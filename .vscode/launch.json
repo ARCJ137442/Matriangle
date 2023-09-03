@@ -2,10 +2,39 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flash",
-            "type": "fdb",
+            "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/batr.swf"
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            // "preLaunchTask": "npx tsc: build - tsconfig.json",
+            "preLaunchTask": "tsc: 构建 - tsconfig.json",
+            "program": "${workspaceFolder}\\test_common.ts",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node-terminal",
+            "name": "JavaScript Debug Terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Current TS File",
+            // "type": "node",
+            // "type": "node",
+            "request": "launch",
+            "args": [
+                "${file}"
+            ],
+            "runtimeExecutable": "npx ts-node",
+            "runtimeArgs": [
+                // "-r",
+                // "ts-node/register"
+                "ts-node"
+            ]
         }
     ]
 }

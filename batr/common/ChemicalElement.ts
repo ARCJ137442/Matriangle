@@ -1,194 +1,190 @@
-package batr.common {
+export class ChemicalElement {
+	//============Static Variables============//
+	private static readonly ELEMENTS: Array<ChemicalElement> = new Array<ChemicalElement>();
 
-	public class ChemicalElement {
-		//============Static Variables============//
-		private static const ELEMENTS:Vector.<ChemicalElement> = new Vector.<ChemicalElement>();
+	private static readonly ZH_CN_ELEMENT_NAME: String = "氢氦锂铍硼碳氮氧氟氖钠镁铝硅磷硫氯氩钾钙钪钛钒铬锰铁钴镍铜锌镓锗砷硒溴氪铷锶钇锆铌钼锝钌铑钯银镉铟锡锑碲碘氙铯钡镧铈镨钕钷钐铕钆铽镝钬铒铥镱镥铪钽钨铼锇铱铂金汞铊铅铋钋砹氡钫镭锕钍镤铀镎钚镅锔锫锎锿镄钔锘铹鈩𨧀𨭎𨨏𨭆䥑鐽錀鎶鉨鈇镆鉝";
 
-		private static const ZH_CN_ELEMENT_NAME:String = "氢氦锂铍硼碳氮氧氟氖钠镁铝硅磷硫氯氩钾钙钪钛钒铬锰铁钴镍铜锌镓锗砷硒溴氪铷锶钇锆铌钼锝钌铑钯银镉铟锡锑碲碘氙铯钡镧铈镨钕钷钐铕钆铽镝钬铒铥镱镥铪钽钨铼锇铱铂金汞铊铅铋钋砹氡钫镭锕钍镤铀镎钚镅锔锫锎锿镄钔锘铹鈩𨧀𨭎𨨏𨭆䥑鐽錀鎶鉨鈇镆鉝";
+	private static _allowCreate: boolean = false;
 
-		private static var _allowCreate:Boolean = false;
+	public static readonly isInited: boolean = ChemicalElement.cInit();
 
-		public static const isInited:Boolean = cInit();
+	//==============Static Functions==============//
+	private static cInit(): boolean {
+		// Begin
+		ChemicalElement._allowCreate = true;
+		// Start
+		ChemicalElement.addElement("H");
+		ChemicalElement.addElement("He");
+		ChemicalElement.addElement("Li");
+		ChemicalElement.addElement("Be");
+		ChemicalElement.addElement("B");
+		ChemicalElement.addElement("C");
+		ChemicalElement.addElement("N");
+		ChemicalElement.addElement("O");
+		ChemicalElement.addElement("F");
+		ChemicalElement.addElement("Ne");
+		ChemicalElement.addElement("Na");
+		ChemicalElement.addElement("Mg");
+		ChemicalElement.addElement("Al");
+		ChemicalElement.addElement("Si");
+		ChemicalElement.addElement("P");
+		ChemicalElement.addElement("S");
+		ChemicalElement.addElement("Cl");
+		ChemicalElement.addElement("Ar");
+		ChemicalElement.addElement("K");
+		ChemicalElement.addElement("Ca");
+		ChemicalElement.addElement("Sc");
+		ChemicalElement.addElement("Ti");
+		ChemicalElement.addElement("V");
+		ChemicalElement.addElement("Cr");
+		ChemicalElement.addElement("Mn");
+		ChemicalElement.addElement("Fe");
+		ChemicalElement.addElement("Co");
+		ChemicalElement.addElement("Ni");
+		ChemicalElement.addElement("Cu");
+		ChemicalElement.addElement("Zn");
+		ChemicalElement.addElement("Ga");
+		ChemicalElement.addElement("Ge");
+		ChemicalElement.addElement("As");
+		ChemicalElement.addElement("Se");
+		ChemicalElement.addElement("Br");
+		ChemicalElement.addElement("Kr");
+		ChemicalElement.addElement("Rb");
+		ChemicalElement.addElement("Sr");
+		ChemicalElement.addElement("Y");
+		ChemicalElement.addElement("Zr");
+		ChemicalElement.addElement("Nb");
+		ChemicalElement.addElement("Mo");
+		ChemicalElement.addElement("Tc");
+		ChemicalElement.addElement("Ru");
+		ChemicalElement.addElement("Rh");
+		ChemicalElement.addElement("Pd");
+		ChemicalElement.addElement("Ag");
+		ChemicalElement.addElement("Cd");
+		ChemicalElement.addElement("In");
+		ChemicalElement.addElement("Sn");
+		ChemicalElement.addElement("Sb");
+		ChemicalElement.addElement("Te");
+		ChemicalElement.addElement("I");
+		ChemicalElement.addElement("Xe");
+		ChemicalElement.addElement("Cs");
+		ChemicalElement.addElement("Ba");
+		ChemicalElement.addElement("La");
+		ChemicalElement.addElement("Ce");
+		ChemicalElement.addElement("Pr");
+		ChemicalElement.addElement("Nd");
+		ChemicalElement.addElement("Pm");
+		ChemicalElement.addElement("Sm");
+		ChemicalElement.addElement("Eu");
+		ChemicalElement.addElement("Gd");
+		ChemicalElement.addElement("Tb");
+		ChemicalElement.addElement("Dy");
+		ChemicalElement.addElement("Ho");
+		ChemicalElement.addElement("Er");
+		ChemicalElement.addElement("Tm");
+		ChemicalElement.addElement("Yb");
+		ChemicalElement.addElement("Lu");
+		ChemicalElement.addElement("Hf");
+		ChemicalElement.addElement("Ta");
+		ChemicalElement.addElement("W");
+		ChemicalElement.addElement("Re");
+		ChemicalElement.addElement("Os");
+		ChemicalElement.addElement("Ir");
+		ChemicalElement.addElement("Pt");
+		ChemicalElement.addElement("Au");
+		ChemicalElement.addElement("Hg");
+		ChemicalElement.addElement("Tl");
+		ChemicalElement.addElement("Pb");
+		ChemicalElement.addElement("Bi");
+		ChemicalElement.addElement("Po");
+		ChemicalElement.addElement("At");
+		ChemicalElement.addElement("Rn");
+		ChemicalElement.addElement("Fr");
+		ChemicalElement.addElement("Ra");
+		ChemicalElement.addElement("Ac");
+		ChemicalElement.addElement("Th");
+		ChemicalElement.addElement("Pa");
+		ChemicalElement.addElement("U");
+		ChemicalElement.addElement("Np");
+		ChemicalElement.addElement("Pu");
+		ChemicalElement.addElement("Am");
+		ChemicalElement.addElement("Cm");
+		ChemicalElement.addElement("Bk");
+		ChemicalElement.addElement("Cf");
+		ChemicalElement.addElement("Es");
+		ChemicalElement.addElement("Fm");
+		ChemicalElement.addElement("Md");
+		ChemicalElement.addElement("No");
+		ChemicalElement.addElement("Lr");
+		ChemicalElement.addElement("Rf");
+		ChemicalElement.addElement("Db");
+		ChemicalElement.addElement("Sg");
+		ChemicalElement.addElement("Bh");
+		ChemicalElement.addElement("Hs");
+		ChemicalElement.addElement("Mt");
+		ChemicalElement.addElement("Ds");
+		ChemicalElement.addElement("Rg");
+		ChemicalElement.addElement("Cn");
+		ChemicalElement.addElement("Nh");
+		ChemicalElement.addElement("Fl");
+		ChemicalElement.addElement("Mc");
+		ChemicalElement.addElement("Lv");
+		ChemicalElement.addElement("Ts");
+		ChemicalElement.addElement("Og");
+		// End
+		ChemicalElement._allowCreate = false;
+		return true;
+	}
 
-		//==============Static Functions==============//
-		private function cInit():void {
-			// Begin
-			ChemicalElement._allowCreate = true;
-			// Start
-			addElement("H");
-			addElement("He");
-			addElement("Li");
-			addElement("Be");
-			addElement("B");
-			addElement("C");
-			addElement("N");
-			addElement("O");
-			addElement("F");
-			addElement("Ne");
-			addElement("Na");
-			addElement("Mg");
-			addElement("Al");
-			addElement("Si");
-			addElement("P");
-			addElement("S");
-			addElement("Cl");
-			addElement("Ar");
-			addElement("K");
-			addElement("Ca");
-			addElement("Sc");
-			addElement("Ti");
-			addElement("V");
-			addElement("Cr");
-			addElement("Mn");
-			addElement("Fe");
-			addElement("Co");
-			addElement("Ni");
-			addElement("Cu");
-			addElement("Zn");
-			addElement("Ga");
-			addElement("Ge");
-			addElement("As");
-			addElement("Se");
-			addElement("Br");
-			addElement("Kr");
-			addElement("Rb");
-			addElement("Sr");
-			addElement("Y");
-			addElement("Zr");
-			addElement("Nb");
-			addElement("Mo");
-			addElement("Tc");
-			addElement("Ru");
-			addElement("Rh");
-			addElement("Pd");
-			addElement("Ag");
-			addElement("Cd");
-			addElement("In");
-			addElement("Sn");
-			addElement("Sb");
-			addElement("Te");
-			addElement("I");
-			addElement("Xe");
-			addElement("Cs");
-			addElement("Ba");
-			addElement("La");
-			addElement("Ce");
-			addElement("Pr");
-			addElement("Nd");
-			addElement("Pm");
-			addElement("Sm");
-			addElement("Eu");
-			addElement("Gd");
-			addElement("Tb");
-			addElement("Dy");
-			addElement("Ho");
-			addElement("Er");
-			addElement("Tm");
-			addElement("Yb");
-			addElement("Lu");
-			addElement("Hf");
-			addElement("Ta");
-			addElement("W");
-			addElement("Re");
-			addElement("Os");
-			addElement("Ir");
-			addElement("Pt");
-			addElement("Au");
-			addElement("Hg");
-			addElement("Tl");
-			addElement("Pb");
-			addElement("Bi");
-			addElement("Po");
-			addElement("At");
-			addElement("Rn");
-			addElement("Fr");
-			addElement("Ra");
-			addElement("Ac");
-			addElement("Th");
-			addElement("Pa");
-			addElement("U");
-			addElement("Np");
-			addElement("Pu");
-			addElement("Am");
-			addElement("Cm");
-			addElement("Bk");
-			addElement("Cf");
-			addElement("Es");
-			addElement("Fm");
-			addElement("Md");
-			addElement("No");
-			addElement("Lr");
-			addElement("Rf");
-			addElement("Db");
-			addElement("Sg");
-			addElement("Bh");
-			addElement("Hs");
-			addElement("Mt");
-			addElement("Ds");
-			addElement("Rg");
-			addElement("Cn");
-			addElement("Nh");
-			addElement("Fl");
-			addElement("Mc");
-			addElement("Lv");
-			addElement("Ts");
-			addElement("Og");
-			// End
-			ChemicalElement._allowCreate = false;
-			return true;
+	private static addElement(sample: String, sampleCN: String = ""): void {
+		var element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, sample);
+		ChemicalElement.ELEMENTS.push(element);
+	}
+
+	public static getElementFromSample(sample: String): ChemicalElement | null {
+		for (let element of ChemicalElement.ELEMENTS) {
+			if (element.sample == sample)
+				return element;
 		}
+		return null;
+	}
 
-		private function addElement(sample:String, sampleCN:String = ""):void {
-			var element:ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, sample, sampleCN);
-			ChemicalElement.ELEMENTS.push(element);
+	public static getElementFromOrdinal(ordinal: number): ChemicalElement | null {
+		if (ordinal <= ChemicalElement.ELEMENTS.length) {
+			return ChemicalElement.ELEMENTS[ordinal - 1];
 		}
+		return null;
+	}
 
-		public function getElementFromSample(sample:String):ChemicalElement {
-			for each (var element:ChemicalElement in ChemicalElement.ELEMENTS) {
-				if (element.sample = sample)
-					return element;
-			}
-			return null;
+	//============Instance Variables============//
+	protected _sample: String;
+	protected _ordinal: number;
+
+	//============Constructor Function============//
+	public constructor(ordinal: number, sample: String) {
+		if (!ChemicalElement._allowCreate) {
+			throw new Error("Invalid constructor");
 		}
+		this._sample = sample;
+		this._ordinal = ordinal;
+	}
 
-		public function getElementFromOrdinal(ordinal:uint):ChemicalElement {
-			if (ordinal <= ChemicalElement.ELEMENTS.length) {
-				return ChemicalElement.ELEMENTS[ordinal - 1];
-			}
-			return null;
-		}
+	//============Instance Getter And Setter============//
+	protected get hasCNSample(): Boolean {
+		return this._ordinal <= ChemicalElement.ZH_CN_ELEMENT_NAME.length;
+	}
 
-		//============Instance Variables============//
-		protected var _sample:String;
-		protected var _ordinal:uint;
+	public get sample(): String {
+		return this._sample;
+	}
 
-		//============Constructor Function============//
-		public function ChemicalElement(ordinal:uint, sample:String):void {
-			if (!ChemicalElement._allowCreate) {
-				throw new Error("Invalid constructor");
-				return;
-			}
-			this._sample = sample;
-			this._ordinal = ordinal;
-		}
+	public get sample_CN(): String {
+		if (this.hasCNSample)
+			return ChemicalElement.ZH_CN_ELEMENT_NAME.charAt(this._ordinal - 1);
+		return "";
+	}
 
-		//============Instance Getter And Setter============//
-		protected function get hasCNSample():Boolean {
-			return this._ordinal <= ZH_CN_ELEMENT_NAME.length;
-		}
-
-		public function get sample():String {
-			return this._sample;
-		}
-
-		public function get sample_CN():String {
-			if (this.hasCNSample)
-				return ZH_CN_ELEMENT_NAME.charAt(this._ordinal - 1);
-			return "";
-		}
-
-		public function get ordinal():uint {
-			return this._ordinal;
-		}
+	public get ordinal(): number {
+		return this._ordinal;
 	}
 }
