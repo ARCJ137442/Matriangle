@@ -1,0 +1,14 @@
+// refer to: https://code.visualstudio.com/docs/typescript/typescript-tutorial
+{
+    "compilerOptions": {
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "target": "es5",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "sourceMap": true // for test
+    },
+    "include": [
+        "batr"
+    ],
+}
