@@ -1,13 +1,16 @@
-import * as batr from './batr/batr'
-import batr.common.*;
-import batr.general.*;
-import batr.main.*;
-import batr.game.main.Game;
+import {
+	common,
+	general,
+	main,
+	game
+} from './batr/batr';
 
-import flash.events.*;
-import flash.display.MovieClip;
+import { Game } from './batr/game/main';
 
-public class batrFla extends MovieClip {
+import { event, display } from 'flash';
+import { MovieClip } from 'flash/display';
+
+export class batrFla extends MovieClip {
 		var sub: BatrSubject = new BatrSubject();
 var fixed_mapID: uint = 0;
 var temp_JSON: String;

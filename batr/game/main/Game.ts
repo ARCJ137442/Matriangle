@@ -39,72 +39,72 @@
 
 	public class Game extends Sprite {
 		//============Static Variables============//
-		public static const ALL_MAPS:Vector.<IMap> = new <IMap>[
-				Map_V1.EMPTY,
-				Map_V1.FRAME,
-				Map_V1.MAP_1,
-				Map_V1.MAP_2,
-				Map_V1.MAP_3,
-				Map_V1.MAP_4,
-				Map_V1.MAP_5,
-				Map_V1.MAP_6,
-				Map_V1.MAP_7,
-				Map_V1.MAP_8,
-				Map_V1.MAP_9,
-				Map_V1.MAP_A,
-				Map_V1.MAP_B,
-				Map_V1.MAP_C,
-				Map_V1.MAP_D,
-				Map_V1.MAP_E,
-				Map_V1.MAP_F,
-				Map_V1.MAP_G,
-				Map_V1.MAP_H
-			];
+		public static const ALL_MAPS: Vector.<IMap> = new < IMap > [
+			Map_V1.EMPTY,
+			Map_V1.FRAME,
+			Map_V1.MAP_1,
+			Map_V1.MAP_2,
+			Map_V1.MAP_3,
+			Map_V1.MAP_4,
+			Map_V1.MAP_5,
+			Map_V1.MAP_6,
+			Map_V1.MAP_7,
+			Map_V1.MAP_8,
+			Map_V1.MAP_9,
+			Map_V1.MAP_A,
+			Map_V1.MAP_B,
+			Map_V1.MAP_C,
+			Map_V1.MAP_D,
+			Map_V1.MAP_E,
+			Map_V1.MAP_F,
+			Map_V1.MAP_G,
+			Map_V1.MAP_H
+		];
 
-		public static const MAP_TRANSFORM_TEXT_FORMAT:TextFormat = new TextFormat(
-				new MainFont().fontName,
-				GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
-				0x3333ff,
-				true,
-				null,
-				null,
-				null,
-				null,
-				TextFormatAlign.LEFT);
+		public static const MAP_TRANSFORM_TEXT_FORMAT: TextFormat = new TextFormat(
+			new MainFont().fontName,
+			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			0x3333ff,
+			true,
+			null,
+			null,
+			null,
+			null,
+			TextFormatAlign.LEFT);
 
-		public static const GAME_PLAYING_TIME_TEXT_FORMET:TextFormat = new TextFormat(
-				new MainFont().fontName,
-				GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
-				0x66ff66,
-				true,
-				null,
-				null,
-				null,
-				null,
-				TextFormatAlign.LEFT);
+		public static const GAME_PLAYING_TIME_TEXT_FORMET: TextFormat = new TextFormat(
+			new MainFont().fontName,
+			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			0x66ff66,
+			true,
+			null,
+			null,
+			null,
+			null,
+			TextFormatAlign.LEFT);
 
-		public static var debugMode:Boolean = false;
+		public static var debugMode: Boolean = false;
 
 		//============Static Getter And Setter============//
-		public static function get VALID_MAP_COUNT():int {
+		public static function get VALID_MAP_COUNT(): int {
 			return Game.ALL_MAPS.length;
 		}
 
 		//============Static Functions============//
-		public static function getMapFromID(id:int):IMap {
+		public static function getMapFromID(id: int): IMap {
 			if (id >= 0 && id < Game.VALID_MAP_COUNT)
 				return Game.ALL_MAPS[id];
 			return null;
 		}
 
-		public static function getIDFromMap(map:IMap):int {
+		public static function getIDFromMap(map: IMap): int {
 			return Game.ALL_MAPS.indexOf(map);
 		}
 
 		// Tools
-		public static function joinNamesFromPlayers(players:Vector.<Player>):String {
-			var result:String = "";
-			for (var i:uint = 0; i < players.length; i++) {
+		public static function joinNamesFromPlayers(players: Vector.<Player>): String {
+			var result: String = "";
+			for (var i: uint = 0; i < players.length; i++) {
 				if (players[i] == null)
 					result += "NULL";
 				else
@@ -121,79 +121,79 @@
 		/**
 		 * The reference of Subject
 		 */
-		protected var _subject:BatrSubject;
-		protected var _map:IMap;
+		protected var _subject: BatrSubject;
+		protected var _map: IMap;
 
 		/**
 		 * Internal GameRule copy from Subject
 		 */
-		protected var _rule:GameRule;
+		protected var _rule: GameRule;
 
-		protected var _stat:GameStats;
+		protected var _stat: GameStats;
 
 		// BackGround
-		protected var _backGround:BackGround = new BackGround(0, 0, true, false, true);
+		protected var _backGround: BackGround = new BackGround(0, 0, true, false, true);
 
 		// System
-		protected var _entitySystem:EntitySystem;
+		protected var _entitySystem: EntitySystem;
 
-		protected var _effectSystem:EffectSystem;
+		protected var _effectSystem: EffectSystem;
 
 		// Map
-		protected var _mapDisplayerBottom:IMapDisplayer = new MapDisplayer();
+		protected var _mapDisplayerBottom: IMapDisplayer = new MapDisplayer();
 
-		protected var _mapDisplayerMiddle:IMapDisplayer = new MapDisplayer();
+		protected var _mapDisplayerMiddle: IMapDisplayer = new MapDisplayer();
 
-		protected var _mapDisplayerTop:IMapDisplayer = new MapDisplayer();
+		protected var _mapDisplayerTop: IMapDisplayer = new MapDisplayer();
 
 		// Players
-		protected var _playerGUIContainer:Sprite = new Sprite();
+		protected var _playerGUIContainer: Sprite = new Sprite();
 
-		protected var _playerContainer:Sprite = new Sprite();
+		protected var _playerContainer: Sprite = new Sprite();
 
-		protected var _projectileContainer:Sprite = new Sprite();
+		protected var _projectileContainer: Sprite = new Sprite();
 
-		protected var _bonusBoxContainer:Sprite = new Sprite();
+		protected var _bonusBoxContainer: Sprite = new Sprite();
 
 		// Effects
-		protected var _effectContainerBottom:Sprite = new Sprite();
+		protected var _effectContainerBottom: Sprite = new Sprite();
 
-		protected var _effectContainerMiddle:Sprite = new Sprite();
+		protected var _effectContainerMiddle: Sprite = new Sprite();
 
-		protected var _effectContainerTop:Sprite = new Sprite();
+		protected var _effectContainerTop: Sprite = new Sprite();
 
 		// Global
-		protected var _isActive:Boolean;
-		protected var _isLoaded:Boolean;
-		protected var _tickTimer:Timer = new Timer(GlobalGameVariables.TICK_TIME_MS);
+		protected var _isActive: Boolean;
+		protected var _isLoaded: Boolean;
+		protected var _tickTimer: Timer = new Timer(GlobalGameVariables.TICK_TIME_MS);
 		// protected var _secondTimer:Timer=new Timer(1000);//When a timer stop and start the timer will lost its phase.
-		protected var _speed:Number;
+		protected var _speed: Number;
 
 		// Frame Complement
-		protected var _lastTime:int;
-		protected var _timeDistance:uint;
-		protected var _expectedFrames:uint;
-		protected var _enableFrameComplement:Boolean;
+		protected var _lastTime: int;
+		protected var _timeDistance: uint;
+		protected var _expectedFrames: uint;
+		protected var _enableFrameComplement: Boolean;
 
 		// Temp
-		protected var _tempUniformWeapon:WeaponType;
+		protected var _tempUniformWeapon: WeaponType;
 
-		protected var _tempMapTransformSecond:uint;
+		protected var _tempMapTransformSecond: uint;
 
 		// protected var _tempTimer:int=getTimer();
-		protected var _tempSecordPhase:uint = 0;
-		protected var _second:uint;
-		protected var _temp_game_rate:Number = 0.0;
+		protected var _tempSecordPhase: uint = 0;
+		protected var _second: uint;
+		protected var _temp_game_rate: Number = 0.0;
 
 		// HUD
-		protected var _globalHUDContainer:Sprite = new Sprite();
+		protected var _globalHUDContainer: Sprite = new Sprite();
 
-		protected var _mapTransformTimeText:BatrTextField = BatrTextField.fromKey(null, null);
+		protected var _mapTransformTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
-		protected var _gamePlayingTimeText:BatrTextField = BatrTextField.fromKey(null, null);
+		protected var _gamePlayingTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
 		//============Constructor Function============//
-		public function Game(subject:BatrSubject, active:Boolean = false):void {
+		public function Game(subject: BatrSubject, active: Boolean = false): void {
 			super();
 			this._subject = subject;
 			this._entitySystem = new EntitySystem(this);
@@ -205,27 +205,27 @@
 
 		//============Instance Getter And Setter============//
 		//======Main Getters======//
-		public function get subject():BatrSubject {
+		public function get subject(): BatrSubject {
 			return this._subject;
 		}
 
-		public function get menu():Menu {
+		public function get menu(): Menu {
 			return this._subject.menuObj;
 		}
 
-		public function get rule():GameRule {
+		public function get rule(): GameRule {
 			return this._rule;
 		}
 
-		public function get translations():Translations {
+		public function get translations(): Translations {
 			return this._subject.translations;
 		}
 
-		public function get isActive():Boolean {
+		public function get isActive(): Boolean {
 			return this._isActive;
 		}
 
-		public function set isActive(value:Boolean):void {
+		public function set isActive(value: Boolean): void {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
@@ -253,85 +253,85 @@
 			}
 		}
 
-		public function get visibleHUD():Boolean {
+		public function get visibleHUD(): Boolean {
 			return this._globalHUDContainer.visible;
 		}
 
-		public function set visibleHUD(value:Boolean):void {
+		public function set visibleHUD(value: Boolean): void {
 			this._globalHUDContainer.visible = value;
 		}
 
-		public function get isLoaded():Boolean {
+		public function get isLoaded(): Boolean {
 			return this._isLoaded;
 		}
 
-		public function get speed():Number {
+		public function get speed(): Number {
 			return this._speed;
 		}
 
-		public function set speed(value:Number):void {
+		public function set speed(value: Number): void {
 			this._speed = value;
 		}
 
-		public function get enableFrameComplement():Boolean {
+		public function get enableFrameComplement(): Boolean {
 			return this._enableFrameComplement;
 		}
 
-		public function set enableFrameComplement(value:Boolean):void {
+		public function set enableFrameComplement(value: Boolean): void {
 			this._enableFrameComplement = value;
 		}
 
 		//======Entity Getters======//
-		public function get playerContainer():Sprite {
+		public function get playerContainer(): Sprite {
 			return this._playerContainer;
 		}
 
-		public function get projectileContainer():Sprite {
+		public function get projectileContainer(): Sprite {
 			return this._projectileContainer;
 		}
 
-		public function get bonusBoxContainer():Sprite {
+		public function get bonusBoxContainer(): Sprite {
 			return this._bonusBoxContainer;
 		}
 
-		public function get playerGUIContainer():Sprite {
+		public function get playerGUIContainer(): Sprite {
 			return this._playerGUIContainer;
 		}
 
-		public function get effectContainerBottom():Sprite {
+		public function get effectContainerBottom(): Sprite {
 			return this._effectContainerBottom;
 		}
 
-		public function get effectContainerTop():Sprite {
+		public function get effectContainerTop(): Sprite {
 			return this._effectContainerTop;
 		}
 
-		public function get entitySystem():EntitySystem {
+		public function get entitySystem(): EntitySystem {
 			return this._entitySystem;
 		}
 
-		public function get effectSystem():EffectSystem {
+		public function get effectSystem(): EffectSystem {
 			return this._effectSystem;
 		}
 
-		public function get numPlayers():uint {
+		public function get numPlayers(): uint {
 			return this._entitySystem.players.length;
 
 			// Includes AI players
 		}
 
-		public function get nextPlayerID():uint {
-			var id:uint = 1;
-			for each (var player:Player in this._entitySystem.players) {
+		public function get nextPlayerID(): uint {
+			var id: uint = 1;
+			for each(var player: Player in this._entitySystem.players) {
 				if (!Player.isAI(player))
 					id++;
 			}
 			return id;
 		}
 
-		public function get nextAIID():uint {
-			var id:uint = 1;
-			for each (var player:Player in this._entitySystem.players) {
+		public function get nextAIID(): uint {
+			var id: uint = 1;
+			for each(var player: Player in this._entitySystem.players) {
 				if (Player.isAI(player))
 					id++;
 			}
@@ -339,27 +339,27 @@
 		}
 
 		//======Map Getters======//
-		public function get map():IMap {
+		public function get map(): IMap {
 			return this._map;
 		}
 
-		public function get mapIndex():uint {
+		public function get mapIndex(): uint {
 			return Game.getIDFromMap(this._map);
 		}
 
-		public function get mapWidth():uint {
+		public function get mapWidth(): uint {
 			return this._map.mapWidth;
 		}
 
-		public function get mapHeight():uint {
+		public function get mapHeight(): uint {
 			return this._map.mapHeight;
 		}
 
-		public function get mapTransformPeriod():uint {
+		public function get mapTransformPeriod(): uint {
 			return this._rule.mapTransformTime;
 		}
 
-		public function set mapVisible(value:Boolean):void {
+		public function set mapVisible(value: Boolean): void {
 			if (this._mapDisplayerBottom as DisplayObject != null)
 				(this._mapDisplayerBottom as DisplayObject).visible = value;
 			if (this._mapDisplayerMiddle as DisplayObject != null)
@@ -368,24 +368,24 @@
 				(this._mapDisplayerTop as DisplayObject).visible = value;
 		}
 
-		public function set entityAndEffectVisible(value:Boolean):void {
+		public function set entityAndEffectVisible(value: Boolean): void {
 			this._effectContainerTop.visible = this._effectContainerMiddle.visible = this._effectContainerBottom.visible = this._bonusBoxContainer.visible = this._playerGUIContainer.visible = this._playerContainer.visible = value;
 		}
 
 		//========Game AI Interface========//
-		public function get allAvaliableBonusBox():Vector.<BonusBox> {
+		public function get allAvaliableBonusBox(): Vector.<BonusBox> {
 			return this.entitySystem.bonusBoxes;
 		}
 
-		public function getBlockPlayerDamage(x:int, y:int):int {
-			var blockAtt:BlockAttributes = this._map.getBlockAttributes(x, y);
+		public function getBlockPlayerDamage(x: int, y: int): int {
+			var blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
 			if (blockAtt != null)
 				return blockAtt.playerDamage;
 			return 0;
 		}
 
-		public function isKillZone(x:int, y:int):Boolean {
-			var blockAtt:BlockAttributes = this._map.getBlockAttributes(x, y);
+		public function isKillZone(x: int, y: int): Boolean {
+			var blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
 			if (blockAtt != null)
 				return blockAtt.playerDamage == int.MAX_VALUE;
 			return false;
@@ -397,11 +397,11 @@
 		/**
 		 * Condition: Only one team's player alive.
 		 */
-		protected function isPlayersEnd(players:Vector.<Player>):Boolean {
+		protected function isPlayersEnd(players: Vector.<Player>): Boolean {
 			if (this.numPlayers < 2)
 				return false;
-			var team:PlayerTeam = null;
-			for each (var player:Player in players) {
+			var team: PlayerTeam = null;
+			for each(var player: Player in players) {
 				if (team == null)
 					team = player.team;
 				else if (player.team != team)
@@ -410,9 +410,9 @@
 			return true;
 		}
 
-		public function getAlivePlayers():Vector.<Player> {
-			var result:Vector.<Player> = new Vector.<Player>();
-			for each (var player:Player in this._entitySystem.players) {
+		public function getAlivePlayers(): Vector.<Player> {
+			var result: Vector.<Player> = new Vector.<Player>();
+			for each(var player: Player in this._entitySystem.players) {
 				if (player == null)
 					continue;
 				if (!player.isCertainlyOut)
@@ -421,9 +421,9 @@
 			return result;
 		}
 
-		public function getInMapPlayers():Vector.<Player> {
-			var result:Vector.<Player> = new Vector.<Player>();
-			for each (var player:Player in this._entitySystem.players) {
+		public function getInMapPlayers(): Vector.<Player> {
+			var result: Vector.<Player> = new Vector.<Player>();
+			for each(var player: Player in this._entitySystem.players) {
 				if (player == null)
 					continue;
 				if (player.health > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
@@ -432,8 +432,8 @@
 			return result;
 		}
 
-		public function testGameEnd(force:Boolean = false):void {
-			var alivePlayers:Vector.<Player> = this.getAlivePlayers();
+		public function testGameEnd(force: Boolean = false): void {
+			var alivePlayers: Vector.<Player> = this.getAlivePlayers();
 			if (this.isPlayersEnd(alivePlayers) || force) {
 				// if allowTeamVictory=false,reset team colors
 				if (!force && alivePlayers.length > 1 && !this.rule.allowTeamVictory) {
@@ -445,29 +445,29 @@
 			}
 		}
 
-		protected function resetPlayersTeamInDifferent(players:Vector.<Player>):void {
-			var tempTeamIndex:uint = exMath.random(this.rule.playerTeams.length);
-			for each (var player:Player in players) {
+		protected function resetPlayersTeamInDifferent(players: Vector.<Player>): void {
+			var tempTeamIndex: uint = exMath.random(this.rule.playerTeams.length);
+			for each(var player: Player in players) {
 				player.team = this.rule.playerTeams[tempTeamIndex];
 				tempTeamIndex = (tempTeamIndex + 1) % this.rule.playerTeams.length;
 			}
 		}
 
-		protected function onGameEnd(winners:Vector.<Player>):void {
+		protected function onGameEnd(winners: Vector.<Player>): void {
 			this.subject.pauseGame();
 			this.subject.gotoMenu();
 			this.subject.menuObj.loadResult(this.getGameResult(winners));
 		}
 
-		protected function getGameResult(winners:Vector.<Player>):GameResult {
-			var result:GameResult = new GameResult(this,
-					this.getResultMessage(winners),
-					this._stat
-				);
+		protected function getGameResult(winners: Vector.<Player>): GameResult {
+			var result: GameResult = new GameResult(this,
+				this.getResultMessage(winners),
+				this._stat
+			);
 			return result;
 		}
 
-		protected function getResultMessage(winners:Vector.<Player>):TranslationalText {
+		protected function getResultMessage(winners: Vector.<Player>): TranslationalText {
 			if (winners.length < 1) {
 				return new TranslationalText(this.translations, TranslationKey.NOTHING_WIN);
 			}
@@ -476,29 +476,29 @@
 			}
 			else if (winners.length > 3) {
 				return new FixedTranslationalText(
-						this.translations,
-						TranslationKey.WIN_PER_PLAYER,
-						winners.length.toString()
-					);
+					this.translations,
+					TranslationKey.WIN_PER_PLAYER,
+					winners.length.toString()
+				);
 			}
 			else {
 				return new FixedTranslationalText(
-						this.translations,
-						winners.length > 1 ? TranslationKey.WIN_MULTI_PLAYER : TranslationKey.WIN_SIGNLE_PLAYER,
-						joinNamesFromPlayers(winners)
-					);
+					this.translations,
+					winners.length > 1 ? TranslationKey.WIN_MULTI_PLAYER : TranslationKey.WIN_SIGNLE_PLAYER,
+					joinNamesFromPlayers(winners)
+				);
 			}
 		}
 
 		//====Functions About Init====//
-		protected function onAddedToStage(E:Event):void {
+		protected function onAddedToStage(E: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			// this.addEventListener(Event.ENTER_FRAME,onEnterFrame);
 			this.subject.addEventListener(TranslationsChangeEvent.TYPE, this.onTranslationsChange);
 			this.addChilds();
 		}
 
-		protected function initDisplay():void {
+		protected function initDisplay(): void {
 			// HUD Text
 			this._mapTransformTimeText.setBlockPos(0, 23);
 			this._mapTransformTimeText.defaultTextFormat = MAP_TRANSFORM_TEXT_FORMAT;
@@ -510,7 +510,7 @@
 			this.visibleHUD = false;
 		}
 
-		protected function addChilds():void {
+		protected function addChilds(): void {
 			this.addChild(this._backGround);
 
 			this.addChild(this._effectContainerBottom);
@@ -530,7 +530,7 @@
 		}
 
 		//====Functions About Game Global Running====//
-		public function load(rule:GameRule, becomeActive:Boolean = false):Boolean {
+		public function load(rule: GameRule, becomeActive: Boolean = false): Boolean {
 			// Check
 			if (this._isLoaded)
 				return false;
@@ -561,7 +561,7 @@
 			return true;
 		}
 
-		public function clearGame():Boolean {
+		public function clearGame(): Boolean {
 			// Check
 			if (!this._isLoaded)
 				return false;
@@ -586,16 +586,16 @@
 			return true;
 		}
 
-		public function restartGame(rule:GameRule, becomeActive:Boolean = false):void {
+		public function restartGame(rule: GameRule, becomeActive: Boolean = false): void {
 			this.clearGame();
 			this.load(rule, becomeActive);
 		}
 
-		public function forceStartGame(rule:GameRule, becomeActive:Boolean = false):Boolean {
+		public function forceStartGame(rule: GameRule, becomeActive: Boolean = false): Boolean {
 			return (this._isLoaded ? this.restartGame : this.load)(rule, becomeActive);
 		}
 
-		public function dealGameTick():void {
+		public function dealGameTick(): void {
 			//=====Ticking=====//
 			this._tempSecordPhase += this._tickTimer.delay;
 			if (this._tempSecordPhase >= 1000) {
@@ -604,7 +604,7 @@
 				this.dealSecond();
 			}
 			//=====Entity TickRun=====//
-			for each (var entity:EntityCommon in this._entitySystem.entities) {
+			for each(var entity: EntityCommon in this._entitySystem.entities) {
 				if (entity != null) {
 					if (entity.isActive) {
 						entity.tickFunction();
@@ -617,7 +617,7 @@
 				}
 			}
 			//=====Player TickRun=====//
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				if (player != null) {
 					// Respawn About
 					if (player.infinityLife || player.lifes > 0) {
@@ -629,7 +629,7 @@
 				}
 			}
 			//=====Effect TickRun=====//
-			for each (var effect:EffectCommon in this._effectSystem.effects) {
+			for each(var effect: EffectCommon in this._effectSystem.effects) {
 				if (effect != null) {
 					if (effect.isActive) {
 						effect.onEffectTick();
@@ -652,8 +652,8 @@
 			this._tempTimer=getTimer();
 		}*/
 
-		protected function onGameTick(E:Event):void {
-			var i:Number = this._speed;
+		protected function onGameTick(E: Event): void {
+			var i: Number = this._speed;
 
 			// Frame Complement
 			if (this._enableFrameComplement) {
@@ -676,12 +676,12 @@
 			}
 		}
 
-		public function refreshLastTime():void {
+		public function refreshLastTime(): void {
 			this._lastTime = getTimer();
 			this._timeDistance = this._expectedFrames = 0;
 		}
 
-		protected function dealSecond():void {
+		protected function dealSecond(): void {
 			//=====Map Transform=====//
 			if (this.mapTransformPeriod > 0) {
 				this._mapTransformTimeText.visible = true;
@@ -695,33 +695,33 @@
 			// this._secondTimer.delay=1000;
 		}
 
-		protected function updateGUIText():void {
+		protected function updateGUIText(): void {
 			if (this.translations == null || this.rule == null)
 				return;
 			this._mapTransformTimeText.setText(
-					Translations.getTranslation(
-						this.translations,
-						TranslationKey.REMAIN_TRANSFORM_TIME
-					) + ": " + this._tempMapTransformSecond +
-					"/" + this.rule.mapTransformTime
-				);
+				Translations.getTranslation(
+					this.translations,
+					TranslationKey.REMAIN_TRANSFORM_TIME
+				) + ": " + this._tempMapTransformSecond +
+				"/" + this.rule.mapTransformTime
+			);
 			this._gamePlayingTimeText.setText(
-					Translations.getTranslation(
-						this.translations,
-						TranslationKey.GAME_DURATION
-					) + ": " + this._second);
+				Translations.getTranslation(
+					this.translations,
+					TranslationKey.GAME_DURATION
+				) + ": " + this._second);
 			this._mapTransformTimeText.visible = this.rule.mapTransformTime > 0;
 		}
 
-		protected function onTranslationsChange(event:Event):void {
+		protected function onTranslationsChange(event: Event): void {
 			this.updateGUIText();
 		}
 
-		protected function onGameKeyDown(E:KeyboardEvent):void {
-			var code:uint = E.keyCode;
-			var ctrl:Boolean = E.ctrlKey;
-			var alt:Boolean = E.altKey;
-			var shift:Boolean = E.shiftKey;
+		protected function onGameKeyDown(E: KeyboardEvent): void {
+			var code: uint = E.keyCode;
+			var ctrl: Boolean = E.ctrlKey;
+			var alt: Boolean = E.altKey;
+			var shift: Boolean = E.shiftKey;
 			// End Game
 			if (shift && code == KeyCode.ESC) {
 				fscommand("quit");
@@ -731,14 +731,14 @@
 			this.dealKeyDownWithPlayers(E.keyCode, true);
 		}
 
-		protected function onGameKeyUp(E:KeyboardEvent):void {
+		protected function onGameKeyUp(E: KeyboardEvent): void {
 			// Player Contol
 			dealKeyDownWithPlayers(E.keyCode, false);
 		}
 
-		protected function dealKeyDownWithPlayers(code:uint, isKeyDown:Boolean):void {
+		protected function dealKeyDownWithPlayers(code: uint, isKeyDown: Boolean): void {
 			if (this._entitySystem.playerCount > 0) {
-				for each (var player:Player in this._entitySystem.players) {
+				for each(var player: Player in this._entitySystem.players) {
 					// Detect - NOT USE:if(player.isRespawning) continue;
 					// Initial Action
 					if (isKeyDown && !player.isOwnKeyDown(code)) {
@@ -772,7 +772,7 @@
 			}
 		}
 
-		public function onStageResize(E:Event):void {
+		public function onStageResize(E: Event): void {
 
 		}
 
@@ -788,18 +788,18 @@
 		 * @param	avoidHurting	Avoidharmful block(returns false)
 		 * @return	true if can pass.
 		 */
-		public function testCanPass(x:Number, y:Number, asPlayer:Boolean, asBullet:Boolean, asLaser:Boolean, includePlayer:Boolean = true, avoidHurting:Boolean = false):Boolean {
+		public function testCanPass(x: Number, y: Number, asPlayer: Boolean, asBullet: Boolean, asLaser: Boolean, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
 			return testIntCanPass(PosTransform.alignToGrid(x), PosTransform.alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
 		}
 
-		public function testIntCanPass(x:int, y:int, asPlayer:Boolean, asBullet:Boolean, asLaser:Boolean, includePlayer:Boolean = true, avoidHurting:Boolean = false):Boolean {
+		public function testIntCanPass(x: int, y: int, asPlayer: Boolean, asBullet: Boolean, asLaser: Boolean, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
 			// Debug: trace("testCanPass:"+arguments+";"+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
-			var mapX:int = this.lockPosInMap(x, true);
+			var mapX: int = this.lockPosInMap(x, true);
 
-			var mapY:int = this.lockPosInMap(y, false);
+			var mapY: int = this.lockPosInMap(y, false);
 
 			// if(isOutOfMap(gridX,gridY)) return true
-			var attributes:BlockAttributes = this.getBlockAttributes(mapX, mapY);
+			var attributes: BlockAttributes = this.getBlockAttributes(mapX, mapY);
 
 			if (avoidHurting && attributes.playerDamage > -1)
 				return false;
@@ -823,30 +823,30 @@
 		/**
 		 * return testCanPass in player's front position.
 		 */
-		public function testFrontCanPass(entity:EntityCommon, distance:Number, asPlayer:Boolean, asBullet:Boolean, asLaser:Boolean, includePlayer:Boolean = true, avoidTrap:Boolean = false):Boolean {
+		public function testFrontCanPass(entity: EntityCommon, distance: Number, asPlayer: Boolean, asBullet: Boolean, asLaser: Boolean, includePlayer: Boolean = true, avoidTrap: Boolean = false): Boolean {
 			// Debug: trace("testFrontCanPass:"+entity.type.name+","+entity.getFrontX(distance)+","+entity.getFrontY(distance))
 			return testCanPass(entity.getFrontX(distance),
-					entity.getFrontY(distance),
-					asPlayer, asBullet, asLaser,
-					includePlayer, avoidTrap);
+				entity.getFrontY(distance),
+				asPlayer, asBullet, asLaser,
+				includePlayer, avoidTrap);
 
 		}
 
-		public function testBonusBoxCanPlaceAt(x:int, y:int):Boolean {
+		public function testBonusBoxCanPlaceAt(x: int, y: int): Boolean {
 			return this.testIntCanPass(x, y, true, false, false, true, true);
 		}
 
 		/**
 		 * return testCanPass as player in other position.
 		 */
-		public function testPlayerCanPass(player:Player, x:int, y:int, includePlayer:Boolean = true, avoidHurting:Boolean = false):Boolean {
+		public function testPlayerCanPass(player: Player, x: int, y: int, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
 			// Debug: trace("testPlayerCanPass:"+player.customName+","+x+","+y+","+includePlayer)
 			// Define
-			var gridX:int = this.lockIntPosInMap(x, true);
+			var gridX: int = this.lockIntPosInMap(x, true);
 
-			var gridY:int = this.lockIntPosInMap(y, false);
+			var gridY: int = this.lockIntPosInMap(y, false);
 
-			var attributes:BlockAttributes = this.getBlockAttributes(gridX, gridY);
+			var attributes: BlockAttributes = this.getBlockAttributes(gridX, gridY);
 
 			// Test
 			// if(isOutOfMap(gridX,gridY)) return true
@@ -863,7 +863,7 @@
 
 		}
 
-		public function testFullPlayerCanPass(player:Player, x:int, y:int, oldX:int, oldY:int, includePlayer:Boolean = true, avoidHurting:Boolean = false):Boolean {
+		public function testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
 			// Debug: trace("testFullPlayerCanPass:"+player.customName+","+x+","+y+","+oldX+","+oldY+","+includePlayer)
 			// Target can pass
 			if (!testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
@@ -874,33 +874,33 @@
 
 		}
 
-		public function testPlayerCanPassToFront(player:Player, rotatedAsRot:uint = 5, includePlayer:Boolean = true, avoidTrap:Boolean = false):Boolean {
+		public function testPlayerCanPassToFront(player: Player, rotatedAsRot: uint = 5, includePlayer: Boolean = true, avoidTrap: Boolean = false): Boolean {
 			return this.testFullPlayerCanPass(player,
-					PosTransform.alignToGrid(player.getFrontIntX(player.moveDistence, rotatedAsRot)),
-					PosTransform.alignToGrid(player.getFrontIntY(player.moveDistence, rotatedAsRot)),
-					player.gridX, player.gridY,
-					includePlayer, avoidTrap);
+				PosTransform.alignToGrid(player.getFrontIntX(player.moveDistence, rotatedAsRot)),
+				PosTransform.alignToGrid(player.getFrontIntY(player.moveDistence, rotatedAsRot)),
+				player.gridX, player.gridY,
+				includePlayer, avoidTrap);
 
 		}
 
-		public function testCarryableWithMap(blockAtt:BlockAttributes, map:IMap):Boolean {
+		public function testCarryableWithMap(blockAtt: BlockAttributes, map: IMap): Boolean {
 			return blockAtt.isCarryable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
 		}
 
-		public function testBreakableWithMap(blockAtt:BlockAttributes, map:IMap):Boolean {
+		public function testBreakableWithMap(blockAtt: BlockAttributes, map: IMap): Boolean {
 			return blockAtt.isBreakable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
 		}
 
-		public function weaponCreateExplode(x:Number, y:Number, finalRadius:Number,
-				damage:uint, projectile:ProjectileCommon,
-				color:uint, edgePercent:Number = 1):void {
+		public function weaponCreateExplode(x: Number, y: Number, finalRadius: Number,
+			damage: uint, projectile: ProjectileCommon,
+			color: uint, edgePercent: Number = 1): void {
 			// Operate
-			var creater:Player = projectile.owner;
+			var creater: Player = projectile.owner;
 			// Effect
 			this._effectSystem.addEffect(new EffectExplode(this, x, y, finalRadius, color));
 			// Hurt Player
-			var distanceP:Number;
-			for each (var player:Player in this._entitySystem.players) {
+			var distanceP: Number;
+			for each(var player: Player in this._entitySystem.players) {
 				if (player == null)
 					continue;
 				distanceP = exMath.getDistanceSquare(x, y, player.entityX, player.entityY) / (finalRadius * finalRadius);
@@ -909,7 +909,7 @@
 					if (edgePercent < 1)
 						damage *= edgePercent + (distanceP * (1 - edgePercent));
 					if (projectile == null ||
-							(creater == null || creater.canUseWeaponHurtPlayer(player, projectile.currentWeapon))) {
+						(creater == null || creater.canUseWeaponHurtPlayer(player, projectile.currentWeapon))) {
 						// Hurt With FinalDamage
 						player.finalRemoveHealth(creater, projectile.currentWeapon, damage);
 					}
@@ -917,48 +917,48 @@
 			}
 		}
 
-		public function laserHurtPlayers(laser:LaserBasic):void {
+		public function laserHurtPlayers(laser: LaserBasic): void {
 			// Set Variables
-			var attacker:Player = laser.owner;
+			var attacker: Player = laser.owner;
 
-			var damage:uint = laser.damage;
+			var damage: uint = laser.damage;
 
-			var length:uint = laser.length;
+			var length: uint = laser.length;
 
-			var rot:uint = laser.rot;
+			var rot: uint = laser.rot;
 
-			var teleport:Boolean = laser is LaserTeleport;
+			var teleport: Boolean = laser is LaserTeleport;
 
-			var absorption:Boolean = laser is LaserAbsorption;
+			var absorption: Boolean = laser is LaserAbsorption;
 
-			var pulse:Boolean = laser is LaserPulse;
+			var pulse: Boolean = laser is LaserPulse;
 
 			// Pos
-			var baseX:int = PosTransform.alignToGrid(laser.entityX);
+			var baseX: int = PosTransform.alignToGrid(laser.entityX);
 
-			var baseY:int = PosTransform.alignToGrid(laser.entityY);
+			var baseY: int = PosTransform.alignToGrid(laser.entityY);
 
-			var vx:int = GlobalRot.towardXInt(rot, 1);
+			var vx: int = GlobalRot.towardXInt(rot, 1);
 
-			var vy:int = GlobalRot.towardYInt(rot, 1);
+			var vy: int = GlobalRot.towardYInt(rot, 1);
 
-			var cx:int = baseX, cy:int = baseY, players:Vector.<Player>;
+			var cx: int = baseX, cy: int = baseY, players: Vector.<Player>;
 
 			// var nextBlockAtt:BlockAttributes
 			// Damage
 			laser.isDamaged = true;
 
-			var finalDamage:uint;
-			for (var i:uint = 0; i < length; i++) {
+			var finalDamage: uint;
+			for (var i: uint = 0; i < length; i++) {
 				// nextBlockAtt=this.getBlockAttributes(cx+vx,cy+vy);
 				players = getHitPlayers(cx, cy);
 
-				for each (var victim:Player in players) {
+				for each(var victim: Player in players) {
 					if (victim == null)
 						continue;
 
 					// Operate
-					finalDamage = attacker == null ? damage : victim.operateFinalDamage(attacker, laser.currentWeapon, damage);
+					finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.currentWeapon, damage);
 					// Effects
 					if (attacker == null || attacker.canUseWeaponHurtPlayer(victim, laser.currentWeapon)) {
 						// Damage
@@ -987,24 +987,24 @@
 			}
 		}
 
-		public function waveHurtPlayers(wave:Wave):void {
+		public function waveHurtPlayers(wave: Wave): void {
 			// Set Variables
-			var attacker:Player = wave.owner;
+			var attacker: Player = wave.owner;
 
-			var damage:uint = wave.damage;
+			var damage: uint = wave.damage;
 
-			var scale:Number = wave.finalScale;
+			var scale: Number = wave.finalScale;
 
-			var rot:uint = wave.rot;
+			var rot: uint = wave.rot;
 
 			// Pos
-			var baseX:Number = wave.entityX;
+			var baseX: Number = wave.entityX;
 
-			var baseY:Number = wave.entityY;
+			var baseY: Number = wave.entityY;
 
-			var radius:Number = scale;
+			var radius: Number = scale;
 
-			for each (var victim:Player in this._entitySystem.players) {
+			for each(var victim: Player in this._entitySystem.players) {
 				if (victim == null)
 					continue;
 				// FinalDamage
@@ -1016,10 +1016,10 @@
 			}
 		}
 
-		public function throwedBlockHurtPlayer(block:ThrowedBlock):void {
-			var attacker:Player = block.owner;
-			var damage:uint = block.damage;
-			for each (var victim:Player in this._entitySystem.players) {
+		public function throwedBlockHurtPlayer(block: ThrowedBlock): void {
+			var attacker: Player = block.owner;
+			var damage: uint = block.damage;
+			for each(var victim: Player in this._entitySystem.players) {
 				if (victim == null)
 					continue;
 				// FinalDamage
@@ -1031,9 +1031,9 @@
 			}
 		}
 
-		public function lightningHurtPlayers(lightning:Lightning, players:Vector.<Player>, damages:Vector.<uint>):void {
-			var p:Player, d:uint;
-			for (var i:* in players) {
+		public function lightningHurtPlayers(lightning: Lightning, players: Vector.<Player>, damages: Vector.<uint>): void {
+			var p: Player, d: uint;
+			for (var i: * in players) {
 				p = players[i];
 				d = damages[i];
 				if (p != null)
@@ -1041,15 +1041,15 @@
 			}
 		}
 
-		public function moveInTestWithEntity():void {
+		public function moveInTestWithEntity(): void {
 			// All Player
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				player.dealMoveInTest(player.entityX, player.entityY, true, false);
 
 			}
 			// BonusBox Displace by Asphyxia/Trap
-			for (var i:int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
-				var box:BonusBox = this._entitySystem.bonusBoxes[i];
+			for (var i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
+				var box: BonusBox = this._entitySystem.bonusBoxes[i];
 				if (box != null && !testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
 					this._entitySystem.removeBonusBox(box);
 
@@ -1060,21 +1060,21 @@
 		/**
 		 * Execute when Player Move in block
 		 */
-		public function moveInTestPlayer(player:Player, isLocationChange:Boolean = false):Boolean {
+		public function moveInTestPlayer(player: Player, isLocationChange: Boolean = false): Boolean {
 			if (!player.isActive)
 				return false;
-			var x:int = player.gridX;
-			var y:int = player.gridY;
-			var type:BlockType = this.getBlockType(player.gridX, player.gridY);
-			var attributes:BlockAttributes = BlockAttributes.fromType(type);
-			var returnBoo:Boolean = false;
+			var x: int = player.gridX;
+			var y: int = player.gridY;
+			var type: BlockType = this.getBlockType(player.gridX, player.gridY);
+			var attributes: BlockAttributes = BlockAttributes.fromType(type);
+			var returnBoo: Boolean = false;
 			if (attributes != null) {
 				if (attributes.playerDamage == -1) {
-					player.removeHealth(this.operateFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
+					player.removeHealth(this.computeFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
 					returnBoo = true;
 				}
 				else if (attributes.playerDamage > -1) {
-					player.removeHealth(this.operateFinalPlayerHurtDamage(player, x, y, attributes.playerDamage), null);
+					player.removeHealth(this.computeFinalPlayerHurtDamage(player, x, y, attributes.playerDamage), null);
 					returnBoo = true;
 				}
 				else if (attributes.playerDamage == -2) {
@@ -1103,7 +1103,7 @@
 		 * (100...] -> playerDamage-100
 		 * @return	The damage.
 		 */
-		public function operateFinalPlayerHurtDamage(player:Player, x:int, y:int, playerDamage:int):uint {
+		public function computeFinalPlayerHurtDamage(player: Player, x: int, y: int, playerDamage: int): uint {
 			if (playerDamage < -1)
 				return 0;
 			if (playerDamage == -1)
@@ -1120,10 +1120,10 @@
 		 * @param	x	the old X
 		 * @param	y	the old Y
 		 */
-		public function moveOutTestPlayer(player:Player, x:int, y:int, isLocationChange:Boolean = false):void {
+		public function moveOutTestPlayer(player: Player, x: int, y: int, isLocationChange: Boolean = false): void {
 			if (!player.isActive)
 				return;
-			var type:BlockType = this.getBlockType(x, y);
+			var type: BlockType = this.getBlockType(x, y);
 			if (type == BlockType.GATE_OPEN) {
 				this.setBlock(x, y, BlockCommon.fromType(BlockType.GATE_CLOSE));
 
@@ -1133,12 +1133,12 @@
 		/**
 		 * Function about Player pickup BonusBox
 		 */
-		public function bonusBoxTest(player:Player, x:Number = NaN, y:Number = NaN):Boolean {
+		public function bonusBoxTest(player: Player, x: Number = NaN, y: Number = NaN): Boolean {
 			if (!player.isActive)
 				return false;
 			x = isNaN(x) ? player.gridX : x;
 			y = isNaN(y) ? player.gridY : y;
-			for each (var bonusBox:BonusBox in this._entitySystem.bonusBoxes) {
+			for each(var bonusBox: BonusBox in this._entitySystem.bonusBoxes) {
 				if (this.hitTestPlayer(player, bonusBox.gridX, bonusBox.gridY)) {
 					bonusBox.onPlayerPickup(player);
 					player.onPickupBonusBox(bonusBox);
@@ -1150,19 +1150,19 @@
 		}
 
 		//====Functions About Map====//
-		public function hasBlock(x:int, y:int):Boolean {
+		public function hasBlock(x: int, y: int): Boolean {
 			return this._map.hasBlock(x, y);
 		}
 
-		public function getBlock(x:int, y:int):BlockCommon {
+		public function getBlock(x: int, y: int): BlockCommon {
 			return this._map.getBlock(x, y);
 		}
 
-		public function getBlockAttributes(x:int, y:int):BlockAttributes {
+		public function getBlockAttributes(x: int, y: int): BlockAttributes {
 			return this._map.getBlockAttributes(x, y);
 		}
 
-		public function getBlockType(x:int, y:int):BlockType {
+		public function getBlockType(x: int, y: int): BlockType {
 			return this._map.getBlockType(x, y);
 		}
 
@@ -1172,12 +1172,12 @@
 		 * @param	y	the Block position y.
 		 * @param	block	the current Block.
 		 */
-		public function setBlock(x:int, y:int, block:BlockCommon):void {
+		public function setBlock(x: int, y: int, block: BlockCommon): void {
 			this._map.setBlock(x, y, block);
 			this.onBlockUpdate(x, y, block);
 		}
 
-		public function isVoid(x:int, y:int):Boolean {
+		public function isVoid(x: int, y: int): Boolean {
 			return this._map.isVoid(x, y);
 
 		}
@@ -1187,12 +1187,12 @@
 		 * @param	x	the voidposition x.
 		 * @param	y	the voidposition y.
 		 */
-		public function setVoid(x:int, y:int):void {
+		public function setVoid(x: int, y: int): void {
 			this._map.setVoid(x, y);
 			this.onBlockUpdate(x, y, null);
 		}
 
-		public function forceMapDisplay():void {
+		public function forceMapDisplay(): void {
 			if (this._map == null) {
 				this._mapDisplayerBottom.removeAllBlock();
 				this._mapDisplayerMiddle.removeAllBlock();
@@ -1202,51 +1202,51 @@
 				this._map.forceDisplayToLayers(this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
 		}
 
-		public function updateMapDisplay(x:int, y:int, block:BlockCommon):void {
+		public function updateMapDisplay(x: int, y: int, block: BlockCommon): void {
 			this._map.updateDisplayToLayers(x, y, block, this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
 
 		}
 
-		public function getDisplayerThenLayer(layer:int):IMapDisplayer {
+		public function getDisplayerThenLayer(layer: int): IMapDisplayer {
 			return layer > 0 ? this._mapDisplayerTop : ((layer < 0) ? this._mapDisplayerBottom : this._mapDisplayerMiddle);
 		}
 
-		public function updateMapSize(updateBackground:Boolean = true):void {
+		public function updateMapSize(updateBackground: Boolean = true): void {
 			// Information
-			var originalStageWidth:Number = GlobalGameVariables.DISPLAY_SIZE;
+			var originalStageWidth: Number = GlobalGameVariables.DISPLAY_SIZE;
 
-			var originalStageHeight:Number = originalStageWidth;
+			var originalStageHeight: Number = originalStageWidth;
 
 			// Square
-			var mapGridWidth:uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapWidth;
+			var mapGridWidth: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapWidth;
 
-			var mapGridHeight:uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
+			var mapGridHeight: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
 
-			var mapShouldDisplayWidth:Number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
+			var mapShouldDisplayWidth: Number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
 
-			var mapShouldDisplayHeight:Number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
+			var mapShouldDisplayHeight: Number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
 
 			// Operation
-			var isMapDisplayWidthMax:Boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
+			var isMapDisplayWidthMax: Boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
 
-			var isStageWidthMax:Boolean = originalStageWidth >= originalStageHeight;
+			var isStageWidthMax: Boolean = originalStageWidth >= originalStageHeight;
 
-			var mapShouldDisplaySizeMax:Number = isMapDisplayWidthMax ? mapShouldDisplayWidth : mapShouldDisplayHeight;
+			var mapShouldDisplaySizeMax: Number = isMapDisplayWidthMax ? mapShouldDisplayWidth : mapShouldDisplayHeight;
 
-			var mapShouldDisplaySizeMin:Number = isMapDisplayWidthMax ? mapShouldDisplayHeight : mapShouldDisplayWidth;
+			var mapShouldDisplaySizeMin: Number = isMapDisplayWidthMax ? mapShouldDisplayHeight : mapShouldDisplayWidth;
 
-			var stageSizeMax:Number = isStageWidthMax ? originalStageWidth : originalStageHeight;
+			var stageSizeMax: Number = isStageWidthMax ? originalStageWidth : originalStageHeight;
 
-			var stageSizeMin:Number = isStageWidthMax ? originalStageHeight : originalStageWidth;
+			var stageSizeMin: Number = isStageWidthMax ? originalStageHeight : originalStageWidth;
 
 			// Oputput
-			var displayScale:Number = stageSizeMin / mapShouldDisplaySizeMin;
+			var displayScale: Number = stageSizeMin / mapShouldDisplaySizeMin;
 
-			var shouldX:Number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (originalStageWidth - mapShouldDisplayWidth * displayScale) / 2 : 0);
+			var shouldX: Number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (originalStageWidth - mapShouldDisplayWidth * displayScale) / 2 : 0);
 
-			var shouldY:Number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (originalStageHeight - mapShouldDisplayHeight * displayScale) / 2);
+			var shouldY: Number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (originalStageHeight - mapShouldDisplayHeight * displayScale) / 2);
 
-			var shouldScale:Number = displayScale;
+			var shouldScale: Number = displayScale;
 
 			// Deal
 			this.x = shouldX;
@@ -1269,7 +1269,7 @@
 
 		/* Change Map into Other
 		 */
-		public function loadMap(isInitial:Boolean = false, update:Boolean = true, reSperadPlayer:Boolean = false):void {
+		public function loadMap(isInitial: Boolean = false, update: Boolean = true, reSperadPlayer: Boolean = false): void {
 			if (isInitial && this.rule.initialMap != null)
 				this.changeMap(this.rule.initialMap, update, reSperadPlayer);
 			else if (this.rule.mapRandomPotentials == null && this.rule.initialMapID)
@@ -1280,13 +1280,13 @@
 
 		/* Get Map from Rule
 		 */
-		protected function getRandomMap():IMap {
+		protected function getRandomMap(): IMap {
 			return this.rule.randomMapEnable.generateNew(); // ALL_MAPS[exMath.random(Game.VALID_MAP_COUNT)].clone()
 		}
 
 		/* Change Map into the other
 		 */
-		public function changeMap(map:IMap, update:Boolean = true, reSperadPlayer:Boolean = false):void {
+		public function changeMap(map: IMap, update: Boolean = true, reSperadPlayer: Boolean = false): void {
 			// Remove and generateNew
 			if (this._map != null)
 				this._map.deleteSelf();
@@ -1297,7 +1297,7 @@
 				this.spreadAllPlayer();
 		}
 
-		public function transformMap(destination:IMap = null):void {
+		public function transformMap(destination: IMap = null): void {
 			this._entitySystem.removeAllProjectile();
 			this._entitySystem.removeAllBonusBox();
 			if (destination == null)
@@ -1305,21 +1305,21 @@
 			else
 				this.changeMap(destination, true, true);
 			// Call AI
-			var players:Vector.<Player> = this.getAlivePlayers();
-			for each (var player:Player in players) {
+			var players: Vector.<Player> = this.getAlivePlayers();
+			for each(var player: Player in players) {
 				if (player is Player)
-					(player as Player).onMapTransform();
+				(player as Player).onMapTransform();
 			}
 			// Stat
 			this._stat.mapTransformCount++;
 		}
 
-		public function isOutOfMap(x:Number, y:Number):Boolean {
-			var outCount:uint = 0;
+		public function isOutOfMap(x: Number, y: Number): Boolean {
+			var outCount: uint = 0;
 
-			var posNum:Number, posMaxNum:uint;
+			var posNum: Number, posMaxNum: uint;
 
-			for (var i:uint = 0; i < 2; i++) {
+			for (var i: uint = 0; i < 2; i++) {
 				posNum = i == 0 ? x : y;
 
 				posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
@@ -1333,19 +1333,19 @@
 
 		}
 
-		public function isIntOutOfMap(x:int, y:int):Boolean {
+		public function isIntOutOfMap(x: int, y: int): Boolean {
 			return (x < 0 || x >= this.mapWidth) || (y < 0 || y >= this.mapHeight);
 		}
 
 		//====Functions About Player====//
-		protected function createPlayer(x:int, y:int, id:uint, team:PlayerTeam, isActive:Boolean = true):Player {
+		protected function createPlayer(x: int, y: int, id: uint, team: PlayerTeam, isActive: Boolean = true): Player {
 			return new Player(this, x, y, team, id, isActive);
 
 		}
 
-		public function addPlayer(id:uint, team:PlayerTeam, x:int, y:int, rot:uint = 0, isActive:Boolean = true, name:String = null):Player {
+		public function addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: Boolean = true, name: String = null): Player {
 			// Define
-			var p:Player = createPlayer(x, y, id, team, isActive);
+			var p: Player = createPlayer(x, y, id, team, isActive);
 			this._entitySystem.registerPlayer(p);
 			// Set
 			p.rot = rot;
@@ -1357,7 +1357,7 @@
 		}
 
 		// Set player datas for gaming
-		public function setupPlayer(player:Player):Player {
+		public function setupPlayer(player: Player): Player {
 			// Position
 			this.respawnPlayer(player);
 			// Variables
@@ -1371,22 +1371,22 @@
 		}
 
 		// Add a player uses random position and weapon
-		public function appendPlayer(controlKeyID:uint = 0):Player {
-			var id:uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
+		public function appendPlayer(controlKeyID: uint = 0): Player {
+			var id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
 			trace("Append Player in ID", id);
 			return this.setupPlayer(
-					this.addPlayer(id, this.rule.randomTeam, -1, -1, 0, false, null)
-				);
+				this.addPlayer(id, this.rule.randomTeam, -1, -1, 0, false, null)
+			);
 		}
 
-		protected function createAI(x:int, y:int, team:PlayerTeam, isActive:Boolean = true):AIPlayer {
+		protected function createAI(x: int, y: int, team: PlayerTeam, isActive: Boolean = true): AIPlayer {
 			return new AIPlayer(this, x, y, team, isActive);
 
 		}
 
-		public function addAI(team:PlayerTeam, x:int, y:int, rot:uint = 0, isActive:Boolean = true, name:String = null):AIPlayer {
+		public function addAI(team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: Boolean = true, name: String = null): AIPlayer {
 			// Define
-			var p:AIPlayer = createAI(x, y, team, isActive);
+			var p: AIPlayer = createAI(x, y, team, isActive);
 			this._entitySystem.registerPlayer(p);
 			// Set
 			p.rot = rot;
@@ -1397,18 +1397,18 @@
 			return p;
 		}
 
-		public function appendAI():Player {
+		public function appendAI(): Player {
 			return this.setupPlayer(
-					this.addAI(this.rule.randomTeam, -1, -1, 0, false, null)
-				);
+				this.addAI(this.rule.randomTeam, -1, -1, 0, false, null)
+			);
 		}
 
-		public function autoGetAIName(player:AIPlayer):String {
+		public function autoGetAIName(player: AIPlayer): String {
 			return "AI-" + this._entitySystem.AICount + "[" + player.AIProgram.labelShort + "]";
 		}
 
-		public function spawnPlayersByRule():void {
-			var i:uint, player:Player;
+		public function spawnPlayersByRule(): void {
+			var i: uint, player: Player;
 
 			// Setup Player
 			for (i = 0; i < this.rule.playerCount; i++) {
@@ -1419,13 +1419,13 @@
 				this.appendAI();
 			}
 			// Active Player
-			for each (player in this._entitySystem.players) {
+			for each(player in this._entitySystem.players) {
 				player.isActive = true;
 
 			}
 		}
 
-		public function teleportPlayerTo(player:Player, x:int, y:int, rotateTo:uint = GlobalRot.NULL, effect:Boolean = false):Player {
+		public function teleportPlayerTo(player: Player, x: int, y: int, rotateTo: uint = GlobalRot.NULL, effect: Boolean = false): Player {
 			player.isActive = false;
 			if (GlobalRot.isValidRot(rotateTo))
 				player.setPositions(PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), rotateTo);
@@ -1442,11 +1442,11 @@
 			return player;
 		}
 
-		public function spreadPlayer(player:Player, rotatePlayer:Boolean = true, createEffect:Boolean = true):Player {
+		public function spreadPlayer(player: Player, rotatePlayer: Boolean = true, createEffect: Boolean = true): Player {
 			if (player == null || player.isRespawning)
 				return player;
-			var p:iPoint = new iPoint(0, 0);
-			for (var i:uint = 0; i < 0xff; i++) {
+			var p: iPoint = new iPoint(0, 0);
+			for (var i: uint = 0; i < 0xff; i++) {
 				p.x = this.map.randomX;
 				p.y = this.map.randomY;
 				if (testPlayerCanPass(player, p.x, p.y, true, true)) {
@@ -1463,11 +1463,11 @@
 		 * @param	player	The player will respawn.
 		 * @return	The same as param:player.
 		 */
-		public function respawnPlayer(player:Player):Player {
+		public function respawnPlayer(player: Player): Player {
 			// Test
 			if (player == null || player.isRespawning)
 				return player;
-			var p:iPoint = this.map.randomSpawnPoint;
+			var p: iPoint = this.map.randomSpawnPoint;
 			// Position offer
 			if (p != null)
 				p = this.findFitSpawnPoint(player, p.x, p.y);
@@ -1476,10 +1476,10 @@
 				this.spreadPlayer(player, true, false);
 			else
 				player.setPositions(
-						PosTransform.alignToEntity(p.x),
-						PosTransform.alignToEntity(p.y),
-						GlobalRot.RANDOM
-					);
+					PosTransform.alignToEntity(p.x),
+					PosTransform.alignToEntity(p.y),
+					GlobalRot.RANDOM
+				);
 			// Spawn Effect
 			this.addSpawnEffect(player.entityX, player.entityY);
 			this.addPlayerDeathLightEffect2(player.entityX, player.entityY, player, true);
@@ -1493,7 +1493,7 @@
 		 * @param	y	SpawnPoint.y
 		 * @return	The nearest point from SpawnPoint.
 		 */
-		protected function findFitSpawnPoint(player:Player, x:int, y:int):iPoint {
+		protected function findFitSpawnPoint(player: Player, x: int, y: int): iPoint {
 			// Older Code uses Open List/Close List
 			/*{
 				var oP:Vector.<uint>=new <uint>[UintPointCompress.compressFromPoint(x,y)];
@@ -1519,16 +1519,16 @@
 				}
 			}*/
 			// Newest code uses subFindSpawnPoint
-			var p:iPoint = null;
-			for (var i:uint = 0; p == null && i < (this.mapWidth + this.mapHeight); i++) {
+			var p: iPoint = null;
+			for (var i: uint = 0; p == null && i < (this.mapWidth + this.mapHeight); i++) {
 				p = this.subFindSpawnPoint(player, x, y, i);
 			}
 			return p;
 		}
 
-		protected function subFindSpawnPoint(player:Player, x:int, y:int, r:int):iPoint {
-			for (var cx:int = x - r; cx <= x + r; cx++) {
-				for (var cy:int = y - r; cy <= y + r; cy++) {
+		protected function subFindSpawnPoint(player: Player, x: int, y: int, r: int): iPoint {
+			for (var cx: int = x - r; cx <= x + r; cx++) {
+				for (var cy: int = y - r; cy <= y + r; cy++) {
 					if (exMath.intAbs(cx - x) == r && exMath.intAbs(cy - y) == r) {
 						if (!this.isOutOfMap(cx, cy) && this.testPlayerCanPass(player, cx, cy, true, true))
 							return new iPoint(cx, cy);
@@ -1538,26 +1538,26 @@
 			return null;
 		}
 
-		public function spreadAllPlayer():void {
-			for each (var player:Player in this._entitySystem.players) {
+		public function spreadAllPlayer(): void {
+			for each(var player: Player in this._entitySystem.players) {
 				spreadPlayer(player);
 
 			}
 		}
 
-		public function hitTestOfPlayer(p1:Player, p2:Player):Boolean {
+		public function hitTestOfPlayer(p1: Player, p2: Player): Boolean {
 			return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
 
 		}
 
-		public function hitTestPlayer(player:Player, x:int, y:int):Boolean {
+		public function hitTestPlayer(player: Player, x: int, y: int): Boolean {
 			return (x == player.gridX && y == player.gridY);
 
 		}
 
-		public function isHitAnyPlayer(x:int, y:int):Boolean {
+		public function isHitAnyPlayer(x: int, y: int): Boolean {
 			// Loop
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y))
 					return true;
 
@@ -1567,9 +1567,9 @@
 
 		}
 
-		public function isHitAnotherPlayer(player:Player):Boolean {
+		public function isHitAnotherPlayer(player: Player): Boolean {
 			// Loop
-			for each (var p2:Player in this._entitySystem.players) {
+			for each(var p2: Player in this._entitySystem.players) {
 				if (p2 == player)
 					continue;
 
@@ -1582,21 +1582,21 @@
 
 		}
 
-		public function hitTestOfPlayers(...players):Boolean {
+		public function hitTestOfPlayers(...players): Boolean {
 			// Transform
-			var _pv:Vector.<Player> = new Vector.<Player>;
+			var _pv: Vector.<Player> = new Vector.<Player>;
 
-			var p:*;
+			var p: *;
 
-			for each (p in players) {
-				if (p is Player) {
+			for each(p in players) {
+				if(p is Player) {
 					_pv.push(p as Player);
 
 				}
 			}
 			// Test
-			for each (var p1:Player in _pv) {
-				for each (var p2:Player in _pv) {
+			for each(var p1: Player in _pv) {
+				for each(var p2: Player in _pv) {
 					if (p1 == p2)
 						continue;
 
@@ -1610,12 +1610,12 @@
 
 		}
 
-		public function getHitPlayers(x:Number, y:Number):Vector.<Player> {
+		public function getHitPlayers(x: Number, y: Number): Vector.<Player> {
 			// Set
-			var returnV:Vector.<Player> = new Vector.<Player>;
+			var returnV: Vector.<Player> = new Vector.<Player>;
 
 			// Test
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y)) {
 					returnV.push(player);
 
@@ -1626,8 +1626,8 @@
 
 		}
 
-		public function getHitPlayerAt(x:int, y:int):Player {
-			for each (var player:Player in this._entitySystem.players) {
+		public function getHitPlayerAt(x: int, y: int): Player {
+			for each(var player: Player in this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y)) {
 					return player;
 				}
@@ -1635,15 +1635,15 @@
 			return null;
 		}
 
-		public function randomizeAllPlayerTeam():void {
-			for each (var player:Player in this._entitySystem.players) {
+		public function randomizeAllPlayerTeam(): void {
+			for each(var player: Player in this._entitySystem.players) {
 				this.randomizePlayerTeam(player);
 
 			}
 		}
 
-		public function randomizePlayerTeam(player:Player):void {
-			var tempT:PlayerTeam, i:uint = 0;
+		public function randomizePlayerTeam(player: Player): void {
+			var tempT: PlayerTeam, i: uint = 0;
 			do {
 				tempT = this.rule.randomTeam;
 			}
@@ -1651,38 +1651,38 @@
 			player.team = tempT;
 		}
 
-		public function setATeamToNotAIPlayer(team:PlayerTeam = null):void {
-			var tempTeam:PlayerTeam = team == null ? this.rule.randomTeam : team;
+		public function setATeamToNotAIPlayer(team: PlayerTeam = null): void {
+			var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				if (!Player.isAI(player))
 					player.team = tempTeam;
 
 			}
 		}
 
-		public function setATeamToAIPlayer(team:PlayerTeam = null):void {
-			var tempTeam:PlayerTeam = team == null ? this.rule.randomTeam : team;
+		public function setATeamToAIPlayer(team: PlayerTeam = null): void {
+			var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				if (Player.isAI(player))
 					player.team = tempTeam;
 
 			}
 		}
 
-		public function changeAllPlayerWeapon(weapon:WeaponType = null):void {
+		public function changeAllPlayerWeapon(weapon: WeaponType = null): void {
 			if (weapon == null)
 				weapon = WeaponType.RANDOM_AVAILABLE;
 
-			for each (var player:Player in this._entitySystem.players) {
+			for each(var player: Player in this._entitySystem.players) {
 				player.weapon = weapon;
 
 			}
 		}
 
-		public function changeAllPlayerWeaponRandomly():void {
-			for each (var player:Player in this._entitySystem.players) {
+		public function changeAllPlayerWeaponRandomly(): void {
+			for each(var player: Player in this._entitySystem.players) {
 				player.weapon = WeaponType.RANDOM_AVAILABLE;
 
 				player.weaponUsingCD = 0;
@@ -1690,7 +1690,7 @@
 			}
 		}
 
-		public function movePlayer(player:Player, rot:uint, distance:Number):void {
+		public function movePlayer(player: Player, rot: uint, distance: Number): void {
 			// Detect
 			if (!player.isActive || !player.visible)
 				return;
@@ -1708,33 +1708,33 @@
 
 		}
 
-		public function playerUseWeapon(player:Player, rot:uint, chargePercent:Number):void {
+		public function playerUseWeapon(player: Player, rot: uint, chargePercent: Number): void {
 			// Test CD
 			if (player.weaponUsingCD > 0)
 				return;
 			// Set Variables
-			var spawnX:Number = player.weapon.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-			var spawnY:Number = player.weapon.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			var spawnX: Number = player.weapon.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			var spawnY: Number = player.weapon.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 			// Use
 			this.playerUseWeaponAt(player, player.weapon, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 			// Set CD
-			player.weaponUsingCD = _rule.weaponsNoCD ? GlobalGameVariables.WEAPON_MIN_CD : player.operateFinalCD(player.weapon);
+			player.weaponUsingCD = _rule.weaponsNoCD ? GlobalGameVariables.WEAPON_MIN_CD : player.computeFinalCD(player.weapon);
 		}
 
-		public function playerUseWeaponAt(player:Player, weapon:WeaponType, x:Number, y:Number, weaponRot:uint, chargePercent:Number, projectilesSpawnDistance:Number):void {
+		public function playerUseWeaponAt(player: Player, weapon: WeaponType, x: Number, y: Number, weaponRot: uint, chargePercent: Number, projectilesSpawnDistance: Number): void {
 			// Set Variables
-			var p:ProjectileCommon = null;
+			var p: ProjectileCommon = null;
 
-			var centerX:Number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
+			var centerX: Number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
 
-			var centerY:Number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
+			var centerY: Number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
 
-			var frontBlock:BlockCommon;
+			var frontBlock: BlockCommon;
 
-			var laserLength:Number = this.rule.defaultLaserLength;
+			var laserLength: Number = this.rule.defaultLaserLength;
 
 			if (WeaponType.isIncludeIn(weapon, WeaponType._LASERS) &&
-					!_rule.allowLaserThroughAllBlock) {
+				!_rule.allowLaserThroughAllBlock) {
 				laserLength = this.getLaserLength2(x, y, weaponRot);
 
 				// -projectilesSpawnDistance
@@ -1779,8 +1779,8 @@
 
 					break;
 				case WeaponType.BLOCK_THROWER:
-					var carryX:int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
-					var carryY:int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
+					var carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
+					var carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
 					frontBlock = this.getBlock(carryX, carryY);
 					if (player.isCarriedBlock) {
 						// Throw
@@ -1805,7 +1805,7 @@
 
 					break;
 				case WeaponType.LIGHTNING:
-					p = new Lightning(this, centerX, centerY, weaponRot, player, player.operateFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
+					p = new Lightning(this, centerX, centerY, weaponRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
 					break;
 				case WeaponType.SHOCKWAVE_ALPHA:
 					p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_WEAPON : player.droneWeapon, player.droneWeapon.chargePercentInDrone);
@@ -1821,18 +1821,18 @@
 			}
 		}
 
-		protected function getLaserLength(player:Player, rot:uint):uint {
+		protected function getLaserLength(player: Player, rot: uint): uint {
 			return getLaserLength2(player.entityX, player.entityY, rot);
 		}
 
-		protected function getLaserLength2(eX:Number, eY:Number, rot:uint):uint {
-			var vx:int = GlobalRot.towardX(rot);
+		protected function getLaserLength2(eX: Number, eY: Number, rot: uint): uint {
+			var vx: int = GlobalRot.towardX(rot);
 
-			var vy:int = GlobalRot.towardY(rot);
+			var vy: int = GlobalRot.towardY(rot);
 
-			var cx:int, cy:int;
+			var cx: int, cy: int;
 
-			for (var i:uint = 0; i <= this.rule.defaultLaserLength; i++) {
+			for (var i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
 				cx = PosTransform.alignToGrid(eX + vx * i);
 
 				cy = PosTransform.alignToGrid(eY + vy * i);
@@ -1845,10 +1845,10 @@
 
 		}
 
-		public function lockEntityInMap(entity:EntityCommon):void {
-			var posNum:Number, posMaxNum:uint, posFunc:Function;
+		public function lockEntityInMap(entity: EntityCommon): void {
+			var posNum: Number, posMaxNum: uint, posFunc: Function;
 
-			for (var i:uint = 0; i < 2; i++) {
+			for (var i: uint = 0; i < 2; i++) {
 				posNum = i == 0 ? entity.entityX : entity.entityY;
 
 				posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
@@ -1866,8 +1866,8 @@
 			}
 		}
 
-		public function lockPosInMap(posNum:Number, returnAsX:Boolean):Number {
-			var posMaxNum:uint = returnAsX ? this.mapWidth : this.mapHeight;
+		public function lockPosInMap(posNum: Number, returnAsX: Boolean): Number {
+			var posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 			if (posNum < 0)
 				return lockPosInMap(posMaxNum + posNum, returnAsX);
@@ -1880,8 +1880,8 @@
 
 		}
 
-		public function lockIntPosInMap(posNum:int, returnAsX:Boolean):int {
-			var posMaxNum:uint = returnAsX ? this.mapWidth : this.mapHeight;
+		public function lockIntPosInMap(posNum: int, returnAsX: Boolean): int {
+			var posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 			if (posNum < 0)
 				return lockIntPosInMap(posMaxNum + posNum, returnAsX);
@@ -1894,7 +1894,7 @@
 
 		}
 
-		public function lockIPointInMap(point:iPoint):iPoint {
+		public function lockIPointInMap(point: iPoint): iPoint {
 			if (point == null)
 				return null;
 			point.x = exMath.lockInt(point.x, this.mapWidth);
@@ -1902,7 +1902,7 @@
 			return point;
 		}
 
-		public function removeAllPlayer(onlyDisplay:Boolean = false):void {
+		public function removeAllPlayer(onlyDisplay: Boolean = false): void {
 			// Display
 			while (this._playerContainer.numChildren > 0)
 				this._playerContainer.removeChildAt(0);
@@ -1912,9 +1912,9 @@
 		}
 
 		//======Entity Functions======//
-		public function updateProjectilesColor(player:Player = null):void {
+		public function updateProjectilesColor(player: Player = null): void {
 			// null means update all projectiles
-			for each (var projectile:ProjectileCommon in this._entitySystem.projectiles) {
+			for each(var projectile: ProjectileCommon in this._entitySystem.projectiles) {
 				if (player == null || projectile.owner == player) {
 					projectile.drawShape();
 
@@ -1922,29 +1922,29 @@
 			}
 		}
 
-		public function addBonusBox(x:int, y:int, type:BonusType):void {
+		public function addBonusBox(x: int, y: int, type: BonusType): void {
 			// Cannot override
 			if (this.hasBonusBoxAt(x, y))
 				return;
 			// Execute
-			var bonusBox:BonusBox = new BonusBox(this, x, y, type);
+			var bonusBox: BonusBox = new BonusBox(this, x, y, type);
 			this._entitySystem.registerBonusBox(bonusBox);
 			this._bonusBoxContainer.addChild(bonusBox);
 			// Stat
 			this._stat.bonusGenerateCount++;
 		}
 
-		protected function hasBonusBoxAt(x:int, y:int):Boolean {
-			for each (var box:BonusBox in this.entitySystem.bonusBoxes) {
+		protected function hasBonusBoxAt(x: int, y: int): Boolean {
+			for each(var box: BonusBox in this.entitySystem.bonusBoxes) {
 				if (box.gridX == x && box.gridY == y)
 					return true;
 			}
 			return false;
 		}
 
-		public function randomAddBonusBox(type:BonusType):void {
-			var bonusBox:BonusBox = new BonusBox(this, x, y, type);
-			var i:uint = 0, rX:int, rY:int;
+		public function randomAddBonusBox(type: BonusType): void {
+			var bonusBox: BonusBox = new BonusBox(this, x, y, type);
+			var i: uint = 0, rX: int, rY: int;
 			do {
 				rX = this._map.randomX;
 				rY = this._map.randomY;
@@ -1954,13 +1954,13 @@
 			this.addBonusBox(rX, rY, type);
 		}
 
-		public function randomAddRandomBonusBox():void {
+		public function randomAddRandomBonusBox(): void {
 			this.randomAddBonusBox(this.rule.randomBonusEnable);
 		}
 
-		public function fillBonusBox():void {
-			for (var x:uint = 0; x < this.map.mapWidth; x++) {
-				for (var y:uint = 0; y < this.map.mapHeight; y++) {
+		public function fillBonusBox(): void {
+			for (var x: uint = 0; x < this.map.mapWidth; x++) {
+				for (var y: uint = 0; y < this.map.mapHeight; y++) {
 					if (this.testBonusBoxCanPlaceAt(x, y))
 						this.addBonusBox(x, y, this.rule.randomBonusEnable);
 				}
@@ -1968,7 +1968,7 @@
 		}
 
 		//======Effect Functions======//
-		public function addEffectChild(effect:EffectCommon):void {
+		public function addEffectChild(effect: EffectCommon): void {
 			if (effect.layer > 0)
 				this._effectContainerTop.addChild(effect);
 
@@ -1980,64 +1980,64 @@
 
 		}
 
-		public function addSpawnEffect(x:Number, y:Number):void {
+		public function addSpawnEffect(x: Number, y: Number): void {
 			this._effectSystem.addEffect(new EffectSpawn(this, x, y));
 
 		}
 
-		public function addTeleportEffect(x:Number, y:Number):void {
+		public function addTeleportEffect(x: Number, y: Number): void {
 			this._effectSystem.addEffect(new EffectTeleport(this, x, y));
 
 		}
 
-		public function addPlayerDeathLightEffect(x:Number, y:Number, color:uint, rot:uint, aiPlayer:AIPlayer = null, reverse:Boolean = false):void {
+		public function addPlayerDeathLightEffect(x: Number, y: Number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
 
 		}
 
-		public function addPlayerDeathAlphaEffect(x:Number, y:Number, color:uint, rot:uint, aiPlayer:AIPlayer = null, reverse:Boolean = false):void {
+		public function addPlayerDeathAlphaEffect(x: Number, y: Number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(new EffectPlayerDeathAlpha(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
 
 		}
 
-		public function addPlayerDeathLightEffect2(x:Number, y:Number, player:Player, reverse:Boolean = false):void {
+		public function addPlayerDeathLightEffect2(x: Number, y: Number, player: Player, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
 
 		}
 
-		public function addPlayerDeathAlphaEffect2(x:Number, y:Number, player:Player, reverse:Boolean = false):void {
+		public function addPlayerDeathAlphaEffect2(x: Number, y: Number, player: Player, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerDeathAlpha.fromPlayer(this, x, y, player, reverse));
 
 		}
 
-		public function addPlayerLevelupEffect(x:Number, y:Number, color:uint, scale:Number):void {
+		public function addPlayerLevelupEffect(x: Number, y: Number, color: uint, scale: Number): void {
 			this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
 
 		}
 
-		public function addBlockLightEffect(x:Number, y:Number, color:uint, alpha:uint, reverse:Boolean = false):void {
+		public function addBlockLightEffect(x: Number, y: Number, color: uint, alpha: uint, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
 		}
 
-		public function addBlockLightEffect2(x:Number, y:Number, block:BlockCommon, reverse:Boolean = false):void {
+		public function addBlockLightEffect2(x: Number, y: Number, block: BlockCommon, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
 		}
 
-		public function addPlayerHurtEffect(player:Player, reverse:Boolean = false):void {
+		public function addPlayerHurtEffect(player: Player, reverse: Boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
 
 		}
 
 		//======Hook Functions======//
-		public function onPlayerMove(player:Player):void {
+		public function onPlayerMove(player: Player): void {
 
 		}
 
-		public function onPlayerUse(player:Player, rot:uint, distance:Number):void {
+		public function onPlayerUse(player: Player, rot: uint, distance: Number): void {
 
 		}
 
-		public function onPlayerHurt(attacker:Player, victim:Player, damage:uint):void {
+		public function onPlayerHurt(attacker: Player, victim: Player, damage: uint): void {
 			// It's no meaningless of hurt NULL
 			if (victim == null)
 				return;
@@ -2072,7 +2072,7 @@
 		 * @param	victim
 		 * @param	damage
 		 */
-		public function onPlayerDeath(attacker:Player, victim:Player, damage:uint):void {
+		public function onPlayerDeath(attacker: Player, victim: Player, damage: uint): void {
 			// It's no meaningless of kill NULL
 			if (victim == null)
 				return;
@@ -2098,7 +2098,7 @@
 				(victim as AIPlayer).resetAITick();
 
 			// Set Respawn
-			var deadX:int = victim.lockedEntityX, deadY:int = victim.lockedEntityY;
+			var deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
 
 			victim.setXY(this.rule.deadPlayerMoveToX, this.rule.deadPlayerMoveToY);
 
@@ -2140,15 +2140,15 @@
 			}
 			// Add Bonus By Rule
 			if (this.rule.bonusBoxSpawnAfterPlayerDeath &&
-					(this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-					this.testCanPass(deadX, deadY, true, false, true, true, true)) {
+				(this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
+				this.testCanPass(deadX, deadY, true, false, true, true, true)) {
 				this.addBonusBox(deadX, deadY, this.rule.randomBonusEnable);
 			}
 			// If Game End
 			this.testGameEnd();
 		}
 
-		public function onPlayerRespawn(player:Player):void {
+		public function onPlayerRespawn(player: Player): void {
 			// Active
 			player.health = player.maxHealth;
 			player.isActive = true;
@@ -2159,11 +2159,11 @@
 			this.respawnPlayer(player);
 		}
 
-		public function prePlayerLocationChange(player:Player, oldX:Number, oldY:Number):void {
+		public function prePlayerLocationChange(player: Player, oldX: Number, oldY: Number): void {
 			this.moveOutTestPlayer(player, oldX, oldY);
 		}
 
-		public function onPlayerLocationChange(player:Player, newX:Number, newY:Number):void {
+		public function onPlayerLocationChange(player: Player, newX: Number, newY: Number): void {
 			// Detect
 			if (!player.isActive || !player.visible)
 				return;
@@ -2174,14 +2174,14 @@
 			this.bonusBoxTest(player, newX, newY);
 		}
 
-		public function onPlayerTeamsChange(event:GameRuleEvent):void {
+		public function onPlayerTeamsChange(event: GameRuleEvent): void {
 			this.randomizeAllPlayerTeam();
 		}
 
-		public function onPlayerLevelup(player:Player):void {
-			var color:uint;
-			var i:uint = 0;
-			var nowE:uint = exMath.random(4);
+		public function onPlayerLevelup(player: Player): void {
+			var color: uint;
+			var i: uint = 0;
+			var nowE: uint = exMath.random(4);
 			// Add buff of cd,resistance,radius,damage
 			while (i < 3) {
 				switch (nowE) {
@@ -2208,12 +2208,12 @@
 			}
 		}
 
-		public function onRandomTick(x:int, y:int):void {
+		public function onRandomTick(x: int, y: int): void {
 			// BonusBox(Supply)
 			if (testCanPass(x, y, true, false, false, true, true)) {
 				if (this.getBlockAttributes(x, y).supplingBonus ||
-						((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-							UsefulTools.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
+					((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
+						UsefulTools.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
 					this.addBonusBox(x, y, this.rule.randomBonusEnable);
 				}
 			}
@@ -2234,19 +2234,19 @@
 			}
 		}
 
-		protected function onBlockUpdate(x:int, y:int, block:BlockCommon):void {
+		protected function onBlockUpdate(x: int, y: int, block: BlockCommon): void {
 			this.updateMapDisplay(x, y, block);
 			this.updateMapSize();
 			this.moveInTestWithEntity();
 		}
 
 		//====Block Functions====//
-		protected function colorSpawnerSpawnBlock(x:int, y:int):void {
-			var randomX:int = x + exMath.random1() * (exMath.random(3));
+		protected function colorSpawnerSpawnBlock(x: int, y: int): void {
+			var randomX: int = x + exMath.random1() * (exMath.random(3));
 
-			var randomY:int = y + exMath.random1() * (exMath.random(3));
+			var randomY: int = y + exMath.random1() * (exMath.random(3));
 
-			var block:ColoredBlock = new ColoredBlock(exMath.random(0xffffff));
+			var block: ColoredBlock = new ColoredBlock(exMath.random(0xffffff));
 
 			if (!this.isOutOfMap(randomX, randomY) && this.isVoid(randomX, randomY)) {
 				this.setBlock(randomX, randomY, block);
@@ -2257,11 +2257,11 @@
 			}
 		}
 
-		protected function laserTrapShootLaser(x:int, y:int):void {
-			var randomRot:uint, rotX:Number, rotY:Number, laserLength:Number;
+		protected function laserTrapShootLaser(x: int, y: int): void {
+			var randomRot: uint, rotX: Number, rotY: Number, laserLength: Number;
 			// add laser by owner=null
-			var p:LaserBasic;
-			var i:uint;
+			var p: LaserBasic;
+			var i: uint;
 			do {
 				randomRot = GlobalRot.RANDOM;
 				rotX = PosTransform.alignToEntity(x) + GlobalRot.towardIntX(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
@@ -2296,11 +2296,11 @@
 
 		}
 
-		protected function moveableWallMove(x:int, y:int, block:BlockCommon):void {
-			var randomRot:uint, rotX:Number, rotY:Number, laserLength:Number;
+		protected function moveableWallMove(x: int, y: int, block: BlockCommon): void {
+			var randomRot: uint, rotX: Number, rotY: Number, laserLength: Number;
 			// add laser by owner=null
-			var p:ThrowedBlock;
-			var i:uint;
+			var p: ThrowedBlock;
+			var i: uint;
 			do {
 				randomRot = GlobalRot.RANDOM;
 				rotX = x + GlobalRot.towardXInt(randomRot);
@@ -2313,7 +2313,7 @@
 				this._projectileContainer.addChild(p);
 				// trace("laser at"+"("+p.entityX+","+p.entityY+"),"+p.life,p.length,p.visible,p.alpha,p.owner);
 				if (!(block is MoveableWall && (block as MoveableWall).virus))
-					break;
+				break;
 			}
 			while (++i < 0x10);
 

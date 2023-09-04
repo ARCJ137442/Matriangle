@@ -13,25 +13,25 @@ package batr.game.entity.entities.projectiles {
 
 	public class Wave extends ProjectileCommon {
 		//============Static Variables============//
-		public static const SIZE:Number = GlobalGameVariables.DEFAULT_SIZE;
-		public static const ALPHA:Number = 0.64;
-		public static const DEFAULT_SPEED:Number = 24 / GlobalGameVariables.FIXED_TPS;
-		public static const MAX_SCALE:Number = 4;
-		public static const MIN_SCALE:Number = 1 / 4;
-		public static const LIFE:uint = GlobalGameVariables.FIXED_TPS * 4;
-		public static const DAMAGE_DELAY:uint = GlobalGameVariables.FIXED_TPS / 12;
+		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE;
+		public static const ALPHA: Number = 0.64;
+		public static const DEFAULT_SPEED: Number = 24 / GlobalGameVariables.FIXED_TPS;
+		public static const MAX_SCALE: Number = 4;
+		public static const MIN_SCALE: Number = 1 / 4;
+		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 4;
+		public static const DAMAGE_DELAY: uint = GlobalGameVariables.FIXED_TPS / 12;
 
 		//============Instance Variables============//
-		public var speed:Number = DEFAULT_SPEED;
+		public var speed: Number = DEFAULT_SPEED;
 
-		public var tempScale:Number;
+		public var tempScale: Number;
 
-		protected var life:uint = LIFE;
+		protected var life: uint = LIFE;
 
-		protected var _finalScale:Number;
+		protected var _finalScale: Number;
 
 		//============Constructor Function============//
-		public function Wave(host:Game, x:Number, y:Number, owner:Player, chargePercent:Number):void {
+		public function Wave(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number): void {
 			super(host, x, y, owner);
 			this._currentWeapon = WeaponType.WAVE;
 			dealCharge(chargePercent);
@@ -39,32 +39,32 @@ package batr.game.entity.entities.projectiles {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type():EntityType {
+		public override function get type(): EntityType {
 			return EntityType.WAVE;
 		}
 
-		public override function deleteSelf():void {
+		public override function deleteSelf(): void {
 			this.graphics.clear();
 		}
 
-		public function get finalScale():Number {
+		public function get finalScale(): Number {
 			return this._finalScale;
 		}
 
-		public function set finalScale(value:Number):void {
+		public function set finalScale(value: Number): void {
 			this._finalScale = this.scaleX = this.scaleY = value;
 		}
 
 		//============Instance Functions============//
-		public function dealCharge(percent:Number):void {
+		public function dealCharge(percent: Number): void {
 			this.tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * percent;
-			this.finalScale = this._owner == null ? tempScale : (1 + this._owner.operateFinalRadius(this.tempScale) / 2);
+			this.finalScale = this._owner == null ? tempScale : (1 + this._owner.computeFinalRadius(this.tempScale) / 2);
 			this.damage = this._currentWeapon.defaultDamage * tempScale / Wave.MAX_SCALE;
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape():void {
-			var realRadius:Number = SIZE / 2;
+		public override function drawShape(): void {
+			var realRadius: Number = SIZE / 2;
 
 			graphics.clear();
 			graphics.beginFill(this.ownerColor, ALPHA);
@@ -98,7 +98,7 @@ package batr.game.entity.entities.projectiles {
 		}
 
 		//====Tick Function====//
-		public override function onProjectileTick():void {
+		public override function onProjectileTick(): void {
 			this.moveForward(this.speed);
 
 			if (this.life % DAMAGE_DELAY == 0) {
@@ -108,7 +108,7 @@ package batr.game.entity.entities.projectiles {
 
 		}
 
-		protected function dealLife():void {
+		protected function dealLife(): void {
 			if (this.life > 0)
 				this.life--;
 

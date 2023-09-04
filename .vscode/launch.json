@@ -9,7 +9,7 @@
                 "<node_internals>/**"
             ],
             // "preLaunchTask": "npx tsc: build - tsconfig.json",
-            "preLaunchTask": "tsc: 构建 - tsconfig.json",
+            "preLaunchTask": "tsc",
             "program": "${workspaceFolder}\\test_common.ts",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"

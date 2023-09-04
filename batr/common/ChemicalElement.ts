@@ -188,3 +188,6 @@ export class ChemicalElement {
 		return this._ordinal;
 	}
 }
+
+// 测试
+console.log(ChemicalElement.getElementFromSample("H"));
