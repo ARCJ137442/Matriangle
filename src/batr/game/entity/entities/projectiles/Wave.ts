@@ -118,4 +118,3 @@ package batr.game.entity.entities.projectiles {
 			}
 		}
 	}
-}
