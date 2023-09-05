@@ -17,13 +17,13 @@ package batr.game.entity {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _host:Game;
-		protected var _isActive:Boolean;
+		protected var _host: Game;
+		protected var _isActive: Boolean;
 
 		//============Constructor Function============//
-		public function EntityCommon(host:Game,
-				x:Number, y:Number,
-				initActive:Boolean = true):void {
+		public function EntityCommon(host: Game,
+			x: Number, y: Number,
+			initActive: Boolean = true): void {
 			super();
 			// Init Host
 			this._host = host;
@@ -35,102 +35,102 @@ package batr.game.entity {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf():void {
+		public function deleteSelf(): void {
 			this.isActive = false;
 			this._host = null;
 		}
 
 		//============Instance Getters And Setters============//
-		public function get host():Game {
+		public function get host(): Game {
 			return this._host;
 		}
 
-		public function get isActive():Boolean {
+		public function get isActive(): Boolean {
 			return this._isActive;
 		}
 
-		public function set isActive(value:Boolean):void {
+		public function set isActive(value: Boolean): void {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
 		}
 
-		public function get rot():Number {
+		public function get rot(): Number {
 			return GlobalRot.lockToStandard(GlobalRot.fromRealRot(this.rotation));
 		}
 
-		public function set rot(value:Number):void {
+		public function set rot(value: Number): void {
 			if (value != this.rot)
 				this.rotation = GlobalRot.toRealRot(GlobalRot.lockToStandard(value));
 			this.onRotationUpdate(this.rot);
 			this.onPositionUpdate(this.entityX, this.entityY, this.rot);
 		}
 
-		public function get type():EntityType {
+		public function get type(): EntityType {
 			return EntityType.ABSTRACT;
 		}
 
-		public function get entityX():Number {
+		public function get entityX(): Number {
 			return this.getX();
 		}
 
-		public function get entityY():Number {
+		public function get entityY(): Number {
 			return this.getY();
 		}
 
 		/**
-		 * Return a Intager than entityX
+		 * Return a Integer than entityX
 		 */
-		public function get gridX():int {
+		public function get gridX(): int {
 			return PosTransform.alignToGrid(this.getX());
 		}
 
 		/**
-		 * Return a Intager than entityY
+		 * Return a Integer than entityY
 		 */
-		public function get gridY():int {
+		public function get gridY(): int {
 			return PosTransform.alignToGrid(this.getY());
 		}
 
 		/**
 		 * Return a Point Contains gridX,gridY
 		 */
-		public function get gridPoint():iPoint {
+		public function get gridPoint(): iPoint {
 			return new iPoint(this.gridX, this.gridY);
 		}
 
-		public function get lockedEntityX():Number {
+		public function get lockedEntityX(): Number {
 			return this._host.lockPosInMap(this.entityX, true);
 		}
 
-		public function get lockedEntityY():Number {
+		public function get lockedEntityY(): Number {
 			return this._host.lockPosInMap(this.entityY, false);
 		}
 
-		public function get lockedGridX():Number {
+		public function get lockedGridX(): Number {
 			return this._host.lockPosInMap(this.gridX, true);
 		}
 
-		public function get lockedGridY():Number {
+		public function get lockedGridY(): Number {
 			return this._host.lockPosInMap(this.gridY, false);
 		}
 
 		//============Instance Functions============//
 		//====Tickrun Functions====//
-		public function tickFunction():void {
+		public function tickFunction(): void {
 
 		}
 
 		//====Position Functions====//
-		public function getX():Number {
+		public function getX(): Number {
 			return PosTransform.realPosToLocalPos(this.x);
 		}
 
-		public function getY():Number {
+		public function getY(): Number {
 			return PosTransform.realPosToLocalPos(this.y);
 		}
 
-		public function setX(value:Number, update:Boolean = true):void {
+		public function setX(value: Number, update: Boolean = true): void {
 			// if(value==this.getX()) return;
 			if (update)
 				this.preLocationUpdate(this.entityX, this.entityY);
@@ -141,7 +141,7 @@ package batr.game.entity {
 			this.onPositionUpdate(value, this.entityY, this.rot);
 		}
 
-		public function setY(value:Number, update:Boolean = true):void {
+		public function setY(value: Number, update: Boolean = true): void {
 			// if(value==this.getY()) return;
 			if (update)
 				this.preLocationUpdate(this.entityX, this.entityY);
@@ -152,15 +152,15 @@ package batr.game.entity {
 			this.onPositionUpdate(this.entityX, value, this.rot);
 		}
 
-		public function addX(value:Number):void {
+		public function addX(value: Number): void {
 			this.setX(this.getX() + value);
 		}
 
-		public function addY(value:Number):void {
+		public function addY(value: Number): void {
 			this.setY(this.getY() + value);
 		}
 
-		public function setXY(x:Number, y:Number, update:Boolean = true):void {
+		public function setXY(x: Number, y: Number, update: Boolean = true): void {
 			if (update)
 				this.preLocationUpdate(this.entityX, this.entityY);
 			this.setX(x, false);
@@ -171,11 +171,11 @@ package batr.game.entity {
 			this.onPositionUpdate(x, y, this.rot);
 		}
 
-		public function addXY(x:Number, y:Number, update:Boolean = true):void {
+		public function addXY(x: Number, y: Number, update: Boolean = true): void {
 			this.setXY(this.getX() + x, this.getY() + y, update);
 		}
 
-		public function setPositions(x:Number, y:Number, rot:Number):void {
+		public function setPositions(x: Number, y: Number, rot: Number): void {
 			this.preLocationUpdate(this.entityX, this.entityY);
 			this.setXY(x, y, false);
 			if (GlobalRot.isValidRot(rot))
@@ -184,7 +184,7 @@ package batr.game.entity {
 			this.onPositionUpdate(x, y, rot);
 		}
 
-		public function addPositions(x:Number, y:Number, rot:Number = NaN):void {
+		public function addPositions(x: Number, y: Number, rot: Number = NaN): void {
 			this.preLocationUpdate(this.entityX, this.entityY);
 			this.addXY(x, y, false);
 			if (!isNaN(rot))
@@ -193,66 +193,66 @@ package batr.game.entity {
 			this.onPositionUpdate(x, y, rot);
 		}
 
-		public function getFrontX(distance:Number = 1):Number {
+		public function getFrontX(distance: Number = 1): Number {
 			return this.getX() + GlobalRot.towardX(this.rot);
 		}
 
-		public function getFrontY(distance:Number = 1):Number {
+		public function getFrontY(distance: Number = 1): Number {
 			return this.getY() + GlobalRot.towardY(this.rot);
 		}
 
-		public function getFrontAsRotX(asRot:Number, distance:Number = 1):Number {
+		public function getFrontAsRotX(asRot: Number, distance: Number = 1): Number {
 			return this.getX() + GlobalRot.towardX(asRot, distance);
 		}
 
-		public function getFrontAsRotY(asRot:Number, distance:Number = 1):Number {
+		public function getFrontAsRotY(asRot: Number, distance: Number = 1): Number {
 			return this.getY() + GlobalRot.towardY(asRot, distance);
 		}
 
-		public function getFrontIntX(distance:Number = 1, rotatedAsRot:uint = 5):Number {
+		public function getFrontIntX(distance: Number = 1, rotatedAsRot: uint = 5): Number {
 			return this.getX() + GlobalRot.towardIntX(rotatedAsRot > 4 ? this.rot : rotatedAsRot, distance);
 		}
 
-		public function getFrontIntY(distance:Number = 1, rotatedAsRot:uint = 5):Number {
+		public function getFrontIntY(distance: Number = 1, rotatedAsRot: uint = 5): Number {
 			return this.getY() + GlobalRot.towardIntY(rotatedAsRot > 4 ? this.rot : rotatedAsRot, distance);
 		}
 
-		public function getFrontXInt(distance:int = 1, rotatedAsRot:uint = 5):int {
+		public function getFrontXInt(distance: int = 1, rotatedAsRot: uint = 5): int {
 			return this.getX() + GlobalRot.towardXInt(rotatedAsRot > 4 ? this.rot : rotatedAsRot, distance);
 		}
 
-		public function getFrontYInt(distance:int = 1, rotatedAsRot:uint = 5):int {
+		public function getFrontYInt(distance: int = 1, rotatedAsRot: uint = 5): int {
 			return this.getY() + GlobalRot.towardYInt(rotatedAsRot > 4 ? this.rot : rotatedAsRot, distance);
 		}
 
-		public function moveForward(distance:Number = 1):void {
+		public function moveForward(distance: Number = 1): void {
 			this.addXY(GlobalRot.towardX(this.rot, distance), GlobalRot.towardY(this.rot, distance));
 		}
 
-		public function moveIntForward(distance:Number = 1):void {
+		public function moveIntForward(distance: Number = 1): void {
 			this.addXY(GlobalRot.towardIntX(this.rot, distance),
-					GlobalRot.towardIntY(this.rot, distance));
+				GlobalRot.towardIntY(this.rot, distance));
 		}
 
-		public function moveForwardInt(distance:int = 1):void {
+		public function moveForwardInt(distance: int = 1): void {
 			this.addXY(GlobalRot.towardXInt(this.rot, distance),
-					GlobalRot.towardYInt(this.rot, distance));
+				GlobalRot.towardYInt(this.rot, distance));
 		}
 
 		// Hook Functions
-		public function onPositionUpdate(newX:Number, newY:Number, newRot:Number):void {
+		public function onPositionUpdate(newX: Number, newY: Number, newRot: Number): void {
 
 		}
 
-		public function onLocationUpdate(newX:Number, newY:Number):void {
+		public function onLocationUpdate(newX: Number, newY: Number): void {
 
 		}
 
-		public function preLocationUpdate(oldX:Number, oldY:Number):void {
+		public function preLocationUpdate(oldX: Number, oldY: Number): void {
 
 		}
 
-		public function onRotationUpdate(newRot:Number):void {
+		public function onRotationUpdate(newRot: Number): void {
 
 		}
 	}

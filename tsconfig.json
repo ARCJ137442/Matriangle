@@ -9,6 +9,7 @@
         "sourceMap": true // for test
     },
     "include": [
-        "batr",
+        "src",
+        "src/batr.ts"
     ],
 }

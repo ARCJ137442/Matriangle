@@ -1,223 +1,223 @@
-package batr.common {
+module common {
 
-	public final class KeyCode {
+	export class KeyCode {
 		//================Key Codes===============//
-		public static const EMPTY:uint = 0;
+		public static readonly EMPTY: number = 0;
 
-		public static const BACKSPACE:uint = 8;
-		public static const TAB:uint = 9;
-		public static const ENTER:uint = 13;
-		public static const SHIFT:uint = 16;
-		public static const CTRL:uint = 17;
-		public static const ALT:uint = 18;
-		public static const PAUSE_BREAK:uint = 19;
-		public static const CAPS_LOCK:uint = 20;
+		public static readonly BACKSPACE: number = 8;
+		public static readonly TAB: number = 9;
+		public static readonly ENTER: number = 13;
+		public static readonly SHIFT: number = 16;
+		public static readonly CTRL: number = 17;
+		public static readonly ALT: number = 18;
+		public static readonly PAUSE_BREAK: number = 19;
+		public static readonly CAPS_LOCK: number = 20;
 
-		public static const ESC:uint = 27;
+		public static readonly ESC: number = 27;
 
-		public static const SPACE:uint = 32;
+		public static readonly SPACE: number = 32;
 
-		public static const PAGE_UP:uint = 33;
+		public static readonly PAGE_UP: number = 33;
 
-		public static const PAGE_DOWN:uint = 34;
+		public static readonly PAGE_DOWN: number = 34;
 
-		public static const END:uint = 35;
+		public static readonly END: number = 35;
 
-		public static const HOME:uint = 36;
+		public static readonly HOME: number = 36;
 
-		public static const LEFT:uint = 37;
+		public static readonly LEFT: number = 37;
 
-		public static const UP:uint = 38;
+		public static readonly UP: number = 38;
 
-		public static const RIGHT:uint = 39;
+		public static readonly RIGHT: number = 39;
 
-		public static const DOWN:uint = 40;
+		public static readonly DOWN: number = 40;
 
-		public static const PRINT_SCREEN:uint = 44;
+		public static readonly PRINT_SCREEN: number = 44;
 
-		public static const INSERT:uint = 45;
+		public static readonly INSERT: number = 45;
 
-		public static const DELETE:uint = 46;
+		public static readonly DELETE: number = 46;
 
-		public static const NUM_0:uint = 48;
+		public static readonly NUM_0: number = 48;
 
-		public static const NUM_1:uint = 49;
+		public static readonly NUM_1: number = 49;
 
-		public static const NUM_2:uint = 50;
+		public static readonly NUM_2: number = 50;
 
-		public static const NUM_3:uint = 51;
+		public static readonly NUM_3: number = 51;
 
-		public static const NUM_4:uint = 52;
+		public static readonly NUM_4: number = 52;
 
-		public static const NUM_5:uint = 53;
+		public static readonly NUM_5: number = 53;
 
-		public static const NUM_6:uint = 54;
+		public static readonly NUM_6: number = 54;
 
-		public static const NUM_7:uint = 55;
+		public static readonly NUM_7: number = 55;
 
-		public static const NUM_8:uint = 56;
+		public static readonly NUM_8: number = 56;
 
-		public static const NUM_9:uint = 57;
+		public static readonly NUM_9: number = 57;
 
-		public static const A:uint = 65;
+		public static readonly A: number = 65;
 
-		public static const B:uint = 66;
+		public static readonly B: number = 66;
 
-		public static const C:uint = 67;
+		public static readonly C: number = 67;
 
-		public static const D:uint = 68;
+		public static readonly D: number = 68;
 
-		public static const E:uint = 69;
+		public static readonly E: number = 69;
 
-		public static const F:uint = 70;
+		public static readonly F: number = 70;
 
-		public static const G:uint = 71;
+		public static readonly G: number = 71;
 
-		public static const H:uint = 72;
+		public static readonly H: number = 72;
 
-		public static const I:uint = 73;
+		public static readonly I: number = 73;
 
-		public static const J:uint = 74;
+		public static readonly J: number = 74;
 
-		public static const K:uint = 75;
+		public static readonly K: number = 75;
 
-		public static const L:uint = 76;
+		public static readonly L: number = 76;
 
-		public static const M:uint = 77;
+		public static readonly M: number = 77;
 
-		public static const N:uint = 78;
+		public static readonly N: number = 78;
 
-		public static const O:uint = 79;
+		public static readonly O: number = 79;
 
-		public static const P:uint = 80;
+		public static readonly P: number = 80;
 
-		public static const Q:uint = 81;
+		public static readonly Q: number = 81;
 
-		public static const R:uint = 82;
+		public static readonly R: number = 82;
 
-		public static const S:uint = 83;
+		public static readonly S: number = 83;
 
-		public static const T:uint = 84;
+		public static readonly T: number = 84;
 
-		public static const U:uint = 85;
+		public static readonly U: number = 85;
 
-		public static const V:uint = 86;
+		public static readonly V: number = 86;
 
-		public static const W:uint = 87;
+		public static readonly W: number = 87;
 
-		public static const X:uint = 88;
+		public static readonly X: number = 88;
 
-		public static const Y:uint = 89;
+		public static readonly Y: number = 89;
 
-		public static const Z:uint = 90;
+		public static readonly Z: number = 90;
 
-		public static const LEFT_WINDOWS:uint = 91;
+		public static readonly LEFT_WINDOWS: number = 91;
 
-		public static const RIGHT_WINDOWS:uint = 92;
+		public static readonly RIGHT_WINDOWS: number = 92;
 
-		public static const APPLICATION:uint = 93;
+		public static readonly APPLICATION: number = 93;
 
-		public static const SLEEP:uint = 95;
+		public static readonly SLEEP: number = 95;
 
-		public static const NUMPAD_0:uint = 96;
+		public static readonly NUMPAD_0: number = 96;
 
-		public static const NUMPAD_1:uint = 97;
+		public static readonly NUMPAD_1: number = 97;
 
-		public static const NUMPAD_2:uint = 98;
+		public static readonly NUMPAD_2: number = 98;
 
-		public static const NUMPAD_3:uint = 99;
+		public static readonly NUMPAD_3: number = 99;
 
-		public static const NUMPAD_4:uint = 100;
+		public static readonly NUMPAD_4: number = 100;
 
-		public static const NUMPAD_5:uint = 101;
+		public static readonly NUMPAD_5: number = 101;
 
-		public static const NUMPAD_6:uint = 102;
+		public static readonly NUMPAD_6: number = 102;
 
-		public static const NUMPAD_7:uint = 103;
+		public static readonly NUMPAD_7: number = 103;
 
-		public static const NUMPAD_8:uint = 104;
+		public static readonly NUMPAD_8: number = 104;
 
-		public static const NUMPAD_9:uint = 105;
+		public static readonly NUMPAD_9: number = 105;
 
-		public static const NUMPAD_TIMES:uint = 106;
+		public static readonly NUMPAD_TIMES: number = 106;
 
 		// *
-		public static const NUMPAD_ADD:uint = 107;
+		public static readonly NUMPAD_ADD: number = 107;
 
 		// +
-		public static const NUMPAD_ENTER:uint = 13;
+		public static readonly NUMPAD_ENTER: number = 13;
 
-		public static const NUMPAD_DOT:uint = 109;
+		public static readonly NUMPAD_DOT: number = 109;
 
 		// .
-		public static const NUMPAD_MINUS:uint = 110;
+		public static readonly NUMPAD_MINUS: number = 110;
 
 		// -
-		public static const NUMPAD_DIVIDE:uint = 111;
+		public static readonly NUMPAD_DIVIDE: number = 111;
 
 		// /
-		public static const F1:uint = 112;
+		public static readonly F1: number = 112;
 
-		public static const F2:uint = 113;
+		public static readonly F2: number = 113;
 
-		public static const F4:uint = 115;
+		public static readonly F4: number = 115;
 
-		public static const F5:uint = 116;
+		public static readonly F5: number = 116;
 
-		public static const F6:uint = 117;
+		public static readonly F6: number = 117;
 
-		public static const F7:uint = 118;
+		public static readonly F7: number = 118;
 
-		public static const F8:uint = 119;
+		public static readonly F8: number = 119;
 
-		public static const F9:uint = 120;
+		public static readonly F9: number = 120;
 
-		public static const F10:uint = 121;
+		public static readonly F10: number = 121;
 
-		public static const F11:uint = 122;
+		public static readonly F11: number = 122;
 
-		public static const F12:uint = 123;
+		public static readonly F12: number = 123;
 
-		public static const NUM_LOCK:uint = 144;
+		public static readonly NUM_LOCK: number = 144;
 
-		public static const SCROLL_LOCK:uint = 145;
+		public static readonly SCROLL_LOCK: number = 145;
 
-		public static const COLON:uint = 186;
+		public static readonly COLON: number = 186;
 
 		// ;:
-		public static const ADD:uint = 187;
+		public static readonly ADD: number = 187;
 
 		//=+
-		public static const COMMA:uint = 188;
+		public static readonly COMMA: number = 188;
 
 		// ,<
-		public static const MINUS:uint = 189;
+		public static readonly MINUS: number = 189;
 
 		// -_
-		public static const POINT:uint = 190;
+		public static readonly POINT: number = 190;
 
 		// .>
-		public static const DIVIDE:uint = 191;
+		public static readonly DIVIDE: number = 191;
 
 		// /?
-		public static const BACK_QUOTES:uint = 192;
+		public static readonly BACK_QUOTES: number = 192;
 
 		// `~
-		public static const LEFT_BRACKET:uint = 219;
+		public static readonly LEFT_BRACKET: number = 219;
 
 		// [{
-		public static const BACK_SLASH:uint = 220;
+		public static readonly BACK_SLASH: number = 220;
 
 		// \|
-		public static const RIGHT_BRACKET:uint = 221;
+		public static readonly RIGHT_BRACKET: number = 221;
 
 		// ]}
-		public static const QUOTES:uint = 222;
+		public static readonly QUOTES: number = 222;
 
 		// '"
-		public static const WAKE_UP:uint = 255;
+		public static readonly WAKE_UP: number = 255;
 
-		public static const POWER:uint = 255;
+		public static readonly POWER: number = 255;
 
 	}
 }

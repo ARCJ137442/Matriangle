@@ -1,4 +1,7 @@
 {
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -8,32 +11,9 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            // "preLaunchTask": "npx tsc: build - tsconfig.json",
-            "preLaunchTask": "tsc",
-            "program": "${workspaceFolder}\\test_common.ts",
+            "program": "${workspaceFolder}\\module_test\\src\\run.ts",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
-            ]
-        },
-        {
-            "type": "node-terminal",
-            "name": "JavaScript Debug Terminal",
-            "request": "launch",
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "Current TS File",
-            // "type": "node",
-            // "type": "node",
-            "request": "launch",
-            "args": [
-                "${file}"
-            ],
-            "runtimeExecutable": "npx ts-node",
-            "runtimeArgs": [
-                // "-r",
-                // "ts-node/register"
-                "ts-node"
             ]
         }
     ]

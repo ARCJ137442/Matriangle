@@ -6,7 +6,7 @@ package batr.menu.objects {
 	import batr.menu.main.*;
 	import batr.menu.events.*;
 	import batr.menu.objects.*;
-	import batr.menu.objects.selecter.*;
+	import batr.menu.objects.selector.*;
 
 	import batr.main.*;
 	import batr.fonts.*;
@@ -18,43 +18,43 @@ package batr.menu.objects {
 
 	public class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
-		public static const LINE_COLOR:uint = 0x888888;
-		public static const FILL_COLOR:uint = 0xcccccc;
-		public static const FILL_ALPHA:Number = 0.375;
-		public static const LINE_SIZE:Number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const HOLD_ALPHA:Number = 1;
-		public static const OVER_ALPHA:Number = 0.75;
-		public static const RELEASE_ALPHA:Number = 0.5;
+		public static const LINE_COLOR: uint = 0x888888;
+		public static const FILL_COLOR: uint = 0xcccccc;
+		public static const FILL_ALPHA: Number = 0.375;
+		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static const HOLD_ALPHA: Number = 1;
+		public static const OVER_ALPHA: Number = 0.75;
+		public static const RELEASE_ALPHA: Number = 0.5;
 
 		//============Instance Variables============//
-		protected var _displayWidth:Number;
+		protected var _displayWidth: Number;
 
-		protected var _displayHeight:Number;
+		protected var _displayHeight: Number;
 
-		protected var _lineColor:uint;
+		protected var _lineColor: uint;
 
-		protected var _fillColor:uint;
+		protected var _fillColor: uint;
 
-		protected var _lineSize:Number;
+		protected var _lineSize: Number;
 
-		protected var _smoothLine:Boolean;
+		protected var _smoothLine: Boolean;
 
-		protected var _translations:Translations;
+		protected var _translations: Translations;
 
-		protected var _text:BatrTextField;
+		protected var _text: BatrTextField;
 
 		/**
 		 * The Linkage(String) to sheet
 		 */
-		public var sheetLinkage:String;
+		public var sheetLinkage: String;
 
 		//============Constructor Function============//
-		public function BatrButton(width:Number, height:Number,
-				translations:Translations,
-				translationKey:String = "",
-				smoothLine:Boolean = true,
-				color:uint = LINE_COLOR,
-				lineSize:Number = LINE_SIZE):void {
+		public function BatrButton(width: Number, height: Number,
+			translations: Translations,
+			translationKey: String = "",
+			smoothLine: Boolean = true,
+			color: uint = LINE_COLOR,
+			lineSize: Number = LINE_SIZE): void {
 			super();
 			this._displayWidth = width;
 			this._displayHeight = height;
@@ -70,7 +70,7 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function deleteSelf(): void {
 			this.graphics.clear();
 			this._text.deleteSelf();
 			this._text = null;
@@ -79,66 +79,66 @@ package batr.menu.objects {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get displayWidth():Number {
+		public function get displayWidth(): Number {
 			return this._displayWidth;
 		}
 
-		public function set displayWidth(value:Number):void {
+		public function set displayWidth(value: Number): void {
 			if (this._displayWidth == value)
 				return;
 			this._displayWidth = value;
 			this.drawShape();
 		}
 
-		public function get displayHeight():Number {
+		public function get displayHeight(): Number {
 			return this._displayHeight;
 		}
 
-		public function set displayHeight(value:Number):void {
+		public function set displayHeight(value: Number): void {
 			if (this._displayHeight == value)
 				return;
 			this._displayHeight = value;
 			this.drawShape();
 		}
 
-		public function get lineColor():uint {
+		public function get lineColor(): uint {
 			return this._lineColor;
 		}
 
-		public function set lineColor(value:uint):void {
+		public function set lineColor(value: uint): void {
 			if (this._lineColor == value)
 				return;
 			this._lineColor = value;
 			this.drawShape();
 		}
 
-		public function get fillColor():uint {
+		public function get fillColor(): uint {
 			return this._fillColor;
 		}
 
-		public function set fillColor(value:uint):void {
+		public function set fillColor(value: uint): void {
 			if (this._fillColor == value)
 				return;
 			this._fillColor = value;
 			this.drawShape();
 		}
 
-		public function get lineSize():Number {
+		public function get lineSize(): Number {
 			return this._fillColor;
 		}
 
-		public function set lineSize(value:Number):void {
+		public function set lineSize(value: Number): void {
 			if (this.lineSize == value)
 				return;
 			this._lineSize = value;
 			this.drawShape();
 		}
 
-		public function get smoothLine():Boolean {
+		public function get smoothLine(): Boolean {
 			return this._smoothLine;
 		}
 
-		public function set smoothLine(value:Boolean):void {
+		public function set smoothLine(value: Boolean): void {
 			if (this._smoothLine == value)
 				return;
 			this._smoothLine = value;
@@ -146,22 +146,22 @@ package batr.menu.objects {
 		}
 
 		//============Instance Functions============//
-		public function setPos(x:Number, y:Number):BatrButton {
-			super.protected::sP(x, y);
+		public function setPos(x: Number, y: Number): BatrButton {
+			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x:Number, y:Number):BatrButton {
-			super.protected::sBP(x, y);
+		public function setBlockPos(x: Number, y: Number): BatrButton {
+			super.protected:: sBP(x, y);
 			return this;
 		}
 
-		public function setLinkage(lSheet:String):BatrButton {
+		public function setLinkage(lSheet: String): BatrButton {
 			this.sheetLinkage = lSheet;
 			return this;
 		}
 
-		protected function initDisplay():void {
+		protected function initDisplay(): void {
 			this.buttonMode = true;
 			this.tabEnabled = true;
 			this._text.x = this._text.y = 0;
@@ -173,7 +173,7 @@ package batr.menu.objects {
 			this.addChild(this._text);
 		}
 
-		protected override function drawShape():void {
+		protected override function drawShape(): void {
 			super.drawShape();
 			// Draw
 			if (this._smoothLine) {
@@ -192,31 +192,31 @@ package batr.menu.objects {
 		}
 
 		// Event Functions
-		protected override function onMouseRollOver(event:MouseEvent):void {
+		protected override function onMouseRollOver(event: MouseEvent): void {
 			super.onMouseRollOver(event);
 			this.alpha = OVER_ALPHA;
 		}
 
-		protected override function onMouseRollOut(event:MouseEvent):void {
+		protected override function onMouseRollOut(event: MouseEvent): void {
 			super.onMouseRollOut(event);
 			this.alpha = RELEASE_ALPHA;
 		}
 
-		protected override function onMouseHold(event:MouseEvent):void {
+		protected override function onMouseHold(event: MouseEvent): void {
 			super.onMouseHold(event);
 			this.alpha = HOLD_ALPHA;
 		}
 
-		protected override function onMouseRelease(event:MouseEvent):void {
+		protected override function onMouseRelease(event: MouseEvent): void {
 			super.onMouseRelease(event);
 			this.alpha = RELEASE_ALPHA;
 		}
 
-		public function onTranslationsChange(E:TranslationsChangeEvent):void {
+		public function onTranslationsChange(E: TranslationsChangeEvent): void {
 			this.turnTranslationsTo(E.nowTranslations);
 		}
 
-		protected function turnTranslationsTo(translations:Translations):void {
+		protected function turnTranslationsTo(translations: Translations): void {
 			this._translations = translations;
 			this._text.turnTranslationsTo(translations);
 			/*this._text.width=this._displayWidth;

@@ -6,70 +6,70 @@ package batr.game.map {
 
 	public interface IMap {
 		//============Interface Functions============//
-		function get mapWidth():uint;
-		function get mapHeight():uint;
-		function get randomX():int;
-		function get randomY():int;
-		function get allDefinedPositions():Vector.<iPoint>;
-		function get allMapPositions():Vector.<iPoint>;
-		function get spawnPoints():Vector.<uint>;
-		function get numSpawnPoints():uint;
+		function get mapWidth(): uint;
+	function get mapHeight(): uint;
+	function get randomX(): int;
+	function get randomY(): int;
+	function get allDefinedPositions(): Vector.<iPoint>;
+	function get allMapPositions(): Vector.<iPoint>;
+	function get spawnPoints(): Vector.<uint>;
+	function get numSpawnPoints(): uint;
 
-		function get hasSpawnPoint():Boolean;
+	function get hasSpawnPoint(): Boolean;
 
-		function get randomSpawnPoint():iPoint;
+	function get randomSpawnPoint(): iPoint;
 
-		function get isArenaMap():Boolean;
+	function get isArenaMap(): Boolean;
 
-		function get name():String;
+	function get name(): String;
 
-		function deleteSelf():void;
+	function deleteSelf(): void;
 
-		function clone(createBlock:Boolean = true):IMap;
+	function clone(createBlock: Boolean = true): IMap;
 
-		function copyContextFrom(target:IMap, clearSelf:Boolean = false, createBlock:Boolean = true):void;
-		function copyFrom(target:IMap, clearSelf:Boolean = false, createBlock:Boolean = true):void;
-		function generateNew():IMap;
+	function copyContentFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void;
+	function copyFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void;
+	function generateNew(): IMap;
 
-		function hasBlock(x:int, y:int):Boolean;
+	function hasBlock(x: int, y: int): Boolean;
 
-		function getBlock(x:int, y:int):BlockCommon;
+	function getBlock(x: int, y: int): BlockCommon;
 
-		function getBlockAttributes(x:int, y:int):BlockAttributes;
+	function getBlockAttributes(x: int, y: int): BlockAttributes;
 
-		function getBlockType(x:int, y:int):BlockType;
+	function getBlockType(x: int, y: int): BlockType;
 
-		function setBlock(x:int, y:int, block:BlockCommon):void;
+	function setBlock(x: int, y: int, block: BlockCommon): void;
 
-		function isVoid(x:int, y:int):Boolean;
+	function isVoid(x: int, y: int): Boolean;
 
-		function setVoid(x:int, y:int):void;
+	function setVoid(x: int, y: int): void;
 
-		function removeAllBlock(deleteBlock:Boolean = true):void;
+	function removeAllBlock(deleteBlock: Boolean = true): void;
 
-		// Display About
-		function setDisplayTo(target:IMapDisplayer):void;
+	// Display About
+	function setDisplayTo(target: IMapDisplayer): void;
 
-		function forceDisplayToLayers(targetBottom:IMapDisplayer, targetMiddle:IMapDisplayer, targetTop:IMapDisplayer):void;
+	function forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
 
-		function updateDisplayToLayers(x:int, y:int, block:BlockCommon, targetBottom:IMapDisplayer, targetMiddle:IMapDisplayer, targetTop:IMapDisplayer):void;
-		// SpawnPoint About
-		function addSpawnPoint(p:uint):void;
+	function updateDisplayToLayers(x: int, y: int, block: BlockCommon, targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
+	// SpawnPoint About
+	function addSpawnPoint(p: uint): void;
 
-		function removeSpawnPoint(p:uint):void;
+	function removeSpawnPoint(p: uint): void;
 
-		function clearSpawnPoints():void;
+	function clearSpawnPoints(): void;
 
-		// AI About
-		function getMatrixObject():Vector.<Vector.<Object>>;
+	// AI About
+	function getMatrixObject(): Vector.<Vector.<Object>>;
 
-		function getMatrixInt():Vector.<Vector.<int>>;
+	function getMatrixInt(): Vector.<Vector.<int>>;
 
-		function getMatrixUint():Vector.<Vector.<uint>>;
+	function getMatrixUint(): Vector.<Vector.<uint>>;
 
-		function getMatrixNumber():Vector.<Vector.<Number>>;
+	function getMatrixNumber(): Vector.<Vector.<Number>>;
 
-		function getMatrixBoolean():Vector.<Vector.<Boolean>>;
+	function getMatrixBoolean(): Vector.<Vector.<Boolean>>;
 
-	}
+}
 }

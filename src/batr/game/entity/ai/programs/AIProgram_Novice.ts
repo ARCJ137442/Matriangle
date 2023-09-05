@@ -12,15 +12,15 @@ package batr.game.entity.ai.programs {
 	 */
 	public class AIProgram_Novice implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL:String = "Novice";
-		public static const LABEL_SHORT:String = "N";
+		public static const LABEL: String = "Novice";
+		public static const LABEL_SHORT: String = "N";
 
 		//============Static Functions============//
-		protected static function getLineEnemyPlayer(owner:AIPlayer):Player {
+		protected static function getLineEnemyPlayer(owner: AIPlayer): Player {
 			if (owner == null)
 				return null;
-			var mapPlayers:Vector.<Player> = owner.host.getInMapPlayers();
-			for each (var player:Player in mapPlayers) {
+			var mapPlayers: Vector.<Player> = owner.host.getInMapPlayers();
+			for each(var player: Player in mapPlayers) {
 				if (player == owner)
 					continue;
 				if (player.gridX == owner.gridX || player.gridY == owner.gridY) {
@@ -31,11 +31,11 @@ package batr.game.entity.ai.programs {
 			return null;
 		}
 
-		protected static function getLineBonusBox(owner:AIPlayer):BonusBox {
+		protected static function getLineBonusBox(owner: AIPlayer): BonusBox {
 			if (owner == null)
 				return null;
-			var boxes:Vector.<BonusBox> = owner.host.allAvaliableBonusBox;
-			for each (var box:BonusBox in boxes) {
+			var boxes: Vector.<BonusBox> = owner.host.allAvaliableBonusBox;
+			for each(var box: BonusBox in boxes) {
 				if (box == null)
 					continue;
 				if (box.gridX == owner.gridX || box.gridY == owner.gridY) {
@@ -46,12 +46,12 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Instance Variables============//
-		protected var _moveSum:uint = 0;
-		protected var _moveMaxSum:uint = 8;
-		protected var _tempRot:uint;
+		protected var _moveSum: uint = 0;
+		protected var _moveMaxSum: uint = 8;
+		protected var _tempRot: uint;
 
-		protected var _waitTime:int = 0;
-		protected var _maxWaitTime:uint = 40;
+		protected var _waitTime: int = 0;
+		protected var _maxWaitTime: uint = 40;
 
 		//============Constructor Function============//
 		public function AIProgram_Novice() {
@@ -59,7 +59,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf():void {
+		public function deleteSelf(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;
@@ -69,30 +69,30 @@ package batr.game.entity.ai.programs {
 
 		/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 		/*========AI Getter And Setter========*/
-		public function get label():String {
+		public function get label(): String {
 			return AIProgram_Novice.LABEL;
 		}
 
-		public function get labelShort():String {
+		public function get labelShort(): String {
 			return AIProgram_Novice.LABEL_SHORT;
 		}
 
 		/**
 		 * Returns use for AIRunSpeed
 		 */
-		public function get referenceSpeed():uint {
+		public function get referenceSpeed(): uint {
 			return 10 + exMath.random(3) * 5;
 		}
 
 		/*========AI Program Main========*/
-		public function requestActionOnTick(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Refresh Wait
 			if (this._waitTime >= this._maxWaitTime)
 				this._waitTime = -this._moveMaxSum;
-			var target:Player = AIProgram_Novice.getLineEnemyPlayer(player);
-			var lineBonus:BonusBox = AIProgram_Novice.getLineBonusBox(player);
+			var target: Player = AIProgram_Novice.getLineEnemyPlayer(player);
+			var lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
 			// Auto Pickup BonusBox
 			if (lineBonus != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
 				// Trun
@@ -134,9 +134,9 @@ package batr.game.entity.ai.programs {
 				if (player.isPress_Use)
 					return AIPlayerAction.RELEASE_KEY_USE;
 				if (this._moveSum >= this._moveMaxSum ||
-						!player.host.testPlayerCanPassToFront(player)) {
+					!player.host.testPlayerCanPassToFront(player)) {
 					this._moveSum = 0;
-					var i:uint = 0;
+					var i: uint = 0;
 					do {
 						this._tempRot = GlobalRot.RANDOM;
 						i++;
@@ -152,39 +152,39 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.MOVE_FORWARD;
 		}
 
-		public function requestActionOnCauseDamage(player:AIPlayer, damage:uint, victim:Player):AIPlayerAction {
+		public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnHurt(player:AIPlayer, damage:uint, attacker:Player):AIPlayerAction {
+		public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			// random move beside on under attack
-			if (UsefulTools.randomBoolean())
+			if (Utils.randomBoolean())
 				return AIPlayerAction.MOVE_LEFT_REL;
 			else
 				return AIPlayerAction.MOVE_RIGHT_REL;
 		}
 
-		public function requestActionOnKill(player:AIPlayer, damage:uint, victim:Player):AIPlayerAction {
+		public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnDeath(player:AIPlayer, damage:uint, attacker:Player):AIPlayerAction {
+		public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnRespawn(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnMapTransfrom(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnPickupBonusBox(player:AIPlayer, box:BonusBox):AIPlayerAction {
+		public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}

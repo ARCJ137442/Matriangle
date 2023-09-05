@@ -4,7 +4,7 @@
  * 0<=H<=360,0<=S<=100,0<=V<=100
  * 0x000000<=HEX<=0xffffff
  * */
-export class Color {
+export default class Color {
 	//========================Static Variables========================//
 
 	/**

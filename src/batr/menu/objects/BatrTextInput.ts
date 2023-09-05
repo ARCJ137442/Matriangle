@@ -6,7 +6,7 @@
 	import batr.menu.main.*;
 	import batr.menu.events.*;
 	import batr.menu.objects.*;
-	import batr.menu.objects.selecter.*;
+	import batr.menu.objects.selector.*;
 
 	import batr.main.*;
 	import batr.fonts.*;
@@ -22,7 +22,7 @@
 		//============Instance Variables============//
 
 		//============Constructor============//
-		public function BatrTextInput(initialText:String = "", autoSize:String = TextFieldAutoSize.LEFT):void {
+		public function BatrTextInput(initialText: String = "", autoSize: String = TextFieldAutoSize.LEFT): void {
 			super();
 			// text
 			this.selectable = true;
@@ -40,7 +40,7 @@
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf():void {
+		public function deleteSelf(): void {
 
 		}
 
@@ -48,35 +48,35 @@
 
 		//============Instance Functions============//
 
-		public function setText(value:String):void {
+		public function setText(value: String): void {
 			this.text = value;
 		}
 
-		public function setPos(x:Number, y:Number):BatrTextInput {
+		public function setPos(x: Number, y: Number): BatrTextInput {
 			this.x = x;
 			this.y = y;
 			return this;
 		}
 
-		public function setBlockPos(x:Number, y:Number):BatrTextInput {
+		public function setBlockPos(x: Number, y: Number): BatrTextInput {
 			this.x = PosTransform.localPosToRealPos(x);
 			this.y = PosTransform.localPosToRealPos(y);
 			return this;
 		}
 
-		public function setSize(w:Number, h:Number):BatrTextInput {
+		public function setSize(w: Number, h: Number): BatrTextInput {
 			this.width = w;
 			this.height = h;
 			return this;
 		}
 
-		public function setBlockSize(w:Number, h:Number):BatrTextInput {
+		public function setBlockSize(w: Number, h: Number): BatrTextInput {
 			this.width = PosTransform.localPosToRealPos(w);
 			this.height = PosTransform.localPosToRealPos(h);
 			return this;
 		}
 
-		public function setFormet(formet:TextFormat, lock:Boolean = false):BatrTextInput {
+		public function setFormat(formet: TextFormat, lock: Boolean = false): BatrTextInput {
 			this.defaultTextFormat = formet;
 			this.setTextFormat(formet);
 			return this;

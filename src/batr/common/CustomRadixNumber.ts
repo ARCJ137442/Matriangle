@@ -1,9 +1,9 @@
 /* The common class calls <CustomRadixNumber>
  * The Number-System can use for define some Custom-Radix-Mechanism
  * The static class implements The Custom Radix Conversion of Unsigned-Integer(number)
- * The class can be create by operator new,likes [var a:CustomRadixNumber=new CustomRadixNumber()],but that also can be register at class
- * The Custom-Number is express as String
- * An example:The Radix-36 Number "a0" can be conver to number(0*36^0+10*36^1)=360
+ * The class can be create by operator new,likes [let a:CustomRadixNumber=new CustomRadixNumber()],but that also can be register at class
+ * The Custom-Number is express as string
+ * An example:The Radix-36 Number "a0" can be converted to number(0*36^0+10*36^1)=360
  * */
 
 //============Import Something============//
@@ -11,34 +11,34 @@
 //============Class Start============//
 export class CustomRadixNumber extends Object {
 	//============Static Variables============//
-	public static const CHAR_SET_ERROR_MESSAGE: String = "CharSet Error!";
-	public static const DEFAULT_CHAR_SET: String = "0123456789";
-	public static const DEFAULT_DOT_CHAR: String = ".";
-	public static const DEFAULT_OPERATION_PRECISION: number = 0x10;
+	public static readonly CHAR_SET_ERROR_MESSAGE: string = "CharSet Error!";
+	public static readonly DEFAULT_CHAR_SET: string = "0123456789";
+	public static readonly DEFAULT_DOT_CHAR: string = ".";
+	public static readonly DEFAULT_OPERATION_PRECISION: number = 0x10;
 
 	protected static _instances: Array<CustomRadixNumber> = new Array<CustomRadixNumber>();
 
 	//============Static Getter And Setter============//
-	public static function get instanceCount(): number {
+	public static get instanceCount(): number {
 		return CustomRadixNumber._instances.length;
 	}
 
-	public static function get alInstances(): Array<CustomRadixNumber> {
+	public static get alInstances(): Array<CustomRadixNumber> {
 		return CustomRadixNumber._instances.concat();
 	}
 
 	//============Static Functions============//
 	// Instance
-	protected static function registerInstance(instance: CustomRadixNumber): void {
+	protected static registerInstance(instance: CustomRadixNumber): void {
 		CustomRadixNumber._instances.push(instance);
 	}
 
-	public static function registerMechanism(charSet: String, key: * = null): void {
-		registerInstance(new CustomRadixNumber(charSet, key));
+	public static registerMechanism(charSet: string, key: any = null): void {
+		CustomRadixNumber.registerInstance(new CustomRadixNumber(charSet, key));
 	}
 
-	public static function getInstanceByKey(key: *, fromIndex: number = 0, strictEqual: Boolean = false): CustomRadixNumber {
-		for each(var instance: CustomRadixNumber in CustomRadixNumber._instances) {
+	public static getInstanceByKey(key: any, fromIndex: number = 0, strictEqual: Boolean = false): CustomRadixNumber | null {
+		for (let instance of CustomRadixNumber._instances) {
 			if (instance._key === key || !strictEqual && instance._key == key) {
 				if (CustomRadixNumber._instances.indexOf(instance) >= fromIndex) {
 					return instance;
@@ -49,20 +49,20 @@ export class CustomRadixNumber extends Object {
 	}
 
 	// Tools
-	protected static function isEmptyString(string: String): Boolean {
+	protected static isEmptyString(string: string | null): Boolean {
 		return (string == null || string.length < 1);
 	}
 
-	protected static function dealCharSet(charSet: String): String {
+	protected static dealCharSet(charSet: string): string {
 		// Test
 		if (charSet == null || charSet.length < 1)
 			return "";
 		// Set
-		var returnCharSet: String = charSet;
-		var char: String;
-		var otherIndex: number;
+		let returnCharSet: string = charSet;
+		let char: string;
+		let otherIndex: number;
 		// Operation
-		for (var i: number = 0; i < charSet.length; i++) {
+		for (let i: number = 0; i < charSet.length; i++) {
 			char = charSet.charAt(i);
 			otherIndex = charSet.indexOf(char, i + 1);
 			if (otherIndex >= 0) {
@@ -73,120 +73,120 @@ export class CustomRadixNumber extends Object {
 		return returnCharSet;
 	}
 
-	public static function dealDotChar(dotChar: String): String {
+	public static dealDotChar(dotChar: string): string {
 		return dotChar.charAt(0);
 	}
 
 	//============Constructor Function============//
-	public function CustomRadixNumber(charSet: String = DEFAULT_CHAR_SET, dotChar: String = DEFAULT_DOT_CHAR, key: * = null): void {
+	public constructor(charSet: string = CustomRadixNumber.DEFAULT_CHAR_SET, dotChar: string = CustomRadixNumber.DEFAULT_DOT_CHAR, key: any = null) {
+		// Super
+		super();
 		// Test
-		if (isEmptyString(charSet)) {
+		if (CustomRadixNumber.isEmptyString(charSet)) {
 			throw new Error(CustomRadixNumber.CHAR_SET_ERROR_MESSAGE);
 			return;
 		}
 		// Set
-		this._charSet = dealCharSet(charSet);
-		this._dotChar = dealDotChar(dotChar);
+		this._charSet = CustomRadixNumber.dealCharSet(charSet);
+		this._dotChar = CustomRadixNumber.dealDotChar(dotChar);
 		this._key = key;
 		// Register
 		CustomRadixNumber.registerInstance(this);
 	}
 
 	//============Instance Variables============//
-	protected var _charSet: String;
-	protected var _dotChar: String;
-	protected var _key: *;
+	protected _charSet: string;
+	protected _dotChar: string;
+	protected _key: any;
 
 	//============Instance Getter And Setter============//
 	// Internal
 
 	// Public
-	public function get radix(): number {
-		if (isEmptyString(this._charSet))
-			return 0;
-		return this._charSet.length;
+	public get radix(): number {
+		return CustomRadixNumber.isEmptyString(this._charSet) ? 0 : this._charSet.length;
 	}
 
-	public function get charSet(): String {
-		if (isEmptyString(this._charSet))
+	public get charSet(): string | null {
+		if (CustomRadixNumber.isEmptyString(this._charSet))
 			return null;
 		return this._charSet;
 	}
 
-	public function get key(): * {
+	public get key(): any {
 		return this._key;
 	}
 
 	//============Instance Functions============//
 	/* This's the Main Function of Radix Conversion(unfinished).
 	 * Functions:
-	 * 	getWeightFromChar(char:String):number
-	 * 	fromNumberInt(number:number):String
-	 * 	toNumberInt(customNumber:String):number
-	 * 	fromNumberFloat(number:Number):String
-	 * 	toNumberFloat(customNumber:String):Number
+	 * 	getWeightFromChar(char:string):number
+	 * 	fromNumberInt(number:number):string
+	 * 	toNumberInt(customNumber:string):number
+	 * 	fromNumberFloat(number:number):string
+	 * 	toNumberFloat(customNumber:string):number
 	 * */
-	public function getWeightFromChar(char: String): number {
-		var weight: number = this._charSet.indexOf(char);
+	public getWeightFromChar(char: string): number {
+		let weight: number = this._charSet.indexOf(char);
 		return weight >= 0 ? weight : 0;
 	}
 
-	public function getCharFromWeight(weight: number): String {
-		var char: String = this._charSet.charAt(weight);
+	public getCharFromWeight(weight: number): string {
+		let char: string = this._charSet.charAt(weight);
 		return char;
 	}
 
-	public function fromNumberInt(number: Number): String {
+	public fromNumberInt(n: number): string {
 		// Test
-		if (number == 0)
-			return getCharFromWeight(0);
+		if (n == 0)
+			return this.getCharFromWeight(0);
 		// Set
-		var returnString: String = "";
-		var radix: number = this.radix;
-		var tempNum: Number = Math.floor(number);
-		var tempNum2: Number = 0;
+		let returnString: string = "";
+		let radix: number = this.radix;
+		let tempNum: number = Math.floor(n);
+		let tempNum2: number = 0;
 		// Operation
-		for (var i: number = 0; i < 0x10000 && tempNum > 0; i++) {
+		for (let i: number = 0; i < 0x10000 && tempNum > 0; i++) {
 			tempNum2 = tempNum % radix;
 			tempNum -= tempNum2;
 			tempNum /= radix;
-			returnString = getCharFromWeight(tempNum2) + returnString;
+			returnString = this.getCharFromWeight(tempNum2) + returnString;
 		}
 		// Output
 		return returnString;
 	}
 
-	public function toNumberInt(customNumber: String): Number {
+	public toNumberInt(customNumber: string): number {
 		// Test
-		if (isEmptyString(customNumber))
+		if (CustomRadixNumber.isEmptyString(customNumber))
 			return 0;
 		// Set
-		var returnNumber: Number = 0;
-		var radix: number = this.radix;
-		var tempNum: Number = 0;
+		let returnNumber: number = 0;
+		let radix: number = this.radix;
+		let tempNum: number = 0;
 		// Operation
-		for (var i: number = customNumber.length - 1; i >= 0; i--) {
-			tempNum = getWeightFromChar(customNumber.charAt(i)) * Math.pow(radix, customNumber.length - i - 1);
+		for (let i: number = customNumber.length - 1; i >= 0; i--) {
+			tempNum = this.getWeightFromChar(customNumber.charAt(i)) * Math.pow(radix, customNumber.length - i - 1);
 			returnNumber += tempNum;
 		}
 		// Output
 		return returnNumber;
 	}
 
-	public function fromNumberFloat(number: Number, precision: number = DEFAULT_OPERATION_PRECISION): String {
+	public fromNumberFloat(number: number, precision: number = CustomRadixNumber.DEFAULT_OPERATION_PRECISION): string {
 		// Test
 		if (number == 0)
-			return getCharFromWeight(0);
+			return this.getCharFromWeight(0);
 		// Set
-		var returnString: String = "";
-		var radix: number = this.radix;
-		var tempNum: Number = Math.floor(number); // number
-		var tempNum2: Number = number - tempNum; // float
-		var tempNum3: Number = 0;
-		var i: number;
+		let returnString: string = "";
+		let radix: number = this.radix;
+		let tempNum: number = Math.floor(number); // number
+		let tempNum2: number = number - tempNum; // float
+		let tempNum3: number = 0;
+		let i: number;
 		// Operation
 		// number
-		returnString += fromNumberInt(tempNum);
+		returnString += this.fromNumberInt(tempNum);
 		// float
 		if (!isNaN(tempNum2) && tempNum2 != 0 && isFinite(tempNum2)) {
 			// dot
@@ -195,10 +195,10 @@ export class CustomRadixNumber extends Object {
 			for (i = 0; i < precision; i++) {
 				tempNum3 = Math.floor(tempNum2 * radix);
 				tempNum2 = tempNum2 * radix - tempNum3;
-				returnString += getCharFromWeight(tempNum3);
+				returnString += this.getCharFromWeight(tempNum3);
 			}
 			for (i = returnString.length - 1; i >= 0; i--) {
-				if (returnString.charAt(i) == getCharFromWeight(0)) {
+				if (returnString.charAt(i) == this.getCharFromWeight(0)) {
 					returnString = returnString.slice(0, returnString.length - 1);
 				}
 				else {
@@ -210,26 +210,23 @@ export class CustomRadixNumber extends Object {
 		return returnString;
 	}
 
-	public function toNumberFloat(customNumber: String): Number {
+	public toNumberFloat(customNumber: string): number {
 		// Test
-		if (isEmptyString(customNumber))
+		if (CustomRadixNumber.isEmptyString(customNumber))
 			return 0;
 		// Set
-		var returnNumber: Number = 0;
-		var radix: number = this.radix;
-		var customNumberParts: Array = customNumber.split(this._dotChar);
-		var cNumInt: String = String(customNumberParts[0] == undefined ? "" : customNumberParts[0]);
-		var cNumFloat: String = String(customNumberParts[1] == undefined ? "" : customNumberParts[1]);
-		var tempNumInt: Number = 0;
-		var tempNumFloat: Number = 0;
-		var i: number;
+		let returnNumber: number = 0;
+		let radix: number = this.radix;
+		let customNumberParts: Array<string> = customNumber.split(this._dotChar);
+		let cNumInt: string = String(customNumberParts[0] == undefined ? "" : customNumberParts[0]);
+		let cNumFloat: string = String(customNumberParts[1] == undefined ? "" : customNumberParts[1]);
 		// Operation
 		// number
-		if (!isEmptyString(cNumInt))
-			returnNumber += toNumberInt(cNumInt);
+		if (!CustomRadixNumber.isEmptyString(cNumInt))
+			returnNumber += this.toNumberInt(cNumInt);
 		// float
-		if (!isEmptyString(cNumFloat))
-			returnNumber += toNumberInt(cNumFloat) / Math.pow(radix, cNumFloat.length);
+		if (!CustomRadixNumber.isEmptyString(cNumFloat))
+			returnNumber += this.toNumberInt(cNumFloat) / Math.pow(radix, cNumFloat.length);
 		// Output
 		return returnNumber;
 	}

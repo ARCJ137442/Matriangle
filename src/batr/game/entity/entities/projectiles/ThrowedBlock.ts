@@ -15,18 +15,18 @@ package batr.game.entity.entities.projectiles {
 
 	public class ThrowedBlock extends ProjectileCommon {
 		//============Static Variables============//
-		public static const MAX_SPEED:Number = 15 / GlobalGameVariables.FIXED_TPS;
-		public static const MIN_SPEED:Number = 1 / 3 * MAX_SPEED;
+		public static const MAX_SPEED: Number = 15 / GlobalGameVariables.FIXED_TPS;
+		public static const MIN_SPEED: Number = 1 / 3 * MAX_SPEED;
 
 		//============Instance Variables============//
-		public var xSpeed:Number;
-		public var ySpeed:Number;
-		protected var _carriedBlock:BlockCommon;
+		public var xSpeed: Number;
+		public var ySpeed: Number;
+		protected var _carriedBlock: BlockCommon;
 
 		//============Constructor Function============//
-		public function ThrowedBlock(host:Game, x:Number, y:Number,
-				owner:Player, block:BlockCommon,
-				rot:uint, chargePercent:Number = 1):void {
+		public function ThrowedBlock(host: Game, x: Number, y: Number,
+			owner: Player, block: BlockCommon,
+			rot: uint, chargePercent: Number = 1): void {
 			super(host, x, y, owner);
 			this._carriedBlock = block;
 
@@ -38,8 +38,8 @@ package batr.game.entity.entities.projectiles {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
-			UsefulTools.removeChildIfContains(this, this._carriedBlock);
+		public override function deleteSelf(): void {
+			Utils.removeChildIfContains(this, this._carriedBlock);
 
 			this._carriedBlock = null;
 
@@ -47,22 +47,22 @@ package batr.game.entity.entities.projectiles {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type():EntityType {
+		public override function get type(): EntityType {
 			return EntityType.THROWED_BLOCK;
 		}
 
-		public function get carriedBlock():BlockCommon {
+		public function get carriedBlock(): BlockCommon {
 			return this._carriedBlock;
 		}
 
 		//============Instance Functions============//
 		//====Tick Function====//
-		public override function onProjectileTick():void {
+		public override function onProjectileTick(): void {
 			if (!this._host.isOutOfMap(this.entityX, this.entityY) &&
-					this._host.testCanPass(
-						this.lockedEntityX, this.lockedEntityY,
-						false, true, false, false
-					) && !this._host.isHitAnyPlayer(this.gridX, this.gridY)) {
+				this._host.testCanPass(
+					this.lockedEntityX, this.lockedEntityY,
+					false, true, false, false
+				) && !this._host.isHitAnyPlayer(this.gridX, this.gridY)) {
 				this.addXY(this.xSpeed, this.ySpeed);
 
 			}
@@ -76,11 +76,11 @@ package batr.game.entity.entities.projectiles {
 			}
 		}
 
-		protected function onBlockHit():void {
+		protected function onBlockHit(): void {
 			// Locate
-			var lx:int = this.lockedGridX, ly:int = this.lockedGridY;
+			var lx: int = this.lockedGridX, ly: int = this.lockedGridY;
 			// Detect
-			var lba:BlockAttributes = this.host.getBlockAttributes(lx, ly);
+			var lba: BlockAttributes = this.host.getBlockAttributes(lx, ly);
 			// Hurt
 			this._host.throwedBlockHurtPlayer(this);
 			if (this.host.testBreakableWithMap(lba, this.host.map)) {
@@ -88,24 +88,24 @@ package batr.game.entity.entities.projectiles {
 				this._host.setBlock(lx, ly, this._carriedBlock);
 				// Effect
 				this.host.addBlockLightEffect2(
-						PosTransform.alignToEntity(lx),
-						PosTransform.alignToEntity(ly),
-						this.carriedBlock, false
-					);
+					PosTransform.alignToEntity(lx),
+					PosTransform.alignToEntity(ly),
+					this.carriedBlock, false
+				);
 			}
 			else {
 				// Effect
 				this.host.addBlockLightEffect2(
-						this.entityX, this.entityY,
-						this.carriedBlock, false
-					);
+					this.entityX, this.entityY,
+					this.carriedBlock, false
+				);
 			}
 			// Remove
 			this._host.entitySystem.removeProjectile(this);
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape():void {
+		public override function drawShape(): void {
 			if (this._carriedBlock != null) {
 				this._carriedBlock.x = -this._carriedBlock.width / 2;
 

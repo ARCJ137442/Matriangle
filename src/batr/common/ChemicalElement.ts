@@ -1,4 +1,4 @@
-export class ChemicalElement {
+export default class ChemicalElement {
 	//============Static Variables============//
 	private static readonly ELEMENTS: Array<ChemicalElement> = new Array<ChemicalElement>();
 
@@ -136,12 +136,12 @@ export class ChemicalElement {
 		return true;
 	}
 
-	private static addElement(sample: String, sampleCN: String = ""): void {
-		var element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, sample);
+	static addElement(sample: String, sampleCN: String = ""): void {
+		let element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, sample);
 		ChemicalElement.ELEMENTS.push(element);
 	}
 
-	public static getElementFromSample(sample: String): ChemicalElement | null {
+	static getElementFromSample(sample: String): (ChemicalElement | null) {
 		for (let element of ChemicalElement.ELEMENTS) {
 			if (element.sample == sample)
 				return element;
@@ -149,7 +149,7 @@ export class ChemicalElement {
 		return null;
 	}
 
-	public static getElementFromOrdinal(ordinal: number): ChemicalElement | null {
+	static getElementFromOrdinal(ordinal: number): ChemicalElement | null {
 		if (ordinal <= ChemicalElement.ELEMENTS.length) {
 			return ChemicalElement.ELEMENTS[ordinal - 1];
 		}
@@ -188,6 +188,3 @@ export class ChemicalElement {
 		return this._ordinal;
 	}
 }
-
-// 测试
-console.log(ChemicalElement.getElementFromSample("H"));

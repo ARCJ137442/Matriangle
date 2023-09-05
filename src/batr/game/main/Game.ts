@@ -2213,7 +2213,7 @@
 			if (testCanPass(x, y, true, false, false, true, true)) {
 				if (this.getBlockAttributes(x, y).supplingBonus ||
 					((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-						UsefulTools.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
+						Utils.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
 					this.addBonusBox(x, y, this.rule.randomBonusEnable);
 				}
 			}

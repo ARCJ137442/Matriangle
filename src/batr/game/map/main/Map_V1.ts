@@ -16,56 +16,56 @@ package batr.game.map.main {
 	 */
 	public class Map_V1 extends NativeMapCommon {
 		//============Static Variables============//
-		protected static const _SIZE:uint = GlobalGameVariables.DISPLAY_GRIDS;
+		protected static const _SIZE: uint = GlobalGameVariables.DISPLAY_GRIDS;
 
-		public static var EMPTY:Map_V1 = new Map_V1("EMPTY");
-		public static var FRAME:Map_V1 = new Map_V1("FRAME");
-		public static var MAP_1:Map_V1 = new Map_V1("1");
-		public static var MAP_2:Map_V1 = new Map_V1("2");
-		public static var MAP_3:Map_V1 = new Map_V1("3");
-		public static var MAP_4:Map_V1 = new Map_V1("4");
-		public static var MAP_5:Map_V1 = new Map_V1("5");
-		public static var MAP_6:Map_V1 = new Map_V1("6");
-		public static var MAP_7:Map_V1 = new Map_V1("7");
-		public static var MAP_8:Map_V1 = new Map_V1("8");
-		public static var MAP_9:Map_V1 = new Map_V1("9");
-		public static var MAP_A:Map_V1 = new Map_V1("A", null, true);
-		public static var MAP_B:Map_V1 = new Map_V1("B", null, true);
-		public static var MAP_C:Map_V1 = new Map_V1("C", null, true);
-		public static var MAP_D:Map_V1 = new Map_V1("D", null, true);
-		public static var MAP_E:Map_V1 = new Map_V1("E", null, true);
+		public static var EMPTY: Map_V1 = new Map_V1("EMPTY");
+		public static var FRAME: Map_V1 = new Map_V1("FRAME");
+		public static var MAP_1: Map_V1 = new Map_V1("1");
+		public static var MAP_2: Map_V1 = new Map_V1("2");
+		public static var MAP_3: Map_V1 = new Map_V1("3");
+		public static var MAP_4: Map_V1 = new Map_V1("4");
+		public static var MAP_5: Map_V1 = new Map_V1("5");
+		public static var MAP_6: Map_V1 = new Map_V1("6");
+		public static var MAP_7: Map_V1 = new Map_V1("7");
+		public static var MAP_8: Map_V1 = new Map_V1("8");
+		public static var MAP_9: Map_V1 = new Map_V1("9");
+		public static var MAP_A: Map_V1 = new Map_V1("A", null, true);
+		public static var MAP_B: Map_V1 = new Map_V1("B", null, true);
+		public static var MAP_C: Map_V1 = new Map_V1("C", null, true);
+		public static var MAP_D: Map_V1 = new Map_V1("D", null, true);
+		public static var MAP_E: Map_V1 = new Map_V1("E", null, true);
 
-		public static var MAP_F:Map_V1 = new Map_V1("F", null, true);
+		public static var MAP_F: Map_V1 = new Map_V1("F", null, true);
 
-		public static var MAP_G:Map_V1 = new Map_V1("G", null, true);
+		public static var MAP_G: Map_V1 = new Map_V1("G", null, true);
 
-		public static var MAP_H:Map_V1 = new Map_V1("H", null, true);
+		public static var MAP_H: Map_V1 = new Map_V1("H", null, true);
 
-		protected static var isInited:Boolean = cInit();
+		protected static var isInited: Boolean = cInit();
 
 		//============Static Functions============//
-		public static function pointToIndex(x:int, y:int):String {
+		public static function pointToIndex(x: int, y: int): String {
 			return String(x + "_" + y);
 
 		}
 
-		public static function indexToPoint(str:String):iPoint {
-			var s:Array = str.split("_");
+		public static function indexToPoint(str: String): iPoint {
+			var s: Array = str.split("_");
 
 			return new iPoint(int(s[0]), int(s[1]));
 
 		}
 
-		protected static function cInit():Boolean {
+		protected static function cInit(): Boolean {
 			// if(isInited) return
 			//========Init Maps========//
-			var i:uint, ix:uint, iy:uint;
+			var i: uint, ix: uint, iy: uint;
 
 			//====Basic Frame====//
 			FRAME.fillBlock(0, 0, _SIZE - 1, _SIZE - 1, BlockType.BEDROCK, true);
 
 			//====Map 1====//
-			MAP_1.copyContextFrom(FRAME); {
+			MAP_1.copyContentFrom(FRAME); {
 				for (ix = 3; ix < _SIZE - 4; ix += 4) {
 					for (iy = 3; iy < _SIZE - 4; iy += 4) {
 						MAP_1.fillBlock(ix, iy, ix + 1, iy + 1, BlockType.WALL);
@@ -74,7 +74,7 @@ package batr.game.map.main {
 				}
 			}
 			//====Map 2====//
-			MAP_2.copyContextFrom(FRAME); {
+			MAP_2.copyContentFrom(FRAME); {
 				MAP_2.fillBlock(4, 4, 10, 10, BlockType.WALL);
 
 				MAP_2.fillBlock(4, 13, 10, 19, BlockType.WALL);
@@ -85,14 +85,14 @@ package batr.game.map.main {
 
 			}
 			//====Map 3====//
-			MAP_3.copyContextFrom(FRAME); {
+			MAP_3.copyContentFrom(FRAME); {
 				for (iy = 3; iy < _SIZE - 4; iy += 4) {
 					MAP_3.fillBlock(3, iy, 20, iy + 1, BlockType.WATER);
 
 				}
 			}
 			//====Map 4====//
-			MAP_4.copyContextFrom(FRAME); {
+			MAP_4.copyContentFrom(FRAME); {
 				MAP_4.fillBlock(3, 3, 20, 4, BlockType.WALL);
 
 				MAP_4.fillBlock(3, 19, 20, 20, BlockType.WALL);
@@ -101,32 +101,32 @@ package batr.game.map.main {
 
 			}
 			//====Map 5====//
-			MAP_5._generater = new MapGenerater(function(map:IMap):IMap {
-					map.copyContextFrom(Map_V1.FRAME);
-					var randNum:int = 24 + exMath.random(47), randType:BlockType;
-					var ix:int, iy:int;
-					while (--randNum > 0) {
-						ix = map.randomX, iy = map.randomY;
-						if (map.getBlockType(ix, iy) == BlockType.BEDROCK) {
-							map.setVoid(ix, iy);
-						} /*
-					else if(UsefulTools.randomBoolean()) {
-						if(UsefulTools.randomBoolean(1,3)) {
+			MAP_5._generater = new MapGenerater(function (map: IMap): IMap {
+				map.copyContentFrom(Map_V1.FRAME);
+				var randNum: int = 24 + exMath.random(47), randType: BlockType;
+				var ix: int, iy: int;
+				while (--randNum > 0) {
+					ix = map.randomX, iy = map.randomY;
+					if (map.getBlockType(ix, iy) == BlockType.BEDROCK) {
+						map.setVoid(ix, iy);
+					} /*
+					else if(Utils.randomBoolean()) {
+						if(Utils.randomBoolean(1,3)) {
 							map.setBlock(ix,iy,BlockCommon.fromType(BlockType.X_TRAP_KILL));
 						}
 						else {
 							map.setBlock(ix,iy,BlockCommon.fromType(BlockType.X_TRAP_HURT));
 						}
 					}*/
-						else {
-							randType = BlockType.RANDOM_NORMAL;
-							map.setBlock(ix, iy, BlockCommon.fromType(randType));
-						}
+					else {
+						randType = BlockType.RANDOM_NORMAL;
+						map.setBlock(ix, iy, BlockCommon.fromType(randType));
 					}
-					return map;
-				});
+				}
+				return map;
+			});
 			//====Map 6====//
-			MAP_6.copyContextFrom(FRAME); {
+			MAP_6.copyContentFrom(FRAME); {
 				MAP_6.setBlock(3, 3, BlockCommon.fromType(BlockType.COLOR_SPAWNER));
 
 				MAP_6.setBlock(3, 20, BlockCommon.fromType(BlockType.COLOR_SPAWNER));
@@ -182,7 +182,7 @@ package batr.game.map.main {
 
 			}
 			//====Map 7====//
-			MAP_7.copyContextFrom(FRAME); {
+			MAP_7.copyContentFrom(FRAME); {
 				MAP_7.fillBlock(1, 5, 22, 6, BlockType.WATER);
 
 				// up side
@@ -211,7 +211,7 @@ package batr.game.map.main {
 				// y+
 			}
 			//====Map 8====//
-			MAP_8.copyContextFrom(FRAME); {
+			MAP_8.copyContentFrom(FRAME); {
 				// hole
 				MAP_8.fillBlock(0, 12, 0, 13, BlockType.VOID);
 
@@ -225,7 +225,7 @@ package batr.game.map.main {
 				drawLaserTrapUpPillar(MAP_8, 19);
 			}
 			//====Map 9====//
-			MAP_9.copyContextFrom(EMPTY); {
+			MAP_9.copyContentFrom(EMPTY); {
 				// left
 				MAP_9.fillBlock(0, 0, 0, 23, BlockType.LASER_TRAP);
 				// right
@@ -237,7 +237,7 @@ package batr.game.map.main {
 			}
 			//======Arena Maps======//
 			//====Map A====//
-			MAP_A.copyContextFrom(FRAME); {
+			MAP_A.copyContentFrom(FRAME); {
 				for (i = 0; i < 5; i++) {
 					// base
 					MAP_A.fillBlock(5, 5 + 3 * i, 18, 6 + 3 * i, BlockType.WALL);
@@ -251,7 +251,7 @@ package batr.game.map.main {
 				}
 			}
 			//====Map B====//
-			MAP_B.copyContextFrom(FRAME); {
+			MAP_B.copyContentFrom(FRAME); {
 				/**
 				 * Spin 180*:x=23-x,y=23-y
 				 * for fill:cross imput
@@ -307,7 +307,7 @@ package batr.game.map.main {
 
 			}
 			//====Map C====//
-			MAP_C.copyContextFrom(FRAME); {
+			MAP_C.copyContentFrom(FRAME); {
 				// center C
 				// h
 				MAP_C.fillBlock(6, 6, 17, 6, BlockType.BEDROCK);
@@ -344,7 +344,7 @@ package batr.game.map.main {
 				}
 			}
 			//====Map D====//
-			MAP_D.copyContextFrom(FRAME); {
+			MAP_D.copyContentFrom(FRAME); {
 				for (i = 0; i < 4; i++) {
 					// Water Circle
 					// long_line
@@ -385,7 +385,7 @@ package batr.game.map.main {
 
 			}
 			//====Map E====//
-			MAP_E.copyContextFrom(FRAME); {
+			MAP_E.copyContentFrom(FRAME); {
 				for (i = 0; i < 4; i++)
 					MAP_E.addSpawnPointWithMark(2 + (i >> 1) * 19, 2 + (i & 1) * 19);
 				// Center E
@@ -435,7 +435,7 @@ package batr.game.map.main {
 
 			}
 			//====Map F====//
-			MAP_F.copyContextFrom(EMPTY); {
+			MAP_F.copyContentFrom(EMPTY); {
 				// Center spawnPoint
 				for (i = 0; i < 4; i++)
 					MAP_F.addSpawnPointWithMark(11 + (i >> 1), 11 + (i & 1));
@@ -478,7 +478,7 @@ package batr.game.map.main {
 
 			}
 			//====Map G====//
-			MAP_G.copyContextFrom(FRAME); {
+			MAP_G.copyContentFrom(FRAME); {
 				fillReflectMirrorBlock(MAP_G, true, true, 3, 3, 8, 3, BlockType.BEDROCK);
 				setReflectMirrorBlock(MAP_G, true, true, 1, 1, BlockCommon.fromType(BlockType.MOVEABLE_WALL));
 				MAP_G.fillBlock(4, 4, 19, 19, BlockType.GATE_OPEN, false);
@@ -486,10 +486,10 @@ package batr.game.map.main {
 					MAP_G.addSpawnPointWithMark(2 + (i >> 1) * 19, 2 + (i & 1) * 19);
 			}
 			//====Map H====//
-			MAP_H.copyContextFrom(FRAME); {
+			MAP_H.copyContentFrom(FRAME); {
 				fillReflectMirrorBlock(MAP_H, true, true, 4, 4, 9, 4, BlockType.BEDROCK);
-				ix = UsefulTools.randomBoolean() ? 0 : 9;
-				iy = UsefulTools.randomBoolean() ? 0 : 9;
+				ix = Utils.randomBoolean() ? 0 : 9;
+				iy = Utils.randomBoolean() ? 0 : 9;
 				MAP_H.fillBlock(5 + ix, 5 + iy, 9 + ix, 9 + iy, BlockType.MOVEABLE_WALL, false);
 				for (i = 10; i <= 13; i++) {
 					// x
@@ -504,7 +504,7 @@ package batr.game.map.main {
 			return true;
 		}
 
-		protected static function setReflectBlock(map:Map_V1, rX:Boolean, rY:Boolean, x:int, y:int, block:BlockCommon):void {
+		protected static function setReflectBlock(map: Map_V1, rX: Boolean, rY: Boolean, x: int, y: int, block: BlockCommon): void {
 			map.setBlock(x, y, block);
 			if (rX)
 				map.setBlock(23 - x, y, block);
@@ -515,7 +515,7 @@ package batr.game.map.main {
 			}
 		}
 
-		protected static function fillReflectBlock(map:Map_V1, rX:Boolean, rY:Boolean, x1:int, y1:int, x2:int, y2:int, type:BlockType, outline:Boolean = false):void {
+		protected static function fillReflectBlock(map: Map_V1, rX: Boolean, rY: Boolean, x1: int, y1: int, x2: int, y2: int, type: BlockType, outline: Boolean = false): void {
 			map.fillBlock(x1, y1, x2, y2, type, outline);
 			if (rX)
 				map.fillBlock(23 - x2, y1, 23 - x1, y2, type, outline);
@@ -526,26 +526,26 @@ package batr.game.map.main {
 			}
 		}
 
-		protected static function setMirrorBlock(map:Map_V1, x:int, y:int, block:BlockCommon):void {
+		protected static function setMirrorBlock(map: Map_V1, x: int, y: int, block: BlockCommon): void {
 			map.setBlock(y, x, block);
 		}
 
-		protected static function fillMirrorBlock(map:Map_V1, x1:int, y1:int, x2:int, y2:int, type:BlockType, outline:Boolean = false):void {
+		protected static function fillMirrorBlock(map: Map_V1, x1: int, y1: int, x2: int, y2: int, type: BlockType, outline: Boolean = false): void {
 			map.fillBlock(y1, x1, y2, x2, type, outline);
 		}
 
-		protected static function setReflectMirrorBlock(map:Map_V1, rX:Boolean, rY:Boolean, x:int, y:int, block:BlockCommon):void {
+		protected static function setReflectMirrorBlock(map: Map_V1, rX: Boolean, rY: Boolean, x: int, y: int, block: BlockCommon): void {
 			setReflectBlock(map, rX, rY, x, y, block);
 			setReflectBlock(map, rY, rX, y, x, block);
 		}
 
-		protected static function fillReflectMirrorBlock(map:Map_V1, rX:Boolean, rY:Boolean, x1:int, y1:int, x2:int, y2:int, type:BlockType, outline:Boolean = false):void {
+		protected static function fillReflectMirrorBlock(map: Map_V1, rX: Boolean, rY: Boolean, x1: int, y1: int, x2: int, y2: int, type: BlockType, outline: Boolean = false): void {
 			fillReflectBlock(map, rX, rY, x1, y1, x2, y2, type, outline);
 			fillReflectBlock(map, rY, rX, y1, x1, y2, x2, type, outline);
 		}
 
 		// Sub Graphics functions
-		protected static function drawLaserTrapDownPillar(map:Map_V1, rootX:uint):void {
+		protected static function drawLaserTrapDownPillar(map: Map_V1, rootX: uint): void {
 			map.fillBlock(rootX - 1, 1, rootX - 1, 18, BlockType.WALL);
 
 			map.fillBlock(rootX + 1, 1, rootX + 1, 18, BlockType.WALL);
@@ -566,7 +566,7 @@ package batr.game.map.main {
 
 		}
 
-		protected static function drawLaserTrapUpPillar(map:Map_V1, rootX:uint):void {
+		protected static function drawLaserTrapUpPillar(map: Map_V1, rootX: uint): void {
 			map.fillBlock(rootX - 1, 22, rootX - 1, 5, BlockType.WALL);
 
 			map.fillBlock(rootX + 1, 22, rootX + 1, 5, BlockType.WALL);
@@ -587,7 +587,7 @@ package batr.game.map.main {
 
 		}
 
-		protected static function drawLaserTrapBox(map:Map_V1, x:int, y:int):void {
+		protected static function drawLaserTrapBox(map: Map_V1, x: int, y: int): void {
 			map.setBlock(x, y, BlockCommon.fromType(BlockType.LASER_TRAP));
 
 			map.setBlock(x + 1, y, BlockCommon.fromType(BlockType.GLASS));
@@ -609,20 +609,20 @@ package batr.game.map.main {
 		}
 
 		//============Instance Variables============//
-		protected var _context:Object = new Object();
-		protected var _generater:IMapGenerater;
+		protected var _Content: Object = new Object();
+		protected var _generater: IMapGenerater;
 
 		//============Constructor============//
-		public function Map_V1(name:String = null, context:Object = null, isArena:Boolean = false):void {
+		public function Map_V1(name: String = null, content: Object = null, isArena: Boolean = false): void {
 			super(name, isArena);
-			if (context != null)
-				this._context = context;
+			if (content != null)
+				this._Content = content;
 		}
 
 		//============Destructor============//
-		public override function deleteSelf():void {
+		public override function deleteSelf(): void {
 			this.removeAllBlock();
-			this._context = null;
+			this._Content = null;
 			this._generater = null;
 			super.deleteSelf();
 		}
@@ -630,33 +630,33 @@ package batr.game.map.main {
 		//============Instance Getter And Setter============//
 
 		//============Interface Functions============//
-		public override function get mapWidth():uint {
+		public override function get mapWidth(): uint {
 			return GlobalGameVariables.DISPLAY_GRIDS;
 
 		}
 
-		public override function get mapHeight():uint {
+		public override function get mapHeight(): uint {
 			return GlobalGameVariables.DISPLAY_GRIDS;
 
 		}
 
-		public override function get randomX():int {
+		public override function get randomX(): int {
 			return exMath.random(this.mapWidth);
 
 		}
 
-		public override function get randomY():int {
+		public override function get randomY(): int {
 			return exMath.random(this.mapHeight);
 
 		}
 
-		public override function get allDefinedPositions():Vector.<iPoint> {
-			var returnPoints:Vector.<iPoint> = new Vector.<iPoint>();
+		public override function get allDefinedPositions(): Vector.<iPoint> {
+			var returnPoints: Vector.<iPoint> = new Vector.<iPoint>();
 
-			if (this._context == null)
+			if (this._Content == null)
 				return returnPoints;
 
-			for (var key:String in this._context) {
+			for (var key: String in this._Content) {
 				returnPoints.push(indexToPoint(key));
 
 			}
@@ -664,11 +664,11 @@ package batr.game.map.main {
 
 		}
 
-		public override function get allMapPositions():Vector.<iPoint> {
-			var returnPoints:Vector.<iPoint> = new Vector.<iPoint>();
+		public override function get allMapPositions(): Vector.<iPoint> {
+			var returnPoints: Vector.<iPoint> = new Vector.<iPoint>();
 
-			for (var x:uint = 0; x < this.mapWidth; x++) {
-				for (var y:uint = 0; y < this.mapHeight; y++) {
+			for (var x: uint = 0; x < this.mapWidth; x++) {
+				for (var y: uint = 0; y < this.mapHeight; y++) {
 					returnPoints.push(new iPoint(x, y));
 
 				}
@@ -680,25 +680,25 @@ package batr.game.map.main {
 		/**
 		 * truly overrite virual function
 		 */
-		public override function clone(createBlock:Boolean = true):IMap {
-			// context
-			var tempContext:Object = new Object();
+		public override function clone(createBlock: Boolean = true): IMap {
+			// content
+			var tempContent: Object = new Object();
 
-			var block:BlockCommon;
+			var block: BlockCommon;
 
-			for (var index:String in this._context) {
-				block = (this._context[index] as BlockCommon);
+			for (var index: String in this._Content) {
+				block = (this._Content[index] as BlockCommon);
 
 				if (block == null)
 					continue;
 
 				block = createBlock ? block.clone() : block;
 
-				tempContext[index] = block;
+				tempContent[index] = block;
 
 			}
 			// construct(included isArena)
-			var copy:Map_V1 = new Map_V1(this._name, tempContext, this._arena);
+			var copy: Map_V1 = new Map_V1(this._name, tempContent, this._arena);
 
 			// spawnPoints
 			copy._spawnPoints = this._spawnPoints.concat();
@@ -711,30 +711,30 @@ package batr.game.map.main {
 
 		}
 
-		public override function copyFrom(target:IMap, clearSelf:Boolean = false, createBlock:Boolean = true):void {
-			// context
-			this.copyContextFrom(target, clearSelf, createBlock);
+		public override function copyFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void {
+			// content
+			this.copyContentFrom(target, clearSelf, createBlock);
 			// super
 			super.copyFrom(target, clearSelf, createBlock);
 		}
 
-		public override function copyContextFrom(target:IMap, clearSelf:Boolean = false, createBlock:Boolean = true):void {
+		public override function copyContentFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void {
 			// clear
 			if (clearSelf)
 				this.removeAllBlock();
 
-			// context
-			var points:Vector.<iPoint> = target.allDefinedPositions;
+			// content
+			var points: Vector.<iPoint> = target.allDefinedPositions;
 
-			var block:BlockCommon;
+			var block: BlockCommon;
 
-			for each (var point:iPoint in points) {
+			for each(var point: iPoint in points) {
 				block = target.getBlock(point.x, point.y);
 				this._setBlock(point.x, point.y, createBlock ? block.clone() : block);
 
 			}
 			// super
-			super.copyContextFrom(target, clearSelf, createBlock);
+			super.copyContentFrom(target, clearSelf, createBlock);
 
 		}
 
@@ -744,70 +744,70 @@ package batr.game.map.main {
 		 * Else clone self
 		 * @return
 		 */
-		public override function generateNew():IMap {
+		public override function generateNew(): IMap {
 			// trace("generateNew:",this===MAP_5,this._generater)
 			if (this._generater != null)
 				return this._generater.generateTo(this.clone(), true);
 			return super.generateNew();
 		}
 
-		public override function hasBlock(x:int, y:int):Boolean {
+		public override function hasBlock(x: int, y: int): Boolean {
 			if (this.getBlock(x, y) == null) {
 				this._setVoid(x, y);
 
 				return false;
 
 			}
-			return this._context.hasOwnProperty(pointToIndex(x, y));
+			return this._Content.hasOwnProperty(pointToIndex(x, y));
 
 		}
 
-		public override function getBlock(x:int, y:int):BlockCommon {
+		public override function getBlock(x: int, y: int): BlockCommon {
 			return this._getBlock(x, y);
 		}
 
-		public override function getBlockAttributes(x:int, y:int):BlockAttributes {
+		public override function getBlockAttributes(x: int, y: int): BlockAttributes {
 			if (hasBlock(x, y))
 				return this._getBlock(x, y).attributes;
 			else
 				return BlockAttributes.VOID;
 		}
 
-		public override function getBlockType(x:int, y:int):BlockType {
+		public override function getBlockType(x: int, y: int): BlockType {
 			if (hasBlock(x, y))
 				return this._getBlock(x, y).type;
 			else
 				return BlockType.VOID;
 		}
 
-		public override function setBlock(x:int, y:int, block:BlockCommon):void {
+		public override function setBlock(x: int, y: int, block: BlockCommon): void {
 			this._setBlock(x, y, block);
 		}
 
-		public override function isVoid(x:int, y:int):Boolean {
+		public override function isVoid(x: int, y: int): Boolean {
 			return (!this.hasBlock(x, y) || this.getBlockType(x, y) == BlockType.VOID);
 		}
 
-		public override function setVoid(x:int, y:int):void {
+		public override function setVoid(x: int, y: int): void {
 			this._setVoid(x, y);
 		}
 
-		public override function removeAllBlock(deleteBlock:Boolean = true):void {
+		public override function removeAllBlock(deleteBlock: Boolean = true): void {
 			// trace(this+":removeAllBlock!")
-			var block:BlockCommon;
-			for (var key:String in this._context) {
-				block = this._context[key] as BlockCommon;
+			var block: BlockCommon;
+			for (var key: String in this._Content) {
+				block = this._Content[key] as BlockCommon;
 
 				if (deleteBlock && block != null)
 					block.deleteSelf();
-				delete this._context[key];
+				delete this._Content[key];
 			}
 		}
 
-		public override function setDisplayTo(target:IMapDisplayer):void {
+		public override function setDisplayTo(target: IMapDisplayer): void {
 			target.removeAllBlock();
-			var ix:int, iy:int, iBlock:BlockCommon;
-			for (var index:String in this._context) {
+			var ix: int, iy: int, iBlock: BlockCommon;
+			for (var index: String in this._Content) {
 				ix = indexToPoint(index).x;
 				iy = indexToPoint(index).y;
 				iBlock = this._getBlock(ix, iy);
@@ -815,13 +815,13 @@ package batr.game.map.main {
 			}
 		}
 
-		public override function forceDisplayToLayers(targetBottom:IMapDisplayer, targetMiddle:IMapDisplayer, targetTop:IMapDisplayer):void {
+		public override function forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void {
 			targetBottom.removeAllBlock();
 			targetMiddle.removeAllBlock();
 			targetTop.removeAllBlock();
-			var ix:int, iy:int, iBlock:BlockCommon, iLayer:int;
+			var ix: int, iy: int, iBlock: BlockCommon, iLayer: int;
 
-			for (var index:String in this._context) {
+			for (var index: String in this._Content) {
 				ix = indexToPoint(index).x;
 
 				iy = indexToPoint(index).y;
@@ -840,29 +840,29 @@ package batr.game.map.main {
 
 		//============Instance Funcitons============//
 		//========Core========//
-		protected function _getBlock(x:int, y:int):BlockCommon {
-			var block:BlockCommon = this._context[pointToIndex(x, y)] as BlockCommon;
+		protected function _getBlock(x: int, y: int): BlockCommon {
+			var block: BlockCommon = this._Content[pointToIndex(x, y)] as BlockCommon;
 			return block == null ? BlockCommon.fromType(BlockType.NULL) : block;
 		}
 
-		protected function _setBlock(x:int, y:int, block:BlockCommon):void {
+		protected function _setBlock(x: int, y: int, block: BlockCommon): void {
 			if (block == null)
 				_setVoid(x, y);
-			this._context[pointToIndex(x, y)] = block;
+			this._Content[pointToIndex(x, y)] = block;
 		}
 
-		protected function _setVoid(x:int, y:int):void {
-			delete this._context[pointToIndex(x, y)];
+		protected function _setVoid(x: int, y: int): void {
+			delete this._Content[pointToIndex(x, y)];
 		}
 
-		public function fillBlock(x1:int, y1:int, x2:int, y2:int,
-				type:BlockType,
-				outline:Boolean = false):Map_V1 {
-			var xl:int = Math.min(x1, x2), xm:int = Math.max(x1, x2);
+		public function fillBlock(x1: int, y1: int, x2: int, y2: int,
+			type: BlockType,
+			outline: Boolean = false): Map_V1 {
+			var xl: int = Math.min(x1, x2), xm: int = Math.max(x1, x2);
 
-			var yl:int = Math.min(y1, y2), ym:int = Math.max(y1, y2);
+			var yl: int = Math.min(y1, y2), ym: int = Math.max(y1, y2);
 
-			var xi:int, yi:int;
+			var xi: int, yi: int;
 
 			for (xi = xl; xi <= xm; xi++) {
 				for (yi = yl; yi <= ym; yi++) {
@@ -875,14 +875,14 @@ package batr.game.map.main {
 			return this;
 		}
 
-		public function fillBlock2(x1:int, y1:int, x2:int, y2:int,
-				block:BlockCommon,
-				outline:Boolean = false):Map_V1 {
-			var xl:int = Math.min(x1, x2), xm:int = Math.max(x1, x2);
+		public function fillBlock2(x1: int, y1: int, x2: int, y2: int,
+			block: BlockCommon,
+			outline: Boolean = false): Map_V1 {
+			var xl: int = Math.min(x1, x2), xm: int = Math.max(x1, x2);
 
-			var yl:int = Math.min(y1, y2), ym:int = Math.max(y1, y2);
+			var yl: int = Math.min(y1, y2), ym: int = Math.max(y1, y2);
 
-			var xi:int, yi:int;
+			var xi: int, yi: int;
 
 			for (xi = xl; xi <= xm; xi++) {
 				for (yi = yl; yi <= ym; yi++) {
