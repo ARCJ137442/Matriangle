@@ -1,6 +1,6 @@
 
 import { uint } from './AS3Legacy'
-import iPoint from "./iPoint";
+import intPoint from "./intPoint";
 /**
  * This class compress uint 0x0~0xffffffff into point(x:uint,y:uint)
  * For example:
@@ -43,7 +43,7 @@ export default class UintPointCompress {
 	 * @param	p	the iPoint.
 	 * @return	The uint as point.
 	 */
-	public static compressFromPoint2(p: iPoint): uint {
+	public static compressFromPoint2(p: intPoint): uint {
 		return UintPointCompress.compressFromPoint(p.x, p.y);
 	}
 
@@ -52,8 +52,8 @@ export default class UintPointCompress {
 	 * @param	p	the uint point.
 	 * @return	The uint as point.
 	 */
-	public static releaseFromUint(uPoint: uint): iPoint {
-		return new iPoint(UintPointCompress.getXFromUint(uPoint), UintPointCompress.getYFromUint(uPoint));
+	public static releaseFromUint(uPoint: uint): intPoint {
+		return new intPoint(UintPointCompress.getXFromUint(uPoint), UintPointCompress.getYFromUint(uPoint));
 	}
 
 	/**
@@ -73,6 +73,6 @@ export default class UintPointCompress {
 	public static getYFromUint(uPoint: uint): uint {
 		// don't use uPoint>>16 because the uint will be signed when bit-move.
 		let s: String = uPoint.toString(16);
-		return s.length > 4 ? (parseInt(s.slice(0, s.length - 4), 16)) | 0 : 0;
+		return s.length > 4 ? uint(parseInt(s.slice(0, s.length - 4), 16)) : 0;
 	}
 }

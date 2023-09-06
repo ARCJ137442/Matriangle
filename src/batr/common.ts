@@ -1,23 +1,10 @@
-import ChemicalElement from './common/ChemicalElement'
-import Color from './common/Color'
-import CustomRadixNumber from './common/CustomRadixNumber'
-import exMath from './common/exMath'
-import iPoint from './common/iPoint'
-import KeyCode from './common/KeyCode'
-import KeyListener from './common/KeyListener'
-import RandomGenerator from './common/RandomGenerator'
-import UintPointCompress from './common/UintPointCompress'
-import Utils from './common/Utils'
-
-export {
-    ChemicalElement,
-    Color,
-    CustomRadixNumber,
-    exMath,
-    iPoint,
-    KeyCode,
-    KeyListener,
-    RandomGenerator,
-    UintPointCompress,
-    Utils
-}
+export { default as ChemicalElement } from './common/ChemicalElement'
+export { default as Color } from './common/Color'
+export { default as CustomRadixNumber } from './common/CustomRadixNumber'
+export { default as exMath } from './common/exMath'
+export { default as intPoint, iPoint } from './common/intPoint'
+export { default as KeyCode } from './common/KeyCode'
+export { default as KeyListener } from './common/KeyListener'
+export { default as RandomGenerator } from './common/RandomGenerator'
+export { default as UintPointCompress } from './common/UintPointCompress'
+export { default as Utils } from './common/Utils'

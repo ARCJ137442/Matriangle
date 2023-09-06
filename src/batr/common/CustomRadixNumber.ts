@@ -83,7 +83,6 @@ export default class CustomRadixNumber {
 		// Test
 		if (CustomRadixNumber.isEmptyString(charSet)) {
 			throw new Error(CustomRadixNumber.CHAR_SET_ERROR_MESSAGE);
-			return;
 		}
 		// Set
 		this._charSet = CustomRadixNumber.dealCharSet(charSet);
@@ -99,17 +98,19 @@ export default class CustomRadixNumber {
 	protected _key: any;
 
 	//============Instance Getter And Setter============//
-	// Internal
-
-	// Public
+	/**
+	 * get the radix
+	 * ! radix with 2 contains charset '01'
+	 */
 	public get radix(): uint {
 		return CustomRadixNumber.isEmptyString(this._charSet) ? 0 : this._charSet.length;
 	}
 
 	public get charSet(): string | null {
-		if (CustomRadixNumber.isEmptyString(this._charSet))
-			return null;
-		return this._charSet;
+		return (
+			CustomRadixNumber.isEmptyString(this._charSet) ?
+				null : this._charSet
+		)
 	}
 
 	public get key(): any {
@@ -172,37 +173,42 @@ export default class CustomRadixNumber {
 		return returnNumber;
 	}
 
+	/**
+	 * represent positive float numbers in the custom radix
+	 * @param number positive float number to convert
+	 * @param precision the float precision
+	 * @returns a string represents the number in custom radix
+	 */
 	public fromNumberFloat(number: number, precision: number = CustomRadixNumber.DEFAULT_OPERATION_PRECISION): string {
 		// Test
 		if (number == 0)
 			return this.getCharFromWeight(0);
 		// Set
 		let returnString: string = "";
-		let radix: number = this.radix;
-		let tempNum: number = Math.floor(number); // number
-		let tempNum2: number = number - tempNum; // float
+		let radix: uint = this.radix;
+		let integer: uint = uint(number); // number
+		let float: number = number - integer; // float
 		let tempNum3: number = 0;
 		let i: number;
 		// Operation
-		// number
-		returnString += this.fromNumberUInt(tempNum);
+		// integer
+		returnString += this.fromNumberUInt(integer);
 		// float
-		if (!isNaN(tempNum2) && tempNum2 != 0 && isFinite(tempNum2)) {
-			// dot
+		if (!isNaN(float) && float != 0.0 && isFinite(float)) {
+			// dot //
 			returnString += this._dotChar;
-			// float
+			// float //
 			for (i = 0; i < precision; i++) {
-				tempNum3 = Math.floor(tempNum2 * radix);
-				tempNum2 = tempNum2 * radix - tempNum3;
+				tempNum3 = uint(float * radix);
+				float = float * radix - tempNum3;
 				returnString += this.getCharFromWeight(tempNum3);
 			}
 			for (i = returnString.length - 1; i >= 0; i--) {
 				if (returnString.charAt(i) == this.getCharFromWeight(0)) {
 					returnString = returnString.slice(0, returnString.length - 1);
 				}
-				else {
+				else
 					break;
-				}
 			}
 		}
 		// Output

@@ -6,28 +6,28 @@ import { flash } from "./FlashLegacy";
 /**
  * The point only contains integer position
  */
-export default class iPoint { // don't extends Object, otherwise it will make the functions undefined!
+export default class intPoint { // don't extends Object, otherwise it will make the functions undefined!
 	//============Static Variables============//
 
 	//============Static Functions============//
-	public static invertPoint(p: iPoint): iPoint {
-		return new iPoint(p.y, p.x);
+	public static invertPoint(p: intPoint): intPoint {
+		return new intPoint(p.y, p.x);
 	}
 
-	public static getDistance(p1: iPoint, p2: iPoint): number {
+	public static getDistance(p1: intPoint, p2: intPoint): number {
 		return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 	}
 
-	public static getManhattanDistance(p1: iPoint, p2: iPoint): int {
+	public static getManhattanDistance(p1: intPoint, p2: intPoint): int {
 		return exMath.intAbs(p1.x - p2.x) + exMath.intAbs(p1.y - p2.y);
 	}
 
-	public static convertToGeomPoint(p: iPoint): flash.geom.Point {
+	public static convertToGeomPoint(p: intPoint): flash.geom.Point {
 		return new flash.geom.Point(p.x, p.y);
 	}
 
-	public static copy(p: iPoint): iPoint {
-		return new iPoint(p.x, p.y);
+	public static copy(p: intPoint): intPoint {
+		return new intPoint(p.x, p.y);
 	}
 
 	// Use For AI
@@ -42,13 +42,13 @@ export default class iPoint { // don't extends Object, otherwise it will make th
 	 * T: Target
 	 * R: Return
 	 */
-	public static getLineTargetPoint(start: iPoint, target: iPoint, defaultReturnX: boolean = true): iPoint | null {
+	public static getLineTargetPoint(start: intPoint, target: intPoint, defaultReturnX: boolean = true): intPoint | null {
 		let xD: int = exMath.intAbs(start.x - target.x);
 		let yD: int = exMath.intAbs(start.y - target.y);
 		if (xD < yD || xD == yD && defaultReturnX)
-			return new iPoint(target.x, start.y);
+			return new intPoint(target.x, start.y);
 		if (xD > yD)
-			return new iPoint(start.x, target.y);
+			return new intPoint(start.x, target.y);
 		return null;
 	}
 
@@ -62,13 +62,13 @@ export default class iPoint { // don't extends Object, otherwise it will make th
 	 * T: Target
 	 * R: Return
 	 */
-	public static getLineTargetPoint2(sX: int, sY: int, tX: int, tY: int, defaultReturnX: boolean = true): iPoint | null {
+	public static getLineTargetPoint2(sX: int, sY: int, tX: int, tY: int, defaultReturnX: boolean = true): intPoint | null {
 		let xD: int = exMath.intAbs(sX - tX);
 		let yD: int = exMath.intAbs(sY - tY);
 		if (xD < yD || xD == yD && defaultReturnX)
-			return new iPoint(tX, sY);
+			return new intPoint(tX, sY);
 		if (xD > yD)
-			return new iPoint(sX, tY);
+			return new intPoint(sX, tY);
 		return null;
 	}
 
@@ -77,7 +77,7 @@ export default class iPoint { // don't extends Object, otherwise it will make th
 	 * @param	t	target point
 	 * @return	The Distance.
 	 */
-	public static getLineTargetDistance(s: iPoint, t: iPoint): number {
+	public static getLineTargetDistance(s: intPoint, t: intPoint): int {
 		return exMath.intMin(exMath.intAbs(s.x - t.x), exMath.intAbs(s.y - t.y));
 	}
 
@@ -88,55 +88,58 @@ export default class iPoint { // don't extends Object, otherwise it will make th
 	 * @param	tY	target point y.
 	 * @return	The Distance.
 	 */
-	public static getLineTargetDistance2(sX: number, sY: number, tX: number, tY: number): number {
+	public static getLineTargetDistance2(sX: int, sY: int, tX: int, tY: int): int {
 		return exMath.intMin(exMath.intAbs(sX - tX), exMath.intAbs(sY - tY));
 	}
 
 	//============Instance Variables============//
-	public x: number = 0;
-	public y: number = 0;
+	public x: int = 0;
+	public y: int = 0;
 
 	//============Constructor Function============//
 	public constructor(x: number, y: number) {
-		this.x = x;
-		this.y = y;
+		this.x = int(x);
+		this.y = int(y);
 	}
 
 	//============Instance Functions============//
 	public toString(): string {
 		return `iPoint(x=${this.x}, y=${this.y})`
-		"(x=" + this.x + ", y=" + this.y + ")";
 	}
 
-	public invert(): iPoint {
+	public invert(): intPoint {
 		this.x ^= this.y;
 		this.y ^= this.x;
 		this.x ^= this.y;
 		return this;
 	}
 
-	public clone(): iPoint {
-		return iPoint.copy(this);
+	public clone(): intPoint {
+		return intPoint.copy(this);
 	}
 
-	public copyFrom(source: iPoint): void {
+	public copyFrom(source: intPoint): void {
 		this.x = source.x;
 		this.y = source.y;
 	}
 
-	public getDistance(p: iPoint): number {
-		return iPoint.getDistance(this, p);
+	public getDistance(p: intPoint): number {
+		return intPoint.getDistance(this, p);
 	}
 
-	public getManhattanDistance(p: iPoint): number {
-		return iPoint.getManhattanDistance(this, p);
+	public getManhattanDistance(p: intPoint): int {
+		return intPoint.getManhattanDistance(this, p);
 	}
 
-	public equals(p: iPoint): boolean {
+	public equals(p: intPoint): boolean {
 		return this.x == p.x && this.y == p.y;
 	}
 
-	public isInSameLine(p: iPoint): boolean {
+	public isInSameLine(p: intPoint): boolean {
 		return this.x == p.x || this.y == p.y;
 	}
 }
+
+// Full alias
+export const iPoint = intPoint; // as class
+export type iPoint = intPoint; // as type

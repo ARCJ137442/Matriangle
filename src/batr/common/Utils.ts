@@ -1,4 +1,4 @@
-﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE, UInt } from "./AS3Legacy"
+﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from "./AS3Legacy"
 import { flash } from "./FlashLegacy";
 import exMath from "./exMath";
 
@@ -39,7 +39,7 @@ export default class Utils {
 	 * @return	uint.
 	 */
 	public static percentToUint(value: number): uint {
-		return (value * uint$MAX_VALUE) | 0;
+		return uint(value * uint$MAX_VALUE);
 	}
 
 	//============Display Methods============//
@@ -89,7 +89,7 @@ export default class Utils {
 		let uin: uint = 0;
 
 		for (let i: int = l - 1; i >= 0; i--) {
-			uin |= UInt(boo[i]) << i;
+			uin |= uint(boo[i]) << i;
 
 		}
 		return uin;

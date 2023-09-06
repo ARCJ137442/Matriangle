@@ -15,7 +15,7 @@ export default class RandomGenerator {
 	public static getBuff(value: number, buffer: number[]): number {
 		if (isNaN(value) || buffer == null || buffer.length < 2)
 			return NaN;
-		let zeroIndex: uint = (buffer[0]) | 0;
+		let zeroIndex: uint = uint(buffer[0]);
 		let result: number = 0;
 		for (let index: uint = 1; index < buffer.length; index++) {
 			let powerNum: number = zeroIndex - index;

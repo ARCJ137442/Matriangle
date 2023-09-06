@@ -20,15 +20,36 @@ export default class exMath {
 	 * A Function in unsigned integers.
 	 * even(0,2,4,6,...)->0
 	 * odd:
-	 * >num[%4=1](1,5,9,...)->1
-	 * >num[%4=3](3,7,11...)->-1
-	 * Total list:[0,1,0,-1,0,1,0,-1,0,1,0,-1...]
-	 * ASpecial Property: χ(x)*χ(y)=χ(x*y)
+	 *   num[%4=1](1,5,9,...)->1
+	 *   num[%4=3](3,7,11...)->-1
+	 * Total list:
+	 * 	 [0,1,0,-1,0,1,0,-1,0,1,0,-1...] // from 0
+	 * A Special Property: χ(x)*χ(y)=χ(x*y)
 	 * @return	χ(x∈N)
 	 */
-	public static chi(X: int): int {
-		return (((((X & 1) ^ ((X >> 1) & 1)) & ((X & 1) | 2)) << 1) | ((X + 1) & 1)) - 1;
+	public static chi4(x: int): int {
+		return (((((x & 1) ^ ((x >> 1) & 1)) & ((x & 1) | 2)) << 1) | ((x + 1) & 1)) - 1;
 	}
+
+	/** some trial to improve the logic of chi
+	 * x&1:
+	 * 	 0  1  0  1  0  1  0  1
+	 * x&2:
+	 *   0  0  2  2  0  0  2  2
+	 * (x+1)&2:
+	 *   0  2  2  0  0  2  2  0
+	 * x&2>>1:
+	 * 	 0  1  1  0  0  1  1  0
+	 * ~(x&1):
+	 *  -1 -2 -1 -2 -1 -2 -1 -2
+	 * ~(x&2):
+	 *  -1 -1 -3 -3 -1 -1 -3 -3
+	 * ~(x&1) + (x+1)&2:
+	 *  -1 -2 -1 -2 -1 -2 -1 -2
+	 */
+
+	public static readonly chi = exMath.chi4;
+	public static readonly χ = exMath.chi4;
 
 	/**
 	 * Get sign of number.
@@ -56,7 +77,7 @@ export default class exMath {
 	}
 
 	public static intAbs(n: int): int {
-		return Number(n >= 0 ? n : -n);
+		return int(n >= 0 ? n : -n);
 	}
 
 	public static intMax(a: int, b: int): int {
@@ -80,16 +101,21 @@ export default class exMath {
 	}
 
 	//==Random About==//
+
+	/**
+	 * @param x upper limit
+	 * @returns interval [0,n)
+	 */
 	public static randomFloat(x: number): number {
 		return Math.random() * x;
 	}
 
 	/**
-	 * @param	x	:number.
-	 * @return	:number
+	 * @param	x	:int.
+	 * @return	:int
 	 */
 	public static randInt(x: int): int {
-		return (exMath.randomFloat(x)) | 0;
+		return int(exMath.randomFloat(x));
 	}
 
 	public static random1(): int {
@@ -130,24 +156,24 @@ export default class exMath {
 	 * @param weights the weight of random
 	 * @returns the selected index of the weight
 	 */
-	public static randomByWeight(weights: number[]): number {
+	public static randomByWeight(weights: number[]): uint {
 		// Return Number Include 0
 		if (weights.length >= 1) {
 			let all = 0;
 			let i;
 			for (i in weights) {
-				if (!isNaN(Number(weights[i])))
-					all += Number(weights[i]);
+				if (!isNaN(weights[i]))
+					all += weights[i];
 			}
 			if (weights.length == 1)
 				return 0;
 			else {
 				let R = Math.random() * all;
 				for (i = 0; i < weights.length; i++) {
-					let N = Number(weights[i]);
+					let N = weights[i];
 					let rs = 0;
 					for (let l = 0; l < i; l++)
-						rs += Number(weights[l]);
+						rs += weights[l];
 					// trace(R+"|"+(rs+N)+">R>="+rs+","+(i+1))
 					if (R >= rs && R < rs + N)
 						return i;
@@ -163,25 +189,21 @@ export default class exMath {
 
 	public static randomByWeightV(weights: number[]): number {
 		if (weights.length >= 1) {
-			let all: number = 0;
-			let i: number;
-			for (i of weights)
-				all += i;
+			let all: number = this.getSum(weights);
 			if (weights.length == 1)
 				return 0;
-			else {
-				let R = Math.random() * all;
-				for (let i = 0; i < weights.length; i++) {
-					let N = weights[i];
-					let rs = 0;
-					for (let l = 0; l < i; l++)
-						rs += weights[l];
-					// trace(R+"|"+(rs+N)+">R>="+rs+","+(i+1))
-					if (R >= rs && R < rs + N)
-						return i;
-				}
+			let r: number = this.randomFloat(all);
+			for (let i = 0; i < weights.length; i++) {
+				let N = weights[i];
+				let rs = 0;
+				for (let l = 0; l < i; l++)
+					rs += weights[l];
+				// trace(R+"|"+(rs+N)+">R>="+rs+","+(i+1))
+				if (r <= rs + N)
+					return i;
 			}
 		}
+		console.error('Nothing is out by weighted random!', weights)
 		return exMath.randInt(weights.length) + 1;
 	}
 
