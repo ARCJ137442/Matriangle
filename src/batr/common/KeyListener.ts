@@ -1,22 +1,13 @@
 ﻿// // Flash
 // import flash.display.Stage;
 // import flash.events.KeyboardEvent;
-declare class Stage {
-	hasEventListener: (type: string) => boolean;
-	addEventListener: (type: string, listener: Function | undefined) => boolean;
-	removeEventListener: (type: string, listener: Function | undefined) => boolean;
-}
+import { flash } from "../legacy/FlashLegacy";
 
-declare class KeyboardEvent {
-	static readonly KEY_DOWN: string;
-	static readonly KEY_UP: string;
+type Stage = flash.display.Stage
+const Stage = flash.display.Stage
 
-	keyCode: number
-
-	ctrlKey: boolean
-	shiftKey: boolean
-	altKey: boolean
-}
+type KeyboardEvent = flash.events.KeyboardEvent
+const KeyboardEvent = flash.events.KeyboardEvent
 
 // key map
 interface KeyMap {
@@ -58,7 +49,6 @@ export default class KeyListener {
 	//============Instance Getter And Setter============//
 	public get listens(): Stage | null {
 		return this._listenTo;
-
 	}
 
 	public set listens(stage: Stage | null) {
@@ -90,17 +80,14 @@ export default class KeyListener {
 
 	public get shiftKey(): boolean {
 		return this._shiftKey;
-
 	}
 
 	public get ctrlKey(): boolean {
 		return this._ctrlKey;
-
 	}
 
 	public get altKey(): boolean {
 		return this._altKey;
-
 	}
 
 	//============Instance Functions============//
@@ -139,7 +126,6 @@ export default class KeyListener {
 
 		if (this._pressedKeys[E.keyCode] != undefined) // Key.pressedKeys.splice(Key.pressedKeys.indexOf(E.keyCode),1)
 			this._pressedKeys[E.keyCode] = false;
-
 	}
 
 	protected onKeyDeal(E: KeyboardEvent): void {

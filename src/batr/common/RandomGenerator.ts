@@ -1,27 +1,26 @@
-﻿import { int, uint, uint$MAX_VALUE } from './AS3Legacy'
+﻿import { int, uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
 
 export default class RandomGenerator {
 	//============Static Variables============//
-	public static readonly DEFAULT_BUFFER: number[] = new Array<number>(2, 1, 0);
+	public static readonly DEFAULT_BUFFER: number[] = new Array<number>(1, 2, 3);
 
 	//============Static Functions============//
-	/*
-	====Get Buff====
-	buffer is number[]
-	[0] is Zero Index
-	Before Zero Index is x^i
-	After Zero Index is 1/x^i
-	*/
-	public static getBuff(value: number, buffer: number[]): number {
-		if (isNaN(value) || buffer == null || buffer.length < 2)
-			return NaN;
-		let zeroIndex: uint = uint(buffer[0]);
+	/**
+	 * calculate polynomial uses Using Qin Jiushao algorithm
+	 * (x, [1,2,3,4]) => 1x^3 + 2x^2 + 2x^1 + 4x^0 = x(x(x1+2)+3)+4
+	 * @param x the `x`
+	 * @param coefficients [1,2,3,4] of x will be 1*x**3 + 2*x**2 + 3*x**1 + 4*x**0
+	 * @returns the calculated
+	 */
+	public static calcPoly(x: number, coefficients: number[]): number {
+		if (isNaN(x) || coefficients == null)
+			return 0;
+		// let zeroIndex: uint = uint(coefficients[0]);
 		let result: number = 0;
-		for (let index: uint = 1; index < buffer.length; index++) {
-			let powerNum: number = zeroIndex - index;
-			let baseNum: number = powerNum == 0 ? 1 : (powerNum == 1 ? value : (powerNum == -1 ? 1 / value : (powerNum > 0 ? Math.pow(value, powerNum) : 1 / Math.pow(value, -powerNum))));
-			let buffNum: number = buffer[index];
-			result += baseNum * buffNum;
+		// calculate polynomial uses Using Qin Jiushao algorithm
+		for (let i: uint = 0; i < coefficients.length; i++) {
+			result *= x
+			result += coefficients[i]
 		}
 		return result;
 	}
@@ -44,9 +43,9 @@ export default class RandomGenerator {
 	protected _randomList: number[] = new Array<number>();
 
 	//============Init RandomGenerator============//
-	public constructor(seed: number = 0, mode: number = 0, buffer: number[] | null = null, length: uint = 1) {
+	public constructor(seed: number, mode: number, buffer: number[] | null = null, length: uint = 1) {
 		this._mode = mode;
-		this._buffer = buffer != null ? buffer : RandomGenerator.DEFAULT_BUFFER;
+		this._buffer = buffer ?? RandomGenerator.DEFAULT_BUFFER;
 		this._randomList[0] = seed;
 		this.generateNext(length);
 	}
@@ -114,7 +113,7 @@ export default class RandomGenerator {
 		return new RandomGenerator(this.seed, this.mode, this.buffer, this.numCount);
 	}
 
-	public equals(other: RandomGenerator, strictMode: boolean = false): boolean {
+	public isEqual(other: RandomGenerator, strictMode: boolean = false): boolean {
 		if (this.mode != other.mode || this.seed != other.seed)
 			return false;
 		let i: uint;
@@ -136,16 +135,24 @@ export default class RandomGenerator {
 	public generateNext(count: uint = 1): void {
 		if (count == 0)
 			return;
-		if (count == 1) {
-			this._randomList.push(RandomGenerator.getBuff(this.lastNum, this.buffer) % this.mode);
-			return;
-		}
-		for (let i: number = 0; i < count; i++) {
-			this._randomList.push(RandomGenerator.getBuff(this.lastNum, this.buffer) % this.mode);
+		for (let i: uint = 0; i < count; i++) {
+			this._randomList.push(
+				RandomGenerator.calcPoly(
+					this.lastNum, this.buffer
+				) % this.mode
+			);
 		}
 	}
 
-	public getRandom(index: uint = 0): number {
+	public getRandom(count: uint = 1): number[] {
+		let arr: number[] = [];
+		for (let i: uint = 0; i < count; i++) {
+			this.generateNext();
+			arr.push(this.lastNum);
+		}
+		return arr;
+	}
+	public getRandomAt(index: uint = 0): number {
 		// index Start At 1
 		if (index == 0) {
 			this.generateNext();
@@ -162,7 +169,7 @@ export default class RandomGenerator {
 
 	public random(buff: number = 1, next: boolean = true): number {
 		// index Start At 1
-		return this.getRandom(next ? 0 : this.numCount - 1) / this._mode * buff;
+		return this.getRandomAt(next ? 0 : this.numCount - 1) / this._mode * buff;
 	}
 
 	public reset(): void {

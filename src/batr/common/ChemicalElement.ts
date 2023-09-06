@@ -1,4 +1,4 @@
-import { uint } from "./AS3Legacy";
+import { uint } from "../legacy/AS3Legacy";
 
 export default class ChemicalElement {
 	//============Static Variables============//

@@ -1,10 +1,61 @@
-﻿import { int, uint } from './AS3Legacy'
+﻿import { int, uint } from '../legacy/AS3Legacy'
 
 export default class exMath {
 	//==============Static Variables==============//
-	private static PrimeList: Array<uint> = new Array<uint>(2);
+	private static readonly PRIME_LIST: Array<uint> = new Array<uint>(2, 3); // only `2` will pass the method about parameter "length"
 
 	//==============Static Functions==============//
+
+	// Prime System
+	public static getPrimesLessThan(x: uint): uint[] {
+		if (x > exMath.lastPrime) {
+			this.increasePrime(x);
+			return exMath.PRIME_LIST.slice();
+		}
+		else {
+			for (let i: uint = 0; i < exMath.PRIME_LIST.length; i++) {
+				if (exMath.PRIME_LIST[i] > x)
+					return exMath.PRIME_LIST.slice(0, i);
+			}
+			return new Array<uint>();
+		}
+	}
+
+	public static getPrimeAt(i: uint): uint {
+		let arr: uint[] = new Array<uint>();
+		for (let i: uint = exMath.lastPrime; arr.length < i; i += 10)
+			arr = exMath.getPrimesLessThan(i);
+		if (arr.length >= i)
+			return arr[i - 1];
+		return 2;
+	}
+
+	private static isPrime_local(x: uint): boolean {
+		return exMath.PRIME_LIST.every(
+			(p: uint, i: uint, v: uint[]): boolean => x % p != 0 || x == p
+		);
+	}
+
+	public static isPrime(x: uint): boolean {
+		if (x < 2)
+			return false;
+		if (x > exMath.lastPrime)
+			this.increasePrime(x);
+		return exMath.isPrime_local(x);
+	}
+
+	private static increasePrime(to: uint): void {
+		for (let n: uint = exMath.lastPrime; n <= to; n++) {
+			if (exMath.isPrime_local(n)) {
+				exMath.PRIME_LIST.push(n);
+			}
+		}
+	}
+
+	private static get lastPrime(): uint {
+		return exMath.PRIME_LIST[exMath.PRIME_LIST.length - 1];
+	}
+
 	//==Special Function==//
 	public static $(x: uint): uint {
 		return x > 0 ? x : 1 / (-x);
@@ -137,9 +188,9 @@ export default class exMath {
 	public static isBetween(
 		x: number,
 		n1: number, n2: number,
-		withL: Boolean = false,
-		withM: Boolean = false
-	): Boolean {
+		withL: boolean = false,
+		withM: boolean = false
+	): boolean {
 		let m: number = Math.max(n1, n2);
 		let l: number = Math.min(n1, n2);
 		if (withL && withM)
@@ -189,7 +240,7 @@ export default class exMath {
 
 	public static randomByWeightV(weights: number[]): number {
 		if (weights.length >= 1) {
-			let all: number = this.getSum(weights);
+			let all: number = this.sum(weights);
 			if (weights.length == 1)
 				return 0;
 			let r: number = this.randomFloat(all);
@@ -215,7 +266,7 @@ export default class exMath {
 		return value / Math.PI * 180;
 	}
 
-	public static getSum(a: number[]): number {
+	public static sum(a: number[]): number {
 		let sum: number = 0;
 		for (let i of a) {
 			if (!isNaN(i))
@@ -224,7 +275,7 @@ export default class exMath {
 		return sum;
 	}
 
-	public static getAverage(a: number[]): number {
+	public static average(a: number[]): number {
 		let sum: number = 0;
 		for (let i of a) {
 			if (!isNaN(i)) {
@@ -266,53 +317,5 @@ export default class exMath {
 
 	public static NumberBetween(x: number, num1: number = Number.NEGATIVE_INFINITY, num2: number = Number.POSITIVE_INFINITY): number {
 		return Math.min(Math.max(num1, num2), Math.max(Math.min(num1, num2), x));
-	}
-
-	// Prime System
-	public static getPrimes(x: uint): uint[] {
-		if (x > exMath.lastPrime) {
-			exMath.lastPrime = x;
-			return exMath.PrimeList;
-		}
-		else {
-			for (let i: uint = 0; i < exMath.PrimeList.length; i++) {
-				if (exMath.PrimeList[i] > x)
-					return exMath.PrimeList.slice(0, i);
-			}
-			return new Array<uint>();
-		}
-	}
-
-	public static getPrimeAt(x: uint): uint {
-		let arr: uint[] = new Array<uint>();
-		for (let i: uint = exMath.lastPrime; arr.length < x; i += 10)
-			arr = exMath.getPrimes(i);
-		if (arr.length >= x)
-			return arr[x - 1];
-		return 2;
-	}
-
-	public static isPrime(x: uint): Boolean {
-		if (Math.abs(x) < 2)
-			return false;
-		if (x > exMath.lastPrime)
-			exMath.lastPrime = x;
-		return exMath.PrimeList.every((p: uint, i: uint, v: uint[]): Boolean => {
-			return x % p != 0 && x != p;
-		});
-	}
-
-	private static get lastPrime(): uint {
-		return exMath.PrimeList[exMath.PrimeList.length - 1] | 0;
-	}
-
-	private static set lastPrime(Num: uint) {
-		for (let n: uint = exMath.lastPrime; n <= Num; n++) {
-			if (exMath.PrimeList.every(
-				(p: uint, i: uint, v: uint[]): Boolean => (n % p != 0 && n != p)
-			)) {
-				exMath.PrimeList.push(n);
-			}
-		}
 	}
 }

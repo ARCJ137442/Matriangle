@@ -1,6 +1,6 @@
 import exMath from "./exMath";
-import { int } from "./AS3Legacy"
-import { flash } from "./FlashLegacy";
+import { int } from "../legacy/AS3Legacy"
+import { flash } from "../legacy/FlashLegacy";
 // import flash.geom.Point;
 
 /**
@@ -131,7 +131,7 @@ export default class intPoint { // don't extends Object, otherwise it will make 
 		return intPoint.getManhattanDistance(this, p);
 	}
 
-	public equals(p: intPoint): boolean {
+	public isEqual(p: intPoint): boolean {
 		return this.x == p.x && this.y == p.y;
 	}
 

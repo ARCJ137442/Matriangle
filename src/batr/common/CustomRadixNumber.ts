@@ -7,7 +7,7 @@
  * */
 
 //============Import Something============//
-import { uint } from './AS3Legacy'
+import { uint } from '../legacy/AS3Legacy'
 
 //============Class Start============//
 export default class CustomRadixNumber {

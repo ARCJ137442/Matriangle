@@ -1,3 +1,8 @@
+// Legacy
+export * as AS3Legacy from './legacy/AS3Legacy'
+export { flash } from './legacy/FlashLegacy'
+
+// Tools
 export { default as ChemicalElement } from './common/ChemicalElement'
 export { default as Color } from './common/Color'
 export { default as CustomRadixNumber } from './common/CustomRadixNumber'

@@ -1,10 +1,11 @@
-﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from "./AS3Legacy"
-import { flash } from "./FlashLegacy";
+﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from "../legacy/AS3Legacy"
+import { DisplayObject, DisplayObjectContainer } from "../legacy/flash/display";
+import { ByteArray } from "../legacy/flash/utils";
 import exMath from "./exMath";
 
 // import flash.utils.getTimer;
 // import flash.utils.ByteArray;
-// import flash.display.*;
+// import *;
 
 export default class Utils {
 	//================Static Variables================//
@@ -43,12 +44,12 @@ export default class Utils {
 	}
 
 	//============Display Methods============//
-	public static removeChildIfContains(parent: flash.display.DisplayObjectContainer, child: flash.display.DisplayObject): void {
+	public static removeChildIfContains(parent: DisplayObjectContainer, child: DisplayObject): void {
 		if (child != null && parent.contains(child))
 			parent.removeChild(child);
 	}
 
-	public static removeAllChildren(container: flash.display.DisplayObjectContainer): void {
+	public static removeAllChildren(container: DisplayObjectContainer): void {
 		while (container.numChildren > 0) {
 			container.removeChildAt(0);
 
@@ -112,19 +113,19 @@ export default class Utils {
 
 	}
 
-	public static getPropertyInObject(arr: any[], pro: string): any[] {
+	public static getPropertyInObjects(objects: object[], key: string): any[] {
 		let ra: any[] = new Array<any>();
 
-		for (let i: uint = 0; i < arr.length; i++) {
-			if (pro in arr[i]) {
-				ra.push(arr[i][pro]);
+		for (let i: uint = 0; i < objects.length; i++) {
+			if (key in objects[i]) {
+				ra.push((objects[i] as any)?.[key]); // if not have value, do not return
 			}
 		}
 		return ra;
 	}
 
-	public static copyObject(object: Object): Object {
-		let tempObject: flash.utils.ByteArray = new flash.utils.ByteArray();
+	public static copyObjectByBytes(object: Object): Object {
+		let tempObject: ByteArray = new ByteArray();
 
 		tempObject.writeObject(object);
 
@@ -185,7 +186,7 @@ export default class Utils {
 		}
 		else {
 			for (let i = 0; i < A.length; i++) {
-				if (A[i] != B[i] && A[i] != null && B[i] != null) {
+				if (A[i] != B[i]) {
 					return false;
 				}
 			}

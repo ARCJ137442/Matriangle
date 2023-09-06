@@ -1,5 +1,5 @@
 
-import { uint } from './AS3Legacy'
+import { uint } from '../legacy/AS3Legacy'
 import intPoint from "./intPoint";
 /**
  * This class compress uint 0x0~0xffffffff into point(x:uint,y:uint)
