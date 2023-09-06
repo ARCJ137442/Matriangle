@@ -14,25 +14,25 @@ package batr.game.map.main {
 	 */
 	public class MapGenerater implements IMapGenerater {
 		//============Static Variables============//
-		private static var generateChaos:Function;
+		private static var generateChaos: Function;
 
 		//============Static Getter and Setter============//
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _generateFunc:Function;
+		protected var _generateFunc: Function;
 
 		//============Constructor============//
-		public function MapGenerater(generateFunc:Function):void {
+		public function MapGenerater(generateFunc: Function): void {
 			this._generateFunc = generateFunc;
 		}
 
 		/* INTERFACE batr.game.map.IMapGenerater */
-		public function generateTo(map:IMap, clearBefore:Boolean):IMap {
+		public function generateTo(map: IMap, clearBefore: Boolean): IMap {
 			if (clearBefore)
 				map.removeAllBlock();
-			// trace("generateNew:generating!",this._generateFunc)
+			// trace('generateNew:generating!',this._generateFunc)
 			if (this._generateFunc != null)
 				return this._generateFunc(map);
 			return map;

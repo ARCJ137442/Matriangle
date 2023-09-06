@@ -1,4 +1,4 @@
-import { uint } from "../AS3Legacy";
+import { uint } from '../AS3Legacy';
 
 export declare class ByteArray {
     writeObject(object: any): void;

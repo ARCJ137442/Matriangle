@@ -51,7 +51,7 @@ package batr.menu.objects {
 		//============Constructor Function============//
 		public function BatrButton(width: Number, height: Number,
 			translations: Translations,
-			translationKey: String = "",
+			translationKey: String = '',
 			smoothLine: Boolean = true,
 			color: uint = LINE_COLOR,
 			lineSize: Number = LINE_SIZE): void {

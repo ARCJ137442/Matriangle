@@ -194,10 +194,10 @@
 										v === null
 					) // Filter
 				if (
-					k != "initialMap"
+					k != 'initialMap'
 				)
 					result[k] = v;
-				trace("Saving data", k, "=", result[k], "(" + v + ")");
+				trace('Saving data', k, '=', result[k], '(' + v + ')');
 
 			}
 			return JSON.stringify(result, replacer, space);
@@ -211,17 +211,17 @@
 				try {
 					v = o[k];
 					// Infinity
-					if (v === " Infinity")
+					if (v === ' Infinity')
 						r[k] = Infinity;
-					else if (v === "-Infinity")
+					else if (v === '-Infinity')
 						r[k] = -Infinity;
 					else {
 						r[k] = v;
-						trace("Loaded data", k, "=", o[k]);
+						trace('Loaded data', k, '=', o[k]);
 					}
 				}
 				catch (error: Error) {
-					trace("Error loading data", k, "=", o[k]);
+					trace('Error loading data', k, '=', o[k]);
 				}
 			}
 			return r;
@@ -355,10 +355,10 @@
 			var weights: Vector.<Number> = new Vector.<Number>();
 			var sum: Number = 0;
 			for each(var mapPotential: Object in this._mapRandomPotentials) {
-				if (mapPotential["map"] is IMap && mapPotential["weight"] is Number) {
-					maps.push(mapPotential["map"] as IMap);
-					weights.push(Number(mapPotential["weight"]));
-					sum += Number(mapPotential["weight"]);
+				if (mapPotential['map'] is IMap && mapPotential['weight'] is Number) {
+					maps.push(mapPotential['map'] as IMap);
+					weights.push(Number(mapPotential['weight']));
+					sum += Number(mapPotential['weight']);
 				}
 			}
 			var randomNum: Number = exMath.randomFloat(sum);
@@ -383,20 +383,20 @@
 			var weights: Vector.<Number> = new Vector.<Number>();
 			var sum: Number = 0;
 			for each(var bonusPotential: Object in this._bonusBoxSpawnPotentials) {
-				if (bonusPotential["type"] is BonusType && bonusPotential["weight"] is Number) {
+				if (bonusPotential['type'] is BonusType && bonusPotential['weight'] is Number) {
 					// Filter
 					if (
 						// if the rule disallow player change their team, the type that potential can change player's team willn't be push
 						!this._allowPlayerChangeTeam && (
-							bonusPotential["type"] == BonusType.RANDOM_CHANGE_TEAM ||
-							bonusPotential["type"] == BonusType.UNITE_PLAYER ||
-							bonusPotential["type"] == BonusType.UNITE_AI
+							bonusPotential['type'] == BonusType.RANDOM_CHANGE_TEAM ||
+							bonusPotential['type'] == BonusType.UNITE_PLAYER ||
+							bonusPotential['type'] == BonusType.UNITE_AI
 						)
 					)
 						continue;
 					// Push
-					types.push(bonusPotential["type"] as BonusType);
-					sum += Number(bonusPotential["weight"]);
+					types.push(bonusPotential['type'] as BonusType);
+					sum += Number(bonusPotential['weight']);
 					weights.push(sum);
 				}
 			}
@@ -407,7 +407,7 @@
 					return types[i];
 				}
 			}
-			trace("warn@GameRule.as: no bonus type is selected, return NULL!");
+			trace('warn@GameRule.as: no bonus type is selected, return NULL!');
 			return BonusType.NULL;
 		}
 

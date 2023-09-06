@@ -68,7 +68,7 @@ package batr.game.entity.entities.projectiles {
 			}
 			else {
 				if (Game.debugMode)
-					trace("Block Hit:", this.getX(), this.getY());
+					trace('Block Hit:', this.getX(), this.getY());
 				if (!this._host.isHitAnyPlayer(this.gridX, this.gridY))
 					this.addXY(-this.xSpeed, -this.ySpeed);
 				this.onBlockHit();

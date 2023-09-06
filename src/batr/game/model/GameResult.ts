@@ -49,12 +49,12 @@ package batr.game.model {
 
 		public function get rankingText(): ForcedTranslationalText {
 			// W.I.P
-			var text: String = "";
+			var text: String = '';
 			var sortedStatList: Vector.<PlayerStats> = this._stats.players.concat().sort(scoreCompareFunc);
 			var currentStats: PlayerStats;
 			for (var i: int = 0; i < sortedStatList.length; i++) {
 				currentStats = sortedStatList[i];
-				text += currentStats.profile.customName + "\t\t\t" + currentStats.totalScore + "\n";
+				text += currentStats.profile.customName + '\t\t\t' + currentStats.totalScore + '\n';
 			}
 			return new ForcedTranslationalText(null, null, text);
 		}

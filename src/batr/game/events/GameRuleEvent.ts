@@ -4,8 +4,8 @@ package batr.game.events {
 
 	public class GameRuleEvent extends Event {
 		//============Static Variables============//
-		public static const VARIABLE_UPDATE: String = "variableUpdate";
-		public static const TEAMS_CHANGE: String = "teamsChange";
+		public static const VARIABLE_UPDATE: String = 'variableUpdate';
+		public static const TEAMS_CHANGE: String = 'teamsChange';
 
 		//============Instance Variables============//
 		protected var _variableOld: any;
@@ -32,7 +32,7 @@ package batr.game.events {
 
 		//============Instance Functions============//
 		public override function toString(): String {
-			return formatToString("GameRuleEvent", "type", "bubbles", "cancelable", "eventPhase");
+			return formatToString('GameRuleEvent', 'type', 'bubbles', 'cancelable', 'eventPhase');
 		}
 	}
 }

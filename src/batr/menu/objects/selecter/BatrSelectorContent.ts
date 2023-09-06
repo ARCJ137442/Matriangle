@@ -71,7 +71,7 @@ package batr.menu.objects.selector {
 		//============Instance Variables============//
 		//====Total====//
 
-		/**The _value is the "_intValue"&"_enumIndex"
+		/**The _value is the '_intValue'&'_enumIndex'
 		 * The enumText is force the intText
 		 */
 		protected var _value: int = 0;
@@ -219,7 +219,7 @@ package batr.menu.objects.selector {
 
 		//============Instance Functions============//
 		//====Total====//
-		// Limit between "min<value<max"
+		// Limit between 'min<value<max'
 		public function updateValue(): BatrSelectorContent {
 			this._value = Math.min(Math.max(this._value, this._intMin), this._intMax);
 			return this;
@@ -276,7 +276,7 @@ package batr.menu.objects.selector {
 
 		//====Debug====//
 		public function toString(): String {
-			return "BatrSelectorContent[" + this._value + "]{" + this._intMin + "~" + this._intMax + "," + this._enumTexts + "/" + this._enumIndexOffect + "}";
+			return 'BatrSelectorContent[' + this._value + ']{' + this._intMin + '~' + this._intMax + ',' + this._enumTexts + '/' + this._enumIndexOffect + '}';
 		}
 	}
 }

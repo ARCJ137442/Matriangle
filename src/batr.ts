@@ -1,2 +1,2 @@
-export * from "./batr/common";
-export * from "./fonts";
+export * from './batr/common';
+export * from './fonts';

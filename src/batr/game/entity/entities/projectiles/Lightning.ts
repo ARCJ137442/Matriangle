@@ -14,25 +14,25 @@ package batr.game.entity.entities.projectiles {
 	 */
 	public class Lightning extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LIGHT_ALPHA:Number = 0.5;
-		public static const LIGHT_BLOCK_WIDTH:Number = 0.2;
-		public static const LIFE:uint = GlobalGameVariables.TPS / 2;
+		public static const LIGHT_ALPHA: Number = 0.5;
+		public static const LIGHT_BLOCK_WIDTH: Number = 0.2;
+		public static const LIFE: uint = GlobalGameVariables.TPS / 2;
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _life:uint = LIFE;
-		public var isDamaged:Boolean = false;
+		protected var _life: uint = LIFE;
+		public var isDamaged: Boolean = false;
 
-		protected var _energy:int;
-		protected var _initialEnergy:int;
+		protected var _energy: int;
+		protected var _initialEnergy: int;
 
-		protected var _wayPoints:Vector.<iPoint> = new Vector.<iPoint>();
-		protected var _hurtPlayers:Vector.<Player> = new Vector.<Player>();
-		protected var _hurtDefaultDamage:Vector.<uint> = new Vector.<uint>();
+		protected var _wayPoints: Vector.<iPoint> = new Vector.<iPoint>();
+		protected var _hurtPlayers: Vector.<Player> = new Vector.<Player>();
+		protected var _hurtDefaultDamage: Vector.<uint> = new Vector.<uint>();
 
 		//============Constructor Function============//
-		public function Lightning(host:Game, x:Number, y:Number, rot:uint, owner:Player, energy:int):void {
+		public function Lightning(host: Game, x: Number, y: Number, rot: uint, owner: Player, energy: int): void {
 			super(host, x, y, owner);
 			this.rot = rot;
 			this._initialEnergy = this._energy = energy;
@@ -40,17 +40,17 @@ package batr.game.entity.entities.projectiles {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function deleteSelf(): void {
 
 		}
 
 		//============Instance Getter And Setter============//
-		public function get energyPercent():Number {
+		public function get energyPercent(): Number {
 			return this._energy / this._initialEnergy;
 		}
 
 		//============Instance Functions============//
-		public function dealTick():void {
+		public function dealTick(): void {
 			if (!this.isDamaged) {
 				this.isDamaged = true;
 				this.lightningWays();
@@ -66,19 +66,19 @@ package batr.game.entity.entities.projectiles {
 		/**
 		 * Init the way of lightning
 		 */
-		protected function lightningWays():void {
+		protected function lightningWays(): void {
 			// Draw in location in this
-			var head:iPoint = new iPoint(this.gridX, this.gridY);
-			var ownerWeapon:WeaponType = this.currentWeapon;
-			var vx:int, vy:int;
-			var cost:int = 0;
-			var player:Player = null;
-			var tRot:uint = this.owner.rot;
-			var nRot:uint = 0;
+			var head: iPoint = new iPoint(this.gridX, this.gridY);
+			var ownerWeapon: WeaponType = this.currentWeapon;
+			var vx: int, vy: int;
+			var cost: int = 0;
+			var player: Player = null;
+			var tRot: uint = this.owner.rot;
+			var nRot: uint = 0;
 			// Loop to run
 			this._wayPoints.push(new iPoint(0, 0));
 			while (true) {
-				// trace("initWay in "+head,nRot,tRot,cost);
+				// trace('initWay in '+head,nRot,tRot,cost);
 				// Cost and hit
 				cost = operateCost(head.x, head.y);
 				if ((this._energy -= cost) < 0)
@@ -107,17 +107,17 @@ package batr.game.entity.entities.projectiles {
 			// trace(this.entityX,this.entityY);
 		}
 
-		protected function addWayPoint(hostX:int, hostY:int):void {
+		protected function addWayPoint(hostX: int, hostY: int): void {
 			this._wayPoints.push(new iPoint(hostX - this.gridX, hostY - this.gridY));
 		}
 
-		protected function getLeastWeightRot(x:int, y:int, nowRot:uint):uint {
-			var cx:int, cy:int;
-			var leastCost:int = operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
-			var cost:int;
-			var result:uint = GlobalRot.NULL;
+		protected function getLeastWeightRot(x: int, y: int, nowRot: uint): uint {
+			var cx: int, cy: int;
+			var leastCost: int = operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
+			var cost: int;
+			var result: uint = GlobalRot.NULL;
 			nowRot = GlobalRot.lockIntToStandard(nowRot + exMath.random1());
-			for (var r:int = nowRot; r < nowRot + 4; r += 2) {
+			for (var r: int = nowRot; r < nowRot + 4; r += 2) {
 				cx = x + GlobalRot.towardXInt(r);
 				cy = y + GlobalRot.towardYInt(r);
 				cost = operateCost(cx, cy);
@@ -129,42 +129,42 @@ package batr.game.entity.entities.projectiles {
 			return result;
 		}
 
-		protected function operateCost(x:int, y:int):int {
+		protected function operateCost(x: int, y: int): int {
 			if (this.host.isHitAnyPlayer(x, y))
 				return 5; // The electricResistance of player
 			if (this.host.isIntOutOfMap(x, y))
 				return int.MAX_VALUE; // The electricResistance out of world
-			var attributes:BlockAttributes = this.host.getBlockAttributes(x, y);
+			var attributes: BlockAttributes = this.host.getBlockAttributes(x, y);
 			if (attributes != null)
 				return attributes.electricResistance;
 			return 0;
 		}
 
-		public override function onProjectileTick():void {
+		public override function onProjectileTick(): void {
 			this.dealTick();
 		}
 
-		public override function drawShape():void {
+		public override function drawShape(): void {
 
 		}
 
-		protected function drawLightning():void {
+		protected function drawLightning(): void {
 			// These points uses local grid,for example the initial point is (0,0)
-			var point:iPoint = null, pointH:iPoint = null;
+			var point: iPoint = null, pointH: iPoint = null;
 			// drawLines
-			for (var i:uint = 0; i < this._wayPoints.length; i++) {
+			for (var i: uint = 0; i < this._wayPoints.length; i++) {
 				point = pointH;
 				pointH = this._wayPoints[i];
-				if (point != null && pointH != null)  { // Head
+				if (point != null && pointH != null) { // Head
 					this.graphics.beginFill(this.ownerColor, LIGHT_ALPHA);
 					this.graphics.drawRect(
-							GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.x, pointH.x) - LIGHT_BLOCK_WIDTH),
-							GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.y, pointH.y) - LIGHT_BLOCK_WIDTH),
-							GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.x - pointH.x) + LIGHT_BLOCK_WIDTH * 2),
-							GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.y - pointH.y) + LIGHT_BLOCK_WIDTH * 2)
-						);
+						GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.x, pointH.x) - LIGHT_BLOCK_WIDTH),
+						GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.y, pointH.y) - LIGHT_BLOCK_WIDTH),
+						GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.x - pointH.x) + LIGHT_BLOCK_WIDTH * 2),
+						GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.y - pointH.y) + LIGHT_BLOCK_WIDTH * 2)
+					);
 					this.graphics.endFill();
-					// trace("drawPoint at ",point,pointH);
+					// trace('drawPoint at ',point,pointH);
 				}
 			}
 			// drawPoints

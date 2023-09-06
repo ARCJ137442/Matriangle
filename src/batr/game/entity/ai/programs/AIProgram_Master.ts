@@ -19,8 +19,8 @@ package batr.game.entity.ai.programs {
 	 */
 	public class AIProgram_Master implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = "Master";
-		public static const LABEL_SHORT: String = "M";
+		public static const LABEL: String = 'Master';
+		public static const LABEL_SHORT: String = 'M';
 
 		public static const DEBUG: Boolean = false;
 
@@ -113,7 +113,7 @@ package batr.game.entity.ai.programs {
 					v[i] = false;
 				}
 			}
-			// trace("remember resetted!")
+			// trace('remember resetted!')
 		}
 
 		protected function changeTarget(owner: AIPlayer, target: EntityCommon): void {
@@ -219,13 +219,13 @@ package batr.game.entity.ai.programs {
 					lastTargetPlayer != null && (!player.canUseWeaponHurtPlayer(lastTargetPlayer, player.weapon) ||
 						lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
 					this.resetTarget();
-					AIProgram_Adventurer.traceLog(player, "Clear invalid target!");
+					AIProgram_Adventurer.traceLog(player, 'Clear invalid target!');
 				}
 				/*//Change target when weak
 				else if(lastTargetPlayer!=null&&player.health<lastTargetPlayer.health) {
 					if((this._pickupWeight++)<0) {
 						this.addCloseTarget(this._lastTarget);
-						AIProgram_Adventurer.traceLog(player,"close target when wreak:"+getEntityName(this._lastTarget));
+						AIProgram_Adventurer.traceLog(player,'close target when wreak:'+getEntityName(this._lastTarget));
 						this.resetTarget();
 					}
 				}*/
@@ -245,7 +245,7 @@ package batr.game.entity.ai.programs {
 					}
 					if (target != null) {
 						this.changeTarget(player, target);
-						AIProgram_Adventurer.traceLog(player, "turn target to " + AIProgram_Adventurer.getEntityName(this._lastTarget));
+						AIProgram_Adventurer.traceLog(player, 'turn target to ' + AIProgram_Adventurer.getEntityName(this._lastTarget));
 					}
 					// If all avliable target closed
 					else
@@ -273,7 +273,7 @@ package batr.game.entity.ai.programs {
 						}
 						else if (!player.isPress_Use)
 							return AIPlayerAction.PRESS_KEY_USE;
-						AIProgram_Adventurer.traceLog(player, "attack target " + AIProgram_Adventurer.getEntityName(this._lastTarget));
+						AIProgram_Adventurer.traceLog(player, 'attack target ' + AIProgram_Adventurer.getEntityName(this._lastTarget));
 					}
 					// Carry Block
 					else if (!AIProgram_Adventurer.detectCarryBlock(player) &&
@@ -318,7 +318,7 @@ package batr.game.entity.ai.programs {
 						if (finalNode == null) {
 							this.addCloseTarget(this._lastTarget);
 							this.resetTarget();
-							AIProgram_Adventurer.traceLog(player, "finalNode==null,forget target");
+							AIProgram_Adventurer.traceLog(player, 'finalNode==null,forget target');
 						}
 						// Find Success
 						else {
@@ -329,7 +329,7 @@ package batr.game.entity.ai.programs {
 									finalNode.fromRot
 								)
 							);
-							AIProgram_Adventurer.traceLog(player, "findPath(" + AIProgram_Adventurer.getEntityName(this._lastTarget) + ") success!writeRememberAt:" + finalNode + "," + ownerPoint);
+							AIProgram_Adventurer.traceLog(player, 'findPath(' + AIProgram_Adventurer.getEntityName(this._lastTarget) + ') success!writeRememberAt:' + finalNode + ',' + ownerPoint);
 						}
 					}
 				}

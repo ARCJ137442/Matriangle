@@ -195,7 +195,7 @@ package batr.menu.objects.selector {
 		}
 
 		private function functionNotFound(): void {
-			throw new Error("Function Not Found!");
+			throw new Error('Function Not Found!');
 		}
 
 		//========True Functions About selectors========//

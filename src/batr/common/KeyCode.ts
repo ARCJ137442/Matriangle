@@ -1,4 +1,4 @@
-import { uint } from "../legacy/AS3Legacy";
+import { uint } from '../legacy/AS3Legacy';
 
 export default class KeyCode {
 	//================Key Codes===============//
@@ -111,7 +111,7 @@ export default class KeyCode {
 	public static readonly LEFT_BRACKET: uint = 219; // [{
 	public static readonly BACK_SLASH: uint = 220; // \|
 	public static readonly RIGHT_BRACKET: uint = 221; // ]}
-	public static readonly QUOTES: uint = 222; // '"
+	public static readonly QUOTES: uint = 222; // ''
 
 	public static readonly WAKE_UP: uint = 255;
 	public static readonly POWER: uint = 255;

@@ -102,7 +102,7 @@
 		protected static function setFixedTextSuffix(text: BatrTextField, suffix: any): void {
 			var fText: FixedTranslationalText = text.translationalText as FixedTranslationalText;
 			if (fText != null) {
-				fText.suffix = "\t\t" + String(suffix);
+				fText.suffix = '\t\t' + String(suffix);
 				text.updateByTranslation();
 			}
 		}
@@ -271,17 +271,17 @@
 		protected function addSheetHistory(history: uint): void {
 			// Add to the Head of UnsignedInteger
 			// history>0,r=this.numSheet+1
-			// trace("Before:",history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
+			// trace('Before:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
 			this._sheetHistory += Math.pow(this.numSheet + 1, this.historyLength) * history;
-			// trace("After:",history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
+			// trace('After:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		}
 
 		protected function popSheetHistory(): uint {
 			// Remove from the Head of UnsignedInteger
-			// trace("Before:",this.historyLength,this._sheetHistory,this.lastSheetHistory);
+			// trace('Before:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 			var lSH: uint = this.lastSheetHistory;
 			this._sheetHistory -= this.lastSheetHistory * Math.pow(this.numSheet + 1, this.historyLength - 1);
-			// trace("After:",this.historyLength,this._sheetHistory,this.lastSheetHistory);
+			// trace('After:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 			return lSH;
 		}
 
@@ -627,7 +627,7 @@
 				this._sheetCustomGameConfig = this.buildSheet(TranslationKey.ADVANCED_CONFIG, false).appendDirectElements(
 					this.quickTextFieldBuild(TranslationKey.ADVANCED_CONFIG, 1, 1),
 					// input
-					this._gameRuleConfig = this.quickTextInputBuild("JSON", 1, 2, 22, 18, TextFieldAutoSize.NONE),
+					this._gameRuleConfig = this.quickTextInputBuild('JSON', 1, 2, 22, 18, TextFieldAutoSize.NONE),
 					// start
 					this.quickButtonBuild2(TranslationKey.START, this.onCustomGameConfigStartButtonClick, 0x0080ff).setBlockPos(9, 21),
 					this.quickBackButtonBuild().setBlockPos(2, 21)
@@ -827,7 +827,7 @@
 				rule.playerAsphyxiaDamage = asphyxiaDamageselector.currentValue;
 			}
 			catch (err: Error) {
-				trace("Load GameRule Error:" + err.message);
+				trace('Load GameRule Error:' + err.message);
 			}
 			return rule;
 		}
@@ -876,7 +876,7 @@
 			if (selector == null)
 				return;
 			var nowMapIndex: int = selector.currentValue;
-			// trace("Now Map ID: "+nowMapIndex);
+			// trace('Now Map ID: '+nowMapIndex);
 			// work in process
 		}
 
@@ -901,7 +901,7 @@
 				var rule: GameRule = this.getRuleFromConfigField(this._gameRuleConfig);
 			}
 			catch (e: Error) {
-				trace("Load Rule Error:", e);
+				trace('Load Rule Error:', e);
 				return;
 			}
 			this.game.forceStartGame(rule, false);
@@ -939,7 +939,7 @@
 				setFixedTextSuffix(this._playerStatTotalScore, currentPlayer.totalScore);
 			}
 			catch (err: Error) {
-				trace("ERROR:", err);
+				trace('ERROR:', err);
 			}
 		}
 

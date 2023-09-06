@@ -3,7 +3,7 @@
  * The static class implements The Custom Radix Conversion of Unsigned-Integer(number)
  * The class can be create by operator new,likes [let a:CustomRadixNumber=new CustomRadixNumber()],but that also can be register at class
  * The Custom-Number is express as string
- * An example:The Radix-36 Number "a0" can be converted to number(0*36^0+10*36^1)=360
+ * An example:The Radix-36 Number 'a0' can be converted to number(0*36^0+10*36^1)=360
  * */
 
 //============Import Something============//
@@ -12,9 +12,9 @@ import { uint } from '../legacy/AS3Legacy'
 //============Class Start============//
 export default class CustomRadixNumber {
 	//============Static Variables============//
-	public static readonly CHAR_SET_ERROR_MESSAGE: string = "CharSet Error!";
-	public static readonly DEFAULT_CHAR_SET: string = "0123456789";
-	public static readonly DEFAULT_DOT_CHAR: string = ".";
+	public static readonly CHAR_SET_ERROR_MESSAGE: string = 'CharSet Error!';
+	public static readonly DEFAULT_CHAR_SET: string = '0123456789';
+	public static readonly DEFAULT_DOT_CHAR: string = '.';
 	public static readonly DEFAULT_OPERATION_PRECISION: uint = 0x10;
 
 	protected static _instances: Array<CustomRadixNumber> = new Array<CustomRadixNumber>();
@@ -57,7 +57,7 @@ export default class CustomRadixNumber {
 	protected static dealCharSet(charSet: string): string {
 		// Test
 		if (charSet == null || charSet.length < 1)
-			return "";
+			return '';
 		// Set
 		let returnCharSet: string = charSet;
 		let char: string;
@@ -141,7 +141,7 @@ export default class CustomRadixNumber {
 		if (n == 0)
 			return this.getCharFromWeight(0);
 		// Set
-		let returnString: string = "";
+		let returnString: string = '';
 		let radix: uint = this.radix;
 		let tempNum: uint = Math.floor(n);
 		let tempNum2: uint = 0;
@@ -184,7 +184,7 @@ export default class CustomRadixNumber {
 		if (number == 0)
 			return this.getCharFromWeight(0);
 		// Set
-		let returnString: string = "";
+		let returnString: string = '';
 		let radix: uint = this.radix;
 		let integer: uint = uint(number); // number
 		let float: number = number - integer; // float
@@ -223,8 +223,8 @@ export default class CustomRadixNumber {
 		let returnNumber: number = 0;
 		let radix: number = this.radix;
 		let customNumberParts: Array<string> = customNumber.split(this._dotChar);
-		let cNumInt: string = String(customNumberParts[0] == undefined ? "" : customNumberParts[0]);
-		let cNumFloat: string = String(customNumberParts[1] == undefined ? "" : customNumberParts[1]);
+		let cNumInt: string = String(customNumberParts[0] == undefined ? '' : customNumberParts[0]);
+		let cNumFloat: string = String(customNumberParts[1] == undefined ? '' : customNumberParts[1]);
 		// Operation
 		// number
 		if (!CustomRadixNumber.isEmptyString(cNumInt))

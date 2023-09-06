@@ -12,8 +12,8 @@ package batr.game.entity.ai.programs {
 	 */
 	public class AIProgram_Novice implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = "Novice";
-		public static const LABEL_SHORT: String = "N";
+		public static const LABEL: String = 'Novice';
+		public static const LABEL_SHORT: String = 'N';
 
 		//============Static Functions============//
 		protected static function getLineEnemyPlayer(owner: AIPlayer): Player {

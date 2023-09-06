@@ -1,7 +1,7 @@
-﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from "../legacy/AS3Legacy"
-import { DisplayObject, DisplayObjectContainer } from "../legacy/flash/display";
-import { ByteArray } from "../legacy/flash/utils";
-import exMath from "./exMath";
+﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from '../legacy/AS3Legacy'
+import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
+import { ByteArray } from '../legacy/flash/utils';
+import exMath from './exMath';
 
 // import flash.utils.getTimer;
 // import flash.utils.ByteArray;
@@ -16,9 +16,9 @@ export default class Utils {
 		if (floatCount > 0) {
 			let pow: uint = 10 ** floatCount;
 			let returnNum: number = Math.floor(x * pow * 100) / pow;
-			return returnNum + "%";
+			return returnNum + '%';
 		}
-		return Math.round(x * 100) + "%";
+		return Math.round(x * 100) + '%';
 	}
 
 	public static NTP(x: number, floatCount: uint = 0): string {

@@ -1,4 +1,4 @@
-import { uint } from "../AS3Legacy";
+import { uint } from '../AS3Legacy';
 
 export abstract class DisplayObject {
     public abstract hasEventListener(name: string): boolean;

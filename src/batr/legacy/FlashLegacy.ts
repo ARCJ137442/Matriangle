@@ -1,1 +1,1 @@
-export * as flash from "./flash";
+export * as flash from './flash';

@@ -11,21 +11,21 @@ package batr.game.entity.ai.programs {
 	 */
 	public class AIProgram_Dummy implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL:String = "Dummy";
-		public static const LABEL_SHORT:String = "D";
+		public static const LABEL: String = 'Dummy';
+		public static const LABEL_SHORT: String = 'D';
 
 		//============Instance Variables============//
-		protected var _moveSum:uint;
-		protected var _moveMaxSum:uint = 4 + exMath.random(16);
-		protected var _tempRot:uint;
+		protected var _moveSum: uint;
+		protected var _moveMaxSum: uint = 4 + exMath.random(16);
+		protected var _tempRot: uint;
 
 		//============Constructor Function============//
-		public function AIProgram_Dummy():void {
+		public function AIProgram_Dummy(): void {
 
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf():void {
+		public function deleteSelf(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;
@@ -33,20 +33,20 @@ package batr.game.entity.ai.programs {
 
 		/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 		/*========AI Getter And Setter========*/
-		public function get label():String {
+		public function get label(): String {
 			return AIProgram_Dummy.LABEL;
 		}
 
-		public function get labelShort():String {
+		public function get labelShort(): String {
 			return AIProgram_Dummy.LABEL_SHORT;
 		}
 
-		public function get referenceSpeed():uint {
+		public function get referenceSpeed(): uint {
 			return 5 + exMath.random(6) * exMath.random(6);
 		}
 
 		/*========AI Program Main========*/
-		public function requestActionOnTick(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Press Use
@@ -60,9 +60,9 @@ package batr.game.entity.ai.programs {
 				return AIPlayerAction.PRESS_KEY_USE;
 			// Act
 			if (this._moveSum >= this._moveMaxSum ||
-					!player.host.testPlayerCanPassToFront(player)) {
+				!player.host.testPlayerCanPassToFront(player)) {
 				this._moveSum = 0;
-				var i:uint = 0;
+				var i: uint = 0;
 				do {
 					this._tempRot = GlobalRot.RANDOM;
 					i++;
@@ -82,37 +82,37 @@ package batr.game.entity.ai.programs {
 
 		}
 
-		public function requestActionOnCauseDamage(player:AIPlayer, damage:uint, victim:Player):AIPlayerAction {
+		public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnHurt(player:AIPlayer, damage:uint, attacker:Player):AIPlayerAction {
+		public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnKill(player:AIPlayer, damage:uint, victim:Player):AIPlayerAction {
+		public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnDeath(player:AIPlayer, damage:uint, attacker:Player):AIPlayerAction {
+		public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnRespawn(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnMapTransfrom(player:AIPlayer):AIPlayerAction {
+		public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnPickupBonusBox(player:AIPlayer, box:BonusBox):AIPlayerAction {
+		public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}

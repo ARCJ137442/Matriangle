@@ -17,8 +17,8 @@ package batr.game.entity.ai.programs {
 	 */
 	public class AIProgram_Adventurer implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = "Adventurer";
-		public static const LABEL_SHORT: String = "A";
+		public static const LABEL: String = 'Adventurer';
+		public static const LABEL_SHORT: String = 'A';
 
 		public static const DEBUG: Boolean = false;
 
@@ -77,14 +77,14 @@ package batr.game.entity.ai.programs {
 		/*========A Star Algorithm========*/
 
 		/**
-		 * Find the "best" path in a map with the owner.
+		 * Find the 'best' path in a map with the owner.
 		 * The startPos should be (owner.gridX,owner.gridY)
 		 * 1. [OpenList],[CloseList]
 		 * 2. [F=G+H]
 		 * @return	The Path From Target To Start
 		 */
 		protected static function findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): Vector.<PathNode> {
-			// trace("Name="+owner.customName)
+			// trace('Name='+owner.customName)
 			// Operation
 			var openList: Vector.<PathNode> = new Vector.<PathNode>();
 			var closeList: Vector.<PathNode> = new Vector.<PathNode>();
@@ -101,7 +101,7 @@ package batr.game.entity.ai.programs {
 			while (openList.length > 0) {
 				// Set
 				_leastNearbyNode = getLeastFNode(openList);
-				// trace("Set _leastNearbyNode="+_leastNearbyNode,"numO="+openList.length,"numC="+closeList.length)
+				// trace('Set _leastNearbyNode='+_leastNearbyNode,'numO='+openList.length,'numC='+closeList.length)
 				// Move
 				removeNodeIn(_leastNearbyNode, openList);
 				if (closeList.indexOf(_leastNearbyNode) < 0)
@@ -136,11 +136,11 @@ protected static function containNode(node: PathNode, nodes: Vector.<PathNode>):
 protected static function removeNodeIn(node: PathNode, nodes: Vector.<PathNode>): Boolean {
 	var i: int = nodes.indexOf(node);
 	if (i >= 0) {
-		// trace("remove node"+node,"succeed!")
+		// trace('remove node'+node,'succeed!')
 		nodes.splice(i, 1);
 		return true;
 	}
-	// trace("remove node"+node,"failed!")
+	// trace('remove node'+node,'failed!')
 	return false;
 }
 
@@ -236,7 +236,7 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 
 		internal static function getEntityName(target: EntityCommon): String {
 	if (target == null)
-		return "null";
+		return 'null';
 	if (target is Player)
 	return (target as Player).customName;
 	return target.toString();
@@ -249,7 +249,7 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 		 */
 		internal static function traceLog(owner: Player, message: String): void {
 	if (DEBUG)
-		trace(owner.customName + ":", message);
+		trace(owner.customName + ':', message);
 }
 
 protected static function initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
@@ -293,7 +293,7 @@ protected function resetRemember(): void {
 			v[i] = false;
 		}
 	}
-	// trace("remember resetted!")
+	// trace('remember resetted!')
 }
 
 protected function changeTarget(owner: AIPlayer, target: EntityCommon): void {
@@ -411,7 +411,7 @@ public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			}
 			if (target != null) {
 				this.changeTarget(player, target);
-				traceLog(player, "turn target to " + getEntityName(this._lastTarget));
+				traceLog(player, 'turn target to ' + getEntityName(this._lastTarget));
 			}
 			// If all avliable target closed
 			else {
@@ -440,7 +440,7 @@ public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 				}
 				else if (!player.isPress_Use)
 					return AIPlayerAction.PRESS_KEY_USE;
-				traceLog(player, "attack target " + getEntityName(this._lastTarget));
+				traceLog(player, 'attack target ' + getEntityName(this._lastTarget));
 			}
 			// Carry Block
 			else if (!detectCarryBlock(player) &&
@@ -485,7 +485,7 @@ public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 				if (finalNode == null) {
 					this.addCloseTarget(this._lastTarget);
 					this.resetTarget();
-					traceLog(player, "finalNode==null,forget target");
+					traceLog(player, 'finalNode==null,forget target');
 				}
 				// Find Success
 				else {
@@ -496,7 +496,7 @@ public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 							finalNode.fromRot
 						)
 					);
-					traceLog(player, "findPath(" + getEntityName(this._lastTarget) + ") success!writeRememberAt:" + finalNode + "," + ownerPoint);
+					traceLog(player, 'findPath(' + getEntityName(this._lastTarget) + ') success!writeRememberAt:' + finalNode + ',' + ownerPoint);
 				}
 			}
 		}
@@ -629,7 +629,7 @@ class PathNode extends iPoint {
 	}
 
 	public override function toString(): String {
-		return "[pos=" + super.toString() + ",F=" + this.F + ",G=" + this.G + ",H=" + this.H + "]";
+		return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 	}
 }
 

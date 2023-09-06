@@ -552,11 +552,11 @@ package batr.game.entity.entities.players {
 
 		// Display for GUI
 		public function get healthText(): String {
-			var healthText: String = this._health + "/" + this._maxHealth;
+			var healthText: String = this._health + '/' + this._maxHealth;
 
-			var healText: String = this._heal > 0 ? "<" + this._heal + ">" : "";
+			var healText: String = this._heal > 0 ? '<' + this._heal + '>' : '';
 
-			var lifeText: String = this._infinityLife ? "" : "[" + this._lifes + "]";
+			var lifeText: String = this._infinityLife ? '' : '[' + this._lifes + ']';
 
 			return healthText + healText + lifeText;
 
@@ -1078,7 +1078,7 @@ package batr.game.entity.entities.players {
 				contolKey_Down = KeyCode.DOWN; // Down:Key_DOWN
 				contolKey_Left = KeyCode.LEFT; // Left:Key_Left
 				contolKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-				contolKey_Use = KeyCode.NUMPAD_0; // Use:"0"
+				contolKey_Use = KeyCode.NUMPAD_0; // Use:'0'
 				break;
 			// P3
 			case 3:
@@ -1086,7 +1086,7 @@ package batr.game.entity.entities.players {
 				contolKey_Down = KeyCode.J; // Down:J
 				contolKey_Left = KeyCode.H; // Left:H
 				contolKey_Right = KeyCode.K; // Right:K
-				contolKey_Use = KeyCode.RIGHT_BRACKET; // Use:"]"
+				contolKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
 				break;
 			// P4
 			case 4:

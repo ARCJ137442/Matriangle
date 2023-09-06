@@ -5,36 +5,36 @@ package batr.game.effect {
 
 	public class EffectType extends TypeCommon {
 		//============Static Variables============//
-		public static const NULL:EffectType = null;
-		public static const ABSTRACT:EffectType = new EffectType("Abstract");
+		public static const NULL: EffectType = null;
+		public static const ABSTRACT: EffectType = new EffectType('Abstract');
 
-		public static const EXPLODE:EffectType = new EffectType("Explode", 1);
-		public static const SPAWN:EffectType = new EffectType("Spawn", -1);
-		public static const TELEPORT:EffectType = new EffectType("Teleport", -1);
-		public static const PLAYER_DEATH_LIGHT:EffectType = new EffectType("PlayerDeathLight", 1);
-		public static const PLAYER_DEATH_ALPHA:EffectType = new EffectType("PlayerDeathAlpha", 0);
-		public static const PLAYER_HURT:EffectType = new EffectType("PlayerHurt", 1);
-		public static const PLAYER_LEVELUP:EffectType = new EffectType("PlayerLevelUp", 1);
-		public static const BLOCK_LIGHT:EffectType = new EffectType("BlockLight", 1);
+		public static const EXPLODE: EffectType = new EffectType('Explode', 1);
+		public static const SPAWN: EffectType = new EffectType('Spawn', -1);
+		public static const TELEPORT: EffectType = new EffectType('Teleport', -1);
+		public static const PLAYER_DEATH_LIGHT: EffectType = new EffectType('PlayerDeathLight', 1);
+		public static const PLAYER_DEATH_ALPHA: EffectType = new EffectType('PlayerDeathAlpha', 0);
+		public static const PLAYER_HURT: EffectType = new EffectType('PlayerHurt', 1);
+		public static const PLAYER_LEVELUP: EffectType = new EffectType('PlayerLevelUp', 1);
+		public static const BLOCK_LIGHT: EffectType = new EffectType('BlockLight', 1);
 
-		public static const _ALL_EFFECT:Vector.<EffectType> = new <EffectType>[
-				EffectType.EXPLODE,
-				EffectType.SPAWN,
-				EffectType.TELEPORT,
-				EffectType.PLAYER_DEATH_LIGHT,
-				EffectType.PLAYER_DEATH_ALPHA,
-				EffectType.PLAYER_HURT,
-				EffectType.PLAYER_LEVELUP,
-				EffectType.BLOCK_LIGHT];
+		public static const _ALL_EFFECT: Vector.<EffectType> = new < EffectType > [
+			EffectType.EXPLODE,
+			EffectType.SPAWN,
+			EffectType.TELEPORT,
+			EffectType.PLAYER_DEATH_LIGHT,
+			EffectType.PLAYER_DEATH_ALPHA,
+			EffectType.PLAYER_HURT,
+			EffectType.PLAYER_LEVELUP,
+			EffectType.BLOCK_LIGHT];
 
 		//============Static Getter And Setter============//
-		public static function get RANDOM():EffectType {
+		public static function get RANDOM(): EffectType {
 			return _ALL_EFFECT[exMath.random(_ALL_EFFECT.length)];
 		}
 
 		//============Static Functions============//
-		public static function fromString(str:String):EffectType {
-			for each (var type:EffectType in EffectType._ALL_EFFECT) {
+		public static function fromString(str: String): EffectType {
+			for each(var type: EffectType in EffectType._ALL_EFFECT) {
 				if (type.name == str)
 					return type;
 
@@ -43,8 +43,8 @@ package batr.game.effect {
 
 		}
 
-		public static function isIncludeIn(type:EffectType, types:Vector.<EffectType>):Boolean {
-			for each (var type2:EffectType in types) {
+		public static function isIncludeIn(type: EffectType, types: Vector.<EffectType>): Boolean {
+			for each(var type2: EffectType in types) {
 				if (type == type2)
 					return true;
 
@@ -54,10 +54,10 @@ package batr.game.effect {
 		}
 
 		//============Instance Variables============//
-		protected var _effectLayer:int;
+		protected var _effectLayer: int;
 
 		//============Constructor Function============//
-		public function EffectType(name:String, effectLayer:int = -1):void {
+		public function EffectType(name: String, effectLayer: int = -1): void {
 			super(name);
 
 			this._effectLayer = effectLayer;
@@ -65,8 +65,8 @@ package batr.game.effect {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get label():String {
-			return "effect";
+		public override function get label(): String {
+			return 'effect';
 		}
 
 		/**
@@ -78,7 +78,7 @@ package batr.game.effect {
 		 * <Bottom>:NEGATIVE
 		 * Background
 		 */
-		public function get effectLayer():int {
+		public function get effectLayer(): int {
 			return this._effectLayer;
 
 		}

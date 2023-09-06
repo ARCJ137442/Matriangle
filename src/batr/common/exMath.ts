@@ -2,7 +2,7 @@
 
 export default class exMath {
 	//==============Static Variables==============//
-	private static readonly PRIME_LIST: Array<uint> = new Array<uint>(2, 3); // only `2` will pass the method about parameter "length"
+	private static readonly PRIME_LIST: Array<uint> = new Array<uint>(2, 3); // only `2` will pass the method about parameter 'length'
 
 	//==============Static Functions==============//
 
@@ -225,7 +225,7 @@ export default class exMath {
 					let rs = 0;
 					for (let l = 0; l < i; l++)
 						rs += weights[l];
-					// trace(R+"|"+(rs+N)+">R>="+rs+","+(i+1))
+					// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
 					if (R >= rs && R < rs + N)
 						return i;
 				}
@@ -249,7 +249,7 @@ export default class exMath {
 				let rs = 0;
 				for (let l = 0; l < i; l++)
 					rs += weights[l];
-				// trace(R+"|"+(rs+N)+">R>="+rs+","+(i+1))
+				// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
 				if (r <= rs + N)
 					return i;
 			}

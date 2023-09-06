@@ -32,7 +32,7 @@ package batr.general {
 		}
 
 		public function get label(): String {
-			return "common";
+			return 'common';
 		}
 	}
 }

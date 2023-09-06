@@ -103,14 +103,14 @@
 
 		// Tools
 		public static function joinNamesFromPlayers(players: Vector.<Player>): String {
-			var result: String = "";
+			var result: String = '';
 			for (var i: uint = 0; i < players.length; i++) {
 				if (players[i] == null)
-					result += "NULL";
+					result += 'NULL';
 				else
 					result += players[i].customName;
 				if (i < players.length - 1)
-					result += ",";
+					result += ',';
 			}
 			return result;
 		}
@@ -662,7 +662,7 @@
 				// Computing<Experimental>
 				this._expectedFrames = this._timeDistance / GlobalGameVariables.TICK_TIME_MS;
 				if (this._expectedFrames > 1)
-					trace("this._expectedFrames>1! value=", this._expectedFrames, "distance=", this._timeDistance);
+					trace('this._expectedFrames>1! value=', this._expectedFrames, 'distance=', this._timeDistance);
 
 				i = this._expectedFrames * this._speed;
 				// Synchronize
@@ -702,14 +702,14 @@
 				Translations.getTranslation(
 					this.translations,
 					TranslationKey.REMAIN_TRANSFORM_TIME
-				) + ": " + this._tempMapTransformSecond +
-				"/" + this.rule.mapTransformTime
+				) + ': ' + this._tempMapTransformSecond +
+				'/' + this.rule.mapTransformTime
 			);
 			this._gamePlayingTimeText.setText(
 				Translations.getTranslation(
 					this.translations,
 					TranslationKey.GAME_DURATION
-				) + ": " + this._second);
+				) + ': ' + this._second);
 			this._mapTransformTimeText.visible = this.rule.mapTransformTime > 0;
 		}
 
@@ -724,7 +724,7 @@
 			var shift: Boolean = E.shiftKey;
 			// End Game
 			if (shift && code == KeyCode.ESC) {
-				fscommand("quit");
+				fscommand('quit');
 				return;
 			}
 			// Player Contol
@@ -793,7 +793,7 @@
 		}
 
 		public function testIntCanPass(x: int, y: int, asPlayer: Boolean, asBullet: Boolean, asLaser: Boolean, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
-			// Debug: trace("testCanPass:"+arguments+";"+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
+			// Debug: trace('testCanPass:'+arguments+';'+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
 			var mapX: int = this.lockPosInMap(x, true);
 
 			var mapY: int = this.lockPosInMap(y, false);
@@ -824,7 +824,7 @@
 		 * return testCanPass in player's front position.
 		 */
 		public function testFrontCanPass(entity: EntityCommon, distance: Number, asPlayer: Boolean, asBullet: Boolean, asLaser: Boolean, includePlayer: Boolean = true, avoidTrap: Boolean = false): Boolean {
-			// Debug: trace("testFrontCanPass:"+entity.type.name+","+entity.getFrontX(distance)+","+entity.getFrontY(distance))
+			// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
 			return testCanPass(entity.getFrontX(distance),
 				entity.getFrontY(distance),
 				asPlayer, asBullet, asLaser,
@@ -840,7 +840,7 @@
 		 * return testCanPass as player in other position.
 		 */
 		public function testPlayerCanPass(player: Player, x: int, y: int, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
-			// Debug: trace("testPlayerCanPass:"+player.customName+","+x+","+y+","+includePlayer)
+			// Debug: trace('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
 			// Define
 			var gridX: int = this.lockIntPosInMap(x, true);
 
@@ -864,7 +864,7 @@
 		}
 
 		public function testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: Boolean = true, avoidHurting: Boolean = false): Boolean {
-			// Debug: trace("testFullPlayerCanPass:"+player.customName+","+x+","+y+","+oldX+","+oldY+","+includePlayer)
+			// Debug: trace('testFullPlayerCanPass:'+player.customName+','+x+','+y+','+oldX+','+oldY+','+includePlayer)
 			// Target can pass
 			if (!testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
 				return false;
@@ -1349,7 +1349,7 @@
 			this._entitySystem.registerPlayer(p);
 			// Set
 			p.rot = rot;
-			p.customName = name == null ? "P" + id : name;
+			p.customName = name == null ? 'P' + id : name;
 			// Add
 			this._playerContainer.addChild(p);
 			// Return
@@ -1373,7 +1373,7 @@
 		// Add a player uses random position and weapon
 		public function appendPlayer(controlKeyID: uint = 0): Player {
 			var id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
-			trace("Append Player in ID", id);
+			trace('Append Player in ID', id);
 			return this.setupPlayer(
 				this.addPlayer(id, this.rule.randomTeam, -1, -1, 0, false, null)
 			);
@@ -1404,7 +1404,7 @@
 		}
 
 		public function autoGetAIName(player: AIPlayer): String {
-			return "AI-" + this._entitySystem.AICount + "[" + player.AIProgram.labelShort + "]";
+			return 'AI-' + this._entitySystem.AICount + '[' + player.AIProgram.labelShort + ']';
 		}
 
 		public function spawnPlayersByRule(): void {
@@ -1454,7 +1454,7 @@
 					break;
 				}
 			}
-			// Debug: trace("Spread "+player.customName+" "+(i+1)+" times.")
+			// Debug: trace('Spread '+player.customName+' '+(i+1)+' times.')
 			return player;
 		}
 
@@ -1484,7 +1484,7 @@
 			this.addSpawnEffect(player.entityX, player.entityY);
 			this.addPlayerDeathLightEffect2(player.entityX, player.entityY, player, true);
 			// Return
-			// Debug: trace("respawnPlayer:respawn "+player.customName+".")
+			// Debug: trace('respawnPlayer:respawn '+player.customName+'.')
 			return player;
 		}
 
@@ -1695,9 +1695,9 @@
 			if (!player.isActive || !player.visible)
 				return;
 
-			/*For Debug:trace("movePlayer:",player.customName,rot,"pos 1:",player.getX(),player.getY(),
-						"pos 2:",player.getFrontX(distance),player.getFrontY(distance),
-						"pos 3:",player.getFrontIntX(distance),player.getFrontIntY(distance))
+			/*For Debug:trace('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
+						'pos 2:',player.getFrontX(distance),player.getFrontY(distance),
+						'pos 3:',player.getFrontIntX(distance),player.getFrontIntY(distance))
 			*/
 			player.rot = rot;
 
@@ -1739,7 +1739,7 @@
 
 				// -projectilesSpawnDistance
 			}
-			// Debug: trace("playerUseWeapon:","X=",player.getX(),spawnX,"Y:",player.getY(),y)
+			// Debug: trace('playerUseWeapon:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
 			// Summon Projectile
 			switch (weapon) {
 				case WeaponType.BULLET:
@@ -2289,7 +2289,7 @@
 					p.rot = randomRot;
 					this.entitySystem.registerProjectile(p);
 					this._projectileContainer.addChild(p);
-					// trace("laser at"+"("+p.entityX+","+p.entityY+"),"+p.life,p.length,p.visible,p.alpha,p.owner);
+					// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
 				}
 			}
 			while (laserLength <= 0 && ++i < 0x10);
@@ -2311,7 +2311,7 @@
 				this.setVoid(x, y);
 				this.entitySystem.registerProjectile(p);
 				this._projectileContainer.addChild(p);
-				// trace("laser at"+"("+p.entityX+","+p.entityY+"),"+p.life,p.length,p.visible,p.alpha,p.owner);
+				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
 				if (!(block is MoveableWall && (block as MoveableWall).virus))
 				break;
 			}

@@ -37,7 +37,7 @@
 			null, null, null, null,
 			TextFormatAlign.CENTER
 		);
-		public static const LEVEL_TEXT_HEAD: String = "Lv.";
+		public static const LEVEL_TEXT_HEAD: String = 'Lv.';
 
 		//============Instance Functions============//
 		public static function getUnderBarY(barNum: uint = 0): Number {
@@ -140,7 +140,7 @@
 		public function updateName(): void {
 			if (this._owner == null)
 				return;
-			this._nameTagText.text = this._owner.customName == null ? "" : this._owner.customName;
+			this._nameTagText.text = this._owner.customName == null ? '' : this._owner.customName;
 		}
 
 		public function updateTeam(): void {
@@ -154,7 +154,7 @@
 			if (this._owner == null)
 				return;
 			this._healthBarHealth.scaleX = this._owner.healthPercent;
-			this._healthBarText.text = this._owner.healthText == null ? "" : this._owner.healthText;
+			this._healthBarText.text = this._owner.healthText == null ? '' : this._owner.healthText;
 		}
 
 		public function updateCharge(sort: Boolean = true): void {

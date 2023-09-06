@@ -1,10 +1,10 @@
-import { uint } from "../legacy/AS3Legacy";
+import { uint } from '../legacy/AS3Legacy';
 
 export default class ChemicalElement {
 	//============Static Variables============//
 	protected static readonly ELEMENTS: Array<ChemicalElement> = new Array<ChemicalElement>();
 
-	protected static readonly ZH_CN_ELEMENT_NAME: string = "氢氦锂铍硼碳氮氧氟氖钠镁铝硅磷硫氯氩钾钙钪钛钒铬锰铁钴镍铜锌镓锗砷硒溴氪铷锶钇锆铌钼锝钌铑钯银镉铟锡锑碲碘氙铯钡镧铈镨钕钷钐铕钆铽镝钬铒铥镱镥铪钽钨铼锇铱铂金汞铊铅铋钋砹氡钫镭锕钍镤铀镎钚镅锔锫锎锿镄钔锘铹鈩𨧀𨭎𨨏𨭆䥑鐽錀鎶鉨鈇镆鉝";
+	protected static readonly ZH_CN_ELEMENT_NAME: string = '氢氦锂铍硼碳氮氧氟氖钠镁铝硅磷硫氯氩钾钙钪钛钒铬锰铁钴镍铜锌镓锗砷硒溴氪铷锶钇锆铌钼锝钌铑钯银镉铟锡锑碲碘氙铯钡镧铈镨钕钷钐铕钆铽镝钬铒铥镱镥铪钽钨铼锇铱铂金汞铊铅铋钋砹氡钫镭锕钍镤铀镎钚镅锔锫锎锿镄钔锘铹鈩𨧀𨭎𨨏𨭆䥑鐽錀鎶鉨鈇镆鉝';
 
 	protected static _allowCreate: boolean = false;
 
@@ -16,23 +16,23 @@ export default class ChemicalElement {
 		ChemicalElement._allowCreate = true;
 		// Start
 		ChemicalElement.addElements(
-			"H", "He",
-			"Li", "Be", "B", "C", "N", "O", "F", "Ne",
-			"Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar",
-			"K", "Ca",
-			"Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-			"Ga", "Ge", "As", "Se", "Br", "Kr",
-			"Rb", "Sr",
-			"Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd",
-			"In", "Sn", "Sb", "Te", "I", "Xe",
-			"Cs", "Ba",
-			"La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu",
-			"Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-			"Tl", "Pb", "Bi", "Po", "At", "Rn",
-			"Fr", "Ra",
-			"Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr",
-			"Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn",
-			"Nh", "Fl", "Mc", "Lv", "Ts", "Og",
+			'H', 'He',
+			'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
+			'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
+			'K', 'Ca',
+			'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn',
+			'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
+			'Rb', 'Sr',
+			'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd',
+			'In', 'Sn', 'Sb', 'Te', 'I', 'Xe',
+			'Cs', 'Ba',
+			'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu',
+			'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg',
+			'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn',
+			'Fr', 'Ra',
+			'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr',
+			'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn',
+			'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
 		)
 		// End
 		ChemicalElement._allowCreate = false;
@@ -79,7 +79,7 @@ export default class ChemicalElement {
 	//============Constructor Function============//
 	protected constructor(ordinal: uint, symbol: string) {
 		if (!ChemicalElement._allowCreate) {
-			throw new Error("Invalid constructor");
+			throw new Error('Invalid constructor');
 		}
 		this._symbol = symbol;
 		this._ordinal = ordinal;
@@ -97,7 +97,7 @@ export default class ChemicalElement {
 	public get symbol_CN(): string {
 		if (this.hasCNSample)
 			return ChemicalElement.ZH_CN_ELEMENT_NAME.charAt(this._ordinal - 1);
-		return "";
+		return '';
 	}
 
 	public get ordinal(): uint {

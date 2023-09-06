@@ -9,30 +9,30 @@ package batr.game.entity.ai.programs {
 	 * @author ARCJ137442
 	 */
 	internal class PathNode extends iPoint {
-		public var parent:PathNode;
+		public var parent: PathNode;
 
 		/**
 		 * From GlobalRot(U,D,L,R)
 		 */
-		public var fromRot:uint = GlobalRot.NULL;
+		public var fromRot: uint = GlobalRot.NULL;
 
-		public var G:int = 0;
-		public var H:int = 0;
+		public var G: int = 0;
+		public var H: int = 0;
 
-		public function get F():int {
+		public function get F(): int {
 			return this.G + this.H;
 		}
 
-		public function get hasParent():Boolean {
+		public function get hasParent(): Boolean {
 			return this.parent != null;
 		}
 
-		public function get hasFromRot():Boolean {
+		public function get hasFromRot(): Boolean {
 			return GlobalRot.isValidRot(this.fromRot);
 		}
 
-		public function get rootParent():PathNode {
-			var p:PathNode = this.parent;
+		public function get rootParent(): PathNode {
+			var p: PathNode = this.parent;
 			while (p.parent != null && p.parent != this) {
 				p = p.parent;
 			}
@@ -42,9 +42,9 @@ package batr.game.entity.ai.programs {
 		/**
 		 * Didn't include the root
 		 */
-		public function get pathToRoot():Vector.<PathNode> {
-			var result:Vector.<PathNode> = new <PathNode>[this];
-			var p:PathNode = this.parent;
+		public function get pathToRoot(): Vector.<PathNode> {
+			var result: Vector.<PathNode> = new < PathNode > [this];
+			var p: PathNode = this.parent;
 			while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 				p = p.parent;
 				result.push(p);
@@ -53,22 +53,22 @@ package batr.game.entity.ai.programs {
 		}
 
 		// Constructor
-		public function PathNode(x:int, y:int, parent:PathNode = null):void {
+		public function PathNode(x: int, y: int, parent: PathNode = null): void {
 			super(x, y);
 			this.parent = parent;
 		}
 
 		// Static Constructor
-		public static function fromPoint(p:iPoint):PathNode {
+		public static function fromPoint(p: iPoint): PathNode {
 			return new PathNode(p.x, p.y, null);
 		}
 
 		// Methods
-		public function getFromRot(from:PathNode):uint {
+		public function getFromRot(from: PathNode): uint {
 			return GlobalRot.fromLinearDistance(this.x - from.x, this.y - from.y);
 		}
 
-		public function autoSetFromRot():void {
+		public function autoSetFromRot(): void {
 			if (this.hasParent) {
 				this.fromRot = this.getFromRot(this.parent);
 			}
@@ -78,19 +78,19 @@ package batr.game.entity.ai.programs {
 		 * @param	parent	A Point
 		 * @return	This point
 		 */
-		public function setParentAndFromRot(parent:PathNode):PathNode {
+		public function setParentAndFromRot(parent: PathNode): PathNode {
 			this.parent = parent;
 			this.autoSetFromRot();
 			return this;
 		}
 
-		public function setFromRot(rot:uint):PathNode {
+		public function setFromRot(rot: uint): PathNode {
 			this.fromRot = rot;
 			return this;
 		}
 
-		public override function toString():String {
-			return "[pos=" + super.toString() + ",F=" + this.F + ",G=" + this.G + ",H=" + this.H + "]";
+		public override function toString(): String {
+			return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 		}
 	}
 }

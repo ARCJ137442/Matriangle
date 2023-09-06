@@ -1,4 +1,4 @@
-import { uint } from "../AS3Legacy"
+import { uint } from '../AS3Legacy'
 
 export abstract class Event extends Object {
     public abstract get bubbles(): boolean;

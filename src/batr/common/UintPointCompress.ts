@@ -1,6 +1,6 @@
 
 import { uint } from '../legacy/AS3Legacy'
-import intPoint from "./intPoint";
+import intPoint from './intPoint';
 /**
  * This class compress uint 0x0~0xffffffff into point(x:uint,y:uint)
  * For example:
@@ -24,7 +24,7 @@ export default class UintPointCompress {
 	 */
 	private static testUintPoint(x: uint, y: uint): void {
 		if (!UintPointCompress.isValidPositionToCompress(x, y))
-			throw new Error("Position out of range:" + x + "," + y);
+			throw new Error('Position out of range:' + x + ',' + y);
 	}
 
 	/**

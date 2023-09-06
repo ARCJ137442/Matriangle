@@ -18,39 +18,39 @@ package batr.game.map.main {
 		//============Static Variables============//
 		protected static const _SIZE: uint = GlobalGameVariables.DISPLAY_GRIDS;
 
-		public static var EMPTY: Map_V1 = new Map_V1("EMPTY");
-		public static var FRAME: Map_V1 = new Map_V1("FRAME");
-		public static var MAP_1: Map_V1 = new Map_V1("1");
-		public static var MAP_2: Map_V1 = new Map_V1("2");
-		public static var MAP_3: Map_V1 = new Map_V1("3");
-		public static var MAP_4: Map_V1 = new Map_V1("4");
-		public static var MAP_5: Map_V1 = new Map_V1("5");
-		public static var MAP_6: Map_V1 = new Map_V1("6");
-		public static var MAP_7: Map_V1 = new Map_V1("7");
-		public static var MAP_8: Map_V1 = new Map_V1("8");
-		public static var MAP_9: Map_V1 = new Map_V1("9");
-		public static var MAP_A: Map_V1 = new Map_V1("A", null, true);
-		public static var MAP_B: Map_V1 = new Map_V1("B", null, true);
-		public static var MAP_C: Map_V1 = new Map_V1("C", null, true);
-		public static var MAP_D: Map_V1 = new Map_V1("D", null, true);
-		public static var MAP_E: Map_V1 = new Map_V1("E", null, true);
+		public static var EMPTY: Map_V1 = new Map_V1('EMPTY');
+		public static var FRAME: Map_V1 = new Map_V1('FRAME');
+		public static var MAP_1: Map_V1 = new Map_V1('1');
+		public static var MAP_2: Map_V1 = new Map_V1('2');
+		public static var MAP_3: Map_V1 = new Map_V1('3');
+		public static var MAP_4: Map_V1 = new Map_V1('4');
+		public static var MAP_5: Map_V1 = new Map_V1('5');
+		public static var MAP_6: Map_V1 = new Map_V1('6');
+		public static var MAP_7: Map_V1 = new Map_V1('7');
+		public static var MAP_8: Map_V1 = new Map_V1('8');
+		public static var MAP_9: Map_V1 = new Map_V1('9');
+		public static var MAP_A: Map_V1 = new Map_V1('A', null, true);
+		public static var MAP_B: Map_V1 = new Map_V1('B', null, true);
+		public static var MAP_C: Map_V1 = new Map_V1('C', null, true);
+		public static var MAP_D: Map_V1 = new Map_V1('D', null, true);
+		public static var MAP_E: Map_V1 = new Map_V1('E', null, true);
 
-		public static var MAP_F: Map_V1 = new Map_V1("F", null, true);
+		public static var MAP_F: Map_V1 = new Map_V1('F', null, true);
 
-		public static var MAP_G: Map_V1 = new Map_V1("G", null, true);
+		public static var MAP_G: Map_V1 = new Map_V1('G', null, true);
 
-		public static var MAP_H: Map_V1 = new Map_V1("H", null, true);
+		public static var MAP_H: Map_V1 = new Map_V1('H', null, true);
 
 		protected static var isInited: Boolean = cInit();
 
 		//============Static Functions============//
 		public static function pointToIndex(x: int, y: int): String {
-			return String(x + "_" + y);
+			return String(x + '_' + y);
 
 		}
 
 		public static function indexToPoint(str: String): iPoint {
-			var s: Array = str.split("_");
+			var s: Array = str.split('_');
 
 			return new iPoint(int(s[0]), int(s[1]));
 
@@ -745,7 +745,7 @@ package batr.game.map.main {
 		 * @return
 		 */
 		public override function generateNew(): IMap {
-			// trace("generateNew:",this===MAP_5,this._generater)
+			// trace('generateNew:',this===MAP_5,this._generater)
 			if (this._generater != null)
 				return this._generater.generateTo(this.clone(), true);
 			return super.generateNew();
@@ -793,7 +793,7 @@ package batr.game.map.main {
 		}
 
 		public override function removeAllBlock(deleteBlock: Boolean = true): void {
-			// trace(this+":removeAllBlock!")
+			// trace(this+':removeAllBlock!')
 			var block: BlockCommon;
 			for (var key: String in this._Content) {
 				block = this._Content[key] as BlockCommon;
