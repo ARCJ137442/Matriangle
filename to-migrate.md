@@ -5,8 +5,8 @@
 - [x] src\batr\common\KeyCode.ts
 - [x] src\batr\common\KeyListener.ts
 - [x] src\batr\common\RandomGenerator.ts
-- [ ] src\batr\common\UintPointCompress.ts
-- [ ] src\batr\common\Utils.ts
+- [x] src\batr\common\UintPointCompress.ts
+- [x] src\batr\common\Utils.ts
 - [ ] src\batr\fonts\MainFont.ts
 - [ ] src\batr\game\block\blocks\Bedrock.ts
 - [ ] src\batr\game\block\blocks\ColoredBlock.ts
