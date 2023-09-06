@@ -120,7 +120,7 @@
 
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, onSubjectKeyDown);
 
-			this.addChilds();
+			this.addChildren();
 			this.resize();
 			// backGround
 			this._menu.backGround.visible = false;
@@ -179,7 +179,7 @@
 		}
 
 		//====Methods====//
-		protected function addChilds(): void {
+		protected function addChildren(): void {
 			this.addChild(this._game);
 			this.addChild(this._menu);
 		}

@@ -13,7 +13,7 @@ package batr.game.map.main {
 	/**
 	 * This class only achieved spawnpoints
 	 */
-	public class NativeMapCommon extends Object implements IMap {
+	public class NativeMapCommon implements IMap {
 		//============Static Functions============//
 		protected static function getTargetByLayer(l: int, top: IMapDisplayer, bottom: IMapDisplayer, middle: IMapDisplayer): IMapDisplayer {
 			return l > 0 ? top : (l < 0 ? bottom : middle);

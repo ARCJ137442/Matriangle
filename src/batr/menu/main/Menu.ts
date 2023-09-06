@@ -99,7 +99,7 @@
 			TextFormatAlign.LEFT);
 
 		//============Static Functions============//
-		protected static function setFixedTextSuffix(text: BatrTextField, suffix: *): void {
+		protected static function setFixedTextSuffix(text: BatrTextField, suffix: any): void {
 			var fText: FixedTranslationalText = text.translationalText as FixedTranslationalText;
 			if (fText != null) {
 				fText.suffix = "\t\t" + String(suffix);
@@ -293,7 +293,7 @@
 		protected function onAddedToStage(E: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			playTitleAnimation();
-			addChilds();
+			addChildren();
 		}
 
 		public function updateMapSize(): void {
@@ -312,7 +312,7 @@
 			this.addEventListener(MenuEvent.TITLE_SHOWEN, constructMainManu);
 		}
 
-		protected function addChilds(): void {
+		protected function addChildren(): void {
 			this.addChild(this._backGround);
 			this.addChild(this._title);
 		}

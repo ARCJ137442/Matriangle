@@ -9,8 +9,8 @@ package batr.game.effect.effects {
 	public class EffectExplode extends EffectCommon {
 		//============Static Variables============//
 		public static const DEFAULT_COLOR: uint = 0xffdd00;
-		public static const LINE_ALPHA: uint = 5 * (uint.MAX_VALUE >> 3); // 5/8
-		public static const FILL_ALPHA: uint = (uint.MAX_VALUE / 5) << 1; // 2/5
+		public static const LINE_ALPHA: uint = 5 * (uint$MAX_VALUE >> 3); // 5/8
+		public static const FILL_ALPHA: uint = (uint$MAX_VALUE / 5) << 1; // 2/5
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
 
 		//============Instance Variables============//

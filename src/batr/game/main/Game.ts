@@ -495,7 +495,7 @@
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			// this.addEventListener(Event.ENTER_FRAME,onEnterFrame);
 			this.subject.addEventListener(TranslationsChangeEvent.TYPE, this.onTranslationsChange);
-			this.addChilds();
+			this.addChildren();
 		}
 
 		protected function initDisplay(): void {
@@ -510,7 +510,7 @@
 			this.visibleHUD = false;
 		}
 
-		protected function addChilds(): void {
+		protected function addChildren(): void {
 			this.addChild(this._backGround);
 
 			this.addChild(this._effectContainerBottom);
@@ -1033,7 +1033,7 @@
 
 		public function lightningHurtPlayers(lightning: Lightning, players: Vector.<Player>, damages: Vector.<uint>): void {
 			var p: Player, d: uint;
-			for (var i: * in players) {
+			for (var i: any in players) {
 				p = players[i];
 				d = damages[i];
 				if (p != null)
@@ -1096,9 +1096,9 @@
 
 		/**
 		 * Operate damage to player by blockAtt.playerDamage,
-		 * int.MAX_VALUE -> uint.MAX_VALUE
+		 * int.MAX_VALUE -> uint$MAX_VALUE
 		 * [...-2) -> 0
-		 * -1 -> uint.MAX_VALUE
+		 * -1 -> uint$MAX_VALUE
 		 * [0,100] -> player.maxHealth*playerDamage/100
 		 * (100...] -> playerDamage-100
 		 * @return	The damage.
@@ -1109,7 +1109,7 @@
 			if (playerDamage == -1)
 				return this.rule.playerAsphyxiaDamage;
 			if (playerDamage == int.MAX_VALUE)
-				return uint.MAX_VALUE;
+				return uint$MAX_VALUE;
 			if (playerDamage <= 100)
 				return player.maxHealth * playerDamage / 100;
 			return playerDamage - 100;
@@ -1586,7 +1586,7 @@
 			// Transform
 			var _pv: Vector.<Player> = new Vector.<Player>;
 
-			var p: *;
+			var p: any;
 
 			for each(p in players) {
 				if(p is Player) {

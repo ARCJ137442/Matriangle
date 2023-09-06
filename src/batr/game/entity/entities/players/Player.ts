@@ -244,7 +244,7 @@ package batr.game.entity.entities.players {
 			// Set GUI And Effects
 			this._GUI = new PlayerGUI(this);
 
-			this.addChilds();
+			this.addChildren();
 
 			// Set Contol Key
 			this.initContolKey(contolKeyId);
@@ -1043,7 +1043,7 @@ package batr.game.entity.entities.players {
 		}
 	}
 
-	protected function addChilds(): void {
+	protected function addChildren(): void {
 		this._host.playerGUIContainer.addChild(this._GUI);
 	}
 

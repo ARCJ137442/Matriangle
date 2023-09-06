@@ -30,7 +30,7 @@ package batr.game.effect.effects {
 		public var reverse: Boolean = false;
 
 		//============Constructor Function============//
-		public function EffectBlockLight(host: Game, x: Number, y: Number, color: uint = 0xffffff, alpha: uint = uint.MAX_VALUE, reverse: Boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
+		public function EffectBlockLight(host: Game, x: Number, y: Number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: Boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
 			super(host, x, y, life);
 			this._color = color;
 			this._alpha = alpha;

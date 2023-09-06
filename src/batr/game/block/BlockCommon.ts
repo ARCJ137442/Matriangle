@@ -8,7 +8,7 @@ package batr.game.block {
 
 	public class BlockCommon extends Shape {
 		//============Static Functions============//
-		public static function fromType(type:BlockType):BlockCommon {
+		public static function fromType(type: BlockType): BlockCommon {
 			switch (type) {
 				case BlockType.X_TRAP_HURT:
 				case BlockType.X_TRAP_KILL:
@@ -26,56 +26,56 @@ package batr.game.block {
 			}
 		}
 
-		public static function fromMapColor(color:uint):BlockCommon {
+		public static function fromMapColor(color: uint): BlockCommon {
 			return BlockCommon.fromType(BlockType.fromMapColor(color));
 		}
 
 		//============Constructor Function============//
-		public function BlockCommon():void {
+		public function BlockCommon(): void {
 			super();
 		}
 
-		public function clone():BlockCommon {
+		public function clone(): BlockCommon {
 			return new BlockCommon();
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf():void {
+		public function deleteSelf(): void {
 			this.graphics.clear();
 		}
 
 		//============Instance Getter And Setter============//
-		public function get attributes():BlockAttributes {
+		public function get attributes(): BlockAttributes {
 			return BlockAttributes.ABSTRACT;
 		}
 
-		public function get type():BlockType {
+		public function get type(): BlockType {
 			return BlockType.ABSTRACT;
 		}
 
-		public function get pixelColor():uint {
+		public function get pixelColor(): uint {
 			if (this.attributes == null)
 				return 0xffffff;
 			return this.attributes.defaultPixelColor;
 		}
 
-		public function get pixelAlpha():uint {
+		public function get pixelAlpha(): uint {
 			if (this.attributes == null)
-				return uint.MAX_VALUE;
+				return uint$MAX_VALUE;
 			return this.attributes.defaultPixelAlpha;
 		}
 
 		//============Instance Functions============//
-		public function displayEquals(block:BlockCommon):Boolean {
+		public function displayEquals(block: BlockCommon): Boolean {
 			return this === block;
 		}
 
-		public function reDraw():void {
+		public function reDraw(): void {
 			this.graphics.clear();
 			this.drawMain();
 		}
 
-		protected function drawMain():void {
+		protected function drawMain(): void {
 
 		}
 	}

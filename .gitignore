@@ -29,6 +29,7 @@ git status
 
 # Test
 *pictures/
+*.test.*
 
 # Executables
 *.air

@@ -3,8 +3,8 @@
 - [x] src\batr\common\exMath.ts
 - [x] src\batr\common\iPoint.ts
 - [x] src\batr\common\KeyCode.ts
-- [ ] src\batr\common\KeyListener.ts
-- [ ] src\batr\common\RandomGenerator.ts
+- [x] src\batr\common\KeyListener.ts
+- [x] src\batr\common\RandomGenerator.ts
 - [ ] src\batr\common\UintPointCompress.ts
 - [ ] src\batr\common\Utils.ts
 - [ ] src\batr\fonts\MainFont.ts

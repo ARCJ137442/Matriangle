@@ -151,7 +151,7 @@ package batr.menu.objects.selector {
 		protected function initDisplay(): void {
 			this.updateTextByContent();
 			this._textField.initFormatAsMenu();
-			// Add Childs
+			// Add Children
 			this.addChild(this._leftArrow);
 			this.addChild(this._rightArrow);
 			this.addChild(this._textField);

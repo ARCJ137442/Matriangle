@@ -1,10 +1,12 @@
 import exMath from "./exMath";
+import { int } from "./AS3Legacy"
+import { flash } from "./FlashLegacy";
 // import flash.geom.Point;
 
 /**
  * The point only contains integer position
  */
-export class iPoint extends Object {
+export default class iPoint { // don't extends Object, otherwise it will make the functions undefined!
 	//============Static Variables============//
 
 	//============Static Functions============//
@@ -13,10 +15,10 @@ export class iPoint extends Object {
 	}
 
 	public static getDistance(p1: iPoint, p2: iPoint): number {
-		return Math.sqrt((p1.x - p2.x) * (p2.x - p1.x) + (p1.y - p2.y) * (p2.y - p1.y));
+		return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 	}
 
-	public static getManhattanDistance(p1: iPoint, p2: iPoint): number {
+	public static getManhattanDistance(p1: iPoint, p2: iPoint): int {
 		return exMath.intAbs(p1.x - p2.x) + exMath.intAbs(p1.y - p2.y);
 	}
 
@@ -40,9 +42,9 @@ export class iPoint extends Object {
 	 * T: Target
 	 * R: Return
 	 */
-	public static getLineTargetPoint(start: iPoint, target: iPoint, defaultReturnX: Boolean = true): iPoint | null {
-		var xD: number = exMath.intAbs(start.x - target.x);
-		var yD: number = exMath.intAbs(start.y - target.y);
+	public static getLineTargetPoint(start: iPoint, target: iPoint, defaultReturnX: boolean = true): iPoint | null {
+		let xD: int = exMath.intAbs(start.x - target.x);
+		let yD: int = exMath.intAbs(start.y - target.y);
 		if (xD < yD || xD == yD && defaultReturnX)
 			return new iPoint(target.x, start.y);
 		if (xD > yD)
@@ -60,9 +62,9 @@ export class iPoint extends Object {
 	 * T: Target
 	 * R: Return
 	 */
-	public static getLineTargetPoint2(sX: number, sY: number, tX: number, tY: number, defaultReturnX: Boolean = true): iPoint | null {
-		var xD: number = exMath.intAbs(sX - tX);
-		var yD: number = exMath.intAbs(sY - tY);
+	public static getLineTargetPoint2(sX: int, sY: int, tX: int, tY: int, defaultReturnX: boolean = true): iPoint | null {
+		let xD: int = exMath.intAbs(sX - tX);
+		let yD: int = exMath.intAbs(sY - tY);
 		if (xD < yD || xD == yD && defaultReturnX)
 			return new iPoint(tX, sY);
 		if (xD > yD)
@@ -96,13 +98,12 @@ export class iPoint extends Object {
 
 	//============Constructor Function============//
 	public constructor(x: number, y: number) {
-		super();
 		this.x = x;
 		this.y = y;
 	}
 
 	//============Instance Functions============//
-	public override toString(): string {
+	public toString(): string {
 		return `iPoint(x=${this.x}, y=${this.y})`
 		"(x=" + this.x + ", y=" + this.y + ")";
 	}
@@ -131,11 +132,11 @@ export class iPoint extends Object {
 		return iPoint.getManhattanDistance(this, p);
 	}
 
-	public equals(p: iPoint): Boolean {
+	public equals(p: iPoint): boolean {
 		return this.x == p.x && this.y == p.y;
 	}
 
-	public isInSameLine(p: iPoint): Boolean {
+	public isInSameLine(p: iPoint): boolean {
 		return this.x == p.x || this.y == p.y;
 	}
 }
