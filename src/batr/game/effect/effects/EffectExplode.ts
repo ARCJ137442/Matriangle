@@ -6,7 +6,7 @@ package batr.game.effect.effects {
 	import batr.game.effect.*;
 	import batr.game.main.*;
 
-	public class EffectExplode extends EffectCommon {
+	export default class EffectExplode extends EffectCommon {
 		//============Static Variables============//
 		public static const DEFAULT_COLOR: uint = 0xffdd00;
 		public static const LINE_ALPHA: uint = 5 * (uint$MAX_VALUE >> 3); // 5/8
@@ -14,8 +14,8 @@ package batr.game.effect.effects {
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
 
 		//============Instance Variables============//
-		protected var _radius: Number = 1; // Entity Pos
-		protected var _color: uint;
+		protected _radius: Number = 1; // Entity Pos
+		protected _color: uint;
 
 		//============Constructor Function============//
 		public function EffectExplode(host: Game, x: Number, y: Number, radius: Number = 1,
@@ -27,10 +27,10 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this._radius = 0;
 			this._color = 0;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

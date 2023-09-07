@@ -5,7 +5,7 @@ package batr.game.block.blocks {
 	import batr.game.block.*;
 
 	// Move as thrown block.
-	public class MoveableWall extends Wall {
+	export default class MoveableWall extends Wall {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x889988;
 		public static const FILL_COLOR: uint = 0xbbccbb;
@@ -13,7 +13,7 @@ package batr.game.block.blocks {
 		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
 
 		//============Instance Variables============//
-		protected var _virus: Boolean;
+		protected _virus: Boolean;
 
 		//============Constructor Function============//
 		public function MoveableWall(virus: Boolean = false): void {
@@ -23,8 +23,8 @@ package batr.game.block.blocks {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

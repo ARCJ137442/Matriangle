@@ -13,16 +13,16 @@
 	import flash.display.*;
 	import flash.events.*;
 
-	public class BatrSubject extends Sprite {
+	export default class BatrSubject extends Sprite {
 		//============Static Variables============//
 		private static const FOR_TEST: Boolean = false;
 
 		//============Instance Variables============//
-		protected var _game: Game;
-		protected var _menu: Menu;
+		protected _game: Game;
+		protected _menu: Menu;
 
-		protected var _gameRule: GameRule;
-		protected var _translations: I18ns;
+		protected _gameRule: GameRule;
+		protected _translations: I18ns;
 
 		//============Constructor Function============//
 		public function BatrSubject(): void {

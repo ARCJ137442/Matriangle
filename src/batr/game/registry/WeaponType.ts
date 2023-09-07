@@ -3,7 +3,7 @@ package batr.game.model {
 	import batr.common.*;
 	import batr.general.*;
 
-	public class WeaponType extends TypeCommon {
+	export default class WeaponType extends TypeCommon {
 		//============Static Variables============//
 		public static const NULL: WeaponType = null;
 		public static const ABSTRACT: WeaponType = new WeaponType('Abstract', 0, 0);
@@ -29,13 +29,13 @@ package batr.game.model {
 		public static const SHOCKWAVE_BETA: WeaponType = new WeaponType('Shockwave-β', 10, 100).setExtraProperty(10, 2, true);
 
 		// WEAPON SET
-		public static const _BULLETS: Vector.<WeaponType> = new < WeaponType > [WeaponType.BULLET, WeaponType.NUKE, WeaponType.SUB_BOMBER, WeaponType.TRACKING_BULLET];
-		public static const _LASERS: Vector.<WeaponType> = new < WeaponType > [WeaponType.LASER, WeaponType.PULSE_LASER, WeaponType.TELEPORT_LASER, WeaponType.ABSORPTION_LASER];
-		public static const _SPECIAL: Vector.<WeaponType> = new < WeaponType > [WeaponType.WAVE, WeaponType.MELEE, WeaponType.BLOCK_THROWER, WeaponType.LIGHTNING];
-		public static const _BOSS_WEAPON: Vector.<WeaponType> = new < WeaponType > [WeaponType.SHOCKWAVE_ALPHA, WeaponType.SHOCKWAVE_BETA];
-		public static const _ALL_WEAPON: Vector.<WeaponType> = _BULLETS.concat(_LASERS).concat(_SPECIAL).concat(_BOSS_WEAPON);
+		public static const _BULLETS: WeaponType[] = new < WeaponType > [WeaponType.BULLET, WeaponType.NUKE, WeaponType.SUB_BOMBER, WeaponType.TRACKING_BULLET];
+		public static const _LASERS: WeaponType[] = new < WeaponType > [WeaponType.LASER, WeaponType.PULSE_LASER, WeaponType.TELEPORT_LASER, WeaponType.ABSORPTION_LASER];
+		public static const _SPECIAL: WeaponType[] = new < WeaponType > [WeaponType.WAVE, WeaponType.MELEE, WeaponType.BLOCK_THROWER, WeaponType.LIGHTNING];
+		public static const _BOSS_WEAPON: WeaponType[] = new < WeaponType > [WeaponType.SHOCKWAVE_ALPHA, WeaponType.SHOCKWAVE_BETA];
+		public static const _ALL_WEAPON: WeaponType[] = _BULLETS.concat(_LASERS).concat(_SPECIAL).concat(_BOSS_WEAPON);
 
-		public static const _ALL_AVALIABLE_WEAPON: Vector.<WeaponType> = new < WeaponType > [
+		public static const _ALL_AVALIABLE_WEAPON: WeaponType[] = new < WeaponType > [
 			WeaponType.BULLET,
 			WeaponType.NUKE,
 			WeaponType.SUB_BOMBER,
@@ -87,7 +87,7 @@ package batr.game.model {
 		}
 
 		public static function fromString(str: String): WeaponType {
-			for each(var type: WeaponType in WeaponType._ALL_WEAPON) {
+			for (var type of WeaponType._ALL_WEAPON) {
 				if (type.name == str)
 					return type;
 
@@ -116,7 +116,7 @@ package batr.game.model {
 			return WeaponType._ALL_AVALIABLE_WEAPON.indexOf(type);
 		}
 
-		public static function isIncludeIn(type: WeaponType, types: Vector.<WeaponType>): Boolean {
+		public static function isIncludeIn(type: WeaponType, types: WeaponType[]): Boolean {
 			return types.indexOf(type) >= 0;
 		}
 
@@ -150,31 +150,31 @@ package batr.game.model {
 		}
 
 		//============Instance Variables============//
-		protected var _defaultCD: uint;
+		protected _defaultCD: uint;
 
 		// Tick
-		protected var _defaultChargeTime: uint;
+		protected _defaultChargeTime: uint;
 
 		// Tick
-		protected var _defaultDamage: uint;
+		protected _defaultDamage: uint;
 
-		protected var _reverseCharge: Boolean;
+		protected _reverseCharge: Boolean;
 
 		// Whether the weapon will auto charge and can use before full charge
 		// canHurt
-		protected var _canHurtEnemy: Boolean;
+		protected _canHurtEnemy: Boolean;
 
-		protected var _canHurtSelf: Boolean;
+		protected _canHurtSelf: Boolean;
 
-		protected var _canHurtAlly: Boolean;
+		protected _canHurtAlly: Boolean;
 
 		// Extra
-		protected var _extraDamageCoefficient: uint = 5;
-		protected var _extraResistanceCoefficient: uint = 1;
-		protected var _useOnCenter: Boolean = false;
+		protected _extraDamageCoefficient: uint = 5;
+		protected _extraResistanceCoefficient: uint = 1;
+		protected _useOnCenter: Boolean = false;
 
 		// Drone
-		protected var _chargePercentInDrone: Number = 1;
+		protected _chargePercentInDrone: Number = 1;
 
 		//============Constructor Function============//
 		public function WeaponType(name: String,

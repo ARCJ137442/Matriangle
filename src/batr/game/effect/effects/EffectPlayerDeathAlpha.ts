@@ -7,7 +7,7 @@ package batr.game.effect.effects {
 	import batr.game.effect.*;
 	import batr.game.main.*;
 
-	public class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
+	export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
 		//============Static Variables============//
 		public static const ALPHA: Number = 0.8;
 		public static const MAX_LIFE: uint = GlobalGameVariables.TPS;
@@ -25,8 +25,8 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

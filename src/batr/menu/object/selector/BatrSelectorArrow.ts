@@ -11,7 +11,7 @@ package batr.menu.object.selector {
 	import flash.display.*;
 	import flash.events.MouseEvent;
 
-	internal class BatrSelectorArrow extends BatrMenuGUI implements IBatrMenuElement {
+	class BatrSelectorArrow extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x888888;
 		public static const FILL_COLOR: uint = 0xcccccc;
@@ -22,12 +22,12 @@ package batr.menu.object.selector {
 		public static const RELEASE_ALPHA: Number = 0.6;
 
 		//============Instance Variables============//
-		protected var _displayWidth: Number;
-		protected var _displayHeight: Number;
-		protected var _lineColor: uint;
-		protected var _fillColor: uint;
-		protected var _lineSize: Number;
-		protected var _clickFunc: Function = null;
+		protected _displayWidth: Number;
+		protected _displayHeight: Number;
+		protected _lineColor: uint;
+		protected _fillColor: uint;
+		protected _lineSize: Number;
+		protected _clickFunc: Function = null;
 
 		//============Constructor Function============//
 		public function BatrSelectorArrow(width: Number = GlobalGameVariables.DEFAULT_SIZE * 0.6,
@@ -48,10 +48,10 @@ package batr.menu.object.selector {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
 			this._clickFunc = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

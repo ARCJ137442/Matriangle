@@ -9,15 +9,15 @@ package batr.game.entity.ai.programs {
 	/**
 	 * Random move and Always Press Use.
 	 */
-	public class AIProgram_Dummy implements IAIProgram {
+	export default class AIProgram_Dummy implements IAIProgram {
 		//============Static Variables============//
 		public static const LABEL: String = 'Dummy';
 		public static const LABEL_SHORT: String = 'D';
 
 		//============Instance Variables============//
-		protected var _moveSum: uint;
-		protected var _moveMaxSum: uint = 4 + exMath.random(16);
-		protected var _tempRot: uint;
+		protected _moveSum: uint;
+		protected _moveMaxSum: uint = 4 + exMath.random(16);
+		protected _tempRot: uint;
 
 		//============Constructor Function============//
 		public function AIProgram_Dummy(): void {
@@ -25,7 +25,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;

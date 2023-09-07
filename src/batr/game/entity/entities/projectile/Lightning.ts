@@ -12,7 +12,7 @@ package batr.game.entity.entity.projectile {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class Lightning extends ProjectileCommon {
+	export default class Lightning extends ProjectileCommon {
 		//============Static Variables============//
 		public static const LIGHT_ALPHA: Number = 0.5;
 		public static const LIGHT_BLOCK_WIDTH: Number = 0.2;
@@ -21,15 +21,15 @@ package batr.game.entity.entity.projectile {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _life: uint = LIFE;
-		public var isDamaged: Boolean = false;
+		protected _life: uint = LIFE;
+		public isDamaged: Boolean = false;
 
-		protected var _energy: int;
-		protected var _initialEnergy: int;
+		protected _energy: int;
+		protected _initialEnergy: int;
 
-		protected var _wayPoints: Vector.<iPoint> = new Vector.<iPoint>();
-		protected var _hurtPlayers: Vector.<Player> = new Vector.<Player>();
-		protected var _hurtDefaultDamage: Vector.<uint> = new Vector.<uint>();
+		protected _wayPoints: iPoint[] = new iPoint[]();
+		protected _hurtPlayers: Player[] = new Player[]();
+		protected _hurtDefaultDamage: uint[] = new uint[]();
 
 		//============Constructor Function============//
 		public function Lightning(host: Game, x: Number, y: Number, rot: uint, owner: Player, energy: int): void {
@@ -40,7 +40,7 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 
 		}
 

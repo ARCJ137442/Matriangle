@@ -9,13 +9,13 @@ package batr.menu.event {
 
 	import flash.events.Event;
 
-	public class I18nsChangeEvent extends Event {
+	export default class I18nsChangeEvent extends Event {
 		//============Static Variables============//
 		public static const TYPE: String = 'I18nsChangeEvent';
 
 		//============Instance Variables============//
-		protected var _nowI18ns: I18ns;
-		protected var _oldI18ns: I18ns;
+		protected _nowI18ns: I18ns;
+		protected _oldI18ns: I18ns;
 
 		//============Constructor Function============//
 		public function I18nsChangeEvent(nowI18ns: I18ns, oldI18ns: I18ns = null, bubbles: Boolean = false, cancelable: Boolean = false): void {

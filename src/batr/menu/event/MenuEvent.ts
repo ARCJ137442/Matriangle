@@ -8,7 +8,7 @@ package batr.menu.events {
 
 	import flash.events.Event;
 
-	public class MenuEvent extends Event {
+	export default class MenuEvent extends Event {
 		//============Static Variables============//
 		public static const TITLE_SHOWEN: String = 'MenuEvent:titleShowen';
 

@@ -10,7 +10,7 @@ package batr.game.entity.ai.programs {
 	/**
 	 * Running as a State Machine.
 	 */
-	public class AIProgram_Novice implements IAIProgram {
+	export default class AIProgram_Novice implements IAIProgram {
 		//============Static Variables============//
 		public static const LABEL: String = 'Novice';
 		public static const LABEL_SHORT: String = 'N';
@@ -19,8 +19,8 @@ package batr.game.entity.ai.programs {
 		protected static function getLineEnemyPlayer(owner: AIPlayer): Player {
 			if (owner == null)
 				return null;
-			var mapPlayers: Vector.<Player> = owner.host.getInMapPlayers();
-			for each(var player: Player in mapPlayers) {
+			var mapPlayers: Player[] = owner.host.getInMapPlayers();
+			for (var player of mapPlayers) {
 				if (player == owner)
 					continue;
 				if (player.gridX == owner.gridX || player.gridY == owner.gridY) {
@@ -34,8 +34,8 @@ package batr.game.entity.ai.programs {
 		protected static function getLineBonusBox(owner: AIPlayer): BonusBox {
 			if (owner == null)
 				return null;
-			var boxes: Vector.<BonusBox> = owner.host.allAvaliableBonusBox;
-			for each(var box: BonusBox in boxes) {
+			var boxes: BonusBox[] = owner.host.allAvaliableBonusBox;
+			for (var box of boxes) {
 				if (box == null)
 					continue;
 				if (box.gridX == owner.gridX || box.gridY == owner.gridY) {
@@ -46,12 +46,12 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Instance Variables============//
-		protected var _moveSum: uint = 0;
-		protected var _moveMaxSum: uint = 8;
-		protected var _tempRot: uint;
+		protected _moveSum: uint = 0;
+		protected _moveMaxSum: uint = 8;
+		protected _tempRot: uint;
 
-		protected var _waitTime: int = 0;
-		protected var _maxWaitTime: uint = 40;
+		protected _waitTime: int = 0;
+		protected _maxWaitTime: uint = 40;
 
 		//============Constructor Function============//
 		public function AIProgram_Novice() {
@@ -59,7 +59,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;

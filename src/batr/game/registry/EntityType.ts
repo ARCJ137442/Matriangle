@@ -3,7 +3,7 @@
 	import batr.common.*;
 	import batr.general.*;
 
-	public class EntityType extends TypeCommon {
+	export default class EntityType extends TypeCommon {
 		//============Static Variables============//
 		public static const NULL: EntityType = null;
 		public static const ABSTRACT: EntityType = new EntityType('Abstract');
@@ -30,12 +30,12 @@
 
 		public static const AI_PLAYER: EntityType = new EntityType('AIPlayer');
 
-		public static const _BULLETS: Vector.<EntityType> = new < EntityType > [EntityType.BULLET_BASIC, EntityType.BULLET_NUKE, EntityType.SUB_BOMBER, EntityType.BULLET_TRACKING];
-		public static const _LASERS: Vector.<EntityType> = new < EntityType > [EntityType.LASER_BASIC, EntityType.LASER_PULSE, EntityType.LASER_TELEPORT, EntityType.LASER_ABSORPTION];
-		public static const _WAVES: Vector.<EntityType> = new < EntityType > [EntityType.WAVE];
+		public static const _BULLETS: EntityType[] = new < EntityType > [EntityType.BULLET_BASIC, EntityType.BULLET_NUKE, EntityType.SUB_BOMBER, EntityType.BULLET_TRACKING];
+		public static const _LASERS: EntityType[] = new < EntityType > [EntityType.LASER_BASIC, EntityType.LASER_PULSE, EntityType.LASER_TELEPORT, EntityType.LASER_ABSORPTION];
+		public static const _WAVES: EntityType[] = new < EntityType > [EntityType.WAVE];
 
-		public static const _PROJECTILES: Vector.<EntityType> = new < EntityType > [EntityType.SHOCKWAVE_LASER_BASE, EntityType.SHOCKWAVE_LASER_DRONE, EntityType.WAVE, EntityType.THROWN_BLOCK].concat(EntityType._BULLETS, EntityType._LASERS);
-		public static const _ALL_ENTITY: Vector.<EntityType> = new < EntityType > [EntityType.PLAYER, EntityType.BONUS_BOX].concat(EntityType._PROJECTILES);
+		public static const _PROJECTILES: EntityType[] = new < EntityType > [EntityType.SHOCKWAVE_LASER_BASE, EntityType.SHOCKWAVE_LASER_DRONE, EntityType.WAVE, EntityType.THROWN_BLOCK].concat(EntityType._BULLETS, EntityType._LASERS);
+		public static const _ALL_ENTITY: EntityType[] = new < EntityType > [EntityType.PLAYER, EntityType.BONUS_BOX].concat(EntityType._PROJECTILES);
 
 		//============Static Getter And Setter============//
 		public static function get RANDOM(): EntityType {
@@ -45,7 +45,7 @@
 
 		//============Static Functions============//
 		public static function fromString(str: String): EntityType {
-			for each(var type: EntityType in EntityType._ALL_ENTITY) {
+			for (var type of EntityType._ALL_ENTITY) {
 				if (type.name == str)
 					return type;
 
@@ -54,8 +54,8 @@
 
 		}
 
-		public static function isIncludeIn(type: EntityType, types: Vector.<EntityType>): Boolean {
-			for each(var type2: EntityType in types) {
+		public static function isIncludeIn(type: EntityType, types: EntityType[]): Boolean {
+			for (var type2 of types) {
 				if (type === type2)
 					return true;
 			}
@@ -68,7 +68,7 @@
 		}
 
 		//============Instance Variables============//
-		protected var _rotatable: Boolean = true;
+		protected _rotatable: Boolean = true;
 
 		//============Instance Getter And Setter============//
 		public override function get label(): String {

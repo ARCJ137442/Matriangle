@@ -23,7 +23,7 @@ export default class KeyListener {
 	//============Instance Variables============//
 	protected _listenTo: Stage | null = null;
 	protected _pressedKeys: KeyMap = {};
-	// protected pressedKeys:Vector.<uint>=new Vector.<uint>
+	// protected pressedKeys:uint[]=new uint[]
 	protected _ctrlKey: boolean = false;
 	protected _shiftKey: boolean = false;
 	protected _altKey: boolean = false;
@@ -34,7 +34,7 @@ export default class KeyListener {
 	}
 
 	//============Destructor Function============//
-	public deleteSelf(): void {
+	public destructor(): void {
 		this.listens = null;
 
 		for (let k in this._pressedKeys) {

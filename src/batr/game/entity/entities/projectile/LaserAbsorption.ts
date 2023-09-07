@@ -7,14 +7,14 @@ package batr.game.entity.entity.projectile {
 	import batr.game.entity.entity.player.*;
 	import batr.game.entity.*;
 
-	public class LaserAbsorption extends LaserBasic {
+	export default class LaserAbsorption extends LaserBasic {
 		//============Static Variables============//
 		public static const LIFE: Number = GlobalGameVariables.TPS;
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;
 		public static const SCALE_V: Number = 1 / 4;
 
 		//============Instance Variables============//
-		protected var scaleReverse: Boolean = true;
+		protected scaleReverse: Boolean = true;
 
 		//============Constructor Function============//
 		public function LaserAbsorption(host: Game, x: Number, y: Number, owner: Player, length: uint = LENGTH): void {

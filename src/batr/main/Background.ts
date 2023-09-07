@@ -6,7 +6,7 @@ package batr.main {
 
 	import flash.display.*;
 
-	public class Background extends Sprite {
+	export default class Background extends Sprite {
 		//============Static Variables============//
 		public static const BACKGROUND_COLOR: uint = 0xdddddd;
 		public static const GRID_COLOR: uint = 0xd6d6d6;
@@ -17,13 +17,13 @@ package batr.main {
 		public static const FRAME_LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 8;
 
 		//============Instance Variables============//
-		protected var _frame: Sprite;
+		protected _frame: Sprite;
 
-		protected var _enableGrid: Boolean;
+		protected _enableGrid: Boolean;
 
-		protected var _enableFrame: Boolean;
+		protected _enableFrame: Boolean;
 
-		protected var _enableBorderLine: Boolean;
+		protected _enableBorderLine: Boolean;
 
 		//============Constructor Function============//
 		public function Background(width: uint, height: uint,
@@ -49,7 +49,7 @@ package batr.main {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.graphics.clear();
 
 			this._enableFrame = false;
@@ -166,7 +166,7 @@ package batr.main {
 				child = this._frame.getChildAt(0);
 
 				if (child is BlockCommon) {
-					(child as BlockCommon).deleteSelf();
+					(child as BlockCommon).destructor();
 
 				}
 				this._frame.removeChild(child);

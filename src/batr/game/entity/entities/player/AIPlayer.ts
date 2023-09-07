@@ -12,7 +12,7 @@ package batr.game.entity.entity.players {
 
 	import flash.display.Graphics;
 
-	public class AIPlayer extends Player {
+	export default class AIPlayer extends Player {
 		//============Static Variables============//
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 32;
 		public static const DEFAULT_AI_RUN_SPEED: Number = 12;
@@ -61,11 +61,11 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Instance Variables============//
-		protected var _AIProgram: IAIProgram;
+		protected _AIProgram: IAIProgram;
 
-		protected var _AIRunDelay: uint;
-		protected var _AIRunMaxDelay: uint;
-		protected var _actionThread: Vector.<AIPlayerAction> = new Vector.<AIPlayerAction>;
+		protected _AIRunDelay: uint;
+		protected _AIRunMaxDelay: uint;
+		protected _actionThread: AIPlayerAction[] = new AIPlayerAction[];
 
 		//============Constructor Function============//
 		public function AIPlayer(
@@ -82,11 +82,11 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this._AIRunDelay = this._AIRunMaxDelay = 0;
 			this._AIProgram = null;
 
-			super.deleteSelf();
+			super.destructor();
 
 		}
 
@@ -123,7 +123,7 @@ package batr.game.entity.entity.players {
 			return this._AIProgram == null ? null : this._AIProgram.label;
 		}
 
-		public function get ActionThread(): Vector.<AIPlayerAction> {
+		public function get ActionThread(): AIPlayerAction[] {
 			return this._actionThread;
 		}
 
@@ -349,7 +349,7 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function runActions(actions: Vector.<AIPlayerAction>): void {
+		public function runActions(actions: AIPlayerAction[]): void {
 			for (var i: uint = 0; i < actions.length; i++) {
 				runAction(actions[i]);
 
@@ -357,7 +357,7 @@ package batr.game.entity.entity.players {
 		}
 
 		public function runActions2(...actions): void {
-			var runV: Vector.<AIPlayerAction> = new Vector.<AIPlayerAction>;
+			var runV: AIPlayerAction[] = new AIPlayerAction[];
 
 			for (var i: uint = 0; i < actions.length; i++) {
 				if (actions[i] is AIPlayerAction) {
@@ -372,7 +372,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function addActionsToThread(actions: Vector.<AIPlayerAction>): void {
+		public function addActionsToThread(actions: AIPlayerAction[]): void {
 			this._actionThread = this._actionThread.concat(actions);
 
 		}
@@ -382,7 +382,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function addActionsToThreadAtFirst(actions: Vector.<AIPlayerAction>): void {
+		public function addActionsToThreadAtFirst(actions: AIPlayerAction[]): void {
 			this._actionThread = actions.concat(this._actionThread);
 
 		}
@@ -412,7 +412,7 @@ package batr.game.entity.entity.players {
 
 			}
 			else {
-				var tempActions: Vector.<AIPlayerAction> = this._actionThread.concat();
+				var tempActions: AIPlayerAction[] = this._actionThread.concat();
 
 				for (var i: uint = 0; i < count; i++) {
 					this._actionThread = this._actionThread.concat(tempActions);

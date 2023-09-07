@@ -14,7 +14,7 @@
 
 	import flash.text.*;
 
-	public class BatrTextInput extends TextField implements IBatrMenuElement {
+	export default class BatrTextInput extends TextField implements IBatrMenuElement {
 		//============Static Constructor============//
 
 		//============Static Variables============//
@@ -40,7 +40,7 @@
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 
 		}
 

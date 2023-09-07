@@ -10,13 +10,13 @@ package batr.game.effect {
 	/**
 	 * Use for manage effects in game.
 	 */
-	public class EffectSystem {
+	export default class EffectSystem {
 		//============Static Variables============//
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _host: Game;
+		protected _host: Game;
 
 		// UUID
 
@@ -24,10 +24,10 @@ package batr.game.effect {
 		 * The UUID Process to system.
 		 * getEffectByUUID(this._headUUID) usual equals null.
 		 */
-		private var _headUUID: uint = 1;
-		private var _uuidDic: Dictionary = new Dictionary(true);
+		private _headUUID: uint = 1;
+		private _uuidDic: Dictionary = new Dictionary(true);
 
-		protected var _effects: Vector.<EffectCommon> = new Vector.<EffectCommon>;
+		protected _effects: EffectCommon[] = new EffectCommon[];
 
 		//============Constructor Function============//
 		public function EffectSystem(host: Game): void {
@@ -35,7 +35,7 @@ package batr.game.effect {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.removeAllEffect();
 			this._effects = null;
 
@@ -48,7 +48,7 @@ package batr.game.effect {
 			return this._host;
 		}
 
-		public function get effects(): Vector.<EffectCommon> {
+		public function get effects(): EffectCommon[] {
 			return this._effects;
 		}
 
@@ -91,18 +91,18 @@ package batr.game.effect {
 			return effect != null && this.isValidUUID(this.getUUIDByEffect(effect));
 		}
 
-		public function getAllEffect(): Vector.<EffectCommon> {
-			var result: Vector.<EffectCommon> = new Vector.<EffectCommon>();
-			for each(var obj: Object in this._uuidDic) {
+		public function getAllEffect(): EffectCommon[] {
+			var result: EffectCommon[] = new EffectCommon[]();
+			for (var obj of this._uuidDic) {
 				if (obj != null && obj is EffectCommon)
 				result.push(obj as EffectCommon);
 			}
 			return result;
 		}
 
-		public function getAllUUID(): Vector.<uint> {
-			var result: Vector.<uint> = new Vector.<uint>();
-			for each(var obj: Object in this._uuidDic) {
+		public function getAllUUID(): uint[] {
+			var result: uint[] = new uint[]();
+			for (var obj of this._uuidDic) {
 				if (obj != null && obj is uint && isValidUUID(obj as uint))
 				result.push(obj as uint);
 			}
@@ -121,7 +121,7 @@ package batr.game.effect {
 			return false;
 		}
 
-		public function cencellEffectforUUID(effect: EffectCommon): Boolean {
+		public function removeEffectforUUID(effect: EffectCommon): Boolean {
 			var uuid: uint = this.getUUIDByEffect(effect);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[effect] = 0;
@@ -140,11 +140,11 @@ package batr.game.effect {
 			}
 		}
 
-		// Register,Cencell and Remove
+		// Register,Remove and Remove
 		public function isRegisteredEffect(effect: EffectCommon): Boolean {
 			// List
 			/*return this._effects.some(
-			function(e2:EffectCommon,i:uint,v:Vector.<EffectCommon>) {
+			function(e2:EffectCommon,i:uint,v:EffectCommon[]) {
 				return e2==effect
 			})*/
 			// UUIDMap
@@ -165,14 +165,14 @@ package batr.game.effect {
 
 		}
 
-		public function cencellEffect(effect: EffectCommon): Boolean {
+		public function removeEffect(effect: EffectCommon): Boolean {
 			if (effect == null || !isRegisteredEffect(effect))
 				return false;
 			// List
 			this._effects.splice(this._effects.indexOf(effect), 1);
 			// UUIDMap
 			if (this.hasValidUUID(effect))
-				this.cencellEffectforUUID(effect);
+				this.removeEffectforUUID(effect);
 			return true;
 
 		}
@@ -188,9 +188,9 @@ package batr.game.effect {
 			if (effect == null)
 				return;
 
-			effect.deleteSelf();
+			effect.destructor();
 
-			cencellEffect(effect);
+			removeEffect(effect);
 
 			Utils.removeChildIfContains(this._host.effectContainerBottom, effect);
 

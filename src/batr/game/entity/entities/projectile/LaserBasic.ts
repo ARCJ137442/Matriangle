@@ -7,15 +7,15 @@ package batr.game.entity.entity.projectile {
 	import batr.game.model.*;
 	import batr.game.main.*;
 
-	public class LaserBasic extends ProjectileCommon {
+	export default class LaserBasic extends ProjectileCommon {
 		//============Static Variables============//
 		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS;
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 2;
 		public static const LENGTH: uint = 32; // EntityPos
 
 		//============Instance Variables============//
-		protected var _life: uint = LIFE;
-		public var isDamaged: Boolean = false;
+		protected _life: uint = LIFE;
+		public isDamaged: Boolean = false;
 
 		//============Constructor Function============//
 		public function LaserBasic(host: Game, x: Number, y: Number, owner: Player, length: Number = LENGTH, chargePercent: Number = 1): void {
@@ -28,9 +28,9 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

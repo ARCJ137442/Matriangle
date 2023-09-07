@@ -11,7 +11,7 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class Wave extends ProjectileCommon {
+	export default class Wave extends ProjectileCommon {
 		//============Static Variables============//
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE;
 		public static const ALPHA: Number = 0.64;
@@ -22,13 +22,13 @@ package batr.game.entity.entity.projectile {
 		public static const DAMAGE_DELAY: uint = GlobalGameVariables.FIXED_TPS / 12;
 
 		//============Instance Variables============//
-		public var speed: Number = DEFAULT_SPEED;
+		public speed: Number = DEFAULT_SPEED;
 
-		public var tempScale: Number;
+		public tempScale: Number;
 
-		protected var life: uint = LIFE;
+		protected life: uint = LIFE;
 
-		protected var _finalScale: Number;
+		protected _finalScale: Number;
 
 		//============Constructor Function============//
 		public function Wave(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number): void {
@@ -43,7 +43,7 @@ package batr.game.entity.entity.projectile {
 			return EntityType.WAVE;
 		}
 
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
 		}
 

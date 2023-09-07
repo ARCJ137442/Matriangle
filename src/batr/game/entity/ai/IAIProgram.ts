@@ -9,7 +9,7 @@ package batr.game.entity.ai.programs {
 	 */
 	public interface IAIProgram {
 		// Destructor
-		function deleteSelf(): void;
+		function destructor(): void;
 	// AI Variables
 	function get label(): String;
 	function get labelShort(): String;

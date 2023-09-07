@@ -1,6 +1,6 @@
 package batr.game.block {
 
-	public class BlockAttributes {
+	export default class BlockAttributes {
 		//============Static Variables============//
 		public static const NULL: BlockAttributes = null;
 		public static const ABSTRACT: BlockAttributes = new BlockAttributes();
@@ -33,13 +33,13 @@ package batr.game.block {
 
 		//============Instance Variables============//
 		//==Attributes==//
-		public var playerCanPass: Boolean;
+		public playerCanPass: Boolean;
 
-		public var bulletCanPass: Boolean;
+		public bulletCanPass: Boolean;
 
-		public var laserCanPass: Boolean;
+		public laserCanPass: Boolean;
 
-		public var isTransParent: Boolean;
+		public isTransParent: Boolean;
 
 		/**
 		 * GUI,HUD,EffectTop
@@ -50,17 +50,17 @@ package batr.game.block {
 		 * <Bottom>:NEGATIVE
 		 * EffectBottom,Background
 		 */
-		public var drawLayer: int = 1;
+		public drawLayer: int = 1;
 
 		/**
 		 * Weapon:BlockThrower can carry
 		 */
-		public var isCarryable: Boolean = true;
+		public isCarryable: Boolean = true;
 
 		/**
 		 * Weapon:BlockThrower can carry
 		 */
-		public var isBreakable: Boolean = true;
+		public isBreakable: Boolean = true;
 
 		/**
 		 * -1 means is will damage player as axphyxia
@@ -68,37 +68,37 @@ package batr.game.block {
 		 * int.MIN_VALUE means no damage
 		 * int.MAX_VALUE means they can kill player once a damage
 		 */
-		public var playerDamage: int = int.MIN_VALUE;
+		public playerDamage: int = int.MIN_VALUE;
 
 		/**
 		 * True means player/projectile will rotate when move in the block.
 		 */
-		public var rotateWhenMoveIn: Boolean = false;
+		public rotateWhenMoveIn: Boolean = false;
 
 		/**
 		 * this attribute determines electric flow in the block,
 		 * 0 means lightning can flow in the block without energy
 		 * energy-=electricResistance
 		 */
-		public var electricResistance: uint = 100;
+		public electricResistance: uint = 100;
 
 		/**
 		 * Cann't be control in Arena Map.
 		 */
-		public var unbreakableInArenaMap: Boolean = false;
+		public unbreakableInArenaMap: Boolean = false;
 
 		/**
 		 * Spawn BonusBox ignore max count.
 		 */
-		public var supplingBonus: Boolean = false;
+		public supplingBonus: Boolean = false;
 
 		//==Information==//
-		public var defaultPixelColor: uint;
+		public defaultPixelColor: uint;
 
 		/**
 		 * Using UINT PERCENT!
 		 */
-		public var defaultPixelAlpha: uint;
+		public defaultPixelAlpha: uint;
 
 		//============Constructor Function============//
 		public function BlockAttributes(defaultPixelColor: uint = 0xffffff, defaultPixelAlpha: uint = uint$MAX_VALUE): void {
@@ -142,7 +142,7 @@ package batr.game.block {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 
 		}
 

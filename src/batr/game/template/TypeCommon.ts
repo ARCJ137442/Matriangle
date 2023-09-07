@@ -7,8 +7,8 @@ export default class TypeCommon {
 	//============Static Getter And Setter============//
 
 	//============Static Functions============//
-	public static isIncludeIn(type: TypeCommon, types: Vector.<TypeCommon>): Boolean {
-		for each(var type2: TypeCommon in types) {
+	public static isIncludeIn(type: TypeCommon, types: TypeCommon[]): Boolean {
+		for (var type2 of types) {
 			if (type === type2)
 				return true;
 		}
@@ -16,11 +16,10 @@ export default class TypeCommon {
 	}
 
 	//============Instance Variables============//
-	protected var _name: String;
+	protected _name: String;
 
 	//============Constructor Function============//
-	public TypeCommon(name: String) {
-		super();
+	public constructor(name: String) {
 		this._name = name;
 	}
 

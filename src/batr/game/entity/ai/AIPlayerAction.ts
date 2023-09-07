@@ -35,7 +35,7 @@ package batr.game.entity.ai {
 		public static const RELEASE_KEY_USE: AIPlayerAction = new AIPlayerAction('releaseKeyUse');
 		public static const DISABLE_CHARGE: AIPlayerAction = new AIPlayerAction('disableCharge');
 
-		public static const _ALL_ACTIONS: Vector.<AIPlayerAction> = new < AIPlayerAction > [
+		public static const _ALL_ACTIONS: AIPlayerAction[] = new < AIPlayerAction > [
 			AIPlayerAction.MOVE_UP,
 			AIPlayerAction.MOVE_DOWN,
 			AIPlayerAction.MOVE_LEFT_ABS,
@@ -66,7 +66,7 @@ package batr.game.entity.ai {
 		];
 		//============Static Functions============//
 		public static function fromString(str: String): AIPlayerAction {
-			for each(var action: AIPlayerAction in AIPlayerAction._ALL_ACTIONS) {
+			for (var action of AIPlayerAction._ALL_ACTIONS) {
 				if (action.name == str)
 					return action;
 			}
@@ -108,7 +108,7 @@ package batr.game.entity.ai {
 		}
 
 		//============Instance Variables============//
-		protected var _name: String;
+		protected _name: String;
 
 		//============Constructor Function============//
 		public function AIPlayerAction(name: String): void {

@@ -13,15 +13,15 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class ThrownBlock extends ProjectileCommon {
+	export default class ThrownBlock extends ProjectileCommon {
 		//============Static Variables============//
 		public static const MAX_SPEED: Number = 15 / GlobalGameVariables.FIXED_TPS;
 		public static const MIN_SPEED: Number = 1 / 3 * MAX_SPEED;
 
 		//============Instance Variables============//
-		public var xSpeed: Number;
-		public var ySpeed: Number;
-		protected var _carriedBlock: BlockCommon;
+		public xSpeed: Number;
+		public ySpeed: Number;
+		protected _carriedBlock: BlockCommon;
 
 		//============Constructor Function============//
 		public function ThrownBlock(host: Game, x: Number, y: Number,
@@ -38,12 +38,12 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			Utils.removeChildIfContains(this, this._carriedBlock);
 
 			this._carriedBlock = null;
 
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

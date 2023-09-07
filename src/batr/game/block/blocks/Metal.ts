@@ -6,38 +6,38 @@ package batr.game.block.blocks {
 
 	import flash.display.*;
 
-	public class Metal extends Wall {
+	export default class Metal extends Wall {
 		//============Static Variables============//
-		protected static const LINE_SIZE:uint = GlobalGameVariables.DEFAULT_SIZE / 20;
+		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 20;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function Metal(lineColor:uint = 0x444444, fillColor:uint = 0xdddddd):void {
+		public function Metal(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd): void {
 			super(lineColor, fillColor);
 			this.drawMain();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.METAL;
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return BlockType.METAL;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new Metal(this._lineColor, this._fillColor);
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			// Line
 			this.graphics.beginFill(this._lineColor);
 			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);

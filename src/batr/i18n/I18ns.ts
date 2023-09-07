@@ -2,18 +2,18 @@ package batr.translations {
 
 	import flash.system.Capabilities;
 
-	public class I18ns {
+	export default class I18ns {
 		//============Static Variables============//
 		// I18ns
 		protected static var EN_US: I18ns;
 		protected static var ZH_CN: I18ns;
-		protected static var _translationsList: Vector.<I18ns>;
+		protected static var _translationsList: I18ns[];
 
 		// Class Init
 		protected static var isInited: Boolean = false;
 
 		//============Static Getter And Setter============//
-		public static function get translationsList(): Vector.<I18ns> {
+		public static function get translationsList(): I18ns[] {
 			return I18ns._translationsList;
 		}
 
@@ -53,7 +53,7 @@ package batr.translations {
 			if (str.length < 1 || str == null)
 				return returnT;
 			var str1: Array, k: String, v: String;
-			for each(var value in str) {
+			for (var value of str) {
 				str1 = String(value).split(':');
 
 				k = str1[0];
@@ -96,13 +96,13 @@ package batr.translations {
 		}
 
 		//============Instance Variables============//
-		protected var _dictionary: Object = new Object();
+		protected _dictionary: Object = new Object();
 
-		protected var _enabledToWrite: Boolean = true;
+		protected _enabledToWrite: Boolean = true;
 
-		protected var _getFunction: Function;
+		protected _getFunction: Function;
 
-		protected var _setFunction: Function;
+		protected _setFunction: Function;
 
 		//============Constructor Function============//
 		// 'index','text','index2','text2','index3','text3','...'
@@ -122,8 +122,8 @@ package batr.translations {
 
 		}
 
-		public function get translationKeys(): Vector.<String> {
-			var rV: Vector.<String> = new Vector.<String>();
+		public function get translationKeys(): String[] {
+			var rV: String[] = new String[]();
 
 			for (var index in this._dictionary) {
 				rV.push(String(index));
@@ -133,10 +133,10 @@ package batr.translations {
 
 		}
 
-		public function get translationValues(): Vector.<String> {
-			var rV: Vector.<String> = new Vector.<String>();
+		public function get translationValues(): String[] {
+			var rV: String[] = new String[]();
 
-			for each(var value in this._dictionary) {
+			for (var value of this._dictionary) {
 				rV.push(String(value));
 
 			}

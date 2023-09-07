@@ -8,53 +8,53 @@ package batr.game.effect.effects {
 
 	import flash.display.*;
 
-	public class EffectSpawn extends EffectTeleport {
+	export default class EffectSpawn extends EffectTeleport {
 		//============Static Variables============//
-		public static const DEFAULT_COLOR:uint = 0x6666ff;
-		public static const LINE_ALPHA:Number = 0.6;
-		public static const FILL_ALPHA:Number = 0.5;
-		public static const LINE_SIZE:Number = GlobalGameVariables.DEFAULT_SIZE / 25;
-		public static const SIZE:uint = GlobalGameVariables.DEFAULT_SIZE * 1.6;
-		public static const MAX_LIFE:uint = GlobalGameVariables.FIXED_TPS * 0.5;
-		public static const SCALE:Number = 1;
-		public static const STAGE_1_START_TIME:uint = MAX_LIFE * 3 / 4;
-		public static const STAGE_2_START_TIME:uint = MAX_LIFE / 4;
-		public static const ROTATE_ANGLE:uint = 45;
+		public static const DEFAULT_COLOR: uint = 0x6666ff;
+		public static const LINE_ALPHA: Number = 0.6;
+		public static const FILL_ALPHA: Number = 0.5;
+		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
+		public static const SIZE: uint = GlobalGameVariables.DEFAULT_SIZE * 1.6;
+		public static const MAX_LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.5;
+		public static const SCALE: Number = 1;
+		public static const STAGE_1_START_TIME: uint = MAX_LIFE * 3 / 4;
+		public static const STAGE_2_START_TIME: uint = MAX_LIFE / 4;
+		public static const ROTATE_ANGLE: uint = 45;
 
 		//============Instance Variables============//
-		protected var _animationStage:uint;
+		protected _animationStage: uint;
 
-		protected var _tempLife:uint;
+		protected _tempLife: uint;
 
 		//============Constructor Function============//
-		public function EffectSpawn(host:Game, x:Number, y:Number, scale:Number = SCALE):void {
+		public function EffectSpawn(host: Game, x: Number, y: Number, scale: Number = SCALE): void {
 			super(host, x, y, scale);
 			this._animationStage = 0;
 		}
 
-		protected override function initScale(scale:Number):void {
+		protected override function initScale(scale: Number): void {
 			this.scale = 0;
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function destructor(): void {
 			this._animationStage = 0;
 			this._tempLife = 0;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type():EffectType {
+		public override function get type(): EffectType {
 			return EffectType.SPAWN;
 		}
 
 		//============Instance Functions============//
-		public override function drawShape():void {
+		public override function drawShape(): void {
 			drawBlocks(EffectSpawn.DEFAULT_COLOR, EffectSpawn.SIZE);
 
 		}
 
-		public override function onEffectTick():void {
+		public override function onEffectTick(): void {
 			dealLife();
 
 			if (this.life <= STAGE_2_START_TIME) {

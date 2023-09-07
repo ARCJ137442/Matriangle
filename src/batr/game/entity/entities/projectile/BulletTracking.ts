@@ -11,7 +11,7 @@
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class BulletTracking extends BulletBasic {
+	export default class BulletTracking extends BulletBasic {
 		//============Static Variables============//
 		public static const SIZE: Number = PosTransform.localPosToRealPos(3 / 8);
 		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
@@ -19,10 +19,10 @@
 		public static const DEFAULT_EXPLODE_RADIUS: Number = 0.625;
 
 		//============Instance Variables============//
-		protected var _target: Player = null;
-		protected var _trackingFunction: Function = getTargetRot; // not the criterion
-		protected var _scalePercent: Number = 1;
-		protected var _cachedTargets: Vector.<Player> = new Vector.<Player>();
+		protected _target: Player = null;
+		protected _trackingFunction: Function = getTargetRot; // not the criterion
+		protected _scalePercent: Number = 1;
+		protected _cachedTargets: Player[] = new Player[]();
 
 		//============Constructor Function============//
 		public function BulletTracking(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number): void {
@@ -46,7 +46,7 @@
 		 * Cached some static properties, during the short livespan of the bullet
 		 */
 		protected function cacheTargets(): void {
-			for each(var player: Player in _host.entitySystem.players) {
+			for (var player of _host.entitySystem.players) {
 				if (player != null && // not null
 					(this._owner == null || this._owner.canUseWeaponHurtPlayer(player, this._currentWeapon)) // should can use it to hurt
 				)

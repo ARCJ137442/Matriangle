@@ -8,46 +8,46 @@ package batr.game.stat {
 
 	/* Thst's a stats(or scoreboard) use for a player
 	 * */
-	public class PlayerStats {
+	export default class PlayerStats {
 		//============Instance Variables============//
 		// Profile
-		protected var _profile: IPlayerProfile = null;
+		protected _profile: IPlayerProfile = null;
 
 		// kills and deaths
-		protected var _killCount: uint = 0;
-		protected var _killAICount: uint = 0;
-		protected var _deathCount: uint = 0;
-		protected var _deathByPlayer: uint = 0;
-		protected var _deathByAI: uint = 0;
-		protected var _killPlayers: Stat_PlayerCount = new Stat_PlayerCount();
-		protected var _deathByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
-		protected var _causeDamage: uint = 0;
+		protected _killCount: uint = 0;
+		protected _killAICount: uint = 0;
+		protected _deathCount: uint = 0;
+		protected _deathByPlayer: uint = 0;
+		protected _deathByAI: uint = 0;
+		protected _killPlayers: Stat_PlayerCount = new Stat_PlayerCount();
+		protected _deathByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
+		protected _causeDamage: uint = 0;
 
-		protected var _damageBy: uint = 0;
+		protected _damageBy: uint = 0;
 
-		protected var _causeDamagePlayers: Stat_PlayerCount = new Stat_PlayerCount();
+		protected _causeDamagePlayers: Stat_PlayerCount = new Stat_PlayerCount();
 
-		protected var _damageByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
+		protected _damageByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
 
-		protected var _suicideCount: uint = 0;
+		protected _suicideCount: uint = 0;
 
-		protected var _killAllyCount: uint = 0;
+		protected _killAllyCount: uint = 0;
 
-		protected var _deathByAllyCount: uint = 0;
+		protected _deathByAllyCount: uint = 0;
 
-		protected var _causeDamageOnSelf: uint = 0;
+		protected _causeDamageOnSelf: uint = 0;
 
-		protected var _causeDamageOnAlly: uint = 0;
+		protected _causeDamageOnAlly: uint = 0;
 
-		protected var _damageByAlly: uint = 0;
+		protected _damageByAlly: uint = 0;
 
 		// weapons
 
 		// bonus boxes
-		protected var _pickupBonusBoxCount: uint = 0;
+		protected _pickupBonusBoxCount: uint = 0;
 
 		// misc
-		protected var _beTeleportCount: uint = 0;
+		protected _beTeleportCount: uint = 0;
 
 		//============Constructor============//
 		public function PlayerStats(owner: Player): void {
@@ -55,12 +55,12 @@ package batr.game.stat {
 		}
 
 		//============Destructor============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._profile = null;
-			this._killPlayers.deleteSelf();
-			this._deathByPlayers.deleteSelf();
-			this._causeDamagePlayers.deleteSelf();
-			this._damageByPlayers.deleteSelf();
+			this._killPlayers.destructor();
+			this._deathByPlayers.destructor();
+			this._causeDamagePlayers.destructor();
+			this._damageByPlayers.destructor();
 		}
 
 		//============Instance Getter And Setter============//
@@ -283,7 +283,7 @@ import flash.utils.Dictionary;
 
 class Stat_PlayerCount {
 	//============Instance Variables============//
-	protected var _dictionary: Dictionary = new Dictionary(true);
+	protected _dictionary: Dictionary = new Dictionary(true);
 
 	//============Constructor Function============//
 	public function Stat_PlayerCount(...params): void {
@@ -334,7 +334,7 @@ class Stat_PlayerCount {
 
 	}
 
-	public function deleteSelf(): void {
+	public function destructor(): void {
 		for (var p in this._dictionary) {
 			delete this._dictionary[p];
 

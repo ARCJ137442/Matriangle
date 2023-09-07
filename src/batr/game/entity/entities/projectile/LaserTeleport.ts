@@ -7,7 +7,7 @@ package batr.game.entity.entity.projectile {
 	import batr.game.model.*;
 	import batr.game.main.*;
 
-	public class LaserTeleport extends LaserBasic {
+	export default class LaserTeleport extends LaserBasic {
 		//============Static Variables============//
 		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS * 0.5;
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;

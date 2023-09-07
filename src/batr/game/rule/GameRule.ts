@@ -13,7 +13,7 @@
 	/**
 	 * This class contains the rules that can affects gameplay.
 	 */
-	public class GameRule extends EventDispatcher {
+	export default class GameRule extends EventDispatcher {
 		//============Static Variables============//
 		//========Rules========//
 		//====Player====//
@@ -23,7 +23,7 @@
 		//====Team====//
 		protected static const d_coloredTeamCount: uint = 8;
 		protected static const d_grayscaleTeamCount: uint = 3;
-		protected static const d_playerTeams: Vector.<PlayerTeam> = initPlayerTeams(d_coloredTeamCount, d_grayscaleTeamCount);
+		protected static const d_playerTeams: PlayerTeam[] = initPlayerTeams(d_coloredTeamCount, d_grayscaleTeamCount);
 
 		/**
 		 * Allows players change their teams by general means
@@ -63,7 +63,7 @@
 		/**
 		 * [{Type:<Type>,Weight:<Number>},...]
 		 */
-		protected static const d_bonusBoxSpawnPotentials: Vector.<Object> = null;
+		protected static const d_bonusBoxSpawnPotentials: Object[] = null;
 
 		/**
 		 * null means all type can be spawned and they have same weight
@@ -87,7 +87,7 @@
 		/**
 		 * [{map:<MAP>,weight:<Number>},...]
 		 */
-		protected static const d_mapRandomPotentials: Vector.<Object> = null;
+		protected static const d_mapRandomPotentials: Object[] = null;
 
 		protected static const d_initialMapID: int = -1;
 
@@ -98,7 +98,7 @@
 		protected static const d_mapTransformTime: uint = 60;
 
 		//====Weapons====//
-		protected static const d_enableWeapons: Vector.<WeaponType> = WeaponType._ALL_AVALIABLE_WEAPON;
+		protected static const d_enableWeapons: WeaponType[] = WeaponType._ALL_AVALIABLE_WEAPON;
 
 		protected static const d_defaultWeaponID: int = 0;
 
@@ -136,8 +136,8 @@
 		 * @param	grayscaleTeamCount	the number of team that color is grayscale
 		 * @return	A list of PlayerTeam,contains different colors.
 		 */
-		protected static function initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): Vector.<PlayerTeam> {
-			var returnTeams: Vector.<PlayerTeam> = new Vector.<PlayerTeam>();
+		protected static function initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
+			var returnTeams: PlayerTeam[] = new PlayerTeam[]();
 			var h: uint, s: Number, v: Number, color: uint;
 			var i: uint;
 			// Grayscale Team
@@ -230,96 +230,96 @@
 		//============Instance Variables============//
 		//====rules====//
 		// Player
-		protected var _playerCount: uint;
+		protected _playerCount: uint;
 
-		protected var _AICount: uint;
+		protected _AICount: uint;
 
 		// Team
-		protected var _coloredTeamCount: uint;
+		protected _coloredTeamCount: uint;
 
-		protected var _grayscaleTeamCount: uint;
+		protected _grayscaleTeamCount: uint;
 
-		protected var _playerTeams: Vector.<PlayerTeam>;
+		protected _playerTeams: PlayerTeam[];
 
-		protected var _allowPlayerChangeTeam: Boolean;
+		protected _allowPlayerChangeTeam: Boolean;
 
 		// GamePlay
-		protected var _defaultHealth: uint;
+		protected _defaultHealth: uint;
 
-		protected var _defaultMaxHealth: uint;
+		protected _defaultMaxHealth: uint;
 
-		protected var _remainLifesPlayer: int;
+		protected _remainLifesPlayer: int;
 
-		protected var _remainLifesAI: int;
+		protected _remainLifesAI: int;
 
-		protected var _defaultRespawnTime: uint;
+		protected _defaultRespawnTime: uint;
 
-		protected var _deadPlayerMoveToX: Number;
+		protected _deadPlayerMoveToX: Number;
 
-		protected var _deadPlayerMoveToY: Number;
+		protected _deadPlayerMoveToY: Number;
 
-		protected var _recordPlayerStats: Boolean;
+		protected _recordPlayerStats: Boolean;
 
 		/**
 		 * int.MAX_VALUE -> uint$MAX_VALUE
 		 * Negative number -> uint$MAX_VALUE
 		 * damage operator function=Game.computeFinalPlayerHurtDamage
 		 */
-		protected var _playerAsphyxiaDamage: int;
+		protected _playerAsphyxiaDamage: int;
 
 		// Bonus
 
 		/**
 		 * Negative number means infinity
 		 */
-		protected var _bonusBoxMaxCount: int;
+		protected _bonusBoxMaxCount: int;
 
-		protected var _bonusBoxSpawnChance: Number = 1 / GlobalGameVariables.TPS / 8;
+		protected _bonusBoxSpawnChance: Number = 1 / GlobalGameVariables.TPS / 8;
 
 		// Spawn per tick
-		protected var _bonusBoxSpawnPotentials: Vector.<Object>;
+		protected _bonusBoxSpawnPotentials: Object[];
 
 		// [{type:<BonusBoxType>,weight:<Number>},...]
-		protected var _bonusBoxSpawnAfterPlayerDeath: Boolean;
+		protected _bonusBoxSpawnAfterPlayerDeath: Boolean;
 
 		// Bonus's Buff
-		protected var _bonusBuffAdditionAmount: uint;
+		protected _bonusBuffAdditionAmount: uint;
 
-		protected var _bonusMaxHealthAdditionAmount: uint;
+		protected _bonusMaxHealthAdditionAmount: uint;
 
 		// Map
 
 		/**
 		 * Null means all type can be spawned and they have same weight
 		 */
-		protected var _mapRandomPotentials: Vector.<Object>;
+		protected _mapRandomPotentials: Object[];
 
 		// [{map:<IMAP>,weight:<Number>},...]
-		protected var _initialMapID: int;
+		protected _initialMapID: int;
 
 		/**
 		 * The unit is second
 		 * 0 means never transform map by time
 		 */
-		protected var _mapTransformTime: uint;
+		protected _mapTransformTime: uint;
 
 		// Weapons
-		protected var _enableWeapons: Vector.<WeaponType>;
+		protected _enableWeapons: WeaponType[];
 
 		/**
 		 * -1 means uniform random
 		 * <-1 means certainly random
 		 */
-		protected var _defaultWeaponID: int;
+		protected _defaultWeaponID: int;
 
-		protected var _defaultLaserLength: uint;
+		protected _defaultLaserLength: uint;
 
-		protected var _allowLaserThroughAllBlock: Boolean;
+		protected _allowLaserThroughAllBlock: Boolean;
 
-		protected var _weaponsNoCD: Boolean;
+		protected _weaponsNoCD: Boolean;
 
 		// End&Victory
-		protected var _allowTeamVictory: Boolean;
+		protected _allowTeamVictory: Boolean;
 
 		//============Constructor Function============//
 		public function GameRule(): void {
@@ -328,7 +328,7 @@
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._bonusBoxSpawnPotentials = null;
 			this._mapRandomPotentials = null;
 			this._enableWeapons = null;
@@ -351,10 +351,10 @@
 				return Game.ALL_MAPS[exMath.random(Game.ALL_MAPS.length)];
 			}
 			// Add
-			var maps: Vector.<IMap> = new Vector.<IMap>();
-			var weights: Vector.<Number> = new Vector.<Number>();
+			var maps: IMap[] = new IMap[]();
+			var weights: Number[] = new Number[]();
 			var sum: Number = 0;
-			for each(var mapPotential: Object in this._mapRandomPotentials) {
+			for (var mapPotential of this._mapRandomPotentials) {
 				if (mapPotential['map'] is IMap && mapPotential['weight'] is Number) {
 					maps.push(mapPotential['map'] as IMap);
 					weights.push(Number(mapPotential['weight']));
@@ -379,10 +379,10 @@
 				this._bonusBoxSpawnPotentials = BonusType.AVALIABLE_SPAWN_POTENTIALS;
 			}
 			// Add
-			var types: Vector.<BonusType> = new Vector.<BonusType>();
-			var weights: Vector.<Number> = new Vector.<Number>();
+			var types: BonusType[] = new BonusType[]();
+			var weights: Number[] = new Number[]();
 			var sum: Number = 0;
-			for each(var bonusPotential: Object in this._bonusBoxSpawnPotentials) {
+			for (var bonusPotential of this._bonusBoxSpawnPotentials) {
 				if (bonusPotential['type'] is BonusType && bonusPotential['weight'] is Number) {
 					// Filter
 					if (
@@ -489,15 +489,15 @@
 			this._bonusBoxSpawnChance = value;
 		}
 
-		public function get bonusBoxSpawnPotentials(): Vector.<Object> {
+		public function get bonusBoxSpawnPotentials(): Object[] {
 			return this._bonusBoxSpawnPotentials;
 		}
 
-		public function set bonusBoxSpawnPotentials(value: Vector.<Object>): void {
+		public function set bonusBoxSpawnPotentials(value: Object[]): void {
 			if (value == this._bonusBoxSpawnPotentials)
 				return;
 
-			var _v: Vector.<Object> = value;
+			var _v: Object[] = value;
 
 			for (var i: int = _v.length - 1; i >= 0; i--) {
 				if (_v[i] is BonusType) {
@@ -557,15 +557,15 @@
 		}
 
 		// Map
-		public function get mapRandomPotentials(): Vector.<Object> {
+		public function get mapRandomPotentials(): Object[] {
 			return this._mapRandomPotentials;
 		}
 
-		public function set mapRandomPotentials(value: Vector.<Object>): void {
+		public function set mapRandomPotentials(value: Object[]): void {
 			if (value == this._mapRandomPotentials)
 				return;
 
-			var _v: Vector.<Object> = value;
+			var _v: Object[] = value;
 
 			for (var i: int = _v.length - 1; i >= 0; i--) {
 				if (_v[i] is IMap) {
@@ -590,8 +590,8 @@
 			this._mapRandomPotentials = _v;
 		}
 
-		public function get mapWeightsByGame(): Vector.<Number> {
-			var wv: Vector.<Number> = new Vector.<Number>(Game.ALL_MAPS.length);
+		public function get mapWeightsByGame(): Number[] {
+			var wv: Number[] = new Number[](Game.ALL_MAPS.length);
 
 			for (var i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
 				for (var map: Object in this.mapRandomPotentials) {
@@ -759,11 +759,11 @@
 		}
 
 		// Weapon Enable
-		public function get enableWeapons(): Vector.<WeaponType> {
+		public function get enableWeapons(): WeaponType[] {
 			return this._enableWeapons == null ? WeaponType._ALL_AVALIABLE_WEAPON : this._enableWeapons;
 		}
 
-		public function set enableWeapons(value: Vector.<WeaponType>): void {
+		public function set enableWeapons(value: WeaponType[]): void {
 			if (value == this._enableWeapons)
 				return;
 			onVariableUpdate(this._enableWeapons, value);
@@ -813,7 +813,7 @@
 			dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
 		}
 
-		public function get playerTeams(): Vector.<PlayerTeam> {
+		public function get playerTeams(): PlayerTeam[] {
 			return this._playerTeams;
 		}
 

@@ -8,18 +8,18 @@
 	 * Thst's a stats(or scoreboard) use for a game
 	 * @author ARCJ137442
 	 */
-	public class GameStats {
+	export default class GameStats {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _rule: GameRule;
-		protected var _players: Vector.<PlayerStats> = new Vector.<PlayerStats>();
+		protected _rule: GameRule;
+		protected _players: PlayerStats[] = new PlayerStats[]();
 
-		protected var _mapTransformCount: uint = 0;
-		protected var _bonusGenerateCount: uint = 0;
+		protected _mapTransformCount: uint = 0;
+		protected _bonusGenerateCount: uint = 0;
 
 		//============Constructor============//
-		public function GameStats(rule: GameRule, players: Vector.<Player> = null): void {
+		public function GameStats(rule: GameRule, players: Player[] = null): void {
 			super();
 			this.rule = rule;
 			if (players != null)
@@ -32,7 +32,7 @@
 		}
 
 		//============Destructor============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.rule = null;
 			this.clearPlayers();
 			this._players = null;
@@ -47,7 +47,7 @@
 			this._rule = value;
 		}
 
-		public function get players(): Vector.<PlayerStats> {
+		public function get players(): PlayerStats[] {
 			return this._players;
 		}
 
@@ -73,14 +73,14 @@
 			return this;
 		}
 
-		public function setPlayers(players: Vector.<PlayerStats>): GameStats {
+		public function setPlayers(players: PlayerStats[]): GameStats {
 			this._players = players;
 			return this;
 		}
 
-		public function loadPlayers(players: Vector.<Player>): void {
-			for each(var player: Player in players)
-			this.addPlayer(player);
+		public function loadPlayers(players: Player[]): void {
+			for (var player of players)
+				this.addPlayer(player);
 		}
 
 		public function clearPlayers(): void {
@@ -88,7 +88,7 @@
 		}
 
 		public function importPlayersFromGame(game: Game): void {
-			for each(var player: Player in game.entitySystem.players) {
+			for (var player of game.entitySystem.players) {
 				if (player != null)
 					this._players.push(player.stats);
 			}

@@ -6,16 +6,16 @@ package batr.game.entity.objects {
 
 	import flash.display.Shape;
 
-	public class PlayerEffectOverlay extends Shape {
+	export default class PlayerEffectOverlay extends Shape {
 		//============Static Variables============//
 		public static const COLOR: uint = 0xff0000;
 		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
 
 		//============Instance Variables============//
-		protected var _life: int = -1;
-		protected var _lifeMax: uint = 0;
+		protected _life: int = -1;
+		protected _lifeMax: uint = 0;
 
-		protected var _color: uint = COLOR;
+		protected _color: uint = COLOR;
 
 		//============Constructor Function============//
 		public function PlayerEffectOverlay(owner: Player, color: uint = PlayerEffectOverlay.COLOR): void {
@@ -69,7 +69,7 @@ package batr.game.entity.objects {
 			this.alpha = _life / _lifeMax;
 		}
 
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.graphics.clear();
 			this._life = -1;
 			this._lifeMax = 0;

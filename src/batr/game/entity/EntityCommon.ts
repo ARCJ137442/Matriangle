@@ -11,14 +11,14 @@ package batr.game.entity {
 	 * ABSTRUCT
 	 * @author ARCJ137442
 	 */
-	public class EntityCommon extends Sprite {
+	export default class EntityCommon extends Sprite {
 		//============Static Variables============//
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _host: Game;
-		protected var _isActive: Boolean;
+		protected _host: Game;
+		protected _isActive: Boolean;
 
 		//============Constructor Function============//
 		public function EntityCommon(host: Game,
@@ -35,7 +35,7 @@ package batr.game.entity {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.isActive = false;
 			this._host = null;
 		}

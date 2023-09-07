@@ -12,7 +12,7 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class BulletBasic extends ProjectileCommon {
+	export default class BulletBasic extends ProjectileCommon {
 		//============Static Variables============//
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 80;
 		public static const SIZE: Number = PosTransform.localPosToRealPos(3 / 8);
@@ -20,12 +20,12 @@ package batr.game.entity.entity.projectile {
 		public static const DEFAULT_EXPLODE_RADIUS: Number = 1;
 
 		//============Instance Variables============//
-		public var speed: Number;
-		public var finalExplodeRadius: Number;
+		public speed: Number;
+		public finalExplodeRadius: Number;
 		// Entity Pos
 
-		public var lastBlockType: BlockType = BlockType.NULL;
-		public var nowBlockType: BlockType = BlockType.NULL;
+		public lastBlockType: BlockType = BlockType.NULL;
+		public nowBlockType: BlockType = BlockType.NULL;
 
 		//============Constructor Function============//
 		public function BulletBasic(host: Game, x: Number, y: Number,
@@ -43,9 +43,9 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

@@ -13,16 +13,16 @@ package batr.game.map.main {
 	/**
 	 * This class only achieved spawnpoints
 	 */
-	public class NativeMapCommon implements IMap {
+	export default class NativeMapCommon implements IMap {
 		//============Static Functions============//
 		protected static function getTargetByLayer(l: int, top: IMapDisplayer, bottom: IMapDisplayer, middle: IMapDisplayer): IMapDisplayer {
 			return l > 0 ? top : (l < 0 ? bottom : middle);
 		}
 
 		//============Instance Variables============//
-		protected var _spawnPoints: Vector.<uint> = new Vector.<uint>();
-		protected var _arena: Boolean = false;
-		protected var _name: String;
+		protected _spawnPoints: uint[] = new uint[]();
+		protected _arena: Boolean = false;
+		protected _name: String;
 
 		//============Constructor============//
 		public function NativeMapCommon(name: String, arena: Boolean = false): void {
@@ -32,7 +32,7 @@ package batr.game.map.main {
 		}
 
 		//============Destructor============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._spawnPoints = null;
 			this._name = null;
 		}
@@ -54,15 +54,15 @@ package batr.game.map.main {
 			return 0;
 		}
 
-		public function get allDefinedPositions(): Vector.<iPoint> {
+		public function get allDefinedPositions(): iPoint[] {
 			return null;
 		}
 
-		public function get allMapPositions(): Vector.<iPoint> {
+		public function get allMapPositions(): iPoint[] {
 			return null;
 		}
 
-		public function get spawnPoints(): Vector.<uint> {
+		public function get spawnPoints(): uint[] {
 			return this._spawnPoints;
 		}
 
@@ -211,11 +211,11 @@ package batr.game.map.main {
 		 * Get with Matrix[x][y].
 		 * @return	The Matrix.
 		 */
-		public function getMatrixObject(): Vector.<Vector.<Object>> {
-			var result: Vector.<Vector.<Object>> = new Vector.<Vector.<Object>>(this.mapHeight);
-			var vec: Vector.<Object>;
+		public function getMatrixObject(): Vector.<Object[]> {
+			var result: Vector.<Object[]> = new Vector.<Object[]>(this.mapHeight);
+			var vec: Object[];
 			for (var i: uint = 0; i < this.mapHeight; i++) {
-				vec = new Vector.<Object>(this.mapWidth);
+				vec = new Object[](this.mapWidth);
 				result[i] = vec;
 			}
 			return result;
@@ -225,11 +225,11 @@ package batr.game.map.main {
 		 * Get with Matrix[x][y].
 		 * @return	The Matrix.
 		 */
-		public function getMatrixInt(): Vector.<Vector.<int>> {
-			var result: Vector.<Vector.<int>> = new Vector.<Vector.<int>>(this.mapHeight);
-			var vec: Vector.<int>;
+		public function getMatrixInt(): Vector.<int[]> {
+			var result: Vector.<int[]> = new Vector.<int[]>(this.mapHeight);
+			var vec: int[];
 			for (var i: uint = 0; i < this.mapHeight; i++) {
-				vec = new Vector.<int>(this.mapWidth);
+				vec = new int[](this.mapWidth);
 				result[i] = vec;
 			}
 			return result;
@@ -239,11 +239,11 @@ package batr.game.map.main {
 		 * Get with Matrix[x][y].
 		 * @return	The Matrix.
 		 */
-		public function getMatrixUint(): Vector.<Vector.<uint>> {
-			var result: Vector.<Vector.<uint>> = new Vector.<Vector.<uint>>(this.mapHeight);
-			var vec: Vector.<uint>;
+		public function getMatrixUint(): Vector.<uint[]> {
+			var result: Vector.<uint[]> = new Vector.<uint[]>(this.mapHeight);
+			var vec: uint[];
 			for (var i: uint = 0; i < this.mapHeight; i++) {
-				vec = new Vector.<uint>(this.mapWidth);
+				vec = new uint[](this.mapWidth);
 				result[i] = vec;
 			}
 			return result;
@@ -253,11 +253,11 @@ package batr.game.map.main {
 		 * Get with Matrix[x][y].
 		 * @return	The Matrix.
 		 */
-		public function getMatrixNumber(): Vector.<Vector.<Number>> {
-			var result: Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>(this.mapHeight);
-			var vec: Vector.<Number>;
+		public function getMatrixNumber(): Vector.<Number[]> {
+			var result: Vector.<Number[]> = new Vector.<Number[]>(this.mapHeight);
+			var vec: Number[];
 			for (var i: uint = 0; i < this.mapHeight; i++) {
-				vec = new Vector.<Number>(this.mapWidth);
+				vec = new Number[](this.mapWidth);
 				result[i] = vec;
 			}
 			return result;
@@ -267,11 +267,11 @@ package batr.game.map.main {
 		 * Get with Matrix[x][y].
 		 * @return	The Matrix.
 		 */
-		public function getMatrixBoolean(): Vector.<Vector.<Boolean>> {
-			var result: Vector.<Vector.<Boolean>> = new Vector.<Vector.<Boolean>>(this.mapHeight);
-			var vec: Vector.<Boolean>;
+		public function getMatrixBoolean(): Vector.<Boolean[]> {
+			var result: Vector.<Boolean[]> = new Vector.<Boolean[]>(this.mapHeight);
+			var vec: Boolean[];
 			for (var i: uint = 0; i < this.mapHeight; i++) {
-				vec = new Vector.<Boolean>(this.mapWidth);
+				vec = new Boolean[](this.mapWidth);
 				result[i] = vec;
 			}
 			return result;

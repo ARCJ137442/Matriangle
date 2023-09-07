@@ -7,7 +7,7 @@ package batr.game.effect.effects {
 
 	import flash.display.*;
 
-	public class EffectTeleport extends EffectCommon {
+	export default class EffectTeleport extends EffectCommon {
 		//============Static Variables============//
 		public static const DEFAULT_COLOR: uint = 0x44ff44;
 		public static const LINE_ALPHA: Number = 0.6;
@@ -17,9 +17,9 @@ package batr.game.effect.effects {
 		public static const SCALE: Number = 1;
 
 		//============Instance Variables============//
-		protected var maxScale: Number;
-		protected var block1: Shape = new Shape();
-		protected var block2: Shape = new Shape();
+		protected maxScale: Number;
+		protected block1: Shape = new Shape();
+		protected block2: Shape = new Shape();
 
 		//============Constructor Function============//
 		public function EffectTeleport(host: Game, x: Number, y: Number, scale: Number = EffectTeleport.SCALE): void {
@@ -35,7 +35,7 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.maxScale = NaN;
 			if (this.block1 != null) {
 				this.removeChild(this.block1);
@@ -47,7 +47,7 @@ package batr.game.effect.effects {
 				this.block2.graphics.clear();
 				this.block2 = null;
 			}
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

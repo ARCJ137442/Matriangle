@@ -14,7 +14,7 @@ package batr.menu.objects {
 
 	import flash.text.*;
 
-	public class BatrTextField extends TextField implements IBatrMenuElement {
+	export default class BatrTextField extends TextField implements IBatrMenuElement {
 		//============Static Constructor============//
 		public static function fromKey(translations: I18ns, translationKey: String = null, autoSize: String = TextFieldAutoSize.LEFT): BatrTextField {
 			return new BatrTextField(new I18nText(
@@ -26,7 +26,7 @@ package batr.menu.objects {
 		//============Static Variables============//
 
 		//============Instance Variables============//
-		protected var _translationalText: I18nText;
+		protected _translationalText: I18nText;
 
 		//============Constructor============//
 		public function BatrTextField(translationalText: I18nText, autoSize: String = TextFieldAutoSize.LEFT): void {
@@ -41,7 +41,7 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._translationalText = null;
 		}
 

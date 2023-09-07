@@ -98,12 +98,14 @@
         - [ ] MapGenerator.ts
         - [ ] NativeMapCommon.ts
     - [ ] registry
-      - [ ] TypeCommon.ts
       - [ ] GameModeType.ts
       - [ ] WeaponType.ts
       - [ ] BlockType.ts
       - [ ] EffectType.ts
       - [ ] EntityType.ts
+    - [ ] template
+      - [ ] TypeCommon.ts
+      - [ ] CommonSystem.ts
     - [ ] rule
       - [ ] GameRule.ts
       - [ ] GameRuleEvent.ts
@@ -150,3 +152,13 @@
         - [ ] BatrSelectorContent.ts
         - [ ] BatrSelectorList.ts
 - [ ] batrFla.ts
+
+## Road Map
+
+1. ~~common~~
+2. ~~fonts~~
+3. ~~general~~
+4. i18n
+5. game
+6. menu
+7. main

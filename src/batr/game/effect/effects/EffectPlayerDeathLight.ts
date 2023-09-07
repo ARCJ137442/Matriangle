@@ -7,7 +7,7 @@ package batr.game.effect.effects {
 	import batr.game.effect.*;
 	import batr.game.main.*;
 
-	public class EffectPlayerDeathLight extends EffectCommon {
+	export default class EffectPlayerDeathLight extends EffectCommon {
 		//============Static Variables============//
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE;
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
@@ -21,9 +21,9 @@ package batr.game.effect.effects {
 		}
 
 		//============Instance Variables============//
-		protected var _color: uint = 0x000000;
-		protected var _AILabel: String;
-		public var reverse: Boolean = false;
+		protected _color: uint = 0x000000;
+		protected _AILabel: String;
+		public reverse: Boolean = false;
 
 		//============Constructor Function============//
 		public function EffectPlayerDeathLight(host: Game, x: Number, y: Number, rot: uint = 0, color: uint = 0xffffff, AILabel: String = null, reverse: Boolean = false, life: uint = EffectPlayerDeathLight.MAX_LIFE): void {
@@ -36,8 +36,8 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

@@ -134,7 +134,7 @@ package {
 	import flash.events.*;
 	import flash.display.MovieClip;
 
-	public class batrFla extends MovieClip {
+	export default class batrFla extends MovieClip {
 		var sub: BatrSubject = new BatrSubject();
 	var fixed_mapID: uint = 0;
 	var temp_JSON: String;

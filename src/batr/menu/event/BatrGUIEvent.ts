@@ -4,14 +4,14 @@ package batr.menu.event {
 
 	import flash.events.Event;
 
-	public class BatrGUIEvent extends Event {
+	export default class BatrGUIEvent extends Event {
 		//============Static Variables============//
 		public static const CLICK: String = 'BatrButtonEvent:click';
 		public static const CLICK_LEFT: String = 'BatrButtonEvent:left_click';
 		public static const CLICK_RIGHT: String = 'BatrButtonEvent:right_click';
 
 		//============Instance Variables============//
-		protected var _gui: BatrMenuGUI;
+		protected _gui: BatrMenuGUI;
 
 		//============Constructor Function============//
 		public function BatrGUIEvent(type: String, gui: BatrMenuGUI, bubbles: Boolean = false, cancelable: Boolean = false): void {

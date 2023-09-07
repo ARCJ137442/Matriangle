@@ -4,46 +4,46 @@ package batr.game.block.blocks {
 
 	import batr.game.block.*;
 
-	public class SupplyPoint extends BlockCommon {
+	export default class SupplyPoint extends BlockCommon {
 		//============Static Variables============//
-		public static const LINE_COLOR:uint = 0x444444;
-		public static const FILL_COLOR:uint = 0xdddddd;
-		public static const CENTER_COLOR:uint = 0x00ff00;
-		public static const BASE_ALPHA:Number = 0.5;
-		public static const GRID_SIZE:uint = GlobalGameVariables.DEFAULT_SIZE;
+		public static const LINE_COLOR: uint = 0x444444;
+		public static const FILL_COLOR: uint = 0xdddddd;
+		public static const CENTER_COLOR: uint = 0x00ff00;
+		public static const BASE_ALPHA: Number = 0.5;
+		public static const GRID_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE;
 
-		public static const LINE_SIZE:Number = GRID_SIZE / 32;
+		public static const LINE_SIZE: Number = GRID_SIZE / 32;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function SupplyPoint():void {
+		public function SupplyPoint(): void {
 			super();
 			this.drawMain();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.SUPPLY_POINT;
 
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return BlockType.SUPPLY_POINT;
 
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new SupplyPoint();
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			// Base
 			this.graphics.beginFill(LINE_COLOR, BASE_ALPHA);
 			this.graphics.drawRect(0, 0, GRID_SIZE, GRID_SIZE);

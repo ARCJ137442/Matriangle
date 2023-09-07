@@ -16,7 +16,7 @@ package batr.menu.objects {
 	import flash.display.*;
 	import flash.events.MouseEvent;
 
-	public class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
+	export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x888888;
 		public static const FILL_COLOR: uint = 0xcccccc;
@@ -27,26 +27,26 @@ package batr.menu.objects {
 		public static const RELEASE_ALPHA: Number = 0.5;
 
 		//============Instance Variables============//
-		protected var _displayWidth: Number;
+		protected _displayWidth: Number;
 
-		protected var _displayHeight: Number;
+		protected _displayHeight: Number;
 
-		protected var _lineColor: uint;
+		protected _lineColor: uint;
 
-		protected var _fillColor: uint;
+		protected _fillColor: uint;
 
-		protected var _lineSize: Number;
+		protected _lineSize: Number;
 
-		protected var _smoothLine: Boolean;
+		protected _smoothLine: Boolean;
 
-		protected var _translations: I18ns;
+		protected _translations: I18ns;
 
-		protected var _text: BatrTextField;
+		protected _text: BatrTextField;
 
 		/**
 		 * The Linkage(String) to sheet
 		 */
-		public var sheetLinkage: String;
+		public sheetLinkage: String;
 
 		//============Constructor Function============//
 		public function BatrButton(width: Number, height: Number,
@@ -70,12 +70,12 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
-			this._text.deleteSelf();
+			this._text.destructor();
 			this._text = null;
 			this.sheetLinkage = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

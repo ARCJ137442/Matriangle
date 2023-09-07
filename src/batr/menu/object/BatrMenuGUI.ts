@@ -10,7 +10,7 @@ package batr.menu.objects {
 	import flash.display.*;
 	import flash.events.*;
 
-	public class BatrMenuGUI extends Sprite implements IBatrMenuElement {
+	export default class BatrMenuGUI extends Sprite implements IBatrMenuElement {
 		//============Static Variables============//
 
 		//============Instance Variables============//
@@ -23,7 +23,7 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			// RemoveEventListener
 			this.removeEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 			this.removeEventListener(MouseEvent.ROLL_OVER, this.onMouseRollOver);

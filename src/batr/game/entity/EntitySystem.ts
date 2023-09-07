@@ -13,11 +13,11 @@ package batr.game.entity {
 	/**
 	 * Use for manage entities in game.
 	 */
-	public class EntitySystem {
+	export default class EntitySystem {
 		//============Static Variables============//
 
 		//============Instance Variables============//
-		protected var _host: Game;
+		protected _host: Game;
 
 		// UUID
 
@@ -25,13 +25,13 @@ package batr.game.entity {
 		 * The UUID Process to system.
 		 * getEntityByUUID(this._headUUID) usual equals null.
 		 */
-		private var _headUUID: uint = 1;
-		private var _uuidDic: Dictionary = new Dictionary(true);
+		private _headUUID: uint = 1;
+		private _uuidDic: Dictionary = new Dictionary(true);
 
-		protected var _entities: Vector.<EntityCommon> = new Vector.<EntityCommon>;
-		protected var _players: Vector.<Player> = new Vector.<Player>;
-		protected var _projectiles: Vector.<ProjectileCommon> = new Vector.<ProjectileCommon>;
-		protected var _bonusBoxes: Vector.<BonusBox> = new Vector.<BonusBox>;
+		protected _entities: EntityCommon[] = new EntityCommon[];
+		protected _players: Player[] = new Player[];
+		protected _projectiles: ProjectileCommon[] = new ProjectileCommon[];
+		protected _bonusBoxes: BonusBox[] = new BonusBox[];
 
 		//============Constructor Function============//
 		public function EntitySystem(host: Game): void {
@@ -40,7 +40,7 @@ package batr.game.entity {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.removeAllEntity();
 			this._entities = null;
 
@@ -59,19 +59,19 @@ package batr.game.entity {
 			return this._host;
 		}
 
-		public function get entities(): Vector.<EntityCommon> {
+		public function get entities(): EntityCommon[] {
 			return this._entities;
 		}
 
-		public function get players(): Vector.<Player> {
+		public function get players(): Player[] {
 			return this._players;
 		}
 
-		public function get projectiles(): Vector.<ProjectileCommon> {
+		public function get projectiles(): ProjectileCommon[] {
 			return this._projectiles;
 		}
 
-		public function get bonusBoxes(): Vector.<BonusBox> {
+		public function get bonusBoxes(): BonusBox[] {
 			return this._bonusBoxes;
 		}
 
@@ -91,7 +91,7 @@ package batr.game.entity {
 			if (this._players == null)
 				return 0;
 			var rU: uint;
-			for each(var player: Player in this._players) {
+			for (var player of this._players) {
 				if (Player.isAI(player))
 					rU++;
 			}
@@ -149,18 +149,18 @@ package batr.game.entity {
 			return entity != null && this.isValidUUID(this.getUUIDByEntity(entity));
 		}
 
-		public function getAllEntity(): Vector.<EntityCommon> {
-			var result: Vector.<EntityCommon> = new Vector.<EntityCommon>();
-			for each(var obj: Object in this._uuidDic) {
+		public function getAllEntity(): EntityCommon[] {
+			var result: EntityCommon[] = new EntityCommon[]();
+			for (var obj of this._uuidDic) {
 				if (obj != null && obj is EntityCommon)
 				result.push(obj as EntityCommon);
 			}
 			return result;
 		}
 
-		public function getAllUUID(): Vector.<uint> {
-			var result: Vector.<uint> = new Vector.<uint>();
-			for each(var obj: Object in this._uuidDic) {
+		public function getAllUUID(): uint[] {
+			var result: uint[] = new uint[]();
+			for (var obj of this._uuidDic) {
 				if (obj != null && obj is uint && isValidUUID(obj as uint))
 				result.push(obj as uint);
 			}
@@ -179,7 +179,7 @@ package batr.game.entity {
 			return false;
 		}
 
-		public function cencellEntityforUUID(entity: EntityCommon): Boolean {
+		public function removeEntityforUUID(entity: EntityCommon): Boolean {
 			var uuid: uint = this.getUUIDByEntity(entity);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[entity] = 0;
@@ -211,11 +211,11 @@ package batr.game.entity {
 			}
 		}
 
-		// Register,Cencell and Remove
+		// Register,Remove and Remove
 		public function isRegisteredEntity(entity: EntityCommon): Boolean {
 			// List
 			/*return this._entities.some(
-			function(e2:EntityCommon,i:uint,v:Vector.<EntityCommon>) {
+			function(e2:EntityCommon,i:uint,v:EntityCommon[]) {
 				return e2==entity
 			})*/
 			// UUIDMap
@@ -237,7 +237,7 @@ package batr.game.entity {
 
 		}
 
-		public function cencellEntity(entity: EntityCommon): Boolean {
+		public function removeEntity(entity: EntityCommon): Boolean {
 			if (entity == null || !isRegisteredEntity(entity))
 				return false;
 
@@ -246,7 +246,7 @@ package batr.game.entity {
 
 			// UUIDMap
 			if (this.hasValidUUID(entity))
-				this.cencellEntityforUUID(entity);
+				this.removeEntityforUUID(entity);
 			return true;
 
 		}
@@ -254,14 +254,14 @@ package batr.game.entity {
 		public function removeEntity(entity: EntityCommon): void {
 			if (entity == null)
 				return;
-			entity.deleteSelf();
-			this.cencellEntity(entity);
+			entity.destructor();
+			this.removeEntity(entity);
 			if (entity is Player)
-			this.cencellPlayer(entity as Player);
+			this.removePlayer(entity as Player);
 			if (entity is ProjectileCommon)
-			this.cencellProjectile(entity as ProjectileCommon);
+			this.removeProjectile(entity as ProjectileCommon);
 			if (entity is BonusBox)
-			this.cencellBonusBox(entity as BonusBox);
+			this.removeBonusBox(entity as BonusBox);
 			Utils.removeChildIfContains(this._host.playerContainer, entity);
 			Utils.removeChildIfContains(this._host.projectileContainer, entity);
 			Utils.removeChildIfContains(this._host.bonusBoxContainer, entity);
@@ -283,7 +283,7 @@ package batr.game.entity {
 		public function isRegisteredPlayer(player: Player): Boolean {
 			// List
 			return this._players.some(
-				function (p2: Player, i: uint, v: Vector.<Player>) {
+				function (p2: Player, i: uint, v: Player[]) {
 					return p2 == player;
 
 				});
@@ -302,20 +302,20 @@ package batr.game.entity {
 
 		}
 
-		public function cencellPlayer(player: Player): Boolean {
+		public function removePlayer(player: Player): Boolean {
 			if (player == null || !isRegisteredPlayer(player))
 				return false;
 
 			this._players.splice(this._players.indexOf(player), 1);
 
-			this.cencellEntity(player);
+			this.removeEntity(player);
 
 			return true;
 
 		}
 
 		public function removePlayer(player: Player): void {
-			this.cencellPlayer(player);
+			this.removePlayer(player);
 
 			this.removeEntity(player);
 
@@ -331,7 +331,7 @@ package batr.game.entity {
 		public function isRegisteredProjectile(projectile: ProjectileCommon): Boolean {
 			// List
 			return this._projectiles.some(
-				function (p2: ProjectileCommon, i: uint, v: Vector.<ProjectileCommon>) {
+				function (p2: ProjectileCommon, i: uint, v: ProjectileCommon[]) {
 					return p2 == projectile;
 
 				});
@@ -350,20 +350,20 @@ package batr.game.entity {
 
 		}
 
-		public function cencellProjectile(projectile: ProjectileCommon): Boolean {
+		public function removeProjectile(projectile: ProjectileCommon): Boolean {
 			if (projectile == null || !isRegisteredProjectile(projectile))
 				return false;
 
 			this._projectiles.splice(this._projectiles.indexOf(projectile), 1);
 
-			cencellEntity(projectile);
+			removeEntity(projectile);
 
 			return true;
 
 		}
 
 		public function removeProjectile(projectile: ProjectileCommon): void {
-			this.cencellProjectile(projectile);
+			this.removeProjectile(projectile);
 
 			this.removeEntity(projectile);
 
@@ -379,7 +379,7 @@ package batr.game.entity {
 		public function isRegisteredBonusBox(bonusBox: BonusBox): Boolean {
 			// List
 			return this._bonusBoxes.some(
-				function (p2: BonusBox, i: uint, v: Vector.<BonusBox>) {
+				function (p2: BonusBox, i: uint, v: BonusBox[]) {
 					return p2 == bonusBox;
 
 				});
@@ -398,20 +398,20 @@ package batr.game.entity {
 
 		}
 
-		public function cencellBonusBox(bonusBox: BonusBox): Boolean {
+		public function removeBonusBox(bonusBox: BonusBox): Boolean {
 			if (bonusBox == null || !isRegisteredBonusBox(bonusBox))
 				return false;
 
 			this._bonusBoxes.splice(this._bonusBoxes.indexOf(bonusBox), 1);
 
-			this.cencellEntity(bonusBox);
+			this.removeEntity(bonusBox);
 
 			return true;
 
 		}
 
 		public function removeBonusBox(bonusBox: BonusBox): void {
-			this.cencellBonusBox(bonusBox);
+			this.removeBonusBox(bonusBox);
 
 			this.removeEntity(bonusBox);
 

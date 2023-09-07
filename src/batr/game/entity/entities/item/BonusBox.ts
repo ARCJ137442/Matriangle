@@ -9,7 +9,7 @@ package batr.game.entity.entities {
 	import batr.game.model.*;
 	import batr.game.main.*;
 
-	public class BonusBox extends EntityCommon {
+	export default class BonusBox extends EntityCommon {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x777777;
 		public static const FILL_COLOR: uint = 0xdddddd;
@@ -21,9 +21,9 @@ package batr.game.entity.entities {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _bonusType: BonusType;
+		protected _bonusType: BonusType;
 
-		protected var _symbol: BonusBoxSymbol;
+		protected _symbol: BonusBoxSymbol;
 
 		//============Constructor Function============//
 		public function BonusBox(host: Game, x: int, y: int, type: BonusType = BonusType.NULL): void {
@@ -36,11 +36,11 @@ package batr.game.entity.entities {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this._bonusType = null;
-			this._symbol.deleteSelf();
+			this._symbol.destructor();
 			this.removeChild(this._symbol);
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getters And Setters============//

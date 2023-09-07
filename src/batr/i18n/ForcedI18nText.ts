@@ -7,10 +7,10 @@ package batr.translations {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class ForcedI18nText extends I18nText {
+	export default class ForcedI18nText extends I18nText {
 		//============Static Getter And Setter============//
-		public static function getTextsByPlayerNames(players: Vector.<PlayerStats>): Vector.<I18nText> {
-			var result: Vector.<I18nText> = new Vector.<I18nText>;
+		public static function getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
+			var result: I18nText[] = new I18nText[];
 			for (var i: uint = 0; i < players.length; i++) {
 				result.push(
 					new ForcedI18nText(
@@ -22,7 +22,7 @@ package batr.translations {
 		}
 
 		//============Instance Variables============//
-		protected var _forcedText: String;
+		protected _forcedText: String;
 
 		//============Constructor Function============//
 		public function ForcedI18nText(translations: I18ns, key: String = null, forcedText: String = null) {
@@ -35,9 +35,9 @@ package batr.translations {
 		}
 
 		//============Destructor Function============//
-		override public function deleteSelf(): void {
+		override public function destructor(): void {
 			this._forcedText = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

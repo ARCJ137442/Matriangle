@@ -5,12 +5,12 @@ package batr.game.entity.entity.projectile {
 	import batr.game.model.*;
 	import batr.game.main.*;
 
-	public class ProjectileCommon extends EntityCommon {
+	export default class ProjectileCommon extends EntityCommon {
 		//============Instance Variables============//
-		protected var _owner: Player;
-		protected var _currentWeapon: WeaponType;
+		protected _owner: Player;
+		protected _currentWeapon: WeaponType;
 
-		public var damage: uint;
+		public damage: uint;
 
 		//============Constructor Function============//
 		public function ProjectileCommon(host: Game, x: Number, y: Number, owner: Player): void {
@@ -46,10 +46,10 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Instance Functions============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this._owner = null;
 			this._currentWeapon = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		public override function tickFunction(): void {

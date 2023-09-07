@@ -17,7 +17,7 @@ package batr.game.entity.ai.programs {
 	/**
 	 * Advanced Advancer.
 	 */
-	public class AIProgram_Master implements IAIProgram {
+	export default class AIProgram_Master implements IAIProgram {
 		//============Static Variables============//
 		public static const LABEL: String = 'Master';
 		public static const LABEL_SHORT: String = 'M';
@@ -51,8 +51,8 @@ package batr.game.entity.ai.programs {
 		}
 
 		//========Dynamic A* PathFind========//
-		internal static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Vector.<Boolean>>): PathNode {
-			var nearbyNodes: Vector.<PathNode> = new < PathNode > [
+		static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+			var nearbyNodes: PathNode[] = new < PathNode > [
 				initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 				initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 				initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
@@ -60,7 +60,7 @@ package batr.game.entity.ai.programs {
 			];
 			var _leastNode: PathNode = null;
 			var _leastF: int = int.MAX_VALUE;
-			for each(var node: PathNode in nearbyNodes) {
+			for (var node of nearbyNodes) {
 				if (node == null || AIProgram_Adventurer.pointInRemember(node, remember) ||
 					host.computeFinalPlayerHurtDamage(owner, node.x, node.y, host.getBlockPlayerDamage(node.x, node.y)) >= owner.health)
 					continue;
@@ -81,14 +81,14 @@ package batr.game.entity.ai.programs {
 		/**
 		 * This matrix contains point where it went.
 		 */
-		protected var _remember: Vector.<Vector.<Boolean>>;
+		protected _remember: Vector.<Boolean[]>;
 
-		protected var _closeTarget: Dictionary;
+		protected _closeTarget: Dictionary;
 
-		protected var _lastTarget: EntityCommon;
+		protected _lastTarget: EntityCommon;
 
 		// AI Judging about
-		protected var _pickupWeight: int = exMath.random(50) * exMath.random1();
+		protected _pickupWeight: int = exMath.random(50) * exMath.random1();
 
 		//============Constructor Function============//
 		public function AIProgram_Master(): void {
@@ -97,7 +97,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._lastTarget = null;
 			this._closeTarget = null;
 		}
@@ -108,7 +108,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		protected function resetRemember(): void {
-			for each(var v: Vector.<Boolean> in this._remember) {
+			for (var v of this._remember) {
 				for (var i: String in v) {
 					v[i] = false;
 				}
@@ -150,7 +150,7 @@ package batr.game.entity.ai.programs {
 			var _nearestBox: BonusBox = null;
 			var _nearestDistance: int = int.MAX_VALUE;
 			var _tempDistance: int;
-			for each(var box: BonusBox in host.entitySystem.bonusBoxes) {
+			for (var box of host.entitySystem.bonusBoxes) {
 				if (box == null || this.inCloseTarget(box))
 					continue;
 				_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
@@ -167,8 +167,8 @@ package batr.game.entity.ai.programs {
 			var _nearestEnemy: Player = null;
 			var _nearestDistance: int = int.MAX_VALUE;
 			var _tempDistance: int;
-			var players: Vector.<Player> = host.getAlivePlayers();
-			for each(var player: Player in players) {
+			var players: Player[] = host.getAlivePlayers();
+			for (var player of players) {
 				if (player == owner || !owner.canUseWeaponHurtPlayer(player, owner.weapon) ||
 					player == null || this.inCloseTarget(player))
 					continue;

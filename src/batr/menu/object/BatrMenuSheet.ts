@@ -13,24 +13,24 @@ package batr.menu.objects {
 	import flash.events.*;
 	import flash.utils.Timer;
 
-	public class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuElementContainer {
+	export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
 
 		//============Instance Variables============//
-		protected var _directElements: Vector.<IBatrMenuElement>;
-		protected var _keepTitle: Boolean;
+		protected _directElements: IBatrMenuElement[];
+		protected _keepTitle: Boolean;
 
 		//============Constructor Function============//
 		public function BatrMenuSheet(keepTitle: Boolean = true): void {
 			super(false);
 			this._keepTitle = keepTitle;
-			this._directElements = new Vector.<IBatrMenuElement>();
+			this._directElements = new IBatrMenuElement[]();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			for each(var element: IBatrMenuElement in this._directElements) {
-				element.deleteSelf();
+		public override function destructor(): void {
+			for (var element of this._directElements) {
+				element.destructor();
 			}
 		}
 
@@ -39,7 +39,7 @@ package batr.menu.objects {
 			return this._keepTitle;
 		}
 
-		public function get directElements(): Vector.<IBatrMenuElement> {
+		public function get directElements(): IBatrMenuElement[] {
 			return this._directElements;
 		}
 
@@ -93,7 +93,7 @@ package batr.menu.objects {
 		}
 
 		public function addChildPerDirectElements(): void {
-			for each(var element: IBatrMenuElement in this._directElements) {
+			for (var element of this._directElements) {
 				if (element == null)
 					continue;
 				if (element is IBatrMenuElementContainer)
@@ -108,7 +108,7 @@ package batr.menu.objects {
 		}
 
 		public function getElementByName(name: String): BatrMenuGUI {
-			for each(var element: IBatrMenuElement in this._directElements) {
+			for (var element of this._directElements) {
 				if (element != null &&
 					element is BatrMenuGUI &&
 						(element as DisplayObject).name == name)

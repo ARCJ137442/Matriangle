@@ -6,48 +6,48 @@ package batr.game.block.blocks {
 
 	import flash.display.*;
 
-	public class Gate extends BlockCommon {
+	export default class Gate extends BlockCommon {
 		//============Static Variables============//
-		protected static const BLOCK_SIZE:uint = GlobalGameVariables.DEFAULT_SIZE;
-		protected static const LINE_SIZE:uint = BLOCK_SIZE / 20;
+		protected static const BLOCK_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE;
+		protected static const LINE_SIZE: uint = BLOCK_SIZE / 20;
 
-		public static const LINE_COLOR:uint = 0xaaaaaa;
-		public static const FILL_COLOR:uint = 0xbbbbbb;
-		public static const CENTER_COLOR:uint = 0x666666;
+		public static const LINE_COLOR: uint = 0xaaaaaa;
+		public static const FILL_COLOR: uint = 0xbbbbbb;
+		public static const CENTER_COLOR: uint = 0x666666;
 
 		//============Constructor Functions============//
 
 		//============Instance Variables============//
-		private var _open:Boolean;
+		private _open: Boolean;
 
 		//============Constructor Function============//
-		public function Gate(open:Boolean):void {
+		public function Gate(open: Boolean): void {
 			super();
 			this._open = open;
 			this.drawMain();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function destructor(): void {
 			this._open = false;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return this._open ? BlockAttributes.GATE_OPEN : BlockAttributes.GATE_CLOSE;
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return this._open ? BlockType.GATE_OPEN : BlockType.GATE_CLOSE;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new Gate(this._open);
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			if (this._open) {
 				// Line
 				this.graphics.beginFill(LINE_COLOR);

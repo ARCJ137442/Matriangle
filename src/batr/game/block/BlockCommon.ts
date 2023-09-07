@@ -39,7 +39,7 @@ export default class BlockCommon extends Shape {
 	}
 
 	//============Destructor Function============//
-	public function deleteSelf(): void {
+	public function destructor(): void {
 		this.graphics.clear();
 	}
 

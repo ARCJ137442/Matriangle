@@ -8,16 +8,16 @@ package batr.game.entity.ai.programs {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	internal class PathNode extends iPoint {
-		public var parent: PathNode;
+	class PathNode extends iPoint {
+		public parent: PathNode;
 
 		/**
 		 * From GlobalRot(U,D,L,R)
 		 */
-		public var fromRot: uint = GlobalRot.NULL;
+		public fromRot: uint = GlobalRot.NULL;
 
-		public var G: int = 0;
-		public var H: int = 0;
+		public G: int = 0;
+		public H: int = 0;
 
 		public function get F(): int {
 			return this.G + this.H;
@@ -42,8 +42,8 @@ package batr.game.entity.ai.programs {
 		/**
 		 * Didn't include the root
 		 */
-		public function get pathToRoot(): Vector.<PathNode> {
-			var result: Vector.<PathNode> = new < PathNode > [this];
+		public function get pathToRoot(): PathNode[] {
+			var result: PathNode[] = new < PathNode > [this];
 			var p: PathNode = this.parent;
 			while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 				p = p.parent;

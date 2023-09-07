@@ -7,39 +7,39 @@
 
 	import flash.display.*;
 
-	public class Glass extends ColoredBlock {
+	export default class Glass extends ColoredBlock {
 		//============Static Variables============//
-		protected static const LINE_SIZE:uint = GlobalGameVariables.DEFAULT_SIZE / 16;
-		protected static const ALPHA_FRAME:Number = 0.6;
-		protected static const ALPHA_FILL:Number = 0.2;
+		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 16;
+		protected static const ALPHA_FRAME: Number = 0.6;
+		protected static const ALPHA_FILL: Number = 0.2;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function Glass(color:uint = 0xddffff):void {
+		public function Glass(color: uint = 0xddffff): void {
 			super(color);
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.GLASS;
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return BlockType.GLASS;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new Glass(this._fillColor);
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			// Line
 			this.graphics.beginFill(this._fillColor, Glass.ALPHA_FRAME);
 			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);

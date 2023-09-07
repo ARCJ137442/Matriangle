@@ -11,7 +11,7 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class SubBomber extends BulletBasic {
+	export default class SubBomber extends BulletBasic {
 		//============Static Variables============//
 		public static const SIZE: Number = PosTransform.localPosToRealPos(2 / 5);
 		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
@@ -20,9 +20,9 @@ package batr.game.entity.entity.projectile {
 		public static const MAX_BOMB_TICK: uint = GlobalGameVariables.FIXED_TPS * 0.125;
 
 		//============Instance Variables============//
-		protected var _bombTick: uint;
+		protected _bombTick: uint;
 
-		protected var _maxBombTick: uint;
+		protected _maxBombTick: uint;
 
 		//============Constructor Function============//
 		public function SubBomber(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number, fuel: int = 100): void {
@@ -35,9 +35,9 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

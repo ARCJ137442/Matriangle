@@ -6,12 +6,12 @@ package batr.game.entity.model {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class PlayerProfile implements IPlayerProfile {
+	export default class PlayerProfile implements IPlayerProfile {
 		//============Instance Variables============//
-		protected var _customName: String;
-		protected var _experience: uint;
-		protected var _level: uint;
-		protected var _teamColor: uint;
+		protected _customName: String;
+		protected _experience: uint;
+		protected _level: uint;
+		protected _teamColor: uint;
 
 		//============Constructor============//
 		public function PlayerProfile(profile: IPlayerProfile = null): void {

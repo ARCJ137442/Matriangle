@@ -15,15 +15,15 @@ package batr.game.model {
 	 * The result stores informations by game,at game end.
 	 * @author ARCJ137442
 	 */
-	public class GameResult {
+	export default class GameResult {
 		//============Static Functions============//
 		protected static function scoreCompareFunc(x: PlayerStats, y: PlayerStats): int {
 			return exMath.sgn(y.totalScore - x.totalScore);
 		}
 
 		//============Instance Variables============//
-		protected var _stats: GameStats;
-		protected var _message: I18nText;
+		protected _stats: GameStats;
+		protected _message: I18nText;
 
 		//============Constructor============//
 		public function GameResult(host: Game, message: I18nText, stats: GameStats): void {
@@ -33,7 +33,7 @@ package batr.game.model {
 		}
 
 		//============Destructor============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._message = null;
 			this._stats = null;
 		}
@@ -50,7 +50,7 @@ package batr.game.model {
 		public function get rankingText(): ForcedI18nText {
 			// W.I.P
 			var text: String = '';
-			var sortedStatList: Vector.<PlayerStats> = this._stats.player.concat().sort(scoreCompareFunc);
+			var sortedStatList: PlayerStats[] = this._stats.player.concat().sort(scoreCompareFunc);
 			var currentStats: PlayerStats;
 			for (var i: int = 0; i < sortedStatList.length; i++) {
 				currentStats = sortedStatList[i];

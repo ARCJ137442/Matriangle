@@ -3,30 +3,30 @@ package batr.game.block {
 	import batr.game.block.*;
 
 	// Abstract
-	public class RotatableBlock extends BlockCommon {
+	export default class RotatableBlock extends BlockCommon {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _rot:uint;
+		protected _rot: uint;
 
 		//============Constructor Function============//
-		public function RotatableBlock(rot:uint):void {
+		public function RotatableBlock(rot: uint): void {
 			this._rot = rot;
 			super();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public function get rot():uint {
+		public function get rot(): uint {
 			return this._rot;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new RotatableBlock(this._rot);
 		}
 	}

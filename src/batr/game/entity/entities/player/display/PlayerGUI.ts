@@ -8,7 +8,7 @@
 	/*
 	 * It's A GUI Attach to Player(x=0,y=0)
 	 * */
-	public class PlayerGUI extends Sprite {
+	export default class PlayerGUI extends Sprite {
 		//============Static Variables============//
 		// Display Color
 		public static const HEALTH_COLOR: uint = 0xff0000;
@@ -50,26 +50,26 @@
 		}
 
 		//============Instance Variables============//
-		protected var _owner: Player;
+		protected _owner: Player;
 
 		// Texts
-		protected var _healthBarFormat: TextFormat = new TextFormat();
-		protected var _nameTagFormat: TextFormat = new TextFormat();
+		protected _healthBarFormat: TextFormat = new TextFormat();
+		protected _nameTagFormat: TextFormat = new TextFormat();
 
 		// Graphics
-		protected var _pointerTriangle: Shape = new Shape();
-		protected var _healthBarHealth: Shape = new Shape();
-		protected var _healthBarFrame: Shape = new Shape();
-		protected var _chargeBarCharge: Shape = new Shape();
-		protected var _chargeBarFrame: Shape = new Shape();
-		protected var _CDBarCD: Shape = new Shape();
-		protected var _CDBarFrame: Shape = new Shape();
-		protected var _experienceBarExperience: Shape = new Shape();
-		protected var _experienceBarFrame: Shape = new Shape();
+		protected _pointerTriangle: Shape = new Shape();
+		protected _healthBarHealth: Shape = new Shape();
+		protected _healthBarFrame: Shape = new Shape();
+		protected _chargeBarCharge: Shape = new Shape();
+		protected _chargeBarFrame: Shape = new Shape();
+		protected _CDBarCD: Shape = new Shape();
+		protected _CDBarFrame: Shape = new Shape();
+		protected _experienceBarExperience: Shape = new Shape();
+		protected _experienceBarFrame: Shape = new Shape();
 
-		protected var _healthBarText: TextField = new TextField();
-		protected var _nameTagText: TextField = new TextField();
-		protected var _levelText: TextField = new TextField();
+		protected _healthBarText: TextField = new TextField();
+		protected _nameTagText: TextField = new TextField();
+		protected _levelText: TextField = new TextField();
 
 		//============Constructor Function============//
 		public function PlayerGUI(owner: Player): void {
@@ -356,7 +356,7 @@
 			this.removeChild(this._pointerTriangle);
 		}
 
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this.removeChildren();
 			this._healthBarHealth = null;
 			this._healthBarFrame = null;

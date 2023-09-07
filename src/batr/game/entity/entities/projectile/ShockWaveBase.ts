@@ -15,7 +15,7 @@ package batr.game.entity.entity.projectile {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class ShockWaveBase extends ProjectileCommon {
+	export default class ShockWaveBase extends ProjectileCommon {
 		//============Static Variables============//
 		public static const BLOCK_RADIUS: Number = GlobalGameVariables.DEFAULT_SIZE * 1.2;
 
@@ -27,18 +27,18 @@ package batr.game.entity.entity.projectile {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _leftBlock: Sprite;
-		protected var _rightBlock: Sprite;
+		protected _leftBlock: Sprite;
+		protected _rightBlock: Sprite;
 
-		protected var _life: uint = 0;
+		protected _life: uint = 0;
 
-		protected var _weapon: WeaponType;
-		protected var _weaponChargePercent: Number;
+		protected _weapon: WeaponType;
+		protected _weaponChargePercent: Number;
 
 		/**
 		 * Default is 0,Vortex is 1
 		 */
-		public var mode: uint = 0;
+		public mode: uint = 0;
 
 		//============Constructor Function============//
 		public function ShockWaveBase(host: Game, x: Number, y: Number, owner: Player, weapon: WeaponType, weaponCharge: Number, mode: uint = 0): void {

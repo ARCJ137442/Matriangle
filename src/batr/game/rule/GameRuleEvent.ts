@@ -2,14 +2,14 @@ package batr.game.events {
 
 	import flash.events.Event;
 
-	public class GameRuleEvent extends Event {
+	export default class GameRuleEvent extends Event {
 		//============Static Variables============//
 		public static const VARIABLE_UPDATE: String = 'variableUpdate';
 		public static const TEAMS_CHANGE: String = 'teamsChange';
 
 		//============Instance Variables============//
-		protected var _variableOld: any;
-		protected var _variableNew: any;
+		protected _variableOld: any;
+		protected _variableNew: any;
 
 		//============Constructor Function============//
 		public function GameRuleEvent(type: String, variableOld: any = null, variableNew: any = null, bubbles: Boolean = false, cancelable: Boolean = false): void {

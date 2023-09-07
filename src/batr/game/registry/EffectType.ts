@@ -3,7 +3,7 @@ package batr.game.effect {
 	import batr.common.*;
 	import batr.general.*;
 
-	public class EffectType extends TypeCommon {
+	export default class EffectType extends TypeCommon {
 		//============Static Variables============//
 		public static const NULL: EffectType = null;
 		public static const ABSTRACT: EffectType = new EffectType('Abstract');
@@ -17,7 +17,7 @@ package batr.game.effect {
 		public static const PLAYER_LEVELUP: EffectType = new EffectType('PlayerLevelUp', 1);
 		public static const BLOCK_LIGHT: EffectType = new EffectType('BlockLight', 1);
 
-		public static const _ALL_EFFECT: Vector.<EffectType> = new < EffectType > [
+		public static const _ALL_EFFECT: EffectType[] = new < EffectType > [
 			EffectType.EXPLODE,
 			EffectType.SPAWN,
 			EffectType.TELEPORT,
@@ -34,7 +34,7 @@ package batr.game.effect {
 
 		//============Static Functions============//
 		public static function fromString(str: String): EffectType {
-			for each(var type: EffectType in EffectType._ALL_EFFECT) {
+			for (var type of EffectType._ALL_EFFECT) {
 				if (type.name == str)
 					return type;
 
@@ -43,8 +43,8 @@ package batr.game.effect {
 
 		}
 
-		public static function isIncludeIn(type: EffectType, types: Vector.<EffectType>): Boolean {
-			for each(var type2: EffectType in types) {
+		public static function isIncludeIn(type: EffectType, types: EffectType[]): Boolean {
+			for (var type2 of types) {
 				if (type == type2)
 					return true;
 
@@ -54,7 +54,7 @@ package batr.game.effect {
 		}
 
 		//============Instance Variables============//
-		protected var _effectLayer: int;
+		protected _effectLayer: int;
 
 		//============Constructor Function============//
 		public function EffectType(name: String, effectLayer: int = -1): void {

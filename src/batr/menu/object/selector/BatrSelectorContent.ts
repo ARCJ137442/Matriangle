@@ -3,7 +3,7 @@ package batr.menu.object.selector {
 	import batr.i18n.*;
 	import batr.game.stat.PlayerStats;
 
-	public class BatrSelectorContent {
+	export default class BatrSelectorContent {
 		//============Static Variables============//
 
 		//============Static Functions============//
@@ -55,8 +55,8 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		public static function createPlayerNamesContent(playerStats: Vector.<PlayerStats>): BatrSelectorContent {
-			var names: Vector.<I18nText> = ForcedI18nText.getTextsByPlayerNames(playerStats);
+		public static function createPlayerNamesContent(playerStats: PlayerStats[]): BatrSelectorContent {
+			var names: I18nText[] = ForcedI18nText.getTextsByPlayerNames(playerStats);
 			return new BatrSelectorContent().initAsEnum(
 				names, 0, 0
 			).initAsInt(
@@ -74,21 +74,21 @@ package batr.menu.object.selector {
 		/**The _value is the '_intValue'&'_enumIndex'
 		 * The enumText is force the intText
 		 */
-		protected var _value: int = 0;
-		protected var _enableLoopLeft: Boolean = false;
-		protected var _enableLoopRight: Boolean = false;
+		protected _value: int = 0;
+		protected _enableLoopLeft: Boolean = false;
+		protected _enableLoopRight: Boolean = false;
 
 		//====Int====//
-		protected var _intMax: int = int.MAX_VALUE;
-		protected var _intMin: int = int.MIN_VALUE;
+		protected _intMax: int = int.MAX_VALUE;
+		protected _intMin: int = int.MIN_VALUE;
 
 		//====Enum====//
-		protected var _enumTexts: Vector.<I18nText>;
-		protected var _enumIndexOffect: int = 0; // Let The Enum affects the negative value
+		protected _enumTexts: I18nText[];
+		protected _enumIndexOffect: int = 0; // Let The Enum affects the negative value
 
 		//============Constructor Function============//
 		public function BatrSelectorContent(): void {
-			this._enumTexts = new Vector.<I18nText>();
+			this._enumTexts = new I18nText[]();
 		}
 
 		public function copyFrom(other: BatrSelectorContent): void {
@@ -111,7 +111,7 @@ package batr.menu.object.selector {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._enumTexts = null;
 			this._value = this._intMax = this._intMin = 0;
 		}
@@ -205,11 +205,11 @@ package batr.menu.object.selector {
 			return this.getEnumTextAt(this.enumIndex);
 		}
 
-		public function get enumTexts(): Vector.<I18nText> {
+		public function get enumTexts(): I18nText[] {
 			return this._enumTexts;
 		}
 
-		public function set enumTexts(value: Vector.<I18nText>): void {
+		public function set enumTexts(value: I18nText[]): void {
 			this._enumTexts = value;
 		}
 
@@ -246,7 +246,7 @@ package batr.menu.object.selector {
 		}
 
 		//====Enum====//
-		public function initAsEnum(texts: Vector.<I18nText>, index: int = 0, offset: int = 0): BatrSelectorContent {
+		public function initAsEnum(texts: I18nText[], index: int = 0, offset: int = 0): BatrSelectorContent {
 			this._enumTexts = texts;
 			this._value = index;
 			this._enumIndexOffect = offset;
@@ -267,7 +267,7 @@ package batr.menu.object.selector {
 
 		public function alignI18nsFrom(translations: I18ns): BatrSelectorContent {
 			if (this._enumTexts != null) {
-				for each(var tText: I18nText in this._enumTexts) {
+				for (var tText of this._enumTexts) {
 					tText.translations = translations;
 				}
 			}

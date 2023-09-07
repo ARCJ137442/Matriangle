@@ -37,9 +37,9 @@
 	import flash.geom.*;
 	import flash.system.fscommand;
 
-	public class Game extends Sprite {
+	export default class Game extends Sprite {
 		//============Static Variables============//
-		public static const ALL_MAPS: Vector.<IMap> = new < IMap > [
+		public static const ALL_MAPS: IMap[] = new < IMap > [
 			Map_V1.EMPTY,
 			Map_V1.FRAME,
 			Map_V1.MAP_1,
@@ -102,7 +102,7 @@
 		}
 
 		// Tools
-		public static function joinNamesFromPlayers(players: Vector.<Player>): String {
+		public static function joinNamesFromPlayers(players: Player[]): String {
 			var result: String = '';
 			for (var i: uint = 0; i < players.length; i++) {
 				if (players[i] == null)
@@ -121,76 +121,76 @@
 		/**
 		 * The reference of Subject
 		 */
-		protected var _subject: BatrSubject;
-		protected var _map: IMap;
+		protected _subject: BatrSubject;
+		protected _map: IMap;
 
 		/**
 		 * Internal GameRule copy from Subject
 		 */
-		protected var _rule: GameRule;
+		protected _rule: GameRule;
 
-		protected var _stat: GameStats;
+		protected _stat: GameStats;
 
 		// Background
-		protected var _backGround: Background = new Background(0, 0, true, false, true);
+		protected _backGround: Background = new Background(0, 0, true, false, true);
 
 		// System
-		protected var _entitySystem: EntitySystem;
+		protected _entitySystem: EntitySystem;
 
-		protected var _effectSystem: EffectSystem;
+		protected _effectSystem: EffectSystem;
 
 		// Map
-		protected var _mapDisplayerBottom: IMapDisplayer = new MapDisplayer();
+		protected _mapDisplayerBottom: IMapDisplayer = new MapDisplayer();
 
-		protected var _mapDisplayerMiddle: IMapDisplayer = new MapDisplayer();
+		protected _mapDisplayerMiddle: IMapDisplayer = new MapDisplayer();
 
-		protected var _mapDisplayerTop: IMapDisplayer = new MapDisplayer();
+		protected _mapDisplayerTop: IMapDisplayer = new MapDisplayer();
 
 		// Players
-		protected var _playerGUIContainer: Sprite = new Sprite();
+		protected _playerGUIContainer: Sprite = new Sprite();
 
-		protected var _playerContainer: Sprite = new Sprite();
+		protected _playerContainer: Sprite = new Sprite();
 
-		protected var _projectileContainer: Sprite = new Sprite();
+		protected _projectileContainer: Sprite = new Sprite();
 
-		protected var _bonusBoxContainer: Sprite = new Sprite();
+		protected _bonusBoxContainer: Sprite = new Sprite();
 
 		// Effects
-		protected var _effectContainerBottom: Sprite = new Sprite();
+		protected _effectContainerBottom: Sprite = new Sprite();
 
-		protected var _effectContainerMiddle: Sprite = new Sprite();
+		protected _effectContainerMiddle: Sprite = new Sprite();
 
-		protected var _effectContainerTop: Sprite = new Sprite();
+		protected _effectContainerTop: Sprite = new Sprite();
 
 		// Global
-		protected var _isActive: Boolean;
-		protected var _isLoaded: Boolean;
-		protected var _tickTimer: Timer = new Timer(GlobalGameVariables.TICK_TIME_MS);
-		// protected var _secondTimer:Timer=new Timer(1000);//When a timer stop and start the timer will lost its phase.
-		protected var _speed: Number;
+		protected _isActive: Boolean;
+		protected _isLoaded: Boolean;
+		protected _tickTimer: Timer = new Timer(GlobalGameVariables.TICK_TIME_MS);
+		// protected _secondTimer:Timer=new Timer(1000);//When a timer stop and start the timer will lost its phase.
+		protected _speed: Number;
 
 		// Frame Complement
-		protected var _lastTime: int;
-		protected var _timeDistance: uint;
-		protected var _expectedFrames: uint;
-		protected var _enableFrameComplement: Boolean;
+		protected _lastTime: int;
+		protected _timeDistance: uint;
+		protected _expectedFrames: uint;
+		protected _enableFrameComplement: Boolean;
 
 		// Temp
-		protected var _tempUniformWeapon: WeaponType;
+		protected _tempUniformWeapon: WeaponType;
 
-		protected var _tempMapTransformSecond: uint;
+		protected _tempMapTransformSecond: uint;
 
-		// protected var _tempTimer:int=getTimer();
-		protected var _tempSecordPhase: uint = 0;
-		protected var _second: uint;
-		protected var _temp_game_rate: Number = 0.0;
+		// protected _tempTimer:int=getTimer();
+		protected _tempSecordPhase: uint = 0;
+		protected _second: uint;
+		protected _temp_game_rate: Number = 0.0;
 
 		// HUD
-		protected var _globalHUDContainer: Sprite = new Sprite();
+		protected _globalHUDContainer: Sprite = new Sprite();
 
-		protected var _mapTransformTimeText: BatrTextField = BatrTextField.fromKey(null, null);
+		protected _mapTransformTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
-		protected var _gamePlayingTimeText: BatrTextField = BatrTextField.fromKey(null, null);
+		protected _gamePlayingTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
 		//============Constructor Function============//
 		public function Game(subject: BatrSubject, active: Boolean = false): void {
@@ -322,7 +322,7 @@
 
 		public function get nextPlayerID(): uint {
 			var id: uint = 1;
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (!Player.isAI(player))
 					id++;
 			}
@@ -331,7 +331,7 @@
 
 		public function get nextAIID(): uint {
 			var id: uint = 1;
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (Player.isAI(player))
 					id++;
 			}
@@ -373,7 +373,7 @@
 		}
 
 		//========Game AI Interface========//
-		public function get allAvaliableBonusBox(): Vector.<BonusBox> {
+		public function get allAvaliableBonusBox(): BonusBox[] {
 			return this.entitySystem.bonusBoxes;
 		}
 
@@ -397,11 +397,11 @@
 		/**
 		 * Condition: Only one team's player alive.
 		 */
-		protected function isPlayersEnd(players: Vector.<Player>): Boolean {
+		protected function isPlayersEnd(players: Player[]): Boolean {
 			if (this.numPlayers < 2)
 				return false;
 			var team: PlayerTeam = null;
-			for each(var player: Player in players) {
+			for (var player of players) {
 				if (team == null)
 					team = player.team;
 				else if (player.team != team)
@@ -410,9 +410,9 @@
 			return true;
 		}
 
-		public function getAlivePlayers(): Vector.<Player> {
-			var result: Vector.<Player> = new Vector.<Player>();
-			for each(var player: Player in this._entitySystem.players) {
+		public function getAlivePlayers(): Player[] {
+			var result: Player[] = new Player[]();
+			for (var player of this._entitySystem.players) {
 				if (player == null)
 					continue;
 				if (!player.isCertainlyOut)
@@ -421,9 +421,9 @@
 			return result;
 		}
 
-		public function getInMapPlayers(): Vector.<Player> {
-			var result: Vector.<Player> = new Vector.<Player>();
-			for each(var player: Player in this._entitySystem.players) {
+		public function getInMapPlayers(): Player[] {
+			var result: Player[] = new Player[]();
+			for (var player of this._entitySystem.players) {
 				if (player == null)
 					continue;
 				if (player.health > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
@@ -433,7 +433,7 @@
 		}
 
 		public function testGameEnd(force: Boolean = false): void {
-			var alivePlayers: Vector.<Player> = this.getAlivePlayers();
+			var alivePlayers: Player[] = this.getAlivePlayers();
 			if (this.isPlayersEnd(alivePlayers) || force) {
 				// if allowTeamVictory=false,reset team colors
 				if (!force && alivePlayers.length > 1 && !this.rule.allowTeamVictory) {
@@ -445,21 +445,21 @@
 			}
 		}
 
-		protected function resetPlayersTeamInDifferent(players: Vector.<Player>): void {
+		protected function resetPlayersTeamInDifferent(players: Player[]): void {
 			var tempTeamIndex: uint = exMath.random(this.rule.playerTeams.length);
-			for each(var player: Player in players) {
+			for (var player of players) {
 				player.team = this.rule.playerTeams[tempTeamIndex];
 				tempTeamIndex = (tempTeamIndex + 1) % this.rule.playerTeams.length;
 			}
 		}
 
-		protected function onGameEnd(winners: Vector.<Player>): void {
+		protected function onGameEnd(winners: Player[]): void {
 			this.subject.pauseGame();
 			this.subject.gotoMenu();
 			this.subject.menuObj.loadResult(this.getGameResult(winners));
 		}
 
-		protected function getGameResult(winners: Vector.<Player>): GameResult {
+		protected function getGameResult(winners: Player[]): GameResult {
 			var result: GameResult = new GameResult(this,
 				this.getResultMessage(winners),
 				this._stat
@@ -467,7 +467,7 @@
 			return result;
 		}
 
-		protected function getResultMessage(winners: Vector.<Player>): I18nText {
+		protected function getResultMessage(winners: Player[]): I18nText {
 			if (winners.length < 1) {
 				return new I18nText(this.translations, I18nKey.NOTHING_WIN);
 			}
@@ -573,7 +573,7 @@
 			this._rule = null;
 			this._stat = null;
 			// Map
-			this._map.deleteSelf();
+			this._map.destructor();
 			this._map = null;
 			this.forceMapDisplay();
 			this.updateMapSize(false);
@@ -604,7 +604,7 @@
 				this.dealSecond();
 			}
 			//=====Entity TickRun=====//
-			for each(var entity: EntityCommon in this._entitySystem.entities) {
+			for (var entity of this._entitySystem.entities) {
 				if (entity != null) {
 					if (entity.isActive) {
 						entity.tickFunction();
@@ -617,7 +617,7 @@
 				}
 			}
 			//=====Player TickRun=====//
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (player != null) {
 					// Respawn About
 					if (player.infinityLife || player.lives > 0) {
@@ -629,7 +629,7 @@
 				}
 			}
 			//=====Effect TickRun=====//
-			for each(var effect: EffectCommon in this._effectSystem.effects) {
+			for (var effect of this._effectSystem.effects) {
 				if (effect != null) {
 					if (effect.isActive) {
 						effect.onEffectTick();
@@ -738,7 +738,7 @@
 
 		protected function dealKeyDownWithPlayers(code: uint, isKeyDown: Boolean): void {
 			if (this._entitySystem.playerCount > 0) {
-				for each(var player: Player in this._entitySystem.players) {
+				for (var player of this._entitySystem.players) {
 					// Detect - NOT USE:if(player.isRespawning) continue;
 					// Initial Action
 					if (isKeyDown && !player.isOwnKeyDown(code)) {
@@ -900,7 +900,7 @@
 			this._effectSystem.addEffect(new EffectExplode(this, x, y, finalRadius, color));
 			// Hurt Player
 			var distanceP: Number;
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (player == null)
 					continue;
 				distanceP = exMath.getDistanceSquare(x, y, player.entityX, player.entityY) / (finalRadius * finalRadius);
@@ -942,7 +942,7 @@
 
 			var vy: int = GlobalRot.towardYInt(rot, 1);
 
-			var cx: int = baseX, cy: int = baseY, players: Vector.<Player>;
+			var cx: int = baseX, cy: int = baseY, players: Player[];
 
 			// var nextBlockAtt:BlockAttributes
 			// Damage
@@ -953,7 +953,7 @@
 				// nextBlockAtt=this.getBlockAttributes(cx+vx,cy+vy);
 				players = getHitPlayers(cx, cy);
 
-				for each(var victim: Player in players) {
+				for (var victim of players) {
 					if (victim == null)
 						continue;
 
@@ -1004,7 +1004,7 @@
 
 			var radius: Number = scale;
 
-			for each(var victim: Player in this._entitySystem.players) {
+			for (var victim of this._entitySystem.players) {
 				if (victim == null)
 					continue;
 				// FinalDamage
@@ -1019,7 +1019,7 @@
 		public function thrownBlockHurtPlayer(block: ThrownBlock): void {
 			var attacker: Player = block.owner;
 			var damage: uint = block.damage;
-			for each(var victim: Player in this._entitySystem.players) {
+			for (var victim of this._entitySystem.players) {
 				if (victim == null)
 					continue;
 				// FinalDamage
@@ -1031,7 +1031,7 @@
 			}
 		}
 
-		public function lightningHurtPlayers(lightning: Lightning, players: Vector.<Player>, damages: Vector.<uint>): void {
+		public function lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void {
 			var p: Player, d: uint;
 			for (var i: any in players) {
 				p = players[i];
@@ -1043,7 +1043,7 @@
 
 		public function moveInTestWithEntity(): void {
 			// All Player
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				player.dealMoveInTest(player.entityX, player.entityY, true, false);
 
 			}
@@ -1138,7 +1138,7 @@
 				return false;
 			x = isNaN(x) ? player.gridX : x;
 			y = isNaN(y) ? player.gridY : y;
-			for each(var bonusBox: BonusBox in this._entitySystem.bonusBoxes) {
+			for (var bonusBox of this._entitySystem.bonusBoxes) {
 				if (this.hitTestPlayer(player, bonusBox.gridX, bonusBox.gridY)) {
 					bonusBox.onPlayerPickup(player);
 					player.onPickupBonusBox(bonusBox);
@@ -1289,7 +1289,7 @@
 		public function changeMap(map: IMap, update: Boolean = true, reSperadPlayer: Boolean = false): void {
 			// Remove and generateNew
 			if (this._map != null)
-				this._map.deleteSelf();
+				this._map.destructor();
 			this._map = map.generateNew();
 			if (update)
 				this.forceMapDisplay();
@@ -1305,8 +1305,8 @@
 			else
 				this.changeMap(destination, true, true);
 			// Call AI
-			var players: Vector.<Player> = this.getAlivePlayers();
-			for each(var player: Player in players) {
+			var players: Player[] = this.getAlivePlayers();
+			for (var player of players) {
 				if (player is Player)
 				(player as Player).onMapTransform();
 			}
@@ -1496,12 +1496,12 @@
 		protected function findFitSpawnPoint(player: Player, x: int, y: int): iPoint {
 			// Older Code uses Open List/Close List
 			/*{
-				var oP:Vector.<uint>=new <uint>[UintPointCompress.compressFromPoint(x,y)];
-				var wP:Vector.<uint>=new Vector.<uint>();
-				var cP:Vector.<uint>=new Vector.<uint>();
+				var oP:uint[]=new <uint>[UintPointCompress.compressFromPoint(x,y)];
+				var wP:uint[]=new uint[]();
+				var cP:uint[]=new uint[]();
 				var tP:iPoint;
 				while(oP.length>0) {
-					for each(var p:uint in oP) {
+					for(var p of oP) {
 						if(cP.indexOf(p)>=0) continue;
 						tP=UintPointCompress.releaseFromUint(p);
 						if(this.isIntOutOfMap(tP.x,tP.y)) continue;
@@ -1539,7 +1539,7 @@
 		}
 
 		public function spreadAllPlayer(): void {
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				spreadPlayer(player);
 
 			}
@@ -1557,7 +1557,7 @@
 
 		public function isHitAnyPlayer(x: int, y: int): Boolean {
 			// Loop
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y))
 					return true;
 
@@ -1569,7 +1569,7 @@
 
 		public function isHitAnotherPlayer(player: Player): Boolean {
 			// Loop
-			for each(var p2: Player in this._entitySystem.players) {
+			for (var p2 of this._entitySystem.players) {
 				if (p2 == player)
 					continue;
 
@@ -1584,7 +1584,7 @@
 
 		public function hitTestOfPlayers(...players): Boolean {
 			// Transform
-			var _pv: Vector.<Player> = new Vector.<Player>;
+			var _pv: Player[] = new Player[];
 
 			var p: any;
 
@@ -1595,27 +1595,27 @@
 				}
 			}
 			// Test
-			for each(var p1: Player in _pv) {
-				for each(var p2: Player in _pv) {
-					if (p1 == p2)
-						continue;
+			for (var p1 of _pv) {
+					for (var p2 of _pv) {
+						if (p1 == p2)
+							continue;
 
-					if (hitTestOfPlayer(p1, p2))
-						return true;
+						if (hitTestOfPlayer(p1, p2))
+							return true;
 
+					}
 				}
-			}
 			// Return
 			return false;
 
 		}
 
-		public function getHitPlayers(x: Number, y: Number): Vector.<Player> {
+		public function getHitPlayers(x: Number, y: Number): Player[] {
 			// Set
-			var returnV: Vector.<Player> = new Vector.<Player>;
+			var returnV: Player[] = new Player[];
 
 			// Test
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y)) {
 					returnV.push(player);
 
@@ -1627,7 +1627,7 @@
 		}
 
 		public function getHitPlayerAt(x: int, y: int): Player {
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y)) {
 					return player;
 				}
@@ -1636,7 +1636,7 @@
 		}
 
 		public function randomizeAllPlayerTeam(): void {
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				this.randomizePlayerTeam(player);
 
 			}
@@ -1654,7 +1654,7 @@
 		public function setATeamToNotAIPlayer(team: PlayerTeam = null): void {
 			var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (!Player.isAI(player))
 					player.team = tempTeam;
 
@@ -1664,7 +1664,7 @@
 		public function setATeamToAIPlayer(team: PlayerTeam = null): void {
 			var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				if (Player.isAI(player))
 					player.team = tempTeam;
 
@@ -1675,14 +1675,14 @@
 			if (weapon == null)
 				weapon = WeaponType.RANDOM_AVAILABLE;
 
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				player.weapon = weapon;
 
 			}
 		}
 
 		public function changeAllPlayerWeaponRandomly(): void {
-			for each(var player: Player in this._entitySystem.players) {
+			for (var player of this._entitySystem.players) {
 				player.weapon = WeaponType.RANDOM_AVAILABLE;
 
 				player.weaponUsingCD = 0;
@@ -1914,7 +1914,7 @@
 		//======Entity Functions======//
 		public function updateProjectilesColor(player: Player = null): void {
 			// null means update all projectiles
-			for each(var projectile: ProjectileCommon in this._entitySystem.projectile) {
+			for (var projectile of this._entitySystem.projectile) {
 				if (player == null || projectile.owner == player) {
 					projectile.drawShape();
 
@@ -1935,7 +1935,7 @@
 		}
 
 		protected function hasBonusBoxAt(x: int, y: int): Boolean {
-			for each(var box: BonusBox in this.entitySystem.bonusBoxes) {
+			for (var box of this.entitySystem.bonusBoxes) {
 				if (box.gridX == x && box.gridY == y)
 					return true;
 			}

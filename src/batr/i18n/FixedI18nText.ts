@@ -4,10 +4,10 @@ package batr.translations {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class FixedI18nText extends I18nText {
+	export default class FixedI18nText extends I18nText {
 		//============Instance Variables============//
-		protected var _prefix: String;
-		protected var _suffix: String;
+		protected _prefix: String;
+		protected _suffix: String;
 
 		//============Constructor Function============//
 		public function FixedI18nText(translations: I18ns, key: String = null, prefix: String = '', suffix: String = '') {
@@ -21,9 +21,9 @@ package batr.translations {
 		}
 
 		//============Destructor Function============//
-		override public function deleteSelf(): void {
+		override public function destructor(): void {
 			this._prefix = this._suffix = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

@@ -12,7 +12,7 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class ShockWaveDrone extends ProjectileCommon {
+	export default class ShockWaveDrone extends ProjectileCommon {
 		//============Static Variables============//
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 80;
 		public static const BLOCK_RADIUS: Number = GlobalGameVariables.DEFAULT_SIZE / 2;
@@ -20,14 +20,14 @@ package batr.game.entity.entity.projectile {
 		public static const MOVING_INTERVAL: uint = GlobalGameVariables.FIXED_TPS * 0.0625;
 
 		//============Instance Variables============//
-		public var lastBlockType: BlockType = BlockType.NULL;
-		public var nowBlockType: BlockType = BlockType.NULL;
+		public lastBlockType: BlockType = BlockType.NULL;
+		public nowBlockType: BlockType = BlockType.NULL;
 
-		protected var _weapon: WeaponType;
-		protected var _weaponChargePercent: Number;
+		protected _weapon: WeaponType;
+		protected _weaponChargePercent: Number;
 
-		protected var _weaponRot: uint;
-		protected var _moveDuration: uint = 0;
+		protected _weaponRot: uint;
+		protected _moveDuration: uint = 0;
 
 		//============Constructor Function============//
 		public function ShockWaveDrone(host: Game, x: Number, y: Number, owner: Player, weapon: WeaponType, weaponRot: uint, weaponChargePercent: Number): void {
@@ -40,10 +40,10 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
 			this._weapon = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

@@ -4,7 +4,7 @@
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
-public class BlockType extends TypeCommon {
+export default class BlockType extends TypeCommon {
 	//============Static Variables============//
 	public static const NULL: BlockType = null;
 	public static const ABSTRACT: BlockType = new BlockType('Abstract', null, BlockAttributes.ABSTRACT);
@@ -27,23 +27,23 @@ public class BlockType extends TypeCommon {
 	public static const GATE_CLOSE: BlockType = new BlockType('GateClose', Gate, BlockAttributes.GATE_CLOSE).setMapColor(0x666666);
 	public static const MOVEABLE_WALL: BlockType = new BlockType('MoveableWall', MoveableWall, BlockAttributes.MOVEABLE_WALL).setMapColor(0x88cc88);
 
-	public static const _SOLID_BLOCKS: Vector.<BlockType> = new < BlockType > [
+	public static const _SOLID_BLOCKS: BlockType[] = new < BlockType > [
 		BlockType.WALL, BlockType.GLASS, BlockType.BEDROCK,
 		BlockType.COLORED_BLOCK, BlockType.COLOR_SPAWNER,
 		BlockType.LASER_TRAP, BlockType.METAL, BlockType.GATE_CLOSE,
 		BlockType.MOVEABLE_WALL
 	];
-	public static const _LIQUID_BLOCKS: Vector.<BlockType> = new < BlockType > [BlockType.WATER];
+	public static const _LIQUID_BLOCKS: BlockType[] = new < BlockType > [BlockType.WATER];
 
-	public static const _GAS_BLOCKS: Vector.<BlockType> = new < BlockType > [BlockType.GATE_OPEN];
+	public static const _GAS_BLOCKS: BlockType[] = new < BlockType > [BlockType.GATE_OPEN];
 
-	public static const _BASE_BLOCKS: Vector.<BlockType> = new < BlockType > [SUPPLY_POINT];
+	public static const _BASE_BLOCKS: BlockType[] = new < BlockType > [SUPPLY_POINT];
 
-	public static const _OTHER_BLOCKS: Vector.<BlockType> = new < BlockType > [BlockType.X_TRAP_HURT, BlockType.X_TRAP_KILL, BlockType.X_TRAP_ROTATE];
-	public static const _NORMAL_BLOCKS: Vector.<BlockType> = _SOLID_BLOCKS.concat(_LIQUID_BLOCKS).concat(_GAS_BLOCKS).concat(_OTHER_BLOCKS);
-	public static const _SPECIAL: Vector.<BlockType> = new < BlockType > [BlockType.VOID, BlockType.SPAWN_POINT_MARK];
+	public static const _OTHER_BLOCKS: BlockType[] = new < BlockType > [BlockType.X_TRAP_HURT, BlockType.X_TRAP_KILL, BlockType.X_TRAP_ROTATE];
+	public static const _NORMAL_BLOCKS: BlockType[] = _SOLID_BLOCKS.concat(_LIQUID_BLOCKS).concat(_GAS_BLOCKS).concat(_OTHER_BLOCKS);
+	public static const _SPECIAL: BlockType[] = new < BlockType > [BlockType.VOID, BlockType.SPAWN_POINT_MARK];
 
-	public static const _ALL_BLOCKS: Vector.<BlockType> = _NORMAL_BLOCKS.concat(_SPECIAL);
+	public static const _ALL_BLOCKS: BlockType[] = _NORMAL_BLOCKS.concat(_SPECIAL);
 
 	//============Static Getter And Setter============//
 	public static get RANDOM_NORMAL(): BlockType {
@@ -53,7 +53,7 @@ public class BlockType extends TypeCommon {
 
 	//============Static Functions============//
 	public static fromString(str: String): BlockType {
-		for each(var type: BlockType in BlockType._NORMAL_BLOCKS) {
+		for (var type of BlockType._NORMAL_BLOCKS) {
 			if (type.name == str)
 				return type;
 
@@ -62,8 +62,8 @@ public class BlockType extends TypeCommon {
 
 	}
 
-	public static isIncludeIn(type: BlockType, types: Vector.<BlockType>): Boolean {
-		for each(var type2: BlockType in types) {
+	public static isIncludeIn(type: BlockType, types: BlockType[]): Boolean {
+		for (var type2 of types) {
 			if (type == type2)
 				return true;
 
@@ -73,7 +73,7 @@ public class BlockType extends TypeCommon {
 	}
 
 	public static fromMapColor(color: uint): BlockType {
-		for each(var type: BlockType in _ALL_BLOCKS) {
+		for (var type of _ALL_BLOCKS) {
 			if (type._mapColor == color)
 				return type;
 		}
@@ -81,14 +81,14 @@ public class BlockType extends TypeCommon {
 	}
 
 	//============Instance Variables============//
-	protected var _currentBlock: Class;
+	protected _currentBlock: Class;
 
-	protected var _currentAttributes: BlockAttributes;
+	protected _currentAttributes: BlockAttributes;
 
 	/**
 	 * Be use for BitMap importing.
 	 */
-	protected var _mapColor: uint = 0xffffffff;
+	protected _mapColor: uint = 0xffffffff;
 
 	//============Constructor Function============//
 	public BlockType(name: String, currentBlock: Class = null, currentAttributes: BlockAttributes = null): void {

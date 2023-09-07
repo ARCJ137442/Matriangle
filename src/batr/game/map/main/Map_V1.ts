@@ -14,7 +14,7 @@ package batr.game.map.main {
 	/* This's a Game Map<Version 1>
 	 * This Map only save BlockType,not BlockCommon
 	 */
-	public class Map_V1 extends NativeMapCommon {
+	export default class Map_V1 extends NativeMapCommon {
 		//============Static Variables============//
 		protected static const _SIZE: uint = GlobalGameVariables.DISPLAY_GRIDS;
 
@@ -609,8 +609,8 @@ package batr.game.map.main {
 		}
 
 		//============Instance Variables============//
-		protected var _Content: Object = new Object();
-		protected var _generator: IMapGenerator;
+		protected _Content: Object = new Object();
+		protected _generator: IMapGenerator;
 
 		//============Constructor============//
 		public function Map_V1(name: String = null, content: Object = null, isArena: Boolean = false): void {
@@ -620,11 +620,11 @@ package batr.game.map.main {
 		}
 
 		//============Destructor============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.removeAllBlock();
 			this._Content = null;
 			this._generator = null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
@@ -650,8 +650,8 @@ package batr.game.map.main {
 
 		}
 
-		public override function get allDefinedPositions(): Vector.<iPoint> {
-			var returnPoints: Vector.<iPoint> = new Vector.<iPoint>();
+		public override function get allDefinedPositions(): iPoint[] {
+			var returnPoints: iPoint[] = new iPoint[]();
 
 			if (this._Content == null)
 				return returnPoints;
@@ -664,8 +664,8 @@ package batr.game.map.main {
 
 		}
 
-		public override function get allMapPositions(): Vector.<iPoint> {
-			var returnPoints: Vector.<iPoint> = new Vector.<iPoint>();
+		public override function get allMapPositions(): iPoint[] {
+			var returnPoints: iPoint[] = new iPoint[]();
 
 			for (var x: uint = 0; x < this.mapWidth; x++) {
 				for (var y: uint = 0; y < this.mapHeight; y++) {
@@ -724,11 +724,11 @@ package batr.game.map.main {
 				this.removeAllBlock();
 
 			// content
-			var points: Vector.<iPoint> = target.allDefinedPositions;
+			var points: iPoint[] = target.allDefinedPositions;
 
 			var block: BlockCommon;
 
-			for each(var point: iPoint in points) {
+			for (var point of points) {
 				block = target.getBlock(point.x, point.y);
 				this._setBlock(point.x, point.y, createBlock ? block.clone() : block);
 
@@ -799,7 +799,7 @@ package batr.game.map.main {
 				block = this._Content[key] as BlockCommon;
 
 				if (deleteBlock && block != null)
-					block.deleteSelf();
+					block.destructor();
 				delete this._Content[key];
 			}
 		}

@@ -15,7 +15,7 @@ package batr.game.entity.ai.programs {
 	/**
 	 * Moving uses A*(A Star) algorithm.
 	 */
-	public class AIProgram_Adventurer implements IAIProgram {
+	export default class AIProgram_Adventurer implements IAIProgram {
 		//============Static Variables============//
 		public static const LABEL: String = 'Adventurer';
 		public static const LABEL_SHORT: String = 'A';
@@ -24,7 +24,7 @@ package batr.game.entity.ai.programs {
 
 		//============Static Functions============//
 		/*========AI Criteria========*/
-		internal static function weaponUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): Boolean {
+		static function weaponUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): Boolean {
 			var vx: int = GlobalRot.towardXInt(rot, 1);
 			var vy: int = GlobalRot.towardYInt(rot, 1);
 			var cx: int, cy: int;
@@ -46,7 +46,7 @@ package batr.game.entity.ai.programs {
 			return true;
 		}
 
-		internal static function weaponNotThroughPlayer(weapon: WeaponType): Boolean {
+		static function weaponNotThroughPlayer(weapon: WeaponType): Boolean {
 			switch (weapon) {
 				case WeaponType.BULLET:
 				case WeaponType.NUKE:
@@ -60,17 +60,17 @@ package batr.game.entity.ai.programs {
 			return false;
 		}
 
-		internal static function weaponNeedCarryBlock(weapon: WeaponType): Boolean {
+		static function weaponNeedCarryBlock(weapon: WeaponType): Boolean {
 			return weapon == WeaponType.BLOCK_THROWER;
 		}
 
-		internal static function detectCarryBlock(player: Player): Boolean {
+		static function detectCarryBlock(player: Player): Boolean {
 			if (weaponNeedCarryBlock(player.weapon) && !player.isCarriedBlock)
 				return false;
 			return true;
 		}
 
-		internal static function detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): Boolean {
+		static function detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): Boolean {
 			return !player.isCarriedBlock && blockAtt.isCarryable && player.host.testCarryableWithMap(blockAtt, player.host.map);
 		}
 
@@ -83,17 +83,17 @@ package batr.game.entity.ai.programs {
 		 * 2. [F=G+H]
 		 * @return	The Path From Target To Start
 		 */
-		protected static function findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): Vector.<PathNode> {
+		protected static function findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 			// trace('Name='+owner.customName)
 			// Operation
-			var openList: Vector.<PathNode> = new Vector.<PathNode>();
-			var closeList: Vector.<PathNode> = new Vector.<PathNode>();
+			var openList: PathNode[] = new PathNode[]();
+			var closeList: PathNode[] = new PathNode[]();
 
 			var endNode: PathNode = new PathNode(endX, endY, null);
 			var startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
 			var targetNode: PathNode = initFGH(new PathNode(endX, endY, null), host, owner, endNode);
 			var _leastNearbyNode: PathNode;
-			var _nearbyNodes: Vector.<PathNode>;
+			var _nearbyNodes: PathNode[];
 			var _tempNode: PathNode;
 
 			openList.push(startNode);
@@ -123,7 +123,7 @@ package batr.game.entity.ai.programs {
 			return _tempNode == null ? null : _tempNode.pathToRoot;
 }
 
-protected static function containNode(node: PathNode, nodes: Vector.<PathNode>): Boolean {
+protected static function containNode(node: PathNode, nodes: PathNode[]): Boolean {
 	if (nodes.indexOf(node) >= 0)
 		return true;
 	for (var i: String in nodes) {
@@ -133,7 +133,7 @@ protected static function containNode(node: PathNode, nodes: Vector.<PathNode>):
 	return false;
 }
 
-protected static function removeNodeIn(node: PathNode, nodes: Vector.<PathNode>): Boolean {
+protected static function removeNodeIn(node: PathNode, nodes: PathNode[]): Boolean {
 	var i: int = nodes.indexOf(node);
 	if (i >= 0) {
 		// trace('remove node'+node,'succeed!')
@@ -144,7 +144,7 @@ protected static function removeNodeIn(node: PathNode, nodes: Vector.<PathNode>)
 	return false;
 }
 
-protected static function getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): Vector.<PathNode> {
+protected static function getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): PathNode[] {
 	// Set Rot in mapDealNode
 	return new < PathNode > [
 		initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
@@ -154,12 +154,12 @@ protected static function getNearbyNodesAndInitFGH(n: PathNode, host: Game, owne
 	];
 }
 
-protected static function getLeastFNode(nodes: Vector.<PathNode>): PathNode {
+protected static function getLeastFNode(nodes: PathNode[]): PathNode {
 	if (nodes == null)
 		return null;
 	var _leastNode: PathNode = null;
 	var _leastF: int = int.MAX_VALUE;
-	for each(var node: PathNode in nodes) {
+	for (var node of nodes) {
 		if (node == null)
 			continue;
 		if (node.F < _leastF) {
@@ -198,9 +198,9 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 	return 0;
 }
 
-		//========Dynamic A* PathFind========//
-		internal static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Vector.<Boolean>>): PathNode {
-	var nearbyNodes: Vector.<PathNode> = new < PathNode > [
+//========Dynamic A* PathFind========//
+static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+	var nearbyNodes: PathNode[] = new < PathNode > [
 		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 		initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
@@ -208,7 +208,7 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 	];
 	var _leastNode: PathNode = null;
 	var _leastF: int = int.MAX_VALUE;
-	for each(var node: PathNode in nearbyNodes) {
+	for (var node of nearbyNodes) {
 		if (node == null || pointInRemember(node, remember) ||
 			host.isKillZone(node.x, node.y))
 			continue;
@@ -220,21 +220,21 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 	return _leastNode;
 }
 
-		internal static function pointInRemember(p: iPoint, r: Vector.<Vector.<Boolean>>): Boolean {
+static function pointInRemember(p: iPoint, r: Vector.<Boolean[]>): Boolean {
 	if (p == null || r == null || r.length < 1)
 		return false;
 	return r[p.x][p.y];
 }
 
-		internal static function writeRemember(remember: Vector.<Vector.<Boolean>>, x: uint, y: uint, value: Boolean): void {
+static function writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: Boolean): void {
 	remember[x][y] = value;
 }
 
-		internal static function writeRememberPoint(remember: Vector.<Vector.<Boolean>>, p: iPoint, value: Boolean): void {
+static function writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: Boolean): void {
 	remember[p.x][p.y] = value;
 }
 
-		internal static function getEntityName(target: EntityCommon): String {
+static function getEntityName(target: EntityCommon): String {
 	if (target == null)
 		return 'null';
 	if (target is Player)
@@ -242,12 +242,12 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 	return target.toString();
 }
 
-		/**
-		 * Trace if DEBUG=true.
-		 * @param	owner	the owner.
-		 * @param	message	the text without AIPlayer name.
-		 */
-		internal static function traceLog(owner: Player, message: String): void {
+/**
+ * Trace if DEBUG=true.
+ * @param	owner	the owner.
+ * @param	message	the text without AIPlayer name.
+ */
+static function traceLog(owner: Player, message: String): void {
 	if (DEBUG)
 		trace(owner.customName + ':', message);
 }
@@ -261,23 +261,23 @@ protected static function initDynamicNode(n: PathNode, host: Game, owner: AIPlay
 /**
  * This matrix contains point where it went.
  */
-protected var _remember: Vector.<Vector.<Boolean>>;
+protected _remember: Vector.<Boolean[]>;
 
-protected var _closeTarget: Vector.<EntityCommon>;
+protected _closeTarget: EntityCommon[];
 
-protected var _lastTarget: EntityCommon;
+protected _lastTarget: EntityCommon;
 
 // AI Judging about
-protected var _pickupFirst: Boolean = true;
+protected _pickupFirst: Boolean = true;
 
 //============Constructor Function============//
 public function AIProgram_Adventurer(): void {
 	this._lastTarget = null;
-	this._closeTarget = new Vector.<EntityCommon>();
+	this._closeTarget = new EntityCommon[]();
 }
 
 //============Destructor Function============//
-public function deleteSelf(): void {
+public function destructor(): void {
 	this._lastTarget = null;
 	this._closeTarget = null;
 }
@@ -288,7 +288,7 @@ protected function initRemember(host: Game): void {
 }
 
 protected function resetRemember(): void {
-	for each(var v: Vector.<Boolean> in this._remember) {
+	for (var v of this._remember) {
 		for (var i: String in v) {
 			v[i] = false;
 		}
@@ -329,7 +329,7 @@ public function getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 	var _nearestBox: BonusBox = null;
 	var _nearestDistance: int = int.MAX_VALUE;
 	var _tempDistance: int;
-	for each(var box: BonusBox in host.entitySystem.bonusBoxes) {
+	for (var box of host.entitySystem.bonusBoxes) {
 		if (box == null || this.inCloseTarget(box))
 			continue;
 		_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
@@ -346,8 +346,8 @@ public function getNearestEnemy(owner: Player, host: Game): Player {
 	var _nearestEnemy: Player = null;
 	var _nearestDistance: int = int.MAX_VALUE;
 	var _tempDistance: int;
-	var players: Vector.<Player> = host.getAlivePlayers();
-	for each(var player: Player in players) {
+	var players: Player[] = host.getAlivePlayers();
+	for (var player of players) {
 		if (player == owner || !owner.canUseWeaponHurtPlayer(player, owner.weapon) ||
 			player == null || this.inCloseTarget(player))
 			continue;
@@ -548,15 +548,15 @@ import batr.general.*;
 import batr.game.map.*;
 
 class PathNode extends iPoint {
-	public var parent: PathNode;
+	public parent: PathNode;
 
 	/**
 	 * From GlobalRot(U,D,L,R)
 	 */
-	public var fromRot: uint = GlobalRot.NULL;
+	public fromRot: uint = GlobalRot.NULL;
 
-	public var G: int = 0;
-	public var H: int = 0;
+	public G: int = 0;
+	public H: int = 0;
 
 	public function get F(): int {
 		return this.G + this.H;
@@ -581,8 +581,8 @@ class PathNode extends iPoint {
 	/**
 	 * Didn't include the root
 	 */
-	public function get pathToRoot(): Vector.<PathNode> {
-		var result: Vector.<PathNode> = new < PathNode > [this];
+	public function get pathToRoot(): PathNode[] {
+		var result: PathNode[] = new < PathNode > [this];
 		var p: PathNode = this.parent;
 		while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 			p = p.parent;
@@ -636,7 +636,7 @@ class PathNode extends iPoint {
 import batr.general.GlobalRot;
 import batr.game.map.IMap;
 
-internal class NodeHeap {
+class NodeHeap {
 	/**
 	 * @param	i	index start at 0
 	 * @return	The index start at 0
@@ -661,7 +661,7 @@ internal class NodeHeap {
 		return ((i + 1) >> 1) - 1;
 	}
 
-	protected const _list: Vector.<PathNode> = new Vector.<PathNode>();
+	protected const _list: PathNode[] = new PathNode[]();
 
 	public function get length(): uint {
 		return this._list.length;

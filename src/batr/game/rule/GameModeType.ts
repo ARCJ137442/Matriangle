@@ -3,7 +3,7 @@ package batr.game.model {
 	import batr.common.*;
 	import batr.general.*;
 
-	public class GameModeType extends TypeCommon {
+	export default class GameModeType extends TypeCommon {
 		//============Static Variables============//
 		public static const NULL: GameModeType = null;
 
@@ -12,7 +12,7 @@ package batr.game.model {
 		public static const SURVIVAL: GameModeType = new GameModeType('survival');
 		public static const HARD: GameModeType = new GameModeType('hard');
 
-		public static const _ALL_TYPE: Vector.<GameModeType> = new <GameModeType>
+		public static const _ALL_TYPE: GameModeType[] = new <GameModeType>
 		[
 			REGULAR, BATTLE, SURVIVAL
 		];
@@ -28,15 +28,15 @@ package batr.game.model {
 
 		//============Static Functions============//
 		public static function fromString(str: String): GameModeType {
-			for each(var type: GameModeType in GameModeType._ALL_TYPE) {
+			for (var type of GameModeType._ALL_TYPE) {
 				if (type.name == str)
 					return type;
 			}
 			return NULL;
 		}
 
-		public static function isIncludeIn(type: GameModeType, types: Vector.<GameModeType>): Boolean {
-			for each(var type2: GameModeType in types) {
+		public static function isIncludeIn(type: GameModeType, types: GameModeType[]): Boolean {
+			for (var type2 of types) {
 				if (type === type2)
 					return true;
 			}

@@ -11,7 +11,7 @@ package batr.game.entity.entity.projectile {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class BulletNuke extends BulletBasic {
+	export default class BulletNuke extends BulletBasic {
 		//============Static Variables============//
 		public static const SIZE: Number = PosTransform.localPosToRealPos(1 / 2);
 		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
@@ -28,9 +28,9 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			this.graphics.clear();
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

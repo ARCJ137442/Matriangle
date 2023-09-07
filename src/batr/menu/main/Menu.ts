@@ -23,7 +23,7 @@
 	import flash.events.*;
 	import flash.utils.Timer;
 
-	public class Menu extends Sprite {
+	export default class Menu extends Sprite {
 		//============Static Variables============//
 		protected static const _TITLE_HIDE_Y: int = -Title.HEIGHT - GlobalGameVariables.DEFAULT_SIZE * 1;
 		protected static const _TITLE_SHOW_Y: int = PosTransform.localPosToRealPos(2);
@@ -108,67 +108,67 @@
 		}
 
 		//============Instance Variables============//
-		protected var _isActive: Boolean;
+		protected _isActive: Boolean;
 
-		protected var _subject: BatrSubject;
-		protected var _backGround: Background = new Background(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
+		protected _subject: BatrSubject;
+		protected _backGround: Background = new Background(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
 
-		protected var _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
-		protected var _isShowingMenu: Boolean = false;
+		protected _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
+		protected _isShowingMenu: Boolean = false;
 
-		protected var _languageselector: BatrSelector;
-		protected var _playerStatselector: BatrSelector;
-		protected var _frameComplementselector: BatrSelector;
+		protected _languageselector: BatrSelector;
+		protected _playerStatselector: BatrSelector;
+		protected _frameComplementselector: BatrSelector;
 
 		// Sheets
 		// List
-		protected var _sheetMain: BatrMenuSheet;
-		protected var _sheetSelect: BatrMenuSheet;
-		protected var _sheetAdvancedCustom: BatrMenuSheet;
-		protected var _sheetCustomGameConfig: BatrMenuSheet;
-		protected var _sheetGameResult: BatrMenuSheet;
-		protected var _sheetScoreRanking: BatrMenuSheet;
-		protected var _sheetPause: BatrMenuSheet;
+		protected _sheetMain: BatrMenuSheet;
+		protected _sheetSelect: BatrMenuSheet;
+		protected _sheetAdvancedCustom: BatrMenuSheet;
+		protected _sheetCustomGameConfig: BatrMenuSheet;
+		protected _sheetGameResult: BatrMenuSheet;
+		protected _sheetScoreRanking: BatrMenuSheet;
+		protected _sheetPause: BatrMenuSheet;
 
 		// Functional
-		protected var _sheets: Vector.<BatrMenuSheet>;
-		protected var _nowSheet: BatrMenuSheet;
-		protected var _lastSheet: BatrMenuSheet;
+		protected _sheets: BatrMenuSheet[];
+		protected _nowSheet: BatrMenuSheet;
+		protected _lastSheet: BatrMenuSheet;
 
-		protected var _selectorListCustom: BatrSelectorList;
-		protected var _selectorListAdvanced_L: BatrSelectorList;
-		protected var _selectorListAdvanced_R: BatrSelectorList;
+		protected _selectorListCustom: BatrSelectorList;
+		protected _selectorListAdvanced_L: BatrSelectorList;
+		protected _selectorListAdvanced_R: BatrSelectorList;
 
-		protected var _storedGameResult: GameResult;
-		protected var _gameResultText: BatrTextField;
-		protected var _rankContentText: BatrTextField;
+		protected _storedGameResult: GameResult;
+		protected _gameResultText: BatrTextField;
+		protected _rankContentText: BatrTextField;
 
-		protected var _playerStatLevel: BatrTextField;
-		protected var _playerStatKill: BatrTextField;
-		protected var _playerStatDeath: BatrTextField;
-		protected var _playerStatDeathByPlayer: BatrTextField;
-		protected var _playerStatCauseDamage: BatrTextField;
-		protected var _playerStatDamageBy: BatrTextField;
-		protected var _playerStatPickupBonus: BatrTextField;
-		protected var _playerStatBeTeleport: BatrTextField;
-		protected var _playerStatTotalScore: BatrTextField;
+		protected _playerStatLevel: BatrTextField;
+		protected _playerStatKill: BatrTextField;
+		protected _playerStatDeath: BatrTextField;
+		protected _playerStatDeathByPlayer: BatrTextField;
+		protected _playerStatCauseDamage: BatrTextField;
+		protected _playerStatDamageBy: BatrTextField;
+		protected _playerStatPickupBonus: BatrTextField;
+		protected _playerStatBeTeleport: BatrTextField;
+		protected _playerStatTotalScore: BatrTextField;
 
-		protected var _gameStatMapTransform: BatrTextField;
-		protected var _gameStatBonusGenerate: BatrTextField;
+		protected _gameStatMapTransform: BatrTextField;
+		protected _gameStatBonusGenerate: BatrTextField;
 
-		protected var _gameRuleConfig: BatrTextInput;
+		protected _gameRuleConfig: BatrTextInput;
 
 		/**
 		 * A integer combine with limitted indexes.
 		 */
-		protected var _sheetHistory: uint;
+		protected _sheetHistory: uint;
 		/* 
 		 * s=<1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,0,1>:[l=17,m=2],
 		 * Complexed To Sum(pow(m,n)*s[n],n,0,l-1)=96217
 		 */
 
 		// GUI
-		protected var _title: Title = new Title();
+		protected _title: Title = new Title();
 
 		//============Constructor Function============//
 		public function Menu(subject: BatrSubject): void {
@@ -418,8 +418,8 @@
 			this.subject.onTitleComplete();
 			// Build Sheets
 			this.buildSheets();
-			for each(var sheet: BatrMenuSheet in this._sheets)
-			sheet.addChildPerDirectElements();
+			for (var sheet of this._sheets)
+				sheet.addChildPerDirectElements();
 			this.nowSheet = this._sheetMain;
 			// Add VresionText
 			var versionText = new TextField();
@@ -704,7 +704,7 @@
 		}
 
 		public function getSheetByName(name: String): BatrMenuSheet {
-			for each(var sheet: BatrMenuSheet in this._sheets) {
+			for (var sheet of this._sheets) {
 				if (sheet.name == name)
 					return sheet;
 			}
@@ -838,7 +838,7 @@
 
 		// Game Button
 		protected function onLinkageButtonClick(event: BatrGUIEvent): void {
-			for each(var sheet: BatrMenuSheet in this._sheets) {
+			for (var sheet of this._sheets) {
 				if (sheet.name == (event.gui as BatrButton).sheetLinkage)
 					this.nowSheet = sheet;
 			}

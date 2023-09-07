@@ -12,7 +12,7 @@ package batr.game.map.main {
 	 * ...
 	 * @author ARCJ137442
 	 */
-	public class MapGenerator implements IMapGenerator {
+	export default class MapGenerator implements IMapGenerator {
 		//============Static Variables============//
 		private static var generateChaos: Function;
 
@@ -21,7 +21,7 @@ package batr.game.map.main {
 		//============Static Functions============//
 
 		//============Instance Variables============//
-		protected var _generateFunc: Function;
+		protected _generateFunc: Function;
 
 		//============Constructor============//
 		public function MapGenerator(generateFunc: Function): void {

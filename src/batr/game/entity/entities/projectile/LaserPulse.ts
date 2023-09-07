@@ -8,14 +8,14 @@
 	import batr.game.model.*;
 	import batr.game.main.*;
 
-	public class LaserPulse extends LaserBasic {
+	export default class LaserPulse extends LaserBasic {
 		//============Static Variables============//
 		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS * 0.25;
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;
 		public static const ALPHA: Number = 1 / 0.75;
 
 		//============Instance Variables============//
-		public var isPull: Boolean = false;
+		public isPull: Boolean = false;
 
 		//============Constructor Function============//
 		public function LaserPulse(host: Game, x: Number, y: Number, owner: Player, length: uint = LENGTH, chargePercent: Number = 1): void {

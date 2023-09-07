@@ -1,6 +1,6 @@
 package batr.game.model {
 
-	public class PlayerTeam {
+	export default class PlayerTeam {
 		//============Static Variables============//
 		public static const isInited: Boolean = cInit();
 
@@ -12,7 +12,7 @@ package batr.game.model {
 		}
 
 		//============Instance Variables============//
-		protected var _defaultColor: uint;
+		protected _defaultColor: uint;
 
 		//============Constructor Function============//
 		public function PlayerTeam(color: uint = 0x000000): void {
@@ -20,7 +20,7 @@ package batr.game.model {
 		}
 
 		//============Destructor Function============//
-		public function deleteSelf(): void {
+		public function destructor(): void {
 			this._defaultColor = 0x000000;
 		}
 

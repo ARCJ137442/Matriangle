@@ -16,7 +16,7 @@ package batr.game.entity.entity.players {
 	import flash.display.*;
 	import flash.geom.*;
 
-	public class Player extends EntityCommon implements IPlayerProfile {
+	export default class Player extends EntityCommon implements IPlayerProfile {
 		//============Static Variables============//
 		public static const SIZE: Number = 1 * GlobalGameVariables.DEFAULT_SIZE;
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 96;
@@ -34,99 +34,99 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Instance Variables============//
-		protected var _team: PlayerTeam;
+		protected _team: PlayerTeam;
 
-		protected var _customName: String;
+		protected _customName: String;
 
-		protected var _weapon: WeaponType;
+		protected _weapon: WeaponType;
 
-		protected var _droneWeapon: WeaponType = GameRule.DEFAULT_DRONE_WEAPON;
+		protected _droneWeapon: WeaponType = GameRule.DEFAULT_DRONE_WEAPON;
 
 		//====Graphics Variables====//
-		protected var _lineColor: uint = 0x888888;
-		protected var _fillColor: uint = 0xffffff;
-		protected var _fillColor2: uint = 0xcccccc;
+		protected _lineColor: uint = 0x888888;
+		protected _fillColor: uint = 0xffffff;
+		protected _fillColor2: uint = 0xcccccc;
 
-		protected var _GUI: PlayerGUI;
+		protected _GUI: PlayerGUI;
 
-		protected var _carriedBlock: BlockCommon;
+		protected _carriedBlock: BlockCommon;
 
 		//====Contol Variables====//
 		// ContolDelay
-		public var contolDelay_Move: uint = GlobalGameVariables.FIXED_TPS * 0.5;
+		public contolDelay_Move: uint = GlobalGameVariables.FIXED_TPS * 0.5;
 
-		// public var contolDelay_Use:uint=GlobalGameVariables.TPS/4
-		// public var contolDelay_Select:uint=GlobalGameVariables.TPS/5
+		// public contolDelay_Use:uint=GlobalGameVariables.TPS/4
+		// public contolDelay_Select:uint=GlobalGameVariables.TPS/5
 
 		// ContolLoop
-		public var contolLoop_Move: uint = GlobalGameVariables.FIXED_TPS * 0.05;
+		public contolLoop_Move: uint = GlobalGameVariables.FIXED_TPS * 0.05;
 
-		// public var contolLoop_Use:uint=GlobalGameVariables.TPS/25
-		// public var contolLoop_Select:uint=GlobalGameVariables.TPS/40
+		// public contolLoop_Use:uint=GlobalGameVariables.TPS/25
+		// public contolLoop_Select:uint=GlobalGameVariables.TPS/40
 
 		// ContolKey
-		public var contolKey_Up: uint;
-		public var contolKey_Down: uint;
-		public var contolKey_Left: uint;
-		public var contolKey_Right: uint;
-		public var contolKey_Use: uint;
-		// public var ContolKey_Select_Left:uint;
-		// public var ContolKey_Select_Right:uint;
+		public contolKey_Up: uint;
+		public contolKey_Down: uint;
+		public contolKey_Left: uint;
+		public contolKey_Right: uint;
+		public contolKey_Use: uint;
+		// public ContolKey_Select_Left:uint;
+		// public ContolKey_Select_Right:uint;
 
 		// isPress
-		public var isPress_Up: Boolean;
-		public var isPress_Down: Boolean;
-		public var isPress_Left: Boolean;
-		public var isPress_Right: Boolean;
-		public var isPress_Use: Boolean;
-		// public var isPress_Select_Left:Boolean;
-		// public var isPress_Select_Right:Boolean;
+		public isPress_Up: Boolean;
+		public isPress_Down: Boolean;
+		public isPress_Left: Boolean;
+		public isPress_Right: Boolean;
+		public isPress_Use: Boolean;
+		// public isPress_Select_Left:Boolean;
+		// public isPress_Select_Right:Boolean;
 
 		// KeyDelay
-		public var keyDelay_Move: int;
-		// public var keyDelay_Use:int;
-		// public var keyDelay_Select:int;
+		public keyDelay_Move: int;
+		// public keyDelay_Use:int;
+		// public keyDelay_Select:int;
 
 		//========Custom Variables========//
 		// Health
-		protected var _health: uint = DEFAULT_HEALTH;
+		protected _health: uint = DEFAULT_HEALTH;
 
-		protected var _maxHealth: uint = DEFAULT_MAX_HEALTH;
+		protected _maxHealth: uint = DEFAULT_MAX_HEALTH;
 
-		protected var _heal: uint = 0;
+		protected _heal: uint = 0;
 
-		protected var _lives: uint = 10;
+		protected _lives: uint = 10;
 
-		protected var _infinityLife: Boolean = true;
+		protected _infinityLife: Boolean = true;
 
 		// Weapon
-		protected var _weaponUsingCD: uint = 0;
+		protected _weaponUsingCD: uint = 0;
 
-		protected var _weaponChargeTime: int = -1;
+		protected _weaponChargeTime: int = -1;
 
-		protected var _weaponChargeMaxTime: uint = 0;
+		protected _weaponChargeMaxTime: uint = 0;
 
 		// Respawn
-		public var respawnTick: int = -1;
+		public respawnTick: int = -1;
 
 		// negative number means isn't respawning
 
 		// Gameplay
-		protected var _lastHurtbyPlayer: Player = null;
+		protected _lastHurtbyPlayer: Player = null;
 
-		protected var _stats: PlayerStats;
+		protected _stats: PlayerStats;
 
-		protected var _damageDelay: int = 0;
+		protected _damageDelay: int = 0;
 
-		protected var _healDelay: uint = 0;
+		protected _healDelay: uint = 0;
 
 		//========Attributes========//
-		public var moveDistence: uint = 1;
+		public moveDistence: uint = 1;
 
-		public var invulnerable: Boolean = false;
+		public invulnerable: Boolean = false;
 
 		//====Experience====//
-		protected var _experience: uint = 0;
+		protected _experience: uint = 0;
 
 		public function get experience(): uint {
 			return this._experience;
@@ -147,7 +147,7 @@ package batr.game.entity.entity.players {
 		/**
 		 * If the experience up to uplevelExperience,level++
 		 */
-		protected var _level: uint = 0;
+		protected _level: uint = 0;
 
 		public function get level(): uint {
 			return this._level;
@@ -171,7 +171,7 @@ package batr.game.entity.entity.players {
 		 * The EXTRA power of Damage
 		 * #TotalDamage=WeaponDamage+buff*WeaponCoefficient
 		 */
-		protected var _buffDamage: uint = 0;
+		protected _buffDamage: uint = 0;
 
 		public function get buffDamage(): uint {
 			return this._buffDamage;
@@ -185,7 +185,7 @@ package batr.game.entity.entity.players {
 		 * The EXTRA power of Weapon Usage CD
 		 * #TotalCD=WeaponCD/(1+buff/10)
 		 */
-		protected var _buffCD: uint = 0;
+		protected _buffCD: uint = 0;
 
 		public function get buffCD(): uint {
 			return this._buffCD;
@@ -199,7 +199,7 @@ package batr.game.entity.entity.players {
 		 * The EXTRA power of Resistance
 		 * #FinalDamage=TotalDamage-buff*WeaponCoefficient>0
 		 */
-		protected var _buffResistance: uint = 0;
+		protected _buffResistance: uint = 0;
 
 		public function get buffResistance(): uint {
 			return this._buffResistance;
@@ -213,7 +213,7 @@ package batr.game.entity.entity.players {
 		 * The EXTRA power of Radius
 		 * #FinalRadius=DefaultRadius*(1+buff/10)
 		 */
-		protected var _buffRadius: uint = 0;
+		protected _buffRadius: uint = 0;
 
 		public function get buffRadius(): uint {
 			return this._buffRadius;
@@ -252,7 +252,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
+		public override function destructor(): void {
 			// Reset Key
 			this.turnAllKeyUp();
 			this.clearContolKeys();
@@ -264,14 +264,14 @@ package batr.game.entity.entity.players {
 			this._weaponUsingCD = 0;
 			this._team = null;
 			// Complex
-			this._stats.deleteSelf();
+			this._stats.destructor();
 			this._stats = null;
 			this._lastHurtbyPlayer = null;
 			this._weapon = null;
-			this._GUI.deleteSelf();
+			this._GUI.destructor();
 			this._GUI = null;
 			// Call Super Class
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
@@ -776,9 +776,9 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function filterPlayersThisCanHurt(players: Vector.<Player>, weapon: WeaponType): Vector.<Player> {
+		public function filterPlayersThisCanHurt(players: Player[], weapon: WeaponType): Player[] {
 			return players.filter(
-				function (player: Player, index: int, vector: Vector.<Player>) {
+				function (player: Player, index: int, vector: Player[]) {
 					return this.canUseWeaponHurtPlayer(player, weapon);
 				}, this
 			);
@@ -1019,7 +1019,7 @@ package batr.game.entity.entity.players {
 		else
 			this._fillColor = uint(fillColor);
 		// Deal lineColor
-		var HSV: Vector.<Number> = Color.HEXtoHSV(this._fillColor);
+		var HSV: Number[] = Color.HEXtoHSV(this._fillColor);
 		this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
 		if (isNaN(lineColor)) {
 			this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);

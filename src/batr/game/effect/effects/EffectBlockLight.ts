@@ -7,7 +7,7 @@ package batr.game.effect.effects {
 	import batr.game.effect.*;
 	import batr.game.main.*;
 
-	public class EffectBlockLight extends EffectCommon {
+	export default class EffectBlockLight extends EffectCommon {
 		//============Static Variables============//
 		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE;
 		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
@@ -21,13 +21,13 @@ package batr.game.effect.effects {
 		}
 
 		//============Instance Variables============//
-		protected var _color: uint = 0x000000;
+		protected _color: uint = 0x000000;
 
 		/**
 		 * The uint percent.
 		 */
-		protected var _alpha: uint;
-		public var reverse: Boolean = false;
+		protected _alpha: uint;
+		public reverse: Boolean = false;
 
 		//============Constructor Function============//
 		public function EffectBlockLight(host: Game, x: Number, y: Number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: Boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
@@ -39,8 +39,8 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

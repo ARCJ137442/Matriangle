@@ -6,18 +6,18 @@ package batr.game.block.blocks {
 
 	import flash.display.*;
 
-	public class XTrap extends BlockCommon {
+	export default class XTrap extends BlockCommon {
 		//============Static Variables============//
-		protected static const LINE_SIZE:uint = GlobalGameVariables.DEFAULT_SIZE / 20;
-		protected static const ALPHA:Number = 1;
-		protected static const ALPHA_BACK:Number = 0.4;
-		protected static const COLOR_NULL:uint = 0;
-		protected static const COLOR_HURT:uint = 0xff8000;
-		protected static const COLOR_KILL:uint = 0xff0000;
-		protected static const COLOR_ROTATE:uint = 0x0000ff;
+		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 20;
+		protected static const ALPHA: Number = 1;
+		protected static const ALPHA_BACK: Number = 0.4;
+		protected static const COLOR_NULL: uint = 0;
+		protected static const COLOR_HURT: uint = 0xff8000;
+		protected static const COLOR_KILL: uint = 0xff0000;
+		protected static const COLOR_ROTATE: uint = 0x0000ff;
 
 		//============Constructor Functions============//
-		private static function getColorByType(type:BlockType):uint {
+		private static function getColorByType(type: BlockType): uint {
 			switch (type) {
 				case BlockType.X_TRAP_HURT:
 					return XTrap.COLOR_HURT;
@@ -31,36 +31,36 @@ package batr.game.block.blocks {
 		}
 
 		//============Instance Variables============//
-		private var _type:BlockType;
+		private _type: BlockType;
 
 		//============Constructor Function============//
-		public function XTrap(type:BlockType):void {
+		public function XTrap(type: BlockType): void {
 			super();
 			this._type = type;
 			this.drawMain();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function destructor(): void {
 			this._type == null;
-			super.deleteSelf();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return this._type.currentAttributes;
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return this._type;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new XTrap(this._type);
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			// Back
 			this.graphics.beginFill(XTrap.getColorByType(this._type), ALPHA_BACK);
 			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);

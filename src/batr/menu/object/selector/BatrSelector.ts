@@ -20,7 +20,7 @@ package batr.menu.object.selector {
 	import flash.display.*;
 	import flash.events.MouseEvent;
 
-	public class BatrSelector extends BatrMenuGUI implements IBatrMenuElement {
+	export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
 		protected static const ARROW_OFFSET: Number = GlobalGameVariables.DEFAULT_SIZE / 10;
 
@@ -37,18 +37,18 @@ package batr.menu.object.selector {
 		}
 
 		//============Instance Variables============//
-		protected var _leftArrow: BatrSelectorArrow;
-		protected var _rightArrow: BatrSelectorArrow;
-		protected var _textField: BatrTextField;
-		protected var _minTextWidth: Number;
+		protected _leftArrow: BatrSelectorArrow;
+		protected _rightArrow: BatrSelectorArrow;
+		protected _textField: BatrTextField;
+		protected _minTextWidth: Number;
 
-		protected var _Content: BatrSelectorContent;
+		protected _Content: BatrSelectorContent;
 
 		/**
 		 * A reference to other selector,and constantly copy content from its link target
 		 * When its value update,the target's value also update
 		 */
-		protected var _linkTarget: BatrSelector = null;
+		protected _linkTarget: BatrSelector = null;
 
 		//============Constructor Function============//
 		public function BatrSelector(content: BatrSelectorContent,
@@ -71,12 +71,12 @@ package batr.menu.object.selector {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			this._leftArrow.deleteSelf();
-			this._rightArrow.deleteSelf();
-			this._textField.deleteSelf();
-			this._Content.deleteSelf();
-			super.deleteSelf();
+		public override function destructor(): void {
+			this._leftArrow.destructor();
+			this._rightArrow.destructor();
+			this._textField.destructor();
+			this._Content.destructor();
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

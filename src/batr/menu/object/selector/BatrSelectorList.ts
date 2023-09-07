@@ -15,24 +15,24 @@ package batr.menu.object.selector {
 	import flash.events.MouseEvent;
 	import flash.display.Sprite;
 
-	public class BatrSelectorList extends BatrMenuGUI implements IBatrMenuElementContainer {
+	export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
 		public static const DEFAULT_DISTANCE_H: Number = GlobalGameVariables.DEFAULT_SIZE * 8;
 		public static const DEFAULT_DISTANCE_V: Number = GlobalGameVariables.DEFAULT_SIZE;
 
 		//============Instance Variables============//
-		protected var _selectors: Vector.<BatrSelector> = new Vector.<BatrSelector>();
-		protected var _selectTextFields: Vector.<BatrTextField> = new Vector.<BatrTextField>();
+		protected _selectors: BatrSelector[] = new BatrSelector[]();
+		protected _selectTextFields: BatrTextField[] = new BatrTextField[]();
 
 		/**
 		 * Distance Between selector And selector.
 		 */
-		protected var _verticalDistance = DEFAULT_DISTANCE_V;
+		protected _verticalDistance = DEFAULT_DISTANCE_V;
 
 		/**
 		 * Distance Between Text And selector.
 		 */
-		protected var _horizontalDistance = DEFAULT_DISTANCE_H;
+		protected _horizontalDistance = DEFAULT_DISTANCE_H;
 
 		//============Constructor Function============//
 		public function BatrSelectorList(horizontalDistance: Number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: Number = BatrSelectorList.DEFAULT_DISTANCE_V): void {
@@ -41,20 +41,20 @@ package batr.menu.object.selector {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			for each(var selector: BatrSelector in this._selectors) {
-				selector.deleteSelf();
+		public override function destructor(): void {
+			for (var selector of this._selectors) {
+				selector.destructor();
 			}
 			this._selectors = null;
-			for each(var textField: BatrTextField in this._selectTextFields) {
-				textField.deleteSelf();
+			for (var textField of this._selectTextFields) {
+				textField.destructor();
 			}
 			this._selectTextFields = null;
 		}
 
 		//============Instance Getter And Setter============//
 		// selector
-		public function get selectors(): Vector.<BatrSelector> {
+		public function get selectors(): BatrSelector[] {
 			return this._selectors;
 		}
 
@@ -63,7 +63,7 @@ package batr.menu.object.selector {
 		}
 
 		// Text
-		public function get selectTextFields(): Vector.<BatrTextField> {
+		public function get selectTextFields(): BatrTextField[] {
 			return this._selectTextFields;
 		}
 
@@ -220,7 +220,7 @@ package batr.menu.object.selector {
 		}
 
 		public function getSelectorByName(name: String): BatrSelector {
-			for each(var selector: BatrSelector in this._selectors) {
+			for (var selector of this._selectors) {
 				if (selector != null && selector.name == name)
 					return selector;
 			}

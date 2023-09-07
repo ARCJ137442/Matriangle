@@ -7,7 +7,7 @@ package batr.game.effect.effects {
 	import batr.game.effect.*;
 	import batr.game.main.*;
 
-	public class EffectPlayerHurt extends EffectPlayerDeathLight {
+	export default class EffectPlayerHurt extends EffectPlayerDeathLight {
 		//============Static Variables============//
 		public static const FILL_COLOR: Number = 0xff0000;
 		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
@@ -25,8 +25,8 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf(): void {
-			super.deleteSelf();
+		public override function destructor(): void {
+			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//

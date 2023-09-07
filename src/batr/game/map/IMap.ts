@@ -10,9 +10,9 @@ package batr.game.map {
 	function get mapHeight(): uint;
 	function get randomX(): int;
 	function get randomY(): int;
-	function get allDefinedPositions(): Vector.<iPoint>;
-	function get allMapPositions(): Vector.<iPoint>;
-	function get spawnPoints(): Vector.<uint>;
+	function get allDefinedPositions(): iPoint[];
+	function get allMapPositions(): iPoint[];
+	function get spawnPoints(): uint[];
 	function get numSpawnPoints(): uint;
 
 	function get hasSpawnPoint(): Boolean;
@@ -23,7 +23,7 @@ package batr.game.map {
 
 	function get name(): String;
 
-	function deleteSelf(): void;
+	function destructor(): void;
 
 	function clone(createBlock: Boolean = true): IMap;
 
@@ -61,15 +61,15 @@ package batr.game.map {
 	function clearSpawnPoints(): void;
 
 	// AI About
-	function getMatrixObject(): Vector.<Vector.<Object>>;
+	function getMatrixObject(): Vector.<Object[]>;
 
-	function getMatrixInt(): Vector.<Vector.<int>>;
+	function getMatrixInt(): Vector.<int[]>;
 
-	function getMatrixUint(): Vector.<Vector.<uint>>;
+	function getMatrixUint(): Vector.<uint[]>;
 
-	function getMatrixNumber(): Vector.<Vector.<Number>>;
+	function getMatrixNumber(): Vector.<Number[]>;
 
-	function getMatrixBoolean(): Vector.<Vector.<Boolean>>;
+	function getMatrixBoolean(): Vector.<Boolean[]>;
 
 }
 }

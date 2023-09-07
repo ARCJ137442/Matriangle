@@ -4,6 +4,6 @@ package batr.menu.objects {
 	import flash.display.DisplayObject;
 
 	public interface IBatrMenuElement {
-		function deleteSelf():void;
-	}
+		function destructor(): void;
+}
 }

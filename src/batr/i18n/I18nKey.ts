@@ -20,7 +20,7 @@ package batr.translations {
 	import batr.fonts.*;
 	import batr.i18n.*;
 
-	public class I18nKey {
+	export default class I18nKey {
 		//============Static Variables============//
 		//====Keys====//
 		public static const NULL: String = '';
