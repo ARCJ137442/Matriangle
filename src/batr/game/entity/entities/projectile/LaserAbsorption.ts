@@ -9,15 +9,15 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserAbsorption extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: Number = GlobalGameVariables.TPS;
-		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;
-		public static const SCALE_V: Number = 1 / 4;
+		public static const LIFE: number = GlobalGameVariables.TPS;
+		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
+		public static const SCALE_V: number = 1 / 4;
 
 		//============Instance Variables============//
-		protected scaleReverse: Boolean = true;
+		protected scaleReverse: boolean = true;
 
 		//============Constructor Function============//
-		public function LaserAbsorption(host: Game, x: Number, y: Number, owner: Player, length: uint = LENGTH): void {
+		public LaserAbsorption(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH): void {
 			super(host, x, y, owner, length);
 			this._currentWeapon = WeaponType.ABSORPTION_LASER;
 			this.damage = this._currentWeapon.defaultDamage;

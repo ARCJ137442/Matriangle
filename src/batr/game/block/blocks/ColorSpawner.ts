@@ -10,12 +10,12 @@ package batr.game.block.blocks {
 		public static const FILL_COLOR: uint = Bedrock.FILL_COLOR;
 		public static const CENTER_COLOR: uint = 0x444444;
 
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 32;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function ColorSpawner(): void {
+		public ColorSpawner(): void {
 			super();
 			this.drawMain();
 		}

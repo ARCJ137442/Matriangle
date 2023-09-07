@@ -34,13 +34,13 @@ package batr.game.entity {
 		protected _bonusBoxes: BonusBox[] = new BonusBox[];
 
 		//============Constructor Function============//
-		public function EntitySystem(host: Game): void {
+		public EntitySystem(host: Game): void {
 			this._host = host;
 
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.removeAllEntity();
 			this._entities = null;
 
@@ -55,39 +55,39 @@ package batr.game.entity {
 		}
 
 		//============Instance Getters And Setters============//
-		public function get host(): Game {
+		public get host(): Game {
 			return this._host;
 		}
 
-		public function get entities(): EntityCommon[] {
+		public get entities(): EntityCommon[] {
 			return this._entities;
 		}
 
-		public function get players(): Player[] {
+		public get players(): Player[] {
 			return this._players;
 		}
 
-		public function get projectiles(): ProjectileCommon[] {
+		public get projectiles(): ProjectileCommon[] {
 			return this._projectiles;
 		}
 
-		public function get bonusBoxes(): BonusBox[] {
+		public get bonusBoxes(): BonusBox[] {
 			return this._bonusBoxes;
 		}
 
-		public function get entityCount(): uint {
+		public get entityCount(): uint {
 			if (this._entities == null)
 				return 0;
 			return this._entities.length;
 		}
 
-		public function get playerCount(): uint {
+		public get playerCount(): uint {
 			if (this._players == null)
 				return 0;
 			return this._players.length;
 		}
 
-		public function get AICount(): uint {
+		public get AICount(): uint {
 			if (this._players == null)
 				return 0;
 			var rU: uint;
@@ -98,13 +98,13 @@ package batr.game.entity {
 			return rU;
 		}
 
-		public function get projectileCount(): uint {
+		public get projectileCount(): uint {
 			if (this._projectiles == null)
 				return 0;
 			return this._projectiles.length;
 		}
 
-		public function get bonusBoxCount(): uint {
+		public get bonusBoxCount(): uint {
 			if (this._bonusBoxes == null)
 				return 0;
 			return this._bonusBoxes.length;
@@ -117,18 +117,18 @@ package batr.game.entity {
 		 * Find next empty UUID,let getEntityByUUID(this._headUUID)==null
 		 * @return
 		 */
-		public function nextUUID(): uint {
+		public nextUUID(): uint {
 			while (getEntityByUUID(++this._headUUID) == null && isValidUUID(this._headUUID)) {
 				return this._headUUID;
 			}
 			return 0;
 		}
 
-		public function getEntityByUUID(uuid: uint): EntityCommon {
+		public getEntityByUUID(uuid: uint): EntityCommon {
 			return (this._uuidDic[uuid] as EntityCommon);
 		}
 
-		public function getUUIDByEntity(entity: EntityCommon): uint {
+		public getUUIDByEntity(entity: EntityCommon): uint {
 			return uint(this._uuidDic[entity]);
 		}
 
@@ -137,19 +137,19 @@ package batr.game.entity {
 		 * @param	uuid	needed UUID
 		 * @return	if uuid!=0
 		 */
-		public function isValidUUID(uuid: uint): Boolean {
+		public isValidUUID(uuid: uint): boolean {
 			return uuid > 0;
 		}
 
-		public function hasValidEntity(uuid: uint): Boolean {
+		public hasValidEntity(uuid: uint): boolean {
 			return this.isValidUUID(uuid) && this.getEntityByUUID(uuid) != null;
 		}
 
-		public function hasValidUUID(entity: EntityCommon): Boolean {
+		public hasValidUUID(entity: EntityCommon): boolean {
 			return entity != null && this.isValidUUID(this.getUUIDByEntity(entity));
 		}
 
-		public function getAllEntity(): EntityCommon[] {
+		public getAllEntity(): EntityCommon[] {
 			var result: EntityCommon[] = new EntityCommon[]();
 			for (var obj of this._uuidDic) {
 				if (obj != null && obj is EntityCommon)
@@ -158,7 +158,7 @@ package batr.game.entity {
 			return result;
 		}
 
-		public function getAllUUID(): uint[] {
+		public getAllUUID(): uint[] {
 			var result: uint[] = new uint[]();
 			for (var obj of this._uuidDic) {
 				if (obj != null && obj is uint && isValidUUID(obj as uint))
@@ -167,7 +167,7 @@ package batr.game.entity {
 			return result;
 		}
 
-		public function registerEntityforUUID(entity: EntityCommon): Boolean {
+		public registerEntityforUUID(entity: EntityCommon): boolean {
 			if (entity == null)
 				return false;
 			var uuid: uint = this.nextUUID();
@@ -179,7 +179,7 @@ package batr.game.entity {
 			return false;
 		}
 
-		public function removeEntityforUUID(entity: EntityCommon): Boolean {
+		public removeEntityforUUID(entity: EntityCommon): boolean {
 			var uuid: uint = this.getUUIDByEntity(entity);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[entity] = 0;
@@ -190,7 +190,7 @@ package batr.game.entity {
 		}
 
 		// Ealier System Functions
-		public function GC(): void {
+		public GC(): void {
 			if (this._entities == null)
 				return;
 			// Entity
@@ -212,7 +212,7 @@ package batr.game.entity {
 		}
 
 		// Register,Remove and Remove
-		public function isRegisteredEntity(entity: EntityCommon): Boolean {
+		public isRegisteredEntity(entity: EntityCommon): boolean {
 			// List
 			/*return this._entities.some(
 			function(e2:EntityCommon,i:uint,v:EntityCommon[]) {
@@ -223,7 +223,7 @@ package batr.game.entity {
 
 		}
 
-		public function registerEntity(entity: EntityCommon): Boolean {
+		public registerEntity(entity: EntityCommon): boolean {
 			if (entity == null || isRegisteredEntity(entity))
 				return false;
 
@@ -237,7 +237,7 @@ package batr.game.entity {
 
 		}
 
-		public function removeEntity(entity: EntityCommon): Boolean {
+		public removeEntity(entity: EntityCommon): boolean {
 			if (entity == null || !isRegisteredEntity(entity))
 				return false;
 
@@ -251,7 +251,7 @@ package batr.game.entity {
 
 		}
 
-		public function removeEntity(entity: EntityCommon): void {
+		public removeEntity(entity: EntityCommon): void {
 			if (entity == null)
 				return;
 			entity.destructor();
@@ -270,7 +270,7 @@ package batr.game.entity {
 		/**
 		 * Remove All Entity!
 		 */
-		public function removeAllEntity(): void {
+		public removeAllEntity(): void {
 			while (this._entities.length > 0) {
 				this.removeEntity(this._entities[0]);
 
@@ -280,7 +280,7 @@ package batr.game.entity {
 			// this._uuidDic=new Dictionary(true);
 		}
 
-		public function isRegisteredPlayer(player: Player): Boolean {
+		public isRegisteredPlayer(player: Player): boolean {
 			// List
 			return this._players.some(
 				function (p2: Player, i: uint, v: Player[]) {
@@ -290,7 +290,7 @@ package batr.game.entity {
 
 		}
 
-		public function registerPlayer(player: Player): Boolean {
+		public registerPlayer(player: Player): boolean {
 			if (player == null || isRegisteredEntity(player))
 				return false;
 
@@ -302,7 +302,7 @@ package batr.game.entity {
 
 		}
 
-		public function removePlayer(player: Player): Boolean {
+		public removePlayer(player: Player): boolean {
 			if (player == null || !isRegisteredPlayer(player))
 				return false;
 
@@ -314,21 +314,21 @@ package batr.game.entity {
 
 		}
 
-		public function removePlayer(player: Player): void {
+		public removePlayer(player: Player): void {
 			this.removePlayer(player);
 
 			this.removeEntity(player);
 
 		}
 
-		public function removeAllPlayer(): void {
+		public removeAllPlayer(): void {
 			while (this._players.length > 0) {
 				this.removePlayer(this._players[0]);
 
 			}
 		}
 
-		public function isRegisteredProjectile(projectile: ProjectileCommon): Boolean {
+		public isRegisteredProjectile(projectile: ProjectileCommon): boolean {
 			// List
 			return this._projectiles.some(
 				function (p2: ProjectileCommon, i: uint, v: ProjectileCommon[]) {
@@ -338,7 +338,7 @@ package batr.game.entity {
 
 		}
 
-		public function registerProjectile(projectile: ProjectileCommon): Boolean {
+		public registerProjectile(projectile: ProjectileCommon): boolean {
 			if (projectile == null || isRegisteredEntity(projectile))
 				return false;
 
@@ -350,7 +350,7 @@ package batr.game.entity {
 
 		}
 
-		public function removeProjectile(projectile: ProjectileCommon): Boolean {
+		public removeProjectile(projectile: ProjectileCommon): boolean {
 			if (projectile == null || !isRegisteredProjectile(projectile))
 				return false;
 
@@ -362,21 +362,21 @@ package batr.game.entity {
 
 		}
 
-		public function removeProjectile(projectile: ProjectileCommon): void {
+		public removeProjectile(projectile: ProjectileCommon): void {
 			this.removeProjectile(projectile);
 
 			this.removeEntity(projectile);
 
 		}
 
-		public function removeAllProjectile(): void {
+		public removeAllProjectile(): void {
 			while (this._projectiles.length > 0) {
 				this.removeProjectile(this._projectiles[0]);
 
 			}
 		}
 
-		public function isRegisteredBonusBox(bonusBox: BonusBox): Boolean {
+		public isRegisteredBonusBox(bonusBox: BonusBox): boolean {
 			// List
 			return this._bonusBoxes.some(
 				function (p2: BonusBox, i: uint, v: BonusBox[]) {
@@ -386,7 +386,7 @@ package batr.game.entity {
 
 		}
 
-		public function registerBonusBox(bonusBox: BonusBox): Boolean {
+		public registerBonusBox(bonusBox: BonusBox): boolean {
 			if (bonusBox == null || isRegisteredBonusBox(bonusBox))
 				return false;
 
@@ -398,7 +398,7 @@ package batr.game.entity {
 
 		}
 
-		public function removeBonusBox(bonusBox: BonusBox): Boolean {
+		public removeBonusBox(bonusBox: BonusBox): boolean {
 			if (bonusBox == null || !isRegisteredBonusBox(bonusBox))
 				return false;
 
@@ -410,14 +410,14 @@ package batr.game.entity {
 
 		}
 
-		public function removeBonusBox(bonusBox: BonusBox): void {
+		public removeBonusBox(bonusBox: BonusBox): void {
 			this.removeBonusBox(bonusBox);
 
 			this.removeEntity(bonusBox);
 
 		}
 
-		public function removeAllBonusBox(): void {
+		public removeAllBonusBox(): void {
 			while (this._bonusBoxes.length > 0) {
 				this.removeBonusBox(this._bonusBoxes[0]);
 

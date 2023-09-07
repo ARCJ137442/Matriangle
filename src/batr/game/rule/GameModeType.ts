@@ -27,7 +27,7 @@ package batr.game.model {
 		}
 
 		//============Static Functions============//
-		public static function fromString(str: String): GameModeType {
+		public static function fromString(str: string): GameModeType {
 			for (var type of GameModeType._ALL_TYPE) {
 				if (type.name == str)
 					return type;
@@ -35,7 +35,7 @@ package batr.game.model {
 			return NULL;
 		}
 
-		public static function isIncludeIn(type: GameModeType, types: GameModeType[]): Boolean {
+		public static function isIncludeIn(type: GameModeType, types: GameModeType[]): boolean {
 			for (var type2 of types) {
 				if (type === type2)
 					return true;
@@ -44,12 +44,12 @@ package batr.game.model {
 		}
 
 		//============Constructor Function============//
-		public function GameModeType(name: String): void {
+		public GameModeType(name: string): void {
 			super(name);
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get label(): String {
+		public override function get label(): string {
 			return 'gameMode';
 		}
 	}

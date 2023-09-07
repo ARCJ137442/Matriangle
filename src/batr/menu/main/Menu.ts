@@ -108,13 +108,13 @@
 		}
 
 		//============Instance Variables============//
-		protected _isActive: Boolean;
+		protected _isActive: boolean;
 
 		protected _subject: BatrSubject;
 		protected _backGround: Background = new Background(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
 
 		protected _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
-		protected _isShowingMenu: Boolean = false;
+		protected _isShowingMenu: boolean = false;
 
 		protected _languageselector: BatrSelector;
 		protected _playerStatselector: BatrSelector;
@@ -171,7 +171,7 @@
 		protected _title: Title = new Title();
 
 		//============Constructor Function============//
-		public function Menu(subject: BatrSubject): void {
+		public Menu(subject: BatrSubject): void {
 			super();
 			this._subject = subject;
 			this.initDisplay();
@@ -180,53 +180,53 @@
 		}
 
 		//============Instance Getter And Setter============//
-		public function get isActive(): Boolean {
+		public get isActive(): boolean {
 			return this._isActive;
 		}
 
-		public function set isActive(value: Boolean): void {
+		public set isActive(value: boolean): void {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
 		}
 
-		public function get backGround(): Background {
+		public get backGround(): Background {
 			return this._backGround;
 		}
 
-		public function get subject(): BatrSubject {
+		public get subject(): BatrSubject {
 			return this._subject;
 		}
 
-		public function get game(): Game {
+		public get game(): Game {
 			return this._subject.gameObj;
 		}
 
-		public function get gameRule(): GameRule {
+		public get gameRule(): GameRule {
 			return this.subject.gameRule;
 		}
 
-		public function get translations(): I18ns {
+		public get translations(): I18ns {
 			return this._subject.translations;
 		}
 
-		public function get nowSheet(): BatrMenuSheet {
+		public get nowSheet(): BatrMenuSheet {
 			return this._nowSheet;
 		}
 
-		public function set nowSheet(value: BatrMenuSheet): void {
+		public set nowSheet(value: BatrMenuSheet): void {
 			this.setNowSheet(value, true);
 		}
 
-		public function get lastSheet(): BatrMenuSheet {
+		public get lastSheet(): BatrMenuSheet {
 			return this._lastSheet;
 		}
 
-		public function get sheetPause(): BatrMenuSheet {
+		public get sheetPause(): BatrMenuSheet {
 			return this._sheetPause;
 		}
 
-		public function get numSheet(): int {
+		public get numSheet(): int {
 			return this._sheets.length;
 		}
 
@@ -234,7 +234,7 @@
 		 * Returns a uint.
 		 * @return	A unsigned integer
 		 */
-		public function get historyLength(): uint {
+		public get historyLength(): uint {
 			// Get 12314 -> 5,1101201 ->7, ...
 			return this._sheetHistory < 2 ? this._sheetHistory : Math.ceil(Math.log(this._sheetHistory) / Math.log(this.numSheet + 1));
 		}
@@ -243,19 +243,19 @@
 		 * Returns a uint>0
 		 * @return	0:null,>0:sheet.indexOf(...)+1/sheet#0,sheet#1,sheet#2,...
 		 */
-		public function get lastSheetHistory(): uint {
+		public get lastSheetHistory(): uint {
 			return Math.floor(this._sheetHistory / Math.pow(this.numSheet + 1, this.historyLength - 1));
 		}
 
-		public function set storedGameResult(value: GameResult): void {
+		public set storedGameResult(value: GameResult): void {
 			this._storedGameResult = value;
 		}
 
-		public function get languageselector(): BatrSelector {
+		public get languageselector(): BatrSelector {
 			return this._languageselector;
 		}
 
-		public function get frameComplementselector(): BatrSelector {
+		public get frameComplementselector(): BatrSelector {
 			return this._frameComplementselector;
 		}
 
@@ -268,7 +268,7 @@
 		 *   used to add to history. If history=0, the sheet
 		 *   history will be add nothing.
 		 */
-		protected function addSheetHistory(history: uint): void {
+		protected addSheetHistory(history: uint): void {
 			// Add to the Head of UnsignedInteger
 			// history>0,r=this.numSheet+1
 			// trace('Before:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
@@ -276,7 +276,7 @@
 			// trace('After:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		}
 
-		protected function popSheetHistory(): uint {
+		protected popSheetHistory(): uint {
 			// Remove from the Head of UnsignedInteger
 			// trace('Before:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 			var lSH: uint = this.lastSheetHistory;
@@ -286,17 +286,17 @@
 		}
 
 		//========Event Functions========//
-		public function onStageResize(E: Event): void {
+		public onStageResize(E: Event): void {
 
 		}
 
-		protected function onAddedToStage(E: Event): void {
+		protected onAddedToStage(E: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			playTitleAnimation();
 			addChildren();
 		}
 
-		public function updateMapSize(): void {
+		public updateMapSize(): void {
 			if (this._backGround == null)
 				return;
 			this._backGround.x = this.x;
@@ -305,19 +305,19 @@
 			this._backGround.scaleY = this.scaleY;
 		}
 
-		protected function playTitleAnimation(): void {
+		protected playTitleAnimation(): void {
 			_title.x = PosTransform.localPosToRealPos(2);
 			_title.y = _TITLE_HIDE_Y;
 			this.animaShowMenu();
 			this.addEventListener(MenuEvent.TITLE_SHOWEN, constructMainManu);
 		}
 
-		protected function addChildren(): void {
+		protected addChildren(): void {
 			this.addChild(this._backGround);
 			this.addChild(this._title);
 		}
 
-		public function setNowSheet(value: BatrMenuSheet, addHistory: Boolean = true): void {
+		public setNowSheet(value: BatrMenuSheet, addHistory: boolean = true): void {
 			// Change
 			if (this._nowSheet != null)
 				this.removeChild(this._nowSheet);
@@ -333,7 +333,7 @@
 
 		//========Menu Build Methods========//
 		// Button Build
-		protected function quickButtonBuild(tKey: String, clickListenerFunction: Function, blockWidth: Number = 6, blockHeight: Number = 1): BatrButton {
+		protected quickButtonBuild(tKey: string, clickListenerFunction: Function, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
 			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
 				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
 				this.translations, tKey);
@@ -344,7 +344,7 @@
 		}
 
 		// quickButtonBuild with color
-		protected function quickButtonBuild2(tKey: String, clickListenerFunction: Function, color: uint, blockWidth: Number = 6, blockHeight: Number = 1): BatrButton {
+		protected quickButtonBuild2(tKey: string, clickListenerFunction: Function, color: uint, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
 			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
 				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
 				this.translations, tKey, true, color);
@@ -354,16 +354,16 @@
 			return button;
 		}
 
-		protected function quickBackButtonBuild(): BatrButton {
+		protected quickBackButtonBuild(): BatrButton {
 			return this.quickButtonBuild2(I18nKey.BACK, this.onBackButtonClick, 0x333333);
 		}
 
-		protected function quickLinkageButtonBuild(tKey: String, sheetLinkage: String, color: uint, blockX: int = 0, blockY: int = 0, blockWidth: Number = 6, blockHeight: Number = 1): BatrButton {
+		protected quickLinkageButtonBuild(tKey: string, sheetLinkage: string, color: uint, blockX: int = 0, blockY: int = 0, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
 			return quickButtonBuild2(tKey, this.onLinkageButtonClick, color, blockWidth, blockHeight).setLinkage(sheetLinkage).setBlockPos(blockX, blockY);
 		}
 
 		// TextField Build
-		protected function quickTextFieldBuild(tKey: String, blockX: Number = 0, blockY: Number = 0, autoSize: String = TextFieldAutoSize.LEFT): BatrTextField {
+		protected quickTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			var textField: BatrTextField = BatrTextField.fromKey(this.translations, tKey, autoSize);
 			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
 			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
@@ -373,7 +373,7 @@
 		}
 
 		// StatTextField Build
-		protected function quickStatTextFieldBuild(tKey: String, blockX: Number = 0, blockY: Number = 0, autoSize: String = TextFieldAutoSize.LEFT): BatrTextField {
+		protected quickStatTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			var textField: BatrTextField = new BatrTextField(new FixedI18nText(this.translations, tKey), autoSize);
 			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
 			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
@@ -383,7 +383,7 @@
 		}
 
 		// StatTextField Build
-		protected function quickTextInputBuild(text: String, blockX: Number = 0, blockY: Number = 0, blockW: Number = 10, blockH: Number = 5, autoSize: String = TextFieldAutoSize.LEFT): BatrTextInput {
+		protected quickTextInputBuild(text: string, blockX: number = 0, blockY: number = 0, blockW: number = 10, blockH: number = 5, autoSize: string = TextFieldAutoSize.LEFT): BatrTextInput {
 			var textInput: BatrTextInput = new BatrTextInput(text, autoSize);
 			textInput.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
 			textInput.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
@@ -393,8 +393,8 @@
 		}
 
 		// selector Build
-		protected function quickselectorBuild(content: BatrSelectorContent,
-			minTextBlockWidth: Number = 1, selectorClickFunction: Function = null): BatrSelector {
+		protected quickselectorBuild(content: BatrSelectorContent,
+			minTextBlockWidth: number = 1, selectorClickFunction: Function = null): BatrSelector {
 			var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
 			if (selectorClickFunction != null)
@@ -403,16 +403,16 @@
 		}
 
 		// I18nText Build
-		protected function quickI18nTextBuild(key: String, forcedText: String = null): I18nText {
+		protected quickI18nTextBuild(key: string, forcedText: string = null): I18nText {
 			return new ForcedI18nText(this.translations, key, forcedText);
 		}
 
 		// Menu Main
-		protected function initDisplay(): void {
+		protected initDisplay(): void {
 
 		}
 
-		protected function constructMainManu(event: MenuEvent): void {
+		protected constructMainManu(event: MenuEvent): void {
 			this.removeEventListener(MenuEvent.TITLE_SHOWEN, constructMainManu);
 			// Call Subject
 			this.subject.onTitleComplete();
@@ -446,7 +446,7 @@
 			this.addChild(this._frameComplementselector);
 		}
 
-		protected function buildSheets(): void {
+		protected buildSheets(): void {
 			// Set Variables
 			var pcS, acS, imS, pcS_2, acS_2, imS_2: BatrSelector;
 			var customLeftselectorX: uint = 10;
@@ -687,23 +687,23 @@
 			BatrSelector.setRelativeLink(imS, imS_2);
 		}
 
-		protected function getLifesFromRule(isAI: Boolean): int {
+		protected getLifesFromRule(isAI: boolean): int {
 			return transformLifesFromRule(isAI ? this.gameRule.remainLifesAI : this.gameRule.remainLifesPlayer);
 		}
 
-		protected function transformLifesFromRule(value: Number): int {
+		protected transformLifesFromRule(value: number): int {
 			return (value == Infinity ? -1 : int(value));
 		}
 
 		// Sheet
-		public function buildSheet(name: String, keepTitle: Boolean = true): BatrMenuSheet {
+		public buildSheet(name: string, keepTitle: boolean = true): BatrMenuSheet {
 			var sheet: BatrMenuSheet = new BatrMenuSheet(keepTitle);
 			sheet.x = sheet.y = 0;
 			sheet.name = name;
 			return sheet;
 		}
 
-		public function getSheetByName(name: String): BatrMenuSheet {
+		public getSheetByName(name: string): BatrMenuSheet {
 			for (var sheet of this._sheets) {
 				if (sheet.name == name)
 					return sheet;
@@ -711,22 +711,22 @@
 			return null;
 		}
 
-		public function turnSheet(): void {
+		public turnSheet(): void {
 			this.nowSheet = this._sheets[(this._sheets.indexOf(this._nowSheet) + 1) % this.numSheet];
 		}
 
 		// Title
-		public function animaShowMenu(): void {
+		public animaShowMenu(): void {
 			this._isShowingMenu = true;
 			startTitleTimer();
 		}
 
-		public function animaHideMenu(): void {
+		public animaHideMenu(): void {
 			this._isShowingMenu = false;
 			startTitleTimer();
 		}
 
-		protected function startTitleTimer(): void {
+		protected startTitleTimer(): void {
 			this._titleTimer.reset();
 			this._titleTimer.addEventListener(TimerEvent.TIMER, onTitleTimerTick);
 			this._titleTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTitleTimerComplete);
@@ -736,7 +736,7 @@
 		/**
 		 * Loading game result when game end.
 		 */
-		public function loadResult(result: GameResult): void {
+		public loadResult(result: GameResult): void {
 			// set
 			this._gameResultText.translationalText = result.message;
 			this._playerStatselector.setContent(BatrSelectorContent.createPlayerNamesContent(result.stats.players));
@@ -749,31 +749,31 @@
 			this.setNowSheet(this._sheetGameResult);
 		}
 
-		protected function updateStatByResult(): void {
+		protected updateStatByResult(): void {
 			this.onPlayerStatselectorClick(null);
 			Menu.setFixedTextSuffix(this._gameStatMapTransform, this._storedGameResult.stats.mapTransformCount);
 			Menu.setFixedTextSuffix(this._gameStatBonusGenerate, this._storedGameResult.stats.bonusGenerateCount);
 		}
 
-		protected function onTitleTimerTick(event: TimerEvent): void {
-			var percent: Number = this._titleTimer.currentCount / this._titleTimer.repeatCount;
-			var forcePercent: Number = this._isShowingMenu ? (1 - percent) : percent;
+		protected onTitleTimerTick(event: TimerEvent): void {
+			var percent: number = this._titleTimer.currentCount / this._titleTimer.repeatCount;
+			var forcePercent: number = this._isShowingMenu ? (1 - percent) : percent;
 			this._title.y = (forcePercent * _TITLE_HIDE_Y + (1 - forcePercent) * _TITLE_SHOW_Y);
 		}
 
-		protected function onTitleTimerComplete(event: TimerEvent): void {
+		protected onTitleTimerComplete(event: TimerEvent): void {
 			this._titleTimer.stop();
 			this._titleTimer.removeEventListener(TimerEvent.TIMER, onTitleTimerTick);
 			this._titleTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTitleTimerComplete);
 			this.dispatchEvent(new MenuEvent(MenuEvent.TITLE_SHOWEN));
 		}
 
-		protected function onI18nChange(E: I18nsChangeEvent): void {
+		protected onI18nChange(E: I18nsChangeEvent): void {
 
 		}
 
 		// GameRule Generation
-		protected function getRuleFromMenu(): GameRule {
+		protected getRuleFromMenu(): GameRule {
 			var rule: GameRule = this._subject.gameRule;
 			try {
 				//====Select====//
@@ -832,46 +832,46 @@
 			return rule;
 		}
 
-		protected function getRuleFromConfigField(input: TextField): GameRule {
+		protected getRuleFromConfigField(input: TextField): GameRule {
 			return GameRule.fromJSON(input.text);
 		}
 
 		// Game Button
-		protected function onLinkageButtonClick(event: BatrGUIEvent): void {
+		protected onLinkageButtonClick(event: BatrGUIEvent): void {
 			for (var sheet of this._sheets) {
 				if (sheet.name == (event.gui as BatrButton).sheetLinkage)
 					this.nowSheet = sheet;
 			}
 		}
 
-		protected function onContinueButtonClick(event: BatrGUIEvent): void {
+		protected onContinueButtonClick(event: BatrGUIEvent): void {
 			if (this.game.isLoaded)
 				this._subject.turnToGame();
 		}
 
-		protected function onQuickGameButtonClick(event: BatrGUIEvent): void {
+		protected onQuickGameButtonClick(event: BatrGUIEvent): void {
 			this._subject.resetRule();
 			this.game.forceStartGame(this.gameRule);
 			this._subject.turnToGame();
 		}
 
-		protected function onRestartButtonClick(event: BatrGUIEvent): void {
+		protected onRestartButtonClick(event: BatrGUIEvent): void {
 			this.game.restartGame(this.gameRule);
 			this._subject.turnToGame();
 		}
 
-		protected function onResultButtonClick(event: BatrGUIEvent): void {
+		protected onResultButtonClick(event: BatrGUIEvent): void {
 			this.game.testGameEnd(true);
 		}
 
-		protected function onBackButtonClick(event: BatrGUIEvent): void {
+		protected onBackButtonClick(event: BatrGUIEvent): void {
 			if (this._sheetHistory < 1)
 				return;
 			this.setNowSheet(this._sheets[this.lastSheetHistory - 1], false);
 			this.popSheetHistory();
 		}
 
-		protected function onMapPreviewSwitch(event: BatrGUIEvent): void {
+		protected onMapPreviewSwitch(event: BatrGUIEvent): void {
 			var selector: BatrSelector = event.gui as BatrSelector;
 			if (selector == null)
 				return;
@@ -880,23 +880,23 @@
 			// work in process
 		}
 
-		protected function onSelectStartButtonClick(event: BatrGUIEvent): void {
+		protected onSelectStartButtonClick(event: BatrGUIEvent): void {
 			this.game.forceStartGame(this.getRuleFromMenu(), false);
 			this._subject.turnToGame();
 		}
 
-		protected function onCustomGameConfigButtonClick(event: BatrGUIEvent): void {
+		protected onCustomGameConfigButtonClick(event: BatrGUIEvent): void {
 			this.setNowSheet(this._sheetCustomGameConfig);
 			this._gameRuleConfig.text = GameRule.toJSON(this.getRuleFromMenu(), null, 4);
 		}
 
 		// from pause screen
-		protected function onCustomGameConfigButtonClick2(event: BatrGUIEvent): void {
+		protected onCustomGameConfigButtonClick2(event: BatrGUIEvent): void {
 			this.setNowSheet(this._sheetCustomGameConfig);
 			this._gameRuleConfig.text = GameRule.toJSON(this.gameRule, null, 4);
 		}
 
-		protected function onCustomGameConfigStartButtonClick(event: BatrGUIEvent): void {
+		protected onCustomGameConfigStartButtonClick(event: BatrGUIEvent): void {
 			try {
 				var rule: GameRule = this.getRuleFromConfigField(this._gameRuleConfig);
 			}
@@ -908,12 +908,12 @@
 			this._subject.turnToGame();
 		}
 
-		protected function onMainMenuButtonClick(event: BatrGUIEvent): void {
+		protected onMainMenuButtonClick(event: BatrGUIEvent): void {
 			this._sheetHistory = 0;
 			this.setNowSheet(this._sheetMain);
 		}
 
-		protected function onMaxHealthselectorClick(event: BatrGUIEvent): void {
+		protected onMaxHealthselectorClick(event: BatrGUIEvent): void {
 			var healthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
 			var maxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
 			if (healthselector == null && maxHealthselector != null)
@@ -924,7 +924,7 @@
 			}
 		}
 
-		protected function onPlayerStatselectorClick(event: BatrGUIEvent): void {
+		protected onPlayerStatselectorClick(event: BatrGUIEvent): void {
 			// Change Texts
 			try {
 				var currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatselector.currentValue];
@@ -943,11 +943,11 @@
 			}
 		}
 
-		protected function onLanguageChange(event: BatrGUIEvent): void {
+		protected onLanguageChange(event: BatrGUIEvent): void {
 			this.subject.turnI18nsTo(I18ns.getI18nFromID(this._languageselector.currentValue));
 		}
 
-		protected function onFillFrameChange(event: BatrGUIEvent): void {
+		protected onFillFrameChange(event: BatrGUIEvent): void {
 			// refresh
 			this.game.refreshLastTime();
 			// set

@@ -16,7 +16,7 @@ package batr.game.block.blocks {
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function LaserTrap(): void {
+		public LaserTrap(): void {
 			super();
 			this.drawMain();
 		}
@@ -81,7 +81,7 @@ package batr.game.block.blocks {
 			this.graphics.endFill();
 		}
 
-		private function drawRhombus(cX: Number, cY: int, radius: Number): void {
+		private drawRhombus(cX: number, cY: int, radius: number): void {
 			this.graphics.moveTo(cX - radius, cY);
 			this.graphics.lineTo(cX, cY + radius);
 			this.graphics.lineTo(cX + radius, cY);

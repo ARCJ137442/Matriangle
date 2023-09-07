@@ -9,11 +9,11 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserTeleport extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS * 0.5;
-		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;
+		public static const LIFE: number = GlobalGameVariables.FIXED_TPS * 0.5;
+		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
 
 		//============Constructor Function============//
-		public function LaserTeleport(host: Game, x: Number, y: Number, owner: Player, length: uint = LENGTH): void {
+		public LaserTeleport(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH): void {
 			super(host, x, y, owner, length);
 			this._currentWeapon = WeaponType.TELEPORT_LASER;
 			this.damage = this._currentWeapon.defaultDamage;

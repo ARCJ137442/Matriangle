@@ -18,10 +18,10 @@ package batr.game.block.blocks {
 		//============Constructor Functions============//
 
 		//============Instance Variables============//
-		private _open: Boolean;
+		private _open: boolean;
 
 		//============Constructor Function============//
-		public function Gate(open: Boolean): void {
+		public Gate(open: boolean): void {
 			super();
 			this._open = open;
 			this.drawMain();

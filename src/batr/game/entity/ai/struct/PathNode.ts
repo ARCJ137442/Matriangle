@@ -19,19 +19,19 @@ package batr.game.entity.ai.programs {
 		public G: int = 0;
 		public H: int = 0;
 
-		public function get F(): int {
+		public get F(): int {
 			return this.G + this.H;
 		}
 
-		public function get hasParent(): Boolean {
+		public get hasParent(): boolean {
 			return this.parent != null;
 		}
 
-		public function get hasFromRot(): Boolean {
+		public get hasFromRot(): boolean {
 			return GlobalRot.isValidRot(this.fromRot);
 		}
 
-		public function get rootParent(): PathNode {
+		public get rootParent(): PathNode {
 			var p: PathNode = this.parent;
 			while (p.parent != null && p.parent != this) {
 				p = p.parent;
@@ -42,7 +42,7 @@ package batr.game.entity.ai.programs {
 		/**
 		 * Didn't include the root
 		 */
-		public function get pathToRoot(): PathNode[] {
+		public get pathToRoot(): PathNode[] {
 			var result: PathNode[] = new < PathNode > [this];
 			var p: PathNode = this.parent;
 			while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
@@ -53,7 +53,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		// Constructor
-		public function PathNode(x: int, y: int, parent: PathNode = null): void {
+		public PathNode(x: int, y: int, parent: PathNode = null): void {
 			super(x, y);
 			this.parent = parent;
 		}
@@ -64,11 +64,11 @@ package batr.game.entity.ai.programs {
 		}
 
 		// Methods
-		public function getFromRot(from: PathNode): uint {
+		public getFromRot(from: PathNode): uint {
 			return GlobalRot.fromLinearDistance(this.x - from.x, this.y - from.y);
 		}
 
-		public function autoSetFromRot(): void {
+		public autoSetFromRot(): void {
 			if (this.hasParent) {
 				this.fromRot = this.getFromRot(this.parent);
 			}
@@ -78,18 +78,18 @@ package batr.game.entity.ai.programs {
 		 * @param	parent	A Point
 		 * @return	This point
 		 */
-		public function setParentAndFromRot(parent: PathNode): PathNode {
+		public setParentAndFromRot(parent: PathNode): PathNode {
 			this.parent = parent;
 			this.autoSetFromRot();
 			return this;
 		}
 
-		public function setFromRot(rot: uint): PathNode {
+		public setFromRot(rot: uint): PathNode {
 			this.fromRot = rot;
 			return this;
 		}
 
-		public override function toString(): String {
+		public override function toString(): string {
 			return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 		}
 	}

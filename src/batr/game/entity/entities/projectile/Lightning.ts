@@ -14,15 +14,15 @@ package batr.game.entity.entity.projectile {
 	 */
 	export default class Lightning extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LIGHT_ALPHA: Number = 0.5;
-		public static const LIGHT_BLOCK_WIDTH: Number = 0.2;
+		public static const LIGHT_ALPHA: number = 0.5;
+		public static const LIGHT_BLOCK_WIDTH: number = 0.2;
 		public static const LIFE: uint = GlobalGameVariables.TPS / 2;
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
 		protected _life: uint = LIFE;
-		public isDamaged: Boolean = false;
+		public isDamaged: boolean = false;
 
 		protected _energy: int;
 		protected _initialEnergy: int;
@@ -32,7 +32,7 @@ package batr.game.entity.entity.projectile {
 		protected _hurtDefaultDamage: uint[] = new uint[]();
 
 		//============Constructor Function============//
-		public function Lightning(host: Game, x: Number, y: Number, rot: uint, owner: Player, energy: int): void {
+		public Lightning(host: Game, x: number, y: number, rot: uint, owner: Player, energy: int): void {
 			super(host, x, y, owner);
 			this.rot = rot;
 			this._initialEnergy = this._energy = energy;
@@ -45,12 +45,12 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get energyPercent(): Number {
+		public get energyPercent(): number {
 			return this._energy / this._initialEnergy;
 		}
 
 		//============Instance Functions============//
-		public function dealTick(): void {
+		public dealTick(): void {
 			if (!this.isDamaged) {
 				this.isDamaged = true;
 				this.lightningWays();
@@ -66,7 +66,7 @@ package batr.game.entity.entity.projectile {
 		/**
 		 * Init the way of lightning
 		 */
-		protected function lightningWays(): void {
+		protected lightningWays(): void {
 			// Draw in location in this
 			var head: iPoint = new iPoint(this.gridX, this.gridY);
 			var ownerWeapon: WeaponType = this.currentWeapon;
@@ -107,11 +107,11 @@ package batr.game.entity.entity.projectile {
 			// trace(this.entityX,this.entityY);
 		}
 
-		protected function addWayPoint(hostX: int, hostY: int): void {
+		protected addWayPoint(hostX: int, hostY: int): void {
 			this._wayPoints.push(new iPoint(hostX - this.gridX, hostY - this.gridY));
 		}
 
-		protected function getLeastWeightRot(x: int, y: int, nowRot: uint): uint {
+		protected getLeastWeightRot(x: int, y: int, nowRot: uint): uint {
 			var cx: int, cy: int;
 			var leastCost: int = operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
 			var cost: int;
@@ -129,7 +129,7 @@ package batr.game.entity.entity.projectile {
 			return result;
 		}
 
-		protected function operateCost(x: int, y: int): int {
+		protected operateCost(x: int, y: int): int {
 			if (this.host.isHitAnyPlayer(x, y))
 				return 5; // The electricResistance of player
 			if (this.host.isIntOutOfMap(x, y))
@@ -148,7 +148,7 @@ package batr.game.entity.entity.projectile {
 
 		}
 
-		protected function drawLightning(): void {
+		protected drawLightning(): void {
 			// These points uses local grid,for example the initial point is (0,0)
 			var point: iPoint = null, pointH: iPoint = null;
 			// drawLines

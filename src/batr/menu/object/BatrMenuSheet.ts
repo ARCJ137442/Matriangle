@@ -18,10 +18,10 @@ package batr.menu.objects {
 
 		//============Instance Variables============//
 		protected _directElements: IBatrMenuElement[];
-		protected _keepTitle: Boolean;
+		protected _keepTitle: boolean;
 
 		//============Constructor Function============//
-		public function BatrMenuSheet(keepTitle: Boolean = true): void {
+		public BatrMenuSheet(keepTitle: boolean = true): void {
 			super(false);
 			this._keepTitle = keepTitle;
 			this._directElements = new IBatrMenuElement[]();
@@ -35,25 +35,25 @@ package batr.menu.objects {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get keepTitle(): Boolean {
+		public get keepTitle(): boolean {
 			return this._keepTitle;
 		}
 
-		public function get directElements(): IBatrMenuElement[] {
+		public get directElements(): IBatrMenuElement[] {
 			return this._directElements;
 		}
 
-		public function get directElementCount(): int {
+		public get directElementCount(): int {
 			return this._directElements.length;
 		}
 
 		//============Instance Functions============//
-		public function setPos(x: Number, y: Number): BatrMenuSheet {
+		public setPos(x: number, y: number): BatrMenuSheet {
 			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrMenuSheet {
+		public setBlockPos(x: number, y: number): BatrMenuSheet {
 			super.protected:: sBP(x, y);
 			return this;
 		}
@@ -64,7 +64,7 @@ package batr.menu.objects {
 		 * @param	alpha	The alpha.
 		 * @return	this
 		 */
-		public function setMaskColor(color: uint, alpha: Number = 1): BatrMenuSheet {
+		public setMaskColor(color: uint, alpha: number = 1): BatrMenuSheet {
 			with (this.graphics) {
 				clear();
 				beginFill(color, alpha);
@@ -75,14 +75,14 @@ package batr.menu.objects {
 		}
 
 		//========By IBatrMenuElementContainer========//
-		public function appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
+		public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
 			if (element == null)
 				return this;
 			this._directElements.push(element);
 			return this;
 		}
 
-		public function appendDirectElements(...elements): IBatrMenuElement {
+		public appendDirectElements(...elements): IBatrMenuElement {
 			var element: IBatrMenuElement;
 			for (var i: int = 0; i < elements.length; i++) {
 				element = elements[i] as IBatrMenuElement;
@@ -92,7 +92,7 @@ package batr.menu.objects {
 			return this;
 		}
 
-		public function addChildPerDirectElements(): void {
+		public addChildPerDirectElements(): void {
 			for (var element of this._directElements) {
 				if (element == null)
 					continue;
@@ -103,11 +103,11 @@ package batr.menu.objects {
 			}
 		}
 
-		public function getElementAt(index: int): IBatrMenuElement {
+		public getElementAt(index: int): IBatrMenuElement {
 			return (index < 1 || index >= this.directElementCount) ? null : this._directElements[index];
 		}
 
-		public function getElementByName(name: String): BatrMenuGUI {
+		public getElementByName(name: string): BatrMenuGUI {
 			for (var element of this._directElements) {
 				if (element != null &&
 					element is BatrMenuGUI &&

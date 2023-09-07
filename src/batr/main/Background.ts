@@ -10,26 +10,26 @@ package batr.main {
 		//============Static Variables============//
 		public static const BACKGROUND_COLOR: uint = 0xdddddd;
 		public static const GRID_COLOR: uint = 0xd6d6d6;
-		public static const GRID_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 32;
+		public static const GRID_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
 		public static const DEFAULT_DISPLAY_GRIDS: uint = GlobalGameVariables.DISPLAY_GRIDS;
 		public static const GRID_SPREAD: uint = 0;
 		public static const FRAME_LINE_COLOR: uint = 0x88ffff;
-		public static const FRAME_LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 8;
+		public static const FRAME_LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 8;
 
 		//============Instance Variables============//
 		protected _frame: Sprite;
 
-		protected _enableGrid: Boolean;
+		protected _enableGrid: boolean;
 
-		protected _enableFrame: Boolean;
+		protected _enableFrame: boolean;
 
-		protected _enableBorderLine: Boolean;
+		protected _enableBorderLine: boolean;
 
 		//============Constructor Function============//
-		public function Background(width: uint, height: uint,
-			enableGrid: Boolean = true,
-			enableFrame: Boolean = true,
-			enableBorderLine: Boolean = true) {
+		public Background(width: uint, height: uint,
+			enableGrid: boolean = true,
+			enableFrame: boolean = true,
+			enableBorderLine: boolean = true) {
 			super();
 			this._enableGrid = enableGrid;
 
@@ -49,7 +49,7 @@ package batr.main {
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.graphics.clear();
 
 			this._enableFrame = false;
@@ -65,7 +65,7 @@ package batr.main {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get frameVisible(): Boolean {
+		public get frameVisible(): boolean {
 			if (this._frame == null)
 				return false;
 
@@ -73,7 +73,7 @@ package batr.main {
 
 		}
 
-		public function set frameVisible(value: Boolean): void {
+		public set frameVisible(value: boolean): void {
 			if (this._frame == null)
 				return;
 
@@ -82,17 +82,17 @@ package batr.main {
 		}
 
 		//============Instance Functions============//
-		public function addChildren(): void {
+		public addChildren(): void {
 			this.addChild(this._frame);
 			this._frame.visible = this._enableFrame;
 		}
 
-		protected function drawGround(width: uint, height: uint): void {
+		protected drawGround(width: uint, height: uint): void {
 			this.graphics.beginFill(BACKGROUND_COLOR, 1);
 			this.graphics.drawRect(0, 0, PosTransform.localPosToRealPos(width), PosTransform.localPosToRealPos(height));
 		}
 
-		protected function drawGrid(x: int, y: int, width: uint, height: uint): void {
+		protected drawGrid(x: int, y: int, width: uint, height: uint): void {
 			var dx: int = x, dy: int = y, mx: int = x + width, my: int = y + height;
 			this.graphics.lineStyle(GRID_SIZE, GRID_COLOR);
 			// V
@@ -107,7 +107,7 @@ package batr.main {
 			}
 		}
 
-		protected function drawBorderLine(width: uint, height: uint): void {
+		protected drawBorderLine(width: uint, height: uint): void {
 			this.graphics.lineStyle(FRAME_LINE_SIZE, FRAME_LINE_COLOR);
 			// V
 			drawLineInGrid(0, 0, 0, height);
@@ -117,7 +117,7 @@ package batr.main {
 			drawLineInGrid(width, height, width, 0);
 		}
 
-		public function updateGrid(width: uint, height: uint): void {
+		public updateGrid(width: uint, height: uint): void {
 			this.graphics.clear();
 			this.drawGround(width, height);
 			if (this._enableGrid)
@@ -126,22 +126,22 @@ package batr.main {
 				this.drawBorderLine(width, height);
 		}
 
-		public function resetGrid(): void {
+		public resetGrid(): void {
 			this.updateGrid(DEFAULT_DISPLAY_GRIDS, DEFAULT_DISPLAY_GRIDS);
 		}
 
-		protected function drawLineInGrid(x1: int, y1: int, x2: int, y2: int): void {
+		protected drawLineInGrid(x1: int, y1: int, x2: int, y2: int): void {
 			this.graphics.moveTo(PosTransform.localPosToRealPos(x1), PosTransform.localPosToRealPos(y1));
 			this.graphics.lineTo(PosTransform.localPosToRealPos(x2), PosTransform.localPosToRealPos(y2));
 		}
 
-		public function toggleFrameVisible(): void {
+		public toggleFrameVisible(): void {
 			if (this._frame == null)
 				return;
 			_frame.visible = _frame.visible ? false : true;
 		}
 
-		protected function drawFrame(width: uint, height: uint): void {
+		protected drawFrame(width: uint, height: uint): void {
 			if (this._frame == null)
 				return;
 			for (var xi: uint = 0; xi < width; xi++) {
@@ -156,7 +156,7 @@ package batr.main {
 			}
 		}
 
-		protected function deleteFrame(): void {
+		protected deleteFrame(): void {
 			if (this._frame == null)
 				return;
 

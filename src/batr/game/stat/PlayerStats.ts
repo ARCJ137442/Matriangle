@@ -50,12 +50,12 @@ package batr.game.stat {
 		protected _beTeleportCount: uint = 0;
 
 		//============Constructor============//
-		public function PlayerStats(owner: Player): void {
+		public PlayerStats(owner: Player): void {
 			this._profile = owner as IPlayerProfile;
 		}
 
 		//============Destructor============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._profile = null;
 			this._killPlayers.destructor();
 			this._deathByPlayers.destructor();
@@ -64,132 +64,132 @@ package batr.game.stat {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get profile(): IPlayerProfile {
+		public get profile(): IPlayerProfile {
 			return this._profile;
 		}
 
-		public function get killCount(): uint {
+		public get killCount(): uint {
 			return this._killCount;
 		}
 
-		public function set killCount(value: uint): void {
+		public set killCount(value: uint): void {
 			this._killCount = value;
 		}
 
-		public function get killAICount(): uint {
+		public get killAICount(): uint {
 			return this._killAICount;
 		}
 
-		public function set killAICount(value: uint): void {
+		public set killAICount(value: uint): void {
 			this._killAICount = value;
 		}
 
-		public function get deathCount(): uint {
+		public get deathCount(): uint {
 			return this._deathCount;
 		}
 
-		public function set deathCount(value: uint): void {
+		public set deathCount(value: uint): void {
 			this._deathCount = value;
 		}
 
-		public function get deathByPlayer(): uint {
+		public get deathByPlayer(): uint {
 			return this._deathByPlayer;
 		}
 
-		public function set deathByPlayer(value: uint): void {
+		public set deathByPlayer(value: uint): void {
 			this._deathByPlayer = value;
 		}
 
-		public function get deathByAI(): uint {
+		public get deathByAI(): uint {
 			return this._deathByAI;
 		}
 
-		public function set deathByAI(value: uint): void {
+		public set deathByAI(value: uint): void {
 			this._deathByAI = value;
 		}
 
-		public function get causeDamage(): uint {
+		public get causeDamage(): uint {
 			return this._causeDamage;
 		}
 
-		public function set causeDamage(value: uint): void {
+		public set causeDamage(value: uint): void {
 			this._causeDamage = value;
 		}
 
-		public function get damageBy(): uint {
+		public get damageBy(): uint {
 			return this._damageBy;
 		}
 
-		public function set damageBy(value: uint): void {
+		public set damageBy(value: uint): void {
 			this._damageBy = value;
 		}
 
-		public function get suicideCount(): uint {
+		public get suicideCount(): uint {
 			return this._suicideCount;
 		}
 
-		public function set suicideCount(value: uint): void {
+		public set suicideCount(value: uint): void {
 			this._suicideCount = value;
 		}
 
-		public function get killAllyCount(): uint {
+		public get killAllyCount(): uint {
 			return this._killAllyCount;
 		}
 
-		public function set killAllyCount(value: uint): void {
+		public set killAllyCount(value: uint): void {
 			this._killAllyCount = value;
 		}
 
-		public function get deathByAllyCount(): uint {
+		public get deathByAllyCount(): uint {
 			return this._deathByAllyCount;
 		}
 
-		public function set deathByAllyCount(value: uint): void {
+		public set deathByAllyCount(value: uint): void {
 			this._deathByAllyCount = value;
 		}
 
-		public function get causeDamageOnSelf(): uint {
+		public get causeDamageOnSelf(): uint {
 			return this._causeDamageOnSelf;
 		}
 
-		public function set causeDamageOnSelf(value: uint): void {
+		public set causeDamageOnSelf(value: uint): void {
 			this._causeDamageOnSelf = value;
 		}
 
-		public function get causeDamageOnAlly(): uint {
+		public get causeDamageOnAlly(): uint {
 			return this._causeDamageOnAlly;
 		}
 
-		public function set causeDamageOnAlly(value: uint): void {
+		public set causeDamageOnAlly(value: uint): void {
 			this._causeDamageOnAlly = value;
 		}
 
-		public function get damageByAlly(): uint {
+		public get damageByAlly(): uint {
 			return this._damageByAlly;
 		}
 
-		public function set damageByAlly(value: uint): void {
+		public set damageByAlly(value: uint): void {
 			this._damageByAlly = value;
 		}
 
-		public function get pickupBonusBoxCount(): uint {
+		public get pickupBonusBoxCount(): uint {
 			return this._pickupBonusBoxCount;
 		}
 
-		public function set pickupBonusBoxCount(value: uint): void {
+		public set pickupBonusBoxCount(value: uint): void {
 			this._pickupBonusBoxCount = value;
 		}
 
-		public function get beTeleportCount(): uint {
+		public get beTeleportCount(): uint {
 			return this._beTeleportCount;
 		}
 
-		public function set beTeleportCount(value: uint): void {
+		public set beTeleportCount(value: uint): void {
 			this._beTeleportCount = value;
 		}
 
 		// Game Score about Playing
-		public function get totalScore(): uint {
+		public get totalScore(): uint {
 			return exMath.intMax(
 				this.profile.level * 50 + this.profile.experience * 5 +
 				this.killAllyCount - this.suicideCount,
@@ -203,74 +203,74 @@ package batr.game.stat {
 		 * If profile is player,then convert it to PlayeProfile.
 		 * @return	this
 		 */
-		public function flushProfile(): PlayerStats {
+		public flushProfile(): PlayerStats {
 			if (this._profile is Player)
 			this._profile = new PlayerProfile(this._profile);
 			return this;
 		}
 
-		public function redirectPlayer(player: Player): PlayerStats {
+		public redirectPlayer(player: Player): PlayerStats {
 			this._profile = player;
 			return this;
 		}
 
 		// Kill And Death By
-		public function getKillPlayerCount(player: Player): uint {
+		public getKillPlayerCount(player: Player): uint {
 			return this._killPlayers.getPlayerValue(player);
 
 		}
 
-		public function getDeathByPlayerCount(player: Player): uint {
+		public getDeathByPlayerCount(player: Player): uint {
 			return this._deathByPlayers.getPlayerValue(player);
 
 		}
 
-		public function setKillPlayerCount(player: Player, value: uint): void {
+		public setKillPlayerCount(player: Player, value: uint): void {
 			this._killPlayers.setPlayerValue(player, value);
 
 		}
 
-		public function setDeathByPlayerCount(player: Player, value: uint): void {
+		public setDeathByPlayerCount(player: Player, value: uint): void {
 			this._deathByPlayers.setPlayerValue(player, value);
 
 		}
 
-		public function addKillPlayerCount(player: Player, value: uint = 1): void {
+		public addKillPlayerCount(player: Player, value: uint = 1): void {
 			this._killPlayers.setPlayerValue(player, getKillPlayerCount(player) + value);
 
 		}
 
-		public function addDeathByPlayerCount(player: Player, value: uint = 1): void {
+		public addDeathByPlayerCount(player: Player, value: uint = 1): void {
 			this._deathByPlayers.setPlayerValue(player, getDeathByPlayerCount(player) + value);
 
 		}
 		// Cause Damage And Damage By
-		public function getCauseDamagePlayerCount(player: Player): uint {
+		public getCauseDamagePlayerCount(player: Player): uint {
 			return this._causeDamagePlayers.getPlayerValue(player);
 
 		}
 
-		public function getDamageByPlayerCount(player: Player): uint {
+		public getDamageByPlayerCount(player: Player): uint {
 			return this._damageByPlayers.getPlayerValue(player);
 
 		}
 
-		public function setCauseDamagePlayerCount(player: Player, value: uint): void {
+		public setCauseDamagePlayerCount(player: Player, value: uint): void {
 			this._causeDamagePlayers.setPlayerValue(player, value);
 
 		}
 
-		public function setDamageByPlayerCount(player: Player, value: uint): void {
+		public setDamageByPlayerCount(player: Player, value: uint): void {
 			this._damageByPlayers.setPlayerValue(player, value);
 
 		}
 
-		public function addCauseDamagePlayerCount(player: Player, value: uint = 1): void {
+		public addCauseDamagePlayerCount(player: Player, value: uint = 1): void {
 			this._causeDamagePlayers.setPlayerValue(player, getCauseDamagePlayerCount(player) + value);
 
 		}
 
-		public function addDamageByPlayerCount(player: Player, value: uint = 1): void {
+		public addDamageByPlayerCount(player: Player, value: uint = 1): void {
 			this._damageByPlayers.setPlayerValue(player, getDamageByPlayerCount(player) + value);
 
 		}
@@ -286,13 +286,13 @@ class Stat_PlayerCount {
 	protected _dictionary: Dictionary = new Dictionary(true);
 
 	//============Constructor Function============//
-	public function Stat_PlayerCount(...params): void {
+	public Stat_PlayerCount(...params): void {
 		setPlayerValues2(params);
 
 	}
 
 	//============Instance Functions============//
-	public function getPlayerValue(player: Player): uint {
+	public getPlayerValue(player: Player): uint {
 		if (player == null)
 			return 0;
 
@@ -300,7 +300,7 @@ class Stat_PlayerCount {
 
 	}
 
-	public function setPlayerValue(player: Player, value: uint): void {
+	public setPlayerValue(player: Player, value: uint): void {
 		if (player == null)
 			return;
 
@@ -308,12 +308,12 @@ class Stat_PlayerCount {
 
 	}
 
-	public function setPlayerValues(...params): void {
+	public setPlayerValues(...params): void {
 		setPlayerValues2(params);
 
 	}
 
-	public function setPlayerValues2(params: Array): void {
+	public setPlayerValues2(params: Array): void {
 		var player: Player, count: uint;
 
 		for (var i: uint = 0; i < params.length - 1; i += 2) {
@@ -326,7 +326,7 @@ class Stat_PlayerCount {
 		}
 	}
 
-	public function resetPlayerValue(player: Player): void {
+	public resetPlayerValue(player: Player): void {
 		if (player == null)
 			return;
 
@@ -334,7 +334,7 @@ class Stat_PlayerCount {
 
 	}
 
-	public function destructor(): void {
+	public destructor(): void {
 		for (var p in this._dictionary) {
 			delete this._dictionary[p];
 

@@ -22,45 +22,45 @@ package batr.translations {
 		}
 
 		//============Instance Variables============//
-		protected _forcedText: String;
+		protected _forcedText: string;
 
 		//============Constructor Function============//
-		public function ForcedI18nText(translations: I18ns, key: String = null, forcedText: String = null) {
+		public ForcedI18nText(translations: I18ns, key: string = null, forcedText: string = null) {
 			super(translations, key);
 			this._forcedText = forcedText;
 		}
 
-		override public function clone(): I18nText {
+		override public clone(): I18nText {
 			return new ForcedI18nText(this._translations, this._key, this._forcedText);
 		}
 
 		//============Destructor Function============//
-		override public function destructor(): void {
+		override public destructor(): void {
 			this._forcedText = null;
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public function get forcedText(): String {
+		public get forcedText(): string {
 			return this._forcedText;
 		}
 
-		public function set forcedText(value: String): void {
+		public set forcedText(value: string): void {
 			this._forcedText = value;
 		}
 
-		public override function get currentText(): String {
+		public override function get currentText(): string {
 			if (this._forcedText != null)
 				return this._forcedText;
 			return super.currentText;
 		}
 
-		public function removeForce(): I18nText {
+		public removeForce(): I18nText {
 			this._forcedText = null;
 			return this;
 		}
 
-		public function setForce(value: String): I18nText {
+		public setForce(value: string): I18nText {
 			this._forcedText = null;
 			return this;
 		}

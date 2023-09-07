@@ -15,18 +15,18 @@ package batr.game.entity.entity.projectile {
 
 	export default class ThrownBlock extends ProjectileCommon {
 		//============Static Variables============//
-		public static const MAX_SPEED: Number = 15 / GlobalGameVariables.FIXED_TPS;
-		public static const MIN_SPEED: Number = 1 / 3 * MAX_SPEED;
+		public static const MAX_SPEED: number = 15 / GlobalGameVariables.FIXED_TPS;
+		public static const MIN_SPEED: number = 1 / 3 * MAX_SPEED;
 
 		//============Instance Variables============//
-		public xSpeed: Number;
-		public ySpeed: Number;
+		public xSpeed: number;
+		public ySpeed: number;
 		protected _carriedBlock: BlockCommon;
 
 		//============Constructor Function============//
-		public function ThrownBlock(host: Game, x: Number, y: Number,
+		public ThrownBlock(host: Game, x: number, y: number,
 			owner: Player, block: BlockCommon,
-			rot: uint, chargePercent: Number = 1): void {
+			rot: uint, chargePercent: number = 1): void {
 			super(host, x, y, owner);
 			this._carriedBlock = block;
 
@@ -51,7 +51,7 @@ package batr.game.entity.entity.projectile {
 			return EntityType.THROWN_BLOCK;
 		}
 
-		public function get carriedBlock(): BlockCommon {
+		public get carriedBlock(): BlockCommon {
 			return this._carriedBlock;
 		}
 
@@ -76,7 +76,7 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		protected function onBlockHit(): void {
+		protected onBlockHit(): void {
 			// Locate
 			var lx: int = this.lockedGridX, ly: int = this.lockedGridY;
 			// Detect

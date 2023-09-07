@@ -14,7 +14,7 @@ package batr.game.block.blocks {
 		protected _lineColor: uint;
 
 		//============Constructor Function============//
-		public function Wall(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb): void {
+		public Wall(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb): void {
 			this._lineColor = lineColor;
 			super(fillColor);
 		}
@@ -34,11 +34,11 @@ package batr.game.block.blocks {
 			return BlockType.WALL;
 		}
 
-		public function get lineColor(): uint {
+		public get lineColor(): uint {
 			return this._lineColor;
 		}
 
-		public function set lineColor(color: uint): void {
+		public set lineColor(color: uint): void {
 			if (this._lineColor != color) {
 				this._lineColor = color;
 				this.reDraw();

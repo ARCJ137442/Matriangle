@@ -9,18 +9,18 @@ package batr.game.effect.effects {
 
 	export default class EffectPlayerHurt extends EffectPlayerDeathLight {
 		//============Static Variables============//
-		public static const FILL_COLOR: Number = 0xff0000;
+		public static const FILL_COLOR: number = 0xff0000;
 		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
 
 		//============Static Functions============//
-		public static function fromPlayer(host: Game, player: Player, reverse: Boolean = false): EffectPlayerHurt {
+		public static function fromPlayer(host: Game, player: Player, reverse: boolean = false): EffectPlayerHurt {
 			return new EffectPlayerHurt(host, player.entityX, player.entityY, player.rot, FILL_COLOR, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
 		}
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function EffectPlayerHurt(host: Game, x: Number, y: Number, rot: uint = 0, color: uint = EffectPlayerHurt.FILL_COLOR, AILabel: String = null, reverse: Boolean = false, life: uint = EffectPlayerHurt.LIFE): void {
+		public EffectPlayerHurt(host: Game, x: number, y: number, rot: uint = 0, color: uint = EffectPlayerHurt.FILL_COLOR, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerHurt.LIFE): void {
 			super(host, x, y, rot, color, AILabel, reverse, life);
 		}
 
@@ -41,8 +41,8 @@ package batr.game.effect.effects {
 		}
 
 		public override function drawShape(): void {
-			var realRadiusX: Number = SIZE / 2;
-			var realRadiusY: Number = SIZE / 2;
+			var realRadiusX: number = SIZE / 2;
+			var realRadiusY: number = SIZE / 2;
 			graphics.clear();
 			graphics.beginFill(this._color);
 			graphics.moveTo(-realRadiusX, -realRadiusY);

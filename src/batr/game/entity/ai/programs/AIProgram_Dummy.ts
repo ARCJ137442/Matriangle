@@ -11,8 +11,8 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Dummy implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = 'Dummy';
-		public static const LABEL_SHORT: String = 'D';
+		public static const LABEL: string = 'Dummy';
+		public static const LABEL_SHORT: string = 'D';
 
 		//============Instance Variables============//
 		protected _moveSum: uint;
@@ -20,12 +20,12 @@ package batr.game.entity.ai.programs {
 		protected _tempRot: uint;
 
 		//============Constructor Function============//
-		public function AIProgram_Dummy(): void {
+		public AIProgram_Dummy(): void {
 
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;
@@ -33,20 +33,20 @@ package batr.game.entity.ai.programs {
 
 		/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 		/*========AI Getter And Setter========*/
-		public function get label(): String {
+		public get label(): string {
 			return AIProgram_Dummy.LABEL;
 		}
 
-		public function get labelShort(): String {
+		public get labelShort(): string {
 			return AIProgram_Dummy.LABEL_SHORT;
 		}
 
-		public function get referenceSpeed(): uint {
+		public get referenceSpeed(): uint {
 			return 5 + exMath.random(6) * exMath.random(6);
 		}
 
 		/*========AI Program Main========*/
-		public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
+		public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Press Use
@@ -82,37 +82,37 @@ package batr.game.entity.ai.programs {
 
 		}
 
-		public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
+		public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}
 
-		public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
+		public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			return AIPlayerAction.NULL;
 
 		}

@@ -65,7 +65,7 @@ package batr.game.entity.ai {
 			AIPlayerAction.DISABLE_CHARGE
 		];
 		//============Static Functions============//
-		public static function fromString(str: String): AIPlayerAction {
+		public static function fromString(str: string): AIPlayerAction {
 			for (var action of AIPlayerAction._ALL_ACTIONS) {
 				if (action.name == str)
 					return action;
@@ -108,20 +108,20 @@ package batr.game.entity.ai {
 		}
 
 		//============Instance Variables============//
-		protected _name: String;
+		protected _name: string;
 
 		//============Constructor Function============//
-		public function AIPlayerAction(name: String): void {
+		public AIPlayerAction(name: string): void {
 			this._name = name;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get name(): String {
+		public get name(): string {
 			return this._name;
 		}
 
 		//============Instance Functions============//
-		public function toString(): String {
+		public toString(): string {
 			return 'AIPlayerAction/' + this.name;
 		}
 	}

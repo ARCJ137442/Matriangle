@@ -9,15 +9,15 @@ package batr.game.block.blocks {
 		public static const LINE_COLOR: uint = 0x444444;
 		public static const FILL_COLOR: uint = 0xdddddd;
 		public static const CENTER_COLOR: uint = 0x00ff00;
-		public static const BASE_ALPHA: Number = 0.5;
+		public static const BASE_ALPHA: number = 0.5;
 		public static const GRID_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE;
 
-		public static const LINE_SIZE: Number = GRID_SIZE / 32;
+		public static const LINE_SIZE: number = GRID_SIZE / 32;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function SupplyPoint(): void {
+		public SupplyPoint(): void {
 			super();
 			this.drawMain();
 		}

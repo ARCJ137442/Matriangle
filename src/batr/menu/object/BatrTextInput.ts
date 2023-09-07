@@ -22,7 +22,7 @@
 		//============Instance Variables============//
 
 		//============Constructor============//
-		public function BatrTextInput(initialText: String = '', autoSize: String = TextFieldAutoSize.LEFT): void {
+		public BatrTextInput(initialText: string = '', autoSize: string = TextFieldAutoSize.LEFT): void {
 			super();
 			// text
 			this.selectable = true;
@@ -40,7 +40,7 @@
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 
 		}
 
@@ -48,35 +48,35 @@
 
 		//============Instance Functions============//
 
-		public function setText(value: String): void {
+		public setText(value: string): void {
 			this.text = value;
 		}
 
-		public function setPos(x: Number, y: Number): BatrTextInput {
+		public setPos(x: number, y: number): BatrTextInput {
 			this.x = x;
 			this.y = y;
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrTextInput {
+		public setBlockPos(x: number, y: number): BatrTextInput {
 			this.x = PosTransform.localPosToRealPos(x);
 			this.y = PosTransform.localPosToRealPos(y);
 			return this;
 		}
 
-		public function setSize(w: Number, h: Number): BatrTextInput {
+		public setSize(w: number, h: number): BatrTextInput {
 			this.width = w;
 			this.height = h;
 			return this;
 		}
 
-		public function setBlockSize(w: Number, h: Number): BatrTextInput {
+		public setBlockSize(w: number, h: number): BatrTextInput {
 			this.width = PosTransform.localPosToRealPos(w);
 			this.height = PosTransform.localPosToRealPos(h);
 			return this;
 		}
 
-		public function setFormat(formet: TextFormat, lock: Boolean = false): BatrTextInput {
+		public setFormat(formet: TextFormat, lock: boolean = false): BatrTextInput {
 			this.defaultTextFormat = formet;
 			this.setTextFormat(formet);
 			return this;

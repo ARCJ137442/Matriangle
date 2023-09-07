@@ -10,7 +10,7 @@ package batr.translations {
 		protected static var _translationsList: I18ns[];
 
 		// Class Init
-		protected static var isInited: Boolean = false;
+		protected static var isInited: boolean = false;
 
 		//============Static Getter And Setter============//
 		public static function get translationsList(): I18ns[] {
@@ -39,7 +39,7 @@ package batr.translations {
 		}
 
 		// 'index:text,index2:text2,index3:text3...'
-		public static function fromString(str: String): I18ns {
+		public static function fromString(str: string): I18ns {
 			return I18ns.fromStringArr(str.split(','));
 		}
 
@@ -52,7 +52,7 @@ package batr.translations {
 
 			if (str.length < 1 || str == null)
 				return returnT;
-			var str1: Array, k: String, v: String;
+			var str1: Array, k: string, v: string;
 			for (var value of str) {
 				str1 = String(value).split(':');
 
@@ -67,7 +67,7 @@ package batr.translations {
 
 		}
 
-		public static function getI18n(translation: I18ns, key: String): String {
+		public static function getI18n(translation: I18ns, key: string): string {
 			return translation == null ? null : translation.getI18n(key);
 		}
 
@@ -86,7 +86,7 @@ package batr.translations {
 		}
 
 		//====Init I18ns====//
-		protected static function cInit(): Boolean {
+		protected static function cInit(): boolean {
 			isInited = true;
 			EN_US = DefaultNativeI18ns.EN_US;
 			ZH_CN = DefaultNativeI18ns.ZH_CN;
@@ -96,9 +96,9 @@ package batr.translations {
 		}
 
 		//============Instance Variables============//
-		protected _dictionary: Object = new Object();
+		protected _dictionary: object = new Object();
 
-		protected _enabledToWrite: Boolean = true;
+		protected _enabledToWrite: boolean = true;
 
 		protected _getFunction: Function;
 
@@ -106,7 +106,7 @@ package batr.translations {
 
 		//============Constructor Function============//
 		// 'index','text','index2','text2','index3','text3','...'
-		public function I18ns(...translations): void {
+		public I18ns(...translations): void {
 			if (!isInited)
 				cInit();
 			this._getFunction = this.defaultGet;
@@ -117,13 +117,13 @@ package batr.translations {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get enableToWrite(): Boolean {
+		public get enableToWrite(): boolean {
 			return this._enabledToWrite;
 
 		}
 
-		public function get translationKeys(): String[] {
-			var rV: String[] = new String[]();
+		public get translationKeys(): string[] {
+			var rV: string[] = new String[]();
 
 			for (var index in this._dictionary) {
 				rV.push(String(index));
@@ -133,8 +133,8 @@ package batr.translations {
 
 		}
 
-		public function get translationValues(): String[] {
-			var rV: String[] = new String[]();
+		public get translationValues(): string[] {
+			var rV: string[] = new String[]();
 
 			for (var value of this._dictionary) {
 				rV.push(String(value));
@@ -145,37 +145,37 @@ package batr.translations {
 		}
 
 		//============Instance Functions============//
-		public function getI18n(key: String): String {
+		public getI18n(key: string): string {
 			return this._getFunction(key);
 		}
 
-		public function setI18n(key: String, value: String): void {
+		public setI18n(key: string, value: string): void {
 			this._setFunction(key, value);
 		}
 
-		protected function defaultGet(key: String): String {
-			var value: String = String(this._dictionary[key]);
+		protected defaultGet(key: string): string {
+			var value: string = String(this._dictionary[key]);
 			if (value == 'undefined' || value == 'null' || value == '')
 				return DefaultNativeI18ns.getDefaultI18n(key);
 			return value;
 		}
 
-		protected function defaultSet(key: String, value: String): void {
+		protected defaultSet(key: string, value: string): void {
 			if (this._enabledToWrite)
 				this._dictionary[key] = value;
 		}
 
-		public function lock(): void {
+		public lock(): void {
 			this._enabledToWrite = false;
 		}
 
-		public function clear(): void {
+		public clear(): void {
 			if (this._enabledToWrite)
 				this._dictionary = new Object();
 		}
 
-		public function toString(): String {
-			var rS: String = '';
+		public toString(): string {
+			var rS: string = '';
 
 			for (var index in this._dictionary) {
 				rS += String(index) + ':' + String(this._dictionary[index]) + ';';

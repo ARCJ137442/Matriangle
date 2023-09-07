@@ -12,19 +12,19 @@ package batr.game.effect {
 		protected static var _NEXT_UUID: uint = 0;
 
 		//============Static Functions============//
-		public static function inValidUUID(effect: EffectCommon): Boolean {
+		public static function inValidUUID(effect: EffectCommon): boolean {
 			return effect._uuid == 0;
 		}
 
 		//============Instance Variables============//
 		protected _uuid: uint;
 		protected _host: Game;
-		protected _isActive: Boolean;
+		protected _isActive: boolean;
 		protected life: uint;
 		protected LIFE: uint;
 
 		//============Constructor Function============//
-		public function EffectCommon(host: Game, x: Number, y: Number, maxLife: uint = DEFAULE_MAX_LIFE, active: Boolean = true): void {
+		public EffectCommon(host: Game, x: number, y: number, maxLife: uint = DEFAULE_MAX_LIFE, active: boolean = true): void {
 			super();
 			// Init ID
 			this._uuid = _NEXT_UUID;
@@ -41,7 +41,7 @@ package batr.game.effect {
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.graphics.clear();
 			this._uuid = 0;
 			this.isActive = false;
@@ -50,99 +50,99 @@ package batr.game.effect {
 		}
 
 		//============Instance Getters And Setters============//
-		public function get uuid(): uint {
+		public get uuid(): uint {
 			return this._uuid;
 		}
 
-		public function get host(): Game {
+		public get host(): Game {
 			return this._host;
 		}
 
-		public function get isActive(): Boolean {
+		public get isActive(): boolean {
 			return this._isActive;
 		}
 
-		public function set isActive(value: Boolean): void {
+		public set isActive(value: boolean): void {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
 		}
 
-		public function get rot(): Number {
+		public get rot(): number {
 			return GlobalRot.fromRealRot(this.rotation);
 		}
 
-		public function set rot(value: Number): void {
+		public set rot(value: number): void {
 			if (value == this.rot)
 				return;
 			this.rotation = GlobalRot.toRealRot(value);
 		}
 
-		public function get type(): EffectType {
+		public get type(): EffectType {
 			return EffectType.ABSTRACT;
 		}
 
-		public function get layer(): int {
+		public get layer(): int {
 			return this.type.effectLayer;
 
 		}
 
 		//============Instance Functions============//
-		public function onEffectTick(): void {
+		public onEffectTick(): void {
 
 		}
 
-		protected function dealLife(): void {
+		protected dealLife(): void {
 			if (this.life > 0)
 				this.life--;
 			else
 				_host.effectSystem.removeEffect(this);
 		}
 
-		public function drawShape(): void {
+		public drawShape(): void {
 
 		}
 
 		//====Position Functions====//
-		public function getX(): Number {
+		public getX(): number {
 			return PosTransform.realPosToLocalPos(this.x);
 		}
 
-		public function getY(): Number {
+		public getY(): number {
 			return PosTransform.realPosToLocalPos(this.y);
 		}
 
-		public function setX(value: Number): void {
+		public setX(value: number): void {
 			this.x = PosTransform.localPosToRealPos(value);
 		}
 
-		public function setY(value: Number): void {
+		public setY(value: number): void {
 			this.y = PosTransform.localPosToRealPos(value);
 		}
 
-		public function addX(value: Number): void {
+		public addX(value: number): void {
 			this.setX(this.getX() + value);
 		}
 
-		public function addY(value: Number): void {
+		public addY(value: number): void {
 			this.setY(this.getY() + value);
 		}
 
-		public function setXY(x: Number, y: Number): void {
+		public setXY(x: number, y: number): void {
 			this.setX(x);
 
 			this.setY(y);
 
 		}
 
-		public function addXY(x: Number, y: Number): void {
+		public addXY(x: number, y: number): void {
 			this.addX(x);
 
 			this.addY(y);
 
 		}
 
-		public function setPositions(x: Number, y: Number, rot: Number = NaN): void {
+		public setPositions(x: number, y: number, rot: number = NaN): void {
 			this.setXY(x, y);
 
 			if (!isNaN(rot))
@@ -150,7 +150,7 @@ package batr.game.effect {
 
 		}
 
-		public function addPositions(x: Number, y: Number, rot: Number = NaN): void {
+		public addPositions(x: number, y: number, rot: number = NaN): void {
 			this.addXY(x, y);
 
 			if (!isNaN(rot))

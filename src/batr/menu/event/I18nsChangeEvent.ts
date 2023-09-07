@@ -11,25 +11,25 @@ package batr.menu.event {
 
 	export default class I18nsChangeEvent extends Event {
 		//============Static Variables============//
-		public static const TYPE: String = 'I18nsChangeEvent';
+		public static const TYPE: string = 'I18nsChangeEvent';
 
 		//============Instance Variables============//
 		protected _nowI18ns: I18ns;
 		protected _oldI18ns: I18ns;
 
 		//============Constructor Function============//
-		public function I18nsChangeEvent(nowI18ns: I18ns, oldI18ns: I18ns = null, bubbles: Boolean = false, cancelable: Boolean = false): void {
+		public I18nsChangeEvent(nowI18ns: I18ns, oldI18ns: I18ns = null, bubbles: boolean = false, cancelable: boolean = false): void {
 			super(I18nsChangeEvent.TYPE, bubbles, cancelable);
 			this._nowI18ns = nowI18ns;
 			this._oldI18ns = oldI18ns;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get nowI18ns(): I18ns {
+		public get nowI18ns(): I18ns {
 			return this._nowI18ns;
 		}
 
-		public function get oldI18ns(): I18ns {
+		public get oldI18ns(): I18ns {
 			return this._oldI18ns;
 		}
 
@@ -39,7 +39,7 @@ package batr.menu.event {
 			;
 		}
 
-		public override function toString(): String {
+		public override function toString(): string {
 			return formatToString('I18nChangeEvent', 'type', 'gui', 'bubbles', 'cancelable', 'eventPhase');
 		}
 	}

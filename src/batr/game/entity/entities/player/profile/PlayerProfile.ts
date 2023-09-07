@@ -8,19 +8,19 @@ package batr.game.entity.model {
 	 */
 	export default class PlayerProfile implements IPlayerProfile {
 		//============Instance Variables============//
-		protected _customName: String;
+		protected _customName: string;
 		protected _experience: uint;
 		protected _level: uint;
 		protected _teamColor: uint;
 
 		//============Constructor============//
-		public function PlayerProfile(profile: IPlayerProfile = null): void {
+		public PlayerProfile(profile: IPlayerProfile = null): void {
 			if (profile == null)
 				return;
 			this.copyFrom(profile);
 		}
 
-		public function copyFrom(profile: IPlayerProfile): void {
+		public copyFrom(profile: IPlayerProfile): void {
 			this._customName = profile.customName;
 			this._experience = profile.experience;
 			this._level = profile.level;
@@ -29,19 +29,19 @@ package batr.game.entity.model {
 
 		//============Instance Functions============//
 		/* INTERFACE batr.game.entity.model.IPlayerProfile */
-		public function get customName(): String {
+		public get customName(): string {
 			return this._customName;
 		}
 
-		public function get experience(): uint {
+		public get experience(): uint {
 			return this._experience;
 		}
 
-		public function get level(): uint {
+		public get level(): uint {
 			return this._level;
 		}
 
-		public function get teamColor(): uint {
+		public get teamColor(): uint {
 			return this._teamColor;
 		}
 	}

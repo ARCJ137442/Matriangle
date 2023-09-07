@@ -20,24 +20,24 @@ package batr.menu.objects {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x888888;
 		public static const FILL_COLOR: uint = 0xcccccc;
-		public static const FILL_ALPHA: Number = 0.375;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const HOLD_ALPHA: Number = 1;
-		public static const OVER_ALPHA: Number = 0.75;
-		public static const RELEASE_ALPHA: Number = 0.5;
+		public static const FILL_ALPHA: number = 0.375;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static const HOLD_ALPHA: number = 1;
+		public static const OVER_ALPHA: number = 0.75;
+		public static const RELEASE_ALPHA: number = 0.5;
 
 		//============Instance Variables============//
-		protected _displayWidth: Number;
+		protected _displayWidth: number;
 
-		protected _displayHeight: Number;
+		protected _displayHeight: number;
 
 		protected _lineColor: uint;
 
 		protected _fillColor: uint;
 
-		protected _lineSize: Number;
+		protected _lineSize: number;
 
-		protected _smoothLine: Boolean;
+		protected _smoothLine: boolean;
 
 		protected _translations: I18ns;
 
@@ -46,15 +46,15 @@ package batr.menu.objects {
 		/**
 		 * The Linkage(String) to sheet
 		 */
-		public sheetLinkage: String;
+		public sheetLinkage: string;
 
 		//============Constructor Function============//
-		public function BatrButton(width: Number, height: Number,
+		public BatrButton(width: number, height: number,
 			translations: I18ns,
-			translationKey: String = '',
-			smoothLine: Boolean = true,
+			translationKey: string = '',
+			smoothLine: boolean = true,
 			color: uint = LINE_COLOR,
-			lineSize: Number = LINE_SIZE): void {
+			lineSize: number = LINE_SIZE): void {
 			super();
 			this._displayWidth = width;
 			this._displayHeight = height;
@@ -79,66 +79,66 @@ package batr.menu.objects {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get displayWidth(): Number {
+		public get displayWidth(): number {
 			return this._displayWidth;
 		}
 
-		public function set displayWidth(value: Number): void {
+		public set displayWidth(value: number): void {
 			if (this._displayWidth == value)
 				return;
 			this._displayWidth = value;
 			this.drawShape();
 		}
 
-		public function get displayHeight(): Number {
+		public get displayHeight(): number {
 			return this._displayHeight;
 		}
 
-		public function set displayHeight(value: Number): void {
+		public set displayHeight(value: number): void {
 			if (this._displayHeight == value)
 				return;
 			this._displayHeight = value;
 			this.drawShape();
 		}
 
-		public function get lineColor(): uint {
+		public get lineColor(): uint {
 			return this._lineColor;
 		}
 
-		public function set lineColor(value: uint): void {
+		public set lineColor(value: uint): void {
 			if (this._lineColor == value)
 				return;
 			this._lineColor = value;
 			this.drawShape();
 		}
 
-		public function get fillColor(): uint {
+		public get fillColor(): uint {
 			return this._fillColor;
 		}
 
-		public function set fillColor(value: uint): void {
+		public set fillColor(value: uint): void {
 			if (this._fillColor == value)
 				return;
 			this._fillColor = value;
 			this.drawShape();
 		}
 
-		public function get lineSize(): Number {
+		public get lineSize(): number {
 			return this._fillColor;
 		}
 
-		public function set lineSize(value: Number): void {
+		public set lineSize(value: number): void {
 			if (this.lineSize == value)
 				return;
 			this._lineSize = value;
 			this.drawShape();
 		}
 
-		public function get smoothLine(): Boolean {
+		public get smoothLine(): boolean {
 			return this._smoothLine;
 		}
 
-		public function set smoothLine(value: Boolean): void {
+		public set smoothLine(value: boolean): void {
 			if (this._smoothLine == value)
 				return;
 			this._smoothLine = value;
@@ -146,22 +146,22 @@ package batr.menu.objects {
 		}
 
 		//============Instance Functions============//
-		public function setPos(x: Number, y: Number): BatrButton {
+		public setPos(x: number, y: number): BatrButton {
 			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrButton {
+		public setBlockPos(x: number, y: number): BatrButton {
 			super.protected:: sBP(x, y);
 			return this;
 		}
 
-		public function setLinkage(lSheet: String): BatrButton {
+		public setLinkage(lSheet: string): BatrButton {
 			this.sheetLinkage = lSheet;
 			return this;
 		}
 
-		protected function initDisplay(): void {
+		protected initDisplay(): void {
 			this.buttonMode = true;
 			this.tabEnabled = true;
 			this._text.x = this._text.y = 0;
@@ -212,11 +212,11 @@ package batr.menu.objects {
 			this.alpha = RELEASE_ALPHA;
 		}
 
-		public function onI18nsChange(E: I18nsChangeEvent): void {
+		public onI18nsChange(E: I18nsChangeEvent): void {
 			this.turnI18nsTo(E.nowI18ns);
 		}
 
-		protected function turnI18nsTo(translations: I18ns): void {
+		protected turnI18nsTo(translations: I18ns): void {
 			this._translations = translations;
 			this._text.turnI18nsTo(translations);
 			/*this._text.width=this._displayWidth;

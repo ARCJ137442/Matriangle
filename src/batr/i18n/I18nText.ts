@@ -13,7 +13,7 @@ package batr.translations {
 		//============Static Variables============//
 
 		//============Static Getter And Setter============//
-		public static function getTextsByAllBlocks(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllBlocks(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of BlockType._NORMAL_BLOCKS) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -21,7 +21,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByAllEntities(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllEntities(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of EntityType._ALL_ENTITY) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -29,7 +29,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByAllEffects(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllEffects(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of EffectType._ALL_EFFECT) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -37,7 +37,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByAllAvaliableWeapons(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllAvaliableWeapons(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of WeaponType._ALL_AVALIABLE_WEAPON) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -45,7 +45,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByAllBonus(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllBonus(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of BonusType._ALL_TYPE) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -53,7 +53,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByAllGameModes(translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByAllGameModes(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var type of GameModeType._ALL_TYPE) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
@@ -69,7 +69,7 @@ package batr.translations {
 			return result;
 		}
 
-		public static function getTextsByRuleWeapons(rule: GameRule, translations: I18ns, isDescription: Boolean): I18nText[] {
+		public static function getTextsByRuleWeapons(rule: GameRule, translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
 			for (var i: uint = 0; i < rule.enableWeaponCount; i++) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enableWeapons[i], isDescription)));
@@ -94,54 +94,54 @@ package batr.translations {
 		}
 
 		//============Static Functions============//
-		public static function fromString(value: String): I18nText {
+		public static function fromString(value: string): I18nText {
 			return new I18nText(null, null);
 		}
 
 		//============Instance Variables============//
-		protected _key: String;
+		protected _key: string;
 		protected _translations: I18ns;
 
 		//============Constructor Function============//
-		public function I18nText(translations: I18ns, key: String = null): void {
+		public I18nText(translations: I18ns, key: string = null): void {
 			this._translations = translations;
 			this._key = key;
 		}
 
-		public function clone(): I18nText {
+		public clone(): I18nText {
 			return new I18nText(this._translations, this._key);
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._key = null;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get key(): String {
+		public get key(): string {
 			return this._key;
 		}
 
-		public function set key(value: String): void {
+		public set key(value: string): void {
 			this._key = value;
 		}
 
-		public function get translations(): I18ns {
+		public get translations(): I18ns {
 			return this._translations;
 		}
 
-		public function set translations(value: I18ns): void {
+		public set translations(value: I18ns): void {
 			this._translations = value;
 		}
 
-		public function get currentText(): String {
+		public get currentText(): string {
 			if (this._translations == null)
 				return null;
 			return this._translations.getI18n(this._key);
 		}
 
 		//============Instance Functions============//
-		public function toString(): String {
+		public toString(): string {
 			return this.currentText;
 		}
 	}

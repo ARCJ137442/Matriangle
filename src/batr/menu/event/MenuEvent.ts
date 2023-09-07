@@ -10,12 +10,12 @@ package batr.menu.events {
 
 	export default class MenuEvent extends Event {
 		//============Static Variables============//
-		public static const TITLE_SHOWEN: String = 'MenuEvent:titleShowen';
+		public static const TITLE_SHOWEN: string = 'MenuEvent:titleShowen';
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function MenuEvent(type: String, bubbles: Boolean = false, cancelable: Boolean = false): void {
+		public MenuEvent(type: string, bubbles: boolean = false, cancelable: boolean = false): void {
 			super(type, bubbles, cancelable);
 		}
 
@@ -26,7 +26,7 @@ package batr.menu.events {
 			return new MenuEvent(type, bubbles, cancelable);
 		}
 
-		public override function toString(): String {
+		public override function toString(): string {
 			return formatToString('MenuEvent', 'type', 'bubbles', 'cancelable', 'eventPhase');
 		}
 	}

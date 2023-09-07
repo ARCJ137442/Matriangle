@@ -19,10 +19,10 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Master implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = 'Master';
-		public static const LABEL_SHORT: String = 'M';
+		public static const LABEL: string = 'Master';
+		public static const LABEL_SHORT: string = 'M';
 
-		public static const DEBUG: Boolean = false;
+		public static const DEBUG: boolean = false;
 
 		//============Static Functions============//
 		protected static function initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
@@ -91,32 +91,32 @@ package batr.game.entity.ai.programs {
 		protected _pickupWeight: int = exMath.random(50) * exMath.random1();
 
 		//============Constructor Function============//
-		public function AIProgram_Master(): void {
+		public AIProgram_Master(): void {
 			this._lastTarget = null;
 			this._closeTarget = new Dictionary(true);
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._lastTarget = null;
 			this._closeTarget = null;
 		}
 
 		//============Instance Functions============//
-		protected function initRemember(host: Game): void {
+		protected initRemember(host: Game): void {
 			this._remember = host.map.getMatrixBoolean();
 		}
 
-		protected function resetRemember(): void {
+		protected resetRemember(): void {
 			for (var v of this._remember) {
-				for (var i: String in v) {
+				for (var i: string in v) {
 					v[i] = false;
 				}
 			}
 			// trace('remember resetted!')
 		}
 
-		protected function changeTarget(owner: AIPlayer, target: EntityCommon): void {
+		protected changeTarget(owner: AIPlayer, target: EntityCommon): void {
 			if (this._lastTarget == target)
 				return;
 			this._lastTarget = target;
@@ -125,27 +125,27 @@ package batr.game.entity.ai.programs {
 				owner.addActionToThread(AIPlayerAction.RELEASE_KEY_USE);
 		}
 
-		protected function resetTarget(): void {
+		protected resetTarget(): void {
 			this._lastTarget = null;
 			this.resetRemember();
 		}
 
-		protected function inCloseTarget(target: EntityCommon): Boolean {
+		protected inCloseTarget(target: EntityCommon): boolean {
 			return Boolean(this._closeTarget[target]);
 		}
 
-		protected function addCloseTarget(target: EntityCommon): void {
+		protected addCloseTarget(target: EntityCommon): void {
 			this._closeTarget[target] = true;
 		}
 
-		protected function resetCloseTarget(): void {
+		protected resetCloseTarget(): void {
 			for (var i in this._closeTarget) {
 				delete this._closeTarget[i];
 			}
 		}
 
 		/*========AI Tools========*/
-		public function getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
+		public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 			// getManhattanDistance
 			var _nearestBox: BonusBox = null;
 			var _nearestDistance: int = int.MAX_VALUE;
@@ -162,7 +162,7 @@ package batr.game.entity.ai.programs {
 			return _nearestBox;
 		}
 
-		public function getNearestEnemy(owner: Player, host: Game): Player {
+		public getNearestEnemy(owner: Player, host: Game): Player {
 			// getManhattanDistance
 			var _nearestEnemy: Player = null;
 			var _nearestDistance: int = int.MAX_VALUE;
@@ -183,24 +183,24 @@ package batr.game.entity.ai.programs {
 
 		/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 		/*========AI Getter And Setter========*/
-		public function get label(): String {
+		public get label(): string {
 			return AIProgram_Master.LABEL;
 		}
 
-		public function get labelShort(): String {
+		public get labelShort(): string {
 			return AIProgram_Master.LABEL_SHORT;
 		}
 
-		public function get referenceSpeed(): uint {
+		public get referenceSpeed(): uint {
 			return 5 * (1 + exMath.random(6));
 		}
 
-		protected function get pickBonusFirst(): Boolean {
+		protected get pickBonusFirst(): boolean {
 			return this._pickupWeight < 0;
 		}
 
 		/*========AI Program Main========*/
-		public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
+		public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Set Variables
@@ -337,12 +337,12 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this._pickupWeight += damage;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			// Run
 			if (player.healthPercent < 0.5) {
 				if (this._pickupWeight > 0)
@@ -367,27 +367,27 @@ package batr.game.entity.ai.programs {
 				return AIPlayerAction.MOVE_RIGHT_REL;
 		}
 
-		public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this.resetTarget();
 			this.resetCloseTarget();
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
+		public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			this.resetTarget();
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			this.resetTarget();
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
+		public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			this._pickupWeight -= 5;
 			return AIPlayerAction.NULL;
 		}

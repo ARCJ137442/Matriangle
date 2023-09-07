@@ -11,8 +11,8 @@ package batr.game.entity.ai.programs {
 		// Destructor
 		function destructor(): void;
 	// AI Variables
-	function get label(): String;
-	function get labelShort(): String;
+	function get label(): string;
+	function get labelShort(): string;
 	function get referenceSpeed(): uint;
 	// AI Methods
 	function requestActionOnTick(player: AIPlayer): AIPlayerAction;

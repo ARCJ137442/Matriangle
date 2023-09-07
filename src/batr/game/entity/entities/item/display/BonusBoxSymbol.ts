@@ -11,7 +11,7 @@ package batr.game.entity.objects {
 	export default class BonusBoxSymbol extends Shape {
 		//============Static Variables============//
 		// General
-		public static const GRID_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 5;
+		public static const GRID_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 5;
 
 		// HHL
 		public static const HEALTH_COLOR: uint = PlayerGUI.HEALTH_COLOR;
@@ -22,7 +22,7 @@ package batr.game.entity.objects {
 
 		// Attributes
 		public static const ATTRIBUTES_LINE_SIZE: uint = 4;
-		public static const ATTRIBUTES_FILL_ALPHA: Number = 3 / 4;
+		public static const ATTRIBUTES_FILL_ALPHA: number = 3 / 4;
 
 		public static const EXPERIENCE_COLOR: uint = 0xcc88ff;
 
@@ -50,23 +50,23 @@ package batr.game.entity.objects {
 		protected _type: BonusType;
 
 		//============Constructor Function============//
-		public function BonusBoxSymbol(type: BonusType = BonusType.NULL): void {
+		public BonusBoxSymbol(type: BonusType = BonusType.NULL): void {
 			super();
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._type = null;
 			this.graphics.clear();
 		}
 
 		//============Instance Getters And Setters============//
-		public function get type(): BonusType {
+		public get type(): BonusType {
 			return this._type;
 		}
 
-		public function set type(value: BonusType): void {
+		public set type(value: BonusType): void {
 			if (this._type == value)
 				return;
 			this._type = value;
@@ -75,7 +75,7 @@ package batr.game.entity.objects {
 
 		//============Instance Functions============//
 		//========Symbol Shape========//
-		public function drawShape(): void {
+		public drawShape(): void {
 			this.graphics.clear();
 			switch (this._type) {
 				case BonusType.NULL:
@@ -131,7 +131,7 @@ package batr.game.entity.objects {
 		}
 
 		//====HHL====//
-		protected function drawHealthSymbol(): void {
+		protected drawHealthSymbol(): void {
 			// V
 			this.graphics.beginFill(HEALTH_COLOR);
 			this.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
@@ -142,7 +142,7 @@ package batr.game.entity.objects {
 			this.graphics.endFill();
 		}
 
-		protected function drawHealSymbol(): void {
+		protected drawHealSymbol(): void {
 			// V
 			this.graphics.beginFill(HEALTH_COLOR);
 			this.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
@@ -151,7 +151,7 @@ package batr.game.entity.objects {
 			this.graphics.endFill();
 		}
 
-		protected function drawLifeSymbol(): void {
+		protected drawLifeSymbol(): void {
 			// L
 			this.graphics.beginFill(HEALTH_COLOR);
 			this.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 2);
@@ -162,14 +162,14 @@ package batr.game.entity.objects {
 		}
 
 		//====Weapon====//
-		protected function drawWeaponSymbol(): void {
+		protected drawWeaponSymbol(): void {
 			// Circle
 			this.graphics.lineStyle(WEAPON_LINE_SIZE, WEAPON_COLOR);
 			this.graphics.drawCircle(0, 0, GRID_SIZE);
 		}
 
 		//====Attributes====//
-		protected function drawAttributesSymbol(color: uint): void {
+		protected drawAttributesSymbol(color: uint): void {
 			// Colored Rectangle
 			/*this.graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
 			this.graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
@@ -196,7 +196,7 @@ package batr.game.entity.objects {
 		}
 
 		//====Team====//
-		protected function drawTeamSymbol(color: uint): void {
+		protected drawTeamSymbol(color: uint): void {
 			this.graphics.lineStyle(TEAM_LINE_SIZE, color);
 			graphics.moveTo(-GRID_SIZE, -GRID_SIZE);
 			graphics.lineTo(GRID_SIZE, 0);
@@ -205,7 +205,7 @@ package batr.game.entity.objects {
 		}
 
 		//====Other====//
-		protected function drawRandomTeleportSymbol(): void {
+		protected drawRandomTeleportSymbol(): void {
 			// Teleport Effect
 			// 1
 			this.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);

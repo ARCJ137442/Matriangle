@@ -17,14 +17,14 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Adventurer implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = 'Adventurer';
-		public static const LABEL_SHORT: String = 'A';
+		public static const LABEL: string = 'Adventurer';
+		public static const LABEL_SHORT: string = 'A';
 
-		public static const DEBUG: Boolean = false;
+		public static const DEBUG: boolean = false;
 
 		//============Static Functions============//
 		/*========AI Criteria========*/
-		static function weaponUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): Boolean {
+		static function weaponUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
 			var vx: int = GlobalRot.towardXInt(rot, 1);
 			var vy: int = GlobalRot.towardYInt(rot, 1);
 			var cx: int, cy: int;
@@ -46,7 +46,7 @@ package batr.game.entity.ai.programs {
 			return true;
 		}
 
-		static function weaponNotThroughPlayer(weapon: WeaponType): Boolean {
+		static function weaponNotThroughPlayer(weapon: WeaponType): boolean {
 			switch (weapon) {
 				case WeaponType.BULLET:
 				case WeaponType.NUKE:
@@ -60,17 +60,17 @@ package batr.game.entity.ai.programs {
 			return false;
 		}
 
-		static function weaponNeedCarryBlock(weapon: WeaponType): Boolean {
+		static function weaponNeedCarryBlock(weapon: WeaponType): boolean {
 			return weapon == WeaponType.BLOCK_THROWER;
 		}
 
-		static function detectCarryBlock(player: Player): Boolean {
+		static function detectCarryBlock(player: Player): boolean {
 			if (weaponNeedCarryBlock(player.weapon) && !player.isCarriedBlock)
 				return false;
 			return true;
 		}
 
-		static function detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): Boolean {
+		static function detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
 			return !player.isCarriedBlock && blockAtt.isCarryable && player.host.testCarryableWithMap(blockAtt, player.host.map);
 		}
 
@@ -123,17 +123,17 @@ package batr.game.entity.ai.programs {
 			return _tempNode == null ? null : _tempNode.pathToRoot;
 }
 
-protected static function containNode(node: PathNode, nodes: PathNode[]): Boolean {
+protected static function containNode(node: PathNode, nodes: PathNode[]): boolean {
 	if (nodes.indexOf(node) >= 0)
 		return true;
-	for (var i: String in nodes) {
+	for (var i: string in nodes) {
 		if (node.equals(nodes[i]))
 			return true;
 	}
 	return false;
 }
 
-protected static function removeNodeIn(node: PathNode, nodes: PathNode[]): Boolean {
+protected static function removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
 	var i: int = nodes.indexOf(node);
 	if (i >= 0) {
 		// trace('remove node'+node,'succeed!')
@@ -220,21 +220,21 @@ static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner:
 	return _leastNode;
 }
 
-static function pointInRemember(p: iPoint, r: Vector.<Boolean[]>): Boolean {
+static function pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
 	if (p == null || r == null || r.length < 1)
 		return false;
 	return r[p.x][p.y];
 }
 
-static function writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: Boolean): void {
+static function writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: boolean): void {
 	remember[x][y] = value;
 }
 
-static function writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: Boolean): void {
+static function writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolean): void {
 	remember[p.x][p.y] = value;
 }
 
-static function getEntityName(target: EntityCommon): String {
+static function getEntityName(target: EntityCommon): string {
 	if (target == null)
 		return 'null';
 	if (target is Player)
@@ -247,7 +247,7 @@ static function getEntityName(target: EntityCommon): String {
  * @param	owner	the owner.
  * @param	message	the text without AIPlayer name.
  */
-static function traceLog(owner: Player, message: String): void {
+static function traceLog(owner: Player, message: string): void {
 	if (DEBUG)
 		trace(owner.customName + ':', message);
 }
@@ -268,63 +268,63 @@ protected _closeTarget: EntityCommon[];
 protected _lastTarget: EntityCommon;
 
 // AI Judging about
-protected _pickupFirst: Boolean = true;
+protected _pickupFirst: boolean = true;
 
 //============Constructor Function============//
-public function AIProgram_Adventurer(): void {
+public AIProgram_Adventurer(): void {
 	this._lastTarget = null;
 	this._closeTarget = new EntityCommon[]();
 }
 
 //============Destructor Function============//
-public function destructor(): void {
+public destructor(): void {
 	this._lastTarget = null;
 	this._closeTarget = null;
 }
 
 //============Instance Functions============//
-protected function initRemember(host: Game): void {
+protected initRemember(host: Game): void {
 	this._remember = host.map.getMatrixBoolean();
 }
 
-protected function resetRemember(): void {
-	for (var v of this._remember) {
-		for (var i: String in v) {
-			v[i] = false;
-		}
+protected resetRemember(): void {
+	for(var v of this._remember) {
+	for (var i: string in v) {
+		v[i] = false;
 	}
+}
 	// trace('remember resetted!')
 }
 
-protected function changeTarget(owner: AIPlayer, target: EntityCommon): void {
-	if (this._lastTarget == target)
-		return;
+protected changeTarget(owner: AIPlayer, target: EntityCommon): void {
+	if(this._lastTarget == target)
+	return;
 	this._lastTarget = target;
 	this.resetRemember();
-	if (owner.isPress_Use)
-		owner.addActionToThread(AIPlayerAction.RELEASE_KEY_USE);
+	if(owner.isPress_Use)
+	owner.addActionToThread(AIPlayerAction.RELEASE_KEY_USE);
 }
 
-protected function resetTarget(): void {
+protected resetTarget(): void {
 	this._lastTarget = null;
 	this.resetRemember();
 }
 
-protected function inCloseTarget(target: EntityCommon): Boolean {
+protected inCloseTarget(target: EntityCommon): boolean {
 	return this._closeTarget.indexOf(target) >= 0;
 }
 
-protected function addCloseTarget(target: EntityCommon): void {
-	if (!this.inCloseTarget(target))
-		this._closeTarget.push(target);
+protected addCloseTarget(target: EntityCommon): void {
+	if(!this.inCloseTarget(target))
+	this._closeTarget.push(target);
 }
 
-protected function resetCloseTarget(): void {
+protected resetCloseTarget(): void {
 	this._closeTarget.splice(0, this._closeTarget.length);
 }
 
 /*========AI Tools========*/
-public function getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
+public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 	// getManhattanDistance
 	var _nearestBox: BonusBox = null;
 	var _nearestDistance: int = int.MAX_VALUE;
@@ -341,7 +341,7 @@ public function getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 	return _nearestBox;
 }
 
-public function getNearestEnemy(owner: Player, host: Game): Player {
+public getNearestEnemy(owner: Player, host: Game): Player {
 	// getManhattanDistance
 	var _nearestEnemy: Player = null;
 	var _nearestDistance: int = int.MAX_VALUE;
@@ -362,20 +362,20 @@ public function getNearestEnemy(owner: Player, host: Game): Player {
 
 /*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 /*========AI Getter And Setter========*/
-public function get label():String {
+public get label():String {
 	return AIProgram_Adventurer.LABEL;
 }
 
-public function get labelShort():String {
+public get labelShort():String {
 	return AIProgram_Adventurer.LABEL_SHORT;
 }
 
-public function get referenceSpeed():uint {
+public get referenceSpeed():uint {
 	return 5 * (1 + exMath.random(6));
 }
 
 /*========AI Program Main========*/
-public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
+public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 	if (player == null)
 		return AIPlayerAction.NULL;
 	// Set Variables
@@ -504,11 +504,11 @@ public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 	// Hurt By Target
 	if (attacker != null && attacker != this._lastTarget && attacker != player &&
 		player.canUseWeaponHurtPlayer(attacker, player.weapon)) {
@@ -517,27 +517,27 @@ public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Pl
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 	this.resetTarget();
 	this.resetCloseTarget();
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
+public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 	this.resetTarget();
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 	this.resetTarget();
 	return AIPlayerAction.NULL;
 }
 
-public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
+public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 	return AIPlayerAction.NULL;
 }
 	}
@@ -558,19 +558,19 @@ class PathNode extends iPoint {
 	public G: int = 0;
 	public H: int = 0;
 
-	public function get F(): int {
+	public get F(): int {
 		return this.G + this.H;
 	}
 
-	public function get hasParent(): Boolean {
+	public get hasParent(): boolean {
 		return this.parent != null;
 	}
 
-	public function get hasFromRot(): Boolean {
+	public get hasFromRot(): boolean {
 		return GlobalRot.isValidRot(this.fromRot);
 	}
 
-	public function get rootParent(): PathNode {
+	public get rootParent(): PathNode {
 		var p: PathNode = this.parent;
 		while (p.parent != null && p.parent != this) {
 			p = p.parent;
@@ -581,7 +581,7 @@ class PathNode extends iPoint {
 	/**
 	 * Didn't include the root
 	 */
-	public function get pathToRoot(): PathNode[] {
+	public get pathToRoot(): PathNode[] {
 		var result: PathNode[] = new < PathNode > [this];
 		var p: PathNode = this.parent;
 		while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
@@ -592,7 +592,7 @@ class PathNode extends iPoint {
 	}
 
 	// Constructor
-	public function PathNode(x: int, y: int, parent: PathNode = null): void {
+	public PathNode(x: int, y: int, parent: PathNode = null): void {
 		super(x, y);
 		this.parent = parent;
 	}
@@ -603,11 +603,11 @@ class PathNode extends iPoint {
 	}
 
 	// Methods
-	public function getFromRot(from: PathNode): uint {
+	public getFromRot(from: PathNode): uint {
 		return GlobalRot.fromLinearDistance(this.x - from.x, this.y - from.y);
 	}
 
-	public function autoSetFromRot(): void {
+	public autoSetFromRot(): void {
 		if (this.hasParent) {
 			this.fromRot = this.getFromRot(this.parent);
 		}
@@ -617,18 +617,18 @@ class PathNode extends iPoint {
 	 * @param	parent	A Point
 	 * @return	This point
 	 */
-	public function setParentAndFromRot(parent: PathNode): PathNode {
+	public setParentAndFromRot(parent: PathNode): PathNode {
 		this.parent = parent;
 		this.autoSetFromRot();
 		return this;
 	}
 
-	public function setFromRot(rot: uint): PathNode {
+	public setFromRot(rot: uint): PathNode {
 		this.fromRot = rot;
 		return this;
 	}
 
-	public override function toString(): String {
+	public override function toString(): string {
 		return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 	}
 }
@@ -663,19 +663,19 @@ class NodeHeap {
 
 	protected const _list: PathNode[] = new PathNode[]();
 
-	public function get length(): uint {
+	public get length(): uint {
 		return this._list.length;
 	}
 
-	public function get leastF(): PathNode {
+	public get leastF(): PathNode {
 		return this._list[0];
 	}
 
-	public function NodeHeap(): void {
+	public NodeHeap(): void {
 
 	}
 
-	public function add(node: PathNode): void {
+	public add(node: PathNode): void {
 		if (node == null)
 			return;
 		this._list.push(node);
@@ -686,7 +686,7 @@ class NodeHeap {
 		}
 	}
 
-	public function remove(): void {
+	public remove(): void {
 		swapNode(0, this.length - 1);
 		this._list.length--;
 		var index: uint = 0;
@@ -696,11 +696,11 @@ class NodeHeap {
 		}
 	}
 
-	protected function getLastNode(): PathNode {
+	protected getLastNode(): PathNode {
 		return this._list[this.length - 1];
 	}
 
-	protected function setNode(n: PathNode, i: uint): void {
+	protected setNode(n: PathNode, i: uint): void {
 		if (n == null)
 			return;
 		if (this.length < i)
@@ -708,39 +708,39 @@ class NodeHeap {
 		this._list[i] = n;
 	}
 
-	protected function hasNode(i: uint): Boolean {
+	protected hasNode(i: uint): boolean {
 		return this.length > i && this._list[i] != null;
 	}
 
-	protected function hasParent(i: uint): Boolean {
+	protected hasParent(i: uint): boolean {
 		if (i == 0)
 			return false;
 		return hasNode(getParentIndex(i));
 	}
 
-	protected function hasChild(i: uint): Boolean {
+	protected hasChild(i: uint): boolean {
 		return hasNode(getLeftIndex(i)) && hasNode(getRightIndex(i));
 	}
 
-	protected function getLeftChildF(i: uint): uint {
+	protected getLeftChildF(i: uint): uint {
 		return hasNode(getLeftIndex(i)) ? this._list[getLeftIndex(i)].F : 0;
 	}
 
-	protected function getRightChildF(i: uint): uint {
+	protected getRightChildF(i: uint): uint {
 		return hasNode(getRightIndex(i)) ? this._list[getRightIndex(i)].F : 0;
 	}
 
-	protected function getChildF(i: uint): uint {
+	protected getChildF(i: uint): uint {
 		return hasNode(i) ? this._list[i].F : 0;
 	}
 
-	protected function leastChildF(i: uint): uint {
+	protected leastChildF(i: uint): uint {
 		if (!this.hasChild(i))
 			return 0;
 		return exMath.intMin(getChildF(getLeftIndex(i)), getChildF(getRightIndex(i)));
 	}
 
-	protected function swapNode(i1: uint, i2: uint): void {
+	protected swapNode(i1: uint, i2: uint): void {
 		if (i1 < this.length && i2 < this.length) {
 			var temp: PathNode = this._list[i1];
 			this._list[i1] = this._list[i2];

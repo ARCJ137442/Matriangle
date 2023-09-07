@@ -17,8 +17,8 @@ package batr.menu.object.selector {
 
 	export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
-		public static const DEFAULT_DISTANCE_H: Number = GlobalGameVariables.DEFAULT_SIZE * 8;
-		public static const DEFAULT_DISTANCE_V: Number = GlobalGameVariables.DEFAULT_SIZE;
+		public static const DEFAULT_DISTANCE_H: number = GlobalGameVariables.DEFAULT_SIZE * 8;
+		public static const DEFAULT_DISTANCE_V: number = GlobalGameVariables.DEFAULT_SIZE;
 
 		//============Instance Variables============//
 		protected _selectors: BatrSelector[] = new BatrSelector[]();
@@ -35,7 +35,7 @@ package batr.menu.object.selector {
 		protected _horizontalDistance = DEFAULT_DISTANCE_H;
 
 		//============Constructor Function============//
-		public function BatrSelectorList(horizontalDistance: Number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: Number = BatrSelectorList.DEFAULT_DISTANCE_V): void {
+		public BatrSelectorList(horizontalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_V): void {
 			super(false);
 			this.setDistance(horizontalDistance, verticalDistance);
 		}
@@ -54,56 +54,56 @@ package batr.menu.object.selector {
 
 		//============Instance Getter And Setter============//
 		// selector
-		public function get selectors(): BatrSelector[] {
+		public get selectors(): BatrSelector[] {
 			return this._selectors;
 		}
 
-		public function get selectorCount(): int {
+		public get selectorCount(): int {
 			return this._selectors.length;
 		}
 
 		// Text
-		public function get selectTextFields(): BatrTextField[] {
+		public get selectTextFields(): BatrTextField[] {
 			return this._selectTextFields;
 		}
 
-		public function get selectTextFieldCount(): int {
+		public get selectTextFieldCount(): int {
 			return this._selectTextFields.length;
 		}
 
 		// verticalDistance
-		public function get horizontalDistance(): Number {
+		public get horizontalDistance(): number {
 			return this._horizontalDistance;
 		}
 
-		public function set horizontalDistance(value: Number): void {
+		public set horizontalDistance(value: number): void {
 			this._horizontalDistance = value;
 			this.refreshDisplay();
 		}
 
 		// verticalDistance
-		public function get verticalDistance(): Number {
+		public get verticalDistance(): number {
 			return this._verticalDistance;
 		}
 
-		public function set verticalDistance(value: Number): void {
+		public set verticalDistance(value: number): void {
 			this._verticalDistance = value;
 			this.refreshDisplay();
 		}
 
 		//============Instance Functions============//
-		public function setPos(x: Number, y: Number): BatrSelectorList {
+		public setPos(x: number, y: number): BatrSelectorList {
 			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrSelectorList {
+		public setBlockPos(x: number, y: number): BatrSelectorList {
 			super.protected:: sBP(x, y);
 			return this;
 		}
 
-		protected function initDisplay(): void {
-			var dy: Number, i: int;
+		protected initDisplay(): void {
+			var dy: number, i: int;
 			if (this.selectTextFieldCount > 0) {
 				var textField: BatrTextField;
 				for (dy = i = 0; i < this.selectTextFieldCount; i++) {
@@ -134,19 +134,19 @@ package batr.menu.object.selector {
 			}
 		}
 
-		public function refreshDisplay(): BatrSelectorList {
+		public refreshDisplay(): BatrSelectorList {
 			this.initDisplay();
 			return this;
 		}
 
-		public function setPosAndRefresh(x: Number, y: Number): BatrSelectorList {
+		public setPosAndRefresh(x: number, y: number): BatrSelectorList {
 			this.x = x;
 			this.y = y;
 			this.refreshDisplay();
 			return this;
 		}
 
-		public function setDistance(H: Number, V: Number): BatrSelectorList {
+		public setDistance(H: number, V: number): BatrSelectorList {
 			this._horizontalDistance = H;
 			this._verticalDistance = V;
 			this.initDisplay();
@@ -158,7 +158,7 @@ package batr.menu.object.selector {
 		/**
 		 * Unfinished.
 		 */
-		public function appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
+		public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
 			functionNotFound();
 			return null;
 		}
@@ -166,7 +166,7 @@ package batr.menu.object.selector {
 		/**
 		 * Unfinished.
 		 */
-		public function appendDirectElements(...elements): IBatrMenuElement {
+		public appendDirectElements(...elements): IBatrMenuElement {
 			functionNotFound();
 			return null;
 		}
@@ -174,14 +174,14 @@ package batr.menu.object.selector {
 		/**
 		 * Unfinished.
 		 */
-		public function addChildPerDirectElements(): void {
+		public addChildPerDirectElements(): void {
 			this.initDisplay();
 		}
 
 		/**
 		 * Unfinished.
 		 */
-		public function getElementAt(index: int): IBatrMenuElement {
+		public getElementAt(index: int): IBatrMenuElement {
 			functionNotFound();
 			return null;
 		}
@@ -189,17 +189,17 @@ package batr.menu.object.selector {
 		/**
 		 * Unfinished.
 		 */
-		public function getElementByName(name: String): BatrMenuGUI {
+		public getElementByName(name: string): BatrMenuGUI {
 			functionNotFound();
 			return null;
 		}
 
-		private function functionNotFound(): void {
+		private functionNotFound(): void {
 			throw new Error('Function Not Found!');
 		}
 
 		//========True Functions About selectors========//
-		public function appendSelectorAndText(host: BatrSubject, selector: BatrSelector, tKey: String, shiftEmptyLine: Boolean = false): BatrSelectorList {
+		public appendSelectorAndText(host: BatrSubject, selector: BatrSelector, tKey: string, shiftEmptyLine: boolean = false): BatrSelectorList {
 			// Empty Line
 			if (shiftEmptyLine)
 				this.AddNewEmptyLine();
@@ -214,12 +214,12 @@ package batr.menu.object.selector {
 			return this;
 		}
 
-		protected function AddNewEmptyLine(): void {
+		protected AddNewEmptyLine(): void {
 			this._selectors.push(null);
 			this._selectTextFields.push(null);
 		}
 
-		public function getSelectorByName(name: String): BatrSelector {
+		public getSelectorByName(name: string): BatrSelector {
 			for (var selector of this._selectors) {
 				if (selector != null && selector.name == name)
 					return selector;
@@ -227,7 +227,7 @@ package batr.menu.object.selector {
 			return null;
 		}
 
-		public function quickAppendSelector(menu: Menu, content: BatrSelectorContent, keyName: String, shiftEmptyLine: Boolean = false, clickListener: Function = null, minTextBlockWidth: Number = 0.5): BatrSelectorList {
+		public quickAppendSelector(menu: Menu, content: BatrSelectorContent, keyName: string, shiftEmptyLine: boolean = false, clickListener: Function = null, minTextBlockWidth: number = 0.5): BatrSelectorList {
 			var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 			selector.setName(keyName);
 			menu.subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);

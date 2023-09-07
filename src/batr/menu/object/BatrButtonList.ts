@@ -9,14 +9,14 @@ package batr.menu.objects {
 
 	export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
-		public static const DEFAULT_DISTANCE: Number = GlobalGameVariables.DEFAULT_SIZE;
+		public static const DEFAULT_DISTANCE: number = GlobalGameVariables.DEFAULT_SIZE;
 
 		//============Instance Variables============//
 		protected _buttons: BatrButton[] = new BatrButton[]();
 		protected _verticalDistance = DEFAULT_DISTANCE;
 
 		//============Constructor Function============//
-		public function BatrButtonList(verticalDistance: Number = BatrButtonList.DEFAULT_DISTANCE): void {
+		public BatrButtonList(verticalDistance: number = BatrButtonList.DEFAULT_DISTANCE): void {
 			super(false);
 			this.verticalDistance = verticalDistance;
 			this.initDisplay();
@@ -32,38 +32,38 @@ package batr.menu.objects {
 
 		//============Instance Getter And Setter============//
 		// Button
-		public function get buttons(): BatrButton[] {
+		public get buttons(): BatrButton[] {
 			return this._buttons;
 		}
 
-		public function get buttonCount(): int {
+		public get buttonCount(): int {
 			return this._buttons.length;
 		}
 
 		// verticalDistance
-		public function get verticalDistance(): Number {
+		public get verticalDistance(): number {
 			return this._verticalDistance;
 		}
 
-		public function set verticalDistance(value: Number): void {
+		public set verticalDistance(value: number): void {
 			this._verticalDistance = value;
 		}
 
 		//============Instance Functions============//
-		public function setPos(x: Number, y: Number): BatrButtonList {
+		public setPos(x: number, y: number): BatrButtonList {
 			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrButtonList {
+		public setBlockPos(x: number, y: number): BatrButtonList {
 			super.protected:: sBP(x, y);
 			return this;
 		}
 
-		protected function initDisplay(): void {
+		protected initDisplay(): void {
 			if (this.buttonCount < 1)
 				return;
-			var dy: Number = 0;
+			var dy: number = 0;
 			for (var i: int = 0; i < this._buttons.length; i++) {
 				var button: BatrButton = this._buttons[i];
 				button.x = 0;
@@ -73,18 +73,18 @@ package batr.menu.objects {
 			}
 		}
 
-		public function refreshDisplay(): void {
+		public refreshDisplay(): void {
 			this.initDisplay();
 		}
 
 		//========By IBatrMenuElementContainer========//
-		public function appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
+		public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
 			if (element is BatrButton)
 			this._buttons.push(element as BatrButton);
 			return this;
 		}
 
-		public function appendDirectElements(...elements): IBatrMenuElement {
+		public appendDirectElements(...elements): IBatrMenuElement {
 			var button: BatrButton;
 			for (var i: int = 0; i < elements.length; i++) {
 				button = elements[i] as BatrButton;
@@ -94,15 +94,15 @@ package batr.menu.objects {
 			return this;
 		}
 
-		public function addChildPerDirectElements(): void {
+		public addChildPerDirectElements(): void {
 			this.initDisplay();
 		}
 
-		public function getElementAt(index: int): IBatrMenuElement {
+		public getElementAt(index: int): IBatrMenuElement {
 			return (index < 1 || index >= this.buttonCount) ? null : (this._buttons[index] as IBatrMenuElement);
 		}
 
-		public function getElementByName(name: String): BatrMenuGUI {
+		public getElementByName(name: string): BatrMenuGUI {
 			for (var button of this._buttons) {
 				if (button != null && button.name == name)
 					return (button as BatrMenuGUI);

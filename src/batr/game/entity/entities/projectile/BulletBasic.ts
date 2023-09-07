@@ -14,24 +14,24 @@ package batr.game.entity.entity.projectile {
 
 	export default class BulletBasic extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 80;
-		public static const SIZE: Number = PosTransform.localPosToRealPos(3 / 8);
-		public static const DEFAULT_SPEED: Number = 16 / GlobalGameVariables.FIXED_TPS;
-		public static const DEFAULT_EXPLODE_RADIUS: Number = 1;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 80;
+		public static const SIZE: number = PosTransform.localPosToRealPos(3 / 8);
+		public static const DEFAULT_SPEED: number = 16 / GlobalGameVariables.FIXED_TPS;
+		public static const DEFAULT_EXPLODE_RADIUS: number = 1;
 
 		//============Instance Variables============//
-		public speed: Number;
-		public finalExplodeRadius: Number;
+		public speed: number;
+		public finalExplodeRadius: number;
 		// Entity Pos
 
 		public lastBlockType: BlockType = BlockType.NULL;
 		public nowBlockType: BlockType = BlockType.NULL;
 
 		//============Constructor Function============//
-		public function BulletBasic(host: Game, x: Number, y: Number,
+		public BulletBasic(host: Game, x: number, y: number,
 			owner: Player,
-			speed: Number = DEFAULT_SPEED,
-			defaultExplodeRadius: Number = DEFAULT_EXPLODE_RADIUS): void {
+			speed: number = DEFAULT_SPEED,
+			defaultExplodeRadius: number = DEFAULT_EXPLODE_RADIUS): void {
 			super(host, x, y, owner);
 			this.speed = speed;
 
@@ -63,7 +63,7 @@ package batr.game.entity.entity.projectile {
 
 		}
 
-		public function onBulletCommonTick(): void {
+		public onBulletCommonTick(): void {
 			// Move
 			// Detect
 			if (this._host == null)
@@ -88,11 +88,11 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		public function onBulletTick(): void {
+		public onBulletTick(): void {
 
 		}
 
-		protected function explode(): void {
+		protected explode(): void {
 			this._host.weaponCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
 			this._host.entitySystem.removeProjectile(this);
 
@@ -100,9 +100,9 @@ package batr.game.entity.entity.projectile {
 
 		//====Graphics Functions====//
 		public override function drawShape(): void {
-			var realRadiusX: Number = SIZE / 2;
+			var realRadiusX: number = SIZE / 2;
 
-			var realRadiusY: Number = SIZE / 2;
+			var realRadiusY: number = SIZE / 2;
 
 			with (this.graphics) {
 				clear();

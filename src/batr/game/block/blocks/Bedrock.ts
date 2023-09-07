@@ -12,7 +12,7 @@ package batr.game.block.blocks {
 		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
 
 		//============Constructor Function============//
-		public function Bedrock(lineColor: uint = LINE_COLOR, fillColor: uint = FILL_COLOR): void {
+		public Bedrock(lineColor: uint = LINE_COLOR, fillColor: uint = FILL_COLOR): void {
 			super(lineColor, fillColor);
 		}
 

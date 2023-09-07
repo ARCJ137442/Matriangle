@@ -26,30 +26,30 @@ package batr.game.model {
 		protected _message: I18nText;
 
 		//============Constructor============//
-		public function GameResult(host: Game, message: I18nText, stats: GameStats): void {
+		public GameResult(host: Game, message: I18nText, stats: GameStats): void {
 			super();
 			this._message = message;
 			this._stats = stats;
 		}
 
 		//============Destructor============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._message = null;
 			this._stats = null;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get message(): I18nText {
+		public get message(): I18nText {
 			return this._message;
 		}
 
-		public function get stats(): GameStats {
+		public get stats(): GameStats {
 			return this._stats;
 		}
 
-		public function get rankingText(): ForcedI18nText {
+		public get rankingText(): ForcedI18nText {
 			// W.I.P
-			var text: String = '';
+			var text: string = '';
 			var sortedStatList: PlayerStats[] = this._stats.player.concat().sort(scoreCompareFunc);
 			var currentStats: PlayerStats;
 			for (var i: int = 0; i < sortedStatList.length; i++) {

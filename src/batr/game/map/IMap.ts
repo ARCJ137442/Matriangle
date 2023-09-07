@@ -15,23 +15,23 @@ package batr.game.map {
 	function get spawnPoints(): uint[];
 	function get numSpawnPoints(): uint;
 
-	function get hasSpawnPoint(): Boolean;
+	function get hasSpawnPoint(): boolean;
 
 	function get randomSpawnPoint(): iPoint;
 
-	function get isArenaMap(): Boolean;
+	function get isArenaMap(): boolean;
 
-	function get name(): String;
+	function get name(): string;
 
 	function destructor(): void;
 
-	function clone(createBlock: Boolean = true): IMap;
+	function clone(createBlock: boolean = true): IMap;
 
-	function copyContentFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void;
-	function copyFrom(target: IMap, clearSelf: Boolean = false, createBlock: Boolean = true): void;
+	function copyContentFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
+	function copyFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
 	function generateNew(): IMap;
 
-	function hasBlock(x: int, y: int): Boolean;
+	function hasBlock(x: int, y: int): boolean;
 
 	function getBlock(x: int, y: int): BlockCommon;
 
@@ -41,11 +41,11 @@ package batr.game.map {
 
 	function setBlock(x: int, y: int, block: BlockCommon): void;
 
-	function isVoid(x: int, y: int): Boolean;
+	function isVoid(x: int, y: int): boolean;
 
 	function setVoid(x: int, y: int): void;
 
-	function removeAllBlock(deleteBlock: Boolean = true): void;
+	function removeAllBlock(deleteBlock: boolean = true): void;
 
 	// Display About
 	function setDisplayTo(target: IMapDisplayer): void;

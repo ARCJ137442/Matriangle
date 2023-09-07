@@ -9,8 +9,8 @@ package batr.game.block.blocks {
 	export default class XTrap extends BlockCommon {
 		//============Static Variables============//
 		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 20;
-		protected static const ALPHA: Number = 1;
-		protected static const ALPHA_BACK: Number = 0.4;
+		protected static const ALPHA: number = 1;
+		protected static const ALPHA_BACK: number = 0.4;
 		protected static const COLOR_NULL: uint = 0;
 		protected static const COLOR_HURT: uint = 0xff8000;
 		protected static const COLOR_KILL: uint = 0xff0000;
@@ -34,7 +34,7 @@ package batr.game.block.blocks {
 		private _type: BlockType;
 
 		//============Constructor Function============//
-		public function XTrap(type: BlockType): void {
+		public XTrap(type: BlockType): void {
 			super();
 			this._type = type;
 			this.drawMain();

@@ -22,7 +22,7 @@ package batr.menu.object.selector {
 
 	export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
-		protected static const ARROW_OFFSET: Number = GlobalGameVariables.DEFAULT_SIZE / 10;
+		protected static const ARROW_OFFSET: number = GlobalGameVariables.DEFAULT_SIZE / 10;
 
 		//============Static Functions============//
 
@@ -40,7 +40,7 @@ package batr.menu.object.selector {
 		protected _leftArrow: BatrSelectorArrow;
 		protected _rightArrow: BatrSelectorArrow;
 		protected _textField: BatrTextField;
-		protected _minTextWidth: Number;
+		protected _minTextWidth: number;
 
 		protected _Content: BatrSelectorContent;
 
@@ -51,8 +51,8 @@ package batr.menu.object.selector {
 		protected _linkTarget: BatrSelector = null;
 
 		//============Constructor Function============//
-		public function BatrSelector(content: BatrSelectorContent,
-			minTextWidth: Number = 2 * GlobalGameVariables.DEFAULT_SIZE): void {
+		public BatrSelector(content: BatrSelectorContent,
+			minTextWidth: number = 2 * GlobalGameVariables.DEFAULT_SIZE): void {
 			super();
 			this._Content = content;
 			this._minTextWidth = minTextWidth;
@@ -80,20 +80,20 @@ package batr.menu.object.selector {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get content(): BatrSelectorContent {
+		public get content(): BatrSelectorContent {
 			return this._Content;
 		}
 
 		// Int:value,Enum:index
-		public function get currentValue(): int {
+		public get currentValue(): int {
 			return this._Content.currentValue;
 		}
 
-		public function get linkTarget(): BatrSelector {
+		public get linkTarget(): BatrSelector {
 			return this._linkTarget;
 		}
 
-		public function set linkTarget(value: BatrSelector): void {
+		public set linkTarget(value: BatrSelector): void {
 			{ // if(isValidTarget(value))
 				this._linkTarget = value;
 				this.copyContentTo(this._linkTarget);
@@ -101,17 +101,17 @@ package batr.menu.object.selector {
 		}
 
 		//============Instance Functions============//
-		public function setPos(x: Number, y: Number): BatrSelector {
+		public setPos(x: number, y: number): BatrSelector {
 			super.protected:: sP(x, y);
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrSelector {
+		public setBlockPos(x: number, y: number): BatrSelector {
 			super.protected:: sBP(x, y);
 			return this;
 		}
 
-		protected function isValidTarget(other: BatrSelector): Boolean {
+		protected isValidTarget(other: BatrSelector): boolean {
 			while (other != null) {
 				if (other.linkTarget == this)
 					return false;
@@ -120,7 +120,7 @@ package batr.menu.object.selector {
 			return true;
 		}
 
-		protected function setLinkTarget(other: BatrSelector, callee: Boolean = true): BatrSelector {
+		protected setLinkTarget(other: BatrSelector, callee: boolean = true): BatrSelector {
 			this._linkTarget = other;
 			this.copyContentTo(this._linkTarget, callee);
 			return this;
@@ -131,7 +131,7 @@ package batr.menu.object.selector {
 		 * @param	num	the other selector
 		 * @param	callee	the boolean determines to callee
 		 */
-		protected function copyContentTo(other: BatrSelector, callee: Boolean = true): void {
+		protected copyContentTo(other: BatrSelector, callee: boolean = true): void {
 			if (other == null)
 				return;
 			if (this._Content != null)
@@ -148,7 +148,7 @@ package batr.menu.object.selector {
 			}
 		}
 
-		protected function initDisplay(): void {
+		protected initDisplay(): void {
 			this.updateTextByContent();
 			this._textField.initFormatAsMenu();
 			// Add Children
@@ -157,7 +157,7 @@ package batr.menu.object.selector {
 			this.addChild(this._textField);
 		}
 
-		protected function updateText(): void {
+		protected updateText(): void {
 			this._textField.setTextFormat(Menu.TEXT_FORMAT);
 			this._textField.width = this._textField.textWidth + GlobalGameVariables.DEFAULT_SIZE / 10;
 			this._textField.height = this._textField.textHeight + GlobalGameVariables.DEFAULT_SIZE / 20;
@@ -168,7 +168,7 @@ package batr.menu.object.selector {
 			this._leftArrow.y = this._rightArrow.y = 0;
 		}
 
-		public function updateTextByContent(): BatrSelector {
+		public updateTextByContent(): BatrSelector {
 			if (this._Content == null)
 				return this;
 			this._textField.setText(this._Content.currentText);
@@ -180,26 +180,26 @@ package batr.menu.object.selector {
 
 		}
 
-		public function setLinkTo(target: BatrSelector): BatrSelector {
+		public setLinkTo(target: BatrSelector): BatrSelector {
 			this.linkTarget = target;
 			return this;
 		}
 
-		public function setContent(content: BatrSelectorContent): void {
+		public setContent(content: BatrSelectorContent): void {
 			this._Content = content;
 			this.updateTextByContent();
 		}
 
 		// Event
-		protected function onClickLeft(E: MouseEvent): void {
+		protected onClickLeft(E: MouseEvent): void {
 			this.turnSelectLeft();
 		}
 
-		protected function onClickRight(E: MouseEvent): void {
+		protected onClickRight(E: MouseEvent): void {
 			this.turnSelectRight();
 		}
 
-		public function onI18nChange(E: I18nsChangeEvent): void {
+		public onI18nChange(E: I18nsChangeEvent): void {
 			/* trace(this.name,this._textField.text,this._Content);
 			 * The Player selector in Game Result Menu dosn't has content when INITIAL LOAD! */
 			if (this._Content == null)
@@ -209,12 +209,12 @@ package batr.menu.object.selector {
 		}
 
 		// Select
-		public function turnSelectTo(index: int): BatrSelector {
+		public turnSelectTo(index: int): BatrSelector {
 			this._Content.currentValue = index;
 			return this;
 		}
 
-		public function turnSelectLeft(): void {
+		public turnSelectLeft(): void {
 			// Check
 			if (this._Content == null)
 				return;
@@ -227,7 +227,7 @@ package batr.menu.object.selector {
 			this.dispatchEvent(new BatrGUIEvent(BatrGUIEvent.CLICK_LEFT, this));
 		}
 
-		public function turnSelectRight(): void {
+		public turnSelectRight(): void {
 			// Check
 			if (this._Content == null)
 				return;

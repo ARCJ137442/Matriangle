@@ -9,12 +9,12 @@ package batr.game.block.blocks {
 
 	export default class Water extends ColoredBlock {
 		//============Static Variables============//
-		protected static const ALPHA: Number = 0.4;
+		protected static const ALPHA: number = 0.4;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function Water(color: uint = 0x2222FF): void {
+		public Water(color: uint = 0x2222FF): void {
 			super(color);
 		}
 

@@ -13,14 +13,14 @@ package batr.game.entity.entity.projectile {
 
 	export default class BulletNuke extends BulletBasic {
 		//============Static Variables============//
-		public static const SIZE: Number = PosTransform.localPosToRealPos(1 / 2);
-		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
+		public static const SIZE: number = PosTransform.localPosToRealPos(1 / 2);
+		public static const DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
 		public static const DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
-		public static const DEFAULT_EXPLODE_RADIUS: Number = 6.4;
+		public static const DEFAULT_EXPLODE_RADIUS: number = 6.4;
 
 		//============Constructor Function============//
-		public function BulletNuke(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number): void {
-			var scalePercent: Number = (0.25 + chargePercent * 0.75);
+		public BulletNuke(host: Game, x: number, y: number, owner: Player, chargePercent: number): void {
+			var scalePercent: number = (0.25 + chargePercent * 0.75);
 			super(host, x, y, owner, DEFAULT_SPEED * (2 - scalePercent), DEFAULT_EXPLODE_RADIUS * (2 * scalePercent));
 			this._currentWeapon = WeaponType.NUKE;
 			this.damage = this._currentWeapon.defaultDamage * scalePercent;
@@ -51,7 +51,7 @@ package batr.game.entity.entity.projectile {
 			this.scaleX = this.scaleY = BulletNuke.SIZE / BulletBasic.SIZE;
 		}
 
-		protected function drawNukeSign(): void {
+		protected drawNukeSign(): void {
 			graphics.beginFill(this.ownerLineColor);
 			graphics.drawCircle(0, 0, BulletBasic.SIZE * 0.125);
 			graphics.endFill();

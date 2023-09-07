@@ -11,14 +11,14 @@ package batr.game.effect.effects {
 		public static const DEFAULT_COLOR: uint = 0xffdd00;
 		public static const LINE_ALPHA: uint = 5 * (uint$MAX_VALUE >> 3); // 5/8
 		public static const FILL_ALPHA: uint = (uint$MAX_VALUE / 5) << 1; // 2/5
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
 
 		//============Instance Variables============//
-		protected _radius: Number = 1; // Entity Pos
+		protected _radius: number = 1; // Entity Pos
 		protected _color: uint;
 
 		//============Constructor Function============//
-		public function EffectExplode(host: Game, x: Number, y: Number, radius: Number = 1,
+		public EffectExplode(host: Game, x: number, y: number, radius: number = 1,
 			color: uint = DEFAULT_COLOR): void {
 			super(host, x, y, GlobalGameVariables.TPS * 0.25);
 			this._color = color;
@@ -38,11 +38,11 @@ package batr.game.effect.effects {
 			return EffectType.EXPLODE;
 		}
 
-		public function get radius(): Number {
+		public get radius(): number {
 			return this._radius;
 		}
 
-		public function set radius(value: Number): void {
+		public set radius(value: number): void {
 			this._radius = value;
 			this.drawShape();
 		}

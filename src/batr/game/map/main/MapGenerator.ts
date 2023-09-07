@@ -24,12 +24,12 @@ package batr.game.map.main {
 		protected _generateFunc: Function;
 
 		//============Constructor============//
-		public function MapGenerator(generateFunc: Function): void {
+		public MapGenerator(generateFunc: Function): void {
 			this._generateFunc = generateFunc;
 		}
 
 		/* INTERFACE batr.game.map.IMapGenerator */
-		public function generateTo(map: IMap, clearBefore: Boolean): IMap {
+		public generateTo(map: IMap, clearBefore: boolean): IMap {
 			if (clearBefore)
 				map.removeAllBlock();
 			// trace('generateNew:generating!',this._generateFunc)

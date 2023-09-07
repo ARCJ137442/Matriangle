@@ -33,7 +33,7 @@ package batr.game.effect {
 		}
 
 		//============Static Functions============//
-		public static function fromString(str: String): EffectType {
+		public static function fromString(str: string): EffectType {
 			for (var type of EffectType._ALL_EFFECT) {
 				if (type.name == str)
 					return type;
@@ -43,7 +43,7 @@ package batr.game.effect {
 
 		}
 
-		public static function isIncludeIn(type: EffectType, types: EffectType[]): Boolean {
+		public static function isIncludeIn(type: EffectType, types: EffectType[]): boolean {
 			for (var type2 of types) {
 				if (type == type2)
 					return true;
@@ -57,7 +57,7 @@ package batr.game.effect {
 		protected _effectLayer: int;
 
 		//============Constructor Function============//
-		public function EffectType(name: String, effectLayer: int = -1): void {
+		public EffectType(name: string, effectLayer: int = -1): void {
 			super(name);
 
 			this._effectLayer = effectLayer;
@@ -65,7 +65,7 @@ package batr.game.effect {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get label(): String {
+		public override function get label(): string {
 			return 'effect';
 		}
 
@@ -78,7 +78,7 @@ package batr.game.effect {
 		 * <Bottom>:NEGATIVE
 		 * Background
 		 */
-		public function get effectLayer(): int {
+		public get effectLayer(): int {
 			return this._effectLayer;
 
 		}

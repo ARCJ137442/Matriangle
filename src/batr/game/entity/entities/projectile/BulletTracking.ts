@@ -13,19 +13,19 @@
 
 	export default class BulletTracking extends BulletBasic {
 		//============Static Variables============//
-		public static const SIZE: Number = PosTransform.localPosToRealPos(3 / 8);
-		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
+		public static const SIZE: number = PosTransform.localPosToRealPos(3 / 8);
+		public static const DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
 		public static const DEFAULT_EXPLODE_COLOR: uint = 0xffff00;
-		public static const DEFAULT_EXPLODE_RADIUS: Number = 0.625;
+		public static const DEFAULT_EXPLODE_RADIUS: number = 0.625;
 
 		//============Instance Variables============//
 		protected _target: Player = null;
 		protected _trackingFunction: Function = getTargetRot; // not the criterion
-		protected _scalePercent: Number = 1;
+		protected _scalePercent: number = 1;
 		protected _cachedTargets: Player[] = new Player[]();
 
 		//============Constructor Function============//
-		public function BulletTracking(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number): void {
+		public BulletTracking(host: Game, x: number, y: number, owner: Player, chargePercent: number): void {
 			this._scalePercent = (1 + chargePercent * 0.5);
 			if (chargePercent >= 1)
 				this._trackingFunction = this.getTargetRotWidely;
@@ -45,7 +45,7 @@
 		/**
 		 * Cached some static properties, during the short livespan of the bullet
 		 */
-		protected function cacheTargets(): void {
+		protected cacheTargets(): void {
 			for (var player of _host.entitySystem.players) {
 				if (player != null && // not null
 					(this._owner == null || this._owner.canUseWeaponHurtPlayer(player, this._currentWeapon)) // should can use it to hurt
@@ -84,7 +84,7 @@
 			}
 		}
 
-		protected function checkTargetInvalid(player: Player): Boolean {
+		protected checkTargetInvalid(player: Player): boolean {
 			return (
 				player == null || // not null
 				player.isRespawning || // not respawning
@@ -93,7 +93,7 @@
 
 		}
 
-		protected function getTargetRot(player: Player): int {
+		protected getTargetRot(player: Player): int {
 			if (this.gridX == player.gridX) {
 				return this.gridY > player.gridY ? GlobalRot.UP : GlobalRot.DOWN; // from left top
 			}
@@ -103,7 +103,7 @@
 			return -1;
 		}
 
-		protected function getTargetRotWidely(player: Player): int {
+		protected getTargetRotWidely(player: Player): int {
 			var xDistance: int = this.gridX - player.gridX;
 			var yDistance: int = this.gridY - player.gridY;
 			if (Math.abs(xDistance) > Math.abs(yDistance)) {
@@ -121,9 +121,9 @@
 			this.scaleX = this.scaleY = BulletTracking.SIZE / BulletBasic.SIZE;
 		}
 
-		protected function drawTrackingSign(): void {
+		protected drawTrackingSign(): void {
 			graphics.beginFill(this.ownerLineColor);
-			var radius: Number = BulletTracking.SIZE * 0.125;
+			var radius: number = BulletTracking.SIZE * 0.125;
 			graphics.moveTo(-radius, -radius);
 			graphics.lineTo(radius, 0);
 			graphics.lineTo(-radius, radius);

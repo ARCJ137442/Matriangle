@@ -38,7 +38,7 @@ export default class CustomRadixNumber {
 		CustomRadixNumber.registerInstance(new CustomRadixNumber(charSet, key));
 	}
 
-	public static getInstanceByKey(key: any, fromIndex: uint = 0, strictEqual: Boolean = false): CustomRadixNumber | null {
+	public static getInstanceByKey(key: any, fromIndex: uint = 0, strictEqual: boolean = false): CustomRadixNumber | null {
 		for (let instance of CustomRadixNumber._instances) {
 			if (instance._key === key || !strictEqual && instance._key == key) {
 				if (CustomRadixNumber._instances.indexOf(instance) >= fromIndex) {
@@ -50,7 +50,7 @@ export default class CustomRadixNumber {
 	}
 
 	// Tools
-	protected static isEmptyString(string: string | null): Boolean {
+	protected static isEmptyString(string: string | null): boolean {
 		return (string == null || string.length < 1);
 	}
 

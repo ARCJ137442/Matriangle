@@ -14,8 +14,8 @@ package batr.game.entity.entity.projectile {
 
 	export default class ShockWaveDrone extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 80;
-		public static const BLOCK_RADIUS: Number = GlobalGameVariables.DEFAULT_SIZE / 2;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 80;
+		public static const BLOCK_RADIUS: number = GlobalGameVariables.DEFAULT_SIZE / 2;
 
 		public static const MOVING_INTERVAL: uint = GlobalGameVariables.FIXED_TPS * 0.0625;
 
@@ -24,13 +24,13 @@ package batr.game.entity.entity.projectile {
 		public nowBlockType: BlockType = BlockType.NULL;
 
 		protected _weapon: WeaponType;
-		protected _weaponChargePercent: Number;
+		protected _weaponChargePercent: number;
 
 		protected _weaponRot: uint;
 		protected _moveDuration: uint = 0;
 
 		//============Constructor Function============//
-		public function ShockWaveDrone(host: Game, x: Number, y: Number, owner: Player, weapon: WeaponType, weaponRot: uint, weaponChargePercent: Number): void {
+		public ShockWaveDrone(host: Game, x: number, y: number, owner: Player, weapon: WeaponType, weaponRot: uint, weaponChargePercent: number): void {
 			super(host, x, y, owner);
 			this._currentWeapon = WeaponType.SHOCKWAVE_ALPHA;
 			this._weapon = weapon;
@@ -64,8 +64,8 @@ package batr.game.entity.entity.projectile {
 				this._moveDuration = ShockWaveDrone.MOVING_INTERVAL;
 				// Moving
 				this.moveForwardInt(1);
-				var ex: Number = this.entityX;
-				var ey: Number = this.entityY;
+				var ex: number = this.entityX;
+				var ey: number = this.entityY;
 				if (_host.isOutOfMap(ex, ey) || !this._host.testCanPass(ex, ey, false, true, false)) {
 					// Gone
 					this._host.entitySystem.removeProjectile(this);

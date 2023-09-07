@@ -9,17 +9,17 @@ package batr.game.effect.effects {
 	export default class EffectPlayerLevelup extends EffectCommon {
 		//============Static Variables============//
 		public static const DEFAULT_COLOR: uint = 0x000000;
-		public static const LINE_ALPHA: Number = 0.8;
-		public static const FILL_ALPHA: Number = 0.75;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
-		public static const GRID_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 5;
+		public static const LINE_ALPHA: number = 0.8;
+		public static const FILL_ALPHA: number = 0.75;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
+		public static const GRID_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 5;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function EffectPlayerLevelup(host: Game, x: Number, y: Number,
+		public EffectPlayerLevelup(host: Game, x: number, y: number,
 			color: uint = DEFAULT_COLOR,
-			scale: Number = 1): void {
+			scale: number = 1): void {
 			super(host, x, y, GlobalGameVariables.TPS / 2);
 			this.scaleX = this.scaleY = scale;
 			this.drawArrow(color);
@@ -47,7 +47,7 @@ package batr.game.effect.effects {
 			this.drawArrow(DEFAULT_COLOR);
 		}
 
-		protected function drawArrow(color: uint): void {
+		protected drawArrow(color: uint): void {
 			// Colored Arrow
 			this.graphics.lineStyle(LINE_SIZE, color, LINE_ALPHA);
 			this.graphics.beginFill(color, FILL_ALPHA);

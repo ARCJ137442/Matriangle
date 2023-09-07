@@ -16,14 +16,14 @@ package batr.menu.objects {
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function BatrMenuGUI(listener: Boolean = true): void {
+		public BatrMenuGUI(listener: boolean = true): void {
 			super();
 			if (listener)
 				this.addEventListeners();
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			// RemoveEventListener
 			this.removeEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 			this.removeEventListener(MouseEvent.ROLL_OVER, this.onMouseRollOver);
@@ -36,7 +36,7 @@ package batr.menu.objects {
 		//============Instance Getter And Setter============//
 
 		//============Instance Functions============//
-		protected function addEventListeners(): void {
+		protected addEventListeners(): void {
 			// AddEventListener
 			this.addEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 			this.addEventListener(MouseEvent.ROLL_OVER, this.onMouseRollOver);
@@ -46,46 +46,46 @@ package batr.menu.objects {
 			this.addEventListener(MouseEvent.CLICK, this.onClick);
 		}
 
-		public function setName(value: String): BatrMenuGUI {
+		public setName(value: string): BatrMenuGUI {
 			this.name = value;
 			return this;
 		}
 
-		protected function sP(x: Number, y: Number): void {
+		protected sP(x: number, y: number): void {
 			this.x = x;
 			this.y = y;
 		}
 
-		protected function sBP(x: Number, y: Number): void {
+		protected sBP(x: number, y: number): void {
 			this.x = PosTransform.localPosToRealPos(x);
 			this.y = PosTransform.localPosToRealPos(y);
 		}
 
-		protected function onAddedToStage(event: Event): void {
+		protected onAddedToStage(event: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 		}
 
-		protected function drawShape(): void {
+		protected drawShape(): void {
 
 		}
 
-		protected function onClick(event: MouseEvent): void {
+		protected onClick(event: MouseEvent): void {
 			dispatchEvent(new BatrGUIEvent(BatrGUIEvent.CLICK, this));
 		}
 
-		protected function onMouseRollOver(event: MouseEvent): void {
+		protected onMouseRollOver(event: MouseEvent): void {
 
 		}
 
-		protected function onMouseRollOut(event: MouseEvent): void {
+		protected onMouseRollOut(event: MouseEvent): void {
 
 		}
 
-		protected function onMouseHold(event: MouseEvent): void {
+		protected onMouseHold(event: MouseEvent): void {
 
 		}
 
-		protected function onMouseRelease(event: MouseEvent): void {
+		protected onMouseRelease(event: MouseEvent): void {
 
 		}
 	}

@@ -10,19 +10,19 @@ package batr.game.effect.effects {
 	export default class EffectTeleport extends EffectCommon {
 		//============Static Variables============//
 		public static const DEFAULT_COLOR: uint = 0x44ff44;
-		public static const LINE_ALPHA: Number = 0.6;
-		public static const FILL_ALPHA: Number = 0.5;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
+		public static const LINE_ALPHA: number = 0.6;
+		public static const FILL_ALPHA: number = 0.5;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
 		public static const SIZE: uint = GlobalGameVariables.DEFAULT_SIZE * 2;
-		public static const SCALE: Number = 1;
+		public static const SCALE: number = 1;
 
 		//============Instance Variables============//
-		protected maxScale: Number;
+		protected maxScale: number;
 		protected block1: Shape = new Shape();
 		protected block2: Shape = new Shape();
 
 		//============Constructor Function============//
-		public function EffectTeleport(host: Game, x: Number, y: Number, scale: Number = EffectTeleport.SCALE): void {
+		public EffectTeleport(host: Game, x: number, y: number, scale: number = EffectTeleport.SCALE): void {
 			super(host, x, y, GlobalGameVariables.FIXED_TPS);
 			this.drawShape();
 			this.maxScale = scale;
@@ -30,7 +30,7 @@ package batr.game.effect.effects {
 			this.addChildren();
 		}
 
-		protected function initScale(scale: Number): void {
+		protected initScale(scale: number): void {
 			this.scale = maxScale;
 		}
 
@@ -55,12 +55,12 @@ package batr.game.effect.effects {
 			return EffectType.TELEPORT;
 		}
 
-		protected function set scale(value: Number): void {
+		protected set scale(value: number): void {
 			this.scaleX = this.scaleY = value;
 		}
 
 		//============Instance Functions============//
-		protected function addChildren(): void {
+		protected addChildren(): void {
 			this.addChild(this.block1);
 			this.addChild(this.block2);
 		}
@@ -75,13 +75,13 @@ package batr.game.effect.effects {
 			drawBlocks(EffectTeleport.DEFAULT_COLOR, EffectTeleport.SIZE);
 		}
 
-		protected function drawBlocks(color: uint, size: uint): void {
+		protected drawBlocks(color: uint, size: uint): void {
 			drawBlock(this.block1.graphics, color, size);
 			drawBlock(this.block2.graphics, color, size);
 			this.block2.rotation = 45;
 		}
 
-		protected function drawBlock(graphics: Graphics, color: uint, size: uint): void {
+		protected drawBlock(graphics: Graphics, color: uint, size: uint): void {
 			graphics.clear();
 			graphics.lineStyle(LINE_SIZE, color, LINE_ALPHA);
 			graphics.beginFill(color, FILL_ALPHA);

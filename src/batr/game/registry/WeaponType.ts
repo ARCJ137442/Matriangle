@@ -51,7 +51,7 @@ package batr.game.model {
 			WeaponType.SHOCKWAVE_BETA];
 
 		//============Static Getter And Setter============//
-		public static function get label(): String {
+		public static function get label(): string {
 			return 'weapon';
 		}
 
@@ -76,17 +76,17 @@ package batr.game.model {
 		}
 
 		//============Static Functions============//
-		public static function isValidWeaponID(id: int): Boolean {
+		public static function isValidWeaponID(id: int): boolean {
 			return (id >= 0 && id < WeaponType._ALL_WEAPON.length);
 
 		}
 
-		public static function isValidAvailableWeaponID(id: int): Boolean {
+		public static function isValidAvailableWeaponID(id: int): boolean {
 			return (id >= 0 && id < WeaponType._ALL_AVALIABLE_WEAPON.length);
 
 		}
 
-		public static function fromString(str: String): WeaponType {
+		public static function fromString(str: string): WeaponType {
 			for (var type of WeaponType._ALL_WEAPON) {
 				if (type.name == str)
 					return type;
@@ -116,15 +116,15 @@ package batr.game.model {
 			return WeaponType._ALL_AVALIABLE_WEAPON.indexOf(type);
 		}
 
-		public static function isIncludeIn(type: WeaponType, types: WeaponType[]): Boolean {
+		public static function isIncludeIn(type: WeaponType, types: WeaponType[]): boolean {
 			return types.indexOf(type) >= 0;
 		}
 
-		public static function isBulletWeapon(type: WeaponType): Boolean {
+		public static function isBulletWeapon(type: WeaponType): boolean {
 			return WeaponType.isIncludeIn(type, WeaponType._BULLETS);
 		}
 
-		public static function isLaserWeapon(type: WeaponType): Boolean {
+		public static function isLaserWeapon(type: WeaponType): boolean {
 			return WeaponType.isIncludeIn(type, WeaponType._LASERS);
 		}
 
@@ -140,11 +140,11 @@ package batr.game.model {
 		/**
 		 * @return true if the weapon uses player's droneWeapon
 		 */
-		public static function isDroneWeapon(weapon: WeaponType): Boolean {
+		public static function isDroneWeapon(weapon: WeaponType): boolean {
 			return weapon == WeaponType.SHOCKWAVE_ALPHA || weapon == WeaponType.SHOCKWAVE_BETA;
 		}
 
-		public static function isAvailableDroneNotUse(weapon: WeaponType): Boolean {
+		public static function isAvailableDroneNotUse(weapon: WeaponType): boolean {
 			return isDroneWeapon(weapon) || weapon == WeaponType.BLOCK_THROWER || weapon == WeaponType.MELEE || weapon == WeaponType.SUB_BOMBER;
 
 		}
@@ -158,30 +158,30 @@ package batr.game.model {
 		// Tick
 		protected _defaultDamage: uint;
 
-		protected _reverseCharge: Boolean;
+		protected _reverseCharge: boolean;
 
 		// Whether the weapon will auto charge and can use before full charge
 		// canHurt
-		protected _canHurtEnemy: Boolean;
+		protected _canHurtEnemy: boolean;
 
-		protected _canHurtSelf: Boolean;
+		protected _canHurtSelf: boolean;
 
-		protected _canHurtAlly: Boolean;
+		protected _canHurtAlly: boolean;
 
 		// Extra
 		protected _extraDamageCoefficient: uint = 5;
 		protected _extraResistanceCoefficient: uint = 1;
-		protected _useOnCenter: Boolean = false;
+		protected _useOnCenter: boolean = false;
 
 		// Drone
-		protected _chargePercentInDrone: Number = 1;
+		protected _chargePercentInDrone: number = 1;
 
 		//============Constructor Function============//
-		public function WeaponType(name: String,
-			defaultCD: Number = 0,
+		public WeaponType(name: string,
+			defaultCD: number = 0,
 			defaultDamage: uint = 1,
-			defaultChargeTime: Number = 0,
-			reverseCharge: Boolean = false): void {
+			defaultChargeTime: number = 0,
+			reverseCharge: boolean = false): void {
 			// defaultCD,defaultChargeTime is Per Second
 			super(name);
 			this._defaultCD = defaultCD * GlobalGameVariables.FIXED_TPS;
@@ -194,104 +194,104 @@ package batr.game.model {
 			this._canHurtAlly = false;
 		}
 
-		protected function setCanHurt(enemy: Boolean, self: Boolean, ally: Boolean): WeaponType {
+		protected setCanHurt(enemy: boolean, self: boolean, ally: boolean): WeaponType {
 			this._canHurtEnemy = enemy;
 			this._canHurtSelf = self;
 			this._canHurtAlly = ally;
 			return this;
 		}
 
-		protected function setExtraProperty(damageCoefficient: uint,
+		protected setExtraProperty(damageCoefficient: uint,
 			resistanceCoefficient: uint,
-			useOnCenter: Boolean = false): WeaponType {
+			useOnCenter: boolean = false): WeaponType {
 			this._extraDamageCoefficient = damageCoefficient;
 			this._extraResistanceCoefficient = resistanceCoefficient;
 			this._useOnCenter = useOnCenter;
 			return this;
 		}
 
-		protected function setDroneProperty(chargePercentInDrone: Number = 1): WeaponType {
+		protected setDroneProperty(chargePercentInDrone: number = 1): WeaponType {
 			this._chargePercentInDrone = chargePercentInDrone;
 			return this;
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get label(): String {
+		public override function get label(): string {
 			return 'weapon';
 		}
 
 		/**
 		 * Dynamic when Weapon List Changing
 		 */
-		public function get weaponID(): int {
+		public get weaponID(): int {
 			return WeaponType.toWeaponID(this);
 		}
 
-		public function get defaultCD(): uint {
+		public get defaultCD(): uint {
 			return this._defaultCD;
 
 		}
 
-		public function get defaultDamage(): uint {
+		public get defaultDamage(): uint {
 			return this._defaultDamage;
 
 		}
 
-		public function get defaultChargeTime(): uint {
+		public get defaultChargeTime(): uint {
 			return this._defaultChargeTime;
 
 		}
 
-		public function get reverseCharge(): Boolean {
+		public get reverseCharge(): boolean {
 			return this._reverseCharge;
 		}
 
-		public function get defaultDamageOutput(): uint {
+		public get defaultDamageOutput(): uint {
 			return this._defaultDamage / (this._defaultCD + this._defaultChargeTime);
 
 		}
 
-		public function get weaponCanHurtEnemy(): Boolean {
+		public get weaponCanHurtEnemy(): boolean {
 			return this._canHurtEnemy;
 
 		}
 
-		public function get weaponCanHurtSelf(): Boolean {
+		public get weaponCanHurtSelf(): boolean {
 			return this._canHurtSelf;
 
 		}
 
-		public function get weaponCanHurtAlly(): Boolean {
+		public get weaponCanHurtAlly(): boolean {
 			return this._canHurtAlly;
 
 		}
 
 		//====Extra Property====//
-		public function get extraDamageCoefficient(): uint {
+		public get extraDamageCoefficient(): uint {
 			return this._extraDamageCoefficient;
 		}
 
-		public function get extraResistanceCoefficient(): uint {
+		public get extraResistanceCoefficient(): uint {
 			return this._extraResistanceCoefficient;
 		}
 
-		public function get useOnCenter(): Boolean {
+		public get useOnCenter(): boolean {
 			return this._useOnCenter;
 		}
 
 		// About Drone
-		public function get chargePercentInDrone(): Number {
+		public get chargePercentInDrone(): number {
 			return this._chargePercentInDrone;
 
 		}
 
 		//============Instance Functions============//
 		//====Buffed Property====//
-		public function getBuffedDamage(defaultDamage: uint, buffDamage: uint, buffResistance: uint): uint {
+		public getBuffedDamage(defaultDamage: uint, buffDamage: uint, buffResistance: uint): uint {
 			return Math.max(defaultDamage + buffDamage * this.extraDamageCoefficient - buffResistance * this.extraResistanceCoefficient, 1);
 		}
 
-		public function getBuffedCD(buffCD: uint): uint {
+		public getBuffedCD(buffCD: uint): uint {
 			return Math.ceil(this.defaultCD / (1 + buffCD / 10));
 		}
 	}

@@ -10,7 +10,7 @@ package batr.game.block {
 		protected _rot: uint;
 
 		//============Constructor Function============//
-		public function RotatableBlock(rot: uint): void {
+		public RotatableBlock(rot: uint): void {
 			this._rot = rot;
 			super();
 		}
@@ -21,7 +21,7 @@ package batr.game.block {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get rot(): uint {
+		public get rot(): uint {
 			return this._rot;
 		}
 

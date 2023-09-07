@@ -12,8 +12,8 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Novice implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: String = 'Novice';
-		public static const LABEL_SHORT: String = 'N';
+		public static const LABEL: string = 'Novice';
+		public static const LABEL_SHORT: string = 'N';
 
 		//============Static Functions============//
 		protected static function getLineEnemyPlayer(owner: AIPlayer): Player {
@@ -54,12 +54,12 @@ package batr.game.entity.ai.programs {
 		protected _maxWaitTime: uint = 40;
 
 		//============Constructor Function============//
-		public function AIProgram_Novice() {
+		public AIProgram_Novice() {
 
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._moveSum = 0;
 			this._moveMaxSum = 0;
 			this._tempRot = 0;
@@ -69,23 +69,23 @@ package batr.game.entity.ai.programs {
 
 		/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
 		/*========AI Getter And Setter========*/
-		public function get label(): String {
+		public get label(): string {
 			return AIProgram_Novice.LABEL;
 		}
 
-		public function get labelShort(): String {
+		public get labelShort(): string {
 			return AIProgram_Novice.LABEL_SHORT;
 		}
 
 		/**
 		 * Returns use for AIRunSpeed
 		 */
-		public function get referenceSpeed(): uint {
+		public get referenceSpeed(): uint {
 			return 10 + exMath.random(3) * 5;
 		}
 
 		/*========AI Program Main========*/
-		public function requestActionOnTick(player: AIPlayer): AIPlayerAction {
+		public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Refresh Wait
@@ -152,12 +152,12 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.MOVE_FORWARD;
 		}
 
-		public function requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			// random move beside on under attack
 			if (Utils.randomBoolean())
 				return AIPlayerAction.MOVE_LEFT_REL;
@@ -165,26 +165,26 @@ package batr.game.entity.ai.programs {
 				return AIPlayerAction.MOVE_RIGHT_REL;
 		}
 
-		public function requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
+		public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}
 
-		public function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
+		public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}

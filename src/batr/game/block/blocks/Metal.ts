@@ -13,7 +13,7 @@ package batr.game.block.blocks {
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function Metal(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd): void {
+		public Metal(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd): void {
 			super(lineColor, fillColor);
 			this.drawMain();
 		}

@@ -120,7 +120,7 @@ export function getPropertyInObjects(objects: object[], key: string): any[] {
 	return ra;
 }
 
-export function copyObjectByBytes(object: Object): Object {
+export function copyObjectByBytes(object: object): object - {
 	let tempObject: ByteArray = new ByteArray();
 
 	tempObject.writeObject(object);

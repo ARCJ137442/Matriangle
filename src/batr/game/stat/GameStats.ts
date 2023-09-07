@@ -19,7 +19,7 @@
 		protected _bonusGenerateCount: uint = 0;
 
 		//============Constructor============//
-		public function GameStats(rule: GameRule, players: Player[] = null): void {
+		public GameStats(rule: GameRule, players: Player[] = null): void {
 			super();
 			this.rule = rule;
 			if (players != null)
@@ -27,67 +27,67 @@
 		}
 
 		// Unfinished
-		public function clone(): GameStats {
+		public clone(): GameStats {
 			return new GameStats(this._rule).setPlayers(this._players);
 		}
 
 		//============Destructor============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.rule = null;
 			this.clearPlayers();
 			this._players = null;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get rule(): GameRule {
+		public get rule(): GameRule {
 			return this._rule;
 		}
 
-		public function set rule(value: GameRule): void {
+		public set rule(value: GameRule): void {
 			this._rule = value;
 		}
 
-		public function get players(): PlayerStats[] {
+		public get players(): PlayerStats[] {
 			return this._players;
 		}
 
-		public function get mapTransformCount(): uint {
+		public get mapTransformCount(): uint {
 			return this._mapTransformCount;
 		}
 
-		public function set mapTransformCount(value: uint): void {
+		public set mapTransformCount(value: uint): void {
 			this._mapTransformCount = value;
 		}
 
-		public function get bonusGenerateCount(): uint {
+		public get bonusGenerateCount(): uint {
 			return this._bonusGenerateCount;
 		}
 
-		public function set bonusGenerateCount(value: uint): void {
+		public set bonusGenerateCount(value: uint): void {
 			this._bonusGenerateCount = value;
 		}
 
 		//============Instance Functions============//
-		public function addPlayer(player: Player): GameStats {
+		public addPlayer(player: Player): GameStats {
 			this._players.push(player.stats);
 			return this;
 		}
 
-		public function setPlayers(players: PlayerStats[]): GameStats {
+		public setPlayers(players: PlayerStats[]): GameStats {
 			this._players = players;
 			return this;
 		}
 
-		public function loadPlayers(players: Player[]): void {
+		public loadPlayers(players: Player[]): void {
 			for (var player of players)
 				this.addPlayer(player);
 		}
 
-		public function clearPlayers(): void {
+		public clearPlayers(): void {
 			this._players.splice(0, int.MAX_VALUE);
 		}
 
-		public function importPlayersFromGame(game: Game): void {
+		public importPlayersFromGame(game: Game): void {
 			for (var player of game.entitySystem.players) {
 				if (player != null)
 					this._players.push(player.stats);

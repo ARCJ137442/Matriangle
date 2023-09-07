@@ -10,15 +10,15 @@
 
 	export default class LaserPulse extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS * 0.25;
-		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 4;
-		public static const ALPHA: Number = 1 / 0.75;
+		public static const LIFE: number = GlobalGameVariables.FIXED_TPS * 0.25;
+		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
+		public static const ALPHA: number = 1 / 0.75;
 
 		//============Instance Variables============//
-		public isPull: Boolean = false;
+		public isPull: boolean = false;
 
 		//============Constructor Function============//
-		public function LaserPulse(host: Game, x: Number, y: Number, owner: Player, length: uint = LENGTH, chargePercent: Number = 1): void {
+		public LaserPulse(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH, chargePercent: number = 1): void {
 			super(host, x, y, owner, length, chargePercent);
 			this._currentWeapon = WeaponType.PULSE_LASER;
 			this._life = LaserPulse.LIFE;
@@ -45,7 +45,7 @@
 			}
 		}
 
-		protected override function dealCharge(percent: Number): void {
+		protected override function dealCharge(percent: number): void {
 			if (percent != 1)
 				this.isPull = true;
 		}

@@ -71,6 +71,6 @@ export function getXFromUint(uPoint: uint): uint {
  */
 export function getYFromUint(uPoint: uint): uint {
 	// don't use uPoint>>16 because the uint will be signed when bit-move.
-	let s: String = uPoint.toString(16);
+	let s: string = uPoint.toString(16);
 	return s.length > 4 ? uint(parseInt(s.slice(0, s.length - 4), 16)) : 0;
 }

@@ -35,7 +35,7 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		public static function createBinaryChoiceContent(initValue: int, translations: I18ns, tKey0: String, tKey1: String): BatrSelectorContent {
+		public static function createBinaryChoiceContent(initValue: int, translations: I18ns, tKey0: string, tKey1: string): BatrSelectorContent {
 			return new BatrSelectorContent().initAsEnum(new < I18nText > [BatrSelectorContent.quickI18nTextBuild(tKey0, translations), BatrSelectorContent.quickI18nTextBuild(tKey1, translations)], 0, 0).initAsInt(1, 0, initValue).autoInitLoopSelect();
 		}
 
@@ -64,7 +64,7 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		protected static function quickI18nTextBuild(key: String, translations: I18ns): I18nText {
+		protected static function quickI18nTextBuild(key: string, translations: I18ns): I18nText {
 			return new I18nText(translations, key);
 		}
 
@@ -75,8 +75,8 @@ package batr.menu.object.selector {
 		 * The enumText is force the intText
 		 */
 		protected _value: int = 0;
-		protected _enableLoopLeft: Boolean = false;
-		protected _enableLoopRight: Boolean = false;
+		protected _enableLoopLeft: boolean = false;
+		protected _enableLoopRight: boolean = false;
 
 		//====Int====//
 		protected _intMax: int = int.MAX_VALUE;
@@ -87,11 +87,11 @@ package batr.menu.object.selector {
 		protected _enumIndexOffect: int = 0; // Let The Enum affects the negative value
 
 		//============Constructor Function============//
-		public function BatrSelectorContent(): void {
+		public BatrSelectorContent(): void {
 			this._enumTexts = new I18nText[]();
 		}
 
-		public function copyFrom(other: BatrSelectorContent): void {
+		public copyFrom(other: BatrSelectorContent): void {
 			// Total
 			this._value = other._value;
 			this._enableLoopLeft = other._enableLoopLeft;
@@ -104,33 +104,33 @@ package batr.menu.object.selector {
 			this._enumIndexOffect = other._enumIndexOffect;
 		}
 
-		public function clone(): BatrSelectorContent {
+		public clone(): BatrSelectorContent {
 			var copy: BatrSelectorContent = new BatrSelectorContent();
 			copy.copyFrom(this);
 			return copy;
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._enumTexts = null;
 			this._value = this._intMax = this._intMin = 0;
 		}
 
 		//============Instance Getter And Setter============//
 		//====Total====//
-		public function get enumIndexOffect(): int {
+		public get enumIndexOffect(): int {
 			return this._enumIndexOffect;
 		}
 
-		public function set enumIndexOffect(value: int): void {
+		public set enumIndexOffect(value: int): void {
 			this._enumIndexOffect = value;
 		}
 
-		public function get currentValue(): int {
+		public get currentValue(): int {
 			return this._value;
 		}
 
-		public function set currentValue(value: int): void {
+		public set currentValue(value: int): void {
 			if (this._value > int.MIN_VALUE && this._value < int.MAX_VALUE) {
 				if (value > this._intMax)
 					value = this._enableLoopRight ? this._intMin : this._intMax;
@@ -140,45 +140,45 @@ package batr.menu.object.selector {
 			this._value = value;
 		}
 
-		public function get currentText(): String {
+		public get currentText(): string {
 			var t = this.enumText;
 			return (t == null) ? String(this.currentValue) : t;
 		}
 
-		public function get enableLoopSelectLeft(): Boolean {
+		public get enableLoopSelectLeft(): boolean {
 			return this._enableLoopLeft;
 		}
 
-		public function set enableLoopSelectLeft(value: Boolean): void {
+		public set enableLoopSelectLeft(value: boolean): void {
 			this._enableLoopLeft = value;
 		}
 
-		public function get enableLoopSelectRight(): Boolean {
+		public get enableLoopSelectRight(): boolean {
 			return this._enableLoopRight;
 		}
 
-		public function set enableLoopSelectRight(value: Boolean): void {
+		public set enableLoopSelectRight(value: boolean): void {
 			this._enableLoopRight = value;
 		}
 
-		public function get enableLoopSelect(): Boolean {
+		public get enableLoopSelect(): boolean {
 			return this._enableLoopLeft || this._enableLoopRight;
 		}
 
-		public function set enableLoopSelect(value: Boolean): void {
+		public set enableLoopSelect(value: boolean): void {
 			this._enableLoopLeft = this._enableLoopRight = value;
 		}
 
 		//====Int====//
-		public function get intMax(): int {
+		public get intMax(): int {
 			return this._intMax;
 		}
 
-		public function get intMin(): int {
+		public get intMin(): int {
 			return this._intMin;
 		}
 
-		public function set intMax(value: int): void {
+		public set intMax(value: int): void {
 			if (this._intMax > value) {
 				this._intMax = value;
 				this.updateValue();
@@ -187,7 +187,7 @@ package batr.menu.object.selector {
 			this._intMax = value;
 		}
 
-		public function set intMin(value: int): void {
+		public set intMin(value: int): void {
 			if (this._intMin < value) {
 				this._intMin = value;
 				this.updateValue();
@@ -197,48 +197,48 @@ package batr.menu.object.selector {
 		}
 
 		//====Enum====//
-		public function get enumIndex(): int {
+		public get enumIndex(): int {
 			return this._value + this._enumIndexOffect;
 		}
 
-		public function get enumText(): String {
+		public get enumText(): string {
 			return this.getEnumTextAt(this.enumIndex);
 		}
 
-		public function get enumTexts(): I18nText[] {
+		public get enumTexts(): I18nText[] {
 			return this._enumTexts;
 		}
 
-		public function set enumTexts(value: I18nText[]): void {
+		public set enumTexts(value: I18nText[]): void {
 			this._enumTexts = value;
 		}
 
-		public function get hasEnum(): Boolean {
+		public get hasEnum(): boolean {
 			return this.hasEnumTextAt(this.enumIndex);
 		}
 
 		//============Instance Functions============//
 		//====Total====//
 		// Limit between 'min<value<max'
-		public function updateValue(): BatrSelectorContent {
+		public updateValue(): BatrSelectorContent {
 			this._value = Math.min(Math.max(this._value, this._intMin), this._intMax);
 			return this;
 		}
 
-		public function initLoopSelect(left: Boolean, right: Boolean): BatrSelectorContent {
+		public initLoopSelect(left: boolean, right: boolean): BatrSelectorContent {
 			this._enableLoopLeft = left;
 			this._enableLoopRight = right;
 			return this;
 		}
 
-		public function autoInitLoopSelect(): BatrSelectorContent {
+		public autoInitLoopSelect(): BatrSelectorContent {
 			this._enableLoopLeft = this._intMax < int.MAX_VALUE;
 			this._enableLoopRight = this._intMin > int.MIN_VALUE;
 			return this;
 		}
 
 		//====Int====//
-		public function initAsInt(max: int, min: int, value: int = 0): BatrSelectorContent {
+		public initAsInt(max: int, min: int, value: int = 0): BatrSelectorContent {
 			this._intMax = max;
 			this._intMin = min;
 			this._value = value;
@@ -246,26 +246,26 @@ package batr.menu.object.selector {
 		}
 
 		//====Enum====//
-		public function initAsEnum(texts: I18nText[], index: int = 0, offset: int = 0): BatrSelectorContent {
+		public initAsEnum(texts: I18nText[], index: int = 0, offset: int = 0): BatrSelectorContent {
 			this._enumTexts = texts;
 			this._value = index;
 			this._enumIndexOffect = offset;
 			return this;
 		}
 
-		public function hasEnumTextAt(index: int): Boolean {
+		public hasEnumTextAt(index: int): boolean {
 			return !(this._enumTexts == null ||
 				index < 0 || index >= this._enumTexts.length ||
 				this._enumTexts[index] == null);
 		}
 
-		public function getEnumTextAt(index: int): String {
+		public getEnumTextAt(index: int): string {
 			if (!this.hasEnumTextAt(index))
 				return null;
 			return this._enumTexts[index].currentText;
 		}
 
-		public function alignI18nsFrom(translations: I18ns): BatrSelectorContent {
+		public alignI18nsFrom(translations: I18ns): BatrSelectorContent {
 			if (this._enumTexts != null) {
 				for (var tText of this._enumTexts) {
 					tText.translations = translations;
@@ -275,7 +275,7 @@ package batr.menu.object.selector {
 		}
 
 		//====Debug====//
-		public function toString(): String {
+		public toString(): string {
 			return 'BatrSelectorContent[' + this._value + ']{' + this._intMin + '~' + this._intMax + ',' + this._enumTexts + '/' + this._enumIndexOffect + '}';
 		}
 	}

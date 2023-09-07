@@ -14,9 +14,9 @@ package batr.game.entity.entities {
 		public static const LINE_COLOR: uint = 0x777777;
 		public static const FILL_COLOR: uint = 0xdddddd;
 
-		public static const BOX_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE * 0.8;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 20;
-		public static const BOX_ELLIPSE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static const BOX_SIZE: number = GlobalGameVariables.DEFAULT_SIZE * 0.8;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 20;
+		public static const BOX_ELLIPSE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 16;
 
 		//============Static Functions============//
 
@@ -26,7 +26,7 @@ package batr.game.entity.entities {
 		protected _symbol: BonusBoxSymbol;
 
 		//============Constructor Function============//
-		public function BonusBox(host: Game, x: int, y: int, type: BonusType = BonusType.NULL): void {
+		public BonusBox(host: Game, x: int, y: int, type: BonusType = BonusType.NULL): void {
 			super(host, x, y);
 			this._bonusType = type;
 			this._symbol = new BonusBoxSymbol(this._bonusType);
@@ -48,25 +48,25 @@ package batr.game.entity.entities {
 			return EntityType.BONUS_BOX;
 		}
 
-		public function get bonusType(): BonusType {
+		public get bonusType(): BonusType {
 			return this._bonusType;
 		}
 
-		public function set bonusType(value: BonusType): void {
+		public set bonusType(value: BonusType): void {
 			this._bonusType = value;
 			this._symbol.drawShape();
 		}
 
-		protected function get borderSpace(): Number {
+		protected get borderSpace(): number {
 			return (GlobalGameVariables.DEFAULT_SIZE - BOX_SIZE) / 2;
 		}
 
-		protected function get boxRadius(): Number {
+		protected get boxRadius(): number {
 			return BOX_SIZE / 2;
 		}
 
 		//============Instance Functions============//
-		public function drawShape(): void {
+		public drawShape(): void {
 			// Define
 			// var radius:Number=GlobalGameVariables.DEFAULT_SIZE/2;
 			// Line
@@ -81,7 +81,7 @@ package batr.game.entity.entities {
 			this._symbol.type = this._bonusType;
 		}
 
-		public function onPlayerPickup(player: Player, forcedBonusType: BonusType = null): void {
+		public onPlayerPickup(player: Player, forcedBonusType: BonusType = null): void {
 			if (player == null)
 				return;
 			// Disactive

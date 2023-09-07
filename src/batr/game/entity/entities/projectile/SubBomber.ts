@@ -13,10 +13,10 @@ package batr.game.entity.entity.projectile {
 
 	export default class SubBomber extends BulletBasic {
 		//============Static Variables============//
-		public static const SIZE: Number = PosTransform.localPosToRealPos(2 / 5);
-		public static const DEFAULT_SPEED: Number = 12 / GlobalGameVariables.FIXED_TPS;
+		public static const SIZE: number = PosTransform.localPosToRealPos(2 / 5);
+		public static const DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
 		public static const DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
-		public static const DEFAULT_EXPLODE_RADIUS: Number = 2;
+		public static const DEFAULT_EXPLODE_RADIUS: number = 2;
 		public static const MAX_BOMB_TICK: uint = GlobalGameVariables.FIXED_TPS * 0.125;
 
 		//============Instance Variables============//
@@ -25,8 +25,8 @@ package batr.game.entity.entity.projectile {
 		protected _maxBombTick: uint;
 
 		//============Constructor Function============//
-		public function SubBomber(host: Game, x: Number, y: Number, owner: Player, chargePercent: Number, fuel: int = 100): void {
-			var scalePercent: Number = (0.25 + chargePercent * 0.75);
+		public SubBomber(host: Game, x: number, y: number, owner: Player, chargePercent: number, fuel: int = 100): void {
+			var scalePercent: number = (0.25 + chargePercent * 0.75);
 			super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
 			this._currentWeapon = WeaponType.SUB_BOMBER;
 			this.damage = this._currentWeapon.defaultDamage;
@@ -58,7 +58,7 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		protected function bomb(): void {
+		protected bomb(): void {
 			this._host.weaponCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, DEFAULT_EXPLODE_COLOR);
 		}
 
@@ -69,8 +69,8 @@ package batr.game.entity.entity.projectile {
 			this.scaleX = this.scaleY = SubBomber.SIZE / BulletBasic.SIZE;
 		}
 
-		protected function drawBomberSign(): void {
-			var realRadius: Number = BulletBasic.SIZE * 0.15;
+		protected drawBomberSign(): void {
+			var realRadius: number = BulletBasic.SIZE * 0.15;
 			graphics.beginFill(this.ownerLineColor);
 			graphics.moveTo(-realRadius, -realRadius);
 			graphics.lineTo(realRadius, 0);

@@ -5,11 +5,12 @@
 // import batr.game.model.*;
 
 import DefaultNativeI18ns from "../../config/lang";
+import TypeCommon from "../game/template/TypeCommon";
 
 export const EN_US = DefaultNativeI18ns.en_us; // English
 export const ZH_HANS = DefaultNativeI18ns.zh_hans; // 简体中文
 
-export function getDefaultI18n(key: String): String {
+export function getDefaultI18n(key: string): string {
 	var type: TypeCommon;
 	// Block Type
 	for (let type of BlockType._NORMAL_BLOCKS) {

@@ -64,8 +64,8 @@
 
 		}
 
-		public static function get AVALIABLE_SPAWN_POTENTIALS(): Object[] {
-			var result: Object[] = new Object[]();
+		public static function get AVALIABLE_SPAWN_POTENTIALS(): object[] {
+			var result: object[] = new Object[]();
 			for (var bType of _ALL_AVALIABLE_TYPE) {
 				result.push({
 					type: bType,
@@ -77,7 +77,7 @@
 		}
 
 		//============Static Functions============//
-		public static function fromString(str: String): BonusType {
+		public static function fromString(str: string): BonusType {
 			for (var type of BonusType._ALL_TYPE) {
 				if (type.name == str)
 					return type;
@@ -85,7 +85,7 @@
 			return NULL;
 		}
 
-		public static function isIncludeIn(type: BonusType, types: BonusType[]): Boolean {
+		public static function isIncludeIn(type: BonusType, types: BonusType[]): boolean {
 			for (var type2 of types) {
 				if (type == type2)
 					return true;
@@ -94,12 +94,12 @@
 		}
 
 		//============Constructor Function============//
-		public function BonusType(name: String): void {
+		public BonusType(name: string): void {
 			super(name);
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get label(): String {
+		public override function get label(): string {
 			return 'bonus';
 		}
 	}

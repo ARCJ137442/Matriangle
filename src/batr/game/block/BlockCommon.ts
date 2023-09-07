@@ -30,51 +30,51 @@ export default class BlockCommon extends Shape {
 	}
 
 	//============Constructor Function============//
-	public function BlockCommon(): void {
+	public BlockCommon(): void {
 		super();
 	}
 
-	public function clone(): BlockCommon {
+	public clone(): BlockCommon {
 		return new BlockCommon();
 	}
 
 	//============Destructor Function============//
-	public function destructor(): void {
+	public destructor(): void {
 		this.graphics.clear();
 	}
 
 	//============Instance Getter And Setter============//
-	public function get attributes(): BlockAttributes {
+	public get attributes(): BlockAttributes {
 		return BlockAttributes.ABSTRACT;
 	}
 
-	public function get type(): BlockType {
+	public get type(): BlockType {
 		return BlockType.ABSTRACT;
 	}
 
-	public function get pixelColor(): uint {
+	public get pixelColor(): uint {
 		if (this.attributes == null)
 			return 0xffffff;
 		return this.attributes.defaultPixelColor;
 	}
 
-	public function get pixelAlpha(): uint {
+	public get pixelAlpha(): uint {
 		if (this.attributes == null)
 			return uint$MAX_VALUE;
 		return this.attributes.defaultPixelAlpha;
 	}
 
 	//============Instance Functions============//
-	public function displayEquals(block: BlockCommon): Boolean {
+	public displayEquals(block: BlockCommon): boolean {
 		return this === block;
 	}
 
-	public function reDraw(): void {
+	public reDraw(): void {
 		this.graphics.clear();
 		this.drawMain();
 	}
 
-	protected function drawMain(): void {
+	protected drawMain(): void {
 
 	}
 }

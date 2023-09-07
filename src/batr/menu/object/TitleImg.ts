@@ -9,7 +9,7 @@ package batr.menu.objects {
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function TitleImg(): void {
+		public TitleImg(): void {
 			super(840, 250, true);
 		}
 	}

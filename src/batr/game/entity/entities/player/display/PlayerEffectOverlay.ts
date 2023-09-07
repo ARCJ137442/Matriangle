@@ -18,21 +18,21 @@ package batr.game.entity.objects {
 		protected _color: uint = COLOR;
 
 		//============Constructor Function============//
-		public function PlayerEffectOverlay(owner: Player, color: uint = PlayerEffectOverlay.COLOR): void {
+		public PlayerEffectOverlay(owner: Player, color: uint = PlayerEffectOverlay.COLOR): void {
 			super();
 			this.drawShape(owner is AIPlayer ? (owner as AIPlayer).AILabel : null);
 			this.dealLife();
 		}
 
 		//============Instance Getter And Setter============//
-		public function get life(): uint {
+		public get life(): uint {
 			return this._life;
 		}
 
 		//============Instance Functions============//
-		protected function drawShape(AILabel: String = null): void {
-			var realRadiusX: Number = Player.SIZE / 2; // -LINE_SIZE
-			var realRadiusY: Number = Player.SIZE / 2;
+		protected drawShape(AILabel: string = null): void {
+			var realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
+			var realRadiusY: number = Player.SIZE / 2;
 			this.graphics.clear();
 			// graphics.lineStyle(LINE_SIZE,this._lineColor);
 			this.graphics.beginFill(this._color);
@@ -45,7 +45,7 @@ package batr.game.entity.objects {
 			this.graphics.endFill();
 		}
 
-		public function playAnimation(life: uint = LIFE, color: uint = uint$MAX_VALUE): void {
+		public playAnimation(life: uint = LIFE, color: uint = uint$MAX_VALUE): void {
 			color = color == uint$MAX_VALUE ? this._color : color;
 			if (this._color != color) {
 				this._color = color;
@@ -57,7 +57,7 @@ package batr.game.entity.objects {
 			this._life = life;
 		}
 
-		public function dealLife(): void {
+		public dealLife(): void {
 			if (_life > 0)
 				this._life--;
 			else {
@@ -69,7 +69,7 @@ package batr.game.entity.objects {
 			this.alpha = _life / _lifeMax;
 		}
 
-		public function destructor(): void {
+		public destructor(): void {
 			this.graphics.clear();
 			this._life = -1;
 			this._lifeMax = 0;

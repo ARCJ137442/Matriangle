@@ -86,7 +86,7 @@ export default class ChemicalElement {
 	}
 
 	//============Instance Getter And Setter============//
-	protected get hasCNSample(): Boolean {
+	protected get hasCNSample(): boolean {
 		return 0 < this._ordinal && this._ordinal <= ChemicalElement.ZH_CN_ELEMENT_NAME.length;
 	}
 

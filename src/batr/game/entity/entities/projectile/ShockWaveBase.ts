@@ -17,7 +17,7 @@ package batr.game.entity.entity.projectile {
 	 */
 	export default class ShockWaveBase extends ProjectileCommon {
 		//============Static Variables============//
-		public static const BLOCK_RADIUS: Number = GlobalGameVariables.DEFAULT_SIZE * 1.2;
+		public static const BLOCK_RADIUS: number = GlobalGameVariables.DEFAULT_SIZE * 1.2;
 
 		/**
 		 * Life For Charge
@@ -33,7 +33,7 @@ package batr.game.entity.entity.projectile {
 		protected _life: uint = 0;
 
 		protected _weapon: WeaponType;
-		protected _weaponChargePercent: Number;
+		protected _weaponChargePercent: number;
 
 		/**
 		 * Default is 0,Vortex is 1
@@ -41,7 +41,7 @@ package batr.game.entity.entity.projectile {
 		public mode: uint = 0;
 
 		//============Constructor Function============//
-		public function ShockWaveBase(host: Game, x: Number, y: Number, owner: Player, weapon: WeaponType, weaponCharge: Number, mode: uint = 0): void {
+		public ShockWaveBase(host: Game, x: number, y: number, owner: Player, weapon: WeaponType, weaponCharge: number, mode: uint = 0): void {
 			super(host, x, y, owner);
 			this._currentWeapon = WeaponType.SHOCKWAVE_ALPHA;
 			this._weapon = weapon;
@@ -77,7 +77,7 @@ package batr.game.entity.entity.projectile {
 			this.graphics.endFill();
 		}
 
-		public function summonDrones(): void {
+		public summonDrones(): void {
 			// Summon Drone
 			switch (this.mode) {
 				case 1:
@@ -91,7 +91,7 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		public function summonDrone(rot: int, weaponRot: int = int.MIN_VALUE): void {
+		public summonDrone(rot: int, weaponRot: int = int.MIN_VALUE): void {
 			var drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._weapon, weaponRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(weaponRot), this._weaponChargePercent);
 			drone.rot = GlobalRot.lockIntToStandard(rot);
 			this.host.entitySystem.registerProjectile(drone);

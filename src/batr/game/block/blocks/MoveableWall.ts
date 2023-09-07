@@ -13,10 +13,10 @@ package batr.game.block.blocks {
 		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
 
 		//============Instance Variables============//
-		protected _virus: Boolean;
+		protected _virus: boolean;
 
 		//============Constructor Function============//
-		public function MoveableWall(virus: Boolean = false): void {
+		public MoveableWall(virus: boolean = false): void {
 			super(LINE_COLOR, FILL_COLOR);
 			this._virus = virus;
 			this.drawMain();
@@ -36,7 +36,7 @@ package batr.game.block.blocks {
 			return BlockType.MOVEABLE_WALL;
 		}
 
-		public function get virus(): Boolean {
+		public get virus(): boolean {
 			return this._virus;
 		}
 

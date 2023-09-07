@@ -9,22 +9,22 @@ package batr.game.map.main {
 
 	export default class MapDisplayer extends Sprite implements IMapDisplayer {
 		//============Static Functions============//
-		protected static function isBlockLocationEquals(block: BlockCommon, x: int, y: int): Boolean {
+		protected static function isBlockLocationEquals(block: BlockCommon, x: int, y: int): boolean {
 			return PosTransform.realPosToLocalPos(block.x) == x && PosTransform.realPosToLocalPos(block.y) == y;
 		}
 
 		//============Constructor Function============//
-		public function MapDisplayer(): void {
+		public MapDisplayer(): void {
 			super();
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.removeAllBlock();
 		}
 
 		//============Interface Functions============//
-		public function hasBlock(x: int, y: int): Boolean {
+		public hasBlock(x: int, y: int): boolean {
 			var b: BlockCommon;
 			for (var i: int = 0; i < this.numChildren; i++) {
 				b = this.getBlockAsChildAt(i);
@@ -36,7 +36,7 @@ package batr.game.map.main {
 			return false;
 		}
 
-		public function getBlock(x: int, y: int): BlockCommon {
+		public getBlock(x: int, y: int): BlockCommon {
 			var b: BlockCommon;
 			for (var i: int = 0; i < this.numChildren; i++) {
 				b = this.getBlockAsChildAt(i);
@@ -48,7 +48,7 @@ package batr.game.map.main {
 			return null;
 		}
 
-		public function removeBlock(x: int, y: int): void {
+		public removeBlock(x: int, y: int): void {
 			var b: BlockCommon;
 			for (var i: int = 0; i < this.numChildren; i++) {
 				b = this.getBlockAsChildAt(i);
@@ -61,7 +61,7 @@ package batr.game.map.main {
 			}
 		}
 
-		public function removeAllBlock(): void {
+		public removeAllBlock(): void {
 			var b: BlockCommon;
 			for (var i: int = this.numChildren - 1; i >= 0; i--) {
 				b = this.getBlockAsChildAt(i);
@@ -71,7 +71,7 @@ package batr.game.map.main {
 			}
 		}
 
-		public function setBlock(x: int, y: int, block: BlockCommon, overwrite: Boolean = true): void {
+		public setBlock(x: int, y: int, block: BlockCommon, overwrite: boolean = true): void {
 			if (block == null)
 				return;
 			var iBlock: BlockCommon = this.getBlock(x, y);
@@ -83,7 +83,7 @@ package batr.game.map.main {
 		}
 
 		//============Instance Functions============//
-		private function getBlockAsChildAt(index: int): BlockCommon {
+		private getBlockAsChildAt(index: int): BlockCommon {
 			if (index >= this.numChildren)
 				return null;
 			return this.getChildAt(index) as BlockCommon;

@@ -10,14 +10,14 @@ package batr.game.block.blocks {
 		public static const LINE_COLOR: uint = 0x808080;
 		public static const FILL_COLOR: uint = 0xcccccc;
 		public static const CENTER_COLOR: uint = 0x8000ff;
-		public static const BASE_ALPHA: Number = 0.5;
+		public static const BASE_ALPHA: number = 0.5;
 
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 32;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function SpawnPointMark(): void {
+		public SpawnPointMark(): void {
 			super();
 			this.drawMain();
 		}
@@ -81,7 +81,7 @@ package batr.game.block.blocks {
 			this.graphics.endFill();*/
 		}
 
-		private function drawSpawnMark(cX: Number, cY: int, radius: Number): void {
+		private drawSpawnMark(cX: number, cY: int, radius: number): void {
 			this.graphics.drawRect(cX - radius, cY - radius, radius * 2, radius * 2);
 			this.graphics.moveTo(cX - radius, cY);
 			this.graphics.lineTo(cX, cY + radius);

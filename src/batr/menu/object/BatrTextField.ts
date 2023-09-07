@@ -16,7 +16,7 @@ package batr.menu.objects {
 
 	export default class BatrTextField extends TextField implements IBatrMenuElement {
 		//============Static Constructor============//
-		public static function fromKey(translations: I18ns, translationKey: String = null, autoSize: String = TextFieldAutoSize.LEFT): BatrTextField {
+		public static function fromKey(translations: I18ns, translationKey: string = null, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			return new BatrTextField(new I18nText(
 				translations == null ? I18ns.getI18nByLanguage() : translations,
 				translationKey
@@ -29,7 +29,7 @@ package batr.menu.objects {
 		protected _translationalText: I18nText;
 
 		//============Constructor============//
-		public function BatrTextField(translationalText: I18nText, autoSize: String = TextFieldAutoSize.LEFT): void {
+		public BatrTextField(translationalText: I18nText, autoSize: string = TextFieldAutoSize.LEFT): void {
 			super();
 			// text
 			this._translationalText = translationalText;
@@ -41,83 +41,83 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this._translationalText = null;
 		}
 
 		//============Instance Getter And Setter============//
-		public function get translationalText(): I18nText {
+		public get translationalText(): I18nText {
 			return this._translationalText;
 		}
 
-		public function set translationalText(value: I18nText): void {
+		public set translationalText(value: I18nText): void {
 			this._translationalText = value;
 			this.updateByI18n();
 		}
 
-		public function get translations(): I18ns {
+		public get translations(): I18ns {
 			return this._translationalText.translations;
 		}
 
-		public function get translationKey(): String {
+		public get translationKey(): string {
 			return this._translationalText.key;
 		}
 
-		public function get textInI18n(): String {
+		public get textInI18n(): string {
 			return this._translationalText.currentText;
 		}
 
 		//============Instance Functions============//
-		public function turnI18nsTo(translations: I18ns): void {
+		public turnI18nsTo(translations: I18ns): void {
 			this._translationalText.translations = translations;
 			this.updateByI18n();
 		}
 
-		public function updateByI18n(): void {
+		public updateByI18n(): void {
 			this.text = this.textInI18n;
 		}
 
-		public function setText(value: String): void {
+		public setText(value: string): void {
 			this.text = value;
 		}
 
-		public function setPos(x: Number, y: Number): BatrTextField {
+		public setPos(x: number, y: number): BatrTextField {
 			this.x = x;
 			this.y = y;
 			return this;
 		}
 
-		public function setBlockPos(x: Number, y: Number): BatrTextField {
+		public setBlockPos(x: number, y: number): BatrTextField {
 			this.x = PosTransform.localPosToRealPos(x);
 			this.y = PosTransform.localPosToRealPos(y);
 			return this;
 		}
 
-		public function setSize(w: Number, h: Number): BatrTextField {
+		public setSize(w: number, h: number): BatrTextField {
 			this.width = w;
 			this.height = h;
 			return this;
 		}
 
-		public function setBlockSize(w: Number, h: Number): BatrTextField {
+		public setBlockSize(w: number, h: number): BatrTextField {
 			this.width = PosTransform.localPosToRealPos(w);
 			this.height = PosTransform.localPosToRealPos(h);
 			return this;
 		}
 
-		public function initFormatAsMenu(): BatrTextField {
+		public initFormatAsMenu(): BatrTextField {
 			this.selectable = false;
 			return this;
 		}
 
-		public function setFormat(formet: TextFormat, lock: Boolean = false): BatrTextField {
+		public setFormat(formet: TextFormat, lock: boolean = false): BatrTextField {
 			this.defaultTextFormat = formet;
 			this.setTextFormat(formet);
 			return this;
 		}
 
 		//============Deal With Event============//
-		public function onI18nChange(E: I18nsChangeEvent): void {
+		public onI18nChange(E: I18nsChangeEvent): void {
 			this.turnI18nsTo(E.nowI18ns);
 		}
 	}

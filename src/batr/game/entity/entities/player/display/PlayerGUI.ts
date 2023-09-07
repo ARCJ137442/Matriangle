@@ -22,12 +22,12 @@
 		public static const LEVEL_COLOR: uint = 0x8800ff;
 
 		// Display Graphics
-		public static const HEALTH_BAR_HEIGHT: Number = GlobalGameVariables.DEFAULT_SIZE / 10;
-		public static const BAR_FRAME_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 320;
-		public static const UNDER_BAR_HEIGHT: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const UNDER_BAR_Y_0: Number = 0.5 * GlobalGameVariables.DEFAULT_SIZE;
-		public static const UNDER_BAR_Y_1: Number = UNDER_BAR_Y_0 + UNDER_BAR_HEIGHT;
-		public static const UNDER_BAR_Y_2: Number = UNDER_BAR_Y_1 + UNDER_BAR_HEIGHT;
+		public static const HEALTH_BAR_HEIGHT: number = GlobalGameVariables.DEFAULT_SIZE / 10;
+		public static const BAR_FRAME_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 320;
+		public static const UNDER_BAR_HEIGHT: number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static const UNDER_BAR_Y_0: number = 0.5 * GlobalGameVariables.DEFAULT_SIZE;
+		public static const UNDER_BAR_Y_1: number = UNDER_BAR_Y_0 + UNDER_BAR_HEIGHT;
+		public static const UNDER_BAR_Y_2: number = UNDER_BAR_Y_1 + UNDER_BAR_HEIGHT;
 
 		// Display Texts
 		public static const EXPERIENCE_FORMAT: TextFormat = new TextFormat(
@@ -37,11 +37,11 @@
 			null, null, null, null,
 			TextFormatAlign.CENTER
 		);
-		public static const LEVEL_TEXT_HEAD: String = 'Lv.';
+		public static const LEVEL_TEXT_HEAD: string = 'Lv.';
 
 		//============Instance Functions============//
-		public static function getUnderBarY(barNum: uint = 0): Number {
-			var result: Number = UNDER_BAR_Y_0;
+		public static function getUnderBarY(barNum: uint = 0): number {
+			var result: number = UNDER_BAR_Y_0;
 			while (barNum > 0) {
 				result += UNDER_BAR_HEIGHT;
 				barNum--;
@@ -72,7 +72,7 @@
 		protected _levelText: TextField = new TextField();
 
 		//============Constructor Function============//
-		public function PlayerGUI(owner: Player): void {
+		public PlayerGUI(owner: Player): void {
 			// Set Owner
 			this._owner = owner;
 			// Set Graphics
@@ -84,50 +84,50 @@
 		}
 
 		//============Instance Getter And Setter============//
-		public function get owner(): Player {
+		public get owner(): Player {
 			return this._owner;
 		}
 
-		public function get entityX(): Number {
+		public get entityX(): number {
 			return PosTransform.realPosToLocalPos(this.x);
 		}
 
-		public function get entityY(): Number {
+		public get entityY(): number {
 			return PosTransform.realPosToLocalPos(this.y);
 		}
 
-		public function set entityX(value: Number): void {
+		public set entityX(value: number): void {
 			if (value == this.entityX)
 				return;
 			this.x = PosTransform.localPosToRealPos(value);
 		}
 
-		public function set entityY(value: Number): void {
+		public set entityY(value: number): void {
 			if (value == this.entityY)
 				return;
 			this.y = PosTransform.localPosToRealPos(value);
 		}
 
-		public function getVisibleCD(player: Boolean = true): Boolean {
+		public getVisibleCD(player: boolean = true): boolean {
 			if (player)
 				return this._owner.weaponNeedsCD && this._owner.weaponCDPercent > 0;
 			return this._CDBarFrame.visible;
 		}
 
-		public function getVisibleCharge(player: Boolean = true): Boolean {
+		public getVisibleCharge(player: boolean = true): boolean {
 			if (player)
 				return this._owner.isCharging;
 			return this._chargeBarFrame.visible;
 		}
 
-		public function getVisibleExperience(player: Boolean = true): Boolean {
+		public getVisibleExperience(player: boolean = true): boolean {
 			if (player)
 				return true;
 			return this._experienceBarFrame.visible;
 		}
 
 		//============Instance Functions============//
-		public function update(): void {
+		public update(): void {
 			this.updateHealth();
 			this.updateCD(false);
 			this.updateCharge(false);
@@ -137,27 +137,27 @@
 			this.updateTeam();
 		}
 
-		public function updateName(): void {
+		public updateName(): void {
 			if (this._owner == null)
 				return;
 			this._nameTagText.text = this._owner.customName == null ? '' : this._owner.customName;
 		}
 
-		public function updateTeam(): void {
+		public updateTeam(): void {
 			if (this._owner == null)
 				return;
 			this.drawPointerTriangle(this._pointerTriangle.graphics);
 			this._nameTagText.textColor = this._owner.lineColor;
 		}
 
-		public function updateHealth(): void {
+		public updateHealth(): void {
 			if (this._owner == null)
 				return;
 			this._healthBarHealth.scaleX = this._owner.healthPercent;
 			this._healthBarText.text = this._owner.healthText == null ? '' : this._owner.healthText;
 		}
 
-		public function updateCharge(sort: Boolean = true): void {
+		public updateCharge(sort: boolean = true): void {
 			if (this._owner == null)
 				return;
 			this._chargeBarCharge.visible = this._chargeBarFrame.visible = this.getVisibleCharge();
@@ -166,7 +166,7 @@
 			this._chargeBarCharge.scaleX = this._owner.chargingPercent;
 		}
 
-		public function updateCD(sort: Boolean = true): void {
+		public updateCD(sort: boolean = true): void {
 			if (this._owner == null)
 				return;
 			this._CDBarCD.visible = this._CDBarFrame.visible = this.getVisibleCD();
@@ -175,7 +175,7 @@
 			this._CDBarCD.scaleX = this._owner.weaponCDPercent;
 		}
 
-		public function updateExperience(sort: Boolean = true): void {
+		public updateExperience(sort: boolean = true): void {
 			if (this._owner == null)
 				return;
 			this._experienceBarExperience.visible = this._experienceBarFrame.visible = this.getVisibleExperience();
@@ -184,7 +184,7 @@
 			this._levelText.text = LEVEL_TEXT_HEAD + this._owner.level;
 		}
 
-		protected function sortUnderBars(): void {
+		protected sortUnderBars(): void {
 			var sortCD: uint = 0, sortCharge: uint = 0; /*,sortExperience:uint=0*/
 			/*if(this.getVisibleExperience(false)) {
 				sortCD++;
@@ -197,7 +197,7 @@
 			// this._experienceBarExperience.y=this._experienceBarFrame.y=getUnderBarY(sortExperience);
 		}
 
-		protected function setFormats(): void {
+		protected setFormats(): void {
 			// Health Bar
 			this._healthBarFormat.font = GlobalGameVariables.MAIN_FONT.fontName;
 			this._healthBarFormat.align = TextFormatAlign.CENTER;
@@ -212,7 +212,7 @@
 			this._nameTagFormat.size = 0.5 * GlobalGameVariables.DEFAULT_SIZE;
 		}
 
-		protected function setFromatsToFields(): void {
+		protected setFromatsToFields(): void {
 			this._healthBarText.defaultTextFormat = this._healthBarFormat;
 			this._nameTagText.defaultTextFormat = this._nameTagFormat;
 			this._levelText.defaultTextFormat = EXPERIENCE_FORMAT;
@@ -223,7 +223,7 @@
 			// this._healthBarText.border=this._nameTagText.border=true;
 		}
 
-		protected function drawShape(): void {
+		protected drawShape(): void {
 			// Pointer Triangle
 			this._pointerTriangle.x = 0;
 			this._pointerTriangle.y = -1.2 * GlobalGameVariables.DEFAULT_SIZE;
@@ -261,9 +261,9 @@
 			this._experienceBarFrame.y = this._experienceBarExperience.y = -0.6 * GlobalGameVariables.DEFAULT_SIZE;
 		}
 
-		protected function drawPointerTriangle(graphics: Graphics): void {
-			var realRadiusX: Number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
-			var realRadiusY: Number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
+		protected drawPointerTriangle(graphics: Graphics): void {
+			var realRadiusX: number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
+			var realRadiusY: number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
 			graphics.clear();
 			graphics.beginFill(this._owner.fillColor);
 			graphics.moveTo(-realRadiusX, -realRadiusY);
@@ -273,7 +273,7 @@
 			graphics.endFill();
 		}
 
-		protected function drawHealthBar(): void {
+		protected drawHealthBar(): void {
 			this._healthBarFrame.graphics.lineStyle(GlobalGameVariables.DEFAULT_SIZE / 200, HEALTH_BAR_FRAME_COLOR);
 			this._healthBarFrame.graphics.drawRect(0, 0,
 				0.9375 * GlobalGameVariables.DEFAULT_SIZE,
@@ -287,7 +287,7 @@
 
 		}
 
-		protected function drawCDBar(): void {
+		protected drawCDBar(): void {
 			this._CDBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, CD_BAR_FRAME_COLOR);
 			this._CDBarFrame.graphics.drawRect(0, 0,
 				GlobalGameVariables.DEFAULT_SIZE,
@@ -300,7 +300,7 @@
 			this._CDBarCD.graphics.endFill();
 		}
 
-		protected function drawChargeBar(): void {
+		protected drawChargeBar(): void {
 			this._chargeBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, CHARGE_BAR_FRAME_COLOR);
 			this._chargeBarFrame.graphics.drawRect(0, 0,
 				GlobalGameVariables.DEFAULT_SIZE,
@@ -313,7 +313,7 @@
 			this._chargeBarCharge.graphics.endFill();
 		}
 
-		protected function drawExperienceBar(): void {
+		protected drawExperienceBar(): void {
 			this._experienceBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, EXPERIENCE_BAR_FRAME_COLOR);
 			this._experienceBarFrame.graphics.drawRect(0, 0,
 				GlobalGameVariables.DEFAULT_SIZE,
@@ -326,7 +326,7 @@
 			this._experienceBarExperience.graphics.endFill();
 		}
 
-		protected function addChildren(): void {
+		protected addChildren(): void {
 			this.addChild(this._healthBarHealth);
 			this.addChild(this._healthBarFrame);
 			this.addChild(this._healthBarText);
@@ -341,7 +341,7 @@
 			this.addChild(this._pointerTriangle);
 		}
 
-		protected function removeChildren(): void {
+		protected removeChildren(): void {
 			this.removeChild(this._healthBarHealth);
 			this.removeChild(this._healthBarFrame);
 			this.removeChild(this._healthBarText);
@@ -356,7 +356,7 @@
 			this.removeChild(this._pointerTriangle);
 		}
 
-		public function destructor(): void {
+		public destructor(): void {
 			this.removeChildren();
 			this._healthBarHealth = null;
 			this._healthBarFrame = null;

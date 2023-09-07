@@ -10,13 +10,13 @@
 	export default class Glass extends ColoredBlock {
 		//============Static Variables============//
 		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 16;
-		protected static const ALPHA_FRAME: Number = 0.6;
-		protected static const ALPHA_FILL: Number = 0.2;
+		protected static const ALPHA_FRAME: number = 0.6;
+		protected static const ALPHA_FILL: number = 0.2;
 
 		//============Instance Variables============//
 
 		//============Constructor Function============//
-		public function Glass(color: uint = 0xddffff): void {
+		public Glass(color: uint = 0xddffff): void {
 			super(color);
 		}
 

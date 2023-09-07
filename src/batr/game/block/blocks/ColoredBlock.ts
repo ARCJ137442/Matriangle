@@ -11,7 +11,7 @@ package batr.game.block.blocks {
 		protected _fillColor: uint;
 
 		//============Constructor Function============//
-		public function ColoredBlock(color: uint = 0x000000): void {
+		public ColoredBlock(color: uint = 0x000000): void {
 			super();
 			this._fillColor = color;
 			this.drawMain();
@@ -32,11 +32,11 @@ package batr.game.block.blocks {
 			return BlockType.COLORED_BLOCK;
 		}
 
-		public function get fillColor(): uint {
+		public get fillColor(): uint {
 			return this._fillColor;
 		}
 
-		public function set fillColor(value: uint): void {
+		public set fillColor(value: uint): void {
 			if (this._fillColor != value) {
 				this._fillColor = value;
 				this.reDraw();

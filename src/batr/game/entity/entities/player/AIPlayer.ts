@@ -14,8 +14,8 @@ package batr.game.entity.entity.players {
 
 	export default class AIPlayer extends Player {
 		//============Static Variables============//
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 32;
-		public static const DEFAULT_AI_RUN_SPEED: Number = 12;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
+		public static const DEFAULT_AI_RUN_SPEED: number = 12;
 
 		//============Static Functions============//
 		public static function randomAIProgram(): IAIProgram {
@@ -36,7 +36,7 @@ package batr.game.entity.entity.players {
 		 * @param	AILabel	The Label that determine shape.
 		 * @param	radius	The scale of decoration.
 		 */
-		public static function drawAIDecoration(graphics: Graphics, AILabel: String, radius: Number = SIZE / 10): void {
+		public static function drawAIDecoration(graphics: Graphics, AILabel: string, radius: number = SIZE / 10): void {
 			switch (AILabel) {
 				case AIProgram_Dummy.LABEL:
 					graphics.drawCircle(0, 0, radius);
@@ -68,14 +68,14 @@ package batr.game.entity.entity.players {
 		protected _actionThread: AIPlayerAction[] = new AIPlayerAction[];
 
 		//============Constructor Function============//
-		public function AIPlayer(
+		public AIPlayer(
 			host: Game,
-			x: Number, y: Number,
+			x: number, y: number,
 			team: PlayerTeam,
-			isActive: Boolean = true,
+			isActive: boolean = true,
 			program: IAIProgram = null,
-			fillColor: Number = NaN,
-			lineColor: Number = NaN): void {
+			fillColor: number = NaN,
+			lineColor: number = NaN): void {
 			this._AIProgram = program == null ? AIPlayer.randomAIProgram() : program;
 			this.AIRunSpeed = Math.random() < 0.01 ? 100 : this._AIProgram.referenceSpeed;
 			super(host, x, y, team, 0, isActive, fillColor, lineColor);
@@ -96,16 +96,16 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get AIProgram(): IAIProgram {
+		public get AIProgram(): IAIProgram {
 			return this._AIProgram;
 		}
 
-		public function get AIRunSpeed(): Number {
+		public get AIRunSpeed(): number {
 			return GlobalGameVariables.TPS / this._AIRunDelay;
 
 		}
 
-		public function set AIRunSpeed(speed: Number): void {
+		public set AIRunSpeed(speed: number): void {
 			if (speed == this.AIRunSpeed)
 				return;
 
@@ -115,33 +115,33 @@ package batr.game.entity.entity.players {
 			this.initAITick();
 		}
 
-		public function get hasAction(): Boolean {
+		public get hasAction(): boolean {
 			return this._actionThread != null && this._actionThread.length > 0;
 		}
 
-		public function get AILabel(): String {
+		public get AILabel(): string {
 			return this._AIProgram == null ? null : this._AIProgram.label;
 		}
 
-		public function get ActionThread(): AIPlayerAction[] {
+		public get ActionThread(): AIPlayerAction[] {
 			return this._actionThread;
 		}
 
 		//============Instance Functions============//
-		public function initAITick(): void {
+		public initAITick(): void {
 			this._AIRunDelay = exMath.random(this._AIRunMaxDelay);
 		}
 
-		public function resetAITick(): void {
+		public resetAITick(): void {
 			this._AIRunDelay = this._AIRunMaxDelay;
 
 		}
 
 		// AI Shape
-		protected override function drawShape(Alpha: Number = 1): void {
+		protected override function drawShape(Alpha: number = 1): void {
 			// Basic Body
-			var realRadiusX: Number = (SIZE - LINE_SIZE) / 2;
-			var realRadiusY: Number = (SIZE - LINE_SIZE) / 2;
+			var realRadiusX: number = (SIZE - LINE_SIZE) / 2;
+			var realRadiusY: number = (SIZE - LINE_SIZE) / 2;
 			graphics.clear();
 			graphics.lineStyle(LINE_SIZE, this._lineColor);
 			graphics.beginFill(this._fillColor, Alpha);
@@ -217,7 +217,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//========AI Contol:The main auto-contol of AI========//
-		protected function AIContol(): void {
+		protected AIContol(): void {
 			// Tick
 			var action: AIPlayerAction;
 
@@ -234,7 +234,7 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function runAction(action: AIPlayerAction): void {
+		public runAction(action: AIPlayerAction): void {
 			if (this.isRespawning)
 				return;
 			switch (action) {
@@ -349,14 +349,14 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function runActions(actions: AIPlayerAction[]): void {
+		public runActions(actions: AIPlayerAction[]): void {
 			for (var i: uint = 0; i < actions.length; i++) {
 				runAction(actions[i]);
 
 			}
 		}
 
-		public function runActions2(...actions): void {
+		public runActions2(...actions): void {
 			var runV: AIPlayerAction[] = new AIPlayerAction[];
 
 			for (var i: uint = 0; i < actions.length; i++) {
@@ -367,42 +367,42 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function addActionToThread(action: AIPlayerAction): void {
+		public addActionToThread(action: AIPlayerAction): void {
 			this._actionThread.push(action);
 
 		}
 
-		public function addActionsToThread(actions: AIPlayerAction[]): void {
+		public addActionsToThread(actions: AIPlayerAction[]): void {
 			this._actionThread = this._actionThread.concat(actions);
 
 		}
 
-		public function addActionToThreadAtFirst(action: AIPlayerAction): void {
+		public addActionToThreadAtFirst(action: AIPlayerAction): void {
 			this._actionThread.unshift(action);
 
 		}
 
-		public function addActionsToThreadAtFirst(actions: AIPlayerAction[]): void {
+		public addActionsToThreadAtFirst(actions: AIPlayerAction[]): void {
 			this._actionThread = actions.concat(this._actionThread);
 
 		}
 
-		public function shiftActionToThread(): AIPlayerAction {
+		public shiftActionToThread(): AIPlayerAction {
 			return this._actionThread.shift();
 
 		}
 
-		public function popActionInThread(): AIPlayerAction {
+		public popActionInThread(): AIPlayerAction {
 			return this._actionThread.pop();
 
 		}
 
-		public function reverseActionThread(): void {
+		public reverseActionThread(): void {
 			this._actionThread = this._actionThread.reverse();
 
 		}
 
-		public function repeatActionThread(count: uint = 1): void {
+		public repeatActionThread(count: uint = 1): void {
 			// this._actionThread*=(count+1)
 			if (count < 1)
 				return;
@@ -421,12 +421,12 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function clearActionThread(): void {
+		public clearActionThread(): void {
 			this._actionThread.splice(0, this._actionThread.length);
 
 		}
 
-		public function runAllActionsOfThreadImmediately(): void {
+		public runAllActionsOfThreadImmediately(): void {
 			if (this._actionThread.length < 1)
 				return;
 

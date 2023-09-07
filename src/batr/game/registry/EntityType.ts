@@ -44,7 +44,7 @@
 		}
 
 		//============Static Functions============//
-		public static function fromString(str: String): EntityType {
+		public static function fromString(str: string): EntityType {
 			for (var type of EntityType._ALL_ENTITY) {
 				if (type.name == str)
 					return type;
@@ -54,7 +54,7 @@
 
 		}
 
-		public static function isIncludeIn(type: EntityType, types: EntityType[]): Boolean {
+		public static function isIncludeIn(type: EntityType, types: EntityType[]): boolean {
 			for (var type2 of types) {
 				if (type === type2)
 					return true;
@@ -63,23 +63,23 @@
 		}
 
 		//============Constructor Function============//
-		public function EntityType(name: String): void {
+		public EntityType(name: string): void {
 			super(name);
 		}
 
 		//============Instance Variables============//
-		protected _rotatable: Boolean = true;
+		protected _rotatable: boolean = true;
 
 		//============Instance Getter And Setter============//
-		public override function get label(): String {
+		public override function get label(): string {
 			return 'entity';
 		}
 
-		public function get rotatable(): Boolean {
+		public get rotatable(): boolean {
 			return this._rotatable;
 		}
 
-		public function get asUnrotatable(): EntityType {
+		public get asUnrotatable(): EntityType {
 			this._rotatable = false;
 			return this;
 		}

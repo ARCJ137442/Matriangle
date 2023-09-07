@@ -15,7 +15,7 @@
 
 	export default class BatrSubject extends Sprite {
 		//============Static Variables============//
-		private static const FOR_TEST: Boolean = false;
+		private static const FOR_TEST: boolean = false;
 
 		//============Instance Variables============//
 		protected _game: Game;
@@ -25,7 +25,7 @@
 		protected _translations: I18ns;
 
 		//============Constructor Function============//
-		public function BatrSubject(): void {
+		public BatrSubject(): void {
 			// Init Variables
 			this._translations = I18ns.getI18nByLanguage();
 			this._gameRule = new GameRule();
@@ -36,70 +36,70 @@
 		}
 
 		//============Instance Getter And Setter============//
-		public function get gameRule(): GameRule {
+		public get gameRule(): GameRule {
 			return this._gameRule;
 		}
 
-		public function get gameObj(): Game {
+		public get gameObj(): Game {
 			return this._game;
 		}
 
-		public function get menuObj(): Menu {
+		public get menuObj(): Menu {
 			return this._menu;
 		}
 
-		public function get gameVisible(): Boolean {
+		public get gameVisible(): boolean {
 			return this._game.visible;
 		}
 
-		public function set gameVisible(value: Boolean): void {
+		public set gameVisible(value: boolean): void {
 			this._game.visible = value;
 		}
 
-		public function get menuVisible(): Boolean {
+		public get menuVisible(): boolean {
 			return this._menu.visible;
 		}
 
-		public function set menuVisible(value: Boolean): void {
+		public set menuVisible(value: boolean): void {
 			this._menu.visible = value;
 		}
 
-		public function get translations(): I18ns {
+		public get translations(): I18ns {
 			return this._translations;
 		}
 
 		//============Instance Functions============//
-		protected function onStageResize(E: Event = null): void {
+		protected onStageResize(E: Event = null): void {
 			// Information
-			var originalStageWidth: Number = GlobalGameVariables.DISPLAY_SIZE;
-			var originalStageHeight: Number = originalStageWidth; // Square
-			var nowStageWidth: Number = this.stage.stageWidth;
-			var nowStageHeight: Number = this.stage.stageHeight;
+			var originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
+			var originalStageHeight: number = originalStageWidth; // Square
+			var nowStageWidth: number = this.stage.stageWidth;
+			var nowStageHeight: number = this.stage.stageHeight;
 			var mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : GlobalGameVariables.DISPLAY_GRIDS;
 			var mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : GlobalGameVariables.DISPLAY_GRIDS;
-			var mapDisplayWidth: Number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
-			var mapDisplayHeight: Number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
+			var mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
+			var mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
 			// var distanceBetweenBorderX:Number=0(nowStageWidth-originalStageWidth)/2
 			// var distanceBetweenBorderY:Number=0(nowStageHeight-originalStageHeight)/2
 			// Operation
-			var isMapDisplayWidthMax: Boolean = mapDisplayWidth >= mapDisplayHeight;
+			var isMapDisplayWidthMax: boolean = mapDisplayWidth >= mapDisplayHeight;
 
-			var isStageWidthMax: Boolean = nowStageWidth >= nowStageHeight;
+			var isStageWidthMax: boolean = nowStageWidth >= nowStageHeight;
 
-			var mapDisplaySizeMax: Number = isMapDisplayWidthMax ? mapDisplayWidth : mapDisplayHeight;
+			var mapDisplaySizeMax: number = isMapDisplayWidthMax ? mapDisplayWidth : mapDisplayHeight;
 
-			var mapDisplaySizeMin: Number = isMapDisplayWidthMax ? mapDisplayHeight : mapDisplayWidth;
+			var mapDisplaySizeMin: number = isMapDisplayWidthMax ? mapDisplayHeight : mapDisplayWidth;
 
-			var stageSizeMax: Number = isStageWidthMax ? nowStageWidth : nowStageHeight;
+			var stageSizeMax: number = isStageWidthMax ? nowStageWidth : nowStageHeight;
 
-			var stageSizeMin: Number = isStageWidthMax ? nowStageHeight : nowStageWidth;
+			var stageSizeMin: number = isStageWidthMax ? nowStageHeight : nowStageWidth;
 
 			// Output
-			var displayScale: Number = stageSizeMin / mapDisplaySizeMin;
+			var displayScale: number = stageSizeMin / mapDisplaySizeMin;
 
-			var shouldX: Number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (nowStageWidth - mapDisplayWidth * displayScale) / 2 : 0);
-			var shouldY: Number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (nowStageHeight - mapDisplayHeight * displayScale) / 2);
-			var shouldScale: Number = displayScale * GlobalGameVariables.DEFAULT_SCALE;
+			var shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (nowStageWidth - mapDisplayWidth * displayScale) / 2 : 0);
+			var shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (nowStageHeight - mapDisplayHeight * displayScale) / 2);
+			var shouldScale: number = displayScale * GlobalGameVariables.DEFAULT_SCALE;
 
 			// Deal
 			this.x = shouldX;
@@ -115,7 +115,7 @@
 
 		}
 
-		protected function onAddedToStage(E: Event): void {
+		protected onAddedToStage(E: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, onSubjectKeyDown);
@@ -130,7 +130,7 @@
 				this.forTest();
 		}
 
-		public function onTitleComplete(): void {
+		public onTitleComplete(): void {
 			// Menu game preview
 			this.startGamePreview();
 			if (FOR_TEST)
@@ -138,7 +138,7 @@
 		}
 
 		// ForTest
-		private function forTest(): void {
+		private forTest(): void {
 			this.resetRule();
 			this._gameRule.playerCount = 4;
 			this._gameRule.AICount = 0;
@@ -150,46 +150,46 @@
 			this.turnToGame();
 		}
 
-		protected function initGamePreview(): void {
+		protected initGamePreview(): void {
 			this._game.load(GameRule.MENU_BACKGROUND);
 			this._game.visibleHUD = false;
 			this.gameVisible = true;
 			this._game.mapVisible = !(this._game.entityAndEffectVisible = false);
 		}
 
-		protected function startGamePreview(): void {
+		protected startGamePreview(): void {
 			this._game.isActive = true;
 			this._game.entityAndEffectVisible = true;
 		}
 
-		protected function onSubjectKeyDown(E: KeyboardEvent): void {
+		protected onSubjectKeyDown(E: KeyboardEvent): void {
 			var code: uint = E.keyCode;
-			var ctrl: Boolean = E.ctrlKey;
-			var alt: Boolean = E.altKey;
-			var shift: Boolean = E.shiftKey;
+			var ctrl: boolean = E.ctrlKey;
+			var alt: boolean = E.altKey;
+			var shift: boolean = E.shiftKey;
 			// P:Pause
 			if (code == KeyCode.P) { // &&!this.menuVisible
 				this.toggleGamePause();
 			}
 		}
 
-		protected function onI18nsChange(E: I18nsChangeEvent): void {
+		protected onI18nsChange(E: I18nsChangeEvent): void {
 			var nowT: I18ns = E.nowI18ns;
 			var oldT: I18ns = E.oldI18ns;
 		}
 
 		//====Methods====//
-		protected function addChildren(): void {
+		protected addChildren(): void {
 			this.addChild(this._game);
 			this.addChild(this._menu);
 		}
 
-		public function resize(): void {
+		public resize(): void {
 			this.scaleX = this.scaleY = GlobalGameVariables.DEFAULT_SCALE;
 
 		}
 
-		public function set emableAutoResize(value: Boolean): void {
+		public set emableAutoResize(value: boolean): void {
 			if (value) {
 				this.stage.scaleMode = StageScaleMode.NO_SCALE;
 
@@ -208,7 +208,7 @@
 			}
 		}
 
-		public function gotoGame(): void {
+		public gotoGame(): void {
 			// Load Game if Game won't loaded
 			if (!this.gameObj.isLoaded)
 				this.startGame();
@@ -218,36 +218,36 @@
 			this._game.updateMapSize();
 		}
 
-		public function gotoMenu(): void {
+		public gotoMenu(): void {
 			// this.gameVisible=false
 			this.menuVisible = true;
 			this._game.visibleHUD = true;
 			this._menu.updateMapSize();
 		}
 
-		public function turnToGame(): void {
+		public turnToGame(): void {
 			gotoGame();
 			continueGame();
 		}
 
-		public function turnToMenu(): void {
+		public turnToMenu(): void {
 			gotoMenu();
 			pauseGame();
 		}
 
-		public function startGame(): void {
+		public startGame(): void {
 			this._game.forceStartGame(this._gameRule);
 		}
 
-		public function pauseGame(): void {
+		public pauseGame(): void {
 			this._game.isActive = false;
 		}
 
-		public function continueGame(): void {
+		public continueGame(): void {
 			this._game.isActive = true;
 		}
 
-		public function toggleGamePause(): void {
+		public toggleGamePause(): void {
 			// this._game.isActive=!this._game.isActive;
 			if (this._game.isActive) {
 				if (this.menuObj.nowSheet != this.menuObj.sheetPause)
@@ -259,18 +259,18 @@
 			}
 		}
 
-		public function turnI18nsTo(translations: I18ns): void {
+		public turnI18nsTo(translations: I18ns): void {
 			var oldI18ns: I18ns = this._translations;
 			this._translations = translations;
 			this.dispatchEvent(new I18nsChangeEvent(this._translations, oldI18ns));
 		}
 
-		public function turnI18ns(): void {
+		public turnI18ns(): void {
 			this._menu.languageselector.turnSelectRight();
 			this.turnI18nsTo(I18ns.translationsList[this._menu.languageselector.currentValue]);
 		}
 
-		public function resetRule(): void {
+		public resetRule(): void {
 			this._gameRule = new GameRule();
 		}
 	}

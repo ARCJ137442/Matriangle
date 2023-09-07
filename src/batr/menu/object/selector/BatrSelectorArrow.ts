@@ -15,26 +15,26 @@ package batr.menu.object.selector {
 		//============Static Variables============//
 		public static const LINE_COLOR: uint = 0x888888;
 		public static const FILL_COLOR: uint = 0xcccccc;
-		public static const FILL_ALPHA: Number = 0.4;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const HOLD_ALPHA: Number = 1;
-		public static const OVER_ALPHA: Number = 0.8;
-		public static const RELEASE_ALPHA: Number = 0.6;
+		public static const FILL_ALPHA: number = 0.4;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static const HOLD_ALPHA: number = 1;
+		public static const OVER_ALPHA: number = 0.8;
+		public static const RELEASE_ALPHA: number = 0.6;
 
 		//============Instance Variables============//
-		protected _displayWidth: Number;
-		protected _displayHeight: Number;
+		protected _displayWidth: number;
+		protected _displayHeight: number;
 		protected _lineColor: uint;
 		protected _fillColor: uint;
-		protected _lineSize: Number;
+		protected _lineSize: number;
 		protected _clickFunc: Function = null;
 
 		//============Constructor Function============//
-		public function BatrSelectorArrow(width: Number = GlobalGameVariables.DEFAULT_SIZE * 0.6,
-			height: Number = GlobalGameVariables.DEFAULT_SIZE * 0.6,
+		public BatrSelectorArrow(width: number = GlobalGameVariables.DEFAULT_SIZE * 0.6,
+			height: number = GlobalGameVariables.DEFAULT_SIZE * 0.6,
 			lineColor: uint = LINE_COLOR,
 			fillColor: uint = FILL_COLOR,
-			lineSize: Number = LINE_SIZE): void {
+			lineSize: number = LINE_SIZE): void {
 			super();
 			this._lineColor = lineColor;
 			this._fillColor = fillColor;
@@ -55,20 +55,20 @@ package batr.menu.object.selector {
 		}
 
 		//============Instance Getter And Setter============//
-		public function set clickFunction(value: Function): void {
+		public set clickFunction(value: Function): void {
 			this._clickFunc = value;
 		}
 
-		public function get displayWidth(): Number {
+		public get displayWidth(): number {
 			return this._displayWidth;
 		}
 
-		public function get displayHeight(): Number {
+		public get displayHeight(): number {
 			return this._displayHeight;
 		}
 
 		//============Instance Functions============//
-		protected function initDisplay(): void {
+		protected initDisplay(): void {
 			this.drawShape();
 		}
 

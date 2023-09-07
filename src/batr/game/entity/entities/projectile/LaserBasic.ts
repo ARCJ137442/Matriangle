@@ -9,16 +9,16 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserBasic extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LIFE: Number = GlobalGameVariables.FIXED_TPS;
-		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 2;
+		public static const LIFE: number = GlobalGameVariables.FIXED_TPS;
+		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 2;
 		public static const LENGTH: uint = 32; // EntityPos
 
 		//============Instance Variables============//
 		protected _life: uint = LIFE;
-		public isDamaged: Boolean = false;
+		public isDamaged: boolean = false;
 
 		//============Constructor Function============//
-		public function LaserBasic(host: Game, x: Number, y: Number, owner: Player, length: Number = LENGTH, chargePercent: Number = 1): void {
+		public LaserBasic(host: Game, x: number, y: number, owner: Player, length: number = LENGTH, chargePercent: number = 1): void {
 			super(host, x, y, owner);
 			this._currentWeapon = WeaponType.LASER;
 			this.damage = this._currentWeapon.defaultDamage;
@@ -38,11 +38,11 @@ package batr.game.entity.entity.projectile {
 			return EntityType.LASER_BASIC;
 		}
 
-		public function get length(): Number {
+		public get length(): number {
 			return this.scaleX;
 		}
 
-		public function get life(): uint {
+		public get life(): uint {
 			return this._life;
 		}
 
@@ -54,25 +54,25 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		protected function dealCharge(percent: Number): void {
+		protected dealCharge(percent: number): void {
 			if (percent == 1)
 				return;
 			this.damage *= percent;
 			this._life = LIFE * percent;
 		}
 
-		public function dealLife(): void {
+		public dealLife(): void {
 			if (this._life > 0)
 				this._life--;
 			else
 				this._host.entitySystem.removeProjectile(this);
 		}
 
-		public function onLaserCommonTick(): void {
+		public onLaserCommonTick(): void {
 			dealLife();
 		}
 
-		public function onLaserTick(): void {
+		public onLaserTick(): void {
 			if (!this.isDamaged)
 				this._host.laserHurtPlayers(this);
 			this.scaleY = _life / LIFE;
@@ -83,10 +83,10 @@ package batr.game.entity.entity.projectile {
 			onLaserCommonTick(); // Unturnable
 		}
 
-		protected function drawLine(y1: Number, y2: Number,
+		protected drawLine(y1: number, y2: number,
 			color: uint = 0xffffff,
-			alpha: Number = 1): void {
-			var yStart: Number = Math.min(y1, y2);
+			alpha: number = 1): void {
+			var yStart: number = Math.min(y1, y2);
 			this.graphics.beginFill(color, alpha);
 			this.graphics.drawRect(0, yStart,
 				GlobalGameVariables.DEFAULT_SIZE,
@@ -94,9 +94,9 @@ package batr.game.entity.entity.projectile {
 			this.graphics.endFill();
 		}
 
-		protected function drawOwnerLine(y1: Number, y2: Number,
-			alpha: Number = 1): void {
-			var yStart: Number = Math.min(y1, y2);
+		protected drawOwnerLine(y1: number, y2: number,
+			alpha: number = 1): void {
+			var yStart: number = Math.min(y1, y2);
 			this.graphics.beginFill(this.ownerColor, alpha);
 			this.graphics.drawRect(0, yStart,
 				GlobalGameVariables.DEFAULT_SIZE,

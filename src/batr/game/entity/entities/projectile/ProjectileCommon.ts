@@ -13,7 +13,7 @@ package batr.game.entity.entity.projectile {
 		public damage: uint;
 
 		//============Constructor Function============//
-		public function ProjectileCommon(host: Game, x: Number, y: Number, owner: Player): void {
+		public ProjectileCommon(host: Game, x: number, y: number, owner: Player): void {
 			super(host, x, y);
 			this._owner = owner;
 			this._currentWeapon = WeaponType.ABSTRACT;
@@ -24,24 +24,24 @@ package batr.game.entity.entity.projectile {
 			return EntityType.ABSTRACT;
 		}
 
-		public function get owner(): Player {
+		public get owner(): Player {
 			return this._owner;
 		}
 
-		public function set owner(value: Player): void {
+		public set owner(value: Player): void {
 			this._owner = value;
 			this.drawShape();
 		}
 
-		public function get currentWeapon(): WeaponType {
+		public get currentWeapon(): WeaponType {
 			return this._currentWeapon;
 		}
 
-		public function get ownerColor(): uint {
+		public get ownerColor(): uint {
 			return this._owner == null ? 0 : this._owner.fillColor;
 		}
 
-		public function get ownerLineColor(): uint {
+		public get ownerLineColor(): uint {
 			return this._owner == null ? 0 : this._owner.lineColor;
 		}
 
@@ -57,11 +57,11 @@ package batr.game.entity.entity.projectile {
 			super.tickFunction();
 		}
 
-		public function onProjectileTick(): void {
+		public onProjectileTick(): void {
 
 		}
 
-		public function drawShape(): void {
+		public drawShape(): void {
 
 		}
 	}

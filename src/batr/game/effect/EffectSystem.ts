@@ -30,12 +30,12 @@ package batr.game.effect {
 		protected _effects: EffectCommon[] = new EffectCommon[];
 
 		//============Constructor Function============//
-		public function EffectSystem(host: Game): void {
+		public EffectSystem(host: Game): void {
 			this._host = host;
 		}
 
 		//============Destructor Function============//
-		public function destructor(): void {
+		public destructor(): void {
 			this.removeAllEffect();
 			this._effects = null;
 
@@ -44,33 +44,33 @@ package batr.game.effect {
 		}
 
 		//============Instance Getters And Setters============//
-		public function get host(): Game {
+		public get host(): Game {
 			return this._host;
 		}
 
-		public function get effects(): EffectCommon[] {
+		public get effects(): EffectCommon[] {
 			return this._effects;
 		}
 
-		public function get effectCount(): uint {
+		public get effectCount(): uint {
 			if (this._effects == null)
 				return 0;
 			return this._effects.length;
 		}
 
 		//============Instance Functions============//
-		public function nextUUID(): uint {
+		public nextUUID(): uint {
 			while (getEffectByUUID(++this._headUUID) == null && isValidUUID(this._headUUID)) {
 				return this._headUUID;
 			}
 			return 0;
 		}
 
-		public function getEffectByUUID(uuid: uint): EffectCommon {
+		public getEffectByUUID(uuid: uint): EffectCommon {
 			return (this._uuidDic[uuid] as EffectCommon);
 		}
 
-		public function getUUIDByEffect(effect: EffectCommon): uint {
+		public getUUIDByEffect(effect: EffectCommon): uint {
 			return uint(this._uuidDic[effect]);
 		}
 
@@ -79,19 +79,19 @@ package batr.game.effect {
 		 * @param	uuid	needed UUID
 		 * @return	if uuid!=0
 		 */
-		public function isValidUUID(uuid: uint): Boolean {
+		public isValidUUID(uuid: uint): boolean {
 			return uuid > 0;
 		}
 
-		public function hasValidEffect(uuid: uint): Boolean {
+		public hasValidEffect(uuid: uint): boolean {
 			return this.isValidUUID(uuid) && this.getEffectByUUID(uuid) != null;
 		}
 
-		public function hasValidUUID(effect: EffectCommon): Boolean {
+		public hasValidUUID(effect: EffectCommon): boolean {
 			return effect != null && this.isValidUUID(this.getUUIDByEffect(effect));
 		}
 
-		public function getAllEffect(): EffectCommon[] {
+		public getAllEffect(): EffectCommon[] {
 			var result: EffectCommon[] = new EffectCommon[]();
 			for (var obj of this._uuidDic) {
 				if (obj != null && obj is EffectCommon)
@@ -100,7 +100,7 @@ package batr.game.effect {
 			return result;
 		}
 
-		public function getAllUUID(): uint[] {
+		public getAllUUID(): uint[] {
 			var result: uint[] = new uint[]();
 			for (var obj of this._uuidDic) {
 				if (obj != null && obj is uint && isValidUUID(obj as uint))
@@ -109,7 +109,7 @@ package batr.game.effect {
 			return result;
 		}
 
-		public function registerEffectforUUID(effect: EffectCommon): Boolean {
+		public registerEffectforUUID(effect: EffectCommon): boolean {
 			if (effect == null)
 				return false;
 			var uuid: uint = this.nextUUID();
@@ -121,7 +121,7 @@ package batr.game.effect {
 			return false;
 		}
 
-		public function removeEffectforUUID(effect: EffectCommon): Boolean {
+		public removeEffectforUUID(effect: EffectCommon): boolean {
 			var uuid: uint = this.getUUIDByEffect(effect);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[effect] = 0;
@@ -131,7 +131,7 @@ package batr.game.effect {
 			return false;
 		}
 
-		public function GC(): void {
+		public GC(): void {
 			if (this._effects == null)
 				return;
 			// Effect
@@ -141,7 +141,7 @@ package batr.game.effect {
 		}
 
 		// Register,Remove and Remove
-		public function isRegisteredEffect(effect: EffectCommon): Boolean {
+		public isRegisteredEffect(effect: EffectCommon): boolean {
 			// List
 			/*return this._effects.some(
 			function(e2:EffectCommon,i:uint,v:EffectCommon[]) {
@@ -152,7 +152,7 @@ package batr.game.effect {
 
 		}
 
-		public function registerEffect(effect: EffectCommon): Boolean {
+		public registerEffect(effect: EffectCommon): boolean {
 			if (effect == null || isRegisteredEffect(effect))
 				return false;
 			// List
@@ -165,7 +165,7 @@ package batr.game.effect {
 
 		}
 
-		public function removeEffect(effect: EffectCommon): Boolean {
+		public removeEffect(effect: EffectCommon): boolean {
 			if (effect == null || !isRegisteredEffect(effect))
 				return false;
 			// List
@@ -177,14 +177,14 @@ package batr.game.effect {
 
 		}
 
-		public function addEffect(effect: EffectCommon): void {
+		public addEffect(effect: EffectCommon): void {
 			this.registerEffect(effect);
 
 			this._host.addEffectChild(effect);
 
 		}
 
-		public function removeEffect(effect: EffectCommon): void {
+		public removeEffect(effect: EffectCommon): void {
 			if (effect == null)
 				return;
 
@@ -198,7 +198,7 @@ package batr.game.effect {
 
 		}
 
-		public function removeAllEffect(): void {
+		public removeAllEffect(): void {
 			while (this._effects.length > 0) {
 				this.removeEffect(this._effects[0]);
 

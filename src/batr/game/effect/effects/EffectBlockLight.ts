@@ -9,14 +9,14 @@ package batr.game.effect.effects {
 
 	export default class EffectBlockLight extends EffectCommon {
 		//============Static Variables============//
-		public static const SIZE: Number = GlobalGameVariables.DEFAULT_SIZE;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 25;
+		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
 		public static const MAX_LIFE: uint = GlobalGameVariables.TPS * 0.4;
-		public static const MAX_SCALE: Number = 2;
-		public static const MIN_SCALE: Number = 1;
+		public static const MAX_SCALE: number = 2;
+		public static const MIN_SCALE: number = 1;
 
 		//============Static Functions============//
-		public static function fromBlock(host: Game, x: Number, y: Number, block: BlockCommon, reverse: Boolean = false): EffectBlockLight {
+		public static function fromBlock(host: Game, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
 			return new EffectBlockLight(host, x, y, block.pixelColor, block.pixelAlpha, reverse);
 		}
 
@@ -27,10 +27,10 @@ package batr.game.effect.effects {
 		 * The uint percent.
 		 */
 		protected _alpha: uint;
-		public reverse: Boolean = false;
+		public reverse: boolean = false;
 
 		//============Constructor Function============//
-		public function EffectBlockLight(host: Game, x: Number, y: Number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: Boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
+		public EffectBlockLight(host: Game, x: number, y: number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
 			super(host, x, y, life);
 			this._color = color;
 			this._alpha = alpha;
@@ -48,11 +48,11 @@ package batr.game.effect.effects {
 			return EffectType.BLOCK_LIGHT;
 		}
 
-		public function get color(): uint {
+		public get color(): uint {
 			return this._color;
 		}
 
-		public function set color(value: uint): void {
+		public set color(value: uint): void {
 			this._color = value;
 			this.drawShape();
 
@@ -66,8 +66,8 @@ package batr.game.effect.effects {
 		}
 
 		public override function drawShape(): void {
-			var realRadiusX: Number = SIZE / 2;
-			var realRadiusY: Number = SIZE / 2;
+			var realRadiusX: number = SIZE / 2;
+			var realRadiusY: number = SIZE / 2;
 			graphics.clear();
 			graphics.beginFill(this._color, Utils.uintToPercent(this._alpha));
 			graphics.drawRect(-realRadiusX, -realRadiusY, SIZE, SIZE);

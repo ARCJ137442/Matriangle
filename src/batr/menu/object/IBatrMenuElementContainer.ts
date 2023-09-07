@@ -14,6 +14,6 @@ package batr.menu.objects {
 	function addChildPerDirectElements(): void;
 
 	function getElementAt(index: int): IBatrMenuElement;
-	function getElementByName(name: String): BatrMenuGUI;
+	function getElementByName(name: string): BatrMenuGUI;
 }
 }

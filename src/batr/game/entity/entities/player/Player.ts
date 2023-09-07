@@ -18,14 +18,14 @@ package batr.game.entity.entity.players {
 
 	export default class Player extends EntityCommon implements IPlayerProfile {
 		//============Static Variables============//
-		public static const SIZE: Number = 1 * GlobalGameVariables.DEFAULT_SIZE;
-		public static const LINE_SIZE: Number = GlobalGameVariables.DEFAULT_SIZE / 96;
-		public static const CARRIED_BLOCK_ALPHA: Number = 1 / 4;
+		public static const SIZE: number = 1 * GlobalGameVariables.DEFAULT_SIZE;
+		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 96;
+		public static const CARRIED_BLOCK_ALPHA: number = 1 / 4;
 
 		public static const DEFAULT_MAX_HEALTH: int = 100;
 		public static const DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
 		public static const MAX_DAMAGE_DELAY: uint = 0.5 * GlobalGameVariables.FIXED_TPS;
-		public static function isAI(player: Player): Boolean {
+		public static function isAI(player: Player): boolean {
 			return player is AIPlayer;
 		}
 
@@ -36,7 +36,7 @@ package batr.game.entity.entity.players {
 		//============Instance Variables============//
 		protected _team: PlayerTeam;
 
-		protected _customName: String;
+		protected _customName: string;
 
 		protected _weapon: WeaponType;
 
@@ -74,11 +74,11 @@ package batr.game.entity.entity.players {
 		// public ContolKey_Select_Right:uint;
 
 		// isPress
-		public isPress_Up: Boolean;
-		public isPress_Down: Boolean;
-		public isPress_Left: Boolean;
-		public isPress_Right: Boolean;
-		public isPress_Use: Boolean;
+		public isPress_Up: boolean;
+		public isPress_Down: boolean;
+		public isPress_Left: boolean;
+		public isPress_Right: boolean;
+		public isPress_Use: boolean;
 		// public isPress_Select_Left:Boolean;
 		// public isPress_Select_Right:Boolean;
 
@@ -97,7 +97,7 @@ package batr.game.entity.entity.players {
 
 		protected _lives: uint = 10;
 
-		protected _infinityLife: Boolean = true;
+		protected _infinityLife: boolean = true;
 
 		// Weapon
 		protected _weaponUsingCD: uint = 0;
@@ -123,16 +123,16 @@ package batr.game.entity.entity.players {
 		//========Attributes========//
 		public moveDistence: uint = 1;
 
-		public invulnerable: Boolean = false;
+		public invulnerable: boolean = false;
 
 		//====Experience====//
 		protected _experience: uint = 0;
 
-		public function get experience(): uint {
+		public get experience(): uint {
 			return this._experience;
 		}
 
-		public function set experience(value: uint): void {
+		public set experience(value: uint): void {
 			while (value > this.uplevelExperience) {
 				value -= this.uplevelExperience;
 				this.level++;
@@ -149,19 +149,19 @@ package batr.game.entity.entity.players {
 		 */
 		protected _level: uint = 0;
 
-		public function get level(): uint {
+		public get level(): uint {
 			return this._level;
 		}
 
-		public function set level(value: uint): void {
+		public set level(value: uint): void {
 			this._level = value;
 		}
 
-		public function get uplevelExperience(): uint {
+		public get uplevelExperience(): uint {
 			return Player.getUplevelExperience(this._level);
 		}
 
-		public function get experiencePercent(): Number {
+		public get experiencePercent(): number {
 			return this._experience / this.uplevelExperience;
 		}
 
@@ -173,11 +173,11 @@ package batr.game.entity.entity.players {
 		 */
 		protected _buffDamage: uint = 0;
 
-		public function get buffDamage(): uint {
+		public get buffDamage(): uint {
 			return this._buffDamage;
 		}
 
-		public function set buffDamage(value: uint): void {
+		public set buffDamage(value: uint): void {
 			this._buffDamage = value;
 		}
 
@@ -187,11 +187,11 @@ package batr.game.entity.entity.players {
 		 */
 		protected _buffCD: uint = 0;
 
-		public function get buffCD(): uint {
+		public get buffCD(): uint {
 			return this._buffCD;
 		}
 
-		public function set buffCD(value: uint): void {
+		public set buffCD(value: uint): void {
 			this._buffCD = value;
 		}
 
@@ -201,11 +201,11 @@ package batr.game.entity.entity.players {
 		 */
 		protected _buffResistance: uint = 0;
 
-		public function get buffResistance(): uint {
+		public get buffResistance(): uint {
 			return this._buffResistance;
 		}
 
-		public function set buffResistance(value: uint): void {
+		public set buffResistance(value: uint): void {
 			this._buffResistance = value;
 		}
 
@@ -215,24 +215,24 @@ package batr.game.entity.entity.players {
 		 */
 		protected _buffRadius: uint = 0;
 
-		public function get buffRadius(): uint {
+		public get buffRadius(): uint {
 			return this._buffRadius;
 		}
 
-		public function set buffRadius(value: uint): void {
+		public set buffRadius(value: uint): void {
 			this._buffRadius = value;
 		}
 
 		//============Constructor Function============//
-		public function Player(
+		public Player(
 			host: Game,
-			x: Number,
-			y: Number,
+			x: number,
+			y: number,
 			team: PlayerTeam,
 			contolKeyId: uint,
-			isActive: Boolean = true,
-			fillColor: Number = NaN,
-			lineColor: Number = NaN): void {
+			isActive: boolean = true,
+			fillColor: number = NaN,
+			lineColor: number = NaN): void {
 			super(host, x, y, isActive);
 			// Set Team
 			this._team = team;
@@ -275,7 +275,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Instance Getter And Setter============//
-		public function get gui(): PlayerGUI {
+		public get gui(): PlayerGUI {
 			return this._GUI;
 		}
 
@@ -283,7 +283,7 @@ package batr.game.entity.entity.players {
 		 * Cannot using INT to return!
 		 * Because it's on the center of block!
 		 */
-		public function get frontX(): Number {
+		public get frontX(): number {
 			return this.getFrontIntX(this.moveDistence);
 		}
 
@@ -291,15 +291,15 @@ package batr.game.entity.entity.players {
 		 * Cannot using INT to return!
 		 * Because it's on the center of block!
 		 */
-		public function get frontY(): Number {
+		public get frontY(): number {
 			return this.getFrontIntY(this.moveDistence);
 		}
 
-		public function get team(): PlayerTeam {
+		public get team(): PlayerTeam {
 			return this._team;
 		}
 
-		public function set team(value: PlayerTeam): void {
+		public set team(value: PlayerTeam): void {
 			if (value == this._team)
 				return;
 			this._team = value;
@@ -309,33 +309,33 @@ package batr.game.entity.entity.players {
 			this._host.updateProjectilesColor();
 		}
 
-		public function get teamColor(): uint {
+		public get teamColor(): uint {
 			return this.team.defaultColor;
 		}
 
-		public function get stats(): PlayerStats {
+		public get stats(): PlayerStats {
 			return this._stats;
 		}
 
-		public function get weapon(): WeaponType {
+		public get weapon(): WeaponType {
 			return this._weapon;
 		}
 
 		/**
 		 * This weapon is used by drones created from another weapon
 		 */
-		public function get droneWeapon(): WeaponType {
+		public get droneWeapon(): WeaponType {
 			return this._droneWeapon;
 		}
 
-		public function set droneWeapon(value: WeaponType): void {
+		public set droneWeapon(value: WeaponType): void {
 			this._droneWeapon = value;
 		}
 
 		/**
 		 * Also Reset CD&Charge
 		 */
-		public function set weapon(value: WeaponType): void {
+		public set weapon(value: WeaponType): void {
 			if (value == this._weapon)
 				return;
 			this.resetCD();
@@ -344,12 +344,12 @@ package batr.game.entity.entity.players {
 			this._weapon = value;
 		}
 
-		public function get weaponUsingCD(): uint {
+		public get weaponUsingCD(): uint {
 			return this._weaponUsingCD;
 
 		}
 
-		public function set weaponUsingCD(value: uint): void {
+		public set weaponUsingCD(value: uint): void {
 			if (value == this._weaponUsingCD)
 				return;
 
@@ -359,12 +359,12 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get weaponChargeTime(): int {
+		public get weaponChargeTime(): int {
 			return this._weaponChargeTime;
 
 		}
 
-		public function set weaponChargeTime(value: int): void {
+		public set weaponChargeTime(value: int): void {
 			if (value == this._weaponChargeTime)
 				return;
 
@@ -374,12 +374,12 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get weaponChargeMaxTime(): uint {
+		public get weaponChargeMaxTime(): uint {
 			return this._weaponChargeMaxTime;
 
 		}
 
-		public function set weaponChargeMaxTime(value: uint): void {
+		public set weaponChargeMaxTime(value: uint): void {
 			if (value == this._weaponChargeMaxTime)
 				return;
 
@@ -389,7 +389,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get weaponNeedsCD(): Boolean {
+		public get weaponNeedsCD(): boolean {
 			if (this._weapon == null)
 				return false;
 
@@ -397,15 +397,15 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get weaponMaxCD(): Number {
+		public get weaponMaxCD(): number {
 			return this._host.rule.weaponsNoCD ? GlobalGameVariables.WEAPON_MIN_CD : this._weapon.getBuffedCD(this.buffCD);
 		}
 
-		public function get weaponReverseCharge(): Boolean {
+		public get weaponReverseCharge(): boolean {
 			return this._weapon.reverseCharge;
 		}
 
-		public function get weaponCDPercent(): Number {
+		public get weaponCDPercent(): number {
 			if (!this.weaponNeedsCD)
 				return 1;
 
@@ -413,7 +413,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get weaponNeedsCharge(): Boolean {
+		public get weaponNeedsCharge(): boolean {
 			if (this._weapon == null)
 				return false;
 
@@ -421,7 +421,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get isCharging(): Boolean {
+		public get isCharging(): boolean {
 			if (!this.weaponNeedsCharge)
 				return false;
 
@@ -429,7 +429,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get chargingPercent(): Number { // 0~1
+		public get chargingPercent(): number { // 0~1
 			if (!this.weaponNeedsCharge)
 				return 1;
 
@@ -441,23 +441,23 @@ package batr.game.entity.entity.players {
 		}
 
 		// Color
-		public function get lineColor(): uint {
+		public get lineColor(): uint {
 			return this._lineColor;
 
 		}
 
-		public function get fillColor(): uint {
+		public get fillColor(): uint {
 			return this._fillColor;
 
 		}
 
 		// Health,MaxHealth,Life&Respawn
-		public function get health(): uint {
+		public get health(): uint {
 			return this._health;
 
 		}
 
-		public function set health(value: uint): void {
+		public set health(value: uint): void {
 			if (value == this._health)
 				return;
 
@@ -468,12 +468,12 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get maxHealth(): uint {
+		public get maxHealth(): uint {
 			return this._maxHealth;
 
 		}
 
-		public function set maxHealth(value: uint): void {
+		public set maxHealth(value: uint): void {
 			if (value == this._maxHealth)
 				return;
 
@@ -486,17 +486,17 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get isFullHealth(): Boolean {
+		public get isFullHealth(): boolean {
 			return this._health >= this._maxHealth;
 
 		}
 
-		public function get heal(): uint {
+		public get heal(): uint {
 			return this._heal;
 
 		}
 
-		public function set heal(value: uint): void {
+		public set heal(value: uint): void {
 			if (value == this._heal)
 				return;
 
@@ -506,12 +506,12 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get lives(): uint {
+		public get lives(): uint {
 			return this._lives;
 
 		}
 
-		public function set lives(value: uint): void {
+		public set lives(value: uint): void {
 			if (value == this._lives)
 				return;
 
@@ -521,12 +521,12 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get infinityLife(): Boolean {
+		public get infinityLife(): boolean {
 			return this._infinityLife;
 
 		}
 
-		public function set infinityLife(value: Boolean): void {
+		public set infinityLife(value: boolean): void {
 			if (value == this._infinityLife)
 				return;
 
@@ -536,38 +536,38 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get isRespawning(): Boolean {
+		public get isRespawning(): boolean {
 			return this.respawnTick >= 0;
 
 		}
 
-		public function get healthPercent(): Number {
+		public get healthPercent(): number {
 			return this.health / this.maxHealth;
 
 		}
 
-		public function get isCertainlyOut(): Boolean {
+		public get isCertainlyOut(): boolean {
 			return this.lives == 0 && this.health == 0 && !this.isActive;
 		}
 
 		// Display for GUI
-		public function get healthText(): String {
-			var healthText: String = this._health + '/' + this._maxHealth;
+		public get healthText(): string {
+			var healthText: string = this._health + '/' + this._maxHealth;
 
-			var healText: String = this._heal > 0 ? '<' + this._heal + '>' : '';
+			var healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
 
-			var lifeText: String = this._infinityLife ? '' : '[' + this._lives + ']';
+			var lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
 
 			return healthText + healText + lifeText;
 
 		}
 
-		public function get customName(): String {
+		public get customName(): string {
 			return this._customName;
 
 		}
 
-		public function set customName(value: String): void {
+		public set customName(value: string): void {
 			if (value == this._customName)
 				return;
 
@@ -578,13 +578,13 @@ package batr.game.entity.entity.players {
 		}
 
 		// Other
-		public function get lastHurtbyPlayer(): Player {
+		public get lastHurtbyPlayer(): Player {
 			return this._lastHurtbyPlayer;
 
 		}
 
 		// Key&Control
-		public function get someKeyDown(): Boolean {
+		public get someKeyDown(): boolean {
 			return (this.isPress_Up ||
 				this.isPress_Down ||
 				this.isPress_Left ||
@@ -595,7 +595,7 @@ package batr.game.entity.entity.players {
 
 		}
 
-		public function get someMoveKeyDown(): Boolean {
+		public get someMoveKeyDown(): boolean {
 			return (this.isPress_Up ||
 				this.isPress_Down ||
 				this.isPress_Left ||
@@ -603,31 +603,31 @@ package batr.game.entity.entity.players {
 
 		}
 		/*
-		public function get someSelectKeyDown():Boolean {
+		public get someSelectKeyDown():Boolean {
 			return (this.isPress_Select_Left||this.isPress_Selec_Right)
 		}*/
 
-		public function set pressLeft(turn: Boolean): void {
+		public set pressLeft(turn: boolean): void {
 			this.isPress_Left = turn;
 
 		}
 
-		public function set pressRight(turn: Boolean): void {
+		public set pressRight(turn: boolean): void {
 			this.isPress_Right = turn;
 
 		}
 
-		public function set pressUp(turn: Boolean): void {
+		public set pressUp(turn: boolean): void {
 			this.isPress_Up = turn;
 
 		}
 
-		public function set pressDown(turn: Boolean): void {
+		public set pressDown(turn: boolean): void {
 			this.isPress_Down = turn;
 
 		}
 
-		public function set pressUse(turn: Boolean): void {
+		public set pressUse(turn: boolean): void {
 			if (this.isPress_Use && !turn) {
 				this.isPress_Use = turn;
 
@@ -641,11 +641,11 @@ package batr.game.entity.entity.players {
 
 		}
 
-		/*public function set pressLeftSelect(turn:Boolean):void {
+		/*public set pressLeftSelect(turn:Boolean):void {
 			this.isPress_Select_Left=turn
 		}
 		
-		public function set pressRightSelect(turn:Boolean):void {
+		public set pressRightSelect(turn:Boolean):void {
 			this.isPress_Select_Right=turn
 		}*/
 
@@ -663,7 +663,7 @@ package batr.game.entity.entity.players {
 		 * @param	weaponID	invaild number means random.
 		 * @param	uniformWeapon	The uniform weapon
 		 */
-		public function initVariablesByRule(weaponID: int, uniformWeapon: WeaponType = null): void {
+		public initVariablesByRule(weaponID: int, uniformWeapon: WeaponType = null): void {
 			// Health&Life
 			this._maxHealth = this._host.rule.defaultMaxHealth;
 
@@ -682,14 +682,14 @@ package batr.game.entity.entity.players {
 		}
 
 		//====Functions About Health====//
-		public function addHealth(value: uint, healer: Player = null): void {
+		public addHealth(value: uint, healer: Player = null): void {
 			this.health += value;
 
 			this.onHeal(value, healer);
 
 		}
 
-		public function removeHealth(value: uint, attacker: Player = null): void {
+		public removeHealth(value: uint, attacker: Player = null): void {
 			if (invulnerable)
 				return;
 			this._lastHurtbyPlayer = attacker;
@@ -703,53 +703,53 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function setLifeByInt(lives: Number): void {
+		public setLifeByInt(lives: number): void {
 			this._infinityLife = (lives < 0);
 			if (this._lives >= 0)
 				this._lives = lives;
 		}
 
 		//====Functions About Hook====//
-		protected function onHeal(amount: uint, healer: Player = null): void {
+		protected onHeal(amount: uint, healer: Player = null): void {
 
 		}
 
-		protected function onHurt(damage: uint, attacker: Player = null): void {
+		protected onHurt(damage: uint, attacker: Player = null): void {
 			// this._hurtOverlay.playAnimation();
 			this._host.addPlayerHurtEffect(this);
 			this._host.onPlayerHurt(attacker, this, damage);
 		}
 
-		protected function onDeath(damage: uint, attacker: Player = null): void {
+		protected onDeath(damage: uint, attacker: Player = null): void {
 			this._host.onPlayerDeath(attacker, this, damage);
 			if (attacker != null)
 				attacker.onKillPlayer(this, damage);
 		}
 
-		protected function onKillPlayer(victim: Player, damage: uint): void {
+		protected onKillPlayer(victim: Player, damage: uint): void {
 			if (victim != this && !this.isRespawning)
 				this.experience++;
 		}
 
-		protected function onRespawn(): void {
+		protected onRespawn(): void {
 
 		}
 
-		public function onMapTransform(): void {
+		public onMapTransform(): void {
 			this.resetCD();
 			this.resetCharge(false);
 		}
 
-		public function onPickupBonusBox(box: BonusBox): void {
+		public onPickupBonusBox(box: BonusBox): void {
 
 		}
 
-		public override function preLocationUpdate(oldX: Number, oldY: Number): void {
+		public override function preLocationUpdate(oldX: number, oldY: number): void {
 			this._host.prePlayerLocationChange(this, oldX, oldY);
 			super.preLocationUpdate(oldX, oldY);
 		}
 
-		public override function onLocationUpdate(newX: Number, newY: Number): void {
+		public override function onLocationUpdate(newX: number, newY: number): void {
 			if (this._GUI != null) {
 				this._GUI.entityX = this.entityX;
 				this._GUI.entityY = this.entityY;
@@ -758,7 +758,7 @@ package batr.game.entity.entity.players {
 			super.onLocationUpdate(newX, newY);
 		}
 
-		public function onLevelup(): void {
+		public onLevelup(): void {
 			this._host.onPlayerLevelup(this);
 		}
 
@@ -769,14 +769,14 @@ package batr.game.entity.entity.players {
 		 * @param	weapon	The weapon.
 		 * @return	If player can hurt target with this weapon.
 		 */
-		public function canUseWeaponHurtPlayer(player: Player, weapon: WeaponType): Boolean {
+		public canUseWeaponHurtPlayer(player: Player, weapon: WeaponType): boolean {
 			return (isEnemy(player) && weapon.weaponCanHurtEnemy ||
 				isSelf(player) && weapon.weaponCanHurtSelf ||
 				isAlly(player) && weapon.weaponCanHurtAlly);
 
 		}
 
-		public function filterPlayersThisCanHurt(players: Player[], weapon: WeaponType): Player[] {
+		public filterPlayersThisCanHurt(players: Player[], weapon: WeaponType): Player[] {
 			return players.filter(
 				function (player: Player, index: int, vector: Player[]) {
 					return this.canUseWeaponHurtPlayer(player, weapon);
@@ -784,38 +784,38 @@ package batr.game.entity.entity.players {
 			);
 		}
 
-		public function isEnemy(player: Player): Boolean {
+		public isEnemy(player: Player): boolean {
 			return (!isAlly(player, true));
 
 		}
 
-		public function isSelf(player: Player): Boolean {
+		public isSelf(player: Player): boolean {
 			return player === this;
 
 		}
 
-		public function isAlly(player: Player, includeSelf: Boolean = false): Boolean {
+		public isAlly(player: Player, includeSelf: boolean = false): boolean {
 			return player != null && ((includeSelf || !isSelf(player)) &&
 				this.team === player.team);
 
 		}
 
-		public function get carriedBlock(): BlockCommon {
+		public get carriedBlock(): BlockCommon {
 			return this._carriedBlock;
 
 		}
 
-		public function get isCarriedBlock(): Boolean {
+		public get isCarriedBlock(): boolean {
 			return this._carriedBlock != null && this._carriedBlock.visible;
 
 		}
 
-		public function dealMoveInTestOnLocationChange(x: Number, y: Number, ignoreDelay: Boolean = false, isLocationChange: Boolean = false): void {
+		public dealMoveInTestOnLocationChange(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 			this.dealMoveInTest(x, y, ignoreDelay, isLocationChange);
 
 		}
 
-		public function dealMoveInTest(x: Number, y: Number, ignoreDelay: Boolean = false, isLocationChange: Boolean = false): void {
+		public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 			if (ignoreDelay) {
 				this._host.moveInTestPlayer(this, isLocationChange);
 				this._damageDelay = MAX_DAMAGE_DELAY;
@@ -831,7 +831,7 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		public function dealHeal(): void {
+		public dealHeal(): void {
 			if (this._heal < 1)
 				return;
 			if (this._healDelay > GlobalGameVariables.TPS * (0.1 + this.healthPercent * 0.15)) {
@@ -847,7 +847,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//====Functions About Respawn====//
-		public function dealRespawn(): void {
+		public dealRespawn(): void {
 			if (this.respawnTick > 0)
 				this.respawnTick--;
 
@@ -861,7 +861,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//====Functions About Weapon====//
-		protected function onWeaponChange(oldType: WeaponType, newType: WeaponType): void {
+		protected onWeaponChange(oldType: WeaponType, newType: WeaponType): void {
 			this.initWeaponCharge();
 			this.resetCharge(false);
 			// Change Drone Weapon
@@ -876,7 +876,7 @@ package batr.game.entity.entity.players {
 			// If The Block is still carring,then throw without charge(WIP,maybe?)
 		}
 
-		protected function dealUsingCD(): void {
+		protected dealUsingCD(): void {
 			// trace(this.weapon.name,this._weaponChargeTime,this._weaponChargeMaxTime)
 			if (this._weaponUsingCD > 0) {
 				this._weaponUsingCD--;
@@ -901,7 +901,7 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		protected function dealWeaponCharge(): void {
+		protected dealWeaponCharge(): void {
 			if (this._weaponChargeTime >= this._weaponChargeMaxTime) {
 				this.useWeapon();
 				this.resetCharge(false, false);
@@ -911,7 +911,7 @@ package batr.game.entity.entity.players {
 			this._GUI.updateCharge();
 		}
 
-		protected function dealWeaponReverseCharge(): void {
+		protected dealWeaponReverseCharge(): void {
 			if (this.weaponChargeTime < this.weaponChargeMaxTime) {
 				this._weaponChargeTime++;
 			}
@@ -922,19 +922,19 @@ package batr.game.entity.entity.players {
 			this._GUI.updateCharge();
 		}
 
-		protected function onDisableCharge(): void {
+		protected onDisableCharge(): void {
 			if (!this.weaponNeedsCharge || this._weaponUsingCD > 0 || !this.isActive || this.isRespawning)
 				return;
 			this.useWeapon();
 			this.resetCharge();
 		}
 
-		public function initWeaponCharge(): void {
+		public initWeaponCharge(): void {
 			this._weaponChargeTime = 0;
 			this._weaponChargeMaxTime = this._weapon.defaultChargeTime;
 		}
 
-		public function resetCharge(includeMaxTime: Boolean = true, updateGUI: Boolean = true): void {
+		public resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
 			this._weaponChargeTime = -1;
 			if (includeMaxTime)
 				this._weaponChargeMaxTime = 0;
@@ -942,7 +942,7 @@ package batr.game.entity.entity.players {
 				this._GUI.updateCharge();
 		}
 
-		public function resetCD(): void {
+		public resetCD(): void {
 			this._weaponUsingCD = 0;
 			this._GUI.updateCD();
 		}
@@ -977,7 +977,7 @@ package batr.game.entity.entity.players {
 		return weapon.getBuffedCD(this.buffCD);
 	}
 
-		public final function computeFinalRadius(defaultRadius: Number): Number {
+		public final function computeFinalRadius(defaultRadius: number): number {
 		return defaultRadius * (1 + Math.min(this.buffRadius / 16, 3));
 	}
 
@@ -987,9 +987,9 @@ package batr.game.entity.entity.players {
 	}
 
 	//====Functions About Graphics====//
-	protected function drawShape(Alpha: Number = 1): void {
-		var realRadiusX: Number = (SIZE - LINE_SIZE) / 2;
-		var realRadiusY: Number = (SIZE - LINE_SIZE) / 2;
+	protected drawShape(Alpha: number = 1): void {
+		var realRadiusX: number = (SIZE - LINE_SIZE) / 2;
+		var realRadiusY: number = (SIZE - LINE_SIZE) / 2;
 		graphics.clear();
 		graphics.lineStyle(LINE_SIZE, this._lineColor);
 		// graphics.beginFill(this._fillColor,Alpha);
@@ -1012,203 +1012,203 @@ package batr.game.entity.entity.players {
 		graphics.endFill();
 	}
 
-	protected function initColors(fillColor: Number = NaN, lineColor: Number = NaN): void {
+	protected initColors(fillColor: number = NaN, lineColor: number = NaN): void {
 		// Deal fillColor
-		if (isNaN(fillColor))
-			this._fillColor = this._team.defaultColor;
+		if(isNaN(fillColor))
+	this._fillColor = this._team.defaultColor;
 		else
-			this._fillColor = uint(fillColor);
-		// Deal lineColor
-		var HSV: Number[] = Color.HEXtoHSV(this._fillColor);
-		this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
-		if (isNaN(lineColor)) {
-			this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);
-		}
-		else
-			this._lineColor = uint(lineColor);
+	this._fillColor = uint(fillColor);
+	// Deal lineColor
+	var HSV: number[] = Color.HEXtoHSV(this._fillColor);
+	this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
+	if (isNaN(lineColor)) {
+		this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);
 	}
+	else
+		this._lineColor = uint(lineColor);
+}
 
-	public function setCarriedBlock(block: BlockCommon, copyBlock: Boolean = true): void {
-		if (block == null) {
-			this._carriedBlock.visible = false;
-		}
+	public setCarriedBlock(block: BlockCommon, copyBlock: boolean = true): void {
+	if(block == null) {
+	this._carriedBlock.visible = false;
+}
 		else {
-			if (this._carriedBlock != null && this.contains(this._carriedBlock))
-				this.removeChild(this._carriedBlock);
-			this._carriedBlock = copyBlock ? block.clone() : block;
-			this._carriedBlock.x = GlobalGameVariables.DEFAULT_SIZE / 2;
-			this._carriedBlock.y = -GlobalGameVariables.DEFAULT_SIZE / 2;
-			this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
-			this.addChild(this._carriedBlock);
-		}
+	if (this._carriedBlock != null && this.contains(this._carriedBlock))
+		this.removeChild(this._carriedBlock);
+	this._carriedBlock = copyBlock ? block.clone() : block;
+	this._carriedBlock.x = GlobalGameVariables.DEFAULT_SIZE / 2;
+	this._carriedBlock.y = -GlobalGameVariables.DEFAULT_SIZE / 2;
+	this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
+	this.addChild(this._carriedBlock);
+}
 	}
 
-	protected function addChildren(): void {
-		this._host.playerGUIContainer.addChild(this._GUI);
-	}
+	protected addChildren(): void {
+	this._host.playerGUIContainer.addChild(this._GUI);
+}
 
 		//====Tick Run Function====//
 		public override function tickFunction(): void {
-		this.dealUsingCD();
-		this.updateKeyDelay();
-		this.dealKeyContol();
-		this.dealMoveInTest(this.entityX, this.entityY, false, false);
-		this.dealHeal();
-		super.tickFunction();
-	}
+	this.dealUsingCD();
+	this.updateKeyDelay();
+	this.dealKeyContol();
+	this.dealMoveInTest(this.entityX, this.entityY, false, false);
+	this.dealHeal();
+	super.tickFunction();
+}
 
 	//====Contol Functions====//
-	public function initContolKey(id: uint): void {
-		switch (id) {
+	public initContolKey(id: uint): void {
+	switch(id) {
 			// AI
 			case 0:
-				return;
-				break;
-			// P1
-			case 1:
-				contolKey_Up = KeyCode.W; // Up:W
-				contolKey_Down = KeyCode.S; // Down:S
-				contolKey_Left = KeyCode.A; // Left:A
-				contolKey_Right = KeyCode.D; // Right:D
-				contolKey_Use = KeyCode.SPACE; // Use:Space
-				break;
-			// P2
-			case 2:
-				contolKey_Up = KeyCode.UP; // Up:Key_UP
-				contolKey_Down = KeyCode.DOWN; // Down:Key_DOWN
-				contolKey_Left = KeyCode.LEFT; // Left:Key_Left
-				contolKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-				contolKey_Use = KeyCode.NUMPAD_0; // Use:'0'
-				break;
-			// P3
-			case 3:
-				contolKey_Up = KeyCode.U; // Up:U
-				contolKey_Down = KeyCode.J; // Down:J
-				contolKey_Left = KeyCode.H; // Left:H
-				contolKey_Right = KeyCode.K; // Right:K
-				contolKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
-				break;
-			// P4
-			case 4:
-				contolKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
-				contolKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
-				contolKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
-				contolKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
-				contolKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
-				break;
-		}
+	return;
+	break;
+	// P1
+	case 1:
+	contolKey_Up = KeyCode.W; // Up:W
+	contolKey_Down = KeyCode.S; // Down:S
+	contolKey_Left = KeyCode.A; // Left:A
+	contolKey_Right = KeyCode.D; // Right:D
+	contolKey_Use = KeyCode.SPACE; // Use:Space
+	break;
+	// P2
+	case 2:
+	contolKey_Up = KeyCode.UP; // Up:Key_UP
+	contolKey_Down = KeyCode.DOWN; // Down:Key_DOWN
+	contolKey_Left = KeyCode.LEFT; // Left:Key_Left
+	contolKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
+	contolKey_Use = KeyCode.NUMPAD_0; // Use:'0'
+	break;
+	// P3
+	case 3:
+	contolKey_Up = KeyCode.U; // Up:U
+	contolKey_Down = KeyCode.J; // Down:J
+	contolKey_Left = KeyCode.H; // Left:H
+	contolKey_Right = KeyCode.K; // Right:K
+	contolKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
+	break;
+	// P4
+	case 4:
+	contolKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
+	contolKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
+	contolKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
+	contolKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
+	contolKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
+	break;
+}
 	}
 
-	public function isOwnContolKey(code: uint): Boolean {
-		return (code == this.contolKey_Up ||
-			code == this.contolKey_Down ||
-			code == this.contolKey_Left ||
-			code == this.contolKey_Right ||
-			code == this.contolKey_Use /*||
+	public isOwnContolKey(code: uint): boolean {
+	return (code == this.contolKey_Up ||
+		code == this.contolKey_Down ||
+		code == this.contolKey_Left ||
+		code == this.contolKey_Right ||
+		code == this.contolKey_Use /*||
 					code==this.contolKey_Select_Left||
 					code==this.contolKey_Selec_Right*/);
-	}
+}
 
-	public function isOwnKeyDown(code: uint): Boolean {
-		return (code == this.contolKey_Up && this.isPress_Up ||
-			code == this.contolKey_Down && this.isPress_Down ||
-			code == this.contolKey_Left && this.isPress_Left ||
-			code == this.contolKey_Right && this.isPress_Right ||
-			code == this.contolKey_Use && this.isPress_Use /*||
+	public isOwnKeyDown(code: uint): boolean {
+	return (code == this.contolKey_Up && this.isPress_Up ||
+		code == this.contolKey_Down && this.isPress_Down ||
+		code == this.contolKey_Left && this.isPress_Left ||
+		code == this.contolKey_Right && this.isPress_Right ||
+		code == this.contolKey_Use && this.isPress_Use /*||
 					code==this.contolKey_Select_Left||
 					code==this.contolKey_Selec_Right*/);
-	}
+}
 
-	public function clearContolKeys(): void {
-		contolKey_Up = KeyCode.EMPTY;
-		contolKey_Down = KeyCode.EMPTY;
-		contolKey_Left = KeyCode.EMPTY;
-		contolKey_Right = KeyCode.EMPTY;
-		contolKey_Use = KeyCode.EMPTY;
-	}
+	public clearContolKeys(): void {
+	contolKey_Up = KeyCode.EMPTY;
+	contolKey_Down = KeyCode.EMPTY;
+	contolKey_Left = KeyCode.EMPTY;
+	contolKey_Right = KeyCode.EMPTY;
+	contolKey_Use = KeyCode.EMPTY;
+}
 
-	public function turnAllKeyUp(): void {
-		this.isPress_Up = false;
-		this.isPress_Down = false;
-		this.isPress_Left = false;
-		this.isPress_Right = false;
-		this.isPress_Use = false;
-		// this.isPress_Select_Left=false;
-		// this.isPress_Select_Right=false;
+	public turnAllKeyUp(): void {
+	this.isPress_Up = false;
+	this.isPress_Down = false;
+	this.isPress_Left = false;
+	this.isPress_Right = false;
+	this.isPress_Use = false;
+	// this.isPress_Select_Left=false;
+	// this.isPress_Select_Right=false;
+	this.keyDelay_Move = 0;
+	this.contolDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
+	// this.contolDelay_Select=GlobalGameVariables.TPS/5;
+	this.contolLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
+	// this.contolLoop_Select=GlobalGameVariables.TPS/40;
+}
+
+	public updateKeyDelay(): void {
+	// trace(this.keyDelay_Move,this.contolDelay_Move,this.contolLoop_Move);
+	//==Set==//
+	// Move
+	if(this.someMoveKeyDown) {
+	this.keyDelay_Move++;
+	if (this.keyDelay_Move >= this.contolLoop_Move) {
 		this.keyDelay_Move = 0;
-		this.contolDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
-		// this.contolDelay_Select=GlobalGameVariables.TPS/5;
-		this.contolLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
-		// this.contolLoop_Select=GlobalGameVariables.TPS/40;
 	}
-
-	public function updateKeyDelay(): void {
-		// trace(this.keyDelay_Move,this.contolDelay_Move,this.contolLoop_Move);
-		//==Set==//
-		// Move
-		if (this.someMoveKeyDown) {
-			this.keyDelay_Move++;
-			if (this.keyDelay_Move >= this.contolLoop_Move) {
-				this.keyDelay_Move = 0;
-			}
-		}
+}
 		else {
-			this.keyDelay_Move = -contolDelay_Move;
-		}
+	this.keyDelay_Move = -contolDelay_Move;
+}
 	}
 
-	public function runActionByKeyCode(code: uint): void {
-		if (!this.isActive || this.isRespawning)
-			return;
-		switch (code) {
+	public runActionByKeyCode(code: uint): void {
+	if(!this.isActive || this.isRespawning)
+	return;
+	switch(code) {
 			case this.contolKey_Up:
-				this.moveUp();
-				break;
-			case this.contolKey_Down:
-				this.moveDown();
-				break;
-			case this.contolKey_Left:
-				this.moveLeft();
-				break;
-			case this.contolKey_Right:
-				this.moveRight();
-				break;
-			case this.contolKey_Use:
-				if (!this.weaponReverseCharge)
-					this.useWeapon();
-				break;
-			/*case this.contolKey_Select_Left:
-			this.moveSelect_Left();
-		break;
-		case this.contolKey_Select_Right:
-			this.moveSelect_Right();
-		break;*/
-		}
+	this.moveUp();
+	break;
+	case this.contolKey_Down:
+	this.moveDown();
+	break;
+	case this.contolKey_Left:
+	this.moveLeft();
+	break;
+	case this.contolKey_Right:
+	this.moveRight();
+	break;
+	case this.contolKey_Use:
+	if(!this.weaponReverseCharge)
+	this.useWeapon();
+	break;
+	/*case this.contolKey_Select_Left:
+	this.moveSelect_Left();
+break;
+case this.contolKey_Select_Right:
+	this.moveSelect_Right();
+break;*/
+}
 	}
 
-	public function dealKeyContol(): void {
-		if (!this.isActive || this.isRespawning)
-			return;
-		if (this.someKeyDown) {
-			// Move
-			if (this.keyDelay_Move == 0) {
-				// Up
-				if (this.isPress_Up) {
-					this.moveUp();
-				}
-				// Down
-				else if (this.isPress_Down) {
-					this.moveDown();
-				}
-				// Left
-				else if (this.isPress_Left) {
-					this.moveLeft();
-				}
-				// Right
-				else if (this.isPress_Right) {
-					this.moveRight();
-				}
-			} /*
+	public dealKeyContol(): void {
+	if(!this.isActive || this.isRespawning)
+	return;
+	if(this.someKeyDown) {
+	// Move
+	if (this.keyDelay_Move == 0) {
+		// Up
+		if (this.isPress_Up) {
+			this.moveUp();
+		}
+		// Down
+		else if (this.isPress_Down) {
+			this.moveDown();
+		}
+		// Left
+		else if (this.isPress_Left) {
+			this.moveLeft();
+		}
+		// Right
+		else if (this.isPress_Right) {
+			this.moveRight();
+		}
+	} /*
 				//Select_Left
 				if(this.keyDelay_Select==0) {
 					//Select_Right
@@ -1219,86 +1219,86 @@ package batr.game.entity.entity.players {
 						this.SelectLeft();
 					}
 				}*/
-		}
+}
 	}
 
-		public override function moveForward(distance: Number = 1): void {
-		if (this.isRespawning)
-			return;
-		switch (this.rot) {
-			case GlobalRot.RIGHT:
-				moveRight();
-				break;
+		public override function moveForward(distance: number = 1): void {
+	if (this.isRespawning)
+		return;
+	switch (this.rot) {
+		case GlobalRot.RIGHT:
+			moveRight();
+			break;
 
-			case GlobalRot.LEFT:
-				moveLeft();
-				break;
+		case GlobalRot.LEFT:
+			moveLeft();
+			break;
 
-			case GlobalRot.UP:
-				moveUp();
-				break;
+		case GlobalRot.UP:
+			moveUp();
+			break;
 
-			case GlobalRot.DOWN:
-				moveDown();
-				break;
+		case GlobalRot.DOWN:
+			moveDown();
+			break;
 
-		}
 	}
+}
 
-		public override function moveIntForward(distance: Number = 1): void {
-		moveForward(distance);
-	}
+		public override function moveIntForward(distance: number = 1): void {
+	moveForward(distance);
+}
 
-	public function moveLeft(): void {
-		this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistence);
-	}
+	public moveLeft(): void {
+	this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistence);
+}
 
-	public function moveRight(): void {
-		this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistence);
-	}
+	public moveRight(): void {
+	this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistence);
+}
 
-	public function moveUp(): void {
-		this._host.movePlayer(this, GlobalRot.UP, this.moveDistence);
-	}
+	public moveUp(): void {
+	this._host.movePlayer(this, GlobalRot.UP, this.moveDistence);
+}
 
-	public function moveDown(): void {
-		this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistence);
-	}
+	public moveDown(): void {
+	this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistence);
+}
 
-	public function turnUp(): void {
-		this.rot = GlobalRot.UP;
-	}
+	public turnUp(): void {
+	this.rot = GlobalRot.UP;
+}
 
-	public function turnDown(): void {
-		this.rot = GlobalRot.DOWN;
-	}
+	public turnDown(): void {
+	this.rot = GlobalRot.DOWN;
+}
 
-	public function turnAbsoluteLeft(): void {
-		this.rot = GlobalRot.LEFT;
-	}
+	public turnAbsoluteLeft(): void {
+	this.rot = GlobalRot.LEFT;
+}
 
-	public function turnAbsoluteRight(): void {
-		this.rot = GlobalRot.RIGHT;
-	}
+	public turnAbsoluteRight(): void {
+	this.rot = GlobalRot.RIGHT;
+}
 
-	public function turnBack(): void {
-		this.rot += 2;
-	}
+	public turnBack(): void {
+	this.rot += 2;
+}
 
-	public function turnRelativeLeft(): void {
-		this.rot += 3;
-	}
+	public turnRelativeLeft(): void {
+	this.rot += 3;
+}
 
-	public function turnRelativeRight(): void {
-		this.rot += 1;
-	}
+	public turnRelativeRight(): void {
+	this.rot += 1;
+}
 
-	public function useWeapon(): void {
-		if (!this.weaponNeedsCharge || this.chargingPercent > 0) {
-			this._host.playerUseWeapon(this, this.rot, this.chargingPercent);
-		}
-		if (this.weaponNeedsCharge)
-			this._GUI.updateCharge();
+	public useWeapon(): void {
+	if(!this.weaponNeedsCharge || this.chargingPercent > 0) {
+	this._host.playerUseWeapon(this, this.rot, this.chargingPercent);
+}
+if (this.weaponNeedsCharge)
+	this._GUI.updateCharge();
 	}
 }
 }
