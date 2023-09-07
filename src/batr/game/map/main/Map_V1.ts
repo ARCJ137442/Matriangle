@@ -101,7 +101,7 @@ package batr.game.map.main {
 
 			}
 			//====Map 5====//
-			MAP_5._generater = new MapGenerater(function (map: IMap): IMap {
+			MAP_5._generator = new MapGenerator(function (map: IMap): IMap {
 				map.copyContentFrom(Map_V1.FRAME);
 				var randNum: int = 24 + exMath.random(47), randType: BlockType;
 				var ix: int, iy: int;
@@ -610,7 +610,7 @@ package batr.game.map.main {
 
 		//============Instance Variables============//
 		protected var _Content: Object = new Object();
-		protected var _generater: IMapGenerater;
+		protected var _generator: IMapGenerator;
 
 		//============Constructor============//
 		public function Map_V1(name: String = null, content: Object = null, isArena: Boolean = false): void {
@@ -623,7 +623,7 @@ package batr.game.map.main {
 		public override function deleteSelf(): void {
 			this.removeAllBlock();
 			this._Content = null;
-			this._generater = null;
+			this._generator = null;
 			super.deleteSelf();
 		}
 
@@ -703,8 +703,8 @@ package batr.game.map.main {
 			// spawnPoints
 			copy._spawnPoints = this._spawnPoints.concat();
 
-			// generater
-			copy._generater = this._generater;
+			// generator
+			copy._generator = this._generator;
 
 			// return
 			return copy;
@@ -740,14 +740,14 @@ package batr.game.map.main {
 
 		/**
 		 * construct new map.
-		 * If has generater,generate to new map
+		 * If has generator,generate to new map
 		 * Else clone self
 		 * @return
 		 */
 		public override function generateNew(): IMap {
-			// trace('generateNew:',this===MAP_5,this._generater)
-			if (this._generater != null)
-				return this._generater.generateTo(this.clone(), true);
+			// trace('generateNew:',this===MAP_5,this._generator)
+			if (this._generator != null)
+				return this._generator.generateTo(this.clone(), true);
 			return super.generateNew();
 		}
 

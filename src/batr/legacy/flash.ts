@@ -9,5 +9,6 @@ export * as utils from './flash/utils'
 export * as display from './flash/display'
 export * as events from './flash/events'
 export * as geom from './flash/geom'
+export * as text from './flash/text'
 
 // export { flash }; // cannot use default

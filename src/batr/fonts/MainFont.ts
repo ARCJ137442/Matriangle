@@ -1,9 +1,8 @@
-package batr.fonts {
+import { Font } from "../legacy/flash/text";
 
-	import flash.text.Font;
+// import flash.text.Font;
 
-	//============Class============//
-	public class MainFont extends Font {
+//============Class============//
+export default class MainFont extends Font {
 
-	}
 }

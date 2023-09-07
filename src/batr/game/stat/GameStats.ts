@@ -2,7 +2,7 @@
 
 	import batr.game.main.*;
 	import batr.game.model.*;
-	import batr.game.entity.entities.players.*;
+	import batr.game.entity.entity.player.*;
 
 	/**
 	 * Thst's a stats(or scoreboard) use for a game

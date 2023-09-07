@@ -1,122 +1,151 @@
 # TODO for migrate `.as` to `.ts`
 
-- [x] src\batr\common\exMath.ts
-- [x] src\batr\common\iPoint.ts
-- [x] src\batr\common\KeyCode.ts
-- [x] src\batr\common\KeyListener.ts
-- [x] src\batr\common\RandomGenerator.ts
-- [x] src\batr\common\UintPointCompress.ts
-- [x] src\batr\common\Utils.ts
-- [ ] src\batr\fonts\MainFont.ts
-- [ ] src\batr\game\block\blocks\Bedrock.ts
-- [ ] src\batr\game\block\blocks\ColoredBlock.ts
-- [ ] src\batr\game\block\blocks\ColorSpawner.ts
-- [ ] src\batr\game\block\blocks\Gate.ts
-- [ ] src\batr\game\block\blocks\Glass.ts
-- [ ] src\batr\game\block\blocks\LaserTrap.ts
-- [ ] src\batr\game\block\blocks\Metal.ts
-- [ ] src\batr\game\block\blocks\MoveableWall.ts
-- [ ] src\batr\game\block\blocks\SpawnPointMark.ts
-- [ ] src\batr\game\block\blocks\SupplyPoint.ts
-- [ ] src\batr\game\block\blocks\Wall.ts
-- [ ] src\batr\game\block\blocks\Water.ts
-- [ ] src\batr\game\block\blocks\XTrap.ts
-- [ ] src\batr\game\block\BlockAttributes.ts
-- [ ] src\batr\game\block\BlockCommon.ts
-- [ ] src\batr\game\block\BlockType.ts
-- [ ] src\batr\game\block\RotatableBlock.ts
-- [ ] src\batr\game\effect\effects\EffectBlockLight.ts
-- [ ] src\batr\game\effect\effects\EffectExplode.ts
-- [ ] src\batr\game\effect\effects\EffectPlayerDeathAlpha.ts
-- [ ] src\batr\game\effect\effects\EffectPlayerDeathLight.ts
-- [ ] src\batr\game\effect\effects\EffectPlayerHurt.ts
-- [ ] src\batr\game\effect\effects\EffectPlayerLevelup.ts
-- [ ] src\batr\game\effect\effects\EffectSpawn.ts
-- [ ] src\batr\game\effect\effects\EffectTeleport.ts
-- [ ] src\batr\game\effect\EffectCommon.ts
-- [ ] src\batr\game\effect\EffectSystem.ts
-- [ ] src\batr\game\effect\EffectType.ts
-- [ ] src\batr\game\entity\ai\programs\AIProgram_Adventurer.ts
-- [ ] src\batr\game\entity\ai\programs\AIProgram_Dummy.ts
-- [ ] src\batr\game\entity\ai\programs\AIProgram_Master.ts
-- [ ] src\batr\game\entity\ai\programs\AIProgram_Novice.ts
-- [ ] src\batr\game\entity\ai\programs\IAIProgram.ts
-- [ ] src\batr\game\entity\ai\programs\PathNode.ts
-- [ ] src\batr\game\entity\ai\AIPlayerAction.ts
-- [ ] src\batr\game\entity\entities\players\AIPlayer.ts
-- [ ] src\batr\game\entity\entities\players\Player.ts
-- [ ] src\batr\game\entity\entities\projectiles\BulletBasic.ts
-- [ ] src\batr\game\entity\entities\projectiles\BulletNuke.ts
-- [ ] src\batr\game\entity\entities\projectiles\BulletTracking.ts
-- [ ] src\batr\game\entity\entities\projectiles\LaserAbsorption.ts
-- [ ] src\batr\game\entity\entities\projectiles\LaserBasic.ts
-- [ ] src\batr\game\entity\entities\projectiles\LaserPulse.ts
-- [ ] src\batr\game\entity\entities\projectiles\LaserTeleport.ts
-- [ ] src\batr\game\entity\entities\projectiles\Lightning.ts
-- [ ] src\batr\game\entity\entities\projectiles\ProjectileCommon.ts
-- [ ] src\batr\game\entity\entities\projectiles\ShockWaveBase.ts
-- [ ] src\batr\game\entity\entities\projectiles\ShockWaveDrone.ts
-- [ ] src\batr\game\entity\entities\projectiles\SubBomber.ts
-- [ ] src\batr\game\entity\entities\projectiles\ThrowedBlock.ts
-- [ ] src\batr\game\entity\entities\projectiles\Wave.ts
-- [ ] src\batr\game\entity\entities\BonusBox.ts
-- [ ] src\batr\game\entity\model\IPlayerProfile.ts
-- [ ] src\batr\game\entity\model\PlayerProfile.ts
-- [ ] src\batr\game\entity\objects\BonusBoxSymbol.ts
-- [ ] src\batr\game\entity\objects\PlayerEffectOverlay.ts
-- [ ] src\batr\game\entity\objects\PlayerGUI.ts
-- [ ] src\batr\game\entity\EntityCommon.ts
-- [ ] src\batr\game\entity\EntitySystem.ts
-- [ ] src\batr\game\entity\EntityType.ts
-- [ ] src\batr\game\events\GameRuleEvent.ts
-- [ ] src\batr\game\main\Game.ts
-- [ ] src\batr\game\main\GameRule.ts
-- [ ] src\batr\game\map\main\Map_V1.ts
-- [ ] src\batr\game\map\main\MapDisplayer.ts
-- [ ] src\batr\game\map\main\MapGenerater.ts
-- [ ] src\batr\game\map\main\NativeMapCommon.ts
-- [ ] src\batr\game\map\IMap.ts
-- [ ] src\batr\game\map\IMapDisplayer.ts
-- [ ] src\batr\game\map\IMapGenerater.ts
-- [ ] src\batr\game\model\BonusType.ts
-- [ ] src\batr\game\model\GameModeType.ts
-- [ ] src\batr\game\model\GameResult.ts
-- [ ] src\batr\game\model\PlayerTeam.ts
-- [ ] src\batr\game\model\WeaponType.ts
-- [ ] src\batr\game\stat\GameStats.ts
-- [ ] src\batr\game\stat\PlayerStats.ts
-- [ ] src\batr\general\GlobalGameInformations.ts
-- [ ] src\batr\general\GlobalGameVariables.ts
-- [ ] src\batr\general\GlobalRot.ts
-- [ ] src\batr\general\PosTransform.ts
-- [ ] src\batr\general\TypeCommon.ts
-- [ ] src\batr\main\BackGround.ts
-- [ ] src\batr\main\BatrSubject.ts
-- [ ] src\batr\menu\event\BatrGUIEvent.ts
-- [ ] src\batr\menu\event\MenuEvent.ts
-- [ ] src\batr\menu\event\TranslationsChangeEvent.ts
-- [ ] src\batr\menu\events\BatrGUIEvent.ts
-- [ ] src\batr\menu\events\MenuEvent.ts
-- [ ] src\batr\menu\events\TranslationsChangeEvent.ts
-- [ ] src\batr\menu\main\Menu.ts
-- [ ] src\batr\menu\objects\selector\BatrSelector.ts
-- [ ] src\batr\menu\objects\selector\BatrSelectorArrow.ts
-- [ ] src\batr\menu\objects\selector\BatrSelectorContent.ts
-- [ ] src\batr\menu\objects\selector\BatrSelectorList.ts
-- [ ] src\batr\menu\objects\BatrButton.ts
-- [ ] src\batr\menu\objects\BatrButtonList.ts
-- [ ] src\batr\menu\objects\BatrMenuGUI.ts
-- [ ] src\batr\menu\objects\BatrMenuSheet.ts
-- [ ] src\batr\menu\objects\BatrTextField.ts
-- [ ] src\batr\menu\objects\BatrTextInput.ts
-- [ ] src\batr\menu\objects\IBatrMenuElement.ts
-- [ ] src\batr\menu\objects\IBatrMenuElementContainer.ts
-- [ ] src\batr\menu\objects\Title.ts
-- [ ] src\batr\menu\objects\TitleImg.ts
-- [ ] src\batr\translations\DefaultNativeTranslations.ts
-- [ ] src\batr\translations\FixedTranslationalText.ts
-- [ ] src\batr\translations\ForcedTranslationalText.ts
-- [ ] src\batr\translations\TranslationalText.ts
-- [ ] src\batr\translations\TranslationKey.ts
-- [ ] src\batr\translations\Translations.ts
+- [ ] src\batr
+  - [x] common
+    - [x] common\exMath.ts
+    - [x] common\iPoint.ts
+    - [x] common\KeyCode.ts
+    - [x] common\KeyListener.ts
+    - [x] common\RandomGenerator.ts
+    - [x] common\UintPointCompress.ts
+    - [x] common\Utils.ts
+    - [x] fonts\MainFont.ts
+  - [ ] game
+    - [ ] block
+      - [ ] BlockAttributes.ts
+      - [ ] BlockCommon.ts
+      - [ ] RotatableBlock.ts
+      - [ ] blocks
+        - [ ] Bedrock.ts
+        - [ ] ColoredBlock.ts
+        - [ ] ColorSpawner.ts
+        - [ ] Gate.ts
+        - [ ] Glass.ts
+        - [ ] LaserTrap.ts
+        - [ ] Metal.ts
+        - [ ] MoveableWall.ts
+        - [ ] SpawnPointMark.ts
+        - [ ] SupplyPoint.ts
+        - [ ] Wall.ts
+        - [ ] Water.ts
+        - [ ] XTrap.ts
+    - [ ] effect
+      - [ ] EffectCommon.ts
+      - [ ] EffectSystem.ts
+      - [ ] effects
+        - [ ] EffectBlockLight.ts
+        - [ ] EffectExplode.ts
+        - [ ] EffectPlayerDeathFadeout.ts
+        - [ ] EffectPlayerDeathLight.ts
+        - [ ] EffectPlayerHurt.ts
+        - [ ] EffectPlayerLevelup.ts
+        - [ ] EffectSpawn.ts
+        - [ ] EffectTeleport.ts
+    - [ ] entity
+      - [ ] ai
+        - [ ] AIPlayerAction.ts
+        - [ ] IAIProgram.ts
+        - [ ] struct
+          - [ ] PathNode.ts
+        - [ ] programs
+          - [ ] AIProgram_Adventurer.ts
+          - [ ] AIProgram_Dummy.ts
+          - [ ] AIProgram_Master.ts
+          - [ ] AIProgram_Novice.ts
+      - [ ] entities
+        - [ ] EntityCommon.ts
+        - [ ] EntitySystem.ts
+        - [ ] item
+          - [ ] BonusBox.ts
+          - [ ] display
+            - [ ] BonusBoxSymbol.ts
+        - [ ] projectile
+          - [ ] BulletBasic.ts
+          - [ ] BulletNuke.ts
+          - [ ] BulletTracking.ts
+          - [ ] LaserAbsorption.ts
+          - [ ] LaserBasic.ts
+          - [ ] LaserPulse.ts
+          - [ ] LaserTeleport.ts
+          - [ ] Lightning.ts
+          - [ ] ProjectileCommon.ts
+          - [ ] ShockWaveBase.ts
+          - [ ] ShockWaveDrone.ts
+          - [ ] SubBomber.ts
+          - [ ] ThrownBlock.ts
+          - [ ] Wave.ts
+        - [ ] player
+          - [ ] Player.ts
+          - [ ] AIPlayer.ts
+          - [ ] profile
+            - [ ] IPlayerProfile.ts
+            - [ ] PlayerProfile.ts
+          - [ ] display
+            - [ ] PlayerEffectOverlay.ts
+            - [ ] PlayerGUI.ts
+          - [ ] team
+            - [ ] PlayerTeam.ts
+    - [ ] main
+      - [ ] Game.ts
+    - [ ] map
+      - [ ] IMap.ts
+      - [ ] IMapDisplayer.ts
+      - [ ] IMapGenerator.ts
+      - [ ] main
+        - [ ] Map_V1.ts
+        - [ ] MapDisplayer.ts
+        - [ ] MapGenerator.ts
+        - [ ] NativeMapCommon.ts
+    - [ ] registry
+      - [ ] TypeCommon.ts
+      - [ ] GameModeType.ts
+      - [ ] WeaponType.ts
+      - [ ] BlockType.ts
+      - [ ] EffectType.ts
+      - [ ] EntityType.ts
+    - [ ] rule
+      - [ ] GameRule.ts
+      - [ ] GameRuleEvent.ts
+    - [ ] stat
+      - [ ] GameStats.ts
+      - [ ] GameResult.ts
+      - [ ] PlayerStats.ts
+  - [ ] general
+    - [ ] GlobalGameInformation.ts
+    - [ ] GlobalGameVariables.ts
+    - [ ] GlobalRot.ts
+    - [ ] PosTransform.ts
+  - [ ] i18n
+    - [ ] DefaultNativeI18n.ts
+    - [ ] FixedI18nText.ts
+    - [ ] ForcedI18nText.ts
+    - [ ] I18nText.ts
+    - [ ] I18nKey.ts
+    - [ ] I18ns.ts
+  - [ ] main
+    - [ ] Background.ts
+    - [ ] BatrSubject.ts
+    - [ ] event
+      - [ ] BatrGUIEvent.ts
+      - [ ] MenuEvent.ts
+      - [ ] i18nChangeEvent.ts
+  - [ ] menu
+    - [ ] main
+      - [ ] Menu.ts
+    - [ ] object
+      - [ ] BatrButton.ts
+      - [ ] BatrButtonList.ts
+      - [ ] BatrMenuGUI.ts
+      - [ ] BatrMenuSheet.ts
+      - [ ] BatrTextField.ts
+      - [ ] BatrTextInput.ts
+      - [ ] IBatrMenuElement.ts
+      - [ ] IBatrMenuElementContainer.ts
+      - [ ] Title.ts
+      - [ ] TitleImg.ts
+      - [ ] selector
+        - [ ] BatrSelector.ts
+        - [ ] BatrSelectorArrow.ts
+        - [ ] BatrSelectorContent.ts
+        - [ ] BatrSelectorList.ts
 - [ ] batrFla.ts

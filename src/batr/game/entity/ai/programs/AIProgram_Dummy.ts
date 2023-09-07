@@ -3,8 +3,8 @@ package batr.game.entity.ai.programs {
 	import batr.common.*;
 	import batr.general.*;
 	import batr.game.entity.ai.*;
-	import batr.game.entity.entities.*;
-	import batr.game.entity.entities.players.*;
+	import batr.game.entity.entity.*;
+	import batr.game.entity.entity.player.*;
 
 	/**
 	 * Random move and Always Press Use.

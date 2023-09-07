@@ -37,7 +37,7 @@ public function onKD(E: KeyboardEvent): void {
 	 * T:Pos/Map
 	 * C:Projectile/Effect
 	 * V:Weapon
-	 * X:Sheet/Translations
+	 * X:Sheet/I18ns
 	 * L:Game UUID List
 	 * <`~>:Game Speed
 	 * N:Append Player
@@ -51,7 +51,7 @@ public function onKD(E: KeyboardEvent): void {
 			sub.turnToGame();
 			break;
 		case KeyCode.X:
-			if (shift) sub.turnTranslations();
+			if (shift) sub.turnI18ns();
 			else sub.menuObj.turnSheet();
 			break;
 	}
@@ -161,7 +161,7 @@ package {
 		 * T:Pos/Map
 		 * C:Projectile/Effect
 		 * V:Weapon
-		 * X:Sheet/Translations
+		 * X:Sheet/I18ns
 		 * L:Game UUID List
 		 * <`~>:Game Speed
 		 * N:Append Player
@@ -175,7 +175,7 @@ package {
 				sub.turnToGame();
 				break;
 			case KeyCode.X:
-				if (shift) sub.turnTranslations();
+				if (shift) sub.turnI18ns();
 				else sub.menuObj.turnSheet();
 				break;
 		}

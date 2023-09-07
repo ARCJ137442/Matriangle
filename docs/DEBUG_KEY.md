@@ -6,7 +6,7 @@
 * `T`: Transform **Pos/Map**
 * `C`: Clear **Projectile/Effect**
 * `V`: Change **Weapon**
-* `X`: Change **Sheet/Translations**
+* `X`: Change **Sheet/I18ns**
 * `~`: Manipulate **Game Speed**
 * `N`: Append **Player**s
 * `Enter`: Enter one **Game Step**

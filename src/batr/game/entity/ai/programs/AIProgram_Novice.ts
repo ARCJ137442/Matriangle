@@ -4,8 +4,8 @@ package batr.game.entity.ai.programs {
 	import batr.general.*;
 
 	import batr.game.entity.ai.*;
-	import batr.game.entity.entities.*;
-	import batr.game.entity.entities.players.*;
+	import batr.game.entity.entity.*;
+	import batr.game.entity.entity.player.*;
 
 	/**
 	 * Running as a State Machine.

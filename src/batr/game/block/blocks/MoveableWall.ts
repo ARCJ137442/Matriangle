@@ -4,48 +4,48 @@ package batr.game.block.blocks {
 
 	import batr.game.block.*;
 
-	// Move as throwed block.
+	// Move as thrown block.
 	public class MoveableWall extends Wall {
 		//============Static Variables============//
-		public static const LINE_COLOR:uint = 0x889988;
-		public static const FILL_COLOR:uint = 0xbbccbb;
+		public static const LINE_COLOR: uint = 0x889988;
+		public static const FILL_COLOR: uint = 0xbbccbb;
 
-		public static const LINE_SIZE:uint = Wall.LINE_SIZE;
+		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
 
 		//============Instance Variables============//
-		protected var _virus:Boolean;
+		protected var _virus: Boolean;
 
 		//============Constructor Function============//
-		public function MoveableWall(virus:Boolean = false):void {
+		public function MoveableWall(virus: Boolean = false): void {
 			super(LINE_COLOR, FILL_COLOR);
 			this._virus = virus;
 			this.drawMain();
 		}
 
 		//============Destructor Function============//
-		public override function deleteSelf():void {
+		public override function deleteSelf(): void {
 			super.deleteSelf();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get attributes():BlockAttributes {
+		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.MOVEABLE_WALL;
 		}
 
-		public override function get type():BlockType {
+		public override function get type(): BlockType {
 			return BlockType.MOVEABLE_WALL;
 		}
 
-		public function get virus():Boolean {
+		public function get virus(): Boolean {
 			return this._virus;
 		}
 
 		//============Instance Functions============//
-		public override function clone():BlockCommon {
+		public override function clone(): BlockCommon {
 			return new MoveableWall(this._virus);
 		}
 
-		protected override function drawMain():void {
+		protected override function drawMain(): void {
 			// Line
 			this.graphics.beginFill(this._lineColor);
 			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);

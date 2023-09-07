@@ -1,4 +1,4 @@
-import exMath from './exMath';
+import * as exMath from './exMath';
 import { int } from '../legacy/AS3Legacy'
 import { flash } from '../legacy/FlashLegacy';
 // import flash.geom.Point;

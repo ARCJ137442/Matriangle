@@ -8,7 +8,7 @@
 	import batr.game.map.main.*;
 	import batr.menu.events.*;
 	import batr.menu.main.*;
-	import batr.translations.*;
+	import batr.i18n.*;
 
 	import flash.display.*;
 	import flash.events.*;
@@ -22,12 +22,12 @@
 		protected var _menu: Menu;
 
 		protected var _gameRule: GameRule;
-		protected var _translations: Translations;
+		protected var _translations: I18ns;
 
 		//============Constructor Function============//
 		public function BatrSubject(): void {
 			// Init Variables
-			this._translations = Translations.getTranslationByLanguage();
+			this._translations = I18ns.getI18nByLanguage();
 			this._gameRule = new GameRule();
 			this._game = new batr.game.main.Game(this, false);
 			this._menu = new batr.menu.main.Menu(this);
@@ -64,7 +64,7 @@
 			this._menu.visible = value;
 		}
 
-		public function get translations(): Translations {
+		public function get translations(): I18ns {
 			return this._translations;
 		}
 
@@ -173,9 +173,9 @@
 			}
 		}
 
-		protected function onTranslationsChange(E: TranslationsChangeEvent): void {
-			var nowT: Translations = E.nowTranslations;
-			var oldT: Translations = E.oldTranslations;
+		protected function onI18nsChange(E: I18nsChangeEvent): void {
+			var nowT: I18ns = E.nowI18ns;
+			var oldT: I18ns = E.oldI18ns;
 		}
 
 		//====Methods====//
@@ -259,15 +259,15 @@
 			}
 		}
 
-		public function turnTranslationsTo(translations: Translations): void {
-			var oldTranslations: Translations = this._translations;
+		public function turnI18nsTo(translations: I18ns): void {
+			var oldI18ns: I18ns = this._translations;
 			this._translations = translations;
-			this.dispatchEvent(new TranslationsChangeEvent(this._translations, oldTranslations));
+			this.dispatchEvent(new I18nsChangeEvent(this._translations, oldI18ns));
 		}
 
-		public function turnTranslations(): void {
+		public function turnI18ns(): void {
 			this._menu.languageselector.turnSelectRight();
-			this.turnTranslationsTo(Translations.translationsList[this._menu.languageselector.currentValue]);
+			this.turnI18nsTo(I18ns.translationsList[this._menu.languageselector.currentValue]);
 		}
 
 		public function resetRule(): void {

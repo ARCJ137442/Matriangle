@@ -1,7 +1,7 @@
 package batr.game.stat {
 
 	import batr.common.*;
-	import batr.game.entity.entities.players.*;
+	import batr.game.entity.entity.player.*;
 	import batr.game.entity.model.*;
 
 	import flash.utils.Dictionary;
@@ -277,7 +277,7 @@ package batr.game.stat {
 	}
 }
 
-import batr.game.entity.entities.players.*;
+import batr.game.entity.entity.player.*;
 
 import flash.utils.Dictionary;
 

@@ -11,12 +11,12 @@
 	import batr.game.model.*;
 
 	import batr.menu.events.*;
-	import batr.menu.objects.*;
-	import batr.menu.objects.selector.*;
+	import batr.menu.object.*;
+	import batr.menu.object.selector.*;
 
 	import batr.main.*;
 	import batr.fonts.*;
-	import batr.translations.*;
+	import batr.i18n.*;
 
 	import flash.text.*;
 	import flash.display.Sprite;
@@ -100,10 +100,10 @@
 
 		//============Static Functions============//
 		protected static function setFixedTextSuffix(text: BatrTextField, suffix: any): void {
-			var fText: FixedTranslationalText = text.translationalText as FixedTranslationalText;
+			var fText: FixedI18nText = text.translationalText as FixedI18nText;
 			if (fText != null) {
 				fText.suffix = '\t\t' + String(suffix);
-				text.updateByTranslation();
+				text.updateByI18n();
 			}
 		}
 
@@ -111,7 +111,7 @@
 		protected var _isActive: Boolean;
 
 		protected var _subject: BatrSubject;
-		protected var _backGround: BackGround = new BackGround(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
+		protected var _backGround: Background = new Background(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
 
 		protected var _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
 		protected var _isShowingMenu: Boolean = false;
@@ -176,7 +176,7 @@
 			this._subject = subject;
 			this.initDisplay();
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, onTranslationChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, onI18nChange);
 		}
 
 		//============Instance Getter And Setter============//
@@ -190,7 +190,7 @@
 			this._isActive = value;
 		}
 
-		public function get backGround(): BackGround {
+		public function get backGround(): Background {
 			return this._backGround;
 		}
 
@@ -206,7 +206,7 @@
 			return this.subject.gameRule;
 		}
 
-		public function get translations(): Translations {
+		public function get translations(): I18ns {
 			return this._subject.translations;
 		}
 
@@ -337,7 +337,7 @@
 			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
 				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
 				this.translations, tKey);
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, button.onTranslationsChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
 			if (clickListenerFunction != null)
 				button.addEventListener(BatrGUIEvent.CLICK, clickListenerFunction);
 			return button;
@@ -348,14 +348,14 @@
 			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
 				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
 				this.translations, tKey, true, color);
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, button.onTranslationsChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
 			if (clickListenerFunction != null)
 				button.addEventListener(BatrGUIEvent.CLICK, clickListenerFunction);
 			return button;
 		}
 
 		protected function quickBackButtonBuild(): BatrButton {
-			return this.quickButtonBuild2(TranslationKey.BACK, this.onBackButtonClick, 0x333333);
+			return this.quickButtonBuild2(I18nKey.BACK, this.onBackButtonClick, 0x333333);
 		}
 
 		protected function quickLinkageButtonBuild(tKey: String, sheetLinkage: String, color: uint, blockX: int = 0, blockY: int = 0, blockWidth: Number = 6, blockHeight: Number = 1): BatrButton {
@@ -368,17 +368,17 @@
 			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
 			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
 			textField.initFormatAsMenu();
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, textField.onTranslationChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, textField.onI18nChange);
 			return textField;
 		}
 
 		// StatTextField Build
 		protected function quickStatTextFieldBuild(tKey: String, blockX: Number = 0, blockY: Number = 0, autoSize: String = TextFieldAutoSize.LEFT): BatrTextField {
-			var textField: BatrTextField = new BatrTextField(new FixedTranslationalText(this.translations, tKey), autoSize);
+			var textField: BatrTextField = new BatrTextField(new FixedI18nText(this.translations, tKey), autoSize);
 			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
 			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
 			textField.initFormatAsMenu();
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, textField.onTranslationChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, textField.onI18nChange);
 			return textField;
 		}
 
@@ -396,15 +396,15 @@
 		protected function quickselectorBuild(content: BatrSelectorContent,
 			minTextBlockWidth: Number = 1, selectorClickFunction: Function = null): BatrSelector {
 			var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
-			this._subject.addEventListener(TranslationsChangeEvent.TYPE, selector.onTranslationChange);
+			this._subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
 			if (selectorClickFunction != null)
 				selector.addEventListener(BatrGUIEvent.CLICK, selectorClickFunction);
 			return selector;
 		}
 
-		// TranslationalText Build
-		protected function quickTranslationalTextBuild(key: String, forcedText: String = null): TranslationalText {
-			return new ForcedTranslationalText(this.translations, key, forcedText);
+		// I18nText Build
+		protected function quickI18nTextBuild(key: String, forcedText: String = null): I18nText {
+			return new ForcedI18nText(this.translations, key, forcedText);
 		}
 
 		// Menu Main
@@ -423,7 +423,7 @@
 			this.nowSheet = this._sheetMain;
 			// Add VresionText
 			var versionText = new TextField();
-			versionText.text = GlobalGameInformations.GAME_FULL_VERSION;
+			versionText.text = GlobalGameInformation.GAME_FULL_VERSION;
 			versionText.setTextFormat(Menu.VERSION_TEXT_FORMAT);
 			versionText.width = versionText.textWidth + 20;
 			versionText.height = versionText.textHeight + 5;
@@ -432,17 +432,17 @@
 			this.addChild(versionText);
 			versionText.selectable = false;
 			// Add Language selector
-			this._languageselector = new BatrSelector(BatrSelectorContent.createLanguageContent(Translations.getIDFromTranslation(this.translations)));
+			this._languageselector = new BatrSelector(BatrSelectorContent.createLanguageContent(I18ns.getIDFromI18n(this.translations)));
 			this._languageselector.x = PosTransform.localPosToRealPos(21);
 			this._languageselector.y = PosTransform.localPosToRealPos(22.5);
 			this._languageselector.addEventListener(BatrGUIEvent.CLICK, this.onLanguageChange);
 			this.addChild(this._languageselector);
 			// Add Frame-Complement selector
-			this._frameComplementselector = new BatrSelector(BatrSelectorContent.createBinaryChoiceContent(uint(game.enableFrameComplement), this.translations, TranslationKey.FILL_FRAME_OFF, TranslationKey.FILL_FRAME_ON));
+			this._frameComplementselector = new BatrSelector(BatrSelectorContent.createBinaryChoiceContent(uint(game.enableFrameComplement), this.translations, I18nKey.FILL_FRAME_OFF, I18nKey.FILL_FRAME_ON));
 			this._frameComplementselector.x = PosTransform.localPosToRealPos(21);
 			this._frameComplementselector.y = PosTransform.localPosToRealPos(21.5);
 			this._frameComplementselector.addEventListener(BatrGUIEvent.CLICK, this.onFillFrameChange);
-			this.subject.addEventListener(TranslationsChangeEvent.TYPE, this._frameComplementselector.onTranslationChange);
+			this.subject.addEventListener(I18nsChangeEvent.TYPE, this._frameComplementselector.onI18nChange);
 			this.addChild(this._frameComplementselector);
 		}
 
@@ -453,23 +453,23 @@
 			//===Build Sheets===//
 			this._sheets = new < BatrMenuSheet > [
 				// Main
-				this._sheetMain = this.buildSheet(TranslationKey.MAIN_MENU, true).appendDirectElements(
+				this._sheetMain = this.buildSheet(I18nKey.MAIN_MENU, true).appendDirectElements(
 					(new BatrButtonList().appendDirectElements(
-						this.quickButtonBuild2(TranslationKey.CONTINUE, this.onContinueButtonClick, 0xff8000),
-						this.quickButtonBuild2(TranslationKey.QUICK_GAME, this.onQuickGameButtonClick, 0x0080ff),
-						this.quickLinkageButtonBuild(TranslationKey.SELECT_GAME, TranslationKey.SELECT_GAME, 0x00ff80),
-						this.quickLinkageButtonBuild(TranslationKey.CUSTOM_MODE, null, 0xff0080)
+						this.quickButtonBuild2(I18nKey.CONTINUE, this.onContinueButtonClick, 0xff8000),
+						this.quickButtonBuild2(I18nKey.QUICK_GAME, this.onQuickGameButtonClick, 0x0080ff),
+						this.quickLinkageButtonBuild(I18nKey.SELECT_GAME, I18nKey.SELECT_GAME, 0x00ff80),
+						this.quickLinkageButtonBuild(I18nKey.CUSTOM_MODE, null, 0xff0080)
 					) as BatrButtonList).setPos(
 						GlobalGameVariables.DEFAULT_SIZE * 9,
 						GlobalGameVariables.DEFAULT_SIZE * 9
 					)
 				) as BatrMenuSheet,
 				// Select
-				this._sheetSelect = this.buildSheet(TranslationKey.SELECT_GAME, true).appendDirectElements(
+				this._sheetSelect = this.buildSheet(I18nKey.SELECT_GAME, true).appendDirectElements(
 					(new BatrButtonList().appendDirectElements(
-						this.quickButtonBuild2(TranslationKey.START, this.onSelectStartButtonClick, 0x0080ff),
-						this.quickLinkageButtonBuild(TranslationKey.ADVANCED, TranslationKey.ADVANCED, 0x00ff80),
-						this.quickButtonBuild2(TranslationKey.SAVES, null, 0xff0080),
+						this.quickButtonBuild2(I18nKey.START, this.onSelectStartButtonClick, 0x0080ff),
+						this.quickLinkageButtonBuild(I18nKey.ADVANCED, I18nKey.ADVANCED, 0x00ff80),
+						this.quickButtonBuild2(I18nKey.SAVES, null, 0xff0080),
 						this.quickBackButtonBuild()
 					) as BatrButtonList).setPos(
 						GlobalGameVariables.DEFAULT_SIZE * 9,
@@ -481,36 +481,36 @@
 						this._subject,
 						pcS = this.quickselectorBuild(
 							BatrSelectorContent.createUnsignedIntegerContent(this.gameRule.playerCount)
-						).setName(TranslationKey.PLAYER_COUNT),
-						TranslationKey.PLAYER_COUNT,
+						).setName(I18nKey.PLAYER_COUNT),
+						I18nKey.PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
 						acS = this.quickselectorBuild(
 							BatrSelectorContent.createUnsignedIntegerContent(this.gameRule.AICount)
-						).setName(TranslationKey.AI_PLAYER_COUNT),
-						TranslationKey.AI_PLAYER_COUNT,
+						).setName(I18nKey.AI_PLAYER_COUNT),
+						I18nKey.AI_PLAYER_COUNT,
 						true
 					).appendSelectorAndText(
 						this._subject,
 						imS = this.quickselectorBuild(new BatrSelectorContent().initAsEnum(
-							(new < TranslationalText > [
-								this.quickTranslationalTextBuild(TranslationKey.MAP_RANDOM)
+							(new < I18nText > [
+								this.quickI18nTextBuild(I18nKey.MAP_RANDOM)
 							]).concat(
-								TranslationalText.getTextsByMapNames()
+								I18nText.getTextsByMapNames()
 							), 0, 0
 						).initAsInt(
 							Game.VALID_MAP_COUNT, 0, this.gameRule.initialMapID + 1
 						).autoInitLoopSelect(), 1 /*,this.onMapPreviewSwitch*/
-						).setName(TranslationKey.INITIAL_MAP),
-						TranslationKey.INITIAL_MAP,
+						).setName(I18nKey.INITIAL_MAP),
+						I18nKey.INITIAL_MAP,
 						true
 					)
 				) as BatrMenuSheet,
 				// Advanced Custom
-				this._sheetAdvancedCustom = this.buildSheet(TranslationKey.ADVANCED, true).appendDirectElements(
+				this._sheetAdvancedCustom = this.buildSheet(I18nKey.ADVANCED, true).appendDirectElements(
 					(new BatrButtonList().appendDirectElements(
-						this.quickButtonBuild2(TranslationKey.START, this.onSelectStartButtonClick, 0x0080ff),
+						this.quickButtonBuild2(I18nKey.START, this.onSelectStartButtonClick, 0x0080ff),
 						this.quickBackButtonBuild()
 					) as BatrButtonList).setBlockPos(9, 19),
 					// Left
@@ -519,54 +519,54 @@
 					).appendSelectorAndText( // Old
 						this._subject,
 						pcS_2 = this.quickselectorBuild(null),
-						TranslationKey.PLAYER_COUNT,
+						I18nKey.PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
 						acS_2 = this.quickselectorBuild(null),
-						TranslationKey.AI_PLAYER_COUNT,
+						I18nKey.AI_PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
 						imS_2 = this.quickselectorBuild(null, 1),
-						TranslationKey.INITIAL_MAP,
+						I18nKey.INITIAL_MAP,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createYorNContent(this.gameRule.allowPlayerChangeTeam ? 0 : 1, this.translations),
-						TranslationKey.LOCK_TEAMS,
+						I18nKey.LOCK_TEAMS,
 						false
 					).quickAppendSelector( // New
 						this,
 						BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultHealth),
-						TranslationKey.DEFAULT_HEALTH,
+						I18nKey.DEFAULT_HEALTH,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultMaxHealth),
-						TranslationKey.DEFAULT_MAX_HEALTH,
+						I18nKey.DEFAULT_MAX_HEALTH,
 						false,
 						this.onMaxHealthselectorClick
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
 							this.getLifesFromRule(false),
-							this.quickTranslationalTextBuild(TranslationKey.INFINITY)
+							this.quickI18nTextBuild(I18nKey.INFINITY)
 						),
-						TranslationKey.REMAIN_LIFES_PLAYER,
+						I18nKey.REMAIN_LIFES_PLAYER,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
 							this.getLifesFromRule(true),
-							this.quickTranslationalTextBuild(TranslationKey.INFINITY)
+							this.quickI18nTextBuild(I18nKey.INFINITY)
 						),
-						TranslationKey.REMAIN_LIFES_AI,
+						I18nKey.REMAIN_LIFES_AI,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createPositiveIntegerContent(int(this.gameRule.defaultRespawnTime / GlobalGameVariables.TPS)),
-						TranslationKey.RESPAWN_TIME,
+						I18nKey.RESPAWN_TIME,
 						false
 					),
 					// Right
@@ -575,106 +575,106 @@
 					).quickAppendSelector(
 						this,
 						new BatrSelectorContent().initAsEnum(
-							(new < TranslationalText > [
-								this.quickTranslationalTextBuild(TranslationKey.COMPLETELY_RANDOM),
-								this.quickTranslationalTextBuild(TranslationKey.UNIFORM_RANDOM)
-							]).concat(TranslationalText.getTextsByAllAvaliableWeapons(this.translations, false)),
+							(new < I18nText > [
+								this.quickI18nTextBuild(I18nKey.COMPLETELY_RANDOM),
+								this.quickI18nTextBuild(I18nKey.UNIFORM_RANDOM)
+							]).concat(I18nText.getTextsByAllAvaliableWeapons(this.translations, false)),
 							0, 2
 						).initAsInt(
 							this.gameRule.enableWeaponCount - 1, -2, this.gameRule.defaultWeaponID
 						).autoInitLoopSelect(),
-						TranslationKey.DEFAULT_WEAPON,
+						I18nKey.DEFAULT_WEAPON,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createYorNContent(this.gameRule.weaponsNoCD ? 1 : 0, this.translations),
-						TranslationKey.WEAPONS_NO_CD,
+						I18nKey.WEAPONS_NO_CD,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createPositiveIntegerAndOneSpecialContent(
 							this.gameRule.mapTransformTime,
-							this.quickTranslationalTextBuild(TranslationKey.NEVER)
+							this.quickI18nTextBuild(I18nKey.NEVER)
 						),
-						TranslationKey.MAP_TRANSFORM_TIME,
+						I18nKey.MAP_TRANSFORM_TIME,
 						true
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
 							this.gameRule.bonusBoxMaxCount,
-							this.quickTranslationalTextBuild(TranslationKey.INFINITY)
+							this.quickI18nTextBuild(I18nKey.INFINITY)
 						),
-						TranslationKey.MAX_BONUS_COUNT,
+						I18nKey.MAX_BONUS_COUNT,
 						true
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createYorNContent(this.gameRule.bonusBoxSpawnAfterPlayerDeath ? 1 : 0, this.translations),
-						TranslationKey.BONUS_SPAWN_AFTER_DEATH,
+						I18nKey.BONUS_SPAWN_AFTER_DEATH,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
 							this.gameRule.playerAsphyxiaDamage,
-							this.quickTranslationalTextBuild(TranslationKey.CERTAINLY_DEAD)
+							this.quickI18nTextBuild(I18nKey.CERTAINLY_DEAD)
 						),
-						TranslationKey.ASPHYXIA_DAMAGE,
+						I18nKey.ASPHYXIA_DAMAGE,
 						true
 					),
 					// Config Entry
-					this.quickButtonBuild2(TranslationKey.ADVANCED_CONFIG, this.onCustomGameConfigButtonClick, 0x8000ff).setBlockPos(16, 19)
+					this.quickButtonBuild2(I18nKey.ADVANCED_CONFIG, this.onCustomGameConfigButtonClick, 0x8000ff).setBlockPos(16, 19)
 				) as BatrMenuSheet,
 				// Config File
-				this._sheetCustomGameConfig = this.buildSheet(TranslationKey.ADVANCED_CONFIG, false).appendDirectElements(
-					this.quickTextFieldBuild(TranslationKey.ADVANCED_CONFIG, 1, 1),
+				this._sheetCustomGameConfig = this.buildSheet(I18nKey.ADVANCED_CONFIG, false).appendDirectElements(
+					this.quickTextFieldBuild(I18nKey.ADVANCED_CONFIG, 1, 1),
 					// input
 					this._gameRuleConfig = this.quickTextInputBuild('JSON', 1, 2, 22, 18, TextFieldAutoSize.NONE),
 					// start
-					this.quickButtonBuild2(TranslationKey.START, this.onCustomGameConfigStartButtonClick, 0x0080ff).setBlockPos(9, 21),
+					this.quickButtonBuild2(I18nKey.START, this.onCustomGameConfigStartButtonClick, 0x0080ff).setBlockPos(9, 21),
 					this.quickBackButtonBuild().setBlockPos(2, 21)
 				) as BatrMenuSheet,
 				// Game Result
-				this._sheetGameResult = this.buildSheet(TranslationKey.GAME_RESULT, false).appendDirectElements(
+				this._sheetGameResult = this.buildSheet(I18nKey.GAME_RESULT, false).appendDirectElements(
 					// Text Title
-					this._gameResultText = quickTextFieldBuild(TranslationKey.GAME_RESULT, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
+					this._gameResultText = quickTextFieldBuild(I18nKey.GAME_RESULT, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
 					// button
-					this.quickButtonBuild2(TranslationKey.MAIN_MENU, this.onMainMenuButtonClick, 0xcccccc).setBlockPos(9, 21),
-					this.quickLinkageButtonBuild(TranslationKey.SCORE_RANKING, TranslationKey.SCORE_RANKING, 0xccffff).setBlockPos(9, 19),
+					this.quickButtonBuild2(I18nKey.MAIN_MENU, this.onMainMenuButtonClick, 0xcccccc).setBlockPos(9, 21),
+					this.quickLinkageButtonBuild(I18nKey.SCORE_RANKING, I18nKey.SCORE_RANKING, 0xccffff).setBlockPos(9, 19),
 					// player
 					this._playerStatselector = this.quickselectorBuild(null, 1, this.onPlayerStatselectorClick).setBlockPos(5, 4.5),
-					this._playerStatLevel = this.quickStatTextFieldBuild(TranslationKey.FINAL_LEVEL, 3, 5),
-					this._playerStatKill = this.quickStatTextFieldBuild(TranslationKey.KILL_COUNT, 3, 6),
-					this._playerStatDeath = this.quickStatTextFieldBuild(TranslationKey.DEATH_COUNT, 3, 7),
-					this._playerStatDeathByPlayer = this.quickStatTextFieldBuild(TranslationKey.DEATH_BY_PLAYER_COUNT, 3, 8),
-					this._playerStatCauseDamage = this.quickStatTextFieldBuild(TranslationKey.CURSE_DAMAGE, 3, 9),
-					this._playerStatDamageBy = this.quickStatTextFieldBuild(TranslationKey.DAMAGE_BY, 3, 10),
-					this._playerStatPickupBonus = this.quickStatTextFieldBuild(TranslationKey.PICKUP_BONUS, 3, 12),
-					this._playerStatBeTeleport = this.quickStatTextFieldBuild(TranslationKey.BE_TELEPORT_COUNT, 3, 13),
-					this._playerStatTotalScore = this.quickStatTextFieldBuild(TranslationKey.TOTAL_SCORE, 3, 14),
+					this._playerStatLevel = this.quickStatTextFieldBuild(I18nKey.FINAL_LEVEL, 3, 5),
+					this._playerStatKill = this.quickStatTextFieldBuild(I18nKey.KILL_COUNT, 3, 6),
+					this._playerStatDeath = this.quickStatTextFieldBuild(I18nKey.DEATH_COUNT, 3, 7),
+					this._playerStatDeathByPlayer = this.quickStatTextFieldBuild(I18nKey.DEATH_COUNT_FROM_PLAYER, 3, 8),
+					this._playerStatCauseDamage = this.quickStatTextFieldBuild(I18nKey.DAMAGE_CAUSE, 3, 9),
+					this._playerStatDamageBy = this.quickStatTextFieldBuild(I18nKey.DAMAGE_BY, 3, 10),
+					this._playerStatPickupBonus = this.quickStatTextFieldBuild(I18nKey.PICKUP_BONUS, 3, 12),
+					this._playerStatBeTeleport = this.quickStatTextFieldBuild(I18nKey.BE_TELEPORT_COUNT, 3, 13),
+					this._playerStatTotalScore = this.quickStatTextFieldBuild(I18nKey.TOTAL_SCORE, 3, 14),
 					// global
-					this._gameStatMapTransform = this.quickStatTextFieldBuild(TranslationKey.GLOBAL_STAT, 14, 4, TextFieldAutoSize.CENTER),
-					this._gameStatMapTransform = this.quickStatTextFieldBuild(TranslationKey.TRANSFORM_MAP_COUNT, 13, 5),
-					this._gameStatBonusGenerate = this.quickStatTextFieldBuild(TranslationKey.BONUS_GENERATE_COUNT, 13, 6)
+					this._gameStatMapTransform = this.quickStatTextFieldBuild(I18nKey.GLOBAL_STAT, 14, 4, TextFieldAutoSize.CENTER),
+					this._gameStatMapTransform = this.quickStatTextFieldBuild(I18nKey.TRANSFORM_MAP_COUNT, 13, 5),
+					this._gameStatBonusGenerate = this.quickStatTextFieldBuild(I18nKey.BONUS_GENERATE_COUNT, 13, 6)
 				) as BatrMenuSheet,
 				// Ranking
-				this._sheetScoreRanking = this.buildSheet(TranslationKey.SCORE_RANKING, false).appendDirectElements(
+				this._sheetScoreRanking = this.buildSheet(I18nKey.SCORE_RANKING, false).appendDirectElements(
 					// Text Title
-					this.quickTextFieldBuild(TranslationKey.SCORE_RANKING, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
+					this.quickTextFieldBuild(I18nKey.SCORE_RANKING, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
 					// ranking
 					this._rankContentText = quickTextFieldBuild(null, 2, 4, TextFieldAutoSize.NONE).setBlockSize(20, 20).setFormat(RANK_Content_FORMET, true),
 					// button
 					this.quickBackButtonBuild().setBlockPos(9, 21)
 				) as BatrMenuSheet,
 				// Pause
-				this._sheetPause = this.buildSheet(TranslationKey.PAUSED, false).setMaskColor(0x7f7f7f, 0.5).appendDirectElements(
+				this._sheetPause = this.buildSheet(I18nKey.PAUSED, false).setMaskColor(0x7f7f7f, 0.5).appendDirectElements(
 					// Text Title
-					quickTextFieldBuild(TranslationKey.PAUSED, 2, 2, TextFieldAutoSize.CENTER).setBlockSize(20, 2).setFormat(TEXT_TITLE_FORMAT, true),
+					quickTextFieldBuild(I18nKey.PAUSED, 2, 2, TextFieldAutoSize.CENTER).setBlockSize(20, 2).setFormat(TEXT_TITLE_FORMAT, true),
 					// Buttons
 					(new BatrButtonList().appendDirectElements(
-						this.quickButtonBuild2(TranslationKey.CONTINUE, this.onContinueButtonClick, 0xff8000),
-						this.quickButtonBuild2(TranslationKey.RESTART, this.onRestartButtonClick, 0xff0080),
-						this.quickButtonBuild2(TranslationKey.GAME_RESULT, this.onResultButtonClick, 0x00ff80),
-						this.quickButtonBuild2(TranslationKey.MAIN_MENU, this.onMainMenuButtonClick, 0x0080ff),
-						this.quickButtonBuild2(TranslationKey.ADVANCED_CONFIG, this.onCustomGameConfigButtonClick2, 0x8000ff)
+						this.quickButtonBuild2(I18nKey.CONTINUE, this.onContinueButtonClick, 0xff8000),
+						this.quickButtonBuild2(I18nKey.RESTART, this.onRestartButtonClick, 0xff0080),
+						this.quickButtonBuild2(I18nKey.GAME_RESULT, this.onResultButtonClick, 0x00ff80),
+						this.quickButtonBuild2(I18nKey.MAIN_MENU, this.onMainMenuButtonClick, 0x0080ff),
+						this.quickButtonBuild2(I18nKey.ADVANCED_CONFIG, this.onCustomGameConfigButtonClick2, 0x8000ff)
 					) as BatrButtonList).setPos(
 						GlobalGameVariables.DEFAULT_SIZE * 9,
 						GlobalGameVariables.DEFAULT_SIZE * 9
@@ -768,7 +768,7 @@
 			this.dispatchEvent(new MenuEvent(MenuEvent.TITLE_SHOWEN));
 		}
 
-		protected function onTranslationChange(E: TranslationsChangeEvent): void {
+		protected function onI18nChange(E: I18nsChangeEvent): void {
 
 		}
 
@@ -778,52 +778,52 @@
 			try {
 				//====Select====//
 				// PlayerCount
-				var playerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(TranslationKey.PLAYER_COUNT);
+				var playerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
 				rule.playerCount = playerCountselector == null ? 4 : playerCountselector.currentValue;
 				// AIPlayerCount
-				var AIPlayerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(TranslationKey.AI_PLAYER_COUNT);
+				var AIPlayerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
 				rule.AICount = AIPlayerCountselector == null ? 6 : AIPlayerCountselector.currentValue;
 				// InitialMap(Map)
-				var initialMapselector: BatrSelector = this._selectorListCustom.getSelectorByName(TranslationKey.INITIAL_MAP);
+				var initialMapselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
 				rule.initialMapID = initialMapselector == null ? -1 : initialMapselector.currentValue - 1;
 				//========Advanced========//
 				//====Left====//
 				// DefaultHealth
-				var defaultHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.DEFAULT_HEALTH);
+				var defaultHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
 				rule.defaultHealth = defaultHealthselector == null ? 100 : defaultHealthselector.currentValue;
 				// DefaultMaxHealth
-				var defaultMaxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.DEFAULT_MAX_HEALTH);
+				var defaultMaxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
 				rule.defaultMaxHealth = defaultMaxHealthselector == null ? 100 : defaultMaxHealthselector.currentValue;
 				// DefaultLifesPlayer
-				var defaultLifesselectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.REMAIN_LIFES_PLAYER);
+				var defaultLifesselectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIFES_PLAYER);
 				rule.remainLifesPlayer = defaultLifesselectorP == null ? -1 : defaultLifesselectorP.currentValue;
 				// DefaultLifesAI
-				var defaultLifesselectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.REMAIN_LIFES_AI);
+				var defaultLifesselectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIFES_AI);
 				rule.remainLifesAI = defaultLifesselectorA == null ? -1 : defaultLifesselectorA.currentValue;
 				// DefaultRespawnTime
-				var defaultRespawnTimeselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.RESPAWN_TIME);
+				var defaultRespawnTimeselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
 				rule.defaultRespawnTime = defaultRespawnTimeselector.currentValue * GlobalGameVariables.TPS;
 				// LockTeam
-				var lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.LOCK_TEAMS);
+				var lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
 				rule.allowPlayerChangeTeam = defaultRespawnTimeselector.currentValue == 0; // inverted boolean
 				//====Right====//
 				// DefaultWeapon
-				var defaultWeaponselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.DEFAULT_WEAPON);
+				var defaultWeaponselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_WEAPON);
 				rule.defaultWeaponID = defaultWeaponselector == null ? -2 : defaultWeaponselector.currentValue;
 				// WeaponsNoCD
-				var weaponsNoCDselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.WEAPONS_NO_CD);
+				var weaponsNoCDselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.WEAPONS_NO_CD);
 				rule.weaponsNoCD = weaponsNoCDselector.currentValue > 0;
 				// MapTransformTime
-				var mapTransformTimeselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.MAP_TRANSFORM_TIME);
+				var mapTransformTimeselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
 				rule.mapTransformTime = mapTransformTimeselector.currentValue;
 				// BonusBoxMaxCount
-				var bonusBoxMaxCountselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.MAX_BONUS_COUNT);
+				var bonusBoxMaxCountselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAX_BONUS_COUNT);
 				rule.bonusBoxMaxCount = bonusBoxMaxCountselector.currentValue;
 				// BonusBoxSpawnAfterDeath
-				var bonusBoxSpawnAfterDeathselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.BONUS_SPAWN_AFTER_DEATH);
+				var bonusBoxSpawnAfterDeathselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.BONUS_SPAWN_AFTER_DEATH);
 				rule.bonusBoxSpawnAfterPlayerDeath = bonusBoxSpawnAfterDeathselector.currentValue > 0;
 				// AsphyxiaDamage
-				var asphyxiaDamageselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(TranslationKey.ASPHYXIA_DAMAGE);
+				var asphyxiaDamageselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.ASPHYXIA_DAMAGE);
 				rule.playerAsphyxiaDamage = asphyxiaDamageselector.currentValue;
 			}
 			catch (err: Error) {
@@ -914,8 +914,8 @@
 		}
 
 		protected function onMaxHealthselectorClick(event: BatrGUIEvent): void {
-			var healthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.DEFAULT_HEALTH) as BatrSelector;
-			var maxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(TranslationKey.DEFAULT_MAX_HEALTH) as BatrSelector;
+			var healthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
+			var maxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
 			if (healthselector == null && maxHealthselector != null)
 				return;
 			if (healthselector.currentValue > maxHealthselector.currentValue) {
@@ -944,7 +944,7 @@
 		}
 
 		protected function onLanguageChange(event: BatrGUIEvent): void {
-			this.subject.turnTranslationsTo(Translations.getTranslationFromID(this._languageselector.currentValue));
+			this.subject.turnI18nsTo(I18ns.getI18nFromID(this._languageselector.currentValue));
 		}
 
 		protected function onFillFrameChange(event: BatrGUIEvent): void {

@@ -7,8 +7,8 @@ package batr.game.entity.ai.programs {
 	import batr.game.entity.ai.*;
 	import batr.game.model.*;
 	import batr.game.entity.*;
-	import batr.game.entity.entities.*;
-	import batr.game.entity.entities.players.*;
+	import batr.game.entity.entity.*;
+	import batr.game.entity.entity.player.*;
 	import batr.game.main.*;
 	import batr.game.map.*;
 

@@ -4,7 +4,7 @@ package batr.menu.events {
 	import batr.general.*;
 	import batr.menu.main.*;
 	import batr.menu.events.*;
-	import batr.menu.objects.*;
+	import batr.menu.object.*;
 
 	import flash.events.Event;
 

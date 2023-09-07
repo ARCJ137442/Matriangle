@@ -3,9 +3,9 @@ package batr.game.entity {
 	import batr.common.*;
 
 	import batr.game.entity.*;
-	import batr.game.entity.entities.*;
-	import batr.game.entity.entities.players.*;
-	import batr.game.entity.entities.projectiles.*;
+	import batr.game.entity.entity.*;
+	import batr.game.entity.entity.player.*;
+	import batr.game.entity.entity.projectile.*;
 	import batr.game.main.*;
 
 	import flash.utils.Dictionary;

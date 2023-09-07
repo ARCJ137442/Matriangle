@@ -92,7 +92,7 @@ package batr.game.block {
 		 */
 		public var supplingBonus: Boolean = false;
 
-		//==Informations==//
+		//==Information==//
 		public var defaultPixelColor: uint;
 
 		/**

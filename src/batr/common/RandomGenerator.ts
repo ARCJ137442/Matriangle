@@ -1,4 +1,4 @@
-﻿import { int, uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
+﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
 
 export default class RandomGenerator {
 	//============Static Variables============//

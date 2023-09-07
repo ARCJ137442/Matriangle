@@ -1,6 +1,6 @@
 package batr.menu.event {
 
-	import batr.menu.objects.*;
+	import batr.menu.object.*;
 
 	import flash.events.Event;
 

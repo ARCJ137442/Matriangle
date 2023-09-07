@@ -6,7 +6,8 @@
         "target": "es5",
         "module": "commonjs",
         "outDir": "./dist",
-        "sourceMap": true // for test
+        "sourceMap": true, // for test
+        "resolveJsonModule": true, // allow import JSON by `import`
     },
     "include": [
         "src",

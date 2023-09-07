@@ -11,10 +11,10 @@
 	import batr.game.effect.effects.*;
 
 	import batr.game.entity.*;
-	import batr.game.entity.objects.*;
-	import batr.game.entity.entities.*;
-	import batr.game.entity.entities.players.*;
-	import batr.game.entity.entities.projectiles.*;
+	import batr.game.entity.object.*;
+	import batr.game.entity.entity.*;
+	import batr.game.entity.entity.player.*;
+	import batr.game.entity.entity.projectile.*;
 
 	import batr.game.main.*;
 	import batr.game.map.*;
@@ -24,11 +24,11 @@
 
 	import batr.menu.events.*;
 	import batr.menu.main.*;
-	import batr.menu.objects.*;
+	import batr.menu.object.*;
 
 	import batr.main.*;
 	import batr.fonts.*;
-	import batr.translations.*;
+	import batr.i18n.*;
 
 	import flash.display.*;
 	import flash.text.*;
@@ -131,8 +131,8 @@
 
 		protected var _stat: GameStats;
 
-		// BackGround
-		protected var _backGround: BackGround = new BackGround(0, 0, true, false, true);
+		// Background
+		protected var _backGround: Background = new Background(0, 0, true, false, true);
 
 		// System
 		protected var _entitySystem: EntitySystem;
@@ -217,7 +217,7 @@
 			return this._rule;
 		}
 
-		public function get translations(): Translations {
+		public function get translations(): I18ns {
 			return this._subject.translations;
 		}
 
@@ -315,7 +315,7 @@
 		}
 
 		public function get numPlayers(): uint {
-			return this._entitySystem.players.length;
+			return this._entitySystem.player.length;
 
 			// Includes AI players
 		}
@@ -467,24 +467,24 @@
 			return result;
 		}
 
-		protected function getResultMessage(winners: Vector.<Player>): TranslationalText {
+		protected function getResultMessage(winners: Vector.<Player>): I18nText {
 			if (winners.length < 1) {
-				return new TranslationalText(this.translations, TranslationKey.NOTHING_WIN);
+				return new I18nText(this.translations, I18nKey.NOTHING_WIN);
 			}
 			else if (winners.length == this.numPlayers) {
-				return new TranslationalText(this.translations, TranslationKey.WIN_ALL_PLAYER);
+				return new I18nText(this.translations, I18nKey.WIN_ALL_PLAYER);
 			}
 			else if (winners.length > 3) {
-				return new FixedTranslationalText(
+				return new FixedI18nText(
 					this.translations,
-					TranslationKey.WIN_PER_PLAYER,
+					I18nKey.WIN_PER_PLAYER,
 					winners.length.toString()
 				);
 			}
 			else {
-				return new FixedTranslationalText(
+				return new FixedI18nText(
 					this.translations,
-					winners.length > 1 ? TranslationKey.WIN_MULTI_PLAYER : TranslationKey.WIN_SIGNLE_PLAYER,
+					winners.length > 1 ? I18nKey.WIN_MULTI_PLAYER : I18nKey.WIN_SINGLE_PLAYER,
 					joinNamesFromPlayers(winners)
 				);
 			}
@@ -494,7 +494,7 @@
 		protected function onAddedToStage(E: Event): void {
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			// this.addEventListener(Event.ENTER_FRAME,onEnterFrame);
-			this.subject.addEventListener(TranslationsChangeEvent.TYPE, this.onTranslationsChange);
+			this.subject.addEventListener(I18nsChangeEvent.TYPE, this.onI18nsChange);
 			this.addChildren();
 		}
 
@@ -620,7 +620,7 @@
 			for each(var player: Player in this._entitySystem.players) {
 				if (player != null) {
 					// Respawn About
-					if (player.infinityLife || player.lifes > 0) {
+					if (player.infinityLife || player.lives > 0) {
 						if (!player.isActive && player.respawnTick >= 0) {
 							player.dealRespawn();
 
@@ -699,21 +699,21 @@
 			if (this.translations == null || this.rule == null)
 				return;
 			this._mapTransformTimeText.setText(
-				Translations.getTranslation(
+				I18ns.getI18n(
 					this.translations,
-					TranslationKey.REMAIN_TRANSFORM_TIME
+					I18nKey.REMAIN_TRANSFORM_TIME
 				) + ': ' + this._tempMapTransformSecond +
 				'/' + this.rule.mapTransformTime
 			);
 			this._gamePlayingTimeText.setText(
-				Translations.getTranslation(
+				I18ns.getI18n(
 					this.translations,
-					TranslationKey.GAME_DURATION
+					I18nKey.GAME_DURATION
 				) + ': ' + this._second);
 			this._mapTransformTimeText.visible = this.rule.mapTransformTime > 0;
 		}
 
-		protected function onTranslationsChange(event: Event): void {
+		protected function onI18nsChange(event: Event): void {
 			this.updateGUIText();
 		}
 
@@ -1016,7 +1016,7 @@
 			}
 		}
 
-		public function throwedBlockHurtPlayer(block: ThrowedBlock): void {
+		public function thrownBlockHurtPlayer(block: ThrownBlock): void {
 			var attacker: Player = block.owner;
 			var damage: uint = block.damage;
 			for each(var victim: Player in this._entitySystem.players) {
@@ -1786,7 +1786,7 @@
 						// Throw
 						if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
 							// Add Block
-							p = new ThrowedBlock(this, centerX, centerY, player, player.carriedBlock.clone(), weaponRot, chargePercent);
+							p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), weaponRot, chargePercent);
 							// Clear
 							player.setCarriedBlock(null);
 						}
@@ -1914,7 +1914,7 @@
 		//======Entity Functions======//
 		public function updateProjectilesColor(player: Player = null): void {
 			// null means update all projectiles
-			for each(var projectile: ProjectileCommon in this._entitySystem.projectiles) {
+			for each(var projectile: ProjectileCommon in this._entitySystem.projectile) {
 				if (player == null || projectile.owner == player) {
 					projectile.drawShape();
 
@@ -1995,8 +1995,8 @@
 
 		}
 
-		public function addPlayerDeathAlphaEffect(x: Number, y: Number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: Boolean = false): void {
-			this._effectSystem.addEffect(new EffectPlayerDeathAlpha(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
+		public function addPlayerDeathFadeoutEffect(x: Number, y: Number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: Boolean = false): void {
+			this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
 
 		}
 
@@ -2005,8 +2005,8 @@
 
 		}
 
-		public function addPlayerDeathAlphaEffect2(x: Number, y: Number, player: Player, reverse: Boolean = false): void {
-			this._effectSystem.addEffect(EffectPlayerDeathAlpha.fromPlayer(this, x, y, player, reverse));
+		public function addPlayerDeathFadeoutEffect2(x: Number, y: Number, player: Player, reverse: Boolean = false): void {
+			this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
 
 		}
 
@@ -2082,7 +2082,7 @@
 			// Add Effect
 			addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
 
-			addPlayerDeathAlphaEffect2(victim.entityX, victim.entityY, victim);
+			addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
 
 			// Set Victim
 			victim.visible = false;
@@ -2299,7 +2299,7 @@
 		protected function moveableWallMove(x: int, y: int, block: BlockCommon): void {
 			var randomRot: uint, rotX: Number, rotY: Number, laserLength: Number;
 			// add laser by owner=null
-			var p: ThrowedBlock;
+			var p: ThrownBlock;
 			var i: uint;
 			do {
 				randomRot = GlobalRot.RANDOM;
@@ -2307,7 +2307,7 @@
 				rotY = y + GlobalRot.towardYInt(randomRot);
 				if (this.isIntOutOfMap(rotX, rotY) || !this.testIntCanPass(rotX, rotY, false, true, false, false))
 					continue;
-				p = new ThrowedBlock(this, PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), null, block.clone(), randomRot, Math.random());
+				p = new ThrownBlock(this, PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), null, block.clone(), randomRot, Math.random());
 				this.setVoid(x, y);
 				this.entitySystem.registerProjectile(p);
 				this._projectileContainer.addChild(p);
