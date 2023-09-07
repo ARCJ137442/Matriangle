@@ -1450,7 +1450,7 @@
 				p.x = this.map.randomX;
 				p.y = this.map.randomY;
 				if (testPlayerCanPass(player, p.x, p.y, true, true)) {
-					this.teleportPlayerTo(player, p.x, p.y, (rotatePlayer ? GlobalRot.RANDOM : GlobalRot.NULL), createEffect);
+					this.teleportPlayerTo(player, p.x, p.y, (rotatePlayer ? GlobalRot.getRandom() : GlobalRot.NULL), createEffect);
 					break;
 				}
 			}
@@ -1478,7 +1478,7 @@
 				player.setPositions(
 					PosTransform.alignToEntity(p.x),
 					PosTransform.alignToEntity(p.y),
-					GlobalRot.RANDOM
+					GlobalRot.getRandom()
 				);
 			// Spawn Effect
 			this.addSpawnEffect(player.entityX, player.entityY);
@@ -2263,7 +2263,7 @@
 			var p: LaserBasic;
 			var i: uint;
 			do {
-				randomRot = GlobalRot.RANDOM;
+				randomRot = GlobalRot.getRandom();
 				rotX = PosTransform.alignToEntity(x) + GlobalRot.towardIntX(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 				rotY = PosTransform.alignToEntity(y) + GlobalRot.towardIntY(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 				if (isOutOfMap(rotX, rotY))
@@ -2302,7 +2302,7 @@
 			var p: ThrownBlock;
 			var i: uint;
 			do {
-				randomRot = GlobalRot.RANDOM;
+				randomRot = GlobalRot.getRandom();
 				rotX = x + GlobalRot.towardXInt(randomRot);
 				rotY = y + GlobalRot.towardYInt(randomRot);
 				if (this.isIntOutOfMap(rotX, rotY) || !this.testIntCanPass(rotX, rotY, false, true, false, false))

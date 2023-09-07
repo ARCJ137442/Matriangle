@@ -64,7 +64,7 @@ package batr.game.entity.ai.programs {
 				this._moveSum = 0;
 				var i: uint = 0;
 				do {
-					this._tempRot = GlobalRot.RANDOM;
+					this._tempRot = GlobalRot.getRandom();
 					i++;
 
 				}

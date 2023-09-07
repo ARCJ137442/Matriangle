@@ -1,4 +1,4 @@
-# TODO for migrate `.as` to `.ts`
+# TODO for migrate AS3 to TS
 
 - [ ] src\batr
   - [x] common
@@ -9,7 +9,8 @@
     - [x] common\RandomGenerator.ts
     - [x] common\UintPointCompress.ts
     - [x] common\Utils.ts
-    - [x] fonts\MainFont.ts
+  - [x] fonts
+    - [x] \MainFont.ts
   - [ ] game
     - [ ] block
       - [ ] BlockAttributes.ts
@@ -110,11 +111,11 @@
       - [ ] GameStats.ts
       - [ ] GameResult.ts
       - [ ] PlayerStats.ts
-  - [ ] general
-    - [ ] GlobalGameInformation.ts
-    - [ ] GlobalGameVariables.ts
-    - [ ] GlobalRot.ts
-    - [ ] PosTransform.ts
+  - [x] general
+    - [x] GlobalGameInformation.ts
+    - [x] GlobalGameVariables.ts
+    - [x] GlobalRot.ts
+    - [x] PosTransform.ts
   - [ ] i18n
     - [ ] DefaultNativeI18n.ts
     - [ ] FixedI18nText.ts
