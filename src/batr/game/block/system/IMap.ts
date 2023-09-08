@@ -30,10 +30,10 @@ export default interface IMap {
 
 	destructor(): void;
 
-	clone(createBlock: boolean/* = true*/): IMap;
+	clone(createBlock?: boolean/* = true*/): IMap;
 
-	copyContentFrom(target: IMap, clearSelf: boolean/* = false*/, createBlock: boolean/* = true*/): void;
-	copyFrom(target: IMap, clearSelf: boolean/* = false*/, createBlock: boolean/* = true*/): void;
+	copyContentFrom(target: IMap, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;
+	copyFrom(target: IMap, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;
 	generateNew(): IMap;
 
 	hasBlock(x: int, y: int): boolean;
@@ -50,7 +50,7 @@ export default interface IMap {
 
 	setVoid(x: int, y: int): void;
 
-	removeAllBlock(deleteBlock: boolean/* = true*/): void;
+	removeAllBlock(deleteBlock?: boolean/* = true*/): void;
 
 	// Display About
 	setDisplayTo(target: IMapDisplayer): void;
