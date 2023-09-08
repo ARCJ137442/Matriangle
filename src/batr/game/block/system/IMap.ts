@@ -1,74 +1,72 @@
-package batr.game.map {
 
-	import batr.common.*;
+// import batr.common.*;
 
-	import batr.game.block.*;
+// import batr.game.block.*;
 
-	public interface IMap {
-		//============Interface Functions============//
-		function get mapWidth(): uint;
-	function get mapHeight(): uint;
-	function get randomX(): int;
-	function get randomY(): int;
-	function get allDefinedPositions(): iPoint[];
-	function get allMapPositions(): iPoint[];
-	function get spawnPoints(): uint[];
-	function get numSpawnPoints(): uint;
+export default interface IMap {
+	//============Interface Functions============//
+	get mapWidth(): uint;
+	get mapHeight(): uint;
+	get randomX(): int;
+	get randomY(): int;
+	get allDefinedPositions(): iPoint[];
+	get allMapPositions(): iPoint[];
+	get spawnPoints(): uint[];
+	get numSpawnPoints(): uint;
 
-	function get hasSpawnPoint(): boolean;
+	get hasSpawnPoint(): boolean;
 
-	function get randomSpawnPoint(): iPoint;
+	get randomSpawnPoint(): iPoint;
 
-	function get isArenaMap(): boolean;
+	get isArenaMap(): boolean;
 
-	function get name(): string;
+	get name(): string;
 
-	function destructor(): void;
+	destructor(): void;
 
-	function clone(createBlock: boolean = true): IMap;
+	clone(createBlock: boolean = true): IMap;
 
-	function copyContentFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
-	function copyFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
-	function generateNew(): IMap;
+	copyContentFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
+	copyFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
+	generateNew(): IMap;
 
-	function hasBlock(x: int, y: int): boolean;
+	hasBlock(x: int, y: int): boolean;
 
-	function getBlock(x: int, y: int): BlockCommon;
+	getBlock(x: int, y: int): BlockCommon;
 
-	function getBlockAttributes(x: int, y: int): BlockAttributes;
+	getBlockAttributes(x: int, y: int): BlockAttributes;
 
-	function getBlockType(x: int, y: int): BlockType;
+	getBlockType(x: int, y: int): BlockType;
 
-	function setBlock(x: int, y: int, block: BlockCommon): void;
+	setBlock(x: int, y: int, block: BlockCommon): void;
 
-	function isVoid(x: int, y: int): boolean;
+	isVoid(x: int, y: int): boolean;
 
-	function setVoid(x: int, y: int): void;
+	setVoid(x: int, y: int): void;
 
-	function removeAllBlock(deleteBlock: boolean = true): void;
+	removeAllBlock(deleteBlock: boolean = true): void;
 
 	// Display About
-	function setDisplayTo(target: IMapDisplayer): void;
+	setDisplayTo(target: IMapDisplayer): void;
 
-	function forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
+	forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
 
-	function updateDisplayToLayers(x: int, y: int, block: BlockCommon, targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
+	updateDisplayToLayers(x: int, y: int, block: BlockCommon, targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
 	// SpawnPoint About
-	function addSpawnPoint(p: uint): void;
+	addSpawnPoint(p: uint): void;
 
-	function removeSpawnPoint(p: uint): void;
+	removeSpawnPoint(p: uint): void;
 
-	function clearSpawnPoints(): void;
+	clearSpawnPoints(): void;
 
 	// AI About
-	function getMatrixObject(): Vector.<Object[]>;
+	getMatrixObject(): Vector.<Object[]>;
 
-	function getMatrixInt(): Vector.<int[]>;
+	getMatrixInt(): Vector.<int[]>;
 
-	function getMatrixUint(): Vector.<uint[]>;
+	getMatrixUint(): Vector.<uint[]>;
 
-	function getMatrixNumber(): Vector.<Number[]>;
+	getMatrixNumber(): Vector.<Number[]>;
 
-	function getMatrixBoolean(): Vector.<Boolean[]>;
-}
+	getMatrixBoolean(): Vector.<Boolean[]>;
 }

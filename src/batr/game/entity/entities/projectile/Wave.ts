@@ -1,15 +1,15 @@
 package batr.game.entity.entity.projectile {
 
-	import batr.general.*;
+	// import batr.general.*;
 
-	import batr.game.entity.entity.player.*;
-	import batr.game.entity.entity.projectile.*;
-	import batr.game.entity.*;
-	import batr.game.model.*;
-	import batr.game.main.*;
+	// import batr.game.entity.entity.player.*;
+	// import batr.game.entity.entity.projectile.*;
+	// import batr.game.entity.*;
+	// import batr.game.model.*;
+	// import batr.game.main.*;
 
-	import flash.display.*;
-	import flash.geom.*;
+	// import flash.display.*;
+	// import flash.geom.*;
 
 	export default class Wave extends ProjectileCommon {
 		//============Static Variables============//

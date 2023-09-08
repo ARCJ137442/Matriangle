@@ -1,12 +1,10 @@
-package batr.game.map {
 
-	import batr.game.block.*;
+// import batr.game.block.*;
 
-	public interface IMapDisplayer {
-		function hasBlock(x:int, y:int):Boolean;
-		function getBlock(x:int, y:int):BlockCommon;
-		function removeBlock(x:int, y:int):void;
-		function removeAllBlock():void;
-		function setBlock(x:int, y:int, block:BlockCommon, overwrite:Boolean = true):void;
-	}
+export default interface IMapDisplayer {
+	hasBlock(x: int, y: int): Boolean;
+	getBlock(x: int, y: int): BlockCommon;
+	removeBlock(x: int, y: int): void;
+	removeAllBlock(): void;
+	setBlock(x: int, y: int, block: BlockCommon, overwrite: Boolean = true): void;
 }

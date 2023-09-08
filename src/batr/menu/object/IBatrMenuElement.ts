@@ -1,9 +1,7 @@
-package batr.menu.objects {
 
-	import flash.display.Sprite;
-	import flash.display.DisplayObject;
+// import flash.display.Sprite;
+// import flash.display.DisplayObject;
 
-	public interface IBatrMenuElement {
-		function destructor(): void;
-}
+export default interface IBatrMenuElement {
+	destructor(): void;
 }

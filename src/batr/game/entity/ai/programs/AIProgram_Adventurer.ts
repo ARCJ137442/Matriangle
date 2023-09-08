@@ -1,123 +1,122 @@
-package batr.game.entity.ai.programs {
 
-	import batr.common.*;
-	import batr.general.*;
+// import batr.common.*;
+// import batr.general.*;
 
-	import batr.game.block.*;
-	import batr.game.entity.ai.*;
-	import batr.game.model.*;
-	import batr.game.entity.*;
-	import batr.game.entity.entity.*;
-	import batr.game.entity.entity.player.*;
-	import batr.game.main.*;
-	import batr.game.map.*;
+// import batr.game.block.*;
+// import batr.game.entity.ai.*;
+// import batr.game.model.*;
+// import batr.game.entity.*;
+// import batr.game.entity.entity.*;
+// import batr.game.entity.entity.player.*;
+// import batr.game.main.*;
+// import batr.game.map.*;
+
+/**
+ * Moving uses A*(A Star) algorithm.
+ */
+export default class AIProgram_Adventurer implements IAIProgram {
+	//============Static Variables============//
+	public static readonly LABEL: string = 'Adventurer';
+	public static readonly LABEL_SHORT: string = 'A';
+
+	public static readonly DEBUG: boolean = false;
+
+	//============Static Functions============//
+	/*========AI Criteria========*/
+	static toolUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
+		var vx: int = GlobalRot.towardXInt(rot, 1);
+		var vy: int = GlobalRot.towardYInt(rot, 1);
+		var cx: int, cy: int;
+		var tool: ToolType = owner.tool;
+		for (var i: uint = 1; i < distance; i++) {
+			cx = owner.gridX + vx * i;
+			cy = owner.gridY + vy * i;
+			if (host.isIntOutOfMap(cx, cy))
+				continue;
+			if (!host.testIntCanPass(
+				cx, cy, tool == ToolType.MELEE,
+				ToolType.isBulletTool(tool) || tool == ToolType.BLOCK_THROWER,
+				ToolType.isLaserTool(tool),
+				toolNotThroughPlayer(tool), false
+			)
+			)
+				return false;
+		}
+		return true;
+	}
+
+	static toolNotThroughPlayer(tool: ToolType): boolean {
+		switch (tool) {
+			case ToolType.BULLET:
+			case ToolType.NUKE:
+			case ToolType.SUB_BOMBER:
+			case ToolType.TRACKING_BULLET:
+			case ToolType.BLOCK_THROWER:
+			case ToolType.MELEE:
+			case ToolType.LIGHTNING:
+				return true;
+		}
+		return false;
+	}
+
+	static toolNeedCarryBlock(tool: ToolType): boolean {
+		return tool == ToolType.BLOCK_THROWER;
+	}
+
+	static detectCarryBlock(player: Player): boolean {
+		if (toolNeedCarryBlock(player.tool) && !player.isCarriedBlock)
+			return false;
+		return true;
+	}
+
+	static detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
+		return !player.isCarriedBlock && blockAtt.isCarriable && player.host.testCarriableWithMap(blockAtt, player.host.map);
+	}
+
+	/*========A Star Algorithm========*/
 
 	/**
-	 * Moving uses A*(A Star) algorithm.
+	 * Find the 'best' path in a map with the owner.
+	 * The startPos should be (owner.gridX,owner.gridY)
+	 * 1. [OpenList],[CloseList]
+	 * 2. [F=G+H]
+	 * @return	The Path From Target To Start
 	 */
-	export default class AIProgram_Adventurer implements IAIProgram {
-		//============Static Variables============//
-		public static readonly LABEL: string = 'Adventurer';
-		public static readonly LABEL_SHORT: string = 'A';
+	protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
+		// trace('Name='+owner.customName)
+		// Operation
+		var openList: PathNode[] = new PathNode[]();
+		var closeList: PathNode[] = new PathNode[]();
 
-		public static readonly DEBUG: boolean = false;
+		var endNode: PathNode = new PathNode(endX, endY, null);
+		var startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
+		var targetNode: PathNode = initFGH(new PathNode(endX, endY, null), host, owner, endNode);
+		var _leastNearbyNode: PathNode;
+		var _nearbyNodes: PathNode[];
+		var _tempNode: PathNode;
 
-		//============Static Functions============//
-		/*========AI Criteria========*/
-		static toolUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
-			var vx: int = GlobalRot.towardXInt(rot, 1);
-			var vy: int = GlobalRot.towardYInt(rot, 1);
-			var cx: int, cy: int;
-			var tool: ToolType = owner.tool;
-			for (var i: uint = 1; i < distance; i++) {
-				cx = owner.gridX + vx * i;
-				cy = owner.gridY + vy * i;
-				if (host.isIntOutOfMap(cx, cy))
-					continue;
-				if (!host.testIntCanPass(
-					cx, cy, tool == ToolType.MELEE,
-					ToolType.isBulletTool(tool) || tool == ToolType.BLOCK_THROWER,
-					ToolType.isLaserTool(tool),
-					toolNotThroughPlayer(tool), false
-				)
-				)
-					return false;
-			}
-			return true;
+		openList.push(startNode);
+
+		while (openList.length > 0) {
+			// Set
+			_leastNearbyNode = getLeastFNode(openList);
+			// trace('Set _leastNearbyNode='+_leastNearbyNode,'numO='+openList.length,'numC='+closeList.length)
+			// Move
+			removeNodeIn(_leastNearbyNode, openList);
+			if (closeList.indexOf(_leastNearbyNode) < 0)
+				closeList.push(_leastNearbyNode);
+			// Find
+			_nearbyNodes = getNearbyNodesAndInitFGH(_leastNearbyNode, host, owner, targetNode);
+			// Test And Add
+			for each(_tempNode in _nearbyNodes) {
+				// Touch End
+				if(_tempNode.equals(targetNode))
+				break;
+				// Add
+				if(!containNode(_tempNode, closeList) && !containNode(_tempNode, openList))
+				openList.push(_tempNode);
 		}
-
-		static toolNotThroughPlayer(tool: ToolType): boolean {
-			switch (tool) {
-				case ToolType.BULLET:
-				case ToolType.NUKE:
-				case ToolType.SUB_BOMBER:
-				case ToolType.TRACKING_BULLET:
-				case ToolType.BLOCK_THROWER:
-				case ToolType.MELEE:
-				case ToolType.LIGHTNING:
-					return true;
-			}
-			return false;
-		}
-
-		static toolNeedCarryBlock(tool: ToolType): boolean {
-			return tool == ToolType.BLOCK_THROWER;
-		}
-
-		static detectCarryBlock(player: Player): boolean {
-			if (toolNeedCarryBlock(player.tool) && !player.isCarriedBlock)
-				return false;
-			return true;
-		}
-
-		static detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
-			return !player.isCarriedBlock && blockAtt.isCarriable && player.host.testCarriableWithMap(blockAtt, player.host.map);
-		}
-
-		/*========A Star Algorithm========*/
-
-		/**
-		 * Find the 'best' path in a map with the owner.
-		 * The startPos should be (owner.gridX,owner.gridY)
-		 * 1. [OpenList],[CloseList]
-		 * 2. [F=G+H]
-		 * @return	The Path From Target To Start
-		 */
-		protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
-			// trace('Name='+owner.customName)
-			// Operation
-			var openList: PathNode[] = new PathNode[]();
-			var closeList: PathNode[] = new PathNode[]();
-
-			var endNode: PathNode = new PathNode(endX, endY, null);
-			var startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
-			var targetNode: PathNode = initFGH(new PathNode(endX, endY, null), host, owner, endNode);
-			var _leastNearbyNode: PathNode;
-			var _nearbyNodes: PathNode[];
-			var _tempNode: PathNode;
-
-			openList.push(startNode);
-
-			while (openList.length > 0) {
-				// Set
-				_leastNearbyNode = getLeastFNode(openList);
-				// trace('Set _leastNearbyNode='+_leastNearbyNode,'numO='+openList.length,'numC='+closeList.length)
-				// Move
-				removeNodeIn(_leastNearbyNode, openList);
-				if (closeList.indexOf(_leastNearbyNode) < 0)
-					closeList.push(_leastNearbyNode);
-				// Find
-				_nearbyNodes = getNearbyNodesAndInitFGH(_leastNearbyNode, host, owner, targetNode);
-				// Test And Add
-				for each(_tempNode in _nearbyNodes) {
-					// Touch End
-					if(_tempNode.equals(targetNode))
-					break;
-					// Add
-					if(!containNode(_tempNode, closeList) && !containNode(_tempNode, openList))
-					openList.push(_tempNode);
-			}
-		}
+	}
 			// Now the _tempNode is the succeed Node.
 			// Return
 			return _tempNode == null ? null : _tempNode.pathToRoot;
@@ -543,9 +542,9 @@ public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerA
 	}
 }
 
-import batr.common.*;
-import batr.general.*;
-import batr.game.map.*;
+// import batr.common.*;
+// import batr.general.*;
+// import batr.game.map.*;
 
 class PathNode extends iPoint {
 	public parent: PathNode;
@@ -633,8 +632,8 @@ class PathNode extends iPoint {
 	}
 }
 
-import batr.general.GlobalRot;
-import batr.game.map.IMap;
+// import batr.general.GlobalRot;
+// import batr.game.map.IMap;
 
 class NodeHeap {
 	/**
@@ -746,4 +745,3 @@ class NodeHeap {
 			this._list[i2] = temp;
 		}
 	}
-}

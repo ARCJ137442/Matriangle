@@ -1,16 +1,14 @@
-package batr.menu.objects {
 
-	import flash.display.BitmapData;
+// import flash.display.BitmapData;
 
-	export default class TitleImg extends BitmapData {
-		//============Static Variables============//
-		// public static readonly IMAGE_DATA:TitleImg=new TitleImg()
+export default class TitleImg extends BitmapData {
+	//============Static Variables============//
+	// public static readonly IMAGE_DATA:TitleImg=new TitleImg()
 
-		//============Instance Variables============//
+	//============Instance Variables============//
 
-		//============Constructor & Destructor============//
-		public constructor() {
-			super(840, 250, true);
-		}
+	//============Constructor & Destructor============//
+	public constructor() {
+		super(840, 250, true);
 	}
 }

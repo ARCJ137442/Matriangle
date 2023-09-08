@@ -1,19 +1,17 @@
-package batr.menu.objects {
 
-	import batr.common.*;
-	import batr.general.*;
+// import batr.common.*;
+// import batr.general.*;
 
-	import batr.menu.events.*;
-	import batr.menu.object.*;
+// import batr.menu.events.*;
+// import batr.menu.object.*;
 
-	import flash.display.*;
+// import flash.display.*;
 
-	public interface IBatrMenuElementContainer extends IBatrMenuElement {
-		function appendDirectElement(element: IBatrMenuElement): IBatrMenuElement;
-	function appendDirectElements(...elements): IBatrMenuElement;
-	function addChildPerDirectElements(): void;
+export default interface IBatrMenuElementContainer extends IBatrMenuElement {
+	appendDirectElement(element: IBatrMenuElement): IBatrMenuElement;
+	appendDirectElements(...elements): IBatrMenuElement;
+	addChildPerDirectElements(): void;
 
-	function getElementAt(index: int): IBatrMenuElement;
-	function getElementByName(name: string): BatrMenuGUI;
-}
+	getElementAt(index: int): IBatrMenuElement;
+	getElementByName(name: string): BatrMenuGUI;
 }

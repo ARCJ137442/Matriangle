@@ -1,13 +1,11 @@
-package batr.game.entity.model {
 
-	/**
-	 * ...
-	 * @author ARCJ137442
-	 */
-	public interface IPlayerProfile {
-		function get customName():String;
-		function get experience():uint;
-		function get level():uint;
-		function get teamColor():uint;
-	}
+/**
+ * ...
+ * @author ARCJ137442
+ */
+export default interface IPlayerProfile {
+	get customName(): String;
+	get experience(): uint;
+	get level(): uint;
+	get teamColor(): uint;
 }
