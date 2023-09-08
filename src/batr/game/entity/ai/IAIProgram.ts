@@ -22,7 +22,7 @@ package batr.game.entity.ai.programs {
 	function requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction;
 	function requestActionOnRespawn(player: AIPlayer): AIPlayerAction;
 
-	function requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction;
+	function requestActionOnMapTransform(player: AIPlayer): AIPlayerAction;
 
 	function requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction;
 }

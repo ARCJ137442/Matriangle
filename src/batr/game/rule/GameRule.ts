@@ -37,9 +37,9 @@
 		/**
 		 * Use as a int with negative numbers means infinity
 		 */
-		protected static readonly d_remainLifesPlayer: int = -1;
+		protected static readonly d_remainLivesPlayer: int = -1;
 
-		protected static readonly d_remainLifesAI: int = -1;
+		protected static readonly d_remainLivesAI: int = -1;
 
 		protected static readonly d_defaultRespawnTime: uint = 3 * GlobalGameVariables.TPS; // tick
 		protected static readonly d_deadPlayerMoveToX: number = -10;
@@ -98,7 +98,7 @@
 		protected static readonly d_mapTransformTime: uint = 60;
 
 		//====Tools====//
-		protected static readonly d_enableTools: ToolType[] = ToolType._ALL_AVALIABLE_TOOL;
+		protected static readonly d_enableTools: ToolType[] = ToolType._ALL_AVAILABLE_TOOL;
 
 		protected static readonly d_defaultToolID: int = 0;
 
@@ -121,8 +121,8 @@
 			rule.playerCount = 0;
 			rule.AICount = 8;
 			rule.defaultToolID = -2;
-			rule.remainLifesPlayer = -1;
-			rule.remainLifesAI = -1;
+			rule.remainLivesPlayer = -1;
+			rule.remainLivesAI = -1;
 			return rule;
 		}
 
@@ -247,9 +247,9 @@
 
 		protected _defaultMaxHealth: uint;
 
-		protected _remainLifesPlayer: int;
+		protected _remainLivesPlayer: int;
 
-		protected _remainLifesAI: int;
+		protected _remainLivesAI: int;
 
 		protected _defaultRespawnTime: uint;
 
@@ -373,9 +373,9 @@
 	public get randomBonusEnable(): BonusType {
 		// Test
 		if (this._bonusBoxSpawnPotentials == null) {
-			// return BonusType.RANDOM_AVALIABLE
+			// return BonusType.RANDOM_AVAILABLE
 			// 20230902: now initialize an equivalent potentials
-			this._bonusBoxSpawnPotentials = BonusType.AVALIABLE_SPAWN_POTENTIALS;
+			this._bonusBoxSpawnPotentials = BonusType.AVAILABLE_SPAWN_POTENTIALS;
 		}
 		// Add
 		var types: BonusType[] = new BonusType[]();
@@ -385,7 +385,7 @@
 			if (bonusPotential['type'] is BonusType && bonusPotential['weight'] is Number) {
 				// Filter
 				if (
-					// if the rule disallow player change their team, the type that potential can change player's team willn't be push
+					// if the rule disallow player change their team, the type that potential can change player's team won't be push
 					!this._allowPlayerChangeTeam && (
 						bonusPotential['type'] == BonusType.RANDOM_CHANGE_TEAM ||
 						bonusPotential['type'] == BonusType.UNITE_PLAYER ||
@@ -713,26 +713,26 @@ public set deadPlayerMoveToY(value: number) {
 	}
 
 // Life
-public get remainLifesPlayer(): int {
-		return this._remainLifesPlayer;
+public get remainLivesPlayer(): int {
+		return this._remainLivesPlayer;
 	}
 
-public set remainLifesPlayer(value: int) {
-		if (value == this._remainLifesPlayer)
+public set remainLivesPlayer(value: int) {
+		if (value == this._remainLivesPlayer)
 			return;
-		onVariableUpdate(this._remainLifesPlayer, value);
-		this._remainLifesPlayer = value;
+		onVariableUpdate(this._remainLivesPlayer, value);
+		this._remainLivesPlayer = value;
 	}
 
-public get remainLifesAI(): int {
-		return this._remainLifesAI;
+public get remainLivesAI(): int {
+		return this._remainLivesAI;
 	}
 
-public set remainLifesAI(value: int) {
-		if (value == this._remainLifesAI)
+public set remainLivesAI(value: int) {
+		if (value == this._remainLivesAI)
 			return;
-		onVariableUpdate(this._remainLifesAI, value);
-		this._remainLifesAI = value;
+		onVariableUpdate(this._remainLivesAI, value);
+		this._remainLivesAI = value;
 	}
 
 // Stats
@@ -749,7 +749,7 @@ public set recordPlayerStats(value: boolean) {
 
 // Tool Enable
 public get enableTools(): ToolType[] {
-		return this._enableTools == null ? ToolType._ALL_AVALIABLE_TOOL : this._enableTools;
+		return this._enableTools == null ? ToolType._ALL_AVAILABLE_TOOL : this._enableTools;
 	}
 
 public set enableTools(value: ToolType[]) {
@@ -760,7 +760,7 @@ public set enableTools(value: ToolType[]) {
 	}
 
 public get enableToolCount(): int {
-		return this._enableTools == null ? ToolType._ALL_AVALIABLE_TOOL.length : this._enableTools.length;
+		return this._enableTools == null ? ToolType._ALL_AVAILABLE_TOOL.length : this._enableTools.length;
 	}
 
 // Asphyxia Damage
@@ -858,8 +858,8 @@ public loadAsDefault(): void {
 		this._deadPlayerMoveToX = d_deadPlayerMoveToX;
 		this._deadPlayerMoveToY = d_deadPlayerMoveToY;
 		// Life
-		this._remainLifesPlayer = d_remainLifesPlayer;
-		this._remainLifesAI = d_remainLifesAI;
+		this._remainLivesPlayer = d_remainLivesPlayer;
+		this._remainLivesAI = d_remainLivesAI;
 		// Stat
 		this._recordPlayerStats = d_recordPlayerStats;
 		// Tool Enable

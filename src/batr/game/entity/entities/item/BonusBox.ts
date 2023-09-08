@@ -84,7 +84,7 @@ package batr.game.entity.entities {
 		public onPlayerPickup(player: Player, forcedBonusType: BonusType = null): void {
 			if (player == null)
 				return;
-			// Disactive
+			// Deactivate
 			this.isActive = false;
 			// Effect
 			var buffColor: int = -1;
@@ -105,7 +105,7 @@ package batr.game.entity.entities {
 					break;
 				// Tool
 				case BonusType.RANDOM_TOOL:
-					player.tool = ToolType.getRandomAvaliableWithout(player.tool);
+					player.tool = ToolType.getRandomAvailableWithout(player.tool);
 					break;
 				// Attributes
 				case BonusType.BUFF_RANDOM:

@@ -108,7 +108,7 @@ package batr.game.effect {
 			return result;
 		}
 
-		public registerEffectforUUID(effect: EffectCommon): boolean {
+		public registerEffectForUUID(effect: EffectCommon): boolean {
 			if (effect == null)
 				return false;
 			var uuid: uint = this.nextUUID();
@@ -120,7 +120,7 @@ package batr.game.effect {
 			return false;
 		}
 
-		public removeEffectforUUID(effect: EffectCommon): boolean {
+		public removeEffectForUUID(effect: EffectCommon): boolean {
 			var uuid: uint = this.getUUIDByEffect(effect);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[effect] = 0;
@@ -158,7 +158,7 @@ package batr.game.effect {
 
 			// UUIDMap
 			if (!this.hasValidUUID(effect))
-				this.registerEffectforUUID(effect);
+				this.registerEffectForUUID(effect);
 			return true;
 		}
 
@@ -169,7 +169,7 @@ package batr.game.effect {
 			this._effects.splice(this._effects.indexOf(effect), 1);
 			// UUIDMap
 			if (this.hasValidUUID(effect))
-				this.removeEffectforUUID(effect);
+				this.removeEffectForUUID(effect);
 			return true;
 		}
 

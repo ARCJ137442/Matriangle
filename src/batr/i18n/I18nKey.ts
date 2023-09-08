@@ -65,8 +65,8 @@ package batr.translations {
 		public static readonly DEFAULT_TOOL: string = 'batr.custom.defaultTool';
 		public static readonly DEFAULT_HEALTH: string = 'batr.custom.defaultHealth';
 		public static readonly DEFAULT_MAX_HEALTH: string = 'batr.custom.defaultMaxHealth';
-		public static readonly REMAIN_LIFES_PLAYER: string = 'batr.custom.remainLifesPlayer';
-		public static readonly REMAIN_LIFES_AI: string = 'batr.custom.remainLifesAI';
+		public static readonly REMAIN_LIVES_PLAYER: string = 'batr.custom.remainLivesPlayer';
+		public static readonly REMAIN_LIVES_AI: string = 'batr.custom.remainLivesAI';
 		public static readonly MAX_BONUS_COUNT: string = 'batr.custom.maxBonusCount';
 		public static readonly BONUS_SPAWN_AFTER_DEATH: string = 'batr.custom.bonusSpawnAfterPlayerDeath';
 		public static readonly MAP_TRANSFORM_TIME: string = 'batr.custom.mapTransformTime';

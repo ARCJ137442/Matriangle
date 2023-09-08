@@ -200,7 +200,7 @@ package batr.menu.object.selector {
 
 		public onI18nChange(E: I18nsChangeEvent): void {
 			/* trace(this.name,this._textField.text,this._Content);
-			 * The Player selector in Game Result Menu dosn't has content when INITIAL LOAD! */
+			 * The Player selector in Game Result Menu doesn't has content when INITIAL LOAD! */
 			if (this._Content == null)
 				return;
 			this._Content.alignI18nsFrom(E.nowI18ns);

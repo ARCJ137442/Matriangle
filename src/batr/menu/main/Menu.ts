@@ -65,7 +65,7 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static readonly RESULT_TITLE_FORMET: TextFormat = new TextFormat(
+		public static readonly RESULT_TITLE_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
 			DEFAULT_SIZE,
 			0x333333,
@@ -76,7 +76,7 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static readonly RANK_Content_FORMET: TextFormat = new TextFormat(
+		public static readonly RANK_Content_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
 			DEFAULT_SIZE * 4 / 5,
 			0x444444,
@@ -116,9 +116,9 @@
 		protected _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
 		protected _isShowingMenu: boolean = false;
 
-		protected _languageselector: BatrSelector;
-		protected _playerStatselector: BatrSelector;
-		protected _frameComplementselector: BatrSelector;
+		protected _languageSelector: BatrSelector;
+		protected _playerStatSelector: BatrSelector;
+		protected _frameComplementSelector: BatrSelector;
 
 		// Sheets
 		// List
@@ -159,12 +159,12 @@
 		protected _gameRuleConfig: BatrTextInput;
 
 		/**
-		 * A integer combine with limitted indexes.
+		 * A integer combine with limited indexes.
 		 */
 		protected _sheetHistory: uint;
 		/* 
 		 * s=<1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,0,1>:[l=17,m=2],
-		 * Complexed To Sum(pow(m,n)*s[n],n,0,l-1)=96217
+		 * A Complex example: To Sum(pow(m,n)*s[n],n,0,l-1)=96217
 		 */
 
 		// GUI
@@ -251,12 +251,12 @@
 			this._storedGameResult = value;
 		}
 
-		public get languageselector(): BatrSelector {
-			return this._languageselector;
+		public get languageSelector(): BatrSelector {
+			return this._languageSelector;
 		}
 
-		public get frameComplementselector(): BatrSelector {
-			return this._frameComplementselector;
+		public get frameComplementSelector(): BatrSelector {
+			return this._frameComplementSelector;
 		}
 
 		//============Instance Functions============//
@@ -308,7 +308,7 @@
 			_title.x = PosTransform.localPosToRealPos(2);
 			_title.y = _TITLE_HIDE_Y;
 			this.animaShowMenu();
-			this.addEventListener(MenuEvent.TITLE_SHOWEN, constructMainManu);
+			this.addEventListener(MenuEvent.TITLE_SHOWN, constructMainMenu);
 		}
 
 		protected addChildren(): void {
@@ -392,7 +392,7 @@
 		}
 
 		// selector Build
-		protected quickselectorBuild(content: BatrSelectorContent,
+		protected quickSelectorBuild(content: BatrSelectorContent,
 			minTextBlockWidth: number = 1, selectorClickFunction: Function = null): BatrSelector {
 			var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
@@ -410,8 +410,8 @@
 		protected initDisplay(): void {
 		}
 
-		protected constructMainManu(event: MenuEvent): void {
-			this.removeEventListener(MenuEvent.TITLE_SHOWEN, constructMainManu);
+		protected constructMainMenu(event: MenuEvent): void {
+			this.removeEventListener(MenuEvent.TITLE_SHOWN, constructMainMenu);
 			// Call Subject
 			this.subject.onTitleComplete();
 			// Build Sheets
@@ -419,7 +419,7 @@
 			for (var sheet of this._sheets)
 				sheet.addChildPerDirectElements();
 			this.nowSheet = this._sheetMain;
-			// Add VresionText
+			// Add VersionText
 			var versionText = new TextField();
 			versionText.text = GlobalGameInformation.GAME_FULL_VERSION;
 			versionText.setTextFormat(Menu.VERSION_TEXT_FORMAT);
@@ -430,24 +430,24 @@
 			this.addChild(versionText);
 			versionText.selectable = false;
 			// Add Language selector
-			this._languageselector = new BatrSelector(BatrSelectorContent.createLanguageContent(I18ns.getIDFromI18n(this.translations)));
-			this._languageselector.x = PosTransform.localPosToRealPos(21);
-			this._languageselector.y = PosTransform.localPosToRealPos(22.5);
-			this._languageselector.addEventListener(BatrGUIEvent.CLICK, this.onLanguageChange);
-			this.addChild(this._languageselector);
+			this._languageSelector = new BatrSelector(BatrSelectorContent.createLanguageContent(I18ns.getIDFromI18n(this.translations)));
+			this._languageSelector.x = PosTransform.localPosToRealPos(21);
+			this._languageSelector.y = PosTransform.localPosToRealPos(22.5);
+			this._languageSelector.addEventListener(BatrGUIEvent.CLICK, this.onLanguageChange);
+			this.addChild(this._languageSelector);
 			// Add Frame-Complement selector
-			this._frameComplementselector = new BatrSelector(BatrSelectorContent.createBinaryChoiceContent(uint(game.enableFrameComplement), this.translations, I18nKey.FILL_FRAME_OFF, I18nKey.FILL_FRAME_ON));
-			this._frameComplementselector.x = PosTransform.localPosToRealPos(21);
-			this._frameComplementselector.y = PosTransform.localPosToRealPos(21.5);
-			this._frameComplementselector.addEventListener(BatrGUIEvent.CLICK, this.onFillFrameChange);
-			this.subject.addEventListener(I18nsChangeEvent.TYPE, this._frameComplementselector.onI18nChange);
-			this.addChild(this._frameComplementselector);
+			this._frameComplementSelector = new BatrSelector(BatrSelectorContent.createBinaryChoiceContent(uint(game.enableFrameComplement), this.translations, I18nKey.FILL_FRAME_OFF, I18nKey.FILL_FRAME_ON));
+			this._frameComplementSelector.x = PosTransform.localPosToRealPos(21);
+			this._frameComplementSelector.y = PosTransform.localPosToRealPos(21.5);
+			this._frameComplementSelector.addEventListener(BatrGUIEvent.CLICK, this.onFillFrameChange);
+			this.subject.addEventListener(I18nsChangeEvent.TYPE, this._frameComplementSelector.onI18nChange);
+			this.addChild(this._frameComplementSelector);
 		}
 
 		protected buildSheets(): void {
 			// Set Variables
 			var pcS, acS, imS, pcS_2, acS_2, imS_2: BatrSelector;
-			var customLeftselectorX: uint = 10;
+			var customLeftSelectorX: uint = 10;
 			//===Build Sheets===//
 			this._sheets = [
 				// Main
@@ -477,21 +477,21 @@
 						16, 9
 					).appendSelectorAndText(
 						this._subject,
-						pcS = this.quickselectorBuild(
+						pcS = this.quickSelectorBuild(
 							BatrSelectorContent.createUnsignedIntegerContent(this.gameRule.playerCount)
 						).setName(I18nKey.PLAYER_COUNT),
 						I18nKey.PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
-						acS = this.quickselectorBuild(
+						acS = this.quickSelectorBuild(
 							BatrSelectorContent.createUnsignedIntegerContent(this.gameRule.AICount)
 						).setName(I18nKey.AI_PLAYER_COUNT),
 						I18nKey.AI_PLAYER_COUNT,
 						true
 					).appendSelectorAndText(
 						this._subject,
-						imS = this.quickselectorBuild(new BatrSelectorContent().initAsEnum(
+						imS = this.quickSelectorBuild(new BatrSelectorContent().initAsEnum(
 							([
 								this.quickI18nTextBuild(I18nKey.MAP_RANDOM)
 							]).concat(
@@ -516,17 +516,17 @@
 						2, 9
 					).appendSelectorAndText( // Old
 						this._subject,
-						pcS_2 = this.quickselectorBuild(null),
+						pcS_2 = this.quickSelectorBuild(null),
 						I18nKey.PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
-						acS_2 = this.quickselectorBuild(null),
+						acS_2 = this.quickSelectorBuild(null),
 						I18nKey.AI_PLAYER_COUNT,
 						false
 					).appendSelectorAndText(
 						this._subject,
-						imS_2 = this.quickselectorBuild(null, 1),
+						imS_2 = this.quickSelectorBuild(null, 1),
 						I18nKey.INITIAL_MAP,
 						false
 					).quickAppendSelector(
@@ -544,22 +544,22 @@
 						BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultMaxHealth),
 						I18nKey.DEFAULT_MAX_HEALTH,
 						false,
-						this.onMaxHealthselectorClick
+						this.onMaxHealthSelectorClick
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
-							this.getLifesFromRule(false),
+							this.getLivesFromRule(false),
 							this.quickI18nTextBuild(I18nKey.INFINITY)
 						),
-						I18nKey.REMAIN_LIFES_PLAYER,
+						I18nKey.REMAIN_LIVES_PLAYER,
 						false
 					).quickAppendSelector(
 						this,
 						BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
-							this.getLifesFromRule(true),
+							this.getLivesFromRule(true),
 							this.quickI18nTextBuild(I18nKey.INFINITY)
 						),
-						I18nKey.REMAIN_LIFES_AI,
+						I18nKey.REMAIN_LIVES_AI,
 						false
 					).quickAppendSelector(
 						this,
@@ -576,7 +576,7 @@
 							([
 								this.quickI18nTextBuild(I18nKey.COMPLETELY_RANDOM),
 								this.quickI18nTextBuild(I18nKey.UNIFORM_RANDOM)
-							]).concat(I18nText.getTextsByAllAvaliableTools(this.translations, false)),
+							]).concat(I18nText.getTextsByAllAvailableTools(this.translations, false)),
 							0, 2
 						).initAsInt(
 							this.gameRule.enableToolCount - 1, -2, this.gameRule.defaultToolID
@@ -633,12 +633,12 @@
 				// Game Result
 				this._sheetGameResult = this.buildSheet(I18nKey.GAME_RESULT, false).appendDirectElements(
 					// Text Title
-					this._gameResultText = quickTextFieldBuild(I18nKey.GAME_RESULT, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
+					this._gameResultText = quickTextFieldBuild(I18nKey.GAME_RESULT, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMAT, true),
 					// button
 					this.quickButtonBuild2(I18nKey.MAIN_MENU, this.onMainMenuButtonClick, 0xcccccc).setBlockPos(9, 21),
 					this.quickLinkageButtonBuild(I18nKey.SCORE_RANKING, I18nKey.SCORE_RANKING, 0xccffff).setBlockPos(9, 19),
 					// player
-					this._playerStatselector = this.quickselectorBuild(null, 1, this.onPlayerStatselectorClick).setBlockPos(5, 4.5),
+					this._playerStatSelector = this.quickSelectorBuild(null, 1, this.onPlayerStatSelectorClick).setBlockPos(5, 4.5),
 					this._playerStatLevel = this.quickStatTextFieldBuild(I18nKey.FINAL_LEVEL, 3, 5),
 					this._playerStatKill = this.quickStatTextFieldBuild(I18nKey.KILL_COUNT, 3, 6),
 					this._playerStatDeath = this.quickStatTextFieldBuild(I18nKey.DEATH_COUNT, 3, 7),
@@ -656,9 +656,9 @@
 				// Ranking
 				this._sheetScoreRanking = this.buildSheet(I18nKey.SCORE_RANKING, false).appendDirectElements(
 					// Text Title
-					this.quickTextFieldBuild(I18nKey.SCORE_RANKING, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMET, true),
+					this.quickTextFieldBuild(I18nKey.SCORE_RANKING, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMAT, true),
 					// ranking
-					this._rankContentText = quickTextFieldBuild(null, 2, 4, TextFieldAutoSize.NONE).setBlockSize(20, 20).setFormat(RANK_Content_FORMET, true),
+					this._rankContentText = quickTextFieldBuild(null, 2, 4, TextFieldAutoSize.NONE).setBlockSize(20, 20).setFormat(RANK_Content_FORMAT, true),
 					// button
 					this.quickBackButtonBuild().setBlockPos(9, 21)
 				) as BatrMenuSheet,
@@ -685,11 +685,11 @@
 			BatrSelector.setRelativeLink(imS, imS_2);
 		}
 
-		protected getLifesFromRule(isAI: boolean): int {
-			return transformLifesFromRule(isAI ? this.gameRule.remainLifesAI : this.gameRule.remainLifesPlayer);
+		protected getLivesFromRule(isAI: boolean): int {
+			return transformLivesFromRule(isAI ? this.gameRule.remainLivesAI : this.gameRule.remainLivesPlayer);
 		}
 
-		protected transformLifesFromRule(value: number): int {
+		protected transformLivesFromRule(value: number): int {
 			return (value == Infinity ? -1 : int(value));
 		}
 
@@ -737,7 +737,7 @@
 		public loadResult(result: GameResult): void {
 			// set
 			this._gameResultText.translationalText = result.message;
-			this._playerStatselector.setContent(BatrSelectorContent.createPlayerNamesContent(result.stats.players));
+			this._playerStatSelector.setContent(BatrSelectorContent.createPlayerNamesContent(result.stats.players));
 			this._storedGameResult = result;
 			this.updateStatByResult();
 			// rank
@@ -748,7 +748,7 @@
 		}
 
 		protected updateStatByResult(): void {
-			this.onPlayerStatselectorClick(null);
+			this.onPlayerStatSelectorClick(null);
 			Menu.setFixedTextSuffix(this._gameStatMapTransform, this._storedGameResult.stats.mapTransformCount);
 			Menu.setFixedTextSuffix(this._gameStatBonusGenerate, this._storedGameResult.stats.bonusGenerateCount);
 		}
@@ -763,7 +763,7 @@
 			this._titleTimer.stop();
 			this._titleTimer.removeEventListener(TimerEvent.TIMER, onTitleTimerTick);
 			this._titleTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTitleTimerComplete);
-			this.dispatchEvent(new MenuEvent(MenuEvent.TITLE_SHOWEN));
+			this.dispatchEvent(new MenuEvent(MenuEvent.TITLE_SHOWN));
 		}
 
 		protected onI18nChange(E: I18nsChangeEvent): void {
@@ -775,53 +775,53 @@
 			try {
 				//====Select====//
 				// PlayerCount
-				var playerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
-				rule.playerCount = playerCountselector == null ? 4 : playerCountselector.currentValue;
+				var playerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
+				rule.playerCount = playerCountSelector == null ? 4 : playerCountSelector.currentValue;
 				// AIPlayerCount
-				var AIPlayerCountselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
-				rule.AICount = AIPlayerCountselector == null ? 6 : AIPlayerCountselector.currentValue;
+				var AIPlayerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
+				rule.AICount = AIPlayerCountSelector == null ? 6 : AIPlayerCountSelector.currentValue;
 				// InitialMap(Map)
-				var initialMapselector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
-				rule.initialMapID = initialMapselector == null ? -1 : initialMapselector.currentValue - 1;
+				var initialMapSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
+				rule.initialMapID = initialMapSelector == null ? -1 : initialMapSelector.currentValue - 1;
 				//========Advanced========//
 				//====Left====//
 				// DefaultHealth
-				var defaultHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
-				rule.defaultHealth = defaultHealthselector == null ? 100 : defaultHealthselector.currentValue;
+				var defaultHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
+				rule.defaultHealth = defaultHealthSelector == null ? 100 : defaultHealthSelector.currentValue;
 				// DefaultMaxHealth
-				var defaultMaxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
-				rule.defaultMaxHealth = defaultMaxHealthselector == null ? 100 : defaultMaxHealthselector.currentValue;
-				// DefaultLifesPlayer
-				var defaultLifesselectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIFES_PLAYER);
-				rule.remainLifesPlayer = defaultLifesselectorP == null ? -1 : defaultLifesselectorP.currentValue;
-				// DefaultLifesAI
-				var defaultLifesselectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIFES_AI);
-				rule.remainLifesAI = defaultLifesselectorA == null ? -1 : defaultLifesselectorA.currentValue;
+				var defaultMaxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
+				rule.defaultMaxHealth = defaultMaxHealthSelector == null ? 100 : defaultMaxHealthSelector.currentValue;
+				// DefaultLivesPlayer
+				var defaultLivesSelectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_PLAYER);
+				rule.remainLivesPlayer = defaultLivesSelectorP == null ? -1 : defaultLivesSelectorP.currentValue;
+				// DefaultLivesAI
+				var defaultLivesSelectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_AI);
+				rule.remainLivesAI = defaultLivesSelectorA == null ? -1 : defaultLivesSelectorA.currentValue;
 				// DefaultRespawnTime
-				var defaultRespawnTimeselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
-				rule.defaultRespawnTime = defaultRespawnTimeselector.currentValue * GlobalGameVariables.TPS;
+				var defaultRespawnTimeSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
+				rule.defaultRespawnTime = defaultRespawnTimeSelector.currentValue * GlobalGameVariables.TPS;
 				// LockTeam
 				var lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
-				rule.allowPlayerChangeTeam = defaultRespawnTimeselector.currentValue == 0; // inverted boolean
+				rule.allowPlayerChangeTeam = defaultRespawnTimeSelector.currentValue == 0; // inverted boolean
 				//====Right====//
 				// DefaultTool
-				var defaultToolselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
-				rule.defaultToolID = defaultToolselector == null ? -2 : defaultToolselector.currentValue;
+				var defaultToolSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
+				rule.defaultToolID = defaultToolSelector == null ? -2 : defaultToolSelector.currentValue;
 				// ToolsNoCD
-				var toolsNoCDselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
-				rule.toolsNoCD = toolsNoCDselector.currentValue > 0;
+				var toolsNoCDSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
+				rule.toolsNoCD = toolsNoCDSelector.currentValue > 0;
 				// MapTransformTime
-				var mapTransformTimeselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
-				rule.mapTransformTime = mapTransformTimeselector.currentValue;
+				var mapTransformTimeSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
+				rule.mapTransformTime = mapTransformTimeSelector.currentValue;
 				// BonusBoxMaxCount
-				var bonusBoxMaxCountselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAX_BONUS_COUNT);
-				rule.bonusBoxMaxCount = bonusBoxMaxCountselector.currentValue;
+				var bonusBoxMaxCountSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAX_BONUS_COUNT);
+				rule.bonusBoxMaxCount = bonusBoxMaxCountSelector.currentValue;
 				// BonusBoxSpawnAfterDeath
-				var bonusBoxSpawnAfterDeathselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.BONUS_SPAWN_AFTER_DEATH);
-				rule.bonusBoxSpawnAfterPlayerDeath = bonusBoxSpawnAfterDeathselector.currentValue > 0;
+				var bonusBoxSpawnAfterDeathSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.BONUS_SPAWN_AFTER_DEATH);
+				rule.bonusBoxSpawnAfterPlayerDeath = bonusBoxSpawnAfterDeathSelector.currentValue > 0;
 				// AsphyxiaDamage
-				var asphyxiaDamageselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.ASPHYXIA_DAMAGE);
-				rule.playerAsphyxiaDamage = asphyxiaDamageselector.currentValue;
+				var asphyxiaDamageSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.ASPHYXIA_DAMAGE);
+				rule.playerAsphyxiaDamage = asphyxiaDamageSelector.currentValue;
 			}
 			catch (err: Error) {
 				trace('Load GameRule Error:' + err.message);
@@ -910,21 +910,21 @@
 			this.setNowSheet(this._sheetMain);
 		}
 
-		protected onMaxHealthselectorClick(event: BatrGUIEvent): void {
-			var healthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
-			var maxHealthselector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
-			if (healthselector == null && maxHealthselector != null)
+		protected onMaxHealthSelectorClick(event: BatrGUIEvent): void {
+			var healthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
+			var maxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
+			if (healthSelector == null && maxHealthSelector != null)
 				return;
-			if (healthselector.currentValue > maxHealthselector.currentValue) {
-				healthselector.content.intMax = maxHealthselector.currentValue;
-				healthselector.updateTextByContent();
+			if (healthSelector.currentValue > maxHealthSelector.currentValue) {
+				healthSelector.content.intMax = maxHealthSelector.currentValue;
+				healthSelector.updateTextByContent();
 			}
 		}
 
-		protected onPlayerStatselectorClick(event: BatrGUIEvent): void {
+		protected onPlayerStatSelectorClick(event: BatrGUIEvent): void {
 			// Change Texts
 			try {
-				var currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatselector.currentValue];
+				var currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatSelector.currentValue];
 				setFixedTextSuffix(this._playerStatCauseDamage, currentPlayer.causeDamage);
 				setFixedTextSuffix(this._playerStatDamageBy, currentPlayer.damageBy);
 				setFixedTextSuffix(this._playerStatDeath, currentPlayer.deathCount);
@@ -941,14 +941,14 @@
 		}
 
 		protected onLanguageChange(event: BatrGUIEvent): void {
-			this.subject.turnI18nsTo(I18ns.getI18nFromID(this._languageselector.currentValue));
+			this.subject.turnI18nsTo(I18ns.getI18nFromID(this._languageSelector.currentValue));
 		}
 
 		protected onFillFrameChange(event: BatrGUIEvent): void {
 			// refresh
 			this.game.refreshLastTime();
 			// set
-			this.game.enableFrameComplement = Boolean(this._frameComplementselector.currentValue);
+			this.game.enableFrameComplement = Boolean(this._frameComplementSelector.currentValue);
 		}
 	}
 }

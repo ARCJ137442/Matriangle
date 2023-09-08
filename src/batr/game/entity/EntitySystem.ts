@@ -165,7 +165,7 @@ package batr.game.entity {
 			return result;
 		}
 
-		public registerEntityforUUID(entity: EntityCommon): boolean {
+		public registerEntityForUUID(entity: EntityCommon): boolean {
 			if (entity == null)
 				return false;
 			var uuid: uint = this.nextUUID();
@@ -177,7 +177,7 @@ package batr.game.entity {
 			return false;
 		}
 
-		public removeEntityforUUID(entity: EntityCommon): boolean {
+		public removeEntityForUUID(entity: EntityCommon): boolean {
 			var uuid: uint = this.getUUIDByEntity(entity);
 			if (this.isValidUUID(uuid)) {
 				this._uuidDic[entity] = 0;
@@ -187,7 +187,7 @@ package batr.game.entity {
 			return false;
 		}
 
-		// Ealier System Functions
+		// Earlier System Functions
 		public GC(): void {
 			if (this._entities == null)
 				return;
@@ -229,7 +229,7 @@ package batr.game.entity {
 
 			// UUIDMap
 			if (!this.hasValidUUID(entity))
-				this.registerEntityforUUID(entity);
+				this.registerEntityForUUID(entity);
 			return true;
 		}
 
@@ -242,7 +242,7 @@ package batr.game.entity {
 
 			// UUIDMap
 			if (this.hasValidUUID(entity))
-				this.removeEntityforUUID(entity);
+				this.removeEntityForUUID(entity);
 			return true;
 		}
 

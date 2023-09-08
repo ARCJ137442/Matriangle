@@ -78,7 +78,7 @@
 			// Set Graphics
 			this.setFormats();
 			this.drawShape();
-			this.setFromatsToFields();
+			this.setFormatsToFields();
 			this.update();
 			this.addChildren();
 		}
@@ -212,7 +212,7 @@
 			this._nameTagFormat.size = 0.5 * DEFAULT_SIZE;
 		}
 
-		protected setFromatsToFields(): void {
+		protected setFormatsToFields(): void {
 			this._healthBarText.defaultTextFormat = this._healthBarFormat;
 			this._nameTagText.defaultTextFormat = this._nameTagFormat;
 			this._levelText.defaultTextFormat = EXPERIENCE_FORMAT;

@@ -12,7 +12,7 @@ package batr.game.model {
 	import batr.game.stat.*;
 
 	/**
-	 * The result stores informations by game,at game end.
+	 * The result stores information by game,at game end.
 	 * @author ARCJ137442
 	 */
 	export default class GameResult {

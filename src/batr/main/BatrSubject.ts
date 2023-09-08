@@ -187,7 +187,7 @@
 			this.scaleX = this.scaleY = GlobalGameVariables.DEFAULT_SCALE;
 		}
 
-		public set emableAutoResize(value: boolean) {
+		public set enableAutoResize(value: boolean) {
 			if (value) {
 				this.stage.scaleMode = StageScaleMode.NO_SCALE;
 
@@ -262,8 +262,8 @@
 		}
 
 		public turnI18ns(): void {
-			this._menu.languageselector.turnSelectRight();
-			this.turnI18nsTo(I18ns.translationsList[this._menu.languageselector.currentValue]);
+			this._menu.languageSelector.turnSelectRight();
+			this.turnI18nsTo(I18ns.translationsList[this._menu.languageSelector.currentValue]);
 		}
 
 		public resetRule(): void {

@@ -6,7 +6,7 @@ package batr.game.stat {
 
 	import flash.utils.Dictionary;
 
-	/* Thst's a stats(or scoreboard) use for a player
+	/* This's a stats(or scoreboard) use for a player
 	 * */
 	export default class PlayerStats {
 		//============Instance Variables============//
@@ -200,7 +200,7 @@ package batr.game.stat {
 		// About Profile
 
 		/**
-		 * If profile is player,then convert it to PlayeProfile.
+		 * If profile is player, then convert it to PlayerProfile.
 		 * @return	this
 		 */
 		public flushProfile(): PlayerStats {

@@ -43,7 +43,7 @@
 		//============Instance Functions============//
 
 		/**
-		 * Cached some static properties, during the short livespan of the bullet
+		 * Cached some static properties, during the short lifespan of the bullet
 		 */
 		protected cacheTargets(): void {
 			for (var player of _host.entitySystem.players) {

@@ -15,13 +15,13 @@ package batr.game.entity.ai {
 		public static readonly MOVE_BACK: AIPlayerAction = new AIPlayerAction('moveBack');
 		public static readonly MOVE_LEFT_REL: AIPlayerAction = new AIPlayerAction('moveLeftRel');
 		public static readonly MOVE_RIGHT_REL: AIPlayerAction = new AIPlayerAction('moveRightRel');
-		public static readonly TRUN_UP: AIPlayerAction = new AIPlayerAction('turnUp');
-		public static readonly TRUN_DOWN: AIPlayerAction = new AIPlayerAction('turnDown');
-		public static readonly TRUN_LEFT_ABS: AIPlayerAction = new AIPlayerAction('turnLeftAbs');
-		public static readonly TRUN_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('turnRightAbs');
-		public static readonly TRUN_BACK: AIPlayerAction = new AIPlayerAction('turnBack');
-		public static readonly TRUN_LEFT_REL: AIPlayerAction = new AIPlayerAction('turnLeftRel');
-		public static readonly TRUN_RIGHT_REL: AIPlayerAction = new AIPlayerAction('turnRightRel');
+		public static readonly TURN_UP: AIPlayerAction = new AIPlayerAction('turnUp');
+		public static readonly TURN_DOWN: AIPlayerAction = new AIPlayerAction('turnDown');
+		public static readonly TURN_LEFT_ABS: AIPlayerAction = new AIPlayerAction('turnLeftAbs');
+		public static readonly TURN_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('turnRightAbs');
+		public static readonly TURN_BACK: AIPlayerAction = new AIPlayerAction('turnBack');
+		public static readonly TURN_LEFT_REL: AIPlayerAction = new AIPlayerAction('turnLeftRel');
+		public static readonly TURN_RIGHT_REL: AIPlayerAction = new AIPlayerAction('turnRightRel');
 		public static readonly USE_TOOL: AIPlayerAction = new AIPlayerAction('useTool');
 		public static readonly PRESS_KEY_UP: AIPlayerAction = new AIPlayerAction('pressKeyUp');
 		public static readonly PRESS_KEY_DOWN: AIPlayerAction = new AIPlayerAction('pressKeyDown');
@@ -44,13 +44,13 @@ package batr.game.entity.ai {
 			AIPlayerAction.MOVE_BACK,
 			AIPlayerAction.MOVE_LEFT_REL,
 			AIPlayerAction.MOVE_RIGHT_REL,
-			AIPlayerAction.TRUN_UP,
-			AIPlayerAction.TRUN_DOWN,
-			AIPlayerAction.TRUN_LEFT_ABS,
-			AIPlayerAction.TRUN_RIGHT_ABS,
-			AIPlayerAction.TRUN_BACK,
-			AIPlayerAction.TRUN_LEFT_REL,
-			AIPlayerAction.TRUN_RIGHT_REL,
+			AIPlayerAction.TURN_UP,
+			AIPlayerAction.TURN_DOWN,
+			AIPlayerAction.TURN_LEFT_ABS,
+			AIPlayerAction.TURN_RIGHT_ABS,
+			AIPlayerAction.TURN_BACK,
+			AIPlayerAction.TURN_LEFT_REL,
+			AIPlayerAction.TURN_RIGHT_REL,
 			AIPlayerAction.USE_TOOL,
 			AIPlayerAction.PRESS_KEY_UP,
 			AIPlayerAction.PRESS_KEY_DOWN,
@@ -88,16 +88,16 @@ package batr.game.entity.ai {
 			}
 		}
 
-		public static getTrunActionFromEntityRot(rot: uint): AIPlayerAction {
+		public static getTurnActionFromEntityRot(rot: uint): AIPlayerAction {
 			switch (rot) {
 				case GlobalRot.UP:
-					return AIPlayerAction.TRUN_UP;
+					return AIPlayerAction.TURN_UP;
 				case GlobalRot.DOWN:
-					return AIPlayerAction.TRUN_DOWN;
+					return AIPlayerAction.TURN_DOWN;
 				case GlobalRot.LEFT:
-					return AIPlayerAction.TRUN_LEFT_ABS;
+					return AIPlayerAction.TURN_LEFT_ABS;
 				case GlobalRot.RIGHT:
-					return AIPlayerAction.TRUN_RIGHT_ABS;
+					return AIPlayerAction.TURN_RIGHT_ABS;
 				default:
 					return AIPlayerAction.NULL;
 			}

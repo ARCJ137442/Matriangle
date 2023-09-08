@@ -8,7 +8,7 @@ package batr.game.entity {
 	import flash.display.Sprite;
 
 	/**
-	 * ABSTRUCT
+	 * ABSTRACT
 	 * @author ARCJ137442
 	 */
 	export default class EntityCommon extends Sprite {
@@ -116,7 +116,7 @@ package batr.game.entity {
 		}
 
 		//============Instance Functions============//
-		//====Tickrun Functions====//
+		//====Tick Functions====//
 		public tickFunction(): void {
 		}
 

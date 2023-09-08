@@ -10,7 +10,7 @@ package batr.menu.events {
 
 	export default class MenuEvent extends Event {
 		//============Static Variables============//
-		public static readonly TITLE_SHOWEN: string = 'MenuEvent:titleShowen';
+		public static readonly TITLE_SHOWN: string = 'MenuEvent:titleShown';
 
 		//============Instance Variables============//
 

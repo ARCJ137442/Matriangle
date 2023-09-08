@@ -79,8 +79,8 @@ package batr.game.entity.entity.projectile {
 		}
 
 		override onProjectileTick(): void {
-			onLaserTick(); // Unturnable
-			onLaserCommonTick(); // Unturnable
+			onLaserTick(); // Unrotatable
+			onLaserCommonTick(); // Unrotatable
 		}
 
 		protected drawLine(y1: number, y2: number,

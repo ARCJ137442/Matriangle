@@ -30,7 +30,7 @@
 			this.type = TextFieldType.INPUT;
 			this.border = true;
 			// this.multiline=true;
-			this.mouseWheelEnabled = true; // avaliable when limited height
+			this.mouseWheelEnabled = true; // available when limited height
 			// this.wordWrap = true; //auto newline
 
 			// form
@@ -75,9 +75,9 @@
 			return this;
 		}
 
-		public setFormat(formet: TextFormat, lock: boolean = false): BatrTextInput {
-			this.defaultTextFormat = formet;
-			this.setTextFormat(formet);
+		public setFormat(format: TextFormat, lock: boolean = false): BatrTextInput {
+			this.defaultTextFormat = format;
+			this.setTextFormat(format);
 			return this;
 		}
 	}

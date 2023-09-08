@@ -37,9 +37,9 @@ package batr.translations {
 			return result;
 		}
 
-		public static getTextsByAllAvaliableTools(translations: I18ns, isDescription: boolean): I18nText[] {
+		public static getTextsByAllAvailableTools(translations: I18ns, isDescription: boolean): I18nText[] {
 			var result: I18nText[] = new I18nText[]();
-			for (var type of ToolType._ALL_AVALIABLE_TOOL) {
+			for (var type of ToolType._ALL_AVAILABLE_TOOL) {
 				result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 			}
 			return result;

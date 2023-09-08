@@ -110,9 +110,9 @@ package batr.menu.objects {
 			return this;
 		}
 
-		public setFormat(formet: TextFormat, lock: boolean = false): BatrTextField {
-			this.defaultTextFormat = formet;
-			this.setTextFormat(formet);
+		public setFormat(format: TextFormat, lock: boolean = false): BatrTextField {
+			this.defaultTextFormat = format;
+			this.setTextFormat(format);
 			return this;
 		}
 

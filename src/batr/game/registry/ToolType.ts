@@ -35,7 +35,7 @@ package batr.game.model {
 		public static readonly _BOSS_TOOL: ToolType[] = new Array<ToolType>(ToolType.SHOCKWAVE_ALPHA, ToolType.SHOCKWAVE_BETA);
 		public static readonly _ALL_TOOL: ToolType[] = _BULLETS.concat(_LASERS).concat(_SPECIAL).concat(_BOSS_TOOL);
 
-		public static readonly _ALL_AVALIABLE_TOOL: ToolType[] = new < ToolType > [
+		public static readonly _ALL_AVAILABLE_TOOL: ToolType[] = new < ToolType > [
 			ToolType.BULLET,
 			ToolType.NUKE,
 			ToolType.SUB_BOMBER,
@@ -64,11 +64,11 @@ package batr.game.model {
 		}
 
 		public static get RANDOM_AVAILABLE_ID(): uint {
-			return exMath.random(_ALL_AVALIABLE_TOOL.length);
+			return exMath.random(_ALL_AVAILABLE_TOOL.length);
 		}
 
 		public static get RANDOM_AVAILABLE(): ToolType {
-			return _ALL_AVALIABLE_TOOL[ToolType.RANDOM_AVAILABLE_ID];
+			return _ALL_AVAILABLE_TOOL[ToolType.RANDOM_AVAILABLE_ID];
 		}
 
 		//============Static Functions============//
@@ -77,7 +77,7 @@ package batr.game.model {
 		}
 
 		public static isValidAvailableToolID(id: int): boolean {
-			return (id >= 0 && id < ToolType._ALL_AVALIABLE_TOOL.length);
+			return (id >= 0 && id < ToolType._ALL_AVAILABLE_TOOL.length);
 		}
 
 		public static fromString(str: string): ToolType {
@@ -91,21 +91,21 @@ package batr.game.model {
 		/**
 		 * Returns a ToolType by ID in int.
 		 * @param	id	A int determines tool.
-		 * @return	A tooltype based on id.
+		 * @return	A tool type based on id.
 		 */
 		public static fromToolID(id: int): ToolType {
-			if (id < 0 || id >= _ALL_AVALIABLE_TOOL.length)
+			if (id < 0 || id >= _ALL_AVAILABLE_TOOL.length)
 				return null;
-			return _ALL_AVALIABLE_TOOL[id];
+			return _ALL_AVAILABLE_TOOL[id];
 		}
 
 		/**
 		 * Returns a ID by ToolType.
 		 * @param	id	A int determines tool.
-		 * @return	A tooltype based on id.
+		 * @return	A tool type based on id.
 		 */
 		public static toToolID(type: ToolType): int {
-			return ToolType._ALL_AVALIABLE_TOOL.indexOf(type);
+			return ToolType._ALL_AVAILABLE_TOOL.indexOf(type);
 		}
 
 		public static isIncludeIn(type: ToolType, types: ToolType[]): boolean {
@@ -120,7 +120,7 @@ package batr.game.model {
 			return ToolType.isIncludeIn(type, ToolType._LASERS);
 		}
 
-		public static getRandomAvaliableWithout(tool: ToolType): ToolType {
+		public static getRandomAvailableWithout(tool: ToolType): ToolType {
 			var tempW: ToolType, i: uint = 0;
 			do {
 				tempW = ToolType.RANDOM_AVAILABLE;

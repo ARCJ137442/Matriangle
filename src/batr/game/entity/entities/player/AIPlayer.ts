@@ -159,7 +159,7 @@ package batr.game.entity.entity.players {
 				this._AIRunDelay--;
 			else {
 				this._AIRunDelay = this._AIRunMaxDelay;
-				AIContol();
+				AIControl();
 			}
 		}
 
@@ -208,12 +208,12 @@ package batr.game.entity.entity.players {
 			// super
 			super.onMapTransform();
 			// act
-			var action: AIPlayerAction = this.AIProgram.requestActionOnMapTransfrom(this);
+			var action: AIPlayerAction = this.AIProgram.requestActionOnMapTransform(this);
 			this.runAction(action);
 		}
 
-		//========AI Contol:The main auto-contol of AI========//
-		protected AIContol(): void {
+		//========AI Control:The main auto-control of AI========//
+		protected AIControl(): void {
 			// Tick
 			var action: AIPlayerAction;
 
@@ -265,31 +265,31 @@ package batr.game.entity.entity.players {
 					this.turnRelativeRight(), this.moveForward();
 
 					break;
-				case AIPlayerAction.TRUN_UP:
+				case AIPlayerAction.TURN_UP:
 					this.turnUp();
 
 					break;
-				case AIPlayerAction.TRUN_DOWN:
+				case AIPlayerAction.TURN_DOWN:
 					this.turnDown();
 
 					break;
-				case AIPlayerAction.TRUN_LEFT_ABS:
+				case AIPlayerAction.TURN_LEFT_ABS:
 					this.turnAbsoluteLeft();
 
 					break;
-				case AIPlayerAction.TRUN_RIGHT_ABS:
+				case AIPlayerAction.TURN_RIGHT_ABS:
 					this.turnAbsoluteRight();
 
 					break;
-				case AIPlayerAction.TRUN_BACK:
+				case AIPlayerAction.TURN_BACK:
 					this.turnBack();
 
 					break;
-				case AIPlayerAction.TRUN_LEFT_REL:
+				case AIPlayerAction.TURN_LEFT_REL:
 					this.turnRelativeLeft();
 
 					break;
-				case AIPlayerAction.TRUN_RIGHT_REL:
+				case AIPlayerAction.TURN_RIGHT_REL:
 					this.turnRelativeRight();
 
 					break;

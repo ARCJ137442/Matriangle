@@ -34,7 +34,7 @@ package batr.game.entity.ai.programs {
 		protected static getLineBonusBox(owner: AIPlayer): BonusBox {
 			if (owner == null)
 				return null;
-			var boxes: BonusBox[] = owner.host.allAvaliableBonusBox;
+			var boxes: BonusBox[] = owner.host.allAvailableBonusBox;
 			for (var box of boxes) {
 				if (box == null)
 					continue;
@@ -94,27 +94,27 @@ package batr.game.entity.ai.programs {
 			var lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
 			// Auto Pickup BonusBox
 			if (lineBonus != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
-				// Trun
+				// Turn
 				player.clearActionThread();
 				this._moveSum = this._moveMaxSum;
 				this._tempRot = GlobalRot.fromLinearDistance(lineBonus.entityX - player.gridX, lineBonus.entityY - player.gridY);
 				// Act
 				this._waitTime++;
 				if (player.rot != this._tempRot) {
-					return AIPlayerAction.getTrunActionFromEntityRot(this._tempRot);
+					return AIPlayerAction.getTurnActionFromEntityRot(this._tempRot);
 				}
 				else
 					return AIPlayerAction.MOVE_FORWARD;
 			}
 			// Auto Attack Target
 			else if (target != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
-				// Trun
+				// Turn
 				player.clearActionThread();
 				this._moveSum = this._moveMaxSum;
 				this._tempRot = GlobalRot.fromLinearDistance(target.entityX - player.entityX, target.entityY - player.entityY);
 				// Act
 				if (player.rot != this._tempRot) {
-					player.addActionToThread(AIPlayerAction.getTrunActionFromEntityRot(this._tempRot));
+					player.addActionToThread(AIPlayerAction.getTurnActionFromEntityRot(this._tempRot));
 				}
 				// Press Use
 				if (player.toolReverseCharge) {
@@ -141,7 +141,7 @@ package batr.game.entity.ai.programs {
 						i++;
 					}
 					while (i <= 8 && !player.host.testPlayerCanPassToFront(player, this._tempRot, true));
-					return AIPlayerAction.getTrunActionFromEntityRot(this._tempRot);
+					return AIPlayerAction.getTurnActionFromEntityRot(this._tempRot);
 				}
 				this._moveSum++;
 			}
@@ -177,7 +177,7 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.NULL;
 		}
 
-		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransform(player: AIPlayer): AIPlayerAction {
 			this._waitTime = 0;
 			return AIPlayerAction.NULL;
 		}

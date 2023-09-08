@@ -247,7 +247,7 @@ package batr.game.entity.ai.programs {
 						this.changeTarget(player, target);
 						AIProgram_Adventurer.traceLog(player, 'turn target to ' + AIProgram_Adventurer.getEntityName(this._lastTarget));
 					}
-					// If all avliable target closed
+					// If all available target closed
 					else
 						this.resetCloseTarget();
 				}
@@ -261,9 +261,9 @@ package batr.game.entity.ai.programs {
 						player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
 						// Reset
 						this.resetRemember();
-						// Trun
+						// Turn
 						if (player.rot != tempRot)
-							player.addActionToThread(AIPlayerAction.getTrunActionFromEntityRot(tempRot));
+							player.addActionToThread(AIPlayerAction.getTurnActionFromEntityRot(tempRot));
 						// Press Use
 						if (player.toolReverseCharge) {
 							if (player.chargingPercent >= 1)
@@ -382,7 +382,7 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.NULL;
 		}
 
-		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransform(player: AIPlayer): AIPlayerAction {
 			this.resetTarget();
 			return AIPlayerAction.NULL;
 		}

@@ -84,7 +84,7 @@ package batr.menu.object.selector {
 
 		//====Enum====//
 		protected _enumTexts: I18nText[];
-		protected _enumIndexOffect: int = 0; // Let The Enum affects the negative value
+		protected _enumIndexOffset: int = 0; // Let The Enum affects the negative value
 
 		//============Constructor & Destructor============//
 		public constructor() {
@@ -101,7 +101,7 @@ package batr.menu.object.selector {
 			this._intMin = other._intMin;
 			// Enum
 			this._enumTexts = other._enumTexts;
-			this._enumIndexOffect = other._enumIndexOffect;
+			this._enumIndexOffset = other._enumIndexOffset;
 		}
 
 		public clone(): BatrSelectorContent {
@@ -118,12 +118,12 @@ package batr.menu.object.selector {
 
 		//============Instance Getter And Setter============//
 		//====Total====//
-		public get enumIndexOffect(): int {
-			return this._enumIndexOffect;
+		public get enumIndexOffset(): int {
+			return this._enumIndexOffset;
 		}
 
-		public set enumIndexOffect(value: int) {
-			this._enumIndexOffect = value;
+		public set enumIndexOffset(value: int) {
+			this._enumIndexOffset = value;
 		}
 
 		public get currentValue(): int {
@@ -198,7 +198,7 @@ package batr.menu.object.selector {
 
 		//====Enum====//
 		public get enumIndex(): int {
-			return this._value + this._enumIndexOffect;
+			return this._value + this._enumIndexOffset;
 		}
 
 		public get enumText(): string {
@@ -249,7 +249,7 @@ package batr.menu.object.selector {
 		public initAsEnum(texts: I18nText[], index: int = 0, offset: int = 0): BatrSelectorContent {
 			this._enumTexts = texts;
 			this._value = index;
-			this._enumIndexOffect = offset;
+			this._enumIndexOffset = offset;
 			return this;
 		}
 
@@ -276,7 +276,7 @@ package batr.menu.object.selector {
 
 		//====Debug====//
 		public toString(): string {
-			return 'BatrSelectorContent[' + this._value + ']{' + this._intMin + '~' + this._intMax + ',' + this._enumTexts + '/' + this._enumIndexOffect + '}';
+			return 'BatrSelectorContent[' + this._value + ']{' + this._intMin + '~' + this._intMax + ',' + this._enumTexts + '/' + this._enumIndexOffset + '}';
 		}
 	}
 }

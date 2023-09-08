@@ -31,7 +31,7 @@ package batr.game.entity.entity.players {
 			return player is AIPlayer;
 		}
 
-		public static getUplevelExperience(level: uint): uint {
+		public static getLevelUpExperience(level: uint): uint {
 			return (level + 1) * 5 + (level >> 1);
 		}
 
@@ -58,27 +58,27 @@ package batr.game.entity.entity.players {
 		// TODO: uses the controller, not set the control keys!
 		protected _controller: PlayerController
 
-		//====Contol Variables====//
-		// ContolDelay
-		public contolDelay_Move: uint = GlobalGameVariables.FIXED_TPS * 0.5;
+		//====Control Variables====//
+		// ControlDelay
+		public controlDelay_Move: uint = GlobalGameVariables.FIXED_TPS * 0.5;
 
-		// public contolDelay_Use:uint=GlobalGameVariables.TPS/4
-		// public contolDelay_Select:uint=GlobalGameVariables.TPS/5
+		// public controlDelay_Use:uint=GlobalGameVariables.TPS/4
+		// public controlDelay_Select:uint=GlobalGameVariables.TPS/5
 
-		// ContolLoop
-		public contolLoop_Move: uint = GlobalGameVariables.FIXED_TPS * 0.05;
+		// ControlLoop
+		public controlLoop_Move: uint = GlobalGameVariables.FIXED_TPS * 0.05;
 
-		// public contolLoop_Use:uint=GlobalGameVariables.TPS/25
-		// public contolLoop_Select:uint=GlobalGameVariables.TPS/40
+		// public controlLoop_Use:uint=GlobalGameVariables.TPS/25
+		// public controlLoop_Select:uint=GlobalGameVariables.TPS/40
 
-		// ContolKey
-		public contolKey_Up: uint;
-		public contolKey_Down: uint;
-		public contolKey_Left: uint;
-		public contolKey_Right: uint;
-		public contolKey_Use: uint;
-		// public ContolKey_Select_Left:uint;
-		// public ContolKey_Select_Right:uint;
+		// ControlKey
+		public controlKey_Up: uint;
+		public controlKey_Down: uint;
+		public controlKey_Left: uint;
+		public controlKey_Right: uint;
+		public controlKey_Use: uint;
+		// public ControlKey_Select_Left:uint;
+		// public ControlKey_Select_Right:uint;
 
 		// isPress
 		public isPress_Up: boolean;
@@ -119,7 +119,7 @@ package batr.game.entity.entity.players {
 		// negative number means isn't respawning
 
 		// Gameplay
-		protected _lastHurtbyPlayer: Player = null;
+		protected _lastHurtByPlayer: Player = null;
 
 		protected _stats: PlayerStats;
 
@@ -128,7 +128,7 @@ package batr.game.entity.entity.players {
 		protected _healDelay: uint = 0;
 
 		//========Attributes========//
-		public moveDistence: uint = 1;
+		public moveDistance: uint = 1;
 
 		public invulnerable: boolean = false;
 
@@ -140,8 +140,8 @@ package batr.game.entity.entity.players {
 		}
 
 		public set experience(value: uint) {
-			while (value > this.uplevelExperience) {
-				value -= this.uplevelExperience;
+			while (value > this.levelupExperience) {
+				value -= this.levelupExperience;
 				this.level++;
 				this.onLevelup();
 			}
@@ -151,7 +151,7 @@ package batr.game.entity.entity.players {
 		}
 
 		/**
-		 * If the experience up to uplevelExperience,level++
+		 * If the experience up to levelupExperience,level++
 		 */
 		protected _level: uint = 0;
 
@@ -163,12 +163,12 @@ package batr.game.entity.entity.players {
 			this._level = value;
 		}
 
-		public get uplevelExperience(): uint {
-			return Player.getUplevelExperience(this._level);
+		public get levelupExperience(): uint {
+			return Player.getLevelUpExperience(this._level);
 		}
 
 		public get experiencePercent(): number {
-			return this._experience / this.uplevelExperience;
+			return this._experience / this.levelupExperience;
 		}
 
 		//====Buff====//
@@ -235,7 +235,7 @@ package batr.game.entity.entity.players {
 			x: number,
 			y: number,
 			team: PlayerTeam,
-			contolKeyId: uint,
+			controlKeyId: uint,
 			isActive: boolean = true,
 			fillColor: number = NaN,
 			lineColor: number = NaN): void {
@@ -252,8 +252,8 @@ package batr.game.entity.entity.players {
 
 			this.addChildren();
 
-			// Set Contol Key
-			this.initContolKey(contolKeyId);
+			// Set Control Key
+			this.initControlKey(controlKeyId);
 			this.updateKeyDelay();
 		}
 
@@ -261,7 +261,7 @@ package batr.game.entity.entity.players {
 		override destructor(): void {
 			// Reset Key
 			this.turnAllKeyUp();
-			this.clearContolKeys();
+			this.clearControlKeys();
 			// Remove Display Object
 			Utils.removeChildIfContains(this._host.playerGUIContainer, this._GUI);
 			// Remove Variables
@@ -272,7 +272,7 @@ package batr.game.entity.entity.players {
 			// Complex
 			this._stats.destructor();
 			this._stats = null;
-			this._lastHurtbyPlayer = null;
+			this._lastHurtByPlayer = null;
 			this._tool = null;
 			this._GUI.destructor();
 			this._GUI = null;
@@ -290,7 +290,7 @@ package batr.game.entity.entity.players {
 		 * Because it's on the center of block!
 		 */
 		public get frontX(): number {
-			return this.getFrontIntX(this.moveDistence);
+			return this.getFrontIntX(this.moveDistance);
 		}
 
 		/**
@@ -298,7 +298,7 @@ package batr.game.entity.entity.players {
 		 * Because it's on the center of block!
 		 */
 		public get frontY(): number {
-			return this.getFrontIntY(this.moveDistence);
+			return this.getFrontIntY(this.moveDistance);
 		}
 
 		public get team(): PlayerTeam {
@@ -555,8 +555,8 @@ package batr.game.entity.entity.players {
 		}
 
 		// Other
-		public get lastHurtbyPlayer(): Player {
-			return this._lastHurtbyPlayer;
+		public get lastHurtByPlayer(): Player {
+			return this._lastHurtByPlayer;
 		}
 
 		// Key&Control
@@ -567,7 +567,7 @@ package batr.game.entity.entity.players {
 				this.isPress_Right ||
 				this.isPress_Use /*||
 					this.isPress_Select_Left||
-					this.isPress_Selec_Right*/);
+					this.isPress_Select_Right*/);
 		}
 
 		public get someMoveKeyDown(): boolean {
@@ -578,7 +578,7 @@ package batr.game.entity.entity.players {
 		}
 		/*
 		public get someSelectKeyDown():Boolean {
-			return (this.isPress_Select_Left||this.isPress_Selec_Right)
+			return (this.isPress_Select_Left||this.isPress_Select_Right)
 		}*/
 
 		public set pressLeft(turn: boolean) {
@@ -627,7 +627,7 @@ package batr.game.entity.entity.players {
 
 		/**
 		 * This function init the variables without update when this Player has been created.
-		 * @param	toolID	invaild number means random.
+		 * @param	toolID	invalid number means random.
 		 * @param	uniformTool	The uniform tool
 		 */
 		public initVariablesByRule(toolID: int, uniformTool: ToolType = null): void {
@@ -636,7 +636,7 @@ package batr.game.entity.entity.players {
 
 			this._health = this._host.rule.defaultHealth;
 
-			this.setLifeByInt(this is AIPlayer ? this._host.rule.remainLifesAI : this._host.rule.remainLifesPlayer);
+			this.setLifeByInt(this is AIPlayer ? this._host.rule.remainLivesAI : this._host.rule.remainLivesPlayer);
 
 			// Tool
 			if (toolID < -1)
@@ -657,7 +657,7 @@ package batr.game.entity.entity.players {
 		public removeHealth(value: uint, attacker: Player = null): void {
 			if (invulnerable)
 				return;
-			this._lastHurtbyPlayer = attacker;
+			this._lastHurtByPlayer = attacker;
 			if (health > value) {
 				this.health -= value;
 				this.onHurt(value, attacker);
@@ -727,7 +727,7 @@ package batr.game.entity.entity.players {
 		//====Functions About Gameplay====//
 
 		/**
-		 * @param	player	The target palyer.
+		 * @param	player	The target player.
 		 * @param	tool	The tool.
 		 * @return	If player can hurt target with this tool.
 		 */
@@ -828,7 +828,7 @@ package batr.game.entity.entity.players {
 				else
 					this._droneTool = GameRule.DEFAULT_DRONE_TOOL;
 			}
-			// If The Block is still carring,then throw without charge(WIP,maybe?)
+			// If The Block is still carrying,then throw without charge(WIP,maybe?)
 		}
 
 		protected dealUsingCD(): void {
@@ -1005,14 +1005,14 @@ package batr.game.entity.entity.players {
 		override tickFunction(): void {
 	this.dealUsingCD();
 	this.updateKeyDelay();
-	this.dealKeyContol();
+	this.dealKeyControl();
 	this.dealMoveInTest(this.entityX, this.entityY, false, false);
 	this.dealHeal();
 	super.tickFunction();
 }
 
-	//====Contol Functions====//
-	public initContolKey(id: uint): void {
+	//====Control Functions====//
+	public initControlKey(id: uint): void {
 	switch(id) {
 			// AI
 			case 0:
@@ -1020,65 +1020,65 @@ package batr.game.entity.entity.players {
 	break;
 	// P1
 	case 1:
-	contolKey_Up = KeyCode.W; // Up:W
-	contolKey_Down = KeyCode.S; // Down:S
-	contolKey_Left = KeyCode.A; // Left:A
-	contolKey_Right = KeyCode.D; // Right:D
-	contolKey_Use = KeyCode.SPACE; // Use:Space
+	controlKey_Up = KeyCode.W; // Up:W
+	controlKey_Down = KeyCode.S; // Down:S
+	controlKey_Left = KeyCode.A; // Left:A
+	controlKey_Right = KeyCode.D; // Right:D
+	controlKey_Use = KeyCode.SPACE; // Use:Space
 	break;
 	// P2
 	case 2:
-	contolKey_Up = KeyCode.UP; // Up:Key_UP
-	contolKey_Down = KeyCode.DOWN; // Down:Key_DOWN
-	contolKey_Left = KeyCode.LEFT; // Left:Key_Left
-	contolKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-	contolKey_Use = KeyCode.NUMPAD_0; // Use:'0'
+	controlKey_Up = KeyCode.UP; // Up:Key_UP
+	controlKey_Down = KeyCode.DOWN; // Down:Key_DOWN
+	controlKey_Left = KeyCode.LEFT; // Left:Key_Left
+	controlKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
+	controlKey_Use = KeyCode.NUMPAD_0; // Use:'0'
 	break;
 	// P3
 	case 3:
-	contolKey_Up = KeyCode.U; // Up:U
-	contolKey_Down = KeyCode.J; // Down:J
-	contolKey_Left = KeyCode.H; // Left:H
-	contolKey_Right = KeyCode.K; // Right:K
-	contolKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
+	controlKey_Up = KeyCode.U; // Up:U
+	controlKey_Down = KeyCode.J; // Down:J
+	controlKey_Left = KeyCode.H; // Left:H
+	controlKey_Right = KeyCode.K; // Right:K
+	controlKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
 	break;
 	// P4
 	case 4:
-	contolKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
-	contolKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
-	contolKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
-	contolKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
-	contolKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
+	controlKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
+	controlKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
+	controlKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
+	controlKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
+	controlKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
 	break;
 }
 	}
 
-	public isOwnContolKey(code: uint): boolean {
-	return (code == this.contolKey_Up ||
-		code == this.contolKey_Down ||
-		code == this.contolKey_Left ||
-		code == this.contolKey_Right ||
-		code == this.contolKey_Use /*||
-					code==this.contolKey_Select_Left||
-					code==this.contolKey_Selec_Right*/);
+	public isOwnControlKey(code: uint): boolean {
+	return (code == this.controlKey_Up ||
+		code == this.controlKey_Down ||
+		code == this.controlKey_Left ||
+		code == this.controlKey_Right ||
+		code == this.controlKey_Use /*||
+					code==this.controlKey_Select_Left||
+					code==this.controlKey_Select_Right*/);
 }
 
 	public isOwnKeyDown(code: uint): boolean {
-	return (code == this.contolKey_Up && this.isPress_Up ||
-		code == this.contolKey_Down && this.isPress_Down ||
-		code == this.contolKey_Left && this.isPress_Left ||
-		code == this.contolKey_Right && this.isPress_Right ||
-		code == this.contolKey_Use && this.isPress_Use /*||
-					code==this.contolKey_Select_Left||
-					code==this.contolKey_Selec_Right*/);
+	return (code == this.controlKey_Up && this.isPress_Up ||
+		code == this.controlKey_Down && this.isPress_Down ||
+		code == this.controlKey_Left && this.isPress_Left ||
+		code == this.controlKey_Right && this.isPress_Right ||
+		code == this.controlKey_Use && this.isPress_Use /*||
+					code==this.controlKey_Select_Left||
+					code==this.controlKey_Select_Right*/);
 }
 
-	public clearContolKeys(): void {
-	contolKey_Up = KeyCode.EMPTY;
-	contolKey_Down = KeyCode.EMPTY;
-	contolKey_Left = KeyCode.EMPTY;
-	contolKey_Right = KeyCode.EMPTY;
-	contolKey_Use = KeyCode.EMPTY;
+	public clearControlKeys(): void {
+	controlKey_Up = KeyCode.EMPTY;
+	controlKey_Down = KeyCode.EMPTY;
+	controlKey_Left = KeyCode.EMPTY;
+	controlKey_Right = KeyCode.EMPTY;
+	controlKey_Use = KeyCode.EMPTY;
 }
 
 	public turnAllKeyUp(): void {
@@ -1090,24 +1090,24 @@ package batr.game.entity.entity.players {
 	// this.isPress_Select_Left=false;
 	// this.isPress_Select_Right=false;
 	this.keyDelay_Move = 0;
-	this.contolDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
-	// this.contolDelay_Select=GlobalGameVariables.TPS/5;
-	this.contolLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
-	// this.contolLoop_Select=GlobalGameVariables.TPS/40;
+	this.controlDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
+	// this.controlDelay_Select=GlobalGameVariables.TPS/5;
+	this.controlLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
+	// this.controlLoop_Select=GlobalGameVariables.TPS/40;
 }
 
 	public updateKeyDelay(): void {
-	// trace(this.keyDelay_Move,this.contolDelay_Move,this.contolLoop_Move);
+	// trace(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
 	//==Set==//
 	// Move
 	if(this.someMoveKeyDown) {
 	this.keyDelay_Move++;
-	if (this.keyDelay_Move >= this.contolLoop_Move) {
+	if (this.keyDelay_Move >= this.controlLoop_Move) {
 		this.keyDelay_Move = 0;
 	}
 }
 		else {
-	this.keyDelay_Move = -contolDelay_Move;
+	this.keyDelay_Move = -controlDelay_Move;
 }
 	}
 
@@ -1115,32 +1115,32 @@ package batr.game.entity.entity.players {
 	if(!this.isActive || this.isRespawning)
 	return;
 	switch(code) {
-			case this.contolKey_Up:
+			case this.controlKey_Up:
 	this.moveUp();
 	break;
-	case this.contolKey_Down:
+	case this.controlKey_Down:
 	this.moveDown();
 	break;
-	case this.contolKey_Left:
+	case this.controlKey_Left:
 	this.moveLeft();
 	break;
-	case this.contolKey_Right:
+	case this.controlKey_Right:
 	this.moveRight();
 	break;
-	case this.contolKey_Use:
+	case this.controlKey_Use:
 	if(!this.toolReverseCharge)
 	this.useTool();
 	break;
-	/*case this.contolKey_Select_Left:
+	/*case this.controlKey_Select_Left:
 	this.moveSelect_Left();
 break;
-case this.contolKey_Select_Right:
+case this.controlKey_Select_Right:
 	this.moveSelect_Right();
 break;*/
 }
 	}
 
-	public dealKeyContol(): void {
+	public dealKeyControl(): void {
 	if(!this.isActive || this.isRespawning)
 	return;
 	if(this.someKeyDown) {
@@ -1203,19 +1203,19 @@ break;*/
 }
 
 	public moveLeft(): void {
-	this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistence);
+	this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
 }
 
 	public moveRight(): void {
-	this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistence);
+	this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
 }
 
 	public moveUp(): void {
-	this._host.movePlayer(this, GlobalRot.UP, this.moveDistence);
+	this._host.movePlayer(this, GlobalRot.UP, this.moveDistance);
 }
 
 	public moveDown(): void {
-	this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistence);
+	this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
 }
 
 	public turnUp(): void {

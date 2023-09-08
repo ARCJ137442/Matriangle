@@ -5,7 +5,7 @@
 	import batr.game.entity.entity.player.*;
 
 	/**
-	 * Thst's a stats(or scoreboard) use for a game
+	 * This's a stats(or scoreboard) use for a game
 	 * @author ARCJ137442
 	 */
 	export default class GameStats {

@@ -69,7 +69,7 @@ package batr.game.entity.ai.programs {
 				while (i <= 8 && !player.host.testPlayerCanPassToFront(player, this._tempRot, true));
 				player.addActionToThread(AIPlayerAction.DISABLE_CHARGE);
 
-				return AIPlayerAction.getTrunActionFromEntityRot(this._tempRot);
+				return AIPlayerAction.getTurnActionFromEntityRot(this._tempRot);
 			}
 			this._moveSum++;
 
@@ -98,7 +98,7 @@ package batr.game.entity.ai.programs {
 			return AIPlayerAction.NULL;
 		}
 
-		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
+		public requestActionOnMapTransform(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
 		}
 

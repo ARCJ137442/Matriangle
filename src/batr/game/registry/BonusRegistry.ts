@@ -43,27 +43,27 @@
 
 		public static readonly _OTHER: BonusType[] = new Array<BonusType>(BonusType.RANDOM_TELEPORT);
 
-		// Unused:Unition
+		// Unused:Union
 		public static readonly _UNUSED: BonusType[] = new Array<BonusType>(BonusType.UNITE_PLAYER, BonusType.UNITE_AI).concat(_ABOUT_BUFF);
-		public static readonly _ALL_AVALIABLE_TYPE: BonusType[] = BonusType._OTHER.concat(BonusType._ABOUT_HEALTH, BonusType._ABOUT_TOOL, BonusType._ABOUT_ATTRIBUTES, BonusType._ABOUT_TEAM);
-		public static readonly _ALL_TYPE: BonusType[] = BonusType._ALL_AVALIABLE_TYPE.concat(BonusType._UNUSED);
+		public static readonly _ALL_AVAILABLE_TYPE: BonusType[] = BonusType._OTHER.concat(BonusType._ABOUT_HEALTH, BonusType._ABOUT_TOOL, BonusType._ABOUT_ATTRIBUTES, BonusType._ABOUT_TEAM);
+		public static readonly _ALL_TYPE: BonusType[] = BonusType._ALL_AVAILABLE_TYPE.concat(BonusType._UNUSED);
 
 		//============Static Getter And Setter============//
 		public static get RANDOM(): BonusType {
 			return _ALL_TYPE[exMath.random(_ALL_TYPE.length)];
 		}
 
-		public static get RANDOM_AVALIABLE(): BonusType {
-			return _ALL_AVALIABLE_TYPE[exMath.random(_ALL_AVALIABLE_TYPE.length)];
+		public static get RANDOM_AVAILABLE(): BonusType {
+			return _ALL_AVAILABLE_TYPE[exMath.random(_ALL_AVAILABLE_TYPE.length)];
 		}
 
 		public static get RANDOM_BUFF(): BonusType {
 			return _ABOUT_BUFF[exMath.random(_ABOUT_BUFF.length)];
 		}
 
-		public static get AVALIABLE_SPAWN_POTENTIALS(): object[] {
+		public static get AVAILABLE_SPAWN_POTENTIALS(): object[] {
 			var result: object[] = new Object[]();
-			for (var bType of _ALL_AVALIABLE_TYPE) {
+			for (var bType of _ALL_AVAILABLE_TYPE) {
 				result.push({
 					type: bType,
 					weight: 1.0

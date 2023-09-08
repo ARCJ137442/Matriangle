@@ -1,154 +1,151 @@
-package batr.game.effect {
+import { uint, int } from "../../legacy/AS3Legacy";
+import { IBatrRenderable, IBatrShape } from "../../render/BatrDisplayInterfaces";
 
-	import batr.general.*;
+export default class EffectCommon implements IBatrRenderable {
+	//============Static Variables============//
+	protected static readonly DEFAULT_MAX_LIFE: uint = GlobalGameVariables.TPS;
+	protected static _NEXT_UUID: uint = 0;
 
-	import batr.game.main.*;
+	//============Static Functions============//
+	public static inValidUUID(effect: EffectCommon): boolean {
+		return effect._uuid == 0;
+	}
 
-	import flash.display.*;
+	//============Instance Variables============//
+	protected _uuid: uint;
+	protected _host: Game;
+	protected _isActive: boolean;
+	protected life: uint;
+	protected LIFE: uint;
 
-	export default class EffectCommon extends MovieClip {
-		//============Static Variables============//
-		protected static readonly DEFAULE_MAX_LIFE: uint = GlobalGameVariables.TPS;
-		protected static _NEXT_UUID: uint = 0;
+	//============Constructor & Destructor============//
+	public constructor(host: Game, x: number, y: number, maxLife: uint = EffectCommon.DEFAULT_MAX_LIFE, active: boolean = true) {
+		// Init ID
+		this._uuid = EffectCommon._NEXT_UUID++;
+		// Init Host
+		this._host = host;
+		// Set Life
+		this.LIFE = maxLife;
+		this.life = this.LIFE;
+		// Init Positions
+		this.setPositions(x, y);
+		// Active
+		this.isActive = active;
+	}
+	shapeRefresh(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
+	}
+	shapeDestruct(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
+	}
 
-		//============Static Functions============//
-		public static inValidUUID(effect: EffectCommon): boolean {
-			return effect._uuid == 0;
-		}
+	public destructor(): void {
+		shape.graphics.clear();
+		this._uuid = 0;
+		this.isActive = false;
+		this.life = this.LIFE = 0;
+		this._host = null;
+	}
 
-		//============Instance Variables============//
-		protected _uuid: uint;
-		protected _host: Game;
-		protected _isActive: boolean;
-		protected life: uint;
-		protected LIFE: uint;
+	//============Instance Getters And Setters============//
+	public get uuid(): uint {
+		return this._uuid;
+	}
 
-		//============Constructor & Destructor============//
-		public constructor(host: Game, x: number, y: number, maxLife: uint = DEFAULE_MAX_LIFE, active: boolean = true) {
-			super();
-			// Init ID
-			this._uuid = _NEXT_UUID;
-			_NEXT_UUID++;
-			// Init Host
-			this._host = host;
-			// Set Life
-			this.LIFE = maxLife;
-			this.life = LIFE;
-			// Init Positions
-			this.setPositions(x, y);
-			// Active
-			this.isActive = active;
-		}
+	public get host(): Game {
+		return this._host;
+	}
 
-		//============Destructor Function============//
-		public destructor(): void {
-			shape.graphics.clear();
-			this._uuid = 0;
-			this.isActive = false;
-			this.life = this.LIFE = 0;
-			this._host = null;
-		}
+	public get isActive(): boolean {
+		return this._isActive;
+	}
 
-		//============Instance Getters And Setters============//
-		public get uuid(): uint {
-			return this._uuid;
-		}
+	public set isActive(value: boolean) {
+		if (value == this._isActive)
+			return;
+		this._isActive = value;
+	}
 
-		public get host(): Game {
-			return this._host;
-		}
+	public get rot(): number {
+		return GlobalRot.fromRealRot(this.rotation);
+	}
 
-		public get isActive(): boolean {
-			return this._isActive;
-		}
+	public set rot(value: number) {
+		if (value == this.rot)
+			return;
+		this.rotation = GlobalRot.toRealRot(value);
+	}
 
-		public set isActive(value: boolean) {
-			if (value == this._isActive)
-				return;
-			this._isActive = value;
-		}
+	public get type(): EffectType {
+		return EffectType.ABSTRACT;
+	}
 
-		public get rot(): number {
-			return GlobalRot.fromRealRot(this.rotation);
-		}
+	public get layer(): int {
+		return this.type.effectLayer;
+	}
 
-		public set rot(value: number) {
-			if (value == this.rot)
-				return;
-			this.rotation = GlobalRot.toRealRot(value);
-		}
+	//============Display Implements============//
+	public onEffectTick(): void {
+	}
 
-		public get type(): EffectType {
-			return EffectType.ABSTRACT;
-		}
+	protected dealLife(): void {
+		if (this.life > 0)
+			this.life--;
+		else
+			this._host.effectSystem.removeEffect(this);
+	}
 
-		public get layer(): int {
-			return this.type.effectLayer;
-		}
+	public shapeInit(shape: IBatrShape): void {
+	}
 
-		//============Instance Functions============//
-		public onEffectTick(): void {
-		}
+	//====Position Functions====//
+	public getX(): number {
+		return PosTransform.realPosToLocalPos(this.x);
+	}
 
-		protected dealLife(): void {
-			if (this.life > 0)
-				this.life--;
-			else
-				_host.effectSystem.removeEffect(this);
-		}
+	public getY(): number {
+		return PosTransform.realPosToLocalPos(this.y);
+	}
 
-		public shapeInit(shape: IBatrShape): void {
-		}
+	public setX(value: number): void {
+		this.x = PosTransform.localPosToRealPos(value);
+	}
 
-		//====Position Functions====//
-		public getX(): number {
-			return PosTransform.realPosToLocalPos(this.x);
-		}
+	public setY(value: number): void {
+		this.y = PosTransform.localPosToRealPos(value);
+	}
 
-		public getY(): number {
-			return PosTransform.realPosToLocalPos(this.y);
-		}
+	public addX(value: number): void {
+		this.setX(this.getX() + value);
+	}
 
-		public setX(value: number): void {
-			this.x = PosTransform.localPosToRealPos(value);
-		}
+	public addY(value: number): void {
+		this.setY(this.getY() + value);
+	}
 
-		public setY(value: number): void {
-			this.y = PosTransform.localPosToRealPos(value);
-		}
+	public setXY(x: number, y: number): void {
+		this.setX(x);
 
-		public addX(value: number): void {
-			this.setX(this.getX() + value);
-		}
+		this.setY(y);
+	}
 
-		public addY(value: number): void {
-			this.setY(this.getY() + value);
-		}
+	public addXY(x: number, y: number): void {
+		this.addX(x);
 
-		public setXY(x: number, y: number): void {
-			this.setX(x);
+		this.addY(y);
+	}
 
-			this.setY(y);
-		}
+	public setPositions(x: number, y: number, rot: number = NaN): void {
+		this.setXY(x, y);
 
-		public addXY(x: number, y: number): void {
-			this.addX(x);
+		if (!isNaN(rot))
+			this.rot = rot;
+	}
 
-			this.addY(y);
-		}
+	public addPositions(x: number, y: number, rot: number = NaN): void {
+		this.addXY(x, y);
 
-		public setPositions(x: number, y: number, rot: number = NaN): void {
-			this.setXY(x, y);
-
-			if (!isNaN(rot))
-				this.rot = rot;
-		}
-
-		public addPositions(x: number, y: number, rot: number = NaN): void {
-			this.addXY(x, y);
-
-			if (!isNaN(rot))
-				this.rot += rot;
-		}
+		if (!isNaN(rot))
+			this.rot += rot;
 	}
 }
