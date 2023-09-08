@@ -13,23 +13,32 @@
     - [x] \MainFont.ts
   - [ ] game
     - [ ] block
-      - [ ] BlockAttributes.ts
-      - [ ] BlockCommon.ts
-      - [ ] RotatableBlock.ts
-      - [ ] blocks
-        - [ ] Bedrock.ts
-        - [ ] ColoredBlock.ts
-        - [ ] ColorSpawner.ts
-        - [ ] Gate.ts
-        - [ ] Glass.ts
-        - [ ] LaserTrap.ts
-        - [ ] Metal.ts
-        - [ ] MoveableWall.ts
-        - [ ] SpawnPointMark.ts
-        - [ ] SupplyPoint.ts
-        - [ ] Wall.ts
-        - [ ] Water.ts
-        - [ ] XTrap.ts
+      - [x] BlockAttributes.ts
+      - [x] BlockCommon.ts
+      - [x] RotatableBlock.ts
+      - [x] blocks
+        - [x] Bedrock.ts
+        - [x] ColoredBlock.ts
+        - [x] ColorSpawner.ts
+        - [x] Gate.ts
+        - [x] Glass.ts
+        - [x] LaserTrap.ts
+        - [x] Metal.ts
+        - [x] MoveableWall.ts
+        - [x] SpawnPointMark.ts
+        - [x] SupplyPoint.ts
+        - [x] Wall.ts
+        - [x] Water.ts
+        - [x] XTrap.ts
+      - [ ] system
+        - [ ] IMap.ts
+        - [ ] IMapDisplayer.ts
+        - [ ] IMapGenerator.ts
+        - [ ] main
+          - [ ] Map_V1.ts
+          - [ ] MapDisplayer.ts
+          - [ ] MapGenerator.ts
+          - [ ] NativeMapCommon.ts
     - [ ] effect
       - [ ] EffectCommon.ts
       - [ ] EffectSystem.ts
@@ -88,19 +97,10 @@
             - [ ] PlayerTeam.ts
     - [ ] main
       - [ ] Game.ts
-    - [ ] map
-      - [ ] IMap.ts
-      - [ ] IMapDisplayer.ts
-      - [ ] IMapGenerator.ts
-      - [ ] main
-        - [ ] Map_V1.ts
-        - [ ] MapDisplayer.ts
-        - [ ] MapGenerator.ts
-        - [ ] NativeMapCommon.ts
     - [ ] registry
       - [ ] GameModeType.ts
       - [ ] ToolType.ts
-      - [ ] BlockType.ts
+      - [x] BlockType.ts
       - [ ] EffectType.ts
       - [ ] EntityType.ts
     - [ ] template
