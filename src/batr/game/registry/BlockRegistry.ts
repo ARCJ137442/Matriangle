@@ -56,7 +56,7 @@ export default class BlockType extends TypeCommon {
 	 */
 	protected _mapColor: uint = 0xffffffff;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(name: string, currentBlock: Class, currentAttributes: BlockAttributes) {
 		super(name);
 		this._currentBlock = currentBlock;
@@ -64,7 +64,7 @@ export default class BlockType extends TypeCommon {
 	}
 
 	//============Instance Getter And Setter============//
-	public override get label(): string {
+	override get label(): string {
 		return 'block';
 	}
 
@@ -109,7 +109,7 @@ export default class BlockType extends TypeCommon {
 
 	public static readonly _SOLID_BLOCKS: BlockType[] = new < BlockType > [
 	];
-	public static readonly _LIQUID_BLOCKS: BlockType[] = new < BlockType > [BlockType.WATER];
+	public static readonly _LIQUID_BLOCKS: BlockType[] = new Array<BlockType>(BlockType.WATER);
 
 	public static readonly _GAS_BLOCKS: BlockType[] = new Array < BlockType > [BlockType.GATE_OPEN];
 

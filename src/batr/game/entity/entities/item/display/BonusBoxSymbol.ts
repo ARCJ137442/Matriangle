@@ -11,46 +11,46 @@ package batr.game.entity.objects {
 	export default class BonusBoxSymbol extends Shape {
 		//============Static Variables============//
 		// General
-		public static const GRID_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 5;
+		public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
 
 		// HHL
-		public static const HEALTH_COLOR: uint = PlayerGUI.HEALTH_COLOR;
+		public static readonly HEALTH_COLOR: uint = PlayerGUI.HEALTH_COLOR;
 
-		// Weapon
-		public static const WEAPON_COLOR: uint = 0x555555;
-		public static const WEAPON_LINE_SIZE: uint = 4;
+		// Tool
+		public static readonly TOOL_COLOR: uint = 0x555555;
+		public static readonly TOOL_LINE_SIZE: uint = 4;
 
 		// Attributes
-		public static const ATTRIBUTES_LINE_SIZE: uint = 4;
-		public static const ATTRIBUTES_FILL_ALPHA: number = 3 / 4;
+		public static readonly ATTRIBUTES_LINE_SIZE: uint = 4;
+		public static readonly ATTRIBUTES_FILL_ALPHA: number = 3 / 4;
 
-		public static const EXPERIENCE_COLOR: uint = 0xcc88ff;
+		public static readonly EXPERIENCE_COLOR: uint = 0xcc88ff;
 
-		public static const BUFF_RANDOM_COLOR: uint = 0x7f7f7f;
-		public static const BUFF_DAMAGE_COLOR: uint = 0xff6666;
+		public static readonly BUFF_RANDOM_COLOR: uint = 0x7f7f7f;
+		public static readonly BUFF_DAMAGE_COLOR: uint = 0xff6666;
 
-		public static const BUFF_CD_COLOR: uint = 0x6666ff;
+		public static readonly BUFF_CD_COLOR: uint = 0x6666ff;
 
-		public static const BUFF_RESISTANCE_COLOR: uint = 0x66ff66;
+		public static readonly BUFF_RESISTANCE_COLOR: uint = 0x66ff66;
 
-		public static const BUFF_RADIUS_COLOR: uint = 0xffff66;
+		public static readonly BUFF_RADIUS_COLOR: uint = 0xffff66;
 
 		// Team
-		public static const TEAM_LINE_SIZE: uint = 4;
+		public static readonly TEAM_LINE_SIZE: uint = 4;
 
-		public static const RANDOM_CHANGE_TEAM_LINE_COLOR: uint = 0x555555;
+		public static readonly RANDOM_CHANGE_TEAM_LINE_COLOR: uint = 0x555555;
 
-		public static const UNITE_PLAYER_LINE_COLOR: uint = 0x6666ff;
+		public static readonly UNITE_PLAYER_LINE_COLOR: uint = 0x6666ff;
 
-		public static const UNITE_AI_LINE_COLOR: uint = 0x66ff66;
+		public static readonly UNITE_AI_LINE_COLOR: uint = 0x66ff66;
 
 		//============Static Functions============//
 
 		//============Instance Variables============//
 		protected _type: BonusType;
 
-		//============Constructor Function============//
-		public BonusBoxSymbol(type: BonusType = BonusType.NULL): void {
+		//============Constructor & Destructor============//
+		public constructor(type: BonusType = BonusType.NULL) {
 			super();
 			this.drawShape();
 		}
@@ -58,7 +58,7 @@ package batr.game.entity.objects {
 		//============Destructor Function============//
 		public destructor(): void {
 			this._type = null;
-			this.graphics.clear();
+			shape.graphics.clear();
 		}
 
 		//============Instance Getters And Setters============//
@@ -66,7 +66,7 @@ package batr.game.entity.objects {
 			return this._type;
 		}
 
-		public set type(value: BonusType): void {
+		public set type(value: BonusType) {
 			if (this._type == value)
 				return;
 			this._type = value;
@@ -75,8 +75,8 @@ package batr.game.entity.objects {
 
 		//============Instance Functions============//
 		//========Symbol Shape========//
-		public drawShape(): void {
-			this.graphics.clear();
+		public shapeInit(shape: IBatrShape): void {
+			shape.graphics.clear();
 			switch (this._type) {
 				case BonusType.NULL:
 					return;
@@ -90,9 +90,9 @@ package batr.game.entity.objects {
 				case BonusType.ADD_LIFE:
 					this.drawLifeSymbol();
 					break;
-				// Weapon
-				case BonusType.RANDOM_WEAPON:
-					this.drawWeaponSymbol();
+				// Tool
+				case BonusType.RANDOM_TOOL:
+					this.drawToolSymbol();
 					break;
 				// Attributes
 				case BonusType.BUFF_RANDOM:
@@ -133,71 +133,71 @@ package batr.game.entity.objects {
 		//====HHL====//
 		protected drawHealthSymbol(): void {
 			// V
-			this.graphics.beginFill(HEALTH_COLOR);
-			this.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
-			this.graphics.endFill();
+			shape.graphics.beginFill(HEALTH_COLOR);
+			shape.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
+			shape.graphics.endFill();
 			// H
-			this.graphics.beginFill(HEALTH_COLOR);
-			this.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-			this.graphics.endFill();
+			shape.graphics.beginFill(HEALTH_COLOR);
+			shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
+			shape.graphics.endFill();
 		}
 
 		protected drawHealSymbol(): void {
 			// V
-			this.graphics.beginFill(HEALTH_COLOR);
-			this.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
+			shape.graphics.beginFill(HEALTH_COLOR);
+			shape.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
 			// H
-			this.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-			this.graphics.endFill();
+			shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
+			shape.graphics.endFill();
 		}
 
 		protected drawLifeSymbol(): void {
 			// L
-			this.graphics.beginFill(HEALTH_COLOR);
-			this.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 2);
-			this.graphics.endFill();
-			this.graphics.beginFill(HEALTH_COLOR);
-			this.graphics.drawRect(-GRID_SIZE * 1.5, GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-			this.graphics.endFill();
+			shape.graphics.beginFill(HEALTH_COLOR);
+			shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 2);
+			shape.graphics.endFill();
+			shape.graphics.beginFill(HEALTH_COLOR);
+			shape.graphics.drawRect(-GRID_SIZE * 1.5, GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
+			shape.graphics.endFill();
 		}
 
-		//====Weapon====//
-		protected drawWeaponSymbol(): void {
+		//====Tool====//
+		protected drawToolSymbol(): void {
 			// Circle
-			this.graphics.lineStyle(WEAPON_LINE_SIZE, WEAPON_COLOR);
-			this.graphics.drawCircle(0, 0, GRID_SIZE);
+			shape.graphics.lineStyle(TOOL_LINE_SIZE, TOOL_COLOR);
+			shape.graphics.drawCircle(0, 0, GRID_SIZE);
 		}
 
 		//====Attributes====//
 		protected drawAttributesSymbol(color: uint): void {
 			// Colored Rectangle
-			/*this.graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
-			this.graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
-			this.graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
-			this.graphics.endFill();*/
+			/*shape.graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
+			shape.graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
+			shape.graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
+			shape.graphics.endFill();*/
 			// Colored Arrow
 			// Top
-			this.graphics.lineStyle(ATTRIBUTES_LINE_SIZE, color);
-			this.graphics.beginFill(color, ATTRIBUTES_FILL_ALPHA);
-			this.graphics.moveTo(0, -GRID_SIZE * 1.5); // T1
-			this.graphics.lineTo(GRID_SIZE * 1.5, 0); // T2
-			this.graphics.lineTo(GRID_SIZE / 2, 0);
+			shape.graphics.lineStyle(ATTRIBUTES_LINE_SIZE, color);
+			shape.graphics.beginFill(color, ATTRIBUTES_FILL_ALPHA);
+			shape.graphics.moveTo(0, -GRID_SIZE * 1.5); // T1
+			shape.graphics.lineTo(GRID_SIZE * 1.5, 0); // T2
+			shape.graphics.lineTo(GRID_SIZE / 2, 0);
 			// B1
-			this.graphics.lineTo(GRID_SIZE / 2, GRID_SIZE * 1.5);
+			shape.graphics.lineTo(GRID_SIZE / 2, GRID_SIZE * 1.5);
 			// B2
-			this.graphics.lineTo(-GRID_SIZE / 2, GRID_SIZE * 1.5);
+			shape.graphics.lineTo(-GRID_SIZE / 2, GRID_SIZE * 1.5);
 			// B3
-			this.graphics.lineTo(-GRID_SIZE / 2, 0);
+			shape.graphics.lineTo(-GRID_SIZE / 2, 0);
 			// B4
-			this.graphics.lineTo(-GRID_SIZE * 1.5, 0); // T3
-			this.graphics.lineTo(0, -GRID_SIZE * 1.5); // T1
-			this.graphics.endFill();
+			shape.graphics.lineTo(-GRID_SIZE * 1.5, 0); // T3
+			shape.graphics.lineTo(0, -GRID_SIZE * 1.5); // T1
+			shape.graphics.endFill();
 			// Bottom
 		}
 
 		//====Team====//
 		protected drawTeamSymbol(color: uint): void {
-			this.graphics.lineStyle(TEAM_LINE_SIZE, color);
+			shape.graphics.lineStyle(TEAM_LINE_SIZE, color);
 			graphics.moveTo(-GRID_SIZE, -GRID_SIZE);
 			graphics.lineTo(GRID_SIZE, 0);
 			graphics.lineTo(-GRID_SIZE, GRID_SIZE);
@@ -208,19 +208,19 @@ package batr.game.entity.objects {
 		protected drawRandomTeleportSymbol(): void {
 			// Teleport Effect
 			// 1
-			this.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
-			this.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
-			this.graphics.drawRect(-GRID_SIZE, -GRID_SIZE, GRID_SIZE * 2, GRID_SIZE * 2);
-			this.graphics.endFill();
+			shape.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
+			shape.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
+			shape.graphics.drawRect(-GRID_SIZE, -GRID_SIZE, GRID_SIZE * 2, GRID_SIZE * 2);
+			shape.graphics.endFill();
 			// 2
-			this.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
-			this.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
+			shape.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
+			shape.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
 			graphics.moveTo(0, -GRID_SIZE * Math.SQRT2);
 			graphics.lineTo(GRID_SIZE * Math.SQRT2, 0);
 			graphics.lineTo(0, GRID_SIZE * Math.SQRT2);
 			graphics.lineTo(-GRID_SIZE * Math.SQRT2, 0);
 			graphics.lineTo(0, -GRID_SIZE * Math.SQRT2);
-			this.graphics.endFill();
+			shape.graphics.endFill();
 		}
 	}
 }

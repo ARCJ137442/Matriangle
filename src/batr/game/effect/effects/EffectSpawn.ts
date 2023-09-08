@@ -10,50 +10,50 @@ package batr.game.effect.effects {
 
 	export default class EffectSpawn extends EffectTeleport {
 		//============Static Variables============//
-		public static const DEFAULT_COLOR: uint = 0x6666ff;
-		public static const LINE_ALPHA: number = 0.6;
-		public static const FILL_ALPHA: number = 0.5;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
-		public static const SIZE: uint = GlobalGameVariables.DEFAULT_SIZE * 1.6;
-		public static const MAX_LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.5;
-		public static const SCALE: number = 1;
-		public static const STAGE_1_START_TIME: uint = MAX_LIFE * 3 / 4;
-		public static const STAGE_2_START_TIME: uint = MAX_LIFE / 4;
-		public static const ROTATE_ANGLE: uint = 45;
+		public static readonly DEFAULT_COLOR: uint = 0x6666ff;
+		public static readonly LINE_ALPHA: number = 0.6;
+		public static readonly FILL_ALPHA: number = 0.5;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
+		public static readonly SIZE: uint = DEFAULT_SIZE * 1.6;
+		public static readonly MAX_LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.5;
+		public static readonly SCALE: number = 1;
+		public static readonly STAGE_1_START_TIME: uint = MAX_LIFE * 3 / 4;
+		public static readonly STAGE_2_START_TIME: uint = MAX_LIFE / 4;
+		public static readonly ROTATE_ANGLE: uint = 45;
 
 		//============Instance Variables============//
 		protected _animationStage: uint;
 
 		protected _tempLife: uint;
 
-		//============Constructor Function============//
-		public EffectSpawn(host: Game, x: number, y: number, scale: number = SCALE): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, scale: number = SCALE) {
 			super(host, x, y, scale);
 			this._animationStage = 0;
 		}
 
-		protected override function initScale(scale: number): void {
+		override initScale(scale: number): void {
 			this.scale = 0;
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this._animationStage = 0;
 			this._tempLife = 0;
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EffectType {
+		override get type(): EffectType {
 			return EffectType.SPAWN;
 		}
 
 		//============Instance Functions============//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			drawBlocks(EffectSpawn.DEFAULT_COLOR, EffectSpawn.SIZE);
 		}
 
-		public override function onEffectTick(): void {
+		override onEffectTick(): void {
 			dealLife();
 
 			if (this.life <= STAGE_2_START_TIME) {

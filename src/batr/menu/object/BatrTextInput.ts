@@ -22,7 +22,7 @@
 		//============Instance Variables============//
 
 		//============Constructor============//
-		public BatrTextInput(initialText: string = '', autoSize: string = TextFieldAutoSize.LEFT): void {
+		public constructor(initialText: string = '', autoSize: string = TextFieldAutoSize.LEFT) {
 			super();
 			// text
 			this.selectable = true;

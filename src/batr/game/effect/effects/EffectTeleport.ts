@@ -9,20 +9,20 @@ package batr.game.effect.effects {
 
 	export default class EffectTeleport extends EffectCommon {
 		//============Static Variables============//
-		public static const DEFAULT_COLOR: uint = 0x44ff44;
-		public static const LINE_ALPHA: number = 0.6;
-		public static const FILL_ALPHA: number = 0.5;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
-		public static const SIZE: uint = GlobalGameVariables.DEFAULT_SIZE * 2;
-		public static const SCALE: number = 1;
+		public static readonly DEFAULT_COLOR: uint = 0x44ff44;
+		public static readonly LINE_ALPHA: number = 0.6;
+		public static readonly FILL_ALPHA: number = 0.5;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
+		public static readonly SIZE: uint = DEFAULT_SIZE * 2;
+		public static readonly SCALE: number = 1;
 
 		//============Instance Variables============//
 		protected maxScale: number;
 		protected block1: Shape = new Shape();
 		protected block2: Shape = new Shape();
 
-		//============Constructor Function============//
-		public EffectTeleport(host: Game, x: number, y: number, scale: number = EffectTeleport.SCALE): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, scale: number = EffectTeleport.SCALE) {
 			super(host, x, y, GlobalGameVariables.FIXED_TPS);
 			this.drawShape();
 			this.maxScale = scale;
@@ -35,7 +35,7 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this.maxScale = NaN;
 			if (this.block1 != null) {
 				this.removeChild(this.block1);
@@ -51,11 +51,11 @@ package batr.game.effect.effects {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EffectType {
+		override get type(): EffectType {
 			return EffectType.TELEPORT;
 		}
 
-		protected set scale(value: number): void {
+		protected set scale(value: number) {
 			this.scaleX = this.scaleY = value;
 		}
 
@@ -65,13 +65,13 @@ package batr.game.effect.effects {
 			this.addChild(this.block2);
 		}
 
-		public override function onEffectTick(): void {
+		override onEffectTick(): void {
 			this.scale = (life / LIFE) * maxScale;
 			this.rotation = ((LIFE - life) / LIFE) * 360;
 			dealLife();
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 			drawBlocks(EffectTeleport.DEFAULT_COLOR, EffectTeleport.SIZE);
 		}
 

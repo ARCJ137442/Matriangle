@@ -1,11 +1,14 @@
-import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
-import BlockType from "../registry/BlockType";
+import { isExtend } from "../../common/Utils";
+import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE, Class } from "../../legacy/AS3Legacy";
+import BlockCommon from "./BlockCommon";
 
 export default class BlockAttributes {
 
 	//============Static Functions============//
-	public static fromType(type: BlockType): BlockAttributes {
-		return type.currentAttributes;
+	public static fromType(type: Class): BlockAttributes {
+		if (isExtend(type, BlockCommon))
+			return (type as any).DEFAULT_ATTRIBUTES; // * ensured `type extends BlockCommon`
+		throw new Error("Unknown BlockType");
 	}
 
 	//============Instance Variables============//
@@ -30,12 +33,12 @@ export default class BlockAttributes {
 	public drawLayer: int = 1;
 
 	/**
-	 * Weapon:BlockThrower can carry
+	 * Tool:BlockThrower can carry
 	 */
 	public isCarryable: boolean = true;
 
 	/**
-	 * Weapon:BlockThrower can carry
+	 * Tool:BlockThrower can carry
 	 */
 	public isBreakable: boolean = true;
 
@@ -77,7 +80,7 @@ export default class BlockAttributes {
 	 */
 	public defaultPixelAlpha: uint;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(defaultPixelColor: uint = 0xffffff, defaultPixelAlpha: uint = uint$MAX_VALUE) {
 		this.defaultPixelColor = defaultPixelColor;
 		this.defaultPixelAlpha = defaultPixelAlpha;

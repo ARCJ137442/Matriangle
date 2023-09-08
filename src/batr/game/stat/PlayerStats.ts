@@ -41,7 +41,7 @@ package batr.game.stat {
 
 		protected _damageByAlly: uint = 0;
 
-		// weapons
+		// tools
 
 		// bonus boxes
 		protected _pickupBonusBoxCount: uint = 0;
@@ -50,7 +50,7 @@ package batr.game.stat {
 		protected _beTeleportCount: uint = 0;
 
 		//============Constructor============//
-		public PlayerStats(owner: Player): void {
+		public constructor(owner: Player) {
 			this._profile = owner as IPlayerProfile;
 		}
 
@@ -72,7 +72,7 @@ package batr.game.stat {
 			return this._killCount;
 		}
 
-		public set killCount(value: uint): void {
+		public set killCount(value: uint) {
 			this._killCount = value;
 		}
 
@@ -80,7 +80,7 @@ package batr.game.stat {
 			return this._killAICount;
 		}
 
-		public set killAICount(value: uint): void {
+		public set killAICount(value: uint) {
 			this._killAICount = value;
 		}
 
@@ -88,7 +88,7 @@ package batr.game.stat {
 			return this._deathCount;
 		}
 
-		public set deathCount(value: uint): void {
+		public set deathCount(value: uint) {
 			this._deathCount = value;
 		}
 
@@ -96,7 +96,7 @@ package batr.game.stat {
 			return this._deathByPlayer;
 		}
 
-		public set deathByPlayer(value: uint): void {
+		public set deathByPlayer(value: uint) {
 			this._deathByPlayer = value;
 		}
 
@@ -104,7 +104,7 @@ package batr.game.stat {
 			return this._deathByAI;
 		}
 
-		public set deathByAI(value: uint): void {
+		public set deathByAI(value: uint) {
 			this._deathByAI = value;
 		}
 
@@ -112,7 +112,7 @@ package batr.game.stat {
 			return this._causeDamage;
 		}
 
-		public set causeDamage(value: uint): void {
+		public set causeDamage(value: uint) {
 			this._causeDamage = value;
 		}
 
@@ -120,7 +120,7 @@ package batr.game.stat {
 			return this._damageBy;
 		}
 
-		public set damageBy(value: uint): void {
+		public set damageBy(value: uint) {
 			this._damageBy = value;
 		}
 
@@ -128,7 +128,7 @@ package batr.game.stat {
 			return this._suicideCount;
 		}
 
-		public set suicideCount(value: uint): void {
+		public set suicideCount(value: uint) {
 			this._suicideCount = value;
 		}
 
@@ -136,7 +136,7 @@ package batr.game.stat {
 			return this._killAllyCount;
 		}
 
-		public set killAllyCount(value: uint): void {
+		public set killAllyCount(value: uint) {
 			this._killAllyCount = value;
 		}
 
@@ -144,7 +144,7 @@ package batr.game.stat {
 			return this._deathByAllyCount;
 		}
 
-		public set deathByAllyCount(value: uint): void {
+		public set deathByAllyCount(value: uint) {
 			this._deathByAllyCount = value;
 		}
 
@@ -152,7 +152,7 @@ package batr.game.stat {
 			return this._causeDamageOnSelf;
 		}
 
-		public set causeDamageOnSelf(value: uint): void {
+		public set causeDamageOnSelf(value: uint) {
 			this._causeDamageOnSelf = value;
 		}
 
@@ -160,7 +160,7 @@ package batr.game.stat {
 			return this._causeDamageOnAlly;
 		}
 
-		public set causeDamageOnAlly(value: uint): void {
+		public set causeDamageOnAlly(value: uint) {
 			this._causeDamageOnAlly = value;
 		}
 
@@ -168,7 +168,7 @@ package batr.game.stat {
 			return this._damageByAlly;
 		}
 
-		public set damageByAlly(value: uint): void {
+		public set damageByAlly(value: uint) {
 			this._damageByAlly = value;
 		}
 
@@ -176,7 +176,7 @@ package batr.game.stat {
 			return this._pickupBonusBoxCount;
 		}
 
-		public set pickupBonusBoxCount(value: uint): void {
+		public set pickupBonusBoxCount(value: uint) {
 			this._pickupBonusBoxCount = value;
 		}
 
@@ -184,7 +184,7 @@ package batr.game.stat {
 			return this._beTeleportCount;
 		}
 
-		public set beTeleportCount(value: uint): void {
+		public set beTeleportCount(value: uint) {
 			this._beTeleportCount = value;
 		}
 
@@ -273,8 +273,8 @@ class Stat_PlayerCount {
 	//============Instance Variables============//
 	protected _dictionary: Dictionary = new Dictionary(true);
 
-	//============Constructor Function============//
-	public Stat_PlayerCount(...params): void {
+	//============Constructor & Destructor============//
+	public constructor(...params) {
 		setPlayerValues2(params);
 	}
 

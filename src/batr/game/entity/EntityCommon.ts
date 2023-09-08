@@ -20,8 +20,8 @@ package batr.game.entity {
 		protected _host: Game;
 		protected _isActive: boolean;
 
-		//============Constructor Function============//
-		public EntityCommon(host: Game,
+		//============Constructor & Destructor============//
+		public constructor(host: Game,
 			x: number, y: number,
 			initActive: boolean = true): void {
 			super();
@@ -49,7 +49,7 @@ package batr.game.entity {
 			return this._isActive;
 		}
 
-		public set isActive(value: boolean): void {
+		public set isActive(value: boolean) {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
@@ -59,7 +59,7 @@ package batr.game.entity {
 			return GlobalRot.lockToStandard(GlobalRot.fromRealRot(this.rotation));
 		}
 
-		public set rot(value: number): void {
+		public set rot(value: number) {
 			if (value != this.rot)
 				this.rotation = GlobalRot.toRealRot(GlobalRot.lockToStandard(value));
 			this.onRotationUpdate(this.rot);

@@ -1,6 +1,5 @@
-﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE } from '../legacy/AS3Legacy'
+﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE, Class } from '../legacy/AS3Legacy'
 import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
-import { ByteArray } from '../legacy/flash/utils';
 import * as exMath from './exMath';
 
 // import flash.getTimer;
@@ -98,7 +97,7 @@ export function startswith(string: string, start: string): boolean {
 	return (string.indexOf(start) == 0);
 }
 
-//============Code Methods============//
+//============Array Methods============//
 export function returnRandom<T>(...Paras: Array<T>): T {
 	return Paras[exMath.randomFloat(Paras.length)];
 }
@@ -112,16 +111,6 @@ export function getPropertyInObjects(objects: object[], key: string): any[] {
 		}
 	}
 	return ra;
-}
-
-export function copyObjectByBytes(object: object): object - {
-	let tempObject: ByteArray = new ByteArray();
-
-	tempObject.writeObject(object);
-
-	tempObject.position = 0;
-
-	return tempObject.readObject() as Object;
 }
 
 /**
@@ -182,6 +171,8 @@ export function isEqualArray<T>(A: T[], B: T[]): boolean {
 		return true;
 	}
 }
+
+//============Object Methods============//
 
 export function isEqualObject(
 	a: { [key: string]: [value: any] },
@@ -291,147 +282,26 @@ export function flattenObject(
 	}
 	return result;
 }
-let { log } = console;
-log(flattenObject({
-	"language_self": "English",
-	"code": {
-		"infinity": "Infinity",
-		"true": "True",
-		"false": "False",
-		"yes": "yes",
-		"no": "No",
-		"completely_random": "C-Random",
-		"uniform_random": "U-Random",
-		"certainly_dead": "Certainly Dead",
-		"never": "Never"
-	},
-	"menu": {
-		"language": "Language",
-		"quick_game": "Quick Game",
-		"select_game": "Select Game",
-		"custom_mode": "Custom Mode",
-		"start": "Start",
-		"advanced": "Advanced",
-		"config": "Config File",
-		"saves": "Saves",
-		"back": "Back",
-		"continue": "Continue",
-		"main_menu": "Main Menu",
-		"global_stat": "Global Stat",
-		"score_ranking": "Score Ranking",
-		"paused": "Paused",
-		"restart": "Restart",
-		"custom": {
-			"player_count": "Player Count",
-			"ai_player_count": "AI Count",
-			"game_mode": "Game Mode",
-			"initial_map": "Initial Map",
-			"lock_teams": "Lock Teams",
-			"default_weapon": "Default Weapon",
-			"default_health": "Default Health",
-			"default_max_health": "Default Max Health",
-			"remain_lives_player": "Player Remain Lives",
-			"remain_lives_ai": "AI Remain Lives",
-			"max_bonus_count": "Max Bonus Count",
-			"bonus_spawn_after_death": "Bonus Spawn After Death",
-			"map_transform_time": "Map Transform Time",
-			"weapons_no_cd": "Weapons No Cd",
-			"respawn_time": "Respawn Time",
-			"asphyxia_damage": "Asphyxia Damage"
-		},
-		"result": {
-			"game_result": "Game Result",
-			"nothing_win": "No player wins the game",
-			"win_single_player": " wins the game",
-			"win_multi_player": " wins the game",
-			"win_per_player": "players win the game",
-			"win_all_player": "All players win the game"
-		},
-		"fill_frame_off": "Fill Frame: Off",
-		"fill_frame_on": "Fill Frame: On"
-	},
-	"game": {
-		"map": {
-			"random": "Random"
-		},
-		"mode": {
-			"regular": "Regular",
-			"battle": "Battle",
-			"survival": "Survival",
-			"hard": "Hard"
-		},
-		"gui": {
-			"remain_transform_time": "Remaining Transform T",
-			"game_duration": "Game Duration"
-		},
-		"stat": {
-			"transform_map_count": "Map Transform Count",
-			"bonus_generate_count": "Bonus Generate Count",
-			"player": {
-				"kill_count": "Kills",
-				"death_count": "Deaths",
-				"death_count_from_player": "Deaths by Player",
-				"damage_cause": "Causes Damage",
-				"damage_by": "Damage By",
-				"pickup_bonus": "Pickup Bonus",
-				"be_teleport_count": "Number of Being Teleport",
-				"total_score": "Total Score"
-			}
-		}
-	},
-	"block": {
-		"void": "Void",
-		"wall": "Wall",
-		"water": "Water",
-		"glass": "Glass",
-		"bedrock": "Bedrock",
-		"x_trap_hurt": "X-Trap Hurt",
-		"x_trap_kill": "X-Trap Kill",
-		"x_trap_rotate": "X-Trap Rotate",
-		"colored_block": "Colored Block",
-		"color_spawner": "Color Spawner",
-		"laser_trap": "Laser Trap",
-		"metal": "Metal"
-	},
-	"entity": {
-		"bullet_basic": "Bullet Basic",
-		"bullet_nuke": "Bullet Nuke",
-		"sub_bomber": "Sub Bomber",
-		"bullet_tracking": "Bullet Tracking",
-		"laser_basic": "Laser Basic",
-		"laser_pulse": "Laser Pulse",
-		"laser_teleport": "Laser Teleport",
-		"laser_absorption": "Laser Absorption",
-		"wave": "Wave",
-		"thrown_block": "Thrown Block",
-		"lightning": "Lightning",
-		"bonus_box": "Bonus Box",
-		"player": "Player",
-		"ai_player": "Ai Player"
-	},
-	"effect": {
-		"explode": "Explode",
-		"spawn": "Spawn",
-		"teleport": "Teleport",
-		"player_death_light": "Player Death Light",
-		"player_death_fadeout": "Player Death Fadeout",
-		"player_levelup": "Player Levelup",
-		"block_light": "Block Light"
-	},
-	"weapon": {
-		"bullet": "Bullet",
-		"nuke": "Nuke",
-		"sub_bomber": "Sub Bomber",
-		"bullet_tracking": "Tracking Bullet",
-		"laser_basic": "Laser",
-		"laser_pulse": "Pulse Laser",
-		"laser_teleport": "Teleport Laser",
-		"laser_absorption": "Absorption Laser",
-		"wave": "Wave",
-		"block_thrower": "Block Thrower",
-		"melee": "Melee",
-		"lightning": "Lightning",
-		"shockwave_alpha": "Shockwave Alpha",
-		"shockwave_beta": "Shockwave Beta"
-	}
-}))
+
+/**
+ * Get the class from a object.
+ * 
+ * * `getClass(new A()) === A` is partial equals to `new A() instanceof A`, 
+ *   * which the former can not match the superclass of A
+ * 
+ * @param instance the instance of a class
+ * @returns the class(constructor) of the instance
+ */
+export function getClass(instance: any): Class {
+	return instance.constructor
+}
+
+/**
+ * 
+ * @param C1 the subclass
+ * @param C the superclass
+ * @returns whether the C1 can replaces the C
+ */
+export function isExtend(C1: Class, C: Class): boolean {
+	return C1 === C || C1.prototype instanceof C
+}

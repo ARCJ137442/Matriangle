@@ -7,15 +7,15 @@ package batr.menu.object.selector {
 		//============Static Variables============//
 
 		//============Static Functions============//
-		public static function createPositiveIntegerContent(initValue: int): BatrSelectorContent {
+		public static createPositiveIntegerContent(initValue: int): BatrSelectorContent {
 			return new BatrSelectorContent().initAsInt(int.MAX_VALUE, 1, initValue).autoInitLoopSelect();
 		}
 
-		public static function createUnsignedIntegerContent(initValue: int): BatrSelectorContent {
+		public static createUnsignedIntegerContent(initValue: int): BatrSelectorContent {
 			return new BatrSelectorContent().initAsInt(int.MAX_VALUE, 0, initValue).autoInitLoopSelect();
 		}
 
-		public static function createPositiveIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
+		public static createPositiveIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
 			return new BatrSelectorContent().initAsEnum(
 				new < I18nText > [
 					tText
@@ -25,7 +25,7 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		public static function createUnsignedIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
+		public static createUnsignedIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
 			return new BatrSelectorContent().initAsEnum(
 				new < I18nText > [
 					tText
@@ -35,19 +35,19 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		public static function createBinaryChoiceContent(initValue: int, translations: I18ns, tKey0: string, tKey1: string): BatrSelectorContent {
-			return new BatrSelectorContent().initAsEnum(new < I18nText > [BatrSelectorContent.quickI18nTextBuild(tKey0, translations), BatrSelectorContent.quickI18nTextBuild(tKey1, translations)], 0, 0).initAsInt(1, 0, initValue).autoInitLoopSelect();
+		public static createBinaryChoiceContent(initValue: int, translations: I18ns, tKey0: string, tKey1: string): BatrSelectorContent {
+			return new BatrSelectorContent().initAsEnum(new Array<I18nText>(BatrSelectorContent.quickI18nTextBuild(tKey0, translations), BatrSelectorContent.quickI18nTextBuild(tKey1, translations)), 0, 0).initAsInt(1, 0, initValue).autoInitLoopSelect();
 		}
 
-		public static function createYorNContent(initValue: int, translations: I18ns): BatrSelectorContent {
+		public static createYorNContent(initValue: int, translations: I18ns): BatrSelectorContent {
 			return createBinaryChoiceContent(initValue, translations, I18nKey.BOOLEAN_NO, I18nKey.BOOLEAN_YES);
 		}
 
-		public static function createBooleanContent(initValue: int, translations: I18ns): BatrSelectorContent {
+		public static createBooleanContent(initValue: int, translations: I18ns): BatrSelectorContent {
 			return createBinaryChoiceContent(initValue, translations, I18nKey.FALSE, I18nKey.TRUE);
 		}
 
-		public static function createLanguageContent(initValue: int): BatrSelectorContent {
+		public static createLanguageContent(initValue: int): BatrSelectorContent {
 			return new BatrSelectorContent().initAsEnum(
 				I18nText.getTextsByLanguages(), 0, 0
 			).initAsInt(
@@ -55,7 +55,7 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		public static function createPlayerNamesContent(playerStats: PlayerStats[]): BatrSelectorContent {
+		public static createPlayerNamesContent(playerStats: PlayerStats[]): BatrSelectorContent {
 			var names: I18nText[] = ForcedI18nText.getTextsByPlayerNames(playerStats);
 			return new BatrSelectorContent().initAsEnum(
 				names, 0, 0
@@ -64,7 +64,7 @@ package batr.menu.object.selector {
 			).autoInitLoopSelect();
 		}
 
-		protected static function quickI18nTextBuild(key: string, translations: I18ns): I18nText {
+		protected static quickI18nTextBuild(key: string, translations: I18ns): I18nText {
 			return new I18nText(translations, key);
 		}
 
@@ -86,8 +86,8 @@ package batr.menu.object.selector {
 		protected _enumTexts: I18nText[];
 		protected _enumIndexOffect: int = 0; // Let The Enum affects the negative value
 
-		//============Constructor Function============//
-		public BatrSelectorContent(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			this._enumTexts = new I18nText[]();
 		}
 
@@ -122,7 +122,7 @@ package batr.menu.object.selector {
 			return this._enumIndexOffect;
 		}
 
-		public set enumIndexOffect(value: int): void {
+		public set enumIndexOffect(value: int) {
 			this._enumIndexOffect = value;
 		}
 
@@ -130,7 +130,7 @@ package batr.menu.object.selector {
 			return this._value;
 		}
 
-		public set currentValue(value: int): void {
+		public set currentValue(value: int) {
 			if (this._value > int.MIN_VALUE && this._value < int.MAX_VALUE) {
 				if (value > this._intMax)
 					value = this._enableLoopRight ? this._intMin : this._intMax;
@@ -149,7 +149,7 @@ package batr.menu.object.selector {
 			return this._enableLoopLeft;
 		}
 
-		public set enableLoopSelectLeft(value: boolean): void {
+		public set enableLoopSelectLeft(value: boolean) {
 			this._enableLoopLeft = value;
 		}
 
@@ -157,7 +157,7 @@ package batr.menu.object.selector {
 			return this._enableLoopRight;
 		}
 
-		public set enableLoopSelectRight(value: boolean): void {
+		public set enableLoopSelectRight(value: boolean) {
 			this._enableLoopRight = value;
 		}
 
@@ -165,7 +165,7 @@ package batr.menu.object.selector {
 			return this._enableLoopLeft || this._enableLoopRight;
 		}
 
-		public set enableLoopSelect(value: boolean): void {
+		public set enableLoopSelect(value: boolean) {
 			this._enableLoopLeft = this._enableLoopRight = value;
 		}
 
@@ -178,7 +178,7 @@ package batr.menu.object.selector {
 			return this._intMin;
 		}
 
-		public set intMax(value: int): void {
+		public set intMax(value: int) {
 			if (this._intMax > value) {
 				this._intMax = value;
 				this.updateValue();
@@ -187,7 +187,7 @@ package batr.menu.object.selector {
 			this._intMax = value;
 		}
 
-		public set intMin(value: int): void {
+		public set intMin(value: int) {
 			if (this._intMin < value) {
 				this._intMin = value;
 				this.updateValue();
@@ -209,7 +209,7 @@ package batr.menu.object.selector {
 			return this._enumTexts;
 		}
 
-		public set enumTexts(value: I18nText[]): void {
+		public set enumTexts(value: I18nText[]) {
 			this._enumTexts = value;
 		}
 

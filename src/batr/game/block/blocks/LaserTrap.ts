@@ -1,92 +1,86 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
+import BlockBedrock from "./Bedrock";
+import BlockColorSpawner from "./ColorSpawner";
+import BlockWall from "./Wall";
 
-	import batr.general.*;
+export default class BlockLaserTrap extends BlockCommon {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = BlockBedrock.LINE_COLOR;
+	public static readonly FILL_COLOR: uint = BlockBedrock.FILL_COLOR;
+	public static readonly CENTER_COLOR: uint = BlockColorSpawner.CENTER_COLOR;
 
-	import batr.game.block.*;
+	public static readonly LINE_SIZE: uint = BlockWall.LINE_SIZE;
 
-	// ShootLaser in 4 side.
-	export default class LaserTrap extends BlockCommon {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = Bedrock.LINE_COLOR;
-		public static const FILL_COLOR: uint = Bedrock.FILL_COLOR;
-		public static const CENTER_COLOR: uint = ColorSpawner.CENTER_COLOR;
+	//============Instance Variables============//
 
-		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
+	//============Constructor & Destructor============//
+	public constructor() {
+		super(BlockAttributes.LASER_TRAP);
+	}
 
-		//============Instance Variables============//
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public LaserTrap(): void {
-			super();
-			this.drawMain();
-		}
+	override clone(): BlockCommon {
+		return new BlockLaserTrap();
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
+	//============Display Implements============//
+	public shapeInit(shape: IBatrShape): void {
+		// Line
+		shape.graphics.beginFill(BlockLaserTrap.LINE_COLOR);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(BlockLaserTrap.FILL_COLOR);
+		shape.graphics.drawRect(BlockLaserTrap.LINE_SIZE, BlockLaserTrap.LINE_SIZE, DEFAULT_SIZE - BlockLaserTrap.LINE_SIZE * 2, DEFAULT_SIZE - BlockLaserTrap.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Rhombus
+		shape.graphics.lineStyle(BlockLaserTrap.LINE_SIZE, BlockLaserTrap.CENTER_COLOR);
+		this.drawRhombus(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 3
+		);
+		this.drawRhombus(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 4
+		);
+		this.drawRhombus(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 5
+		);
+		this.drawRhombus(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 6
+		);
+		// Point
+		shape.graphics.beginFill(BlockLaserTrap.CENTER_COLOR);
+		shape.graphics.drawCircle(
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 16
+		);
+		shape.graphics.endFill();
+	}
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.LASER_TRAP;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.LASER_TRAP;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new LaserTrap();
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(LINE_COLOR);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(FILL_COLOR);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Rhombus
-			this.graphics.lineStyle(LINE_SIZE, CENTER_COLOR);
-			this.drawRhombus(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 3
-			);
-			this.drawRhombus(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 4
-			);
-			this.drawRhombus(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 5
-			);
-			this.drawRhombus(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 6
-			);
-			// Point
-			this.graphics.beginFill(CENTER_COLOR);
-			this.graphics.drawCircle(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 16
-			);
-			this.graphics.endFill();
-		}
-
-		private drawRhombus(cX: number, cY: int, radius: number): void {
-			this.graphics.moveTo(cX - radius, cY);
-			this.graphics.lineTo(cX, cY + radius);
-			this.graphics.lineTo(cX + radius, cY);
-			this.graphics.lineTo(cX, cY - radius);
-			this.graphics.lineTo(cX - radius, cY);
-		}
+	protected drawRhombus(shape: IBatrShape, cX: number, cY: number, radius: number): void {
+		shape.graphics.moveTo(cX - radius, cY);
+		shape.graphics.lineTo(cX, cY + radius);
+		shape.graphics.lineTo(cX + radius, cY);
+		shape.graphics.lineTo(cX, cY - radius);
+		shape.graphics.lineTo(cX - radius, cY);
 	}
 }

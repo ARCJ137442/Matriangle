@@ -16,7 +16,7 @@ package batr.menu.objects {
 
 	export default class BatrTextField extends TextField implements IBatrMenuElement {
 		//============Static Constructor============//
-		public static function fromKey(translations: I18ns, translationKey: string = null, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
+		public static fromKey(translations: I18ns, translationKey: string = null, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			return new BatrTextField(new I18nText(
 				translations == null ? I18ns.getI18nByLanguage() : translations,
 				translationKey
@@ -29,7 +29,7 @@ package batr.menu.objects {
 		protected _translationalText: I18nText;
 
 		//============Constructor============//
-		public BatrTextField(translationalText: I18nText, autoSize: string = TextFieldAutoSize.LEFT): void {
+		public constructor(translationalText: I18nText, autoSize: string = TextFieldAutoSize.LEFT) {
 			super();
 			// text
 			this._translationalText = translationalText;
@@ -50,7 +50,7 @@ package batr.menu.objects {
 			return this._translationalText;
 		}
 
-		public set translationalText(value: I18nText): void {
+		public set translationalText(value: I18nText) {
 			this._translationalText = value;
 			this.updateByI18n();
 		}

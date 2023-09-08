@@ -14,47 +14,47 @@ package batr.game.entity.entity.projectile {
 
 	export default class ShockWaveDrone extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 80;
-		public static const BLOCK_RADIUS: number = GlobalGameVariables.DEFAULT_SIZE / 2;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
+		public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2;
 
-		public static const MOVING_INTERVAL: uint = GlobalGameVariables.FIXED_TPS * 0.0625;
+		public static readonly MOVING_INTERVAL: uint = GlobalGameVariables.FIXED_TPS * 0.0625;
 
 		//============Instance Variables============//
 		public lastBlockType: BlockType = BlockType.NULL;
 		public nowBlockType: BlockType = BlockType.NULL;
 
-		protected _weapon: WeaponType;
-		protected _weaponChargePercent: number;
+		protected _tool: ToolType;
+		protected _toolChargePercent: number;
 
-		protected _weaponRot: uint;
+		protected _toolRot: uint;
 		protected _moveDuration: uint = 0;
 
-		//============Constructor Function============//
-		public ShockWaveDrone(host: Game, x: number, y: number, owner: Player, weapon: WeaponType, weaponRot: uint, weaponChargePercent: number): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, tool: ToolType, toolRot: uint, toolChargePercent: number) {
 			super(host, x, y, owner);
-			this._currentWeapon = WeaponType.SHOCKWAVE_ALPHA;
-			this._weapon = weapon;
-			this._weaponChargePercent = weaponChargePercent;
-			this._weaponRot = weaponRot;
+			this._currentTool = ToolType.SHOCKWAVE_ALPHA;
+			this._tool = tool;
+			this._toolChargePercent = toolChargePercent;
+			this._toolRot = toolRot;
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
-			this.graphics.clear();
-			this._weapon = null;
+		override destructor(): void {
+			shape.graphics.clear();
+			this._tool = null;
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.SHOCKWAVE_LASER_DRONE;
 		}
 
 		//============Instance Functions============//
 
 		//====Tick Function====//
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			if (this._host == null)
 				return;
 			// Ticking
@@ -70,21 +70,21 @@ package batr.game.entity.entity.projectile {
 					// Gone
 					this._host.entitySystem.removeProjectile(this);
 				}
-				// Use Weapon
+				// Use Tool
 				else
-					this.host.playerUseWeaponAt(this.owner, this._weapon,
-						ex + GlobalRot.towardIntX(this._weaponRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
-						ey + GlobalRot.towardIntY(this._weaponRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
-						this._weaponRot, this._weaponChargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+					this.host.playerUseToolAt(this.owner, this._tool,
+						ex + GlobalRot.towardIntX(this._toolRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
+						ey + GlobalRot.towardIntY(this._toolRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
+						this._toolRot, this._toolChargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 			}
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
-			this.graphics.beginFill(this.ownerColor, 0.5);
-			this.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
-			this.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
-			this.graphics.endFill();
+		override drawShape(): void {
+			shape.graphics.beginFill(this.ownerColor, 0.5);
+			shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
+			shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
+			shape.graphics.endFill();
 		}
 	}
 }

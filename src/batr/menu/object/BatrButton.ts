@@ -18,13 +18,13 @@ package batr.menu.objects {
 
 	export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x888888;
-		public static const FILL_COLOR: uint = 0xcccccc;
-		public static const FILL_ALPHA: number = 0.375;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const HOLD_ALPHA: number = 1;
-		public static const OVER_ALPHA: number = 0.75;
-		public static const RELEASE_ALPHA: number = 0.5;
+		public static readonly LINE_COLOR: uint = 0x888888;
+		public static readonly FILL_COLOR: uint = 0xcccccc;
+		public static readonly FILL_ALPHA: number = 0.375;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 16;
+		public static readonly HOLD_ALPHA: number = 1;
+		public static readonly OVER_ALPHA: number = 0.75;
+		public static readonly RELEASE_ALPHA: number = 0.5;
 
 		//============Instance Variables============//
 		protected _displayWidth: number;
@@ -48,8 +48,8 @@ package batr.menu.objects {
 		 */
 		public sheetLinkage: string;
 
-		//============Constructor Function============//
-		public BatrButton(width: number, height: number,
+		//============Constructor & Destructor============//
+		public constructor(width: number, height: number,
 			translations: I18ns,
 			translationKey: string = '',
 			smoothLine: boolean = true,
@@ -70,8 +70,8 @@ package batr.menu.objects {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
-			this.graphics.clear();
+		override destructor(): void {
+			shape.graphics.clear();
 			this._text.destructor();
 			this._text = null;
 			this.sheetLinkage = null;
@@ -83,7 +83,7 @@ package batr.menu.objects {
 			return this._displayWidth;
 		}
 
-		public set displayWidth(value: number): void {
+		public set displayWidth(value: number) {
 			if (this._displayWidth == value)
 				return;
 			this._displayWidth = value;
@@ -94,7 +94,7 @@ package batr.menu.objects {
 			return this._displayHeight;
 		}
 
-		public set displayHeight(value: number): void {
+		public set displayHeight(value: number) {
 			if (this._displayHeight == value)
 				return;
 			this._displayHeight = value;
@@ -105,7 +105,7 @@ package batr.menu.objects {
 			return this._lineColor;
 		}
 
-		public set lineColor(value: uint): void {
+		public set lineColor(value: uint) {
 			if (this._lineColor == value)
 				return;
 			this._lineColor = value;
@@ -116,7 +116,7 @@ package batr.menu.objects {
 			return this._fillColor;
 		}
 
-		public set fillColor(value: uint): void {
+		public set fillColor(value: uint) {
 			if (this._fillColor == value)
 				return;
 			this._fillColor = value;
@@ -127,7 +127,7 @@ package batr.menu.objects {
 			return this._fillColor;
 		}
 
-		public set lineSize(value: number): void {
+		public set lineSize(value: number) {
 			if (this.lineSize == value)
 				return;
 			this._lineSize = value;
@@ -138,7 +138,7 @@ package batr.menu.objects {
 			return this._smoothLine;
 		}
 
-		public set smoothLine(value: boolean): void {
+		public set smoothLine(value: boolean) {
 			if (this._smoothLine == value)
 				return;
 			this._smoothLine = value;
@@ -173,41 +173,41 @@ package batr.menu.objects {
 			this.addChild(this._text);
 		}
 
-		protected override function drawShape(): void {
+		override drawShape(): void {
 			super.drawShape();
 			// Draw
 			if (this._smoothLine) {
-				this.graphics.lineStyle(this._lineSize, this._lineColor);
-				this.graphics.beginFill(this._fillColor, FILL_ALPHA);
-				this.graphics.drawRect(0, 0, this._displayWidth, this._displayHeight);
+				shape.graphics.lineStyle(this._lineSize, this._lineColor);
+				shape.graphics.beginFill(this._fillColor, FILL_ALPHA);
+				shape.graphics.drawRect(0, 0, this._displayWidth, this._displayHeight);
 			}
 			else {
-				this.graphics.beginFill(this._lineColor);
-				this.graphics.drawRect(0, 0, this._displayWidth, this._displayHeight);
-				this.graphics.endFill();
-				this.graphics.beginFill(this._fillColor, FILL_ALPHA);
-				this.graphics.drawRect(this._lineSize, this._lineSize, this._displayWidth - this._lineSize * 2, this._displayHeight - this._lineSize * 2);
+				shape.graphics.beginFill(this._lineColor);
+				shape.graphics.drawRect(0, 0, this._displayWidth, this._displayHeight);
+				shape.graphics.endFill();
+				shape.graphics.beginFill(this._fillColor, FILL_ALPHA);
+				shape.graphics.drawRect(this._lineSize, this._lineSize, this._displayWidth - this._lineSize * 2, this._displayHeight - this._lineSize * 2);
 			}
-			this.graphics.endFill();
+			shape.graphics.endFill();
 		}
 
 		// Event Functions
-		protected override function onMouseRollOver(event: MouseEvent): void {
+		override onMouseRollOver(event: MouseEvent): void {
 			super.onMouseRollOver(event);
 			this.alpha = OVER_ALPHA;
 		}
 
-		protected override function onMouseRollOut(event: MouseEvent): void {
+		override onMouseRollOut(event: MouseEvent): void {
 			super.onMouseRollOut(event);
 			this.alpha = RELEASE_ALPHA;
 		}
 
-		protected override function onMouseHold(event: MouseEvent): void {
+		override onMouseHold(event: MouseEvent): void {
 			super.onMouseHold(event);
 			this.alpha = HOLD_ALPHA;
 		}
 
-		protected override function onMouseRelease(event: MouseEvent): void {
+		override onMouseRelease(event: MouseEvent): void {
 			super.onMouseRelease(event);
 			this.alpha = RELEASE_ALPHA;
 		}

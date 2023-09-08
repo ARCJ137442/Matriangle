@@ -6,15 +6,15 @@ package batr.menu.event {
 
 	export default class BatrGUIEvent extends Event {
 		//============Static Variables============//
-		public static const CLICK: string = 'BatrButtonEvent:click';
-		public static const CLICK_LEFT: string = 'BatrButtonEvent:left_click';
-		public static const CLICK_RIGHT: string = 'BatrButtonEvent:right_click';
+		public static readonly CLICK: string = 'BatrButtonEvent:click';
+		public static readonly CLICK_LEFT: string = 'BatrButtonEvent:left_click';
+		public static readonly CLICK_RIGHT: string = 'BatrButtonEvent:right_click';
 
 		//============Instance Variables============//
 		protected _gui: BatrMenuGUI;
 
-		//============Constructor Function============//
-		public BatrGUIEvent(type: string, gui: BatrMenuGUI, bubbles: boolean = false, cancelable: boolean = false): void {
+		//============Constructor & Destructor============//
+		public constructor(type: string, gui: BatrMenuGUI, bubbles: boolean = false, cancelable: boolean = false) {
 			super(type, bubbles, cancelable);
 			this._gui = gui;
 		}
@@ -25,12 +25,12 @@ package batr.menu.event {
 		}
 
 		//============Instance Functions============//
-		public override function clone(): Event {
+		override clone(): Event {
 			return new BatrGUIEvent(this.type, this._gui, this.bubbles, this.cancelable);
 			;
 		}
 
-		public override function toString(): string {
+		override toString(): string {
 			return formatToString('BatrButtonEvent', 'type', 'gui', 'bubbles', 'cancelable', 'eventPhase');
 		}
 	}

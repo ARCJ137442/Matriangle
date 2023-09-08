@@ -39,7 +39,7 @@
 
 	export default class Game extends Sprite {
 		//============Static Variables============//
-		public static const ALL_MAPS: IMap[] = new < IMap > [
+		public static readonly ALL_MAPS: IMap[] = new < IMap > [
 			Map_V1.EMPTY,
 			Map_V1.FRAME,
 			Map_V1.MAP_1,
@@ -61,9 +61,9 @@
 			Map_V1.MAP_H
 		];
 
-		public static const MAP_TRANSFORM_TEXT_FORMAT: TextFormat = new TextFormat(
+		public static readonly MAP_TRANSFORM_TEXT_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			DEFAULT_SIZE * 5 / 8,
 			0x3333ff,
 			true,
 			null,
@@ -72,9 +72,9 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static const GAME_PLAYING_TIME_TEXT_FORMET: TextFormat = new TextFormat(
+		public static readonly GAME_PLAYING_TIME_TEXT_FORMET: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			DEFAULT_SIZE * 5 / 8,
 			0x66ff66,
 			true,
 			null,
@@ -83,26 +83,26 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static var debugMode: boolean = false;
+		public static debugMode: boolean = false;
 
 		//============Static Getter And Setter============//
-		public static function get VALID_MAP_COUNT(): int {
+		public static get VALID_MAP_COUNT(): int {
 			return Game.ALL_MAPS.length;
 		}
 
 		//============Static Functions============//
-		public static function getMapFromID(id: int): IMap {
+		public static getMapFromID(id: int): IMap {
 			if (id >= 0 && id < Game.VALID_MAP_COUNT)
 				return Game.ALL_MAPS[id];
 			return null;
 		}
 
-		public static function getIDFromMap(map: IMap): int {
+		public static getIDFromMap(map: IMap): int {
 			return Game.ALL_MAPS.indexOf(map);
 		}
 
 		// Tools
-		public static function joinNamesFromPlayers(players: Player[]): string {
+		public static joinNamesFromPlayers(players: Player[]): string {
 			var result: string = '';
 			for (var i: uint = 0; i < players.length; i++) {
 				if (players[i] == null)
@@ -176,7 +176,7 @@
 		protected _enableFrameComplement: boolean;
 
 		// Temp
-		protected _tempUniformWeapon: WeaponType;
+		protected _tempUniformTool: ToolType;
 
 		protected _tempMapTransformSecond: uint;
 
@@ -192,8 +192,8 @@
 
 		protected _gamePlayingTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
-		//============Constructor Function============//
-		public Game(subject: BatrSubject, active: boolean = false): void {
+		//============Constructor & Destructor============//
+		public constructor(subject: BatrSubject, active: boolean = false) {
 			super();
 			this._subject = subject;
 			this._entitySystem = new EntitySystem(this);
@@ -225,7 +225,7 @@
 			return this._isActive;
 		}
 
-		public set isActive(value: boolean): void {
+		public set isActive(value: boolean) {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
@@ -257,7 +257,7 @@
 			return this._globalHUDContainer.visible;
 		}
 
-		public set visibleHUD(value: boolean): void {
+		public set visibleHUD(value: boolean) {
 			this._globalHUDContainer.visible = value;
 		}
 
@@ -269,7 +269,7 @@
 			return this._speed;
 		}
 
-		public set speed(value: number): void {
+		public set speed(value: number) {
 			this._speed = value;
 		}
 
@@ -277,7 +277,7 @@
 			return this._enableFrameComplement;
 		}
 
-		public set enableFrameComplement(value: boolean): void {
+		public set enableFrameComplement(value: boolean) {
 			this._enableFrameComplement = value;
 		}
 
@@ -359,7 +359,7 @@
 			return this._rule.mapTransformTime;
 		}
 
-		public set mapVisible(value: boolean): void {
+		public set mapVisible(value: boolean) {
 			if (this._mapDisplayerBottom as DisplayObject != null)
 				(this._mapDisplayerBottom as DisplayObject).visible = value;
 			if (this._mapDisplayerMiddle as DisplayObject != null)
@@ -368,7 +368,7 @@
 				(this._mapDisplayerTop as DisplayObject).visible = value;
 		}
 
-		public set entityAndEffectVisible(value: boolean): void {
+		public set entityAndEffectVisible(value: boolean) {
 			this._effectContainerTop.visible = this._effectContainerMiddle.visible = this._effectContainerBottom.visible = this._bonusBoxContainer.visible = this._playerGUIContainer.visible = this._playerContainer.visible = value;
 		}
 
@@ -539,7 +539,7 @@
 			this.loadMap(true, true, false);
 			this.updateMapSize(true);
 			this._isLoaded = true;
-			this._tempUniformWeapon = this._rule.randomWeaponEnable;
+			this._tempUniformTool = this._rule.randomToolEnable;
 			this._tempMapTransformSecond = this.mapTransformPeriod;
 			this._speed = 1;
 			// Stats
@@ -879,7 +879,7 @@
 			return blockAtt.isBreakable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
 		}
 
-		public weaponCreateExplode(x: number, y: number, finalRadius: number,
+		public toolCreateExplode(x: number, y: number, finalRadius: number,
 			damage: uint, projectile: ProjectileCommon,
 			color: uint, edgePercent: number = 1): void {
 			// Operate
@@ -897,9 +897,9 @@
 					if (edgePercent < 1)
 						damage *= edgePercent + (distanceP * (1 - edgePercent));
 					if (projectile == null ||
-						(creater == null || creater.canUseWeaponHurtPlayer(player, projectile.currentWeapon))) {
+						(creater == null || creater.canUseToolHurtPlayer(player, projectile.currentTool))) {
 						// Hurt With FinalDamage
-						player.finalRemoveHealth(creater, projectile.currentWeapon, damage);
+						player.finalRemoveHealth(creater, projectile.currentTool, damage);
 					}
 				}
 			}
@@ -946,9 +946,9 @@
 						continue;
 
 					// Operate
-					finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.currentWeapon, damage);
+					finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.currentTool, damage);
 					// Effects
-					if (attacker == null || attacker.canUseWeaponHurtPlayer(victim, laser.currentWeapon)) {
+					if (attacker == null || attacker.canUseToolHurtPlayer(victim, laser.currentTool)) {
 						// Damage
 						victim.removeHealth(finalDamage, attacker);
 
@@ -996,9 +996,9 @@
 				if (victim == null)
 					continue;
 				// FinalDamage
-				if (attacker == null || attacker.canUseWeaponHurtPlayer(victim, wave.currentWeapon)) {
+				if (attacker == null || attacker.canUseToolHurtPlayer(victim, wave.currentTool)) {
 					if (exMath.getDistance(baseX, baseY, victim.entityX, victim.entityY) <= radius) {
-						victim.finalRemoveHealth(attacker, wave.currentWeapon, damage);
+						victim.finalRemoveHealth(attacker, wave.currentTool, damage);
 					}
 				}
 			}
@@ -1011,9 +1011,9 @@
 				if (victim == null)
 					continue;
 				// FinalDamage
-				if (attacker == null || attacker.canUseWeaponHurtPlayer(victim, block.currentWeapon)) {
+				if (attacker == null || attacker.canUseToolHurtPlayer(victim, block.currentTool)) {
 					if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
-						victim.finalRemoveHealth(attacker, block.currentWeapon, damage);
+						victim.finalRemoveHealth(attacker, block.currentTool, damage);
 					}
 				}
 			}
@@ -1025,7 +1025,7 @@
 				p = players[i];
 				d = damages[i];
 				if (p != null)
-					p.finalRemoveHealth(lightning.owner, lightning.currentWeapon, d);
+					p.finalRemoveHealth(lightning.owner, lightning.currentTool, d);
 			}
 		}
 
@@ -1205,9 +1205,9 @@
 
 			var mapGridHeight: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
 
-			var mapShouldDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
+			var mapShouldDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
 
-			var mapShouldDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
+			var mapShouldDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
 
 			// Operation
 			var isMapDisplayWidthMax: boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
@@ -1340,7 +1340,7 @@
 			// Position
 			this.respawnPlayer(player);
 			// Variables
-			player.initVariablesByRule(this.rule.defaultWeaponID, this._tempUniformWeapon);
+			player.initVariablesByRule(this.rule.defaultToolID, this._tempUniformTool);
 			// GUI
 			player.gui.updateHealth();
 			// Stats
@@ -1349,7 +1349,7 @@
 			return player;
 		}
 
-		// Add a player uses random position and weapon
+		// Add a player uses random position and tool
 		public appendPlayer(controlKeyID: uint = 0): Player {
 			var id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
 			trace('Append Player in ID', id);
@@ -1633,20 +1633,20 @@
 			}
 		}
 
-		public changeAllPlayerWeapon(weapon: WeaponType = null): void {
-			if (weapon == null)
-				weapon = WeaponType.RANDOM_AVAILABLE;
+		public changeAllPlayerTool(tool: ToolType = null): void {
+			if (tool == null)
+				tool = ToolType.RANDOM_AVAILABLE;
 
 			for (var player of this._entitySystem.players) {
-				player.weapon = weapon;
+				player.tool = tool;
 			}
 		}
 
-		public changeAllPlayerWeaponRandomly(): void {
+		public changeAllPlayerToolRandomly(): void {
 			for (var player of this._entitySystem.players) {
-				player.weapon = WeaponType.RANDOM_AVAILABLE;
+				player.tool = ToolType.RANDOM_AVAILABLE;
 
-				player.weaponUsingCD = 0;
+				player.toolUsingCD = 0;
 			}
 		}
 
@@ -1667,20 +1667,20 @@
 			this.onPlayerMove(player);
 		}
 
-		public playerUseWeapon(player: Player, rot: uint, chargePercent: number): void {
+		public playerUseTool(player: Player, rot: uint, chargePercent: number): void {
 			// Test CD
-			if (player.weaponUsingCD > 0)
+			if (player.toolUsingCD > 0)
 				return;
 			// Set Variables
-			var spawnX: number = player.weapon.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-			var spawnY: number = player.weapon.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			var spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			var spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 			// Use
-			this.playerUseWeaponAt(player, player.weapon, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 			// Set CD
-			player.weaponUsingCD = _rule.weaponsNoCD ? GlobalGameVariables.WEAPON_MIN_CD : player.computeFinalCD(player.weapon);
+			player.toolUsingCD = _rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : player.computeFinalCD(player.tool);
 		}
 
-		public playerUseWeaponAt(player: Player, weapon: WeaponType, x: number, y: number, weaponRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
+		public playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
 			// Set Variables
 			var p: ProjectileCommon = null;
 
@@ -1692,52 +1692,52 @@
 
 			var laserLength: number = this.rule.defaultLaserLength;
 
-			if (WeaponType.isIncludeIn(weapon, WeaponType._LASERS) &&
+			if (ToolType.isIncludeIn(tool, ToolType._LASERS) &&
 				!_rule.allowLaserThroughAllBlock) {
-				laserLength = this.getLaserLength2(x, y, weaponRot);
+				laserLength = this.getLaserLength2(x, y, toolRot);
 
 				// -projectilesSpawnDistance
 			}
-			// Debug: trace('playerUseWeapon:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
+			// Debug: trace('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
 			// Summon Projectile
-			switch (weapon) {
-				case WeaponType.BULLET:
+			switch (tool) {
+				case ToolType.BULLET:
 					p = new BulletBasic(this, x, y, player);
 
 					break;
-				case WeaponType.NUKE:
+				case ToolType.NUKE:
 					p = new BulletNuke(this, x, y, player, chargePercent);
 
 					break;
-				case WeaponType.SUB_BOMBER:
+				case ToolType.SUB_BOMBER:
 					p = new SubBomber(this, x, y, player, chargePercent);
 
 					break;
-				case WeaponType.TRACKING_BULLET:
+				case ToolType.TRACKING_BULLET:
 					p = new BulletTracking(this, x, y, player, chargePercent);
 
 					break;
-				case WeaponType.LASER:
+				case ToolType.LASER:
 					p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
 
 					break;
-				case WeaponType.PULSE_LASER:
+				case ToolType.PULSE_LASER:
 					p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
 
 					break;
-				case WeaponType.TELEPORT_LASER:
+				case ToolType.TELEPORT_LASER:
 					p = new LaserTeleport(this, x, y, player, laserLength);
 
 					break;
-				case WeaponType.ABSORPTION_LASER:
+				case ToolType.ABSORPTION_LASER:
 					p = new LaserAbsorption(this, x, y, player, laserLength);
 
 					break;
-				case WeaponType.WAVE:
+				case ToolType.WAVE:
 					p = new Wave(this, x, y, player, chargePercent);
 
 					break;
-				case WeaponType.BLOCK_THROWER:
+				case ToolType.BLOCK_THROWER:
 					var carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
 					var carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
 					frontBlock = this.getBlock(carryX, carryY);
@@ -1745,7 +1745,7 @@
 						// Throw
 						if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
 							// Add Block
-							p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), weaponRot, chargePercent);
+							p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
 							// Clear
 							player.setCarriedBlock(null);
 						}
@@ -1760,21 +1760,21 @@
 						}
 					}
 					break;
-				case WeaponType.MELEE:
+				case ToolType.MELEE:
 
 					break;
-				case WeaponType.LIGHTNING:
-					p = new Lightning(this, centerX, centerY, weaponRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
+				case ToolType.LIGHTNING:
+					p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
 					break;
-				case WeaponType.SHOCKWAVE_ALPHA:
-					p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_WEAPON : player.droneWeapon, player.droneWeapon.chargePercentInDrone);
+				case ToolType.SHOCKWAVE_ALPHA:
+					p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone);
 					break;
-				case WeaponType.SHOCKWAVE_BETA:
-					p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_WEAPON : player.droneWeapon, player.droneWeapon.chargePercentInDrone, 1);
+				case ToolType.SHOCKWAVE_BETA:
+					p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
 					break;
 			}
 			if (p != null) {
-				p.rot = weaponRot;
+				p.rot = toolRot;
 				this._entitySystem.registerProjectile(p);
 				this._projectileContainer.addChild(p);
 			}

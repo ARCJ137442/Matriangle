@@ -4,12 +4,12 @@ package batr.menu.objects {
 
 	export default class TitleImg extends BitmapData {
 		//============Static Variables============//
-		// public static const IMAGE_DATA:TitleImg=new TitleImg()
+		// public static readonly IMAGE_DATA:TitleImg=new TitleImg()
 
 		//============Instance Variables============//
 
-		//============Constructor Function============//
-		public TitleImg(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			super(840, 250, true);
 		}
 	}

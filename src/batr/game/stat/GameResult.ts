@@ -17,7 +17,7 @@ package batr.game.model {
 	 */
 	export default class GameResult {
 		//============Static Functions============//
-		protected static function scoreCompareFunc(x: PlayerStats, y: PlayerStats): int {
+		protected static scoreCompareFunc(x: PlayerStats, y: PlayerStats): int {
 			return exMath.sgn(y.totalScore - x.totalScore);
 		}
 
@@ -26,7 +26,7 @@ package batr.game.model {
 		protected _message: I18nText;
 
 		//============Constructor============//
-		public GameResult(host: Game, message: I18nText, stats: GameStats): void {
+		public constructor(host: Game, message: I18nText, stats: GameStats) {
 			super();
 			this._message = message;
 			this._stats = stats;

@@ -99,7 +99,7 @@
         - [ ] NativeMapCommon.ts
     - [ ] registry
       - [ ] GameModeType.ts
-      - [ ] WeaponType.ts
+      - [ ] ToolType.ts
       - [ ] BlockType.ts
       - [ ] EffectType.ts
       - [ ] EntityType.ts

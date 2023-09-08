@@ -25,16 +25,16 @@
 
 	export default class Menu extends Sprite {
 		//============Static Variables============//
-		protected static const _TITLE_HIDE_Y: int = -Title.HEIGHT - GlobalGameVariables.DEFAULT_SIZE * 1;
-		protected static const _TITLE_SHOW_Y: int = PosTransform.localPosToRealPos(2);
-		protected static const _TITLE_ANIMATION_TIME: uint = GlobalGameVariables.FIXED_TPS;
+		protected static readonly _TITLE_HIDE_Y: int = -Title.HEIGHT - DEFAULT_SIZE * 1;
+		protected static readonly _TITLE_SHOW_Y: int = PosTransform.localPosToRealPos(2);
+		protected static readonly _TITLE_ANIMATION_TIME: uint = GlobalGameVariables.FIXED_TPS;
 
 		/**
 		 * Menu Text Format
 		 */
-		public static const TEXT_FORMAT: TextFormat = new TextFormat(
+		public static readonly TEXT_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			DEFAULT_SIZE * 5 / 8,
 			0x000000,
 			true,
 			null,
@@ -43,9 +43,9 @@
 			null,
 			TextFormatAlign.CENTER);
 
-		public static const TEXT_TITLE_FORMAT: TextFormat = new TextFormat(
+		public static readonly TEXT_TITLE_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 15 / 8,
+			DEFAULT_SIZE * 15 / 8,
 			0x000000,
 			true,
 			null,
@@ -54,9 +54,9 @@
 			null,
 			TextFormatAlign.CENTER);
 
-		public static const VERSION_TEXT_FORMAT: TextFormat = new TextFormat(
+		public static readonly VERSION_TEXT_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 5 / 8,
+			DEFAULT_SIZE * 5 / 8,
 			0x6666ff,
 			true,
 			null,
@@ -65,9 +65,9 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static const RESULT_TITLE_FORMET: TextFormat = new TextFormat(
+		public static readonly RESULT_TITLE_FORMET: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE,
+			DEFAULT_SIZE,
 			0x333333,
 			true,
 			false,
@@ -76,9 +76,9 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static const RANK_Content_FORMET: TextFormat = new TextFormat(
+		public static readonly RANK_Content_FORMET: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 4 / 5,
+			DEFAULT_SIZE * 4 / 5,
 			0x444444,
 			true,
 			false,
@@ -87,9 +87,9 @@
 			null,
 			TextFormatAlign.LEFT);
 
-		public static const INPUT_FORMAT: TextFormat = new TextFormat(
+		public static readonly INPUT_FORMAT: TextFormat = new TextFormat(
 			new MainFont().fontName,
-			GlobalGameVariables.DEFAULT_SIZE * 3.5 / 8,
+			DEFAULT_SIZE * 3.5 / 8,
 			0x000000,
 			true,
 			null,
@@ -99,7 +99,7 @@
 			TextFormatAlign.LEFT);
 
 		//============Static Functions============//
-		protected static function setFixedTextSuffix(text: BatrTextField, suffix: any): void {
+		protected static setFixedTextSuffix(text: BatrTextField, suffix: any): void {
 			var fText: FixedI18nText = text.translationalText as FixedI18nText;
 			if (fText != null) {
 				fText.suffix = '\t\t' + String(suffix);
@@ -170,8 +170,8 @@
 		// GUI
 		protected _title: Title = new Title();
 
-		//============Constructor Function============//
-		public Menu(subject: BatrSubject): void {
+		//============Constructor & Destructor============//
+		public constructor(subject: BatrSubject) {
 			super();
 			this._subject = subject;
 			this.initDisplay();
@@ -184,7 +184,7 @@
 			return this._isActive;
 		}
 
-		public set isActive(value: boolean): void {
+		public set isActive(value: boolean) {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
@@ -214,7 +214,7 @@
 			return this._nowSheet;
 		}
 
-		public set nowSheet(value: BatrMenuSheet): void {
+		public set nowSheet(value: BatrMenuSheet) {
 			this.setNowSheet(value, true);
 		}
 
@@ -247,7 +247,7 @@
 			return Math.floor(this._sheetHistory / Math.pow(this.numSheet + 1, this.historyLength - 1));
 		}
 
-		public set storedGameResult(value: GameResult): void {
+		public set storedGameResult(value: GameResult) {
 			this._storedGameResult = value;
 		}
 
@@ -333,8 +333,8 @@
 		//========Menu Build Methods========//
 		// Button Build
 		protected quickButtonBuild(tKey: string, clickListenerFunction: Function, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
-			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
-				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
+			var button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
+				DEFAULT_SIZE * blockHeight,
 				this.translations, tKey);
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
 			if (clickListenerFunction != null)
@@ -344,8 +344,8 @@
 
 		// quickButtonBuild with color
 		protected quickButtonBuild2(tKey: string, clickListenerFunction: Function, color: uint, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
-			var button: BatrButton = new BatrButton(GlobalGameVariables.DEFAULT_SIZE * blockWidth,
-				GlobalGameVariables.DEFAULT_SIZE * blockHeight,
+			var button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
+				DEFAULT_SIZE * blockHeight,
 				this.translations, tKey, true, color);
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
 			if (clickListenerFunction != null)
@@ -364,8 +364,8 @@
 		// TextField Build
 		protected quickTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			var textField: BatrTextField = BatrTextField.fromKey(this.translations, tKey, autoSize);
-			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
-			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
+			textField.x = DEFAULT_SIZE * blockX;
+			textField.y = DEFAULT_SIZE * blockY;
 			textField.initFormatAsMenu();
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, textField.onI18nChange);
 			return textField;
@@ -374,8 +374,8 @@
 		// StatTextField Build
 		protected quickStatTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 			var textField: BatrTextField = new BatrTextField(new FixedI18nText(this.translations, tKey), autoSize);
-			textField.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
-			textField.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
+			textField.x = DEFAULT_SIZE * blockX;
+			textField.y = DEFAULT_SIZE * blockY;
 			textField.initFormatAsMenu();
 			this._subject.addEventListener(I18nsChangeEvent.TYPE, textField.onI18nChange);
 			return textField;
@@ -384,10 +384,10 @@
 		// StatTextField Build
 		protected quickTextInputBuild(text: string, blockX: number = 0, blockY: number = 0, blockW: number = 10, blockH: number = 5, autoSize: string = TextFieldAutoSize.LEFT): BatrTextInput {
 			var textInput: BatrTextInput = new BatrTextInput(text, autoSize);
-			textInput.x = GlobalGameVariables.DEFAULT_SIZE * blockX;
-			textInput.y = GlobalGameVariables.DEFAULT_SIZE * blockY;
-			textInput.width = GlobalGameVariables.DEFAULT_SIZE * blockW;
-			textInput.height = GlobalGameVariables.DEFAULT_SIZE * blockH;
+			textInput.x = DEFAULT_SIZE * blockX;
+			textInput.y = DEFAULT_SIZE * blockY;
+			textInput.width = DEFAULT_SIZE * blockW;
+			textInput.height = DEFAULT_SIZE * blockH;
 			return textInput;
 		}
 
@@ -458,8 +458,8 @@
 						this.quickLinkageButtonBuild(I18nKey.SELECT_GAME, I18nKey.SELECT_GAME, 0x00ff80),
 						this.quickLinkageButtonBuild(I18nKey.CUSTOM_MODE, null, 0xff0080)
 					) as BatrButtonList).setPos(
-						GlobalGameVariables.DEFAULT_SIZE * 9,
-						GlobalGameVariables.DEFAULT_SIZE * 9
+						DEFAULT_SIZE * 9,
+						DEFAULT_SIZE * 9
 					)
 				) as BatrMenuSheet,
 				// Select
@@ -470,8 +470,8 @@
 						this.quickButtonBuild2(I18nKey.SAVES, null, 0xff0080),
 						this.quickBackButtonBuild()
 					) as BatrButtonList).setPos(
-						GlobalGameVariables.DEFAULT_SIZE * 9,
-						GlobalGameVariables.DEFAULT_SIZE * 9
+						DEFAULT_SIZE * 9,
+						DEFAULT_SIZE * 9
 					),
 					this._selectorListCustom = new BatrSelectorList(PosTransform.localPosToRealPos(5.5)).setBlockPos(
 						16, 9
@@ -576,17 +576,17 @@
 							(new < I18nText > [
 								this.quickI18nTextBuild(I18nKey.COMPLETELY_RANDOM),
 								this.quickI18nTextBuild(I18nKey.UNIFORM_RANDOM)
-							]).concat(I18nText.getTextsByAllAvaliableWeapons(this.translations, false)),
+							]).concat(I18nText.getTextsByAllAvaliableTools(this.translations, false)),
 							0, 2
 						).initAsInt(
-							this.gameRule.enableWeaponCount - 1, -2, this.gameRule.defaultWeaponID
+							this.gameRule.enableToolCount - 1, -2, this.gameRule.defaultToolID
 						).autoInitLoopSelect(),
-						I18nKey.DEFAULT_WEAPON,
+						I18nKey.DEFAULT_TOOL,
 						false
 					).quickAppendSelector(
 						this,
-						BatrSelectorContent.createYorNContent(this.gameRule.weaponsNoCD ? 1 : 0, this.translations),
-						I18nKey.WEAPONS_NO_CD,
+						BatrSelectorContent.createYorNContent(this.gameRule.toolsNoCD ? 1 : 0, this.translations),
+						I18nKey.TOOLS_NO_CD,
 						false
 					).quickAppendSelector(
 						this,
@@ -674,8 +674,8 @@
 						this.quickButtonBuild2(I18nKey.MAIN_MENU, this.onMainMenuButtonClick, 0x0080ff),
 						this.quickButtonBuild2(I18nKey.ADVANCED_CONFIG, this.onCustomGameConfigButtonClick2, 0x8000ff)
 					) as BatrButtonList).setPos(
-						GlobalGameVariables.DEFAULT_SIZE * 9,
-						GlobalGameVariables.DEFAULT_SIZE * 9
+						DEFAULT_SIZE * 9,
+						DEFAULT_SIZE * 9
 					)
 				) as BatrMenuSheet
 			];
@@ -804,12 +804,12 @@
 				var lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
 				rule.allowPlayerChangeTeam = defaultRespawnTimeselector.currentValue == 0; // inverted boolean
 				//====Right====//
-				// DefaultWeapon
-				var defaultWeaponselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_WEAPON);
-				rule.defaultWeaponID = defaultWeaponselector == null ? -2 : defaultWeaponselector.currentValue;
-				// WeaponsNoCD
-				var weaponsNoCDselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.WEAPONS_NO_CD);
-				rule.weaponsNoCD = weaponsNoCDselector.currentValue > 0;
+				// DefaultTool
+				var defaultToolselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
+				rule.defaultToolID = defaultToolselector == null ? -2 : defaultToolselector.currentValue;
+				// ToolsNoCD
+				var toolsNoCDselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
+				rule.toolsNoCD = toolsNoCDselector.currentValue > 0;
 				// MapTransformTime
 				var mapTransformTimeselector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
 				rule.mapTransformTime = mapTransformTimeselector.currentValue;

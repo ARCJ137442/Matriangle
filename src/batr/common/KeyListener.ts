@@ -28,7 +28,7 @@ export default class KeyListener {
 	protected _shiftKey: boolean = false;
 	protected _altKey: boolean = false;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(listens: Stage) {
 		this.listens = listens;
 	}

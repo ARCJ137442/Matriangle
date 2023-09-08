@@ -9,14 +9,14 @@ package batr.game.effect.effects {
 
 	export default class EffectBlockLight extends EffectCommon {
 		//============Static Variables============//
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 25;
-		public static const MAX_LIFE: uint = GlobalGameVariables.TPS * 0.4;
-		public static const MAX_SCALE: number = 2;
-		public static const MIN_SCALE: number = 1;
+		public static readonly SIZE: number = DEFAULT_SIZE;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
+		public static readonly MAX_LIFE: uint = GlobalGameVariables.TPS * 0.4;
+		public static readonly MAX_SCALE: number = 2;
+		public static readonly MIN_SCALE: number = 1;
 
 		//============Static Functions============//
-		public static function fromBlock(host: Game, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
+		public static fromBlock(host: Game, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
 			return new EffectBlockLight(host, x, y, block.pixelColor, block.pixelAlpha, reverse);
 		}
 
@@ -29,8 +29,8 @@ package batr.game.effect.effects {
 		protected _alpha: uint;
 		public reverse: boolean = false;
 
-		//============Constructor Function============//
-		public EffectBlockLight(host: Game, x: number, y: number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: boolean = false, life: uint = EffectBlockLight.MAX_LIFE): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: boolean = false, life: uint = EffectBlockLight.MAX_LIFE) {
 			super(host, x, y, life);
 			this._color = color;
 			this._alpha = alpha;
@@ -39,12 +39,12 @@ package batr.game.effect.effects {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EffectType {
+		override get type(): EffectType {
 			return EffectType.BLOCK_LIGHT;
 		}
 
@@ -52,19 +52,19 @@ package batr.game.effect.effects {
 			return this._color;
 		}
 
-		public set color(value: uint): void {
+		public set color(value: uint) {
 			this._color = value;
 			this.drawShape();
 		}
 
 		//============Instance Functions============//
-		public override function onEffectTick(): void {
+		override onEffectTick(): void {
 			this.alpha = (this.reverse ? (1 - life / LIFE) : (life / LIFE));
 			this.scaleX = this.scaleY = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * (1 - this.alpha);
 			dealLife();
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 			var realRadiusX: number = SIZE / 2;
 			var realRadiusY: number = SIZE / 2;
 			graphics.clear();

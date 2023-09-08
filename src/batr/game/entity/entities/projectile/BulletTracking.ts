@@ -13,10 +13,10 @@
 
 	export default class BulletTracking extends BulletBasic {
 		//============Static Variables============//
-		public static const SIZE: number = PosTransform.localPosToRealPos(3 / 8);
-		public static const DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
-		public static const DEFAULT_EXPLODE_COLOR: uint = 0xffff00;
-		public static const DEFAULT_EXPLODE_RADIUS: number = 0.625;
+		public static readonly SIZE: number = PosTransform.localPosToRealPos(3 / 8);
+		public static readonly DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
+		public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffff00;
+		public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.625;
 
 		//============Instance Variables============//
 		protected _target: Player = null;
@@ -24,19 +24,19 @@
 		protected _scalePercent: number = 1;
 		protected _cachedTargets: Player[] = new Player[]();
 
-		//============Constructor Function============//
-		public BulletTracking(host: Game, x: number, y: number, owner: Player, chargePercent: number): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
 			this._scalePercent = (1 + chargePercent * 0.5);
 			if (chargePercent >= 1)
 				this._trackingFunction = this.getTargetRotWidely;
 			super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
-			this._currentWeapon = WeaponType.TRACKING_BULLET;
+			this._currentTool = ToolType.TRACKING_BULLET;
 			this.cacheTargets();
 			this.drawShape();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.BULLET_TRACKING;
 		}
 
@@ -48,13 +48,13 @@
 		protected cacheTargets(): void {
 			for (var player of _host.entitySystem.players) {
 				if (player != null && // not null
-					(this._owner == null || this._owner.canUseWeaponHurtPlayer(player, this._currentWeapon)) // should can use it to hurt
+					(this._owner == null || this._owner.canUseToolHurtPlayer(player, this._currentTool)) // should can use it to hurt
 				)
 					this._cachedTargets.push(player);
 			}
 		}
 
-		public override function onBulletTick(): void {
+		override onBulletTick(): void {
 			var tempRot: int;
 			if (this._target == null) {
 				var player: Player;
@@ -88,7 +88,7 @@
 			return (
 				player == null || // not null
 				player.isRespawning || // not respawning
-				(this._owner != null && !this._owner.canUseWeaponHurtPlayer(player, this._currentWeapon)) // should can use it to hurt
+				(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this._currentTool)) // should can use it to hurt
 			);
 		}
 
@@ -114,7 +114,7 @@
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			super.drawShape();
 			this.drawTrackingSign();
 			this.scaleX = this.scaleY = BulletTracking.SIZE / BulletBasic.SIZE;

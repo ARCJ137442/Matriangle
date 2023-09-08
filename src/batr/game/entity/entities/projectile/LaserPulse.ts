@@ -10,29 +10,29 @@
 
 	export default class LaserPulse extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: number = GlobalGameVariables.FIXED_TPS * 0.25;
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
-		public static const ALPHA: number = 1 / 0.75;
+		public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS * 0.25;
+		public static readonly SIZE: number = DEFAULT_SIZE / 4;
+		public static readonly ALPHA: number = 1 / 0.75;
 
 		//============Instance Variables============//
 		public isPull: boolean = false;
 
-		//============Constructor Function============//
-		public LaserPulse(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH, chargePercent: number = 1): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH, chargePercent: number = 1) {
 			super(host, x, y, owner, length, chargePercent);
-			this._currentWeapon = WeaponType.PULSE_LASER;
+			this._currentTool = ToolType.PULSE_LASER;
 			this._life = LaserPulse.LIFE;
-			this.damage = this._currentWeapon.defaultDamage;
+			this.damage = this._currentTool.defaultDamage;
 			this.dealCharge(chargePercent);
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.LASER_PULSE;
 		}
 
 		//============Instance Functions============//
-		public override function onLaserTick(): void {
+		override onLaserTick(): void {
 			if (!this.isDamaged)
 				this._host.laserHurtPlayers(this);
 			if (this.isPull) {
@@ -45,13 +45,13 @@
 			}
 		}
 
-		protected override function dealCharge(percent: number): void {
+		override dealCharge(percent: number): void {
 			if (percent != 1)
 				this.isPull = true;
 		}
 
-		public override function drawShape(): void {
-			this.graphics.clear();
+		override drawShape(): void {
+			shape.graphics.clear();
 			for (var i: uint = 0; i < 2; i++) { // 0,1
 				this.drawOwnerLine(-SIZE / Math.pow(2, i + 1),
 					SIZE / Math.pow(2, i + 1),

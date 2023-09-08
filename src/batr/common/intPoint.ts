@@ -96,7 +96,7 @@ export default class intPoint { // don't extends Object, otherwise it will make 
 	public x: int = 0;
 	public y: int = 0;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(x: number, y: number) {
 		this.x = int(x);
 		this.y = int(y);

@@ -11,36 +11,36 @@
 	export default class PlayerGUI extends Sprite {
 		//============Static Variables============//
 		// Display Color
-		public static const HEALTH_COLOR: uint = 0xff0000;
-		public static const HEALTH_BAR_FRAME_COLOR: uint = 0xbbbbbb;
-		public static const CHARGE_COLOR: uint = 0x88ffff;
-		public static const CHARGE_BAR_FRAME_COLOR: uint = 0xaadddd;
-		public static const CD_COLOR: uint = 0x88ff88;
-		public static const CD_BAR_FRAME_COLOR: uint = 0xaaddaa;
-		public static const EXPERIENCE_COLOR: uint = 0xcc88ff;
-		public static const EXPERIENCE_BAR_FRAME_COLOR: uint = 0xbbaadd;
-		public static const LEVEL_COLOR: uint = 0x8800ff;
+		public static readonly HEALTH_COLOR: uint = 0xff0000;
+		public static readonly HEALTH_BAR_FRAME_COLOR: uint = 0xbbbbbb;
+		public static readonly CHARGE_COLOR: uint = 0x88ffff;
+		public static readonly CHARGE_BAR_FRAME_COLOR: uint = 0xaadddd;
+		public static readonly CD_COLOR: uint = 0x88ff88;
+		public static readonly CD_BAR_FRAME_COLOR: uint = 0xaaddaa;
+		public static readonly EXPERIENCE_COLOR: uint = 0xcc88ff;
+		public static readonly EXPERIENCE_BAR_FRAME_COLOR: uint = 0xbbaadd;
+		public static readonly LEVEL_COLOR: uint = 0x8800ff;
 
 		// Display Graphics
-		public static const HEALTH_BAR_HEIGHT: number = GlobalGameVariables.DEFAULT_SIZE / 10;
-		public static const BAR_FRAME_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 320;
-		public static const UNDER_BAR_HEIGHT: number = GlobalGameVariables.DEFAULT_SIZE / 16;
-		public static const UNDER_BAR_Y_0: number = 0.5 * GlobalGameVariables.DEFAULT_SIZE;
-		public static const UNDER_BAR_Y_1: number = UNDER_BAR_Y_0 + UNDER_BAR_HEIGHT;
-		public static const UNDER_BAR_Y_2: number = UNDER_BAR_Y_1 + UNDER_BAR_HEIGHT;
+		public static readonly HEALTH_BAR_HEIGHT: number = DEFAULT_SIZE / 10;
+		public static readonly BAR_FRAME_SIZE: number = DEFAULT_SIZE / 320;
+		public static readonly UNDER_BAR_HEIGHT: number = DEFAULT_SIZE / 16;
+		public static readonly UNDER_BAR_Y_0: number = 0.5 * DEFAULT_SIZE;
+		public static readonly UNDER_BAR_Y_1: number = UNDER_BAR_Y_0 + UNDER_BAR_HEIGHT;
+		public static readonly UNDER_BAR_Y_2: number = UNDER_BAR_Y_1 + UNDER_BAR_HEIGHT;
 
 		// Display Texts
-		public static const EXPERIENCE_FORMAT: TextFormat = new TextFormat(
+		public static readonly EXPERIENCE_FORMAT: TextFormat = new TextFormat(
 			GlobalGameVariables.MAIN_FONT.fontName,
-			0.4 * GlobalGameVariables.DEFAULT_SIZE,
+			0.4 * DEFAULT_SIZE,
 			LEVEL_COLOR, true,
 			null, null, null, null,
 			TextFormatAlign.CENTER
 		);
-		public static const LEVEL_TEXT_HEAD: string = 'Lv.';
+		public static readonly LEVEL_TEXT_HEAD: string = 'Lv.';
 
 		//============Instance Functions============//
-		public static function getUnderBarY(barNum: uint = 0): number {
+		public static getUnderBarY(barNum: uint = 0): number {
 			var result: number = UNDER_BAR_Y_0;
 			while (barNum > 0) {
 				result += UNDER_BAR_HEIGHT;
@@ -71,8 +71,8 @@
 		protected _nameTagText: TextField = new TextField();
 		protected _levelText: TextField = new TextField();
 
-		//============Constructor Function============//
-		public PlayerGUI(owner: Player): void {
+		//============Constructor & Destructor============//
+		public constructor(owner: Player) {
 			// Set Owner
 			this._owner = owner;
 			// Set Graphics
@@ -96,13 +96,13 @@
 			return PosTransform.realPosToLocalPos(this.y);
 		}
 
-		public set entityX(value: number): void {
+		public set entityX(value: number) {
 			if (value == this.entityX)
 				return;
 			this.x = PosTransform.localPosToRealPos(value);
 		}
 
-		public set entityY(value: number): void {
+		public set entityY(value: number) {
 			if (value == this.entityY)
 				return;
 			this.y = PosTransform.localPosToRealPos(value);
@@ -110,7 +110,7 @@
 
 		public getVisibleCD(player: boolean = true): boolean {
 			if (player)
-				return this._owner.weaponNeedsCD && this._owner.weaponCDPercent > 0;
+				return this._owner.toolNeedsCD && this._owner.toolCDPercent > 0;
 			return this._CDBarFrame.visible;
 		}
 
@@ -172,7 +172,7 @@
 			this._CDBarCD.visible = this._CDBarFrame.visible = this.getVisibleCD();
 			if (sort)
 				sortUnderBars();
-			this._CDBarCD.scaleX = this._owner.weaponCDPercent;
+			this._CDBarCD.scaleX = this._owner.toolCDPercent;
 		}
 
 		public updateExperience(sort: boolean = true): void {
@@ -203,13 +203,13 @@
 			this._healthBarFormat.align = TextFormatAlign.CENTER;
 			this._healthBarFormat.bold = true;
 			this._healthBarFormat.color = HEALTH_COLOR;
-			this._healthBarFormat.size = 0.3 * GlobalGameVariables.DEFAULT_SIZE;
+			this._healthBarFormat.size = 0.3 * DEFAULT_SIZE;
 			// NameTag
 			this._nameTagFormat.font = GlobalGameVariables.MAIN_FONT.fontName;
 			this._nameTagFormat.align = TextFormatAlign.CENTER;
 			this._nameTagFormat.bold = true;
 			// this._nameTagFormat.color=this._owner.fillColor;
-			this._nameTagFormat.size = 0.5 * GlobalGameVariables.DEFAULT_SIZE;
+			this._nameTagFormat.size = 0.5 * DEFAULT_SIZE;
 		}
 
 		protected setFromatsToFields(): void {
@@ -226,44 +226,44 @@
 		protected drawShape(): void {
 			// Pointer Triangle
 			this._pointerTriangle.x = 0;
-			this._pointerTriangle.y = -1.2 * GlobalGameVariables.DEFAULT_SIZE;
+			this._pointerTriangle.y = -1.2 * DEFAULT_SIZE;
 			// Name Tag
-			this._nameTagText.x = -1.875 * GlobalGameVariables.DEFAULT_SIZE;
-			this._nameTagText.y = -2.5 * GlobalGameVariables.DEFAULT_SIZE;
-			this._nameTagText.width = 3.75 * GlobalGameVariables.DEFAULT_SIZE;
-			this._nameTagText.height = 0.625 * GlobalGameVariables.DEFAULT_SIZE;
+			this._nameTagText.x = -1.875 * DEFAULT_SIZE;
+			this._nameTagText.y = -2.5 * DEFAULT_SIZE;
+			this._nameTagText.width = 3.75 * DEFAULT_SIZE;
+			this._nameTagText.height = 0.625 * DEFAULT_SIZE;
 			// Level Text
-			this._levelText.x = -1.875 * GlobalGameVariables.DEFAULT_SIZE;
-			this._levelText.y = -1.9375 * GlobalGameVariables.DEFAULT_SIZE;
-			this._levelText.width = 3.75 * GlobalGameVariables.DEFAULT_SIZE;
-			this._levelText.height = 0.6 * GlobalGameVariables.DEFAULT_SIZE;
+			this._levelText.x = -1.875 * DEFAULT_SIZE;
+			this._levelText.y = -1.9375 * DEFAULT_SIZE;
+			this._levelText.width = 3.75 * DEFAULT_SIZE;
+			this._levelText.height = 0.6 * DEFAULT_SIZE;
 			// Health Bar
 			drawHealthBar();
-			this._healthBarFrame.x = this._healthBarHealth.x = -0.46875 * GlobalGameVariables.DEFAULT_SIZE;
-			this._healthBarFrame.y = this._healthBarHealth.y = -0.725 * GlobalGameVariables.DEFAULT_SIZE;
-			this._healthBarText.x = -1.5625 * GlobalGameVariables.DEFAULT_SIZE;
-			this._healthBarText.y = -1.1 * GlobalGameVariables.DEFAULT_SIZE;
-			this._healthBarText.width = 3.125 * GlobalGameVariables.DEFAULT_SIZE;
-			this._healthBarText.height = 0.375 * GlobalGameVariables.DEFAULT_SIZE;
+			this._healthBarFrame.x = this._healthBarHealth.x = -0.46875 * DEFAULT_SIZE;
+			this._healthBarFrame.y = this._healthBarHealth.y = -0.725 * DEFAULT_SIZE;
+			this._healthBarText.x = -1.5625 * DEFAULT_SIZE;
+			this._healthBarText.y = -1.1 * DEFAULT_SIZE;
+			this._healthBarText.width = 3.125 * DEFAULT_SIZE;
+			this._healthBarText.height = 0.375 * DEFAULT_SIZE;
 			// CD Bar
 			drawCDBar();
-			this._CDBarFrame.x = this._CDBarCD.x = -0.5 * GlobalGameVariables.DEFAULT_SIZE;
+			this._CDBarFrame.x = this._CDBarCD.x = -0.5 * DEFAULT_SIZE;
 			this._CDBarFrame.y = this._CDBarCD.y = UNDER_BAR_Y_1;
 			// Charge Bar
 			drawChargeBar();
 
-			this._chargeBarFrame.x = this._chargeBarCharge.x = -0.5 * GlobalGameVariables.DEFAULT_SIZE;
+			this._chargeBarFrame.x = this._chargeBarCharge.x = -0.5 * DEFAULT_SIZE;
 			this._chargeBarFrame.y = this._chargeBarCharge.y = UNDER_BAR_Y_2;
 			// Experience Bar
 			drawExperienceBar();
 
-			this._experienceBarFrame.x = this._experienceBarExperience.x = -0.5 * GlobalGameVariables.DEFAULT_SIZE;
-			this._experienceBarFrame.y = this._experienceBarExperience.y = -0.6 * GlobalGameVariables.DEFAULT_SIZE;
+			this._experienceBarFrame.x = this._experienceBarExperience.x = -0.5 * DEFAULT_SIZE;
+			this._experienceBarFrame.y = this._experienceBarExperience.y = -0.6 * DEFAULT_SIZE;
 		}
 
 		protected drawPointerTriangle(graphics: Graphics): void {
-			var realRadiusX: number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
-			var realRadiusY: number = 0.1875 * GlobalGameVariables.DEFAULT_SIZE;
+			var realRadiusX: number = 0.1875 * DEFAULT_SIZE;
+			var realRadiusY: number = 0.1875 * DEFAULT_SIZE;
 			graphics.clear();
 			graphics.beginFill(this._owner.fillColor);
 			graphics.moveTo(-realRadiusX, -realRadiusY);
@@ -274,14 +274,14 @@
 		}
 
 		protected drawHealthBar(): void {
-			this._healthBarFrame.graphics.lineStyle(GlobalGameVariables.DEFAULT_SIZE / 200, HEALTH_BAR_FRAME_COLOR);
+			this._healthBarFrame.graphics.lineStyle(DEFAULT_SIZE / 200, HEALTH_BAR_FRAME_COLOR);
 			this._healthBarFrame.graphics.drawRect(0, 0,
-				0.9375 * GlobalGameVariables.DEFAULT_SIZE,
+				0.9375 * DEFAULT_SIZE,
 				HEALTH_BAR_HEIGHT);
 			this._healthBarFrame.graphics.endFill();
 			this._healthBarHealth.graphics.beginFill(HEALTH_COLOR);
 			this._healthBarHealth.graphics.drawRect(0, 0,
-				0.9375 * GlobalGameVariables.DEFAULT_SIZE,
+				0.9375 * DEFAULT_SIZE,
 				HEALTH_BAR_HEIGHT);
 			this._healthBarFrame.graphics.endFill();
 		}
@@ -289,12 +289,12 @@
 		protected drawCDBar(): void {
 			this._CDBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, CD_BAR_FRAME_COLOR);
 			this._CDBarFrame.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._CDBarFrame.graphics.endFill();
 			this._CDBarCD.graphics.beginFill(CD_COLOR);
 			this._CDBarCD.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._CDBarCD.graphics.endFill();
 		}
@@ -302,12 +302,12 @@
 		protected drawChargeBar(): void {
 			this._chargeBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, CHARGE_BAR_FRAME_COLOR);
 			this._chargeBarFrame.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._chargeBarFrame.graphics.endFill();
 			this._chargeBarCharge.graphics.beginFill(CHARGE_COLOR);
 			this._chargeBarCharge.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._chargeBarCharge.graphics.endFill();
 		}
@@ -315,12 +315,12 @@
 		protected drawExperienceBar(): void {
 			this._experienceBarFrame.graphics.lineStyle(BAR_FRAME_SIZE, EXPERIENCE_BAR_FRAME_COLOR);
 			this._experienceBarFrame.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._experienceBarFrame.graphics.endFill();
 			this._experienceBarExperience.graphics.beginFill(EXPERIENCE_COLOR);
 			this._experienceBarExperience.graphics.drawRect(0, 0,
-				GlobalGameVariables.DEFAULT_SIZE,
+				DEFAULT_SIZE,
 				UNDER_BAR_HEIGHT);
 			this._experienceBarExperience.graphics.endFill();
 		}

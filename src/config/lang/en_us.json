@@ -33,7 +33,7 @@
             "game_mode": "Game Mode",
             "initial_map": "Initial Map",
             "lock_teams": "Lock Teams",
-            "default_weapon": "Default Weapon",
+            "default_tool": "Default Tool",
             "default_health": "Default Health",
             "default_max_health": "Default Max Health",
             "remain_lives_player": "Player Remain Lives",
@@ -41,7 +41,7 @@
             "max_bonus_count": "Max Bonus Count",
             "bonus_spawn_after_death": "Bonus Spawn After Death",
             "map_transform_time": "Map Transform Time",
-            "weapons_no_cd": "Weapons No Cd",
+            "tools_no_cd": "Tools No Cd",
             "respawn_time": "Respawn Time",
             "asphyxia_damage": "Asphyxia Damage"
         },
@@ -124,7 +124,7 @@
         "player_levelup": "Player Levelup",
         "block_light": "Block Light"
     },
-    "weapon": {
+    "tool": {
         "bullet": "Bullet",
         "nuke": "Nuke",
         "sub_bomber": "Sub Bomber",

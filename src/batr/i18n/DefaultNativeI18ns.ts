@@ -33,8 +33,8 @@ export function getDefaultI18n(key: string): string {
 		if (key == I18nKey.getTypeNameKey(type))
 			return type.name;
 	}
-	// Weapon Type
-	for (let type of WeaponType._ALL_WEAPON) {
+	// Tool Type
+	for (let type of ToolType._ALL_TOOL) {
 		if (type == null)
 			continue;
 		if (key == I18nKey.getTypeNameKey(type))

@@ -1,35 +1,18 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import BlockAttributes from "../BlockAttributes";
+import BlockWall from "./Wall";
 
-	import batr.general.*;
-	import batr.game.block.*;
+export default class BlockBedrock extends BlockWall {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = 0x999999;
+	public static readonly FILL_COLOR: uint = 0xaaaaaa;
 
-	import flash.display.*;
-
-	export default class Bedrock extends Wall {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x999999;
-		public static const FILL_COLOR: uint = 0xaaaaaa;
-		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
-
-		//============Constructor Function============//
-		public Bedrock(lineColor: uint = LINE_COLOR, fillColor: uint = FILL_COLOR): void {
-			super(lineColor, fillColor);
-		}
-
-		//============Destructor Function============//
-
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.BEDROCK;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.BEDROCK;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Bedrock(this._lineColor, this._fillColor);
-		}
+	//============Constructor & Destructor============//
+	public constructor(
+		lineColor: uint = BlockBedrock.LINE_COLOR,
+		fillColor: uint = BlockBedrock.FILL_COLOR
+	) {
+		super(lineColor, fillColor);
+		this._attributes = BlockAttributes.BEDROCK;
 	}
 }

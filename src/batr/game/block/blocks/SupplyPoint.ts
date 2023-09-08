@@ -1,64 +1,55 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
 
-	import batr.general.*;
+export default class SupplyPoint extends BlockCommon {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = 0x444444;
+	public static readonly FILL_COLOR: uint = 0xdddddd;
+	public static readonly CENTER_COLOR: uint = 0x00ff00;
+	public static readonly BASE_ALPHA: number = 0.5;
+	public static readonly GRID_SIZE: uint = DEFAULT_SIZE;
 
-	import batr.game.block.*;
+	public static readonly LINE_SIZE: number = SupplyPoint.GRID_SIZE / 32;
 
-	export default class SupplyPoint extends BlockCommon {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x444444;
-		public static const FILL_COLOR: uint = 0xdddddd;
-		public static const CENTER_COLOR: uint = 0x00ff00;
-		public static const BASE_ALPHA: number = 0.5;
-		public static const GRID_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE;
+	//============Instance Variables============//
 
-		public static const LINE_SIZE: number = GRID_SIZE / 32;
+	//============Constructor & Destructor============//
+	public constructor() {
+		super(BlockAttributes.SUPPLY_POINT);
+	}
 
-		//============Instance Variables============//
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public SupplyPoint(): void {
-			super();
-			this.drawMain();
-		}
+	override clone(): BlockCommon {
+		return new SupplyPoint();
+	}
+	//============Instance Getter And Setter============//
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
+	//============Display Implements============//
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.SUPPLY_POINT;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.SUPPLY_POINT;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new SupplyPoint();
-		}
-
-		protected override function drawMain(): void {
-			// Base
-			this.graphics.beginFill(LINE_COLOR, BASE_ALPHA);
-			this.graphics.drawRect(0, 0, GRID_SIZE, GRID_SIZE);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GRID_SIZE - LINE_SIZE * 2, GRID_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			this.graphics.beginFill(FILL_COLOR, BASE_ALPHA);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GRID_SIZE - LINE_SIZE * 2, GRID_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Center
-			// V
-			this.graphics.beginFill(CENTER_COLOR);
-			this.graphics.drawRect(GRID_SIZE / 8, GRID_SIZE * 3 / 8, GRID_SIZE * 0.75, GRID_SIZE * 0.25);
-			this.graphics.endFill();
-			// H
-			this.graphics.beginFill(CENTER_COLOR);
-			this.graphics.drawRect(GRID_SIZE * 3 / 8, GRID_SIZE / 8, GRID_SIZE * 0.25, GRID_SIZE * 0.75);
-			this.graphics.endFill();
-		}
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		// Base
+		shape.graphics.beginFill(SupplyPoint.LINE_COLOR, SupplyPoint.BASE_ALPHA);
+		shape.graphics.drawRect(0, 0, SupplyPoint.GRID_SIZE, SupplyPoint.GRID_SIZE);
+		shape.graphics.drawRect(SupplyPoint.LINE_SIZE, SupplyPoint.LINE_SIZE, SupplyPoint.GRID_SIZE - SupplyPoint.LINE_SIZE * 2, SupplyPoint.GRID_SIZE - SupplyPoint.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		shape.graphics.beginFill(SupplyPoint.FILL_COLOR, SupplyPoint.BASE_ALPHA);
+		shape.graphics.drawRect(SupplyPoint.LINE_SIZE, SupplyPoint.LINE_SIZE, SupplyPoint.GRID_SIZE - SupplyPoint.LINE_SIZE * 2, SupplyPoint.GRID_SIZE - SupplyPoint.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Center
+		// V
+		shape.graphics.beginFill(SupplyPoint.CENTER_COLOR);
+		shape.graphics.drawRect(SupplyPoint.GRID_SIZE / 8, SupplyPoint.GRID_SIZE * 3 / 8, SupplyPoint.GRID_SIZE * 0.75, SupplyPoint.GRID_SIZE * 0.25);
+		shape.graphics.endFill();
+		// H
+		shape.graphics.beginFill(SupplyPoint.CENTER_COLOR);
+		shape.graphics.drawRect(SupplyPoint.GRID_SIZE * 3 / 8, SupplyPoint.GRID_SIZE / 8, SupplyPoint.GRID_SIZE * 0.25, SupplyPoint.GRID_SIZE * 0.75);
+		shape.graphics.endFill();
 	}
 }

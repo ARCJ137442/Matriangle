@@ -2,20 +2,20 @@ package batr.game.model {
 
 	export default class PlayerTeam {
 		//============Static Variables============//
-		public static const isInited: boolean = cInit();
+		public static readonly isInited: boolean = cInit();
 
 		//============Static Getter And Setter============//
 
 		//============Static Functions============//
-		protected static function cInit(): boolean {
+		protected static cInit(): boolean {
 			return true;
 		}
 
 		//============Instance Variables============//
 		protected _defaultColor: uint;
 
-		//============Constructor Function============//
-		public PlayerTeam(color: uint = 0x000000): void {
+		//============Constructor & Destructor============//
+		public constructor(color: uint = 0x000000) {
 			this._defaultColor = color;
 		}
 

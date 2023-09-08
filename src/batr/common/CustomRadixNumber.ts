@@ -78,7 +78,7 @@ export default class CustomRadixNumber {
 		return dotChar.charAt(0);
 	}
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(charSet: string = CustomRadixNumber.DEFAULT_CHAR_SET, dotChar: string = CustomRadixNumber.DEFAULT_DOT_CHAR, key: any = null) {
 		// Test
 		if (CustomRadixNumber.isEmptyString(charSet)) {

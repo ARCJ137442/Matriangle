@@ -8,8 +8,8 @@ package batr.game.entity.objects {
 
 	export default class PlayerEffectOverlay extends Shape {
 		//============Static Variables============//
-		public static const COLOR: uint = 0xff0000;
-		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
+		public static readonly COLOR: uint = 0xff0000;
+		public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
 
 		//============Instance Variables============//
 		protected _life: int = -1;
@@ -17,8 +17,8 @@ package batr.game.entity.objects {
 
 		protected _color: uint = COLOR;
 
-		//============Constructor Function============//
-		public PlayerEffectOverlay(owner: Player, color: uint = PlayerEffectOverlay.COLOR): void {
+		//============Constructor & Destructor============//
+		public constructor(owner: Player, color: uint = PlayerEffectOverlay.COLOR) {
 			super();
 			this.drawShape(owner is AIPlayer ? (owner as AIPlayer).AILabel : null);
 			this.dealLife();
@@ -33,16 +33,16 @@ package batr.game.entity.objects {
 		protected drawShape(AILabel: string = null): void {
 			var realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
 			var realRadiusY: number = Player.SIZE / 2;
-			this.graphics.clear();
+			shape.graphics.clear();
 			// graphics.lineStyle(LINE_SIZE,this._lineColor);
-			this.graphics.beginFill(this._color);
-			this.graphics.moveTo(-realRadiusX, -realRadiusY);
-			this.graphics.lineTo(realRadiusX, 0);
-			this.graphics.lineTo(-realRadiusX, realRadiusY);
-			this.graphics.lineTo(-realRadiusX, -realRadiusY);
+			shape.graphics.beginFill(this._color);
+			shape.graphics.moveTo(-realRadiusX, -realRadiusY);
+			shape.graphics.lineTo(realRadiusX, 0);
+			shape.graphics.lineTo(-realRadiusX, realRadiusY);
+			shape.graphics.lineTo(-realRadiusX, -realRadiusY);
 			if (AILabel != null)
-				AIPlayer.drawAIDecoration(this.graphics, AILabel);
-			this.graphics.endFill();
+				AIPlayer.drawAIDecoration(shape.graphics, AILabel);
+			shape.graphics.endFill();
 		}
 
 		public playAnimation(life: uint = LIFE, color: uint = uint$MAX_VALUE): void {
@@ -70,7 +70,7 @@ package batr.game.entity.objects {
 		}
 
 		public destructor(): void {
-			this.graphics.clear();
+			shape.graphics.clear();
 			this._life = -1;
 			this._lifeMax = 0;
 		}

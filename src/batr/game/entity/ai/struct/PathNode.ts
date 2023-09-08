@@ -43,7 +43,7 @@ package batr.game.entity.ai.programs {
 		 * Didn't include the root
 		 */
 		public get pathToRoot(): PathNode[] {
-			var result: PathNode[] = new < PathNode > [this];
+			var result: PathNode[] = new Array<PathNode>(this);
 			var p: PathNode = this.parent;
 			while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 				p = p.parent;
@@ -53,13 +53,13 @@ package batr.game.entity.ai.programs {
 		}
 
 		// Constructor
-		public PathNode(x: int, y: int, parent: PathNode = null): void {
+		public constructor(x: int, y: int, parent: PathNode = null) {
 			super(x, y);
 			this.parent = parent;
 		}
 
 		// Static Constructor
-		public static function fromPoint(p: iPoint): PathNode {
+		public static fromPoint(p: iPoint): PathNode {
 			return new PathNode(p.x, p.y, null);
 		}
 
@@ -89,7 +89,7 @@ package batr.game.entity.ai.programs {
 			return this;
 		}
 
-		public override function toString(): string {
+		override toString(): string {
 			return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 		}
 	}

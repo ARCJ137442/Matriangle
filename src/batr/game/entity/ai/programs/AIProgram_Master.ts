@@ -19,13 +19,13 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Master implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: string = 'Master';
-		public static const LABEL_SHORT: string = 'M';
+		public static readonly LABEL: string = 'Master';
+		public static readonly LABEL_SHORT: string = 'M';
 
-		public static const DEBUG: boolean = false;
+		public static readonly DEBUG: boolean = false;
 
 		//============Static Functions============//
-		protected static function initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
+		protected static initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
 			// Set Rot in mapDealNode
 			n.G = getPathWeight(n, host, owner);
 			n.H = target == null ? 0 : n.getManhattanDistance(target) * 10 // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
@@ -39,7 +39,7 @@ package batr.game.entity.ai.programs {
 		 * @param	player	The player.
 		 * @return	A int will be multi with G.
 		 */
-		protected static function getPathWeight(node: PathNode, host: Game, player: Player): int {
+		protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
 			var damage: int = host.getBlockPlayerDamage(node.x, node.y);
 			if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 				return 1000;
@@ -51,7 +51,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		//========Dynamic A* PathFind========//
-		static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+		static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
 			var nearbyNodes: PathNode[] = new < PathNode > [
 				initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 				initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
@@ -72,7 +72,7 @@ package batr.game.entity.ai.programs {
 			return _leastNode;
 		}
 
-		protected static function initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
+		protected static initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
 			return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
 		}
 
@@ -90,8 +90,8 @@ package batr.game.entity.ai.programs {
 		// AI Judging about
 		protected _pickupWeight: int = exMath.random(50) * exMath.random1();
 
-		//============Constructor Function============//
-		public AIProgram_Master(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			this._lastTarget = null;
 			this._closeTarget = new Dictionary(true);
 		}
@@ -169,7 +169,7 @@ package batr.game.entity.ai.programs {
 			var _tempDistance: int;
 			var players: Player[] = host.getAlivePlayers();
 			for (var player of players) {
-				if (player == owner || !owner.canUseWeaponHurtPlayer(player, owner.weapon) ||
+				if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 					player == null || this.inCloseTarget(player))
 					continue;
 				_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
@@ -216,7 +216,7 @@ package batr.game.entity.ai.programs {
 			if (!player.hasAction) {
 				// Clear Invalid Target
 				if (this._lastTarget != null && !this._lastTarget.isActive ||
-					lastTargetPlayer != null && (!player.canUseWeaponHurtPlayer(lastTargetPlayer, player.weapon) ||
+					lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
 						lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
 					this.resetTarget();
 					AIProgram_Adventurer.traceLog(player, 'Clear invalid target!');
@@ -257,15 +257,15 @@ package batr.game.entity.ai.programs {
 					if (GlobalRot.isValidRot(tempRot) &&
 						AIProgram_Adventurer.detectCarryBlock(player) &&
 						lastTargetPlayer != null &&
-						AIProgram_Adventurer.weaponUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
-						player.canUseWeaponHurtPlayer(lastTargetPlayer, player.weapon)) {
+						AIProgram_Adventurer.toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
+						player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
 						// Reset
 						this.resetRemember();
 						// Trun
 						if (player.rot != tempRot)
 							player.addActionToThread(AIPlayerAction.getTrunActionFromEntityRot(tempRot));
 						// Press Use
-						if (player.weaponReverseCharge) {
+						if (player.toolReverseCharge) {
 							if (player.chargingPercent >= 1)
 								return AIPlayerAction.PRESS_KEY_USE;
 							else if (player.isPress_Use)
@@ -353,11 +353,11 @@ package batr.game.entity.ai.programs {
 			}
 			// Hurt By Target
 			else if (attacker != null && attacker != this._lastTarget && attacker != player &&
-				player.canUseWeaponHurtPlayer(attacker, player.weapon)) {
+				player.canUseToolHurtPlayer(attacker, player.tool)) {
 				this._pickupWeight -= damage;
 				this.changeTarget(player, attacker);
 			}
-			// Release Weapon
+			// Release Tool
 			if (player.isCharging)
 				player.runAction(AIPlayerAction.RELEASE_KEY_USE);
 			// random move beside on under attack<From AI-N>

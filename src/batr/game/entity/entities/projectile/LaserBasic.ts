@@ -9,32 +9,32 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserBasic extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LIFE: number = GlobalGameVariables.FIXED_TPS;
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 2;
-		public static const LENGTH: uint = 32; // EntityPos
+		public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS;
+		public static readonly SIZE: number = DEFAULT_SIZE / 2;
+		public static readonly LENGTH: uint = 32; // EntityPos
 
 		//============Instance Variables============//
 		protected _life: uint = LIFE;
 		public isDamaged: boolean = false;
 
-		//============Constructor Function============//
-		public LaserBasic(host: Game, x: number, y: number, owner: Player, length: number = LENGTH, chargePercent: number = 1): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, length: number = LENGTH, chargePercent: number = 1) {
 			super(host, x, y, owner);
-			this._currentWeapon = WeaponType.LASER;
-			this.damage = this._currentWeapon.defaultDamage;
+			this._currentTool = ToolType.LASER;
+			this.damage = this._currentTool.defaultDamage;
 			this.scaleX = length;
 			this.dealCharge(chargePercent);
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
-			this.graphics.clear();
+		override destructor(): void {
+			shape.graphics.clear();
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.LASER_BASIC;
 		}
 
@@ -47,8 +47,8 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Instance Functions============//
-		public override function drawShape(): void {
-			this.graphics.clear();
+		override drawShape(): void {
+			shape.graphics.clear();
 			for (var i: uint = 0; i < 3; i++) { // 0,1,2
 				this.drawOwnerLine(-SIZE / Math.pow(2, i + 1), SIZE / Math.pow(2, i + 1), i * 0.1 + 0.5);
 			}
@@ -78,7 +78,7 @@ package batr.game.entity.entity.projectile {
 			this.scaleY = _life / LIFE;
 		}
 
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			onLaserTick(); // Unturnable
 			onLaserCommonTick(); // Unturnable
 		}
@@ -87,21 +87,21 @@ package batr.game.entity.entity.projectile {
 			color: uint = 0xffffff,
 			alpha: number = 1): void {
 			var yStart: number = Math.min(y1, y2);
-			this.graphics.beginFill(color, alpha);
-			this.graphics.drawRect(0, yStart,
-				GlobalGameVariables.DEFAULT_SIZE,
+			shape.graphics.beginFill(color, alpha);
+			shape.graphics.drawRect(0, yStart,
+				DEFAULT_SIZE,
 				Math.max(y1, y2) - yStart);
-			this.graphics.endFill();
+			shape.graphics.endFill();
 		}
 
 		protected drawOwnerLine(y1: number, y2: number,
 			alpha: number = 1): void {
 			var yStart: number = Math.min(y1, y2);
-			this.graphics.beginFill(this.ownerColor, alpha);
-			this.graphics.drawRect(0, yStart,
-				GlobalGameVariables.DEFAULT_SIZE,
+			shape.graphics.beginFill(this.ownerColor, alpha);
+			shape.graphics.drawRect(0, yStart,
+				DEFAULT_SIZE,
 				Math.max(y1, y2) - yStart);
-			this.graphics.endFill();
+			shape.graphics.endFill();
 		}
 	}
 }

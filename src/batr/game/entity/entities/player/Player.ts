@@ -1,55 +1,62 @@
+import PlayerController from "./controller/PlayerController";
+
 package batr.game.entity.entity.players {
 
-	import batr.common.*;
-	import batr.general.*;
-	import batr.game.stat.*;
-	import batr.game.entity.player.profile.IPlayerProfile;
+	// import batr.common.*;
+	// import batr.general.*;
+	// import batr.game.stat.*;
+	// import batr.game.entity.player.profile.IPlayerProfile;
 
-	import batr.game.block.*;
-	import batr.game.entity.entity.*;
-	import batr.game.entity.entity.player.*;
-	import batr.game.entity.*;
-	import batr.game.entity.object.*;
-	import batr.game.model.*;
-	import batr.game.main.*;
+	// import batr.game.block.*;
+	// import batr.game.entity.entity.*;
+	// import batr.game.entity.entity.player.*;
+	// import batr.game.entity.*;
+	// import batr.game.entity.object.*;
+	// import batr.game.model.*;
+	// import batr.game.main.*;
 
-	import flash.display.*;
-	import flash.geom.*;
+	// import flash.display.*;
+	// import flash.geom.*;
 
 	export default class Player extends EntityCommon implements IPlayerProfile {
 		//============Static Variables============//
-		public static const SIZE: number = 1 * GlobalGameVariables.DEFAULT_SIZE;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 96;
-		public static const CARRIED_BLOCK_ALPHA: number = 1 / 4;
+		public static readonly SIZE: number = 1 * DEFAULT_SIZE;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 96;
+		public static readonly CARRIED_BLOCK_ALPHA: number = 1 / 4;
 
-		public static const DEFAULT_MAX_HEALTH: int = 100;
-		public static const DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
-		public static const MAX_DAMAGE_DELAY: uint = 0.5 * GlobalGameVariables.FIXED_TPS;
-		public static function isAI(player: Player): boolean {
+		public static readonly DEFAULT_MAX_HEALTH: int = 100;
+		public static readonly DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
+		public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * GlobalGameVariables.FIXED_TPS;
+		public static isAI(player: Player): boolean {
 			return player is AIPlayer;
 		}
 
-		public static function getUplevelExperience(level: uint): uint {
+		public static getUplevelExperience(level: uint): uint {
 			return (level + 1) * 5 + (level >> 1);
 		}
+
 
 		//============Instance Variables============//
 		protected _team: PlayerTeam;
 
 		protected _customName: string;
 
-		protected _weapon: WeaponType;
+		protected _tool: ToolType;
 
-		protected _droneWeapon: WeaponType = GameRule.DEFAULT_DRONE_WEAPON;
+		protected _droneTool: ToolType = GameRule.DEFAULT_DRONE_TOOL;
 
 		//====Graphics Variables====//
 		protected _lineColor: uint = 0x888888;
 		protected _fillColor: uint = 0xffffff;
 		protected _fillColor2: uint = 0xcccccc;
 
+		// TODO: remove the _GUI to remove the reliances
 		protected _GUI: PlayerGUI;
 
 		protected _carriedBlock: BlockCommon;
+
+		// TODO: uses the controller, not set the control keys!
+		protected _controller: PlayerController
 
 		//====Contol Variables====//
 		// ContolDelay
@@ -99,12 +106,12 @@ package batr.game.entity.entity.players {
 
 		protected _infinityLife: boolean = true;
 
-		// Weapon
-		protected _weaponUsingCD: uint = 0;
+		// Tool
+		protected _toolUsingCD: uint = 0;
 
-		protected _weaponChargeTime: int = -1;
+		protected _toolChargeTime: int = -1;
 
-		protected _weaponChargeMaxTime: uint = 0;
+		protected _toolChargeMaxTime: uint = 0;
 
 		// Respawn
 		public respawnTick: int = -1;
@@ -132,7 +139,7 @@ package batr.game.entity.entity.players {
 			return this._experience;
 		}
 
-		public set experience(value: uint): void {
+		public set experience(value: uint) {
 			while (value > this.uplevelExperience) {
 				value -= this.uplevelExperience;
 				this.level++;
@@ -152,7 +159,7 @@ package batr.game.entity.entity.players {
 			return this._level;
 		}
 
-		public set level(value: uint): void {
+		public set level(value: uint) {
 			this._level = value;
 		}
 
@@ -168,7 +175,7 @@ package batr.game.entity.entity.players {
 
 		/**
 		 * The EXTRA power of Damage
-		 * #TotalDamage=WeaponDamage+buff*WeaponCoefficient
+		 * #TotalDamage=ToolDamage+buff*ToolCoefficient
 		 */
 		protected _buffDamage: uint = 0;
 
@@ -176,13 +183,13 @@ package batr.game.entity.entity.players {
 			return this._buffDamage;
 		}
 
-		public set buffDamage(value: uint): void {
+		public set buffDamage(value: uint) {
 			this._buffDamage = value;
 		}
 
 		/**
-		 * The EXTRA power of Weapon Usage CD
-		 * #TotalCD=WeaponCD/(1+buff/10)
+		 * The EXTRA power of Tool Usage CD
+		 * #TotalCD=ToolCD/(1+buff/10)
 		 */
 		protected _buffCD: uint = 0;
 
@@ -190,13 +197,13 @@ package batr.game.entity.entity.players {
 			return this._buffCD;
 		}
 
-		public set buffCD(value: uint): void {
+		public set buffCD(value: uint) {
 			this._buffCD = value;
 		}
 
 		/**
 		 * The EXTRA power of Resistance
-		 * #FinalDamage=TotalDamage-buff*WeaponCoefficient>0
+		 * #FinalDamage=TotalDamage-buff*ToolCoefficient>0
 		 */
 		protected _buffResistance: uint = 0;
 
@@ -204,7 +211,7 @@ package batr.game.entity.entity.players {
 			return this._buffResistance;
 		}
 
-		public set buffResistance(value: uint): void {
+		public set buffResistance(value: uint) {
 			this._buffResistance = value;
 		}
 
@@ -218,12 +225,12 @@ package batr.game.entity.entity.players {
 			return this._buffRadius;
 		}
 
-		public set buffRadius(value: uint): void {
+		public set buffRadius(value: uint) {
 			this._buffRadius = value;
 		}
 
-		//============Constructor Function============//
-		public Player(
+		//============Constructor & Destructor============//
+		public constructor(
 			host: Game,
 			x: number,
 			y: number,
@@ -251,7 +258,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			// Reset Key
 			this.turnAllKeyUp();
 			this.clearContolKeys();
@@ -260,13 +267,13 @@ package batr.game.entity.entity.players {
 			// Remove Variables
 			// Primitive
 			this._customName = null;
-			this._weaponUsingCD = 0;
+			this._toolUsingCD = 0;
 			this._team = null;
 			// Complex
 			this._stats.destructor();
 			this._stats = null;
 			this._lastHurtbyPlayer = null;
-			this._weapon = null;
+			this._tool = null;
 			this._GUI.destructor();
 			this._GUI = null;
 			// Call Super Class
@@ -298,7 +305,7 @@ package batr.game.entity.entity.players {
 			return this._team;
 		}
 
-		public set team(value: PlayerTeam): void {
+		public set team(value: PlayerTeam) {
 			if (value == this._team)
 				return;
 			this._team = value;
@@ -316,116 +323,116 @@ package batr.game.entity.entity.players {
 			return this._stats;
 		}
 
-		public get weapon(): WeaponType {
-			return this._weapon;
+		public get tool(): ToolType {
+			return this._tool;
 		}
 
 		/**
-		 * This weapon is used by drones created from another weapon
+		 * This tool is used by drones created from another tool
 		 */
-		public get droneWeapon(): WeaponType {
-			return this._droneWeapon;
+		public get droneTool(): ToolType {
+			return this._droneTool;
 		}
 
-		public set droneWeapon(value: WeaponType): void {
-			this._droneWeapon = value;
+		public set droneTool(value: ToolType) {
+			this._droneTool = value;
 		}
 
 		/**
 		 * Also Reset CD&Charge
 		 */
-		public set weapon(value: WeaponType): void {
-			if (value == this._weapon)
+		public set tool(value: ToolType) {
+			if (value == this._tool)
 				return;
 			this.resetCD();
 			this.resetCharge(true, false);
-			this.onWeaponChange(this._weapon, value);
-			this._weapon = value;
+			this.onToolChange(this._tool, value);
+			this._tool = value;
 		}
 
-		public get weaponUsingCD(): uint {
-			return this._weaponUsingCD;
+		public get toolUsingCD(): uint {
+			return this._toolUsingCD;
 		}
 
-		public set weaponUsingCD(value: uint): void {
-			if (value == this._weaponUsingCD)
+		public set toolUsingCD(value: uint) {
+			if (value == this._toolUsingCD)
 				return;
 
-			this._weaponUsingCD = value;
+			this._toolUsingCD = value;
 
 			this._GUI.updateCD();
 		}
 
-		public get weaponChargeTime(): int {
-			return this._weaponChargeTime;
+		public get toolChargeTime(): int {
+			return this._toolChargeTime;
 		}
 
-		public set weaponChargeTime(value: int): void {
-			if (value == this._weaponChargeTime)
+		public set toolChargeTime(value: int) {
+			if (value == this._toolChargeTime)
 				return;
 
-			this._weaponChargeTime = value;
+			this._toolChargeTime = value;
 
 			this._GUI.updateCharge();
 		}
 
-		public get weaponChargeMaxTime(): uint {
-			return this._weaponChargeMaxTime;
+		public get toolChargeMaxTime(): uint {
+			return this._toolChargeMaxTime;
 		}
 
-		public set weaponChargeMaxTime(value: uint): void {
-			if (value == this._weaponChargeMaxTime)
+		public set toolChargeMaxTime(value: uint) {
+			if (value == this._toolChargeMaxTime)
 				return;
 
-			this._weaponChargeMaxTime = value;
+			this._toolChargeMaxTime = value;
 
 			this._GUI.updateCharge();
 		}
 
-		public get weaponNeedsCD(): boolean {
-			if (this._weapon == null)
+		public get toolNeedsCD(): boolean {
+			if (this._tool == null)
 				return false;
 
-			return this.weaponMaxCD > 0;
+			return this.toolMaxCD > 0;
 		}
 
-		public get weaponMaxCD(): number {
-			return this._host.rule.weaponsNoCD ? GlobalGameVariables.WEAPON_MIN_CD : this._weapon.getBuffedCD(this.buffCD);
+		public get toolMaxCD(): number {
+			return this._host.rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : this._tool.getBuffedCD(this.buffCD);
 		}
 
-		public get weaponReverseCharge(): boolean {
-			return this._weapon.reverseCharge;
+		public get toolReverseCharge(): boolean {
+			return this._tool.reverseCharge;
 		}
 
-		public get weaponCDPercent(): number {
-			if (!this.weaponNeedsCD)
+		public get toolCDPercent(): number {
+			if (!this.toolNeedsCD)
 				return 1;
 
-			return this._weaponUsingCD / this.weaponMaxCD;
+			return this._toolUsingCD / this.toolMaxCD;
 		}
 
-		public get weaponNeedsCharge(): boolean {
-			if (this._weapon == null)
+		public get toolNeedsCharge(): boolean {
+			if (this._tool == null)
 				return false;
 
-			return this._weapon.defaultChargeTime > 0;
+			return this._tool.defaultChargeTime > 0;
 		}
 
 		public get isCharging(): boolean {
-			if (!this.weaponNeedsCharge)
+			if (!this.toolNeedsCharge)
 				return false;
 
-			return this._weaponChargeTime >= 0;
+			return this._toolChargeTime >= 0;
 		}
 
 		public get chargingPercent(): number { // 0~1
-			if (!this.weaponNeedsCharge)
+			if (!this.toolNeedsCharge)
 				return 1;
 
 			if (!this.isCharging)
 				return 0;
 
-			return this._weaponChargeTime / this._weaponChargeMaxTime;
+			return this._toolChargeTime / this._toolChargeMaxTime;
 		}
 
 		// Color
@@ -442,7 +449,7 @@ package batr.game.entity.entity.players {
 			return this._health;
 		}
 
-		public set health(value: uint): void {
+		public set health(value: uint) {
 			if (value == this._health)
 				return;
 
@@ -456,7 +463,7 @@ package batr.game.entity.entity.players {
 			return this._maxHealth;
 		}
 
-		public set maxHealth(value: uint): void {
+		public set maxHealth(value: uint) {
 			if (value == this._maxHealth)
 				return;
 
@@ -476,7 +483,7 @@ package batr.game.entity.entity.players {
 			return this._heal;
 		}
 
-		public set heal(value: uint): void {
+		public set heal(value: uint) {
 			if (value == this._heal)
 				return;
 
@@ -489,7 +496,7 @@ package batr.game.entity.entity.players {
 			return this._lives;
 		}
 
-		public set lives(value: uint): void {
+		public set lives(value: uint) {
 			if (value == this._lives)
 				return;
 
@@ -502,7 +509,7 @@ package batr.game.entity.entity.players {
 			return this._infinityLife;
 		}
 
-		public set infinityLife(value: boolean): void {
+		public set infinityLife(value: boolean) {
 			if (value == this._infinityLife)
 				return;
 
@@ -538,7 +545,7 @@ package batr.game.entity.entity.players {
 			return this._customName;
 		}
 
-		public set customName(value: string): void {
+		public set customName(value: string) {
 			if (value == this._customName)
 				return;
 
@@ -574,23 +581,23 @@ package batr.game.entity.entity.players {
 			return (this.isPress_Select_Left||this.isPress_Selec_Right)
 		}*/
 
-		public set pressLeft(turn: boolean): void {
+		public set pressLeft(turn: boolean) {
 			this.isPress_Left = turn;
 		}
 
-		public set pressRight(turn: boolean): void {
+		public set pressRight(turn: boolean) {
 			this.isPress_Right = turn;
 		}
 
-		public set pressUp(turn: boolean): void {
+		public set pressUp(turn: boolean) {
 			this.isPress_Up = turn;
 		}
 
-		public set pressDown(turn: boolean): void {
+		public set pressDown(turn: boolean) {
 			this.isPress_Down = turn;
 		}
 
-		public set pressUse(turn: boolean): void {
+		public set pressUse(turn: boolean) {
 			if (this.isPress_Use && !turn) {
 				this.isPress_Use = turn;
 
@@ -602,16 +609,16 @@ package batr.game.entity.entity.players {
 			this.isPress_Use = turn;
 		}
 
-		/*public set pressLeftSelect(turn:Boolean):void {
+		/*public set pressLeftSelect(turn:Boolean) {
 			this.isPress_Select_Left=turn
 		}
 		
-		public set pressRightSelect(turn:Boolean):void {
+		public set pressRightSelect(turn:Boolean) {
 			this.isPress_Select_Right=turn
 		}*/
 
 		// Entity Type
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.PLAYER;
 		}
 
@@ -620,10 +627,10 @@ package batr.game.entity.entity.players {
 
 		/**
 		 * This function init the variables without update when this Player has been created.
-		 * @param	weaponID	invaild number means random.
-		 * @param	uniformWeapon	The uniform weapon
+		 * @param	toolID	invaild number means random.
+		 * @param	uniformTool	The uniform tool
 		 */
-		public initVariablesByRule(weaponID: int, uniformWeapon: WeaponType = null): void {
+		public initVariablesByRule(toolID: int, uniformTool: ToolType = null): void {
 			// Health&Life
 			this._maxHealth = this._host.rule.defaultMaxHealth;
 
@@ -631,13 +638,13 @@ package batr.game.entity.entity.players {
 
 			this.setLifeByInt(this is AIPlayer ? this._host.rule.remainLifesAI : this._host.rule.remainLifesPlayer);
 
-			// Weapon
-			if (weaponID < -1)
-				this._weapon = this.host.rule.randomWeaponEnable;
-			else if (!WeaponType.isValidAvailableWeaponID(weaponID) && uniformWeapon != null)
-				this._weapon = uniformWeapon;
+			// Tool
+			if (toolID < -1)
+				this._tool = this.host.rule.randomToolEnable;
+			else if (!ToolType.isValidAvailableToolID(toolID) && uniformTool != null)
+				this._tool = uniformTool;
 			else
-				this._weapon = WeaponType.fromWeaponID(weaponID);
+				this._tool = ToolType.fromToolID(toolID);
 		}
 
 		//====Functions About Health====//
@@ -699,12 +706,12 @@ package batr.game.entity.entity.players {
 		public onPickupBonusBox(box: BonusBox): void {
 		}
 
-		public override function preLocationUpdate(oldX: number, oldY: number): void {
+		override preLocationUpdate(oldX: number, oldY: number): void {
 			this._host.prePlayerLocationChange(this, oldX, oldY);
 			super.preLocationUpdate(oldX, oldY);
 		}
 
-		public override function onLocationUpdate(newX: number, newY: number): void {
+		override onLocationUpdate(newX: number, newY: number): void {
 			if (this._GUI != null) {
 				this._GUI.entityX = this.entityX;
 				this._GUI.entityY = this.entityY;
@@ -721,19 +728,19 @@ package batr.game.entity.entity.players {
 
 		/**
 		 * @param	player	The target palyer.
-		 * @param	weapon	The weapon.
-		 * @return	If player can hurt target with this weapon.
+		 * @param	tool	The tool.
+		 * @return	If player can hurt target with this tool.
 		 */
-		public canUseWeaponHurtPlayer(player: Player, weapon: WeaponType): boolean {
-			return (isEnemy(player) && weapon.weaponCanHurtEnemy ||
-				isSelf(player) && weapon.weaponCanHurtSelf ||
-				isAlly(player) && weapon.weaponCanHurtAlly);
+		public canUseToolHurtPlayer(player: Player, tool: ToolType): boolean {
+			return (isEnemy(player) && tool.toolCanHurtEnemy ||
+				isSelf(player) && tool.toolCanHurtSelf ||
+				isAlly(player) && tool.toolCanHurtAlly);
 		}
 
-		public filterPlayersThisCanHurt(players: Player[], weapon: WeaponType): Player[] {
+		public filterPlayersThisCanHurt(players: Player[], tool: ToolType): Player[] {
 			return players.filter(
 				function (player: Player, index: int, vector: Player[]) {
-					return this.canUseWeaponHurtPlayer(player, weapon);
+					return this.canUseToolHurtPlayer(player, tool);
 				}, this
 			);
 		}
@@ -808,90 +815,90 @@ package batr.game.entity.entity.players {
 			}
 		}
 
-		//====Functions About Weapon====//
-		protected onWeaponChange(oldType: WeaponType, newType: WeaponType): void {
-			this.initWeaponCharge();
+		//====Functions About Tool====//
+		protected onToolChange(oldType: ToolType, newType: ToolType): void {
+			this.initToolCharge();
 			this.resetCharge(false);
-			// Change Drone Weapon
-			if (WeaponType.isDroneWeapon(newType)) {
-				if (WeaponType.isBulletWeapon(oldType))
-					this._droneWeapon = WeaponType.BULLET;
-				else if (!WeaponType.isAvailableDroneNotUse(oldType))
-					this._droneWeapon = oldType;
+			// Change Drone Tool
+			if (ToolType.isDroneTool(newType)) {
+				if (ToolType.isBulletTool(oldType))
+					this._droneTool = ToolType.BULLET;
+				else if (!ToolType.isAvailableDroneNotUse(oldType))
+					this._droneTool = oldType;
 				else
-					this._droneWeapon = GameRule.DEFAULT_DRONE_WEAPON;
+					this._droneTool = GameRule.DEFAULT_DRONE_TOOL;
 			}
 			// If The Block is still carring,then throw without charge(WIP,maybe?)
 		}
 
 		protected dealUsingCD(): void {
-			// trace(this.weapon.name,this._weaponChargeTime,this._weaponChargeMaxTime)
-			if (this._weaponUsingCD > 0) {
-				this._weaponUsingCD--;
+			// trace(this.tool.name,this._toolChargeTime,this._toolChargeMaxTime)
+			if (this._toolUsingCD > 0) {
+				this._toolUsingCD--;
 				this._GUI.updateCD();
 			}
 			else {
-				if (!this.weaponNeedsCharge) {
+				if (!this.toolNeedsCharge) {
 					if (this.isPress_Use)
-						this.useWeapon();
+						this.useTool();
 				}
-				else if (this._weaponChargeTime < 0) {
-					this.initWeaponCharge();
+				else if (this._toolChargeTime < 0) {
+					this.initToolCharge();
 				}
 				else {
-					if (this.weaponReverseCharge) {
-						this.dealWeaponReverseCharge();
+					if (this.toolReverseCharge) {
+						this.dealToolReverseCharge();
 					}
 					else if (this.isPress_Use) {
-						this.dealWeaponCharge();
+						this.dealToolCharge();
 					}
 				}
 			}
 		}
 
-		protected dealWeaponCharge(): void {
-			if (this._weaponChargeTime >= this._weaponChargeMaxTime) {
-				this.useWeapon();
+		protected dealToolCharge(): void {
+			if (this._toolChargeTime >= this._toolChargeMaxTime) {
+				this.useTool();
 				this.resetCharge(false, false);
 			}
 			else
-				this._weaponChargeTime++;
+				this._toolChargeTime++;
 			this._GUI.updateCharge();
 		}
 
-		protected dealWeaponReverseCharge(): void {
-			if (this.weaponChargeTime < this.weaponChargeMaxTime) {
-				this._weaponChargeTime++;
+		protected dealToolReverseCharge(): void {
+			if (this.toolChargeTime < this.toolChargeMaxTime) {
+				this._toolChargeTime++;
 			}
 			if (this.isPress_Use) {
-				this.useWeapon();
+				this.useTool();
 				this.resetCharge(false, false);
 			}
 			this._GUI.updateCharge();
 		}
 
 		protected onDisableCharge(): void {
-			if (!this.weaponNeedsCharge || this._weaponUsingCD > 0 || !this.isActive || this.isRespawning)
+			if (!this.toolNeedsCharge || this._toolUsingCD > 0 || !this.isActive || this.isRespawning)
 				return;
-			this.useWeapon();
+			this.useTool();
 			this.resetCharge();
 		}
 
-		public initWeaponCharge(): void {
-			this._weaponChargeTime = 0;
-			this._weaponChargeMaxTime = this._weapon.defaultChargeTime;
+		public initToolCharge(): void {
+			this._toolChargeTime = 0;
+			this._toolChargeMaxTime = this._tool.defaultChargeTime;
 		}
 
 		public resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
-			this._weaponChargeTime = -1;
+			this._toolChargeTime = -1;
 			if (includeMaxTime)
-				this._weaponChargeMaxTime = 0;
+				this._toolChargeMaxTime = 0;
 			if (updateGUI)
 				this._GUI.updateCharge();
 		}
 
 		public resetCD(): void {
-			this._weaponUsingCD = 0;
+			this._toolUsingCD = 0;
 			this._GUI.updateCD();
 		}
 
@@ -900,29 +907,29 @@ package batr.game.entity.entity.players {
 		/**
 		 * The Function returns the final damage with THIS PLAYER.
 		 * FinalDamage=DefaultDamage+
-		 * attacker.buffDamage*WeaponCoefficient-
-		 * this.buffResistance*WeaponCoefficient>=0.
+		 * attacker.buffDamage*ToolCoefficient-
+		 * this.buffResistance*ToolCoefficient>=0.
 		 * @param	attacker	The attacker.
-		 * @param	attackerWeapon	The attacker's weapon(null=attacker.weapon).
+		 * @param	attackerTool	The attacker's tool(null=attacker.tool).
 		 * @param	defaultDamage	The original damage by attacker.
 		 * @return	The Final Damage.
 		 */
-		public final function computeFinalDamage(attacker: Player, attackerWeapon: WeaponType, defaultDamage: uint): uint {
+		public final function computeFinalDamage(attacker: Player, attackerTool: ToolType, defaultDamage: uint): uint {
 			if (attacker == null)
-				return attackerWeapon == null ? 0 : attackerWeapon.defaultDamage;
-			if (attackerWeapon == null)
-				attackerWeapon = attacker.weapon;
-			if (attackerWeapon != null)
-				return attackerWeapon.getBuffedDamage(defaultDamage, attacker.buffDamage, this.buffResistance);
+				return attackerTool == null ? 0 : attackerTool.defaultDamage;
+			if (attackerTool == null)
+				attackerTool = attacker.tool;
+			if (attackerTool != null)
+				return attackerTool.getBuffedDamage(defaultDamage, attacker.buffDamage, this.buffResistance);
 			return 0;
 		}
 
-		public final function finalRemoveHealth(attacker: Player, attackerWeapon: WeaponType, defaultDamage: uint): void {
-		this.removeHealth(this.computeFinalDamage(attacker, attackerWeapon, defaultDamage), attacker);
+		public final function finalRemoveHealth(attacker: Player, attackerTool: ToolType, defaultDamage: uint): void {
+		this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
 	}
 
-		public final function computeFinalCD(weapon: WeaponType): uint {
-		return weapon.getBuffedCD(this.buffCD);
+		public final function computeFinalCD(tool: ToolType): uint {
+		return tool.getBuffedCD(this.buffCD);
 	}
 
 		public final function computeFinalRadius(defaultRadius: number): number {
@@ -941,8 +948,8 @@ package batr.game.entity.entity.players {
 		graphics.lineStyle(LINE_SIZE, this._lineColor);
 		// graphics.beginFill(this._fillColor,Alpha);
 		var m: Matrix = new Matrix();
-		m.createGradientBox(GlobalGameVariables.DEFAULT_SIZE,
-			GlobalGameVariables.DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
+		m.createGradientBox(DEFAULT_SIZE,
+			DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
 		graphics.beginGradientFill(GradientType.LINEAR,
 			[this._fillColor, this._fillColor2],
 			[Alpha, Alpha],
@@ -983,8 +990,8 @@ package batr.game.entity.entity.players {
 	if (this._carriedBlock != null && this.contains(this._carriedBlock))
 		this.removeChild(this._carriedBlock);
 	this._carriedBlock = copyBlock ? block.clone() : block;
-	this._carriedBlock.x = GlobalGameVariables.DEFAULT_SIZE / 2;
-	this._carriedBlock.y = -GlobalGameVariables.DEFAULT_SIZE / 2;
+	this._carriedBlock.x = DEFAULT_SIZE / 2;
+	this._carriedBlock.y = -DEFAULT_SIZE / 2;
 	this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
 	this.addChild(this._carriedBlock);
 }
@@ -995,7 +1002,7 @@ package batr.game.entity.entity.players {
 }
 
 		//====Tick Run Function====//
-		public override function tickFunction(): void {
+		override tickFunction(): void {
 	this.dealUsingCD();
 	this.updateKeyDelay();
 	this.dealKeyContol();
@@ -1121,8 +1128,8 @@ package batr.game.entity.entity.players {
 	this.moveRight();
 	break;
 	case this.contolKey_Use:
-	if(!this.weaponReverseCharge)
-	this.useWeapon();
+	if(!this.toolReverseCharge)
+	this.useTool();
 	break;
 	/*case this.contolKey_Select_Left:
 	this.moveSelect_Left();
@@ -1169,29 +1176,29 @@ break;*/
 }
 	}
 
-		public override function moveForward(distance: number = 1): void {
-	if (this.isRespawning)
-		return;
-	switch (this.rot) {
+		override moveForward(distance: number = 1): void {
+	if(this.isRespawning)
+	return;
+	switch(this.rot) {
 		case GlobalRot.RIGHT:
-			moveRight();
-			break;
+	moveRight();
+	break;
 
 		case GlobalRot.LEFT:
-			moveLeft();
-			break;
+	moveLeft();
+	break;
 
 		case GlobalRot.UP:
-			moveUp();
-			break;
+	moveUp();
+	break;
 
 		case GlobalRot.DOWN:
-			moveDown();
-			break;
-	}
+	moveDown();
+	break;
+}
 }
 
-		public override function moveIntForward(distance: number = 1): void {
+		override moveIntForward(distance: number = 1): void {
 	moveForward(distance);
 }
 
@@ -1239,11 +1246,11 @@ break;*/
 	this.rot += 1;
 }
 
-	public useWeapon(): void {
-	if(!this.weaponNeedsCharge || this.chargingPercent > 0) {
-	this._host.playerUseWeapon(this, this.rot, this.chargingPercent);
+	public useTool(): void {
+	if(!this.toolNeedsCharge || this.chargingPercent > 0) {
+	this._host.playerUseTool(this, this.rot, this.chargingPercent);
 }
-if (this.weaponNeedsCharge)
+if (this.toolNeedsCharge)
 	this._GUI.updateCharge();
 	}
 }

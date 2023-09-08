@@ -15,8 +15,8 @@ package batr.menu.objects {
 
 		//============Instance Variables============//
 
-		//============Constructor Function============//
-		public BatrMenuGUI(listener: boolean = true): void {
+		//============Constructor & Destructor============//
+		public constructor(listener: boolean = true) {
 			super();
 			if (listener)
 				this.addEventListeners();

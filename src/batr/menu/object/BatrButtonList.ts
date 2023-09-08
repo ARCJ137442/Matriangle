@@ -9,21 +9,21 @@ package batr.menu.objects {
 
 	export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
-		public static const DEFAULT_DISTANCE: number = GlobalGameVariables.DEFAULT_SIZE;
+		public static readonly DEFAULT_DISTANCE: number = DEFAULT_SIZE;
 
 		//============Instance Variables============//
 		protected _buttons: BatrButton[] = new BatrButton[]();
 		protected _verticalDistance = DEFAULT_DISTANCE;
 
-		//============Constructor Function============//
-		public BatrButtonList(verticalDistance: number = BatrButtonList.DEFAULT_DISTANCE): void {
+		//============Constructor & Destructor============//
+		public constructor(verticalDistance: number = BatrButtonList.DEFAULT_DISTANCE) {
 			super(false);
 			this.verticalDistance = verticalDistance;
 			this.initDisplay();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			for (var button of this._buttons) {
 				button.destructor();
 			}
@@ -45,7 +45,7 @@ package batr.menu.objects {
 			return this._verticalDistance;
 		}
 
-		public set verticalDistance(value: number): void {
+		public set verticalDistance(value: number) {
 			this._verticalDistance = value;
 		}
 

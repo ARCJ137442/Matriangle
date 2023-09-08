@@ -25,16 +25,16 @@ package batr.game.entity {
 		 * The UUID Process to system.
 		 * getEntityByUUID(this._headUUID) usual equals null.
 		 */
-		private _headUUID: uint = 1;
-		private _uuidDic: Dictionary = new Dictionary(true);
+		protected _headUUID: uint = 1;
+		protected _uuidDic: Dictionary = new Dictionary(true);
 
 		protected _entities: EntityCommon[] = new EntityCommon[];
 		protected _players: Player[] = new Player[];
 		protected _projectiles: ProjectileCommon[] = new ProjectileCommon[];
 		protected _bonusBoxes: BonusBox[] = new BonusBox[];
 
-		//============Constructor Function============//
-		public EntitySystem(host: Game): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game) {
 			this._host = host;
 		}
 

@@ -6,5 +6,5 @@ export const TICK_TIME_S: number = 1 / TPS;
 export const TICK_TIME_MS: number = TICK_TIME_S * 1000;
 // Timer:A delay lower than 20 milliseconds is not recommended
 
-export const WEAPON_MIN_CD: uint = TPS / 8;
+export const TOOL_MIN_CD: uint = TPS / 8;
 export const PROJECTILES_SPAWN_DISTANCE: number = 0.55;

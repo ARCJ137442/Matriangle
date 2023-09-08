@@ -9,38 +9,38 @@ package batr.game.effect.effects {
 
 	export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
 		//============Static Variables============//
-		public static const ALPHA: number = 0.8;
-		public static const MAX_LIFE: uint = GlobalGameVariables.TPS;
+		public static readonly ALPHA: number = 0.8;
+		public static readonly MAX_LIFE: uint = GlobalGameVariables.TPS;
 
 		//============Static Functions============//
-		public static function fromPlayer(host: Game, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
+		public static fromPlayer(host: Game, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
 			return new EffectPlayerDeathFadeout(host, x, y, player.rot, player.fillColor, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
 		}
 
 		//============Instance Variables============//
 
-		//============Constructor Function============//
-		public EffectPlayerDeathFadeout(host: Game, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathFadeout.MAX_LIFE): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathFadeout.MAX_LIFE) {
 			super(host, x, y, rot, color, AILabel, reverse, life);
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EffectType {
+		override get type(): EffectType {
 			return EffectType.PLAYER_DEATH_FADEOUT;
 		}
 
 		//============Instance Functions============//
-		public override function onEffectTick(): void {
+		override onEffectTick(): void {
 			this.alpha = this.reverse ? 1 - life / LIFE : life / LIFE;
 			this.dealLife();
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 			var realRadiusX: number = SIZE / 2;
 			var realRadiusY: number = SIZE / 2;
 			graphics.clear();

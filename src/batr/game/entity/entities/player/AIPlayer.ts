@@ -14,11 +14,11 @@ package batr.game.entity.entity.players {
 
 	export default class AIPlayer extends Player {
 		//============Static Variables============//
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
-		public static const DEFAULT_AI_RUN_SPEED: number = 12;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
+		public static readonly DEFAULT_AI_RUN_SPEED: number = 12;
 
 		//============Static Functions============//
-		public static function randomAIProgram(): IAIProgram {
+		public static randomAIProgram(): IAIProgram {
 			switch (exMath.random(4)) {
 				case 1:
 					return new AIProgram_Novice();
@@ -36,7 +36,7 @@ package batr.game.entity.entity.players {
 		 * @param	AILabel	The Label that determine shape.
 		 * @param	radius	The scale of decoration.
 		 */
-		public static function drawAIDecoration(graphics: Graphics, AILabel: string, radius: number = SIZE / 10): void {
+		public static drawAIDecoration(graphics: Graphics, AILabel: string, radius: number = SIZE / 10): void {
 			switch (AILabel) {
 				case AIProgram_Dummy.LABEL:
 					graphics.drawCircle(0, 0, radius);
@@ -67,8 +67,8 @@ package batr.game.entity.entity.players {
 		protected _AIRunMaxDelay: uint;
 		protected _actionThread: AIPlayerAction[] = new AIPlayerAction[];
 
-		//============Constructor Function============//
-		public AIPlayer(
+		//============Constructor & Destructor============//
+		public constructor(
 			host: Game,
 			x: number, y: number,
 			team: PlayerTeam,
@@ -82,7 +82,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this._AIRunDelay = this._AIRunMaxDelay = 0;
 			this._AIProgram = null;
 
@@ -90,7 +90,7 @@ package batr.game.entity.entity.players {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.AI_PLAYER;
 		}
 
@@ -102,7 +102,7 @@ package batr.game.entity.entity.players {
 			return GlobalGameVariables.TPS / this._AIRunDelay;
 		}
 
-		public set AIRunSpeed(speed: number): void {
+		public set AIRunSpeed(speed: number) {
 			if (speed == this.AIRunSpeed)
 				return;
 
@@ -134,7 +134,7 @@ package batr.game.entity.entity.players {
 		}
 
 		// AI Shape
-		protected override function drawShape(Alpha: number = 1): void {
+		override drawShape(Alpha: number = 1): void {
 			// Basic Body
 			var realRadiusX: number = (SIZE - LINE_SIZE) / 2;
 			var realRadiusY: number = (SIZE - LINE_SIZE) / 2;
@@ -146,12 +146,12 @@ package batr.game.entity.entity.players {
 			graphics.lineTo(-realRadiusX, realRadiusY);
 			graphics.lineTo(-realRadiusX, -realRadiusY);
 			// Shape By AI
-			AIPlayer.drawAIDecoration(this.graphics, this._AIProgram.label);
+			AIPlayer.drawAIDecoration(shape.graphics, this._AIProgram.label);
 			graphics.endFill();
 		}
 
 		// AI Tick
-		public override function tickFunction(): void {
+		override tickFunction(): void {
 			if (!_isActive)
 				return;
 			super.tickFunction();
@@ -164,7 +164,7 @@ package batr.game.entity.entity.players {
 		}
 
 		// AI Trigger
-		protected override function onHurt(damage: uint, attacker: Player = null): void {
+		override onHurt(damage: uint, attacker: Player = null): void {
 			// super
 			super.onHurt(damage, attacker);
 			// act
@@ -172,7 +172,7 @@ package batr.game.entity.entity.players {
 			this.runAction(action);
 		}
 
-		protected override function onDeath(damage: uint, attacker: Player = null): void {
+		override onDeath(damage: uint, attacker: Player = null): void {
 			// super
 			super.onDeath(damage, attacker);
 			// act
@@ -180,7 +180,7 @@ package batr.game.entity.entity.players {
 			this.runAction(action);
 		}
 
-		protected override function onKillPlayer(victim: Player, damage: uint): void {
+		override onKillPlayer(victim: Player, damage: uint): void {
 			// super
 			super.onKillPlayer(victim, damage);
 			// act
@@ -188,7 +188,7 @@ package batr.game.entity.entity.players {
 			this.runAction(action);
 		}
 
-		public override function onPickupBonusBox(box: BonusBox): void {
+		override onPickupBonusBox(box: BonusBox): void {
 			// super
 			super.onPickupBonusBox(box);
 			// act
@@ -196,7 +196,7 @@ package batr.game.entity.entity.players {
 			this.runAction(action);
 		}
 
-		protected override function onRespawn(): void {
+		override onRespawn(): void {
 			// super
 			super.onRespawn();
 			// act
@@ -204,7 +204,7 @@ package batr.game.entity.entity.players {
 			this.runAction(action);
 		}
 
-		public override function onMapTransform(): void {
+		override onMapTransform(): void {
 			// super
 			super.onMapTransform();
 			// act
@@ -293,8 +293,8 @@ package batr.game.entity.entity.players {
 					this.turnRelativeRight();
 
 					break;
-				case AIPlayerAction.USE_WEAPON:
-					this.useWeapon();
+				case AIPlayerAction.USE_TOOL:
+					this.useTool();
 
 					break;
 				case AIPlayerAction.PRESS_KEY_UP:

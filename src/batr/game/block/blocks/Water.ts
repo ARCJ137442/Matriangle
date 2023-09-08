@@ -1,50 +1,39 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
+import BlockColored from "./Colored";
 
-	import batr.general.*;
+export default class Water extends BlockColored {
+	//============Static Variables============//
+	protected static readonly ALPHA: number = 0.4;
 
-	import batr.game.block.*;
-	import batr.game.block.blocks.*;
+	//============Instance Variables============//
 
-	import flash.display.*;
+	//============Constructor & Destructor============//
+	public constructor(color: uint = 0x2222FF) {
+		super(color);
+		this._attributes = BlockAttributes.WATER;
+	}
 
-	export default class Water extends ColoredBlock {
-		//============Static Variables============//
-		protected static const ALPHA: number = 0.4;
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Instance Variables============//
+	override clone(): BlockCommon {
+		return new Water(this._color);
+	}
 
-		//============Constructor Function============//
-		public Water(color: uint = 0x2222FF): void {
-			super(color);
-		}
+	//============Display Implements============//
+	override get pixelAlpha(): uint {
+		return Water.ALPHA;
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
-
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.WATER;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.WATER;
-		}
-
-		public override function get pixelAlpha(): uint {
-			return Water.ALPHA;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Water(this._fillColor);
-		}
-
-		protected override function drawMain(): void {
-			this.graphics.beginFill(this._fillColor, Water.ALPHA);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-		}
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		shape.graphics.beginFill(this._color, Water.ALPHA);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
 	}
 }

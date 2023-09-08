@@ -11,12 +11,12 @@ package batr.game.entity.entities {
 
 	export default class BonusBox extends EntityCommon {
 		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x777777;
-		public static const FILL_COLOR: uint = 0xdddddd;
+		public static readonly LINE_COLOR: uint = 0x777777;
+		public static readonly FILL_COLOR: uint = 0xdddddd;
 
-		public static const BOX_SIZE: number = GlobalGameVariables.DEFAULT_SIZE * 0.8;
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 20;
-		public static const BOX_ELLIPSE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 16;
+		public static readonly BOX_SIZE: number = DEFAULT_SIZE * 0.8;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 20;
+		public static readonly BOX_ELLIPSE_SIZE: number = DEFAULT_SIZE / 16;
 
 		//============Static Functions============//
 
@@ -25,18 +25,18 @@ package batr.game.entity.entities {
 
 		protected _symbol: BonusBoxSymbol;
 
-		//============Constructor Function============//
-		public BonusBox(host: Game, x: int, y: int, type: BonusType = BonusType.NULL): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: int, y: int, type: BonusType = BonusType.NULL) {
 			super(host, x, y);
 			this._bonusType = type;
 			this._symbol = new BonusBoxSymbol(this._bonusType);
-			this._symbol.x = this._symbol.y = GlobalGameVariables.DEFAULT_SIZE / 2;
+			this._symbol.x = this._symbol.y = DEFAULT_SIZE / 2;
 			this.addChild(this._symbol);
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this._bonusType = null;
 			this._symbol.destructor();
 			this.removeChild(this._symbol);
@@ -44,7 +44,7 @@ package batr.game.entity.entities {
 		}
 
 		//============Instance Getters And Setters============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.BONUS_BOX;
 		}
 
@@ -52,13 +52,13 @@ package batr.game.entity.entities {
 			return this._bonusType;
 		}
 
-		public set bonusType(value: BonusType): void {
+		public set bonusType(value: BonusType) {
 			this._bonusType = value;
 			this._symbol.drawShape();
 		}
 
 		protected get borderSpace(): number {
-			return (GlobalGameVariables.DEFAULT_SIZE - BOX_SIZE) / 2;
+			return (DEFAULT_SIZE - BOX_SIZE) / 2;
 		}
 
 		protected get boxRadius(): number {
@@ -66,17 +66,17 @@ package batr.game.entity.entities {
 		}
 
 		//============Instance Functions============//
-		public drawShape(): void {
+		public shapeInit(shape: IBatrShape): void {
 			// Define
-			// var radius:Number=GlobalGameVariables.DEFAULT_SIZE/2;
+			// var radius:Number=DEFAULT_SIZE/2;
 			// Line
-			this.graphics.beginFill(LINE_COLOR);
-			this.graphics.drawRoundRect(borderSpace, borderSpace, BOX_SIZE, BOX_SIZE, BOX_ELLIPSE_SIZE, BOX_ELLIPSE_SIZE);
-			this.graphics.endFill();
+			shape.graphics.beginFill(LINE_COLOR);
+			shape.graphics.drawRoundRect(borderSpace, borderSpace, BOX_SIZE, BOX_SIZE, BOX_ELLIPSE_SIZE, BOX_ELLIPSE_SIZE);
+			shape.graphics.endFill();
 			// Fill
-			this.graphics.beginFill(FILL_COLOR);
-			this.graphics.drawRoundRect(borderSpace + LINE_SIZE, borderSpace + LINE_SIZE, BOX_SIZE - 2 * LINE_SIZE, BOX_SIZE - 2 * LINE_SIZE, BOX_ELLIPSE_SIZE, BOX_ELLIPSE_SIZE);
-			this.graphics.endFill();
+			shape.graphics.beginFill(FILL_COLOR);
+			shape.graphics.drawRoundRect(borderSpace + LINE_SIZE, borderSpace + LINE_SIZE, BOX_SIZE - 2 * LINE_SIZE, BOX_SIZE - 2 * LINE_SIZE, BOX_ELLIPSE_SIZE, BOX_ELLIPSE_SIZE);
+			shape.graphics.endFill();
 			// Symbol
 			this._symbol.type = this._bonusType;
 		}
@@ -103,9 +103,9 @@ package batr.game.entity.entities {
 					else
 						player.lives++;
 					break;
-				// Weapon
-				case BonusType.RANDOM_WEAPON:
-					player.weapon = WeaponType.getRandomAvaliableWithout(player.weapon);
+				// Tool
+				case BonusType.RANDOM_TOOL:
+					player.tool = ToolType.getRandomAvaliableWithout(player.tool);
 					break;
 				// Attributes
 				case BonusType.BUFF_RANDOM:

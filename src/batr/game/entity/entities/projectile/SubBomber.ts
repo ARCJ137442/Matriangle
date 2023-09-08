@@ -13,45 +13,45 @@ package batr.game.entity.entity.projectile {
 
 	export default class SubBomber extends BulletBasic {
 		//============Static Variables============//
-		public static const SIZE: number = PosTransform.localPosToRealPos(2 / 5);
-		public static const DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
-		public static const DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
-		public static const DEFAULT_EXPLODE_RADIUS: number = 2;
-		public static const MAX_BOMB_TICK: uint = GlobalGameVariables.FIXED_TPS * 0.125;
+		public static readonly SIZE: number = PosTransform.localPosToRealPos(2 / 5);
+		public static readonly DEFAULT_SPEED: number = 12 / GlobalGameVariables.FIXED_TPS;
+		public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
+		public static readonly DEFAULT_EXPLODE_RADIUS: number = 2;
+		public static readonly MAX_BOMB_TICK: uint = GlobalGameVariables.FIXED_TPS * 0.125;
 
 		//============Instance Variables============//
 		protected _bombTick: uint;
 
 		protected _maxBombTick: uint;
 
-		//============Constructor Function============//
-		public SubBomber(host: Game, x: number, y: number, owner: Player, chargePercent: number, fuel: int = 100): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number, fuel: int = 100) {
 			var scalePercent: number = (0.25 + chargePercent * 0.75);
 			super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
-			this._currentWeapon = WeaponType.SUB_BOMBER;
-			this.damage = this._currentWeapon.defaultDamage;
+			this._currentTool = ToolType.SUB_BOMBER;
+			this.damage = this._currentTool.defaultDamage;
 			this._maxBombTick = MAX_BOMB_TICK * (1.5 - scalePercent);
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
-			this.graphics.clear();
+		override destructor(): void {
+			shape.graphics.clear();
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.SUB_BOMBER;
 		}
 
 		//============Instance Functions============//
-		protected override function explode(): void {
+		override explode(): void {
 			this.bomb();
 			this._host.entitySystem.removeProjectile(this);
 		}
 
-		public override function onBulletTick(): void {
+		override onBulletTick(): void {
 			if ((this._bombTick--) == 0) {
 				this.bomb();
 				this._bombTick = this._maxBombTick;
@@ -59,11 +59,11 @@ package batr.game.entity.entity.projectile {
 		}
 
 		protected bomb(): void {
-			this._host.weaponCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, DEFAULT_EXPLODE_COLOR);
+			this._host.toolCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, DEFAULT_EXPLODE_COLOR);
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			super.drawShape();
 			this.drawBomberSign();
 			this.scaleX = this.scaleY = SubBomber.SIZE / BulletBasic.SIZE;

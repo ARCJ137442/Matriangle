@@ -1,8 +1,7 @@
-import { exMath } from "../common";
+import * as exMath from "../common/exMath";
 import { int, uint, uint$MAX_VALUE } from "../legacy/AS3Legacy";
 
 // import batr.common.*;
-
 //============Static Variables============//
 export const NULL: uint = uint$MAX_VALUE;
 

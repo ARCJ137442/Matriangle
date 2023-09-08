@@ -24,13 +24,13 @@ package batr.game.effect {
 		 * The UUID Process to system.
 		 * getEffectByUUID(this._headUUID) usual equals null.
 		 */
-		private _headUUID: uint = 1;
-		private _uuidDic: Dictionary = new Dictionary(true);
+		protected _headUUID: uint = 1;
+		protected _uuidDic: Dictionary = new Dictionary(true);
 
 		protected _effects: EffectCommon[] = new EffectCommon[];
 
-		//============Constructor Function============//
-		public EffectSystem(host: Game): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game) {
 			this._host = host;
 		}
 

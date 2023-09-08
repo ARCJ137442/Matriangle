@@ -15,7 +15,7 @@
 
 	export default class BatrSubject extends Sprite {
 		//============Static Variables============//
-		private static const FOR_TEST: boolean = false;
+		protected static readonly FOR_TEST: boolean = false;
 
 		//============Instance Variables============//
 		protected _game: Game;
@@ -24,8 +24,8 @@
 		protected _gameRule: GameRule;
 		protected _translations: I18ns;
 
-		//============Constructor Function============//
-		public BatrSubject(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			// Init Variables
 			this._translations = I18ns.getI18nByLanguage();
 			this._gameRule = new GameRule();
@@ -52,7 +52,7 @@
 			return this._game.visible;
 		}
 
-		public set gameVisible(value: boolean): void {
+		public set gameVisible(value: boolean) {
 			this._game.visible = value;
 		}
 
@@ -60,7 +60,7 @@
 			return this._menu.visible;
 		}
 
-		public set menuVisible(value: boolean): void {
+		public set menuVisible(value: boolean) {
 			this._menu.visible = value;
 		}
 
@@ -77,8 +77,8 @@
 			var nowStageHeight: number = this.stage.stageHeight;
 			var mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : GlobalGameVariables.DISPLAY_GRIDS;
 			var mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : GlobalGameVariables.DISPLAY_GRIDS;
-			var mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * GlobalGameVariables.DEFAULT_SIZE;
-			var mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * GlobalGameVariables.DEFAULT_SIZE;
+			var mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
+			var mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
 			// var distanceBetweenBorderX:Number=0(nowStageWidth-originalStageWidth)/2
 			// var distanceBetweenBorderY:Number=0(nowStageHeight-originalStageHeight)/2
 			// Operation
@@ -137,14 +137,14 @@
 		}
 
 		// ForTest
-		private forTest(): void {
+		protected forTest(): void {
 			this.resetRule();
 			this._gameRule.playerCount = 4;
 			this._gameRule.AICount = 0;
 			this._gameRule.initialMap = Map_V1.MAP_5;
-			this._gameRule.weaponsNoCD = true;
+			this._gameRule.toolsNoCD = true;
 			this._gameRule.mapTransformTime = 0;
-			this._gameRule.defaultWeaponID = WeaponType.LIGHTNING.weaponID;
+			this._gameRule.defaultToolID = ToolType.LIGHTNING.toolID;
 			this._game.forceStartGame(this.gameRule);
 			this.turnToGame();
 		}
@@ -187,7 +187,7 @@
 			this.scaleX = this.scaleY = GlobalGameVariables.DEFAULT_SCALE;
 		}
 
-		public set emableAutoResize(value: boolean): void {
+		public set emableAutoResize(value: boolean) {
 			if (value) {
 				this.stage.scaleMode = StageScaleMode.NO_SCALE;
 

@@ -14,7 +14,7 @@ package batr.game.entity.model {
 		protected _teamColor: uint;
 
 		//============Constructor============//
-		public PlayerProfile(profile: IPlayerProfile = null): void {
+		public constructor(profile: IPlayerProfile = null) {
 			if (profile == null)
 				return;
 			this.copyFrom(profile);

@@ -2,7 +2,7 @@ package batr.game.entity.entity.projectile {
 
 	import batr.common.*;
 	import batr.general.*;
-	import batr.game.model.WeaponType;
+	import batr.game.model.ToolType;
 
 	import batr.game.block.*;
 	import batr.game.entity.entity.player.*;
@@ -14,9 +14,9 @@ package batr.game.entity.entity.projectile {
 	 */
 	export default class Lightning extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LIGHT_ALPHA: number = 0.5;
-		public static const LIGHT_BLOCK_WIDTH: number = 0.2;
-		public static const LIFE: uint = GlobalGameVariables.TPS / 2;
+		public static readonly LIGHT_ALPHA: number = 0.5;
+		public static readonly LIGHT_BLOCK_WIDTH: number = 0.2;
+		public static readonly LIFE: uint = GlobalGameVariables.TPS / 2;
 
 		//============Static Functions============//
 
@@ -31,16 +31,16 @@ package batr.game.entity.entity.projectile {
 		protected _hurtPlayers: Player[] = new Player[]();
 		protected _hurtDefaultDamage: uint[] = new uint[]();
 
-		//============Constructor Function============//
-		public Lightning(host: Game, x: number, y: number, rot: uint, owner: Player, energy: int): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, rot: uint, owner: Player, energy: int) {
 			super(host, x, y, owner);
 			this.rot = rot;
 			this._initialEnergy = this._energy = energy;
-			this._currentWeapon = WeaponType.LIGHTNING;
+			this._currentTool = ToolType.LIGHTNING;
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 		}
 
 		//============Instance Getter And Setter============//
@@ -68,7 +68,7 @@ package batr.game.entity.entity.projectile {
 		protected lightningWays(): void {
 			// Draw in location in this
 			var head: iPoint = new iPoint(this.gridX, this.gridY);
-			var ownerWeapon: WeaponType = this.currentWeapon;
+			var ownerTool: ToolType = this.currentTool;
 			var vx: int, vy: int;
 			var cost: int = 0;
 			var player: Player = null;
@@ -83,9 +83,9 @@ package batr.game.entity.entity.projectile {
 				if ((this._energy -= cost) < 0)
 					break;
 				player = this.host.getHitPlayerAt(head.x, head.y);
-				if (player != null && this.owner.canUseWeaponHurtPlayer(player, ownerWeapon)) {
+				if (player != null && this.owner.canUseToolHurtPlayer(player, ownerTool)) {
 					this._hurtPlayers.push(player);
-					this._hurtDefaultDamage.push(ownerWeapon.defaultDamage * this.energyPercent);
+					this._hurtDefaultDamage.push(ownerTool.defaultDamage * this.energyPercent);
 				}
 				// Update Rot
 				nRot = this.getLeastWeightRot(head.x, head.y, tRot);
@@ -139,11 +139,11 @@ package batr.game.entity.entity.projectile {
 			return 0;
 		}
 
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			this.dealTick();
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 		}
 
 		protected drawLightning(): void {
@@ -154,14 +154,14 @@ package batr.game.entity.entity.projectile {
 				point = pointH;
 				pointH = this._wayPoints[i];
 				if (point != null && pointH != null) { // Head
-					this.graphics.beginFill(this.ownerColor, LIGHT_ALPHA);
-					this.graphics.drawRect(
-						GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.x, pointH.x) - LIGHT_BLOCK_WIDTH),
-						GlobalGameVariables.DEFAULT_SIZE * (exMath.intMin(point.y, pointH.y) - LIGHT_BLOCK_WIDTH),
-						GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.x - pointH.x) + LIGHT_BLOCK_WIDTH * 2),
-						GlobalGameVariables.DEFAULT_SIZE * (exMath.intAbs(point.y - pointH.y) + LIGHT_BLOCK_WIDTH * 2)
+					shape.graphics.beginFill(this.ownerColor, LIGHT_ALPHA);
+					shape.graphics.drawRect(
+						DEFAULT_SIZE * (exMath.intMin(point.x, pointH.x) - LIGHT_BLOCK_WIDTH),
+						DEFAULT_SIZE * (exMath.intMin(point.y, pointH.y) - LIGHT_BLOCK_WIDTH),
+						DEFAULT_SIZE * (exMath.intAbs(point.x - pointH.x) + LIGHT_BLOCK_WIDTH * 2),
+						DEFAULT_SIZE * (exMath.intAbs(point.y - pointH.y) + LIGHT_BLOCK_WIDTH * 2)
 					);
-					this.graphics.endFill();
+					shape.graphics.endFill();
 					// trace('drawPoint at ',point,pointH);
 				}
 			}

@@ -17,8 +17,8 @@ package batr.menu.object.selector {
 
 	export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuElementContainer {
 		//============Static Variables============//
-		public static const DEFAULT_DISTANCE_H: number = GlobalGameVariables.DEFAULT_SIZE * 8;
-		public static const DEFAULT_DISTANCE_V: number = GlobalGameVariables.DEFAULT_SIZE;
+		public static readonly DEFAULT_DISTANCE_H: number = DEFAULT_SIZE * 8;
+		public static readonly DEFAULT_DISTANCE_V: number = DEFAULT_SIZE;
 
 		//============Instance Variables============//
 		protected _selectors: BatrSelector[] = new BatrSelector[]();
@@ -34,14 +34,14 @@ package batr.menu.object.selector {
 		 */
 		protected _horizontalDistance = DEFAULT_DISTANCE_H;
 
-		//============Constructor Function============//
-		public BatrSelectorList(horizontalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_V): void {
+		//============Constructor & Destructor============//
+		public constructor(horizontalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_V) {
 			super(false);
 			this.setDistance(horizontalDistance, verticalDistance);
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			for (var selector of this._selectors) {
 				selector.destructor();
 			}
@@ -76,7 +76,7 @@ package batr.menu.object.selector {
 			return this._horizontalDistance;
 		}
 
-		public set horizontalDistance(value: number): void {
+		public set horizontalDistance(value: number) {
 			this._horizontalDistance = value;
 			this.refreshDisplay();
 		}
@@ -86,7 +86,7 @@ package batr.menu.object.selector {
 			return this._verticalDistance;
 		}
 
-		public set verticalDistance(value: number): void {
+		public set verticalDistance(value: number) {
 			this._verticalDistance = value;
 			this.refreshDisplay();
 		}
@@ -127,7 +127,7 @@ package batr.menu.object.selector {
 						continue;
 					}
 					selector.x = this.horizontalDistance;
-					selector.y = dy + GlobalGameVariables.DEFAULT_SIZE / 2;
+					selector.y = dy + DEFAULT_SIZE / 2;
 					dy += this.verticalDistance;
 					this.addChild(selector);
 				}
@@ -194,7 +194,7 @@ package batr.menu.object.selector {
 			return null;
 		}
 
-		private functionNotFound(): void {
+		protected functionNotFound(): void {
 			throw new Error('Function Not Found!');
 		}
 

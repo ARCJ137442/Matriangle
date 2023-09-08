@@ -1,61 +1,52 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockCommon from "../BlockCommon";
+import Wall from "./Wall";
+import BlockWall from "./Wall";
 
-	import batr.general.*;
+// Move as thrown block.
+export default class BlockMoveableWall extends BlockWall {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = 0x889988;
+	public static readonly FILL_COLOR: uint = 0xbbccbb;
 
-	import batr.game.block.*;
+	public static readonly LINE_SIZE: uint = Wall.LINE_SIZE;
 
-	// Move as thrown block.
-	export default class MoveableWall extends Wall {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x889988;
-		public static const FILL_COLOR: uint = 0xbbccbb;
+	//============Instance Variables============//
+	protected _virus: boolean;
 
-		public static const LINE_SIZE: uint = Wall.LINE_SIZE;
+	//============Constructor & Destructor============//
+	public constructor(virus: boolean = false) {
+		super(BlockMoveableWall.LINE_COLOR, BlockMoveableWall.FILL_COLOR);
+		this._virus = virus;
+	}
 
-		//============Instance Variables============//
-		protected _virus: boolean;
+	//============Destructor Function============//
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public MoveableWall(virus: boolean = false): void {
-			super(LINE_COLOR, FILL_COLOR);
-			this._virus = virus;
-			this.drawMain();
-		}
+	//============Instance Getter And Setter============//
+	public get virus(): boolean {
+		return this._virus;
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
+	//============Instance Functions============//
+	override clone(): BlockCommon {
+		return new BlockMoveableWall(this._virus);
+	}
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.MOVEABLE_WALL;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.MOVEABLE_WALL;
-		}
-
-		public get virus(): boolean {
-			return this._virus;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new MoveableWall(this._virus);
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(this._lineColor);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(this._fillColor);
-			this.graphics.drawRect(MoveableWall.LINE_SIZE, MoveableWall.LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - Wall.LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - MoveableWall.LINE_SIZE * 2);
-			// Circle
-			this.graphics.drawCircle(GlobalGameVariables.DEFAULT_SIZE / 2, GlobalGameVariables.DEFAULT_SIZE / 2, GlobalGameVariables.DEFAULT_SIZE / 8);
-			this.graphics.endFill();
-		}
+	public shapeInit(shape: IBatrShape): void {
+		// Line
+		shape.graphics.beginFill(this._lineColor);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(this._color);
+		shape.graphics.drawRect(BlockMoveableWall.LINE_SIZE, BlockMoveableWall.LINE_SIZE, DEFAULT_SIZE - Wall.LINE_SIZE * 2, DEFAULT_SIZE - BlockMoveableWall.LINE_SIZE * 2);
+		// Circle
+		shape.graphics.drawCircle(DEFAULT_SIZE / 2, DEFAULT_SIZE / 2, DEFAULT_SIZE / 8);
+		shape.graphics.endFill();
 	}
 }

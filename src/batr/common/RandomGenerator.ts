@@ -29,7 +29,7 @@ export default class RandomGenerator {
 		return (value % mode) / mode;
 	}
 
-	private static isEqualNumVec(v1: number[], v2: number[]): boolean {
+	protected static isEqualNumVec(v1: number[], v2: number[]): boolean {
 		if (v1.length != v2.length)
 			return false;
 		return v1.every(
@@ -167,7 +167,7 @@ export default class RandomGenerator {
 		}
 	}
 
-	public random(buff: number = 1, next: boolean = true): number {
+	public constructor(buff: number = 1, next: boolean = true) {
 		// index Start At 1
 		return this.getRandomAt(next ? 0 : this.numCount - 1) / this._mode * buff;
 	}

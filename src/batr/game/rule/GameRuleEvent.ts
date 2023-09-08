@@ -4,20 +4,20 @@ package batr.game.events {
 
 	export default class GameRuleEvent extends Event {
 		//============Static Variables============//
-		public static const VARIABLE_UPDATE: string = 'variableUpdate';
-		public static const TEAMS_CHANGE: string = 'teamsChange';
+		public static readonly VARIABLE_UPDATE: string = 'variableUpdate';
+		public static readonly TEAMS_CHANGE: string = 'teamsChange';
 
 		//============Instance Variables============//
 		protected _variableOld: any;
 		protected _variableNew: any;
 
-		//============Constructor Function============//
-		public GameRuleEvent(type: string, variableOld: any = null, variableNew: any = null, bubbles: boolean = false, cancelable: boolean = false): void {
+		//============Constructor & Destructor============//
+		public constructor(type: string, variableOld: any = null, variableNew: any = null, bubbles: boolean = false, cancelable: boolean = false) {
 			super(type, bubbles, cancelable);
 		}
 
 		//============Copy Constructor Function============//
-		public override function clone(): Event {
+		override clone(): Event {
 			return new GameRuleEvent(type, bubbles, cancelable);
 		}
 
@@ -31,7 +31,7 @@ package batr.game.events {
 		}
 
 		//============Instance Functions============//
-		public override function toString(): string {
+		override toString(): string {
 			return formatToString('GameRuleEvent', 'type', 'bubbles', 'cancelable', 'eventPhase');
 		}
 	}

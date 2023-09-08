@@ -19,7 +19,7 @@
 		protected _bonusGenerateCount: uint = 0;
 
 		//============Constructor============//
-		public GameStats(rule: GameRule, players: Player[] = null): void {
+		public constructor(rule: GameRule, players: Player[] = null) {
 			super();
 			this.rule = rule;
 			if (players != null)
@@ -43,7 +43,7 @@
 			return this._rule;
 		}
 
-		public set rule(value: GameRule): void {
+		public set rule(value: GameRule) {
 			this._rule = value;
 		}
 
@@ -55,7 +55,7 @@
 			return this._mapTransformCount;
 		}
 
-		public set mapTransformCount(value: uint): void {
+		public set mapTransformCount(value: uint) {
 			this._mapTransformCount = value;
 		}
 
@@ -63,7 +63,7 @@
 			return this._bonusGenerateCount;
 		}
 
-		public set bonusGenerateCount(value: uint): void {
+		public set bonusGenerateCount(value: uint) {
 			this._bonusGenerateCount = value;
 		}
 

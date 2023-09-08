@@ -14,10 +14,10 @@ package batr.game.entity.entity.projectile {
 
 	export default class BulletBasic extends ProjectileCommon {
 		//============Static Variables============//
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 80;
-		public static const SIZE: number = PosTransform.localPosToRealPos(3 / 8);
-		public static const DEFAULT_SPEED: number = 16 / GlobalGameVariables.FIXED_TPS;
-		public static const DEFAULT_EXPLODE_RADIUS: number = 1;
+		public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
+		public static readonly SIZE: number = PosTransform.localPosToRealPos(3 / 8);
+		public static readonly DEFAULT_SPEED: number = 16 / GlobalGameVariables.FIXED_TPS;
+		public static readonly DEFAULT_EXPLODE_RADIUS: number = 1;
 
 		//============Instance Variables============//
 		public speed: number;
@@ -27,8 +27,8 @@ package batr.game.entity.entity.projectile {
 		public lastBlockType: BlockType = BlockType.NULL;
 		public nowBlockType: BlockType = BlockType.NULL;
 
-		//============Constructor Function============//
-		public BulletBasic(host: Game, x: number, y: number,
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number,
 			owner: Player,
 			speed: number = DEFAULT_SPEED,
 			defaultExplodeRadius: number = DEFAULT_EXPLODE_RADIUS): void {
@@ -36,27 +36,27 @@ package batr.game.entity.entity.projectile {
 			this.speed = speed;
 
 			this.finalExplodeRadius = owner == null ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
-			this._currentWeapon = WeaponType.BULLET;
+			this._currentTool = ToolType.BULLET;
 
-			this.damage = this._currentWeapon.defaultDamage;
+			this.damage = this._currentTool.defaultDamage;
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
-			this.graphics.clear();
+		override destructor(): void {
+			shape.graphics.clear();
 			super.destructor();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.BULLET_BASIC;
 		}
 
 		//============Instance Functions============//
 
 		//====Tick Function====//
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			this.onBulletTick();
 
 			this.onBulletCommonTick();
@@ -90,17 +90,17 @@ package batr.game.entity.entity.projectile {
 		}
 
 		protected explode(): void {
-			this._host.weaponCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
+			this._host.toolCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
 			this._host.entitySystem.removeProjectile(this);
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			var realRadiusX: number = SIZE / 2;
 
 			var realRadiusY: number = SIZE / 2;
 
-			with (this.graphics) {
+			with (shape.graphics) {
 				clear();
 				lineStyle(LINE_SIZE, this.ownerLineColor);
 				beginFill(this.ownerColor);

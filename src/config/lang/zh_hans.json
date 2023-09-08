@@ -33,7 +33,7 @@
             "game_mode": "游戏模式",
             "initial_map": "初始地图",
             "lock_teams": "锁定队伍",
-            "default_weapon": "默认武器",
+            "default_tool": "默认道具",
             "default_health": "默认生命值",
             "default_max_health": "默认最大生命值",
             "remain_lives_player": "玩家剩余生命",
@@ -41,7 +41,7 @@
             "max_bonus_count": "最大奖励箱数",
             "bonus_spawn_after_death": "奖励箱死后生成",
             "map_transform_time": "地图变换时间(s)",
-            "weapons_no_cd": "武器无冷却",
+            "tools_no_cd": "道具无冷却",
             "respawn_time": "重生时间(s)",
             "asphyxia_damage": "窒息伤害"
         },
@@ -124,7 +124,7 @@
         "player_levelup": "玩家升级",
         "block_light": "方块光效"
     },
-    "weapon": {
+    "tool": {
         "bullet": "子弹",
         "nuke": "核弹",
         "sub_bomber": "子轰炸机",

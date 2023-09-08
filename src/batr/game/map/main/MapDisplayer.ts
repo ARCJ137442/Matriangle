@@ -9,12 +9,12 @@ package batr.game.map.main {
 
 	export default class MapDisplayer extends Sprite implements IMapDisplayer {
 		//============Static Functions============//
-		protected static function isBlockLocationEquals(block: BlockCommon, x: int, y: int): boolean {
+		protected static isBlockLocationEquals(block: BlockCommon, x: int, y: int): boolean {
 			return PosTransform.realPosToLocalPos(block.x) == x && PosTransform.realPosToLocalPos(block.y) == y;
 		}
 
-		//============Constructor Function============//
-		public MapDisplayer(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			super();
 		}
 
@@ -83,7 +83,7 @@ package batr.game.map.main {
 		}
 
 		//============Instance Functions============//
-		private getBlockAsChildAt(index: int): BlockCommon {
+		protected getBlockAsChildAt(index: int): BlockCommon {
 			if (index >= this.numChildren)
 				return null;
 			return this.getChildAt(index) as BlockCommon;

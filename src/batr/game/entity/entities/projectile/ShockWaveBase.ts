@@ -17,12 +17,12 @@ package batr.game.entity.entity.projectile {
 	 */
 	export default class ShockWaveBase extends ProjectileCommon {
 		//============Static Variables============//
-		public static const BLOCK_RADIUS: number = GlobalGameVariables.DEFAULT_SIZE * 1.2;
+		public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2;
 
 		/**
 		 * Life For Charge
 		 */
-		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS;
+		public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS;
 
 		//============Static Functions============//
 
@@ -32,31 +32,31 @@ package batr.game.entity.entity.projectile {
 
 		protected _life: uint = 0;
 
-		protected _weapon: WeaponType;
-		protected _weaponChargePercent: number;
+		protected _tool: ToolType;
+		protected _toolChargePercent: number;
 
 		/**
 		 * Default is 0,Vortex is 1
 		 */
 		public mode: uint = 0;
 
-		//============Constructor Function============//
-		public ShockWaveBase(host: Game, x: number, y: number, owner: Player, weapon: WeaponType, weaponCharge: number, mode: uint = 0): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, tool: ToolType, toolCharge: number, mode: uint = 0) {
 			super(host, x, y, owner);
-			this._currentWeapon = WeaponType.SHOCKWAVE_ALPHA;
-			this._weapon = weapon;
+			this._currentTool = ToolType.SHOCKWAVE_ALPHA;
+			this._tool = tool;
 			this.mode = mode;
-			this._weaponChargePercent = weaponCharge;
+			this._toolChargePercent = toolCharge;
 			this.drawShape();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.SHOCKWAVE_LASER_BASE;
 		}
 
 		//============Instance Functions============//
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			// Charging
 			if (this._life >= LIFE) {
 				this.summonDrones();
@@ -70,11 +70,11 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		public override function drawShape(): void {
-			this.graphics.beginFill(this.ownerColor);
-			this.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
-			this.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
-			this.graphics.endFill();
+		override drawShape(): void {
+			shape.graphics.beginFill(this.ownerColor);
+			shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
+			shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
+			shape.graphics.endFill();
 		}
 
 		public summonDrones(): void {
@@ -91,8 +91,8 @@ package batr.game.entity.entity.projectile {
 			}
 		}
 
-		public summonDrone(rot: int, weaponRot: int = int.MIN_VALUE): void {
-			var drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._weapon, weaponRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(weaponRot), this._weaponChargePercent);
+		public summonDrone(rot: int, toolRot: int = int.MIN_VALUE): void {
+			var drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._tool, toolRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(toolRot), this._toolChargePercent);
 			drone.rot = GlobalRot.lockIntToStandard(rot);
 			this.host.entitySystem.registerProjectile(drone);
 			this.host.projectileContainer.addChild(drone);

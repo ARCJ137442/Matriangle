@@ -13,13 +13,13 @@ package batr.game.entity.entity.projectile {
 
 	export default class Wave extends ProjectileCommon {
 		//============Static Variables============//
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE;
-		public static const ALPHA: number = 0.64;
-		public static const DEFAULT_SPEED: number = 24 / GlobalGameVariables.FIXED_TPS;
-		public static const MAX_SCALE: number = 4;
-		public static const MIN_SCALE: number = 1 / 4;
-		public static const LIFE: uint = GlobalGameVariables.FIXED_TPS * 4;
-		public static const DAMAGE_DELAY: uint = GlobalGameVariables.FIXED_TPS / 12;
+		public static readonly SIZE: number = DEFAULT_SIZE;
+		public static readonly ALPHA: number = 0.64;
+		public static readonly DEFAULT_SPEED: number = 24 / GlobalGameVariables.FIXED_TPS;
+		public static readonly MAX_SCALE: number = 4;
+		public static readonly MIN_SCALE: number = 1 / 4;
+		public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS * 4;
+		public static readonly DAMAGE_DELAY: uint = GlobalGameVariables.FIXED_TPS / 12;
 
 		//============Instance Variables============//
 		public speed: number = DEFAULT_SPEED;
@@ -30,28 +30,28 @@ package batr.game.entity.entity.projectile {
 
 		protected _finalScale: number;
 
-		//============Constructor Function============//
-		public Wave(host: Game, x: number, y: number, owner: Player, chargePercent: number): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
 			super(host, x, y, owner);
-			this._currentWeapon = WeaponType.WAVE;
+			this._currentTool = ToolType.WAVE;
 			dealCharge(chargePercent);
 			this.drawShape();
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.WAVE;
 		}
 
-		public override function destructor(): void {
-			this.graphics.clear();
+		override destructor(): void {
+			shape.graphics.clear();
 		}
 
 		public get finalScale(): number {
 			return this._finalScale;
 		}
 
-		public set finalScale(value: number): void {
+		public set finalScale(value: number) {
 			this._finalScale = this.scaleX = this.scaleY = value;
 		}
 
@@ -59,11 +59,11 @@ package batr.game.entity.entity.projectile {
 		public dealCharge(percent: number): void {
 			this.tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * percent;
 			this.finalScale = this._owner == null ? tempScale : (1 + this._owner.computeFinalRadius(this.tempScale) / 2);
-			this.damage = this._currentWeapon.defaultDamage * tempScale / Wave.MAX_SCALE;
+			this.damage = this._currentTool.defaultDamage * tempScale / Wave.MAX_SCALE;
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			var realRadius: number = SIZE / 2;
 
 			graphics.clear();
@@ -98,7 +98,7 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//====Tick Function====//
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			this.moveForward(this.speed);
 
 			if (this.life % DAMAGE_DELAY == 0) {

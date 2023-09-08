@@ -1,55 +1,39 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockCommon from "../BlockCommon";
+import BlockWall from "./Wall";
 
-	import batr.general.*;
+export default class BlockMetal extends BlockWall {
 
-	import batr.game.block.*;
+	//============Constructor & Destructor============//
+	public constructor(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd) {
+		super(lineColor, fillColor);
+	}
 
-	import flash.display.*;
+	override destructor(): void {
+		super.destructor();
+	}
 
-	export default class Metal extends Wall {
-		//============Static Variables============//
-		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 20;
+	override clone(): BlockCommon {
+		return new BlockMetal(this._lineColor, this._color);
+	}
 
-		//============Instance Variables============//
+	//============Display Implements============//
+	public static readonly LINE_SIZE: uint = DEFAULT_SIZE / 20;
 
-		//============Constructor Function============//
-		public Metal(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd): void {
-			super(lineColor, fillColor);
-			this.drawMain();
-		}
-
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
-
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.METAL;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.METAL;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Metal(this._lineColor, this._fillColor);
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(this._lineColor);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(this._fillColor);
-			this.graphics.drawRect(Metal.LINE_SIZE, Metal.LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - Metal.LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - Metal.LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Block
-			this.graphics.beginFill(this._lineColor);
-			this.graphics.drawRect(GlobalGameVariables.DEFAULT_SIZE / 4, GlobalGameVariables.DEFAULT_SIZE / 4, GlobalGameVariables.DEFAULT_SIZE / 2, GlobalGameVariables.DEFAULT_SIZE / 2);
-			this.graphics.endFill();
-		}
+	public shapeInit(shape: IBatrShape): void {
+		// Line
+		shape.graphics.beginFill(this._lineColor);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(this._color);
+		shape.graphics.drawRect(BlockMetal.LINE_SIZE, BlockMetal.LINE_SIZE, DEFAULT_SIZE - BlockMetal.LINE_SIZE * 2, DEFAULT_SIZE - BlockMetal.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Block
+		shape.graphics.beginFill(this._lineColor);
+		shape.graphics.drawRect(DEFAULT_SIZE / 4, DEFAULT_SIZE / 4, DEFAULT_SIZE / 2, DEFAULT_SIZE / 2);
+		shape.graphics.endFill();
 	}
 }

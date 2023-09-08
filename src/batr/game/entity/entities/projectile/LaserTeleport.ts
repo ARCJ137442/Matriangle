@@ -9,23 +9,23 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserTeleport extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: number = GlobalGameVariables.FIXED_TPS * 0.5;
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
+		public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS * 0.5;
+		public static readonly SIZE: number = DEFAULT_SIZE / 4;
 
-		//============Constructor Function============//
-		public LaserTeleport(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH) {
 			super(host, x, y, owner, length);
-			this._currentWeapon = WeaponType.TELEPORT_LASER;
-			this.damage = this._currentWeapon.defaultDamage;
+			this._currentTool = ToolType.TELEPORT_LASER;
+			this.damage = this._currentTool.defaultDamage;
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.LASER_TELEPORT;
 		}
 
 		//============Instance Functions============//
-		public override function onLaserTick(): void {
+		override onLaserTick(): void {
 			this.alpha = (this._life & 3) < 2 ? 0.75 : 1;
 			if (_life < 1 / 4 * LIFE)
 				this.scaleY = (1 / 4 * LIFE - _life) / (1 / 4 * LIFE);
@@ -33,7 +33,7 @@ package batr.game.entity.entity.projectile {
 				this._host.laserHurtPlayers(this);
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 			graphics.clear();
 
 			// Middle

@@ -8,19 +8,19 @@ package batr.game.entity.entity.projectile {
 	export default class ProjectileCommon extends EntityCommon {
 		//============Instance Variables============//
 		protected _owner: Player;
-		protected _currentWeapon: WeaponType;
+		protected _currentTool: ToolType;
 
 		public damage: uint;
 
-		//============Constructor Function============//
-		public ProjectileCommon(host: Game, x: number, y: number, owner: Player): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player) {
 			super(host, x, y);
 			this._owner = owner;
-			this._currentWeapon = WeaponType.ABSTRACT;
+			this._currentTool = ToolType.ABSTRACT;
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.ABSTRACT;
 		}
 
@@ -28,13 +28,13 @@ package batr.game.entity.entity.projectile {
 			return this._owner;
 		}
 
-		public set owner(value: Player): void {
+		public set owner(value: Player) {
 			this._owner = value;
 			this.drawShape();
 		}
 
-		public get currentWeapon(): WeaponType {
-			return this._currentWeapon;
+		public get currentTool(): ToolType {
+			return this._currentTool;
 		}
 
 		public get ownerColor(): uint {
@@ -46,13 +46,13 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Instance Functions============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this._owner = null;
-			this._currentWeapon = null;
+			this._currentTool = null;
 			super.destructor();
 		}
 
-		public override function tickFunction(): void {
+		override tickFunction(): void {
 			this.onProjectileTick();
 			super.tickFunction();
 		}
@@ -60,7 +60,7 @@ package batr.game.entity.entity.projectile {
 		public onProjectileTick(): void {
 		}
 
-		public drawShape(): void {
+		public shapeInit(shape: IBatrShape): void {
 		}
 	}
 }

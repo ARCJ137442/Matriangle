@@ -11,16 +11,16 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Dummy implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: string = 'Dummy';
-		public static const LABEL_SHORT: string = 'D';
+		public static readonly LABEL: string = 'Dummy';
+		public static readonly LABEL_SHORT: string = 'D';
 
 		//============Instance Variables============//
 		protected _moveSum: uint;
 		protected _moveMaxSum: uint = 4 + exMath.random(16);
 		protected _tempRot: uint;
 
-		//============Constructor Function============//
-		public AIProgram_Dummy(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 		}
 
 		//============Destructor Function============//
@@ -49,7 +49,7 @@ package batr.game.entity.ai.programs {
 			if (player == null)
 				return AIPlayerAction.NULL;
 			// Press Use
-			if (player.weaponReverseCharge) {
+			if (player.toolReverseCharge) {
 				if (player.chargingPercent >= 1)
 					return AIPlayerAction.PRESS_KEY_USE;
 				else if (player.isPress_Use)

@@ -5,24 +5,24 @@ package batr.translations {
 	export default class I18ns {
 		//============Static Variables============//
 		// I18ns
-		protected static var EN_US: I18ns;
-		protected static var ZH_CN: I18ns;
-		protected static var _translationsList: I18ns[];
+		protected static EN_US: I18ns;
+		protected static ZH_CN: I18ns;
+		protected static _translationsList: I18ns[];
 
 		// Class Init
-		protected static var isInited: boolean = false;
+		protected static isInited: boolean = false;
 
 		//============Static Getter And Setter============//
-		public static function get translationsList(): I18ns[] {
+		public static get translationsList(): I18ns[] {
 			return I18ns._translationsList;
 		}
 
-		public static function get numI18ns(): int {
+		public static get numI18ns(): int {
 			return I18ns._translationsList.length;
 		}
 
 		//============Static Functions============//
-		public static function getI18nByLanguage(): I18ns {
+		public static getI18nByLanguage(): I18ns {
 			if (!isInited)
 				cInit();
 			switch (Capabilities.language) {
@@ -38,12 +38,12 @@ package batr.translations {
 		}
 
 		// 'index:text,index2:text2,index3:text3...'
-		public static function fromString(str: string): I18ns {
+		public static fromString(str: string): I18ns {
 			return I18ns.fromStringArr(str.split(','));
 		}
 
 		// ['index:text','index2:text2','index3:text3'...]
-		public static function fromStringArr(str: Array): I18ns {
+		public static fromStringArr(str: Array): I18ns {
 			if (!isInited)
 				cInit();
 
@@ -64,30 +64,30 @@ package batr.translations {
 			return returnT;
 		}
 
-		public static function getI18n(translation: I18ns, key: string): string {
+		public static getI18n(translation: I18ns, key: string): string {
 			return translation == null ? null : translation.getI18n(key);
 		}
 
 		// 'index:text','index2:text2','index3:text3','...'
-		public static function fromStringArr2(...str): I18ns {
+		public static fromStringArr2(...str): I18ns {
 			return I18ns.fromStringArr(str);
 		}
 
-		public static function getIDFromI18n(translations: I18ns): int {
+		public static getIDFromI18n(translations: I18ns): int {
 			return I18ns._translationsList.indexOf(translations);
 		}
 
-		public static function getI18nFromID(index: int): I18ns {
+		public static getI18nFromID(index: int): I18ns {
 			return I18ns._translationsList[index];
 		}
 
 		//====Init I18ns====//
-		protected static function cInit(): boolean {
+		protected static cInit(): boolean {
 			isInited = true;
 			EN_US = DefaultNativeI18ns.EN_US;
 			ZH_CN = DefaultNativeI18ns.ZH_CN;
 			// trace(ZH_CN.translationKeys.toString()+'\n'+ZH_CN.translationValues.toString())
-			_translationsList = new < I18ns > [I18ns.EN_US, I18ns.ZH_CN];
+			_translationsList = new Array<I18ns>(I18ns.EN_US, I18ns.ZH_CN);
 			return true;
 		}
 
@@ -100,9 +100,9 @@ package batr.translations {
 
 		protected _setFunction: Function;
 
-		//============Constructor Function============//
+		//============Constructor & Destructor============//
 		// 'index','text','index2','text2','index3','text3','...'
-		public I18ns(...translations): void {
+		public constructor(...translations) {
 			if (!isInited)
 				cInit();
 			this._getFunction = this.defaultGet;

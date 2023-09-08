@@ -9,8 +9,8 @@ package batr.translations {
 		protected _prefix: string;
 		protected _suffix: string;
 
-		//============Constructor Function============//
-		public FixedI18nText(translations: I18ns, key: string = null, prefix: string = '', suffix: string = '') {
+		//============Constructor & Destructor============//
+		public constructor(translations: I18ns, key: string = null, prefix: string = '', suffix: string = '') {
 			super(translations, key);
 			this._prefix = prefix;
 			this._suffix = suffix;
@@ -31,7 +31,7 @@ package batr.translations {
 			return this._prefix;
 		}
 
-		public set prefix(value: string): void {
+		public set prefix(value: string) {
 			this._prefix = value;
 		}
 
@@ -39,11 +39,11 @@ package batr.translations {
 			return this._suffix;
 		}
 
-		public set suffix(value: string): void {
+		public set suffix(value: string) {
 			this._suffix = value;
 		}
 
-		public override function get currentText(): string {
+		override get currentText(): string {
 			return this._prefix + super.currentText + this._suffix;
 		}
 	}

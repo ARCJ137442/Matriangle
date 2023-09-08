@@ -1,68 +1,61 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
+import BlockColored from "./Colored";
 
-	import batr.general.*;
+export default class BlockWall extends BlockColored {
+	//============Static Variables============//
 
-	import batr.game.block.*;
+	//============Instance Variables============//
+	protected _lineColor: uint;
 
-	import flash.display.*;
+	//============Constructor & Destructor============//
+	public constructor(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb) {
+		super(fillColor); // ! won't give the attributes
+		this._lineColor = lineColor;
+		this._attributes = BlockAttributes.COLORED_BLOCK;
+	}
 
-	export default class Wall extends ColoredBlock {
-		//============Static Variables============//
-		public static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 50;
+	override destructor(): void {
+		this._lineColor = 0;
+		super.destructor();
+	}
 
-		//============Instance Variables============//
-		protected _lineColor: uint;
+	override clone(): BlockCommon {
+		return new BlockWall(this._lineColor, this._color);
+	}
 
-		//============Constructor Function============//
-		public Wall(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb): void {
-			this._lineColor = lineColor;
-			super(fillColor);
+	//========Display Implements========//
+	public static readonly LINE_SIZE: uint = DEFAULT_SIZE / 50;
+
+	public get lineColor(): uint {
+		return this._lineColor;
+	}
+
+	public set lineColor(color: uint) {
+		if (this._lineColor != color) {
+			this._lineColor = color;
 		}
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			this._lineColor = 0;
-			super.destructor();
-		}
+	override get pixelColor(): uint {
+		return this.attributes.defaultPixelColor;
+	}
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.WALL;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.WALL;
-		}
-
-		public get lineColor(): uint {
-			return this._lineColor;
-		}
-
-		public set lineColor(color: uint): void {
-			if (this._lineColor != color) {
-				this._lineColor = color;
-				this.reDraw();
-			}
-		}
-
-		public override function get pixelColor(): uint {
-			return this.attributes.defaultPixelColor;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Wall(this._lineColor, this._fillColor);
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(this._lineColor);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(this._fillColor);
-			this.graphics.drawRect(Wall.LINE_SIZE, Wall.LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - Wall.LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - Wall.LINE_SIZE * 2);
-			this.graphics.endFill();
-		}
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		// Line
+		shape.graphics.beginFill(this._lineColor);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(this._color);
+		shape.graphics.drawRect(
+			BlockWall.LINE_SIZE, BlockWall.LINE_SIZE,
+			DEFAULT_SIZE - BlockWall.LINE_SIZE * 2, DEFAULT_SIZE - BlockWall.LINE_SIZE * 2
+		);
+		shape.graphics.endFill();
 	}
 }

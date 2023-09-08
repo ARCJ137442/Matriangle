@@ -15,30 +15,30 @@ package batr.game.entity.entity.projectile {
 
 	export default class ThrownBlock extends ProjectileCommon {
 		//============Static Variables============//
-		public static const MAX_SPEED: number = 15 / GlobalGameVariables.FIXED_TPS;
-		public static const MIN_SPEED: number = 1 / 3 * MAX_SPEED;
+		public static readonly MAX_SPEED: number = 15 / GlobalGameVariables.FIXED_TPS;
+		public static readonly MIN_SPEED: number = 1 / 3 * MAX_SPEED;
 
 		//============Instance Variables============//
 		public xSpeed: number;
 		public ySpeed: number;
 		protected _carriedBlock: BlockCommon;
 
-		//============Constructor Function============//
-		public ThrownBlock(host: Game, x: number, y: number,
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number,
 			owner: Player, block: BlockCommon,
 			rot: uint, chargePercent: number = 1): void {
 			super(host, x, y, owner);
 			this._carriedBlock = block;
 
-			this._currentWeapon = WeaponType.BLOCK_THROWER;
+			this._currentTool = ToolType.BLOCK_THROWER;
 			this.xSpeed = GlobalRot.towardIntX(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 			this.ySpeed = GlobalRot.towardIntY(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
-			this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this._currentWeapon.defaultDamage;
+			this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this._currentTool.defaultDamage;
 			this.drawShape();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			Utils.removeChildIfContains(this, this._carriedBlock);
 
 			this._carriedBlock = null;
@@ -47,7 +47,7 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.THROWN_BLOCK;
 		}
 
@@ -57,7 +57,7 @@ package batr.game.entity.entity.projectile {
 
 		//============Instance Functions============//
 		//====Tick Function====//
-		public override function onProjectileTick(): void {
+		override onProjectileTick(): void {
 			if (!this._host.isOutOfMap(this.entityX, this.entityY) &&
 				this._host.testCanPass(
 					this.lockedEntityX, this.lockedEntityY,
@@ -103,7 +103,7 @@ package batr.game.entity.entity.projectile {
 		}
 
 		//====Graphics Functions====//
-		public override function drawShape(): void {
+		override drawShape(): void {
 			if (this._carriedBlock != null) {
 				this._carriedBlock.x = -this._carriedBlock.width / 2;
 

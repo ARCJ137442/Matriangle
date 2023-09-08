@@ -17,28 +17,28 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Adventurer implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: string = 'Adventurer';
-		public static const LABEL_SHORT: string = 'A';
+		public static readonly LABEL: string = 'Adventurer';
+		public static readonly LABEL_SHORT: string = 'A';
 
-		public static const DEBUG: boolean = false;
+		public static readonly DEBUG: boolean = false;
 
 		//============Static Functions============//
 		/*========AI Criteria========*/
-		static function weaponUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
+		static toolUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
 			var vx: int = GlobalRot.towardXInt(rot, 1);
 			var vy: int = GlobalRot.towardYInt(rot, 1);
 			var cx: int, cy: int;
-			var weapon: WeaponType = owner.weapon;
+			var tool: ToolType = owner.tool;
 			for (var i: uint = 1; i < distance; i++) {
 				cx = owner.gridX + vx * i;
 				cy = owner.gridY + vy * i;
 				if (host.isIntOutOfMap(cx, cy))
 					continue;
 				if (!host.testIntCanPass(
-					cx, cy, weapon == WeaponType.MELEE,
-					WeaponType.isBulletWeapon(weapon) || weapon == WeaponType.BLOCK_THROWER,
-					WeaponType.isLaserWeapon(weapon),
-					weaponNotThroughPlayer(weapon), false
+					cx, cy, tool == ToolType.MELEE,
+					ToolType.isBulletTool(tool) || tool == ToolType.BLOCK_THROWER,
+					ToolType.isLaserTool(tool),
+					toolNotThroughPlayer(tool), false
 				)
 				)
 					return false;
@@ -46,31 +46,31 @@ package batr.game.entity.ai.programs {
 			return true;
 		}
 
-		static function weaponNotThroughPlayer(weapon: WeaponType): boolean {
-			switch (weapon) {
-				case WeaponType.BULLET:
-				case WeaponType.NUKE:
-				case WeaponType.SUB_BOMBER:
-				case WeaponType.TRACKING_BULLET:
-				case WeaponType.BLOCK_THROWER:
-				case WeaponType.MELEE:
-				case WeaponType.LIGHTNING:
+		static toolNotThroughPlayer(tool: ToolType): boolean {
+			switch (tool) {
+				case ToolType.BULLET:
+				case ToolType.NUKE:
+				case ToolType.SUB_BOMBER:
+				case ToolType.TRACKING_BULLET:
+				case ToolType.BLOCK_THROWER:
+				case ToolType.MELEE:
+				case ToolType.LIGHTNING:
 					return true;
 			}
 			return false;
 		}
 
-		static function weaponNeedCarryBlock(weapon: WeaponType): boolean {
-			return weapon == WeaponType.BLOCK_THROWER;
+		static toolNeedCarryBlock(tool: ToolType): boolean {
+			return tool == ToolType.BLOCK_THROWER;
 		}
 
-		static function detectCarryBlock(player: Player): boolean {
-			if (weaponNeedCarryBlock(player.weapon) && !player.isCarriedBlock)
+		static detectCarryBlock(player: Player): boolean {
+			if (toolNeedCarryBlock(player.tool) && !player.isCarriedBlock)
 				return false;
 			return true;
 		}
 
-		static function detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
+		static detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
 			return !player.isCarriedBlock && blockAtt.isCarryable && player.host.testCarryableWithMap(blockAtt, player.host.map);
 		}
 
@@ -83,7 +83,7 @@ package batr.game.entity.ai.programs {
 		 * 2. [F=G+H]
 		 * @return	The Path From Target To Start
 		 */
-		protected static function findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
+		protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 			// trace('Name='+owner.customName)
 			// Operation
 			var openList: PathNode[] = new PathNode[]();
@@ -123,7 +123,7 @@ package batr.game.entity.ai.programs {
 			return _tempNode == null ? null : _tempNode.pathToRoot;
 }
 
-protected static function containNode(node: PathNode, nodes: PathNode[]): boolean {
+protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
 	if (nodes.indexOf(node) >= 0)
 		return true;
 	for (var i: string in nodes) {
@@ -133,7 +133,7 @@ protected static function containNode(node: PathNode, nodes: PathNode[]): boolea
 	return false;
 }
 
-protected static function removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
+protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
 	var i: int = nodes.indexOf(node);
 	if (i >= 0) {
 		// trace('remove node'+node,'succeed!')
@@ -144,7 +144,7 @@ protected static function removeNodeIn(node: PathNode, nodes: PathNode[]): boole
 	return false;
 }
 
-protected static function getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): PathNode[] {
+protected static getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): PathNode[] {
 	// Set Rot in mapDealNode
 	return new < PathNode > [
 		initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
@@ -154,7 +154,7 @@ protected static function getNearbyNodesAndInitFGH(n: PathNode, host: Game, owne
 	];
 }
 
-protected static function getLeastFNode(nodes: PathNode[]): PathNode {
+protected static getLeastFNode(nodes: PathNode[]): PathNode {
 	if (nodes == null)
 		return null;
 	var _leastNode: PathNode = null;
@@ -170,14 +170,14 @@ protected static function getLeastFNode(nodes: PathNode[]): PathNode {
 	return _leastNode;
 }
 
-protected static function initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
+protected static initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
 	// Set Rot in mapDealNode
 	n.G = getPathWeight(n, host, owner);
 	n.H = n.getManhattanDistance(target) * 10; // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
 	return n;
 }
 
-protected static function mapDealNode(n: PathNode, host: Game, fromRot: uint): PathNode {
+protected static mapDealNode(n: PathNode, host: Game, fromRot: uint): PathNode {
 	n.fromRot = fromRot;
 	return host.lockIPointInMap(n) as PathNode;
 }
@@ -189,7 +189,7 @@ protected static function mapDealNode(n: PathNode, host: Game, fromRot: uint): P
  * @param	player	The player.
  * @return	A int will be multi with G.
  */
-protected static function getPathWeight(node: PathNode, host: Game, player: Player): int {
+protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
 	var damage: int = host.getBlockPlayerDamage(node.x, node.y);
 	if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 		return 1000;
@@ -199,7 +199,7 @@ protected static function getPathWeight(node: PathNode, host: Game, player: Play
 }
 
 //========Dynamic A* PathFind========//
-static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
 	var nearbyNodes: PathNode[] = new < PathNode > [
 		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
@@ -220,21 +220,21 @@ static function getDynamicNode(start: iPoint, target: iPoint, host: Game, owner:
 	return _leastNode;
 }
 
-static function pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
+static pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
 	if (p == null || r == null || r.length < 1)
 		return false;
 	return r[p.x][p.y];
 }
 
-static function writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: boolean): void {
+static writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: boolean): void {
 	remember[x][y] = value;
 }
 
-static function writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolean): void {
+static writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolean): void {
 	remember[p.x][p.y] = value;
 }
 
-static function getEntityName(target: EntityCommon): string {
+static getEntityName(target: EntityCommon): string {
 	if (target == null)
 		return 'null';
 	if (target is Player)
@@ -247,12 +247,12 @@ static function getEntityName(target: EntityCommon): string {
  * @param	owner	the owner.
  * @param	message	the text without AIPlayer name.
  */
-static function traceLog(owner: Player, message: string): void {
-	if (DEBUG)
+static traceLog(owner: Player, message: string): void {
+	if(DEBUG)
 		trace(owner.customName + ':', message);
 }
 
-protected static function initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
+protected static initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
 	return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
 }
 
@@ -270,8 +270,8 @@ protected _lastTarget: EntityCommon;
 // AI Judging about
 protected _pickupFirst: boolean = true;
 
-//============Constructor Function============//
-public AIProgram_Adventurer(): void {
+//============Constructor & Destructor============//
+public constructor() {
 	this._lastTarget = null;
 	this._closeTarget = new EntityCommon[]();
 }
@@ -348,7 +348,7 @@ public getNearestEnemy(owner: Player, host: Game): Player {
 	var _tempDistance: int;
 	var players: Player[] = host.getAlivePlayers();
 	for (var player of players) {
-		if (player == owner || !owner.canUseWeaponHurtPlayer(player, owner.weapon) ||
+		if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 			player == null || this.inCloseTarget(player))
 			continue;
 		_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
@@ -391,7 +391,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 	if (!player.hasAction) {
 		// Clear Invalid Target
 		if (this._lastTarget != null && !this._lastTarget.isActive ||
-			lastTargetPlayer != null && (!player.canUseWeaponHurtPlayer(lastTargetPlayer, player.weapon) ||
+			lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
 				lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
 			this.resetTarget();
 		}
@@ -424,15 +424,15 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			if (GlobalRot.isValidRot(tempRot) &&
 				detectCarryBlock(player) &&
 				lastTargetPlayer != null &&
-				weaponUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
-				player.canUseWeaponHurtPlayer(lastTargetPlayer, player.weapon)) {
+				toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
+				player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
 				// Reset
 				this.resetRemember();
 				// Trun
 				if (player.rot != tempRot)
 					player.addActionToThread(AIPlayerAction.getTrunActionFromEntityRot(tempRot));
 				// Press Use
-				if (player.weaponReverseCharge) {
+				if (player.toolReverseCharge) {
 					if (player.chargingPercent >= 1)
 						return AIPlayerAction.PRESS_KEY_USE;
 					else if (player.isPress_Use)
@@ -511,7 +511,7 @@ public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player
 public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 	// Hurt By Target
 	if (attacker != null && attacker != this._lastTarget && attacker != player &&
-		player.canUseWeaponHurtPlayer(attacker, player.weapon)) {
+		player.canUseToolHurtPlayer(attacker, player.tool)) {
 		this.changeTarget(player, attacker);
 	}
 	return AIPlayerAction.NULL;
@@ -582,7 +582,7 @@ class PathNode extends iPoint {
 	 * Didn't include the root
 	 */
 	public get pathToRoot(): PathNode[] {
-		var result: PathNode[] = new < PathNode > [this];
+		var result: PathNode[] = new Array<PathNode>(this);
 		var p: PathNode = this.parent;
 		while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 			p = p.parent;
@@ -592,13 +592,13 @@ class PathNode extends iPoint {
 	}
 
 	// Constructor
-	public PathNode(x: int, y: int, parent: PathNode = null): void {
+	public constructor(x: int, y: int, parent: PathNode = null) {
 		super(x, y);
 		this.parent = parent;
 	}
 
 	// Static Constructor
-	public static function fromPoint(p: iPoint): PathNode {
+	public static fromPoint(p: iPoint): PathNode {
 		return new PathNode(p.x, p.y, null);
 	}
 
@@ -628,7 +628,7 @@ class PathNode extends iPoint {
 		return this;
 	}
 
-	public override function toString(): string {
+	override toString(): string {
 		return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 	}
 }
@@ -641,7 +641,7 @@ class NodeHeap {
 	 * @param	i	index start at 0
 	 * @return	The index start at 0
 	 */
-	protected static function getLeftIndex(i: uint): uint {
+	protected static getLeftIndex(i: uint): uint {
 		return ((i + 1) << 1) - 1;
 	}
 
@@ -649,7 +649,7 @@ class NodeHeap {
 	 * @param	i	index start at 0
 	 * @return	The index start at 0
 	 */
-	protected static function getRightIndex(i: uint): uint {
+	protected static getRightIndex(i: uint): uint {
 		return (i + 1) << 1;
 	}
 
@@ -657,7 +657,7 @@ class NodeHeap {
 	 * @param	i	index start at 0
 	 * @return	The index start at 0
 	 */
-	protected static function getParentIndex(i: uint): uint {
+	protected static getParentIndex(i: uint): uint {
 		return ((i + 1) >> 1) - 1;
 	}
 
@@ -671,7 +671,7 @@ class NodeHeap {
 		return this._list[0];
 	}
 
-	public NodeHeap(): void {
+	public constructor() {
 	}
 
 	public add(node: PathNode): void {

@@ -1,93 +1,84 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
 
-	import batr.general.*;
+// A Mark to SpawnPoint
+export default class SpawnPointMark extends BlockCommon {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = 0x808080;
+	public static readonly FILL_COLOR: uint = 0xcccccc;
+	public static readonly CENTER_COLOR: uint = 0x8000ff;
+	public static readonly BASE_ALPHA: number = 0.5;
 
-	import batr.game.block.*;
+	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
 
-	// A Mark to SpawnPoint
-	export default class SpawnPointMark extends BlockCommon {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = 0x808080;
-		public static const FILL_COLOR: uint = 0xcccccc;
-		public static const CENTER_COLOR: uint = 0x8000ff;
-		public static const BASE_ALPHA: number = 0.5;
 
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
+	//============Constructor & Destructor============//
+	public constructor() {
+		super(BlockAttributes.SPAWN_POINT_MARK);
+	}
 
-		//============Instance Variables============//
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public SpawnPointMark(): void {
-			super();
-			this.drawMain();
-		}
+	override clone(): BlockCommon {
+		return new SpawnPointMark();
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
+	//============Display Implements============//
+	public shapeInit(shape: IBatrShape): void {
+		// Base
+		shape.graphics.beginFill(SpawnPointMark.LINE_COLOR, SpawnPointMark.BASE_ALPHA);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.drawRect(SpawnPointMark.LINE_SIZE, SpawnPointMark.LINE_SIZE, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		shape.graphics.beginFill(SpawnPointMark.FILL_COLOR, SpawnPointMark.BASE_ALPHA);
+		shape.graphics.drawRect(SpawnPointMark.LINE_SIZE, SpawnPointMark.LINE_SIZE, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Center
+		shape.graphics.lineStyle(SpawnPointMark.LINE_SIZE, SpawnPointMark.CENTER_COLOR);
+		this.drawSpawnMark(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 3
+		);
+		this.drawSpawnMark(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 4
+		);
+		this.drawSpawnMark(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 5
+		);
+		this.drawSpawnMark(
+			shape,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 6
+		);
+		/*shape.graphics.beginFill(LINE_COLOR);
+		shape.graphics.drawCircle(
+			DEFAULT_SIZE/2,
+			DEFAULT_SIZE/2,
+			DEFAULT_SIZE/10
+		);
+		shape.graphics.endFill();*/
+	}
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.SPAWN_POINT_MARK;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.SPAWN_POINT_MARK;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new SpawnPointMark();
-		}
-
-		protected override function drawMain(): void {
-			// Base
-			this.graphics.beginFill(LINE_COLOR, BASE_ALPHA);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			this.graphics.beginFill(FILL_COLOR, BASE_ALPHA);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Center
-			this.graphics.lineStyle(LINE_SIZE, CENTER_COLOR);
-			this.drawSpawnMark(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 3
-			);
-			this.drawSpawnMark(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 4
-			);
-			this.drawSpawnMark(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 5
-			);
-			this.drawSpawnMark(
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 6
-			);
-			/*this.graphics.beginFill(LINE_COLOR);
-			this.graphics.drawCircle(
-				GlobalGameVariables.DEFAULT_SIZE/2,
-				GlobalGameVariables.DEFAULT_SIZE/2,
-				GlobalGameVariables.DEFAULT_SIZE/10
-			);
-			this.graphics.endFill();*/
-		}
-
-		private drawSpawnMark(cX: number, cY: int, radius: number): void {
-			this.graphics.drawRect(cX - radius, cY - radius, radius * 2, radius * 2);
-			this.graphics.moveTo(cX - radius, cY);
-			this.graphics.lineTo(cX, cY + radius);
-			this.graphics.lineTo(cX + radius, cY);
-			this.graphics.lineTo(cX, cY - radius);
-			this.graphics.lineTo(cX - radius, cY);
-		}
+	protected drawSpawnMark(shape: IBatrShape, cX: number, cY: number, radius: number): void {
+		shape.graphics.drawRect(cX - radius, cY - radius, radius * 2, radius * 2);
+		shape.graphics.moveTo(cX - radius, cY);
+		shape.graphics.lineTo(cX, cY + radius);
+		shape.graphics.lineTo(cX + radius, cY);
+		shape.graphics.lineTo(cX, cY - radius);
+		shape.graphics.lineTo(cX - radius, cY);
 	}
 }

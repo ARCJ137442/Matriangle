@@ -8,11 +8,11 @@ package batr.game.effect {
 
 	export default class EffectCommon extends MovieClip {
 		//============Static Variables============//
-		protected static const DEFAULE_MAX_LIFE: uint = GlobalGameVariables.TPS;
-		protected static var _NEXT_UUID: uint = 0;
+		protected static readonly DEFAULE_MAX_LIFE: uint = GlobalGameVariables.TPS;
+		protected static _NEXT_UUID: uint = 0;
 
 		//============Static Functions============//
-		public static function inValidUUID(effect: EffectCommon): boolean {
+		public static inValidUUID(effect: EffectCommon): boolean {
 			return effect._uuid == 0;
 		}
 
@@ -23,8 +23,8 @@ package batr.game.effect {
 		protected life: uint;
 		protected LIFE: uint;
 
-		//============Constructor Function============//
-		public EffectCommon(host: Game, x: number, y: number, maxLife: uint = DEFAULE_MAX_LIFE, active: boolean = true): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, maxLife: uint = DEFAULE_MAX_LIFE, active: boolean = true) {
 			super();
 			// Init ID
 			this._uuid = _NEXT_UUID;
@@ -42,7 +42,7 @@ package batr.game.effect {
 
 		//============Destructor Function============//
 		public destructor(): void {
-			this.graphics.clear();
+			shape.graphics.clear();
 			this._uuid = 0;
 			this.isActive = false;
 			this.life = this.LIFE = 0;
@@ -62,7 +62,7 @@ package batr.game.effect {
 			return this._isActive;
 		}
 
-		public set isActive(value: boolean): void {
+		public set isActive(value: boolean) {
 			if (value == this._isActive)
 				return;
 			this._isActive = value;
@@ -72,7 +72,7 @@ package batr.game.effect {
 			return GlobalRot.fromRealRot(this.rotation);
 		}
 
-		public set rot(value: number): void {
+		public set rot(value: number) {
 			if (value == this.rot)
 				return;
 			this.rotation = GlobalRot.toRealRot(value);
@@ -97,7 +97,7 @@ package batr.game.effect {
 				_host.effectSystem.removeEffect(this);
 		}
 
-		public drawShape(): void {
+		public shapeInit(shape: IBatrShape): void {
 		}
 
 		//====Position Functions====//

@@ -22,7 +22,7 @@ package batr.menu.object.selector {
 
 	export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElement {
 		//============Static Variables============//
-		protected static const ARROW_OFFSET: number = GlobalGameVariables.DEFAULT_SIZE / 10;
+		protected static readonly ARROW_OFFSET: number = DEFAULT_SIZE / 10;
 
 		//============Static Functions============//
 
@@ -31,7 +31,7 @@ package batr.menu.object.selector {
 		 * @param	selector1	the first selector carries content.
 		 * @param	selector2	the second selector that will lost its content.
 		 */
-		public static function setRelativeLink(selector1: BatrSelector, selector2: BatrSelector): void {
+		public static setRelativeLink(selector1: BatrSelector, selector2: BatrSelector): void {
 			selector1.setLinkTarget(selector2, false);
 			selector2.setLinkTarget(selector1, false);
 		}
@@ -50,9 +50,9 @@ package batr.menu.object.selector {
 		 */
 		protected _linkTarget: BatrSelector = null;
 
-		//============Constructor Function============//
-		public BatrSelector(content: BatrSelectorContent,
-			minTextWidth: number = 2 * GlobalGameVariables.DEFAULT_SIZE): void {
+		//============Constructor & Destructor============//
+		public constructor(content: BatrSelectorContent,
+			minTextWidth: number = 2 * DEFAULT_SIZE): void {
 			super();
 			this._Content = content;
 			this._minTextWidth = minTextWidth;
@@ -71,7 +71,7 @@ package batr.menu.object.selector {
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			this._leftArrow.destructor();
 			this._rightArrow.destructor();
 			this._textField.destructor();
@@ -93,7 +93,7 @@ package batr.menu.object.selector {
 			return this._linkTarget;
 		}
 
-		public set linkTarget(value: BatrSelector): void {
+		public set linkTarget(value: BatrSelector) {
 			{ // if(isValidTarget(value))
 				this._linkTarget = value;
 				this.copyContentTo(this._linkTarget);
@@ -159,8 +159,8 @@ package batr.menu.object.selector {
 
 		protected updateText(): void {
 			this._textField.setTextFormat(Menu.TEXT_FORMAT);
-			this._textField.width = this._textField.textWidth + GlobalGameVariables.DEFAULT_SIZE / 10;
-			this._textField.height = this._textField.textHeight + GlobalGameVariables.DEFAULT_SIZE / 20;
+			this._textField.width = this._textField.textWidth + DEFAULT_SIZE / 10;
+			this._textField.height = this._textField.textHeight + DEFAULT_SIZE / 20;
 			this._textField.x = -this._textField.width / 2;
 			this._textField.y = -this._textField.height / 2;
 			this._leftArrow.x = -Math.max(this._textField.textWidth + this._leftArrow.displayWidth, this._minTextWidth) / 2 - ARROW_OFFSET;
@@ -176,7 +176,7 @@ package batr.menu.object.selector {
 			return this;
 		}
 
-		protected override function drawShape(): void {
+		override drawShape(): void {
 		}
 
 		public setLinkTo(target: BatrSelector): BatrSelector {

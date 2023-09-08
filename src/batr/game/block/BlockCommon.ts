@@ -2,78 +2,108 @@
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
+import { getClass } from "../../common/Utils";
+import { Class, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
+import { IBatrRenderable, IBatrShape } from "../../render/BatrDisplayInterfaces";
+import BlockAttributes from "./BlockAttributes";
+
 // import flash.display.Shape;
 // import flash.events.Event;
 
-export default class BlockCommon extends Shape {
-	//============Static Functions============//
-	public static function fromType(type: BlockType): BlockCommon {
-		switch (type) {
-			case BlockType.X_TRAP_HURT:
-			case BlockType.X_TRAP_KILL:
-			case BlockType.X_TRAP_ROTATE:
-				return new XTrap(type);
-			case BlockType.GATE_OPEN:
-				return new Gate(true);
-			case BlockType.GATE_CLOSE:
-				return new Gate(false);
-			default:
-				if (type != null && type.currentBlock != null)
-					return new type.currentBlock();
-				else
-					return null;
-		}
+export type BlockType = Class;
+
+/**
+ * One of the fundamental element in BaTr
+ */
+export default abstract class BlockCommon implements IBatrRenderable {
+
+	//============Static============//
+	/**
+	 * ! the original implement of `XXType` now will be combined as static variables and functions, or be concentrated to module `XXRegistry`
+	 */
+
+	// ? so it could be generalized to registry
+	// * and it may be uses the class directly
+	// public static fromType(type: BlockType): BlockCommon {
+	// 	switch (type) {
+	// 		case BlockType.X_TRAP_HURT:
+	// 		case BlockType.X_TRAP_KILL:
+	// 		case BlockType.X_TRAP_ROTATE:
+	// 			return new XTrap(type);
+	// 		case BlockType.GATE_OPEN:
+	// 			return new Gate(true);
+	// 		case BlockType.GATE_CLOSE:
+	// 			return new Gate(false);
+	// 		default:
+	// 			if (type != null && type.currentBlock != null)
+	// 				return new type.currentBlock();
+	// 			else
+	// 				return null;
+	// 	}
+	// }
+
+	// public static fromMapColor(color: uint): BlockCommon {
+	// 	return BlockCommon.fromType(BlockType.fromMapColor(color));
+	// }
+
+	//============Constructor & Destructor============//
+	public constructor(attributes: BlockAttributes) {
+		// super();
+		this._attributes = attributes;
 	}
 
-	public static function fromMapColor(color: uint): BlockCommon {
-		return BlockCommon.fromType(BlockType.fromMapColor(color));
-	}
+	public destructor(): void {
 
-	//============Constructor Function============//
-	public BlockCommon(): void {
-		super();
 	}
 
 	public clone(): BlockCommon {
-		return new BlockCommon();
+		throw new Error("Method not implemented.");
 	}
 
-	//============Destructor Function============//
-	public destructor(): void {
-		this.graphics.clear();
-	}
-
-	//============Instance Getter And Setter============//
+	//============Game Mechanics============//
+	/**
+	 * Every Block has a `BlockAttributes` to define its nature, 
+	 * it determinate the block's behavior in game.
+	 * 
+	 * * It only contains the **reference** of the attributes, so it don't uses much of memory when it is linked to a static constant.
+	 */
+	protected _attributes: BlockAttributes;
 	public get attributes(): BlockAttributes {
-		return BlockAttributes.ABSTRACT;
+		return this._attributes;
 	}
 
+	/**
+	 * It don't implements as another object
+	 * 
+	 * ! It will directly returns its constructor
+	 */
 	public get type(): BlockType {
-		return BlockType.ABSTRACT;
+		return getClass(this);
 	}
 
+	//============Display Implements============//
+
+	/**
+	 * Determinate the single-pixel color
+	 */
 	public get pixelColor(): uint {
-		if (this.attributes == null)
-			return 0xffffff;
-		return this.attributes.defaultPixelColor;
+		return this.attributes.defaultPixelColor // default
 	}
 
-	public get pixelAlpha(): uint {
-		if (this.attributes == null)
-			return uint$MAX_VALUE;
-		return this.attributes.defaultPixelAlpha;
+	public get pixelAlpha(): number {
+		return this.attributes.defaultPixelAlpha // default
 	}
 
-	//============Instance Functions============//
-	public displayEquals(block: BlockCommon): boolean {
-		return this === block;
+	public shapeRefresh(shape: IBatrShape): void {
+		this.shapeDestruct(shape);
+		this.shapeInit(shape);
 	}
 
-	public reDraw(): void {
-		this.graphics.clear();
-		this.drawMain();
+	public shapeInit(shape: IBatrShape): void {
+
 	}
 
-	protected drawMain(): void {
+	public shapeDestruct(shape: IBatrShape): void {
+		shape.graphics.clear();
 	}
 }

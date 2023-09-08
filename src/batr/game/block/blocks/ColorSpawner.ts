@@ -1,67 +1,58 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
+import BlockBedrock from "./Bedrock";
 
-	import batr.general.*;
+export default class BlockColorSpawner extends BlockCommon {
+	//============Static Variables============//
+	public static readonly LINE_COLOR: uint = BlockBedrock.LINE_COLOR;
+	public static readonly FILL_COLOR: uint = BlockBedrock.FILL_COLOR;
+	public static readonly CENTER_COLOR: uint = 0x444444;
 
-	import batr.game.block.*;
+	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
 
-	export default class ColorSpawner extends BlockCommon {
-		//============Static Variables============//
-		public static const LINE_COLOR: uint = Bedrock.LINE_COLOR;
-		public static const FILL_COLOR: uint = Bedrock.FILL_COLOR;
-		public static const CENTER_COLOR: uint = 0x444444;
+	//============Instance Variables============//
 
-		public static const LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
+	//============Constructor & Destructor============//
+	public constructor() {
+		super(BlockAttributes.COLOR_SPAWNER);
+	}
 
-		//============Instance Variables============//
+	override destructor(): void {
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public ColorSpawner(): void {
-			super();
-			this.drawMain();
-		}
+	override clone(): BlockCommon {
+		return new BlockColorSpawner();
+	}
 
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
+	//============Display Implements============//
 
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.COLOR_SPAWNER;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.COLOR_SPAWNER;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new ColorSpawner();
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(LINE_COLOR);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(FILL_COLOR);
-			this.graphics.drawRect(LINE_SIZE, LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Circle
-			this.graphics.lineStyle(GlobalGameVariables.DEFAULT_SIZE / 32, CENTER_COLOR);
-			// 1
-			this.graphics.drawCircle(GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE * 0.4);
-			// 2
-			this.graphics.drawCircle(GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE * 0.25);
-			// 3
-			this.graphics.drawCircle(GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE / 2,
-				GlobalGameVariables.DEFAULT_SIZE * 0.325);
-		}
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		// Line
+		shape.graphics.beginFill(BlockColorSpawner.LINE_COLOR);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(BlockColorSpawner.FILL_COLOR);
+		shape.graphics.drawRect(BlockColorSpawner.LINE_SIZE, BlockColorSpawner.LINE_SIZE, DEFAULT_SIZE - BlockColorSpawner.LINE_SIZE * 2, DEFAULT_SIZE - BlockColorSpawner.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Circle
+		shape.graphics.lineStyle(DEFAULT_SIZE / 32, BlockColorSpawner.CENTER_COLOR);
+		// 1
+		shape.graphics.drawCircle(DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE * 0.4);
+		// 2
+		shape.graphics.drawCircle(DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE * 0.25);
+		// 3
+		shape.graphics.drawCircle(DEFAULT_SIZE / 2,
+			DEFAULT_SIZE / 2,
+			DEFAULT_SIZE * 0.325);
 	}
 }

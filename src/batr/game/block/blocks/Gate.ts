@@ -1,74 +1,77 @@
-package batr.game.block.blocks {
+import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
 
-	import batr.game.block.*;
-	import batr.game.block.blocks.*;
-	import batr.general.*;
+export default class BlockGate extends BlockCommon {
+	//============Static Variables============//
+	protected static readonly BLOCK_SIZE: uint = DEFAULT_SIZE;
+	protected static readonly LINE_SIZE: uint = this.BLOCK_SIZE / 20;
 
-	import flash.display.*;
+	public static readonly LINE_COLOR: uint = 0xaaaaaa;
+	public static readonly FILL_COLOR: uint = 0xbbbbbb;
+	public static readonly CENTER_COLOR: uint = 0x666666;
 
-	export default class Gate extends BlockCommon {
-		//============Static Variables============//
-		protected static const BLOCK_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE;
-		protected static const LINE_SIZE: uint = BLOCK_SIZE / 20;
+	//============Constructor Functions============//
 
-		public static const LINE_COLOR: uint = 0xaaaaaa;
-		public static const FILL_COLOR: uint = 0xbbbbbb;
-		public static const CENTER_COLOR: uint = 0x666666;
+	//============Instance Variables============//
+	protected _open: boolean;
 
-		//============Constructor Functions============//
+	//============Constructor & Destructor============//
+	public constructor(open: boolean) {
+		super(BlockAttributes.ABSTRACT);
+		this._open = open;
+		this.updateAttributes();
+	}
 
-		//============Instance Variables============//
-		private _open: boolean;
+	override destructor(): void {
+		this._open = false;
+		super.destructor();
+	}
 
-		//============Constructor Function============//
-		public Gate(open: boolean): void {
-			super();
-			this._open = open;
-			this.drawMain();
+	override clone(): BlockCommon {
+		return new BlockGate(this._open);
+	}
+
+
+	//============Game Mechanics============//
+	public updateAttributes(): void {
+		this._attributes = this._open ? BlockAttributes.GATE_OPEN : BlockAttributes.GATE_CLOSE;
+	}
+
+	public get open(): boolean {
+		return this._open
+	}
+
+	public set open(open: boolean) {
+		this._open = open;
+		this.updateAttributes();
+	}
+
+	//============Display Implements============//
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		if (this._open) {
+			// Line
+			shape.graphics.beginFill(BlockGate.LINE_COLOR);
+			shape.graphics.drawRect(0, 0, BlockGate.BLOCK_SIZE, BlockGate.BLOCK_SIZE);
+			shape.graphics.drawRect(BlockGate.LINE_SIZE, BlockGate.LINE_SIZE, BlockGate.BLOCK_SIZE - BlockGate.LINE_SIZE * 2, BlockGate.BLOCK_SIZE - BlockGate.LINE_SIZE * 2);
+			shape.graphics.endFill();
 		}
-
-		//============Destructor Function============//
-		public override function destructor(): void {
-			this._open = false;
-			super.destructor();
-		}
-
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return this._open ? BlockAttributes.GATE_OPEN : BlockAttributes.GATE_CLOSE;
-		}
-
-		public override function get type(): BlockType {
-			return this._open ? BlockType.GATE_OPEN : BlockType.GATE_CLOSE;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Gate(this._open);
-		}
-
-		protected override function drawMain(): void {
-			if (this._open) {
-				// Line
-				this.graphics.beginFill(LINE_COLOR);
-				this.graphics.drawRect(0, 0, BLOCK_SIZE, BLOCK_SIZE);
-				this.graphics.drawRect(LINE_SIZE, LINE_SIZE, BLOCK_SIZE - LINE_SIZE * 2, BLOCK_SIZE - LINE_SIZE * 2);
-				this.graphics.endFill();
-			}
-			else {
-				this.graphics.beginFill(LINE_COLOR);
-				this.graphics.drawRect(0, 0, BLOCK_SIZE, BLOCK_SIZE);
-				this.graphics.endFill();
-				// Fill
-				this.graphics.beginFill(FILL_COLOR);
-				this.graphics.drawRect(LINE_SIZE, LINE_SIZE, BLOCK_SIZE - LINE_SIZE * 2, BLOCK_SIZE - LINE_SIZE * 2);
-				this.graphics.endFill();
-				// Center
-				this.graphics.beginFill(CENTER_COLOR);
-				this.graphics.drawCircle(BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 3);
-				this.graphics.drawCircle(BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 4);
-				this.graphics.endFill();
-			}
+		else {
+			shape.graphics.beginFill(BlockGate.LINE_COLOR);
+			shape.graphics.drawRect(0, 0, BlockGate.BLOCK_SIZE, BlockGate.BLOCK_SIZE);
+			shape.graphics.endFill();
+			// Fill
+			shape.graphics.beginFill(BlockGate.FILL_COLOR);
+			shape.graphics.drawRect(BlockGate.LINE_SIZE, BlockGate.LINE_SIZE, BlockGate.BLOCK_SIZE - BlockGate.LINE_SIZE * 2, BlockGate.BLOCK_SIZE - BlockGate.LINE_SIZE * 2);
+			shape.graphics.endFill();
+			// Center
+			shape.graphics.beginFill(BlockGate.CENTER_COLOR);
+			shape.graphics.drawCircle(BlockGate.BLOCK_SIZE / 2, BlockGate.BLOCK_SIZE / 2, BlockGate.BLOCK_SIZE / 3);
+			shape.graphics.drawCircle(BlockGate.BLOCK_SIZE / 2, BlockGate.BLOCK_SIZE / 2, BlockGate.BLOCK_SIZE / 4);
+			shape.graphics.endFill();
 		}
 	}
 }

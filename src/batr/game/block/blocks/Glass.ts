@@ -1,54 +1,41 @@
-﻿package batr.game.block.blocks {
+﻿import { uint } from "../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon from "../BlockCommon";
+import BlockColored from "./Colored";
 
-	import batr.general.*;
+export default class BlockGlass extends BlockColored {
 
-	import batr.game.block.*;
-	import batr.game.block.blocks.*;
+	//============Constructor & Destructor============//
+	public constructor(color: uint = 0xddffff) {
+		super(color);
+		this._attributes = BlockAttributes.GLASS;
+	}
 
-	import flash.display.*;
+	override destructor(): void {
+		super.destructor();
+	}
 
-	export default class Glass extends ColoredBlock {
-		//============Static Variables============//
-		protected static const LINE_SIZE: uint = GlobalGameVariables.DEFAULT_SIZE / 16;
-		protected static const ALPHA_FRAME: number = 0.6;
-		protected static const ALPHA_FILL: number = 0.2;
+	override clone(): BlockCommon {
+		return new BlockGlass(this._color);
+	}
 
-		//============Instance Variables============//
+	//============Display Implements============//
+	protected static readonly LINE_SIZE: uint = DEFAULT_SIZE / 16;
+	protected static readonly ALPHA_FRAME: number = 0.6;
+	protected static readonly ALPHA_FILL: number = 0.2;
 
-		//============Constructor Function============//
-		public Glass(color: uint = 0xddffff): void {
-			super(color);
-		}
-
-		//============Destructor Function============//
-		public override function destructor(): void {
-			super.destructor();
-		}
-
-		//============Instance Getter And Setter============//
-		public override function get attributes(): BlockAttributes {
-			return BlockAttributes.GLASS;
-		}
-
-		public override function get type(): BlockType {
-			return BlockType.GLASS;
-		}
-
-		//============Instance Functions============//
-		public override function clone(): BlockCommon {
-			return new Glass(this._fillColor);
-		}
-
-		protected override function drawMain(): void {
-			// Line
-			this.graphics.beginFill(this._fillColor, Glass.ALPHA_FRAME);
-			this.graphics.drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE, GlobalGameVariables.DEFAULT_SIZE);
-			this.graphics.drawRect(Glass.LINE_SIZE, Glass.LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - Glass.LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - Glass.LINE_SIZE * 2);
-			this.graphics.endFill();
-			// Fill
-			this.graphics.beginFill(this._fillColor, Glass.ALPHA_FILL);
-			this.graphics.drawRect(Glass.LINE_SIZE, Glass.LINE_SIZE, GlobalGameVariables.DEFAULT_SIZE - Glass.LINE_SIZE * 2, GlobalGameVariables.DEFAULT_SIZE - Glass.LINE_SIZE * 2);
-			this.graphics.endFill();
-		}
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape);
+		// Line
+		shape.graphics.beginFill(this._color, BlockGlass.ALPHA_FRAME);
+		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		shape.graphics.drawRect(BlockGlass.LINE_SIZE, BlockGlass.LINE_SIZE, DEFAULT_SIZE - BlockGlass.LINE_SIZE * 2, DEFAULT_SIZE - BlockGlass.LINE_SIZE * 2);
+		shape.graphics.endFill();
+		// Fill
+		shape.graphics.beginFill(this._color, BlockGlass.ALPHA_FILL);
+		shape.graphics.drawRect(BlockGlass.LINE_SIZE, BlockGlass.LINE_SIZE, DEFAULT_SIZE - BlockGlass.LINE_SIZE * 2, DEFAULT_SIZE - BlockGlass.LINE_SIZE * 2);
+		shape.graphics.endFill();
 	}
 }

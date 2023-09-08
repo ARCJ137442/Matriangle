@@ -8,13 +8,13 @@ package batr.main {
 
 	export default class Background extends Sprite {
 		//============Static Variables============//
-		public static const BACKGROUND_COLOR: uint = 0xdddddd;
-		public static const GRID_COLOR: uint = 0xd6d6d6;
-		public static const GRID_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 32;
-		public static const DEFAULT_DISPLAY_GRIDS: uint = GlobalGameVariables.DISPLAY_GRIDS;
-		public static const GRID_SPREAD: uint = 0;
-		public static const FRAME_LINE_COLOR: uint = 0x88ffff;
-		public static const FRAME_LINE_SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 8;
+		public static readonly BACKGROUND_COLOR: uint = 0xdddddd;
+		public static readonly GRID_COLOR: uint = 0xd6d6d6;
+		public static readonly GRID_SIZE: number = DEFAULT_SIZE / 32;
+		public static readonly DEFAULT_DISPLAY_GRIDS: uint = GlobalGameVariables.DISPLAY_GRIDS;
+		public static readonly GRID_SPREAD: uint = 0;
+		public static readonly FRAME_LINE_COLOR: uint = 0x88ffff;
+		public static readonly FRAME_LINE_SIZE: number = DEFAULT_SIZE / 8;
 
 		//============Instance Variables============//
 		protected _frame: Sprite;
@@ -25,8 +25,8 @@ package batr.main {
 
 		protected _enableBorderLine: boolean;
 
-		//============Constructor Function============//
-		public Background(width: uint, height: uint,
+		//============Constructor & Destructor============//
+		public constructor(width: uint, height: uint,
 			enableGrid: boolean = true,
 			enableFrame: boolean = true,
 			enableBorderLine: boolean = true) {
@@ -49,7 +49,7 @@ package batr.main {
 
 		//============Destructor Function============//
 		public destructor(): void {
-			this.graphics.clear();
+			shape.graphics.clear();
 
 			this._enableFrame = false;
 
@@ -70,7 +70,7 @@ package batr.main {
 			return _frame.visible;
 		}
 
-		public set frameVisible(value: boolean): void {
+		public set frameVisible(value: boolean) {
 			if (this._frame == null)
 				return;
 
@@ -84,13 +84,13 @@ package batr.main {
 		}
 
 		protected drawGround(width: uint, height: uint): void {
-			this.graphics.beginFill(BACKGROUND_COLOR, 1);
-			this.graphics.drawRect(0, 0, PosTransform.localPosToRealPos(width), PosTransform.localPosToRealPos(height));
+			shape.graphics.beginFill(BACKGROUND_COLOR, 1);
+			shape.graphics.drawRect(0, 0, PosTransform.localPosToRealPos(width), PosTransform.localPosToRealPos(height));
 		}
 
 		protected drawGrid(x: int, y: int, width: uint, height: uint): void {
 			var dx: int = x, dy: int = y, mx: int = x + width, my: int = y + height;
-			this.graphics.lineStyle(GRID_SIZE, GRID_COLOR);
+			shape.graphics.lineStyle(GRID_SIZE, GRID_COLOR);
 			// V
 			while (dx <= mx) {
 				drawLineInGrid(dx, y, dx, my);
@@ -104,7 +104,7 @@ package batr.main {
 		}
 
 		protected drawBorderLine(width: uint, height: uint): void {
-			this.graphics.lineStyle(FRAME_LINE_SIZE, FRAME_LINE_COLOR);
+			shape.graphics.lineStyle(FRAME_LINE_SIZE, FRAME_LINE_COLOR);
 			// V
 			drawLineInGrid(0, 0, 0, height);
 			drawLineInGrid(width, height, 0, height);
@@ -114,7 +114,7 @@ package batr.main {
 		}
 
 		public updateGrid(width: uint, height: uint): void {
-			this.graphics.clear();
+			shape.graphics.clear();
 			this.drawGround(width, height);
 			if (this._enableGrid)
 				this.drawGrid(-GRID_SPREAD, -GRID_SPREAD, width + GRID_SPREAD * 2, height + GRID_SPREAD * 2);
@@ -127,8 +127,8 @@ package batr.main {
 		}
 
 		protected drawLineInGrid(x1: int, y1: int, x2: int, y2: int): void {
-			this.graphics.moveTo(PosTransform.localPosToRealPos(x1), PosTransform.localPosToRealPos(y1));
-			this.graphics.lineTo(PosTransform.localPosToRealPos(x2), PosTransform.localPosToRealPos(y2));
+			shape.graphics.moveTo(PosTransform.localPosToRealPos(x1), PosTransform.localPosToRealPos(y1));
+			shape.graphics.lineTo(PosTransform.localPosToRealPos(x2), PosTransform.localPosToRealPos(y2));
 		}
 
 		public toggleFrameVisible(): void {
@@ -144,8 +144,8 @@ package batr.main {
 				for (var yi: uint = 0; yi < height; yi++) {
 					if ((xi == 0 || xi == width - 1) || (yi == 0 || yi == height - 1)) {
 						var block: BlockCommon = new Bedrock();
-						block.x = GlobalGameVariables.DEFAULT_SIZE * xi;
-						block.y = GlobalGameVariables.DEFAULT_SIZE * yi;
+						block.x = DEFAULT_SIZE * xi;
+						block.y = DEFAULT_SIZE * yi;
 						_frame.addChild(block);
 					}
 				}

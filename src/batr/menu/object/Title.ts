@@ -4,13 +4,13 @@ package batr.menu.objects {
 
 	export default class Title extends Bitmap {
 		//============Static Variables============//
-		public static const WIDTH: number = 2048.75;
-		public static const HEIGHT: number = 609.75;
-		public static const X: number = -23.1;
-		public static const Y: number = -23.1;
+		public static readonly WIDTH: number = 2048.75;
+		public static readonly HEIGHT: number = 609.75;
+		public static readonly X: number = -23.1;
+		public static readonly Y: number = -23.1;
 
-		//============Constructor Function============//
-		public Title(): void {
+		//============Constructor & Destructor============//
+		public constructor() {
 			super(new TitleImg()); // TitleImg.IMAGE_DATA
 			// AddBitMap
 			// var bitmap:Bitmap=new Bitmap();

@@ -20,15 +20,15 @@ package batr.menu.objects {
 		protected _directElements: IBatrMenuElement[];
 		protected _keepTitle: boolean;
 
-		//============Constructor Function============//
-		public BatrMenuSheet(keepTitle: boolean = true): void {
+		//============Constructor & Destructor============//
+		public constructor(keepTitle: boolean = true) {
 			super(false);
 			this._keepTitle = keepTitle;
 			this._directElements = new IBatrMenuElement[]();
 		}
 
 		//============Destructor Function============//
-		public override function destructor(): void {
+		override destructor(): void {
 			for (var element of this._directElements) {
 				element.destructor();
 			}
@@ -65,10 +65,10 @@ package batr.menu.objects {
 		 * @return	this
 		 */
 		public setMaskColor(color: uint, alpha: number = 1): BatrMenuSheet {
-			with (this.graphics) {
+			with (shape.graphics) {
 				clear();
 				beginFill(color, alpha);
-				drawRect(0, 0, GlobalGameVariables.DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS);
+				drawRect(0, 0, DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS, DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS);
 				endFill();
 			}
 			return this;

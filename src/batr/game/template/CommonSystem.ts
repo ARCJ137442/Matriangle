@@ -1,19 +1,8 @@
-// import batr.common.*;
-
 import { int, uint } from "../../legacy/AS3Legacy";
 
-// import batr.game.Entry.*;
-// import batr.game.Entry.Entry.*;
-// import batr.game.Entry.Entry.player.*;
-// import batr.game.Entry.Entry.projectile.*;
-// import batr.game.main.*;
-
-// import flash.utils.Dictionary;
-
 /**
- * Use for manage entities in game.
+ * Use for manage entries in game.
  */
-
 export default class CommonSystem<T> {
 	//============Static variables============//
 
@@ -31,7 +20,7 @@ export default class CommonSystem<T> {
 
 	public reuseUUID: boolean = false;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(...entries: T[]) {
 		this._entries = [...entries];
 	}
@@ -48,7 +37,7 @@ export default class CommonSystem<T> {
 		return this._entries;
 	}
 
-	private _temp_numEntries = 0;
+	protected _temp_numEntries = 0;
 	/**
 	 * Return the count of valid entries.
 	 * 

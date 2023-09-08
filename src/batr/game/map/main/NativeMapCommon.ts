@@ -15,7 +15,7 @@ package batr.game.map.main {
 	 */
 	export default class NativeMapCommon implements IMap {
 		//============Static Functions============//
-		protected static function getTargetByLayer(l: int, top: IMapDisplayer, bottom: IMapDisplayer, middle: IMapDisplayer): IMapDisplayer {
+		protected static getTargetByLayer(l: int, top: IMapDisplayer, bottom: IMapDisplayer, middle: IMapDisplayer): IMapDisplayer {
 			return l > 0 ? top : (l < 0 ? bottom : middle);
 		}
 
@@ -25,7 +25,7 @@ package batr.game.map.main {
 		protected _name: string;
 
 		//============Constructor============//
-		public NativeMapCommon(name: string, arena: boolean = false): void {
+		public constructor(name: string, arena: boolean = false) {
 			super();
 			this._arena = arena;
 			this._name = name;
@@ -88,7 +88,7 @@ package batr.game.map.main {
 		/**
 		 * This property determines this map's
 		 * switch/mechine/trap/spawner can be destroy or carry
-		 * by Weapon BlockThrower.
+		 * by Tool BlockThrower.
 		 */
 		public get isArenaMap(): boolean {
 			return this._arena;

@@ -76,7 +76,7 @@ export default class ChemicalElement {
 	protected _symbol: string;
 	protected _ordinal: uint;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	protected constructor(ordinal: uint, symbol: string) {
 		if (!ChemicalElement._allowCreate) {
 			throw new Error('Invalid constructor');

@@ -17,110 +17,110 @@
 		//============Static Variables============//
 		//========Rules========//
 		//====Player====//
-		protected static const d_playerCount: uint = 1;
-		protected static const d_AICount: uint = 3;
+		protected static readonly d_playerCount: uint = 1;
+		protected static readonly d_AICount: uint = 3;
 
 		//====Team====//
-		protected static const d_coloredTeamCount: uint = 8;
-		protected static const d_grayscaleTeamCount: uint = 3;
-		protected static const d_playerTeams: PlayerTeam[] = initPlayerTeams(d_coloredTeamCount, d_grayscaleTeamCount);
+		protected static readonly d_coloredTeamCount: uint = 8;
+		protected static readonly d_grayscaleTeamCount: uint = 3;
+		protected static readonly d_playerTeams: PlayerTeam[] = initPlayerTeams(d_coloredTeamCount, d_grayscaleTeamCount);
 
 		/**
 		 * Allows players change their teams by general means
 		 */
-		protected static const d_allowPlayerChangeTeam: boolean = true;
+		protected static readonly d_allowPlayerChangeTeam: boolean = true;
 
 		//====GamePlay====//
-		protected static const d_defaultHealth: uint = 100;
-		protected static const d_defaultMaxHealth: uint = 100;
+		protected static readonly d_defaultHealth: uint = 100;
+		protected static readonly d_defaultMaxHealth: uint = 100;
 
 		/**
 		 * Use as a int with negative numbers means infinity
 		 */
-		protected static const d_remainLifesPlayer: int = -1;
+		protected static readonly d_remainLifesPlayer: int = -1;
 
-		protected static const d_remainLifesAI: int = -1;
+		protected static readonly d_remainLifesAI: int = -1;
 
-		protected static const d_defaultRespawnTime: uint = 3 * GlobalGameVariables.TPS; // tick
-		protected static const d_deadPlayerMoveToX: number = -10;
+		protected static readonly d_defaultRespawnTime: uint = 3 * GlobalGameVariables.TPS; // tick
+		protected static readonly d_deadPlayerMoveToX: number = -10;
 
-		protected static const d_deadPlayerMoveToY: number = -10;
+		protected static readonly d_deadPlayerMoveToY: number = -10;
 
-		protected static const d_recordPlayerStats: boolean = true;
+		protected static readonly d_recordPlayerStats: boolean = true;
 
 		/**
 		 * Negative Number means asphyxia can kill player
 		 */
-		protected static const d_playerAsphyxiaDamage: int = 15;
+		protected static readonly d_playerAsphyxiaDamage: int = 15;
 
 		//====Bonus====//
 
 		/**
 		 * negative number means infinity
 		 */
-		protected static const d_bonusBoxMaxCount: int = 8;
+		protected static readonly d_bonusBoxMaxCount: int = 8;
 
 		/**
 		 * [{Type:<Type>,Weight:<Number>},...]
 		 */
-		protected static const d_bonusBoxSpawnPotentials: object[] = null;
+		protected static readonly d_bonusBoxSpawnPotentials: object[] = null;
 
 		/**
 		 * null means all type can be spawned and they have same weight
 		 */
-		protected static const d_bonusBoxSpawnAfterPlayerDeath: boolean = true;
+		protected static readonly d_bonusBoxSpawnAfterPlayerDeath: boolean = true;
 
 		//====Bonus's Buff====//
 
 		/**
 		 * Determines bonus(type=buffs)'s amount of addition
 		 */
-		protected static const d_bonusBuffAdditionAmount: uint = 1;
+		protected static readonly d_bonusBuffAdditionAmount: uint = 1;
 
 		/**
 		 * Determines bonus(type=ADD_LIFE)'s amount of addition
 		 */
-		protected static const d_bonusMaxHealthAdditionAmount: uint = 5;
+		protected static readonly d_bonusMaxHealthAdditionAmount: uint = 5;
 
 		//====Map====//
 
 		/**
 		 * [{map:<MAP>,weight:<Number>},...]
 		 */
-		protected static const d_mapRandomPotentials: object[] = null;
+		protected static readonly d_mapRandomPotentials: object[] = null;
 
-		protected static const d_initialMapID: int = -1;
+		protected static readonly d_initialMapID: int = -1;
 
 		/**
 		 * The time of the map transform loop.
 		 * stranded by second.
 		 */
-		protected static const d_mapTransformTime: uint = 60;
+		protected static readonly d_mapTransformTime: uint = 60;
 
-		//====Weapons====//
-		protected static const d_enableWeapons: WeaponType[] = WeaponType._ALL_AVALIABLE_WEAPON;
+		//====Tools====//
+		protected static readonly d_enableTools: ToolType[] = ToolType._ALL_AVALIABLE_TOOL;
 
-		protected static const d_defaultWeaponID: int = 0;
+		protected static readonly d_defaultToolID: int = 0;
 
-		protected static const d_defaultLaserLength: uint = 32;
+		protected static readonly d_defaultLaserLength: uint = 32;
 
-		protected static const d_allowLaserThroughAllBlock: boolean = false;
+		protected static readonly d_allowLaserThroughAllBlock: boolean = false;
 
-		protected static const d_weaponsNoCD: boolean = false;
+		protected static readonly d_toolsNoCD: boolean = false;
 
 		//====End&Victory====//
-		protected static const d_allowTeamVictory: boolean = true;
+		protected static readonly d_allowTeamVictory: boolean = true;
 
 		//========Preview========//
-		public static const MENU_BACKGROUND: GameRule = GameRule.getBackgroundRule();
+		public static readonly MENU_BACKGROUND: GameRule = GameRule.getBackgroundRule();
 
-		public static const DEFAULT_DRONE_WEAPON: WeaponType = WeaponType.LASER;
+		public static readonly DEFAULT_DRONE_TOOL: ToolType = ToolType.LASER;
 
-		private static function getBackgroundRule(): GameRule {
+		protected static getBackgroundRule(): GameRule {
 			var rule: GameRule = new GameRule();
 			rule.playerCount = 0;
 			rule.AICount = 8;
-			rule.defaultWeaponID = -2;
+			rule.defaultToolID = -2;
 			rule.remainLifesPlayer = -1;
 			rule.remainLifesAI = -1;
 			return rule;
@@ -136,7 +136,7 @@
 		 * @param	grayscaleTeamCount	the number of team that color is grayscale
 		 * @return	A list of PlayerTeam,contains different colors.
 		 */
-		protected static function initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
+		protected static initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
 			var returnTeams: PlayerTeam[] = new PlayerTeam[]();
 			var h: uint, s: number, v: number, color: uint;
 			var i: uint;
@@ -160,7 +160,7 @@
 			return returnTeams;
 		}
 
-		public static function toJSON(rule: GameRule, replacer: any = null, space: any = null): string {
+		public static toJSON(rule: GameRule, replacer: any = null, space: any = null): string {
 			var i = true;
 
 			// get all getter value
@@ -202,7 +202,7 @@
 			return JSON.stringify(result, replacer, space);
 		}
 
-		public static function fromJSON(rule: string): GameRule {
+		public static fromJSON(rule: string): GameRule {
 			var r: GameRule = new GameRule();
 			var o: object = JSON.parse(rule);
 			var v: any;
@@ -302,26 +302,26 @@
 		 */
 		protected _mapTransformTime: uint;
 
-		// Weapons
-		protected _enableWeapons: WeaponType[];
+		// Tools
+		protected _enableTools: ToolType[];
 
 		/**
 		 * -1 means uniform random
 		 * <-1 means certainly random
 		 */
-		protected _defaultWeaponID: int;
+		protected _defaultToolID: int;
 
 		protected _defaultLaserLength: uint;
 
 		protected _allowLaserThroughAllBlock: boolean;
 
-		protected _weaponsNoCD: boolean;
+		protected _toolsNoCD: boolean;
 
 		// End&Victory
 		protected _allowTeamVictory: boolean;
 
-	//============Constructor Function============//
-	public GameRule(): void {
+	//============Constructor & Destructor============//
+	public constructor() {
 		super();
 		loadAsDefault();
 	}
@@ -330,18 +330,18 @@
 	public destructor(): void {
 		this._bonusBoxSpawnPotentials = null;
 		this._mapRandomPotentials = null;
-		this._enableWeapons = null;
+		this._enableTools = null;
 		this._playerTeams = null;
 	}
 
 	//============Instance Getter And Setter============//
 	// Rule Random About
-	public get randomWeaponEnable(): WeaponType {
-		return this.enableWeapons[exMath.random(this.enableWeapons.length)];
+	public get randomToolEnable(): ToolType {
+		return this.enableTools[exMath.random(this.enableTools.length)];
 	}
 
-	public get randomWeaponIDEnable(): int {
-		return WeaponType.toWeaponID(this.enableWeapons[exMath.random(this.enableWeapons.length)]);
+	public get randomToolIDEnable(): int {
+		return ToolType.toToolID(this.enableTools[exMath.random(this.enableTools.length)]);
 	}
 
 	public get randomMapEnable(): IMap {
@@ -423,458 +423,458 @@
 		return this._playerCount;
 	}
 
-	public set playerCount(value: uint): void {
-		if(value == this._playerCount)
-	return;
-	onVariableUpdate(this._playerCount, value);
-	this._playerCount = value;
-}
+	public set playerCount(value: uint) {
+		if (value == this._playerCount)
+			return;
+		onVariableUpdate(this._playerCount, value);
+		this._playerCount = value;
+	}
 
 public get AICount(): uint {
-	return this._AICount;
-}
+		return this._AICount;
+	}
 
-public set AICount(value: uint): void {
-	if(value == this._AICount)
-return;
-onVariableUpdate(this._AICount, value);
-this._AICount = value;
-		}
+public set AICount(value: uint) {
+		if (value == this._AICount)
+			return;
+		onVariableUpdate(this._AICount, value);
+		this._AICount = value;
+	}
 
 // Health
 public get defaultHealth(): uint {
-	return this._defaultHealth;
-}
+		return this._defaultHealth;
+	}
 
-public set defaultHealth(value: uint): void {
-	if(value == this._defaultHealth)
-return;
-onVariableUpdate(this._defaultHealth, value);
-this._defaultHealth = value;
-		}
+public set defaultHealth(value: uint) {
+		if (value == this._defaultHealth)
+			return;
+		onVariableUpdate(this._defaultHealth, value);
+		this._defaultHealth = value;
+	}
 
 public get defaultMaxHealth(): uint {
-	return this._defaultMaxHealth;
-}
+		return this._defaultMaxHealth;
+	}
 
-public set defaultMaxHealth(value: uint): void {
-	if(value == this._defaultMaxHealth)
-return;
-onVariableUpdate(this._defaultMaxHealth, value);
-this._defaultMaxHealth = value;
-		}
+public set defaultMaxHealth(value: uint) {
+		if (value == this._defaultMaxHealth)
+			return;
+		onVariableUpdate(this._defaultMaxHealth, value);
+		this._defaultMaxHealth = value;
+	}
 
 // Bonus
 public get bonusBoxMaxCount(): int {
-	return this._bonusBoxMaxCount;
-}
+		return this._bonusBoxMaxCount;
+	}
 
-public set bonusBoxMaxCount(value: int): void {
-	if(value == this._bonusBoxMaxCount)
-return;
-onVariableUpdate(this._bonusBoxMaxCount, value);
-this._bonusBoxMaxCount = value;
-		}
+public set bonusBoxMaxCount(value: int) {
+		if (value == this._bonusBoxMaxCount)
+			return;
+		onVariableUpdate(this._bonusBoxMaxCount, value);
+		this._bonusBoxMaxCount = value;
+	}
 
 public get bonusBoxSpawnChance(): number {
-	return this._bonusBoxSpawnChance;
-}
+		return this._bonusBoxSpawnChance;
+	}
 
-public set bonusBoxSpawnChance(value: number): void {
-	if(value == this._bonusBoxSpawnChance)
-return;
-onVariableUpdate(this._bonusBoxSpawnChance, value);
-this._bonusBoxSpawnChance = value;
-		}
+public set bonusBoxSpawnChance(value: number) {
+		if (value == this._bonusBoxSpawnChance)
+			return;
+		onVariableUpdate(this._bonusBoxSpawnChance, value);
+		this._bonusBoxSpawnChance = value;
+	}
 
 public get bonusBoxSpawnPotentials(): object - [] {
-	return this._bonusBoxSpawnPotentials;
-}
-
-public set bonusBoxSpawnPotentials(value: object - []): void {
-	if(value == this._bonusBoxSpawnPotentials)
-return;
-
-var _v: object[] = value;
-
-for (var i: int = _v.length - 1; i >= 0; i--) {
-	if (_v[i] is BonusType) {
-		_v[i] = { type: _v[i], weight: 1 };
-
-		continue;
+		return this._bonusBoxSpawnPotentials;
 	}
-	if (!(_v[i].type is BonusType) || !(_v[i].weight is Number)) {
-		_v.splice(i, 1);
 
-		continue;
-	}
-	if (isNaN(_v[i].weight)) {
-		_v[i].weight = 1;
-	}
-}
-onVariableUpdate(this._bonusBoxSpawnPotentials, _v);
+public set bonusBoxSpawnPotentials(value: object - []) {
+		if (value == this._bonusBoxSpawnPotentials)
+			return;
 
-this._bonusBoxSpawnPotentials = _v;
+		var _v: object[] = value;
+
+		for (var i: int = _v.length - 1; i >= 0; i--) {
+			if (_v[i] is BonusType) {
+				_v[i] = { type: _v[i], weight: 1 };
+
+				continue;
+			}
+			if (!(_v[i].type is BonusType) || !(_v[i].weight is Number)) {
+				_v.splice(i, 1);
+
+				continue;
+			}
+			if (isNaN(_v[i].weight)) {
+				_v[i].weight = 1;
+			}
 		}
+		onVariableUpdate(this._bonusBoxSpawnPotentials, _v);
+
+		this._bonusBoxSpawnPotentials = _v;
+	}
 
 public get bonusBoxSpawnAfterPlayerDeath(): boolean {
-	return this._bonusBoxSpawnAfterPlayerDeath;
-}
+		return this._bonusBoxSpawnAfterPlayerDeath;
+	}
 
-public set bonusBoxSpawnAfterPlayerDeath(value: boolean): void {
-	if(value == this._bonusBoxSpawnAfterPlayerDeath)
-return;
-onVariableUpdate(this._bonusBoxSpawnAfterPlayerDeath, value);
-this._bonusBoxSpawnAfterPlayerDeath = value;
-		}
+public set bonusBoxSpawnAfterPlayerDeath(value: boolean) {
+		if (value == this._bonusBoxSpawnAfterPlayerDeath)
+			return;
+		onVariableUpdate(this._bonusBoxSpawnAfterPlayerDeath, value);
+		this._bonusBoxSpawnAfterPlayerDeath = value;
+	}
 
 // Bonus's Buff
 public get bonusBuffAdditionAmount(): uint {
-	return this._bonusBuffAdditionAmount;
-}
+		return this._bonusBuffAdditionAmount;
+	}
 
-public set bonusBuffAdditionAmount(value: uint): void {
-	if(value == this._bonusBuffAdditionAmount)
-return;
-onVariableUpdate(this._bonusBuffAdditionAmount, value);
-this._bonusBuffAdditionAmount = value;
-		}
+public set bonusBuffAdditionAmount(value: uint) {
+		if (value == this._bonusBuffAdditionAmount)
+			return;
+		onVariableUpdate(this._bonusBuffAdditionAmount, value);
+		this._bonusBuffAdditionAmount = value;
+	}
 
 public get bonusMaxHealthAdditionAmount(): uint {
-	return this._bonusMaxHealthAdditionAmount;
-}
+		return this._bonusMaxHealthAdditionAmount;
+	}
 
-public set bonusMaxHealthAdditionAmount(value: uint): void {
-	if(value == this._bonusMaxHealthAdditionAmount)
-return;
-onVariableUpdate(this._bonusMaxHealthAdditionAmount, value);
-this._bonusMaxHealthAdditionAmount = value;
-		}
+public set bonusMaxHealthAdditionAmount(value: uint) {
+		if (value == this._bonusMaxHealthAdditionAmount)
+			return;
+		onVariableUpdate(this._bonusMaxHealthAdditionAmount, value);
+		this._bonusMaxHealthAdditionAmount = value;
+	}
 
 // Map
 public get mapRandomPotentials(): object - [] {
-	return this._mapRandomPotentials;
-}
-
-public set mapRandomPotentials(value: object - []): void {
-	if(value == this._mapRandomPotentials)
-return;
-
-var _v: object[] = value;
-
-for (var i: int = _v.length - 1; i >= 0; i--) {
-	if (_v[i] is IMap) {
-		_v[i] = { map: _v[i], weight: 1 };
-
-		continue;
+		return this._mapRandomPotentials;
 	}
-	if (!(_v[i].map is IMap) || !(_v[i].weight is Number)) {
-		_v.splice(i, 1);
 
-		continue;
-	}
-	if (isNaN(_v[i].weight)) {
-		_v[i].weight = 1;
-	}
-}
-onVariableUpdate(this._mapRandomPotentials, _v);
+public set mapRandomPotentials(value: object - []) {
+		if (value == this._mapRandomPotentials)
+			return;
 
-this._mapRandomPotentials = _v;
-		}
+		var _v: object[] = value;
 
-public get mapWeightsByGame(): number[] {
-	var wv: number[] = new Number[](Game.ALL_MAPS.length);
+		for (var i: int = _v.length - 1; i >= 0; i--) {
+			if (_v[i] is IMap) {
+				_v[i] = { map: _v[i], weight: 1 };
 
-	for (var i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
-		for (var map: object in this.mapRandomPotentials) {
-			if (map.map == Game.ALL_MAPS[i]) {
-				wv[i] = map.weight;
+				continue;
+			}
+			if (!(_v[i].map is IMap) || !(_v[i].weight is Number)) {
+				_v.splice(i, 1);
+
+				continue;
+			}
+			if (isNaN(_v[i].weight)) {
+				_v[i].weight = 1;
 			}
 		}
+		onVariableUpdate(this._mapRandomPotentials, _v);
+
+		this._mapRandomPotentials = _v;
 	}
-	return wv;
-}
+
+public get mapWeightsByGame(): number[] {
+		var wv: number[] = new Number[](Game.ALL_MAPS.length);
+
+		for (var i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
+			for (var map: object in this.mapRandomPotentials) {
+				if (map.map == Game.ALL_MAPS[i]) {
+					wv[i] = map.weight;
+				}
+			}
+		}
+		return wv;
+	}
 
 public get initialMapID(): int {
-	return this._initialMapID;
-}
+		return this._initialMapID;
+	}
 
-public set initialMapID(value: int): void {
-	if(value == this._initialMapID)
-return;
-onVariableUpdate(this._initialMapID, value);
-this._initialMapID = value;
-		}
+public set initialMapID(value: int) {
+		if (value == this._initialMapID)
+			return;
+		onVariableUpdate(this._initialMapID, value);
+		this._initialMapID = value;
+	}
 
 public get mapTransformTime(): uint {
-	return this._mapTransformTime;
-}
+		return this._mapTransformTime;
+	}
 
-public set mapTransformTime(value: uint): void {
-	if(value == this._mapTransformTime)
-return;
-onVariableUpdate(this._mapTransformTime, value);
-this._mapTransformTime = value;
-		}
+public set mapTransformTime(value: uint) {
+		if (value == this._mapTransformTime)
+			return;
+		onVariableUpdate(this._mapTransformTime, value);
+		this._mapTransformTime = value;
+	}
 
 /* The Copy Operation is in Menu:getRuleFromMenu
 	 * The Negative Number returns null and The Game will be start as random map
 	 */
 public get initialMap(): IMap {
-	if (this._initialMapID < 0)
-		return null;
-	return Game.getMapFromID(this._initialMapID);
-}
+		if (this._initialMapID < 0)
+			return null;
+		return Game.getMapFromID(this._initialMapID);
+	}
 
 /* The Map must be the true object in Game.ALL_MAPS not a clone!
 	 * The initial map will be loaded in Game:loadMap
 	 */
-public set initialMap(value: IMap): void {
-	this.initialMapID = Game.getIDFromMap(value);
-}
+public set initialMap(value: IMap) {
+		this.initialMapID = Game.getIDFromMap(value);
+	}
 
-// Weapon
-public get defaultWeaponID(): int {
-	return this._defaultWeaponID;
-}
+// Tool
+public get defaultToolID(): int {
+		return this._defaultToolID;
+	}
 
-public set defaultWeaponID(value: int): void {
-	if(value == this._defaultWeaponID)
-return;
-onVariableUpdate(this._defaultWeaponID, value);
-this._defaultWeaponID = value;
-		}
+public set defaultToolID(value: int) {
+		if (value == this._defaultToolID)
+			return;
+		onVariableUpdate(this._defaultToolID, value);
+		this._defaultToolID = value;
+	}
 
 public get defaultLaserLength(): uint {
-	return this._defaultLaserLength;
-}
+		return this._defaultLaserLength;
+	}
 
-public set defaultLaserLength(value: uint): void {
-	if(value == this._defaultLaserLength)
-return;
-onVariableUpdate(this._defaultLaserLength, value);
-this._defaultLaserLength = value;
-		}
+public set defaultLaserLength(value: uint) {
+		if (value == this._defaultLaserLength)
+			return;
+		onVariableUpdate(this._defaultLaserLength, value);
+		this._defaultLaserLength = value;
+	}
 
 public get allowLaserThroughAllBlock(): boolean {
-	return this._allowLaserThroughAllBlock;
-}
+		return this._allowLaserThroughAllBlock;
+	}
 
-public set allowLaserThroughAllBlock(value: boolean): void {
-	if(value == this._allowLaserThroughAllBlock)
-return;
-onVariableUpdate(this._allowLaserThroughAllBlock, value);
-this._allowLaserThroughAllBlock = value;
-		}
+public set allowLaserThroughAllBlock(value: boolean) {
+		if (value == this._allowLaserThroughAllBlock)
+			return;
+		onVariableUpdate(this._allowLaserThroughAllBlock, value);
+		this._allowLaserThroughAllBlock = value;
+	}
 
-public get weaponsNoCD(): boolean {
-	return this._weaponsNoCD;
-}
+public get toolsNoCD(): boolean {
+		return this._toolsNoCD;
+	}
 
-public set weaponsNoCD(value: boolean): void {
-	if(value == this._weaponsNoCD)
-return;
-onVariableUpdate(this._weaponsNoCD, value);
-this._weaponsNoCD = value;
-		}
+public set toolsNoCD(value: boolean) {
+		if (value == this._toolsNoCD)
+			return;
+		onVariableUpdate(this._toolsNoCD, value);
+		this._toolsNoCD = value;
+	}
 
 // Respawn
 public get defaultRespawnTime(): uint {
-	return this._defaultRespawnTime;
-}
+		return this._defaultRespawnTime;
+	}
 
-public set defaultRespawnTime(value: uint): void {
-	if(value == this._defaultRespawnTime)
-return;
-onVariableUpdate(this._defaultRespawnTime, value);
-this._defaultRespawnTime = value;
-		}
+public set defaultRespawnTime(value: uint) {
+		if (value == this._defaultRespawnTime)
+			return;
+		onVariableUpdate(this._defaultRespawnTime, value);
+		this._defaultRespawnTime = value;
+	}
 
 public get deadPlayerMoveToX(): number {
-	return this._deadPlayerMoveToX;
-}
+		return this._deadPlayerMoveToX;
+	}
 
-public set deadPlayerMoveToX(value: number): void {
-	if(value == this._deadPlayerMoveToX)
-return;
-onVariableUpdate(this._deadPlayerMoveToX, value);
-this._deadPlayerMoveToX = value;
-		}
+public set deadPlayerMoveToX(value: number) {
+		if (value == this._deadPlayerMoveToX)
+			return;
+		onVariableUpdate(this._deadPlayerMoveToX, value);
+		this._deadPlayerMoveToX = value;
+	}
 
 public get deadPlayerMoveToY(): number {
-	return this._deadPlayerMoveToY;
-}
+		return this._deadPlayerMoveToY;
+	}
 
-public set deadPlayerMoveToY(value: number): void {
-	if(value == this._deadPlayerMoveToY)
-return;
-onVariableUpdate(this._deadPlayerMoveToY, value);
-this._deadPlayerMoveToY = value;
-		}
+public set deadPlayerMoveToY(value: number) {
+		if (value == this._deadPlayerMoveToY)
+			return;
+		onVariableUpdate(this._deadPlayerMoveToY, value);
+		this._deadPlayerMoveToY = value;
+	}
 
 // Life
 public get remainLifesPlayer(): int {
-	return this._remainLifesPlayer;
-}
+		return this._remainLifesPlayer;
+	}
 
-public set remainLifesPlayer(value: int): void {
-	if(value == this._remainLifesPlayer)
-return;
-onVariableUpdate(this._remainLifesPlayer, value);
-this._remainLifesPlayer = value;
-		}
+public set remainLifesPlayer(value: int) {
+		if (value == this._remainLifesPlayer)
+			return;
+		onVariableUpdate(this._remainLifesPlayer, value);
+		this._remainLifesPlayer = value;
+	}
 
 public get remainLifesAI(): int {
-	return this._remainLifesAI;
-}
+		return this._remainLifesAI;
+	}
 
-public set remainLifesAI(value: int): void {
-	if(value == this._remainLifesAI)
-return;
-onVariableUpdate(this._remainLifesAI, value);
-this._remainLifesAI = value;
-		}
+public set remainLifesAI(value: int) {
+		if (value == this._remainLifesAI)
+			return;
+		onVariableUpdate(this._remainLifesAI, value);
+		this._remainLifesAI = value;
+	}
 
 // Stats
 public get recordPlayerStats(): boolean {
-	return this._recordPlayerStats;
-}
+		return this._recordPlayerStats;
+	}
 
-public set recordPlayerStats(value: boolean): void {
-	if(value == this._recordPlayerStats)
-return;
-onVariableUpdate(this._recordPlayerStats, value);
-this._recordPlayerStats = value;
-		}
+public set recordPlayerStats(value: boolean) {
+		if (value == this._recordPlayerStats)
+			return;
+		onVariableUpdate(this._recordPlayerStats, value);
+		this._recordPlayerStats = value;
+	}
 
-// Weapon Enable
-public get enableWeapons(): WeaponType[] {
-	return this._enableWeapons == null ? WeaponType._ALL_AVALIABLE_WEAPON : this._enableWeapons;
-}
+// Tool Enable
+public get enableTools(): ToolType[] {
+		return this._enableTools == null ? ToolType._ALL_AVALIABLE_TOOL : this._enableTools;
+	}
 
-public set enableWeapons(value: WeaponType[]): void {
-	if(value == this._enableWeapons)
-return;
-onVariableUpdate(this._enableWeapons, value);
-this._enableWeapons = value;
-		}
+public set enableTools(value: ToolType[]) {
+		if (value == this._enableTools)
+			return;
+		onVariableUpdate(this._enableTools, value);
+		this._enableTools = value;
+	}
 
-public get enableWeaponCount(): int {
-	return this._enableWeapons == null ? WeaponType._ALL_AVALIABLE_WEAPON.length : this._enableWeapons.length;
-}
+public get enableToolCount(): int {
+		return this._enableTools == null ? ToolType._ALL_AVALIABLE_TOOL.length : this._enableTools.length;
+	}
 
 // Asphyxia Damage
 public get playerAsphyxiaDamage(): int {
-	return this._playerAsphyxiaDamage;
-}
+		return this._playerAsphyxiaDamage;
+	}
 
-public set playerAsphyxiaDamage(value: int): void {
-	if(value == this._playerAsphyxiaDamage)
-return;
-onVariableUpdate(this._playerAsphyxiaDamage, value);
-this._playerAsphyxiaDamage = value;
-		}
+public set playerAsphyxiaDamage(value: int) {
+		if (value == this._playerAsphyxiaDamage)
+			return;
+		onVariableUpdate(this._playerAsphyxiaDamage, value);
+		this._playerAsphyxiaDamage = value;
+	}
 
 // Team
 public get coloredTeamCount(): uint {
-	return this._coloredTeamCount;
-}
+		return this._coloredTeamCount;
+	}
 
-public set coloredTeamCount(value: uint): void {
-	if(value == this._coloredTeamCount)
-return;
-onVariableUpdate(this._coloredTeamCount, value);
-this._coloredTeamCount = value;
-this._playerTeams = initPlayerTeams(value, this._grayscaleTeamCount);
-dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
-		}
+public set coloredTeamCount(value: uint) {
+		if (value == this._coloredTeamCount)
+			return;
+		onVariableUpdate(this._coloredTeamCount, value);
+		this._coloredTeamCount = value;
+		this._playerTeams = initPlayerTeams(value, this._grayscaleTeamCount);
+		dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
+	}
 
 public get grayscaleTeamCount(): uint {
-	return this._grayscaleTeamCount;
-}
+		return this._grayscaleTeamCount;
+	}
 
-public set grayscaleTeamCount(value: uint): void {
-	if(value == this._grayscaleTeamCount)
-return;
-onVariableUpdate(this._grayscaleTeamCount, value);
-this._grayscaleTeamCount = value;
-this._playerTeams = initPlayerTeams(this._coloredTeamCount, value);
-dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
-		}
+public set grayscaleTeamCount(value: uint) {
+		if (value == this._grayscaleTeamCount)
+			return;
+		onVariableUpdate(this._grayscaleTeamCount, value);
+		this._grayscaleTeamCount = value;
+		this._playerTeams = initPlayerTeams(this._coloredTeamCount, value);
+		dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
+	}
 
 public get playerTeams(): PlayerTeam[] {
-	return this._playerTeams;
-}
+		return this._playerTeams;
+	}
 
 public get allowPlayerChangeTeam(): boolean {
-	return this._allowPlayerChangeTeam;
-}
+		return this._allowPlayerChangeTeam;
+	}
 
-public set allowPlayerChangeTeam(value: boolean): void {
-	if(value == this._allowPlayerChangeTeam)
-return;
-onVariableUpdate(this._allowPlayerChangeTeam, value);
-this._allowPlayerChangeTeam = value;
-		}
+public set allowPlayerChangeTeam(value: boolean) {
+		if (value == this._allowPlayerChangeTeam)
+			return;
+		onVariableUpdate(this._allowPlayerChangeTeam, value);
+		this._allowPlayerChangeTeam = value;
+	}
 
 // End&Victory
 public get allowTeamVictory(): boolean {
-	return this._allowTeamVictory;
-}
+		return this._allowTeamVictory;
+	}
 
-public set allowTeamVictory(value: boolean): void {
-	if(value == this._allowTeamVictory)
-return;
-onVariableUpdate(this._allowTeamVictory, value);
-this._allowTeamVictory = value;
-		}
+public set allowTeamVictory(value: boolean) {
+		if (value == this._allowTeamVictory)
+			return;
+		onVariableUpdate(this._allowTeamVictory, value);
+		this._allowTeamVictory = value;
+	}
 
 //============Instance Functions============//
 public loadAsDefault(): void {
-	// Player
-	this._playerCount = d_playerCount;
-	this._AICount = d_AICount;
-	// Health
-	this._defaultHealth = d_defaultHealth;
-	this._defaultMaxHealth = d_defaultMaxHealth;
-	// Bonus
-	this._bonusBoxMaxCount = d_bonusBoxMaxCount;
-	this._bonusBoxSpawnPotentials = d_bonusBoxSpawnPotentials;
-	this._bonusBoxSpawnAfterPlayerDeath = d_bonusBoxSpawnAfterPlayerDeath;
-	// Bonus's Buff
-	this._bonusBuffAdditionAmount = d_bonusBuffAdditionAmount;
-	this._bonusMaxHealthAdditionAmount = d_bonusMaxHealthAdditionAmount;
-	// Map
-	this._mapRandomPotentials = d_mapRandomPotentials;
-	this._initialMapID = d_initialMapID;
-	this._mapTransformTime = d_mapTransformTime;
-	// Weapon
-	this._defaultWeaponID = d_defaultWeaponID;
-	this._defaultLaserLength = d_defaultLaserLength;
-	this._allowLaserThroughAllBlock = d_allowLaserThroughAllBlock;
-	this._weaponsNoCD = d_weaponsNoCD;
-	// Respawn
-	this._defaultRespawnTime = d_defaultRespawnTime;
-	this._deadPlayerMoveToX = d_deadPlayerMoveToX;
-	this._deadPlayerMoveToY = d_deadPlayerMoveToY;
-	// Life
-	this._remainLifesPlayer = d_remainLifesPlayer;
-	this._remainLifesAI = d_remainLifesAI;
-	// Stat
-	this._recordPlayerStats = d_recordPlayerStats;
-	// Weapon Enable
-	this._enableWeapons = d_enableWeapons;
-	// Asphyxia Damage
-	this._playerAsphyxiaDamage = d_playerAsphyxiaDamage;
-	// Team
-	this._playerTeams = d_playerTeams;
-	this._allowPlayerChangeTeam = d_allowPlayerChangeTeam;
-	// End&Victory
-	this._allowTeamVictory = d_allowTeamVictory;
-}
+		// Player
+		this._playerCount = d_playerCount;
+		this._AICount = d_AICount;
+		// Health
+		this._defaultHealth = d_defaultHealth;
+		this._defaultMaxHealth = d_defaultMaxHealth;
+		// Bonus
+		this._bonusBoxMaxCount = d_bonusBoxMaxCount;
+		this._bonusBoxSpawnPotentials = d_bonusBoxSpawnPotentials;
+		this._bonusBoxSpawnAfterPlayerDeath = d_bonusBoxSpawnAfterPlayerDeath;
+		// Bonus's Buff
+		this._bonusBuffAdditionAmount = d_bonusBuffAdditionAmount;
+		this._bonusMaxHealthAdditionAmount = d_bonusMaxHealthAdditionAmount;
+		// Map
+		this._mapRandomPotentials = d_mapRandomPotentials;
+		this._initialMapID = d_initialMapID;
+		this._mapTransformTime = d_mapTransformTime;
+		// Tool
+		this._defaultToolID = d_defaultToolID;
+		this._defaultLaserLength = d_defaultLaserLength;
+		this._allowLaserThroughAllBlock = d_allowLaserThroughAllBlock;
+		this._toolsNoCD = d_toolsNoCD;
+		// Respawn
+		this._defaultRespawnTime = d_defaultRespawnTime;
+		this._deadPlayerMoveToX = d_deadPlayerMoveToX;
+		this._deadPlayerMoveToY = d_deadPlayerMoveToY;
+		// Life
+		this._remainLifesPlayer = d_remainLifesPlayer;
+		this._remainLifesAI = d_remainLifesAI;
+		// Stat
+		this._recordPlayerStats = d_recordPlayerStats;
+		// Tool Enable
+		this._enableTools = d_enableTools;
+		// Asphyxia Damage
+		this._playerAsphyxiaDamage = d_playerAsphyxiaDamage;
+		// Team
+		this._playerTeams = d_playerTeams;
+		this._allowPlayerChangeTeam = d_allowPlayerChangeTeam;
+		// End&Victory
+		this._allowTeamVictory = d_allowTeamVictory;
+	}
 
 protected onVariableUpdate(oldValue: any, newValue: any): void {
-	dispatchEvent(new GameRuleEvent(GameRuleEvent.VARIABLE_UPDATE, oldValue, newValue));
+		dispatchEvent(new GameRuleEvent(GameRuleEvent.VARIABLE_UPDATE, oldValue, newValue));
 }
 	}
 }

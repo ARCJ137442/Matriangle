@@ -5,7 +5,7 @@
 * `R`: Change **Team(Color)**
 * `T`: Transform **Pos/Map**
 * `C`: Clear **Projectile/Effect**
-* `V`: Change **Weapon**
+* `V`: Change **Tool**
 * `X`: Change **Sheet/I18ns**
 * `~`: Manipulate **Game Speed**
 * `N`: Append **Player**s

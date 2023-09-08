@@ -9,7 +9,7 @@ package batr.translations {
 	 */
 	export default class ForcedI18nText extends I18nText {
 		//============Static Getter And Setter============//
-		public static function getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
+		public static getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
 			var result: I18nText[] = new I18nText[];
 			for (var i: uint = 0; i < players.length; i++) {
 				result.push(
@@ -24,8 +24,8 @@ package batr.translations {
 		//============Instance Variables============//
 		protected _forcedText: string;
 
-		//============Constructor Function============//
-		public ForcedI18nText(translations: I18ns, key: string = null, forcedText: string = null) {
+		//============Constructor & Destructor============//
+		public constructor(translations: I18ns, key: string = null, forcedText: string = null) {
 			super(translations, key);
 			this._forcedText = forcedText;
 		}
@@ -45,11 +45,11 @@ package batr.translations {
 			return this._forcedText;
 		}
 
-		public set forcedText(value: string): void {
+		public set forcedText(value: string) {
 			this._forcedText = value;
 		}
 
-		public override function get currentText(): string {
+		override get currentText(): string {
 			if (this._forcedText != null)
 				return this._forcedText;
 			return super.currentText;

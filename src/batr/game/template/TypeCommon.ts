@@ -1,5 +1,7 @@
 /**
- * All ChildClass:BlockType,EntityType,EffectType,WeaponType,BonusType
+ * It's used for commonly define rich-enum types.
+ * 
+ * * Child Classes: BlockType, EntityType, EffectType, ToolType, BonusType
  */
 export default class TypeCommon {
 	//============Static Variables============//
@@ -18,7 +20,7 @@ export default class TypeCommon {
 	//============Instance Variables============//
 	protected _name: string;
 
-	//============Constructor Function============//
+	//============Constructor & Destructor============//
 	public constructor(name: string) {
 		this._name = name;
 	}

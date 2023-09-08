@@ -9,27 +9,27 @@ package batr.game.entity.entity.projectile {
 
 	export default class LaserAbsorption extends LaserBasic {
 		//============Static Variables============//
-		public static const LIFE: number = GlobalGameVariables.TPS;
-		public static const SIZE: number = GlobalGameVariables.DEFAULT_SIZE / 4;
-		public static const SCALE_V: number = 1 / 4;
+		public static readonly LIFE: number = GlobalGameVariables.TPS;
+		public static readonly SIZE: number = DEFAULT_SIZE / 4;
+		public static readonly SCALE_V: number = 1 / 4;
 
 		//============Instance Variables============//
 		protected scaleReverse: boolean = true;
 
-		//============Constructor Function============//
-		public LaserAbsorption(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH): void {
+		//============Constructor & Destructor============//
+		public constructor(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH) {
 			super(host, x, y, owner, length);
-			this._currentWeapon = WeaponType.ABSORPTION_LASER;
-			this.damage = this._currentWeapon.defaultDamage;
+			this._currentTool = ToolType.ABSORPTION_LASER;
+			this.damage = this._currentTool.defaultDamage;
 		}
 
 		//============Instance Getter And Setter============//
-		public override function get type(): EntityType {
+		override get type(): EntityType {
 			return EntityType.LASER_ABSORPTION;
 		}
 
 		//============Instance Functions============//
-		public override function onLaserTick(): void {
+		override onLaserTick(): void {
 			this.scaleY += SCALE_V * (scaleReverse ? -1 : 1);
 			if (this.scaleY >= 1) {
 				scaleReverse = true;
@@ -40,7 +40,7 @@ package batr.game.entity.entity.projectile {
 				scaleReverse = false;
 		}
 
-		public override function drawShape(): void {
+		override drawShape(): void {
 			graphics.clear();
 
 			// Left

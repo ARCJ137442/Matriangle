@@ -12,11 +12,11 @@ package batr.game.entity.ai.programs {
 	 */
 	export default class AIProgram_Novice implements IAIProgram {
 		//============Static Variables============//
-		public static const LABEL: string = 'Novice';
-		public static const LABEL_SHORT: string = 'N';
+		public static readonly LABEL: string = 'Novice';
+		public static readonly LABEL_SHORT: string = 'N';
 
 		//============Static Functions============//
-		protected static function getLineEnemyPlayer(owner: AIPlayer): Player {
+		protected static getLineEnemyPlayer(owner: AIPlayer): Player {
 			if (owner == null)
 				return null;
 			var mapPlayers: Player[] = owner.host.getInMapPlayers();
@@ -24,14 +24,14 @@ package batr.game.entity.ai.programs {
 				if (player == owner)
 					continue;
 				if (player.gridX == owner.gridX || player.gridY == owner.gridY) {
-					if (owner.canUseWeaponHurtPlayer(player, owner.weapon))
+					if (owner.canUseToolHurtPlayer(player, owner.tool))
 						return player;
 				}
 			}
 			return null;
 		}
 
-		protected static function getLineBonusBox(owner: AIPlayer): BonusBox {
+		protected static getLineBonusBox(owner: AIPlayer): BonusBox {
 			if (owner == null)
 				return null;
 			var boxes: BonusBox[] = owner.host.allAvaliableBonusBox;
@@ -53,8 +53,8 @@ package batr.game.entity.ai.programs {
 		protected _waitTime: int = 0;
 		protected _maxWaitTime: uint = 40;
 
-		//============Constructor Function============//
-		public AIProgram_Novice() {
+		//============Constructor & Destructor============//
+		public constructor() {
 		}
 
 		//============Destructor Function============//
@@ -117,7 +117,7 @@ package batr.game.entity.ai.programs {
 					player.addActionToThread(AIPlayerAction.getTrunActionFromEntityRot(this._tempRot));
 				}
 				// Press Use
-				if (player.weaponReverseCharge) {
+				if (player.toolReverseCharge) {
 					if (player.chargingPercent >= 1)
 						return AIPlayerAction.PRESS_KEY_USE;
 					else if (player.isPress_Use)

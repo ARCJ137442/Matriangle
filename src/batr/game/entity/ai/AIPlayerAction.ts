@@ -5,37 +5,37 @@ package batr.game.entity.ai {
 
 	public final class AIPlayerAction {
 		//============Static Variables============//
-		public static const NULL: AIPlayerAction = null;
+		public static readonly NULL: AIPlayerAction = null;
 
-		public static const MOVE_UP: AIPlayerAction = new AIPlayerAction('moveUp');
-		public static const MOVE_DOWN: AIPlayerAction = new AIPlayerAction('moveDown');
-		public static const MOVE_LEFT_ABS: AIPlayerAction = new AIPlayerAction('moveLeftAbs');
-		public static const MOVE_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('moveRightAbs');
-		public static const MOVE_FORWARD: AIPlayerAction = new AIPlayerAction('moveForward');
-		public static const MOVE_BACK: AIPlayerAction = new AIPlayerAction('moveBack');
-		public static const MOVE_LEFT_REL: AIPlayerAction = new AIPlayerAction('moveLeftRel');
-		public static const MOVE_RIGHT_REL: AIPlayerAction = new AIPlayerAction('moveRightRel');
-		public static const TRUN_UP: AIPlayerAction = new AIPlayerAction('turnUp');
-		public static const TRUN_DOWN: AIPlayerAction = new AIPlayerAction('turnDown');
-		public static const TRUN_LEFT_ABS: AIPlayerAction = new AIPlayerAction('turnLeftAbs');
-		public static const TRUN_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('turnRightAbs');
-		public static const TRUN_BACK: AIPlayerAction = new AIPlayerAction('turnBack');
-		public static const TRUN_LEFT_REL: AIPlayerAction = new AIPlayerAction('turnLeftRel');
-		public static const TRUN_RIGHT_REL: AIPlayerAction = new AIPlayerAction('turnRightRel');
-		public static const USE_WEAPON: AIPlayerAction = new AIPlayerAction('useWeapon');
-		public static const PRESS_KEY_UP: AIPlayerAction = new AIPlayerAction('pressKeyUp');
-		public static const PRESS_KEY_DOWN: AIPlayerAction = new AIPlayerAction('pressKeyDown');
-		public static const PRESS_KEY_LEFT: AIPlayerAction = new AIPlayerAction('pressKeyLeft');
-		public static const PRESS_KEY_RIGHT: AIPlayerAction = new AIPlayerAction('pressKeyRight');
-		public static const PRESS_KEY_USE: AIPlayerAction = new AIPlayerAction('pressKeyUse');
-		public static const RELEASE_KEY_UP: AIPlayerAction = new AIPlayerAction('releaseKeyUp');
-		public static const RELEASE_KEY_DOWN: AIPlayerAction = new AIPlayerAction('releaseKeyDown');
-		public static const RELEASE_KEY_LEFT: AIPlayerAction = new AIPlayerAction('releaseKeyLeft');
-		public static const RELEASE_KEY_RIGHT: AIPlayerAction = new AIPlayerAction('releaseKeyRight');
-		public static const RELEASE_KEY_USE: AIPlayerAction = new AIPlayerAction('releaseKeyUse');
-		public static const DISABLE_CHARGE: AIPlayerAction = new AIPlayerAction('disableCharge');
+		public static readonly MOVE_UP: AIPlayerAction = new AIPlayerAction('moveUp');
+		public static readonly MOVE_DOWN: AIPlayerAction = new AIPlayerAction('moveDown');
+		public static readonly MOVE_LEFT_ABS: AIPlayerAction = new AIPlayerAction('moveLeftAbs');
+		public static readonly MOVE_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('moveRightAbs');
+		public static readonly MOVE_FORWARD: AIPlayerAction = new AIPlayerAction('moveForward');
+		public static readonly MOVE_BACK: AIPlayerAction = new AIPlayerAction('moveBack');
+		public static readonly MOVE_LEFT_REL: AIPlayerAction = new AIPlayerAction('moveLeftRel');
+		public static readonly MOVE_RIGHT_REL: AIPlayerAction = new AIPlayerAction('moveRightRel');
+		public static readonly TRUN_UP: AIPlayerAction = new AIPlayerAction('turnUp');
+		public static readonly TRUN_DOWN: AIPlayerAction = new AIPlayerAction('turnDown');
+		public static readonly TRUN_LEFT_ABS: AIPlayerAction = new AIPlayerAction('turnLeftAbs');
+		public static readonly TRUN_RIGHT_ABS: AIPlayerAction = new AIPlayerAction('turnRightAbs');
+		public static readonly TRUN_BACK: AIPlayerAction = new AIPlayerAction('turnBack');
+		public static readonly TRUN_LEFT_REL: AIPlayerAction = new AIPlayerAction('turnLeftRel');
+		public static readonly TRUN_RIGHT_REL: AIPlayerAction = new AIPlayerAction('turnRightRel');
+		public static readonly USE_TOOL: AIPlayerAction = new AIPlayerAction('useTool');
+		public static readonly PRESS_KEY_UP: AIPlayerAction = new AIPlayerAction('pressKeyUp');
+		public static readonly PRESS_KEY_DOWN: AIPlayerAction = new AIPlayerAction('pressKeyDown');
+		public static readonly PRESS_KEY_LEFT: AIPlayerAction = new AIPlayerAction('pressKeyLeft');
+		public static readonly PRESS_KEY_RIGHT: AIPlayerAction = new AIPlayerAction('pressKeyRight');
+		public static readonly PRESS_KEY_USE: AIPlayerAction = new AIPlayerAction('pressKeyUse');
+		public static readonly RELEASE_KEY_UP: AIPlayerAction = new AIPlayerAction('releaseKeyUp');
+		public static readonly RELEASE_KEY_DOWN: AIPlayerAction = new AIPlayerAction('releaseKeyDown');
+		public static readonly RELEASE_KEY_LEFT: AIPlayerAction = new AIPlayerAction('releaseKeyLeft');
+		public static readonly RELEASE_KEY_RIGHT: AIPlayerAction = new AIPlayerAction('releaseKeyRight');
+		public static readonly RELEASE_KEY_USE: AIPlayerAction = new AIPlayerAction('releaseKeyUse');
+		public static readonly DISABLE_CHARGE: AIPlayerAction = new AIPlayerAction('disableCharge');
 
-		public static const _ALL_ACTIONS: AIPlayerAction[] = new < AIPlayerAction > [
+		public static readonly _ALL_ACTIONS: AIPlayerAction[] = new < AIPlayerAction > [
 			AIPlayerAction.MOVE_UP,
 			AIPlayerAction.MOVE_DOWN,
 			AIPlayerAction.MOVE_LEFT_ABS,
@@ -51,7 +51,7 @@ package batr.game.entity.ai {
 			AIPlayerAction.TRUN_BACK,
 			AIPlayerAction.TRUN_LEFT_REL,
 			AIPlayerAction.TRUN_RIGHT_REL,
-			AIPlayerAction.USE_WEAPON,
+			AIPlayerAction.USE_TOOL,
 			AIPlayerAction.PRESS_KEY_UP,
 			AIPlayerAction.PRESS_KEY_DOWN,
 			AIPlayerAction.PRESS_KEY_LEFT,
@@ -65,7 +65,7 @@ package batr.game.entity.ai {
 			AIPlayerAction.DISABLE_CHARGE
 		];
 		//============Static Functions============//
-		public static function fromString(str: string): AIPlayerAction {
+		public static fromString(str: string): AIPlayerAction {
 			for (var action of AIPlayerAction._ALL_ACTIONS) {
 				if (action.name == str)
 					return action;
@@ -73,7 +73,7 @@ package batr.game.entity.ai {
 			return AIPlayerAction.NULL;
 		}
 
-		public static function getMoveActionFromEntityRot(rot: uint): AIPlayerAction {
+		public static getMoveActionFromEntityRot(rot: uint): AIPlayerAction {
 			switch (rot) {
 				case GlobalRot.UP:
 					return AIPlayerAction.MOVE_UP;
@@ -88,7 +88,7 @@ package batr.game.entity.ai {
 			}
 		}
 
-		public static function getTrunActionFromEntityRot(rot: uint): AIPlayerAction {
+		public static getTrunActionFromEntityRot(rot: uint): AIPlayerAction {
 			switch (rot) {
 				case GlobalRot.UP:
 					return AIPlayerAction.TRUN_UP;
@@ -103,15 +103,15 @@ package batr.game.entity.ai {
 			}
 		}
 
-		public static function get RANDOM(): AIPlayerAction {
+		public static get RANDOM(): AIPlayerAction {
 			return _ALL_ACTIONS[exMath.random(_ALL_ACTIONS.length)];
 		}
 
 		//============Instance Variables============//
 		protected _name: string;
 
-		//============Constructor Function============//
-		public AIPlayerAction(name: string): void {
+		//============Constructor & Destructor============//
+		public constructor(name: string) {
 			this._name = name;
 		}
 
