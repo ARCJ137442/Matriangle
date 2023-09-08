@@ -2,6 +2,10 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { NULL } from "../../general/GlobalRot";
+import { int } from "../../legacy/AS3Legacy";
+import TypeCommon from "../template/TypeCommon";
+
 export default class EffectType extends TypeCommon {
 	//============Static Variables============//
 	public static readonly NULL: EffectType = null;

@@ -3,6 +3,11 @@
 // import batr.game.entity.entity.*;
 // import batr.game.entity.entity.player.*;
 
+import { uint } from "../../../legacy/AS3Legacy";
+import BonusBox from "../entities/item/BonusBox";
+import AIPlayer from "../entities/player/AIPlayer";
+import Player from "../entities/player/Player";
+
 /**
  * Running as a Agent:Perception->Decision->Behavior
  */

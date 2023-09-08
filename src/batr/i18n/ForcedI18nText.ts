@@ -2,6 +2,11 @@
 // import batr.game.entity.entity.player.Player;
 // import batr.game.stat.PlayerStats;
 
+import PlayerStats from "../game/stat/PlayerStats";
+import { uint } from "../legacy/AS3Legacy";
+import I18nText from "./I18nText";
+import I18ns from "./I18ns";
+
 /**
  * ...
  * @author ARCJ137442

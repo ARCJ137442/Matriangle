@@ -2,6 +2,17 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { iPoint } from "../../../../common/intPoint";
+import { uint, int } from "../../../../legacy/AS3Legacy";
+import BlockAttributes from "../../../block/BlockAttributes";
+import Game from "../../../main/Game.1";
+import ToolType from "../../../registry/ToolType";
+import EntityCommon from "../../EntityCommon";
+import BonusBox from "../../entities/item/BonusBox";
+import AIPlayer from "../../entities/player/AIPlayer";
+import Player from "../../entities/player/Player";
+import IAIProgram from "../IAIProgram";
+
 // import batr.game.block.*;
 // import batr.game.entity.ai.*;
 // import batr.game.model.*;
@@ -85,8 +96,8 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 		// trace('Name='+owner.customName)
 		// Operation
-		var openList: PathNode[] = new PathNode[]();
-		var closeList: PathNode[] = new PathNode[]();
+		var openList: PathNode[] = new Array<PathNode>();
+		var closeList: PathNode[] = new Array<PathNode>();
 
 		var endNode: PathNode = new PathNode(endX, endY, null);
 		var startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
@@ -272,7 +283,7 @@ protected _pickupFirst: boolean = true;
 //============Constructor & Destructor============//
 public constructor() {
 	this._lastTarget = null;
-	this._closeTarget = new EntityCommon[]();
+	this._closeTarget = new Array<EntityCommon>();
 }
 
 //============Destructor Function============//
@@ -660,7 +671,7 @@ class NodeHeap {
 		return ((i + 1) >> 1) - 1;
 	}
 
-	protected const _list: PathNode[] = new PathNode[]();
+	protected const _list: PathNode[] = new Array<PathNode>();
 
 	public get length(): uint {
 		return this._list.length;

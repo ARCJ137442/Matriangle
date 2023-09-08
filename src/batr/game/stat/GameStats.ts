@@ -3,6 +3,12 @@
 // import batr.game.model.*;
 // import batr.game.entity.entity.player.*;
 
+import { uint, int } from "../../legacy/AS3Legacy";
+import Player from "../entity/entities/player/Player";
+import Game from "../main/Game";
+import GameRule from "../rule/GameRule";
+import PlayerStats from "./PlayerStats";
+
 /**
  * This's a stats(or scoreboard) use for a game
  * @author ARCJ137442
@@ -12,7 +18,7 @@ export default class GameStats {
 
 	//============Instance Variables============//
 	protected _rule: GameRule;
-	protected _players: PlayerStats[] = new PlayerStats[]();
+	protected _players: PlayerStats[] = new Array<PlayerStats>();
 
 	protected _mapTransformCount: uint = 0;
 	protected _bonusGenerateCount: uint = 0;

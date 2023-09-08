@@ -3,6 +3,11 @@
 // import batr.game.entity.entity.player.*;
 // import batr.game.entity.model.*;
 
+import { uint } from "../../legacy/AS3Legacy";
+import Player from "../entity/entities/player/Player";
+import IPlayerProfile from "../entity/entities/player/profile/IPlayerProfile";
+import PlayerProfile from "../entity/entities/player/profile/PlayerProfile";
+
 // import flash.utils.Dictionary;
 
 /* This's a stats(or scoreboard) use for a player

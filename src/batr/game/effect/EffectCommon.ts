@@ -1,5 +1,7 @@
 import { uint, int } from "../../legacy/AS3Legacy";
 import { IBatrRenderable, IBatrShape } from "../../render/BatrDisplayInterfaces";
+import Game from "../main/Game.1";
+import EffectType from "../registry/EffectRegistry";
 
 export default class EffectCommon implements IBatrRenderable {
 	//============Static Variables============//

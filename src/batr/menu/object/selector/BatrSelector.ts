@@ -2,6 +2,16 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { int } from "../../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BatrGUIEvent from "../../event/BatrGUIEvent";
+import I18nsChangeEvent from "../../event/I18nsChangeEvent";
+import Menu from "../../main/Menu";
+import BatrMenuGUI from "../BatrMenuGUI";
+import BatrTextField from "../BatrTextField";
+import IBatrMenuElement from "../IBatrMenuElement";
+import BatrSelectorContent from "./BatrSelectorContent";
+
 // import batr.game.block.*;
 // import batr.game.map.*;
 // import batr.game.main.*;

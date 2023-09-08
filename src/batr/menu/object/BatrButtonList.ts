@@ -1,6 +1,13 @@
 
 // import batr.general.*;
 
+import { int } from "../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../render/GlobalRenderVariables";
+import BatrButton from "./BatrButton";
+import BatrMenuGUI from "./BatrMenuGUI";
+import IBatrMenuElement from "./IBatrMenuElement";
+import IBatrMenuElementContainer from "./IBatrMenuElementContainer";
+
 // import flash.text.*;
 // import flash.display.*;
 // import flash.events.MouseEvent;
@@ -11,7 +18,7 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 	public static readonly DEFAULT_DISTANCE: number = DEFAULT_SIZE;
 
 	//============Instance Variables============//
-	protected _buttons: BatrButton[] = new BatrButton[]();
+	protected _buttons: BatrButton[] = new Array<BatrButton>();
 	protected _verticalDistance = DEFAULT_DISTANCE;
 
 	//============Constructor & Destructor============//

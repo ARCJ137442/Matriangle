@@ -2,6 +2,15 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { uint, int } from "../../legacy/AS3Legacy";
+import { EventDispatcher } from "../../legacy/flash/events";
+import IMap from "../block/system/IMap";
+import PlayerTeam from "../entity/entities/player/team/PlayerTeam";
+import Game from "../main/Game";
+import BonusType from "../registry/BonusRegistry";
+import ToolType from "../registry/ToolType";
+import GameRuleEvent from "./GameRuleEvent";
+
 // import batr.game.map.*;
 // import batr.game.main.*;
 // import batr.game.model.*;
@@ -136,7 +145,7 @@ export default class GameRule extends EventDispatcher {
 	 * @return	A list of PlayerTeam,contains different colors.
 	 */
 	protected static initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
-		var returnTeams: PlayerTeam[] = new PlayerTeam[]();
+		var returnTeams: PlayerTeam[] = new Array<PlayerTeam>();
 		var h: uint, s: number, v: number, color: uint;
 		var i: uint;
 		// Grayscale Team
@@ -349,8 +358,8 @@ export default class GameRule extends EventDispatcher {
 		return Game.ALL_MAPS[exMath.random(Game.ALL_MAPS.length)];
 	}
 	// Add
-	var maps: IMap[] = new IMap[]();
-	var weights: number[] = new Number[]();
+	var maps: IMap[] = new Array<IMap>();
+	var weights: number[] = new Array<Number>();
 	var sum: number = 0;
 	for (var mapPotential of this._mapRandomPotentials) {
 		if (mapPotential['map'] is IMap && mapPotential['weight'] is Number) {
@@ -377,8 +386,8 @@ export default class GameRule extends EventDispatcher {
 		this._bonusBoxSpawnPotentials = BonusType.AVAILABLE_SPAWN_POTENTIALS;
 	}
 	// Add
-	var types: BonusType[] = new BonusType[]();
-	var weights: number[] = new Number[]();
+	var types: BonusType[] = new Array<BonusType>();
+	var weights: number[] = new Array<Number>();
 	var sum: number = 0;
 	for (var bonusPotential of this._bonusBoxSpawnPotentials) {
 		if (bonusPotential['type'] is BonusType && bonusPotential['weight'] is Number) {
@@ -582,7 +591,7 @@ public set mapRandomPotentials(value: object - []) {
 }
 
 public get mapWeightsByGame(): number[] {
-	var wv: number[] = new Number[](Game.ALL_MAPS.length);
+	var wv: number[] = new Array<Number>(Game.ALL_MAPS.length);
 
 	for (var i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
 		for (var map: object in this.mapRandomPotentials) {

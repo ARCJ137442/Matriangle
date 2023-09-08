@@ -5,6 +5,14 @@
 // import batr.game.entity.entity.*;
 // import batr.game.entity.entity.player.*;
 
+import { randInt } from "../../../../common/exMath";
+import { getRandom as randomRot } from "../../../../general/GlobalRot";
+import { uint } from "../../../../legacy/AS3Legacy";
+import BonusBox from "../../entities/item/BonusBox";
+import AIPlayer from "../../entities/player/AIPlayer";
+import Player from "../../entities/player/Player";
+import IAIProgram from "../IAIProgram";
+
 /**
  * Random move and Always Press Use.
  */
@@ -15,7 +23,7 @@ export default class AIProgram_Dummy implements IAIProgram {
 
 	//============Instance Variables============//
 	protected _moveSum: uint;
-	protected _moveMaxSum: uint = 4 + exMath.random(16);
+	protected _moveMaxSum: uint = 4 + randInt(16);
 	protected _tempRot: uint;
 
 	//============Constructor & Destructor============//
@@ -62,7 +70,7 @@ export default class AIProgram_Dummy implements IAIProgram {
 			this._moveSum = 0;
 			var i: uint = 0;
 			do {
-				this._tempRot = GlobalRot.getRandom();
+				this._tempRot = randomRot();
 				i++;
 			}
 			while (i <= 8 && !player.host.testPlayerCanPassToFront(player, this._tempRot, true));

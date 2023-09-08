@@ -1,3 +1,5 @@
+import I18nText from "./I18nText";
+import I18ns from "./I18ns";
 
 /**
  * ...

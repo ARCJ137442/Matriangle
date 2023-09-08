@@ -2,6 +2,10 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { NULL } from "../../general/GlobalRot";
+import { uint, int } from "../../legacy/AS3Legacy";
+import TypeCommon from "../template/TypeCommon";
+
 export default class ToolType extends TypeCommon {
 	//============Static Variables============//
 	public static readonly NULL: ToolType = null;
@@ -34,7 +38,7 @@ export default class ToolType extends TypeCommon {
 	public static readonly _BOSS_TOOL: ToolType[] = new Array<ToolType>(ToolType.SHOCKWAVE_ALPHA, ToolType.SHOCKWAVE_BETA);
 	public static readonly _ALL_TOOL: ToolType[] = _BULLETS.concat(_LASERS).concat(_SPECIAL).concat(_BOSS_TOOL);
 
-	public static readonly _ALL_AVAILABLE_TOOL: ToolType[] = new < ToolType > [
+	public static readonly _ALL_AVAILABLE_TOOL: ToolType[] = [
 		ToolType.BULLET,
 		ToolType.NUKE,
 		ToolType.SUB_BOMBER,

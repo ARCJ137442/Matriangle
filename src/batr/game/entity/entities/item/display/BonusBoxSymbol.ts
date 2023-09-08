@@ -1,6 +1,13 @@
 
 // import batr.general.*;
 
+import { uint } from "../../../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../../../render/GlobalRenderVariables";
+import EffectTeleport from "../../../../effect/effects/EffectTeleport";
+import BonusType from "../../../../registry/BonusRegistry";
+import PlayerGUI from "../../player/display/PlayerGUI";
+
 // import batr.game.main.*;
 // import batr.game.effect.effects.*;
 // import batr.game.model.*;

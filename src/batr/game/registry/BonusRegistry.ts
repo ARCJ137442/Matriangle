@@ -2,6 +2,9 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { NULL } from "../../general/GlobalRot";
+import TypeCommon from "../template/TypeCommon";
+
 export default class BonusType extends TypeCommon {
 	//============Static Variables============//
 	public static readonly NULL: BonusType = null;
@@ -61,7 +64,7 @@ export default class BonusType extends TypeCommon {
 	}
 
 	public static get AVAILABLE_SPAWN_POTENTIALS(): object[] {
-		var result: object[] = new Object[]();
+		var result: object[] = new Array<Object>();
 		for (var bType of _ALL_AVAILABLE_TYPE) {
 			result.push({
 				type: bType,

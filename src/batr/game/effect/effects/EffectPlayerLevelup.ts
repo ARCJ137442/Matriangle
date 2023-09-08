@@ -2,6 +2,12 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { uint } from "../../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import Game from "../../main/Game.1";
+import EffectType from "../../registry/EffectRegistry";
+import EffectCommon from "../EffectCommon";
+
 // import batr.game.effect.*;
 // import batr.game.main.*;
 

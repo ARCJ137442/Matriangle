@@ -6,6 +6,9 @@
 // import batr.menu.object.*;
 // import batr.menu.events.*;
 
+import BatrGUIEvent from "../event/BatrGUIEvent";
+import IBatrMenuElement from "./IBatrMenuElement";
+
 // import flash.display.*;
 // import flash.events.*;
 

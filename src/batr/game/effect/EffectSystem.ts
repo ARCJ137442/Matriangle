@@ -1,6 +1,10 @@
 
 // import batr.common.*;
 
+import { uint } from "../../legacy/AS3Legacy";
+import Game from "../main/Game.1";
+import EffectCommon from "./EffectCommon";
+
 // import batr.game.effect.*;
 // import batr.game.main.*;
 
@@ -90,7 +94,7 @@ export default class EffectSystem {
 	}
 
 	public getAllEffect(): EffectCommon[] {
-		var result: EffectCommon[] = new EffectCommon[]();
+		var result: EffectCommon[] = new Array<EffectCommon>();
 		for (var obj of this._uuidDic) {
 			if (obj != null && obj is EffectCommon)
 			result.push(obj as EffectCommon);
@@ -99,7 +103,7 @@ export default class EffectSystem {
 	}
 
 	public getAllUUID(): uint[] {
-		var result: uint[] = new uint[]();
+		var result: uint[] = new array<uint>();
 		for (var obj of this._uuidDic) {
 			if (obj != null && obj is uint && isValidUUID(obj as uint))
 			result.push(obj as uint);

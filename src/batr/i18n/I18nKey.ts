@@ -2,6 +2,8 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import TypeCommon from "../game/template/TypeCommon";
+
 // import batr.game.block.*;
 // import batr.game.entity.*;
 // import batr.game.entity.ai.*;
@@ -140,6 +142,6 @@ export default class I18nKey {
 	 * @return	A string based on the type.
 	 */
 	public static getTypeKey(type: TypeCommon, isDescription: boolean): string {
-		return (isDescription ? getTypeDescriptionKey : getTypeNameKey)(type);
+		return (isDescription ? I18nKey.getTypeDescriptionKey : I18nKey.getTypeNameKey)(type);
 	}
 }

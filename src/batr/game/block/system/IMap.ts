@@ -1,6 +1,12 @@
 
 // import batr.common.*;
 
+import { iPoint } from "../../../common/intPoint";
+import { uint, int } from "../../../legacy/AS3Legacy";
+import BlockAttributes from "../BlockAttributes";
+import BlockCommon, { BlockType } from "../BlockCommon";
+import IMapDisplayer from "./IMapDisplayer";
+
 // import batr.game.block.*;
 
 export default interface IMap {
@@ -24,10 +30,10 @@ export default interface IMap {
 
 	destructor(): void;
 
-	clone(createBlock: boolean = true): IMap;
+	clone(createBlock: boolean/* = true*/): IMap;
 
-	copyContentFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
-	copyFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void;
+	copyContentFrom(target: IMap, clearSelf: boolean/* = false*/, createBlock: boolean/* = true*/): void;
+	copyFrom(target: IMap, clearSelf: boolean/* = false*/, createBlock: boolean/* = true*/): void;
 	generateNew(): IMap;
 
 	hasBlock(x: int, y: int): boolean;
@@ -44,7 +50,7 @@ export default interface IMap {
 
 	setVoid(x: int, y: int): void;
 
-	removeAllBlock(deleteBlock: boolean = true): void;
+	removeAllBlock(deleteBlock: boolean/* = true*/): void;
 
 	// Display About
 	setDisplayTo(target: IMapDisplayer): void;
@@ -60,13 +66,13 @@ export default interface IMap {
 	clearSpawnPoints(): void;
 
 	// AI About
-	getMatrixObject(): Vector.<Object[]>;
+	getMatrixObject(): (Object[])[];
 
-	getMatrixInt(): Vector.<int[]>;
+	getMatrixInt(): (int[])[];
 
-	getMatrixUint(): Vector.<uint[]>;
+	getMatrixUint(): (uint[])[];
 
-	getMatrixNumber(): Vector.<Number[]>;
+	getMatrixNumber(): (Number[])[];
 
-	getMatrixBoolean(): Vector.<Boolean[]>;
+	getMatrixBoolean(): (Boolean[])[];
 }

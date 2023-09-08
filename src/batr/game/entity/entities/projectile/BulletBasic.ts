@@ -2,6 +2,14 @@
 // import batr.general.*;
 // import batr.common.*;
 
+import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import { BlockType } from "../../../block/BlockCommon";
+import Game from "../../../main/Game.1";
+import EntityType from "../../../registry/EntityRegistry";
+import ToolType from "../../../registry/ToolType";
+import Player from "../player/Player";
+import ProjectileCommon from "./ProjectileCommon";
+
 // import batr.game.block.*;
 // import batr.game.entity.*;
 // import batr.game.entity.entity.player.*;

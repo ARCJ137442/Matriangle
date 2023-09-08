@@ -2,6 +2,10 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { NULL } from "../../general/GlobalRot";
+import { uint } from "../../legacy/AS3Legacy";
+import TypeCommon from "../template/TypeCommon";
+
 export default class GameModeType extends TypeCommon {
 	//============Static Variables============//
 	public static readonly NULL: GameModeType = null;
@@ -11,10 +15,10 @@ export default class GameModeType extends TypeCommon {
 	public static readonly SURVIVAL: GameModeType = new GameModeType('survival');
 	public static readonly HARD: GameModeType = new GameModeType('hard');
 
-	public static readonly _ALL_TYPE: GameModeType[] = new <GameModeType>
-	[
-		REGULAR, BATTLE, SURVIVAL
-	];
+	public static readonly _ALL_TYPE: GameModeType[] =
+		[
+			REGULAR, BATTLE, SURVIVAL
+		];
 
 	//============Static Getter And Setter============//
 	public static get RANDOM(): GameModeType {

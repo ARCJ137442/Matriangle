@@ -3,6 +3,12 @@
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
+import BlockCommon from "../game/block/BlockCommon";
+import { Bedrock } from "../game/registry/BlockRegistry";
+import { uint, int } from "../legacy/AS3Legacy";
+import { DisplayObject } from "../legacy/flash/display";
+import { DEFAULT_SIZE } from "../render/GlobalRenderVariables";
+
 // import flash.display.*;
 
 export default class Background extends Sprite {

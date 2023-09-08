@@ -9,6 +9,19 @@
 // import batr.menu.object.selector.*;
 // import batr.i18n.*;
 
+import { int } from "../../../legacy/AS3Legacy";
+import BatrSubject from "../../../main/BatrSubject";
+import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import BatrGUIEvent from "../../event/BatrGUIEvent";
+import I18nsChangeEvent from "../../event/I18nsChangeEvent";
+import Menu from "../../main/Menu";
+import BatrMenuGUI from "../BatrMenuGUI";
+import BatrTextField from "../BatrTextField";
+import IBatrMenuElement from "../IBatrMenuElement";
+import IBatrMenuElementContainer from "../IBatrMenuElementContainer";
+import BatrSelector from "./BatrSelector";
+import BatrSelectorContent from "./BatrSelectorContent";
+
 // import flash.text.*;
 // import flash.display.*;
 // import flash.events.MouseEvent;
@@ -20,18 +33,18 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	public static readonly DEFAULT_DISTANCE_V: number = DEFAULT_SIZE;
 
 	//============Instance Variables============//
-	protected _selectors: BatrSelector[] = new BatrSelector[]();
-	protected _selectTextFields: BatrTextField[] = new BatrTextField[]();
+	protected _selectors: BatrSelector[] = new Array<BatrSelector>();
+	protected _selectTextFields: BatrTextField[] = new Array<BatrTextField>();
 
 	/**
 	 * Distance Between selector And selector.
 	 */
-	protected _verticalDistance = DEFAULT_DISTANCE_V;
+	protected _verticalDistance = BatrSelectorList.DEFAULT_DISTANCE_V;
 
 	/**
 	 * Distance Between Text And selector.
 	 */
-	protected _horizontalDistance = DEFAULT_DISTANCE_H;
+	protected _horizontalDistance = BatrSelectorList.DEFAULT_DISTANCE_H;
 
 	//============Constructor & Destructor============//
 	public constructor(horizontalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_H, verticalDistance: number = BatrSelectorList.DEFAULT_DISTANCE_V) {
@@ -92,12 +105,12 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 
 	//============Instance Functions============//
 	public setPos(x: number, y: number): BatrSelectorList {
-		super.protected:: sP(x, y);
+		super.protected:: this.sP(x, y);
 		return this;
 	}
 
 	public setBlockPos(x: number, y: number): BatrSelectorList {
-		super.protected:: sBP(x, y);
+		super.protected:: this.sBP(x, y);
 		return this;
 	}
 
@@ -158,7 +171,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	 * Unfinished.
 	 */
 	public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
-		functionNotFound();
+		this.functionNotFound();
 		return null;
 	}
 
@@ -166,7 +179,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	 * Unfinished.
 	 */
 	public appendDirectElements(...elements): IBatrMenuElement {
-		functionNotFound();
+		this.functionNotFound();
 		return null;
 	}
 
@@ -181,7 +194,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	 * Unfinished.
 	 */
 	public getElementAt(index: int): IBatrMenuElement {
-		functionNotFound();
+		this.functionNotFound();
 		return null;
 	}
 
@@ -189,7 +202,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	 * Unfinished.
 	 */
 	public getElementByName(name: string): BatrMenuGUI {
-		functionNotFound();
+		this.functionNotFound();
 		return null;
 	}
 

@@ -2,6 +2,9 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { NULL } from "../../general/GlobalRot";
+import TypeCommon from "../template/TypeCommon";
+
 export default class EntityType extends TypeCommon {
 	//============Static Variables============//
 	public static readonly NULL: EntityType = null;

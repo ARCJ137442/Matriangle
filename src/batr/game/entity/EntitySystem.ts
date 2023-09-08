@@ -1,6 +1,13 @@
 
 // import batr.common.*;
 
+import { uint } from "../../legacy/AS3Legacy";
+import Game from "../main/Game.1";
+import EntityCommon from "./EntityCommon";
+import BonusBox from "./entities/item/BonusBox";
+import Player from "./entities/player/Player";
+import ProjectileCommon from "./entities/projectile/ProjectileCommon";
+
 // import batr.game.entity.*;
 // import batr.game.entity.entity.*;
 // import batr.game.entity.entity.player.*;
@@ -147,7 +154,7 @@ export default class EntitySystem {
 	}
 
 	public getAllEntity(): EntityCommon[] {
-		var result: EntityCommon[] = new EntityCommon[]();
+		var result: EntityCommon[] = new Array<EntityCommon>();
 		for (var obj of this._uuidDic) {
 			if (obj != null && obj is EntityCommon)
 			result.push(obj as EntityCommon);
@@ -156,7 +163,7 @@ export default class EntitySystem {
 	}
 
 	public getAllUUID(): uint[] {
-		var result: uint[] = new uint[]();
+		var result: uint[] = new array<uint>();
 		for (var obj of this._uuidDic) {
 			if (obj != null && obj is uint && isValidUUID(obj as uint))
 			result.push(obj as uint);

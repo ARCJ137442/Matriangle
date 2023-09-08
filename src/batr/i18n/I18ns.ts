@@ -1,6 +1,9 @@
 
 // import flash.system.Capabilities;
 
+import { int, uint } from "../legacy/AS3Legacy";
+import * as DefaultNativeI18ns from './DefaultNativeI18ns';
+
 export default class I18ns {
 	//============Static Variables============//
 	// I18ns
@@ -21,15 +24,19 @@ export default class I18ns {
 	}
 
 	//============Static Functions============//
-	public static getI18nByLanguage(): I18ns {
-		if (!isInited)
-			cInit();
-		switch (Capabilities.language) {
+	public static getCapabilitiesLanguage(): string {
+		// return Capabilities.language
+		return 'en'; // TODO: system language getter
+	}
+	public static getI18nByLanguage(): I18ns | null {
+		if (!I18ns.isInited)
+			I18ns.cInit();
+		switch (this.getCapabilitiesLanguage()) {
 			case 'en':
-				return EN_US;
+				return I18ns.EN_US;
 
 			case 'zh-CN':
-				return ZH_CN;
+				return I18ns.ZH_CN;
 
 			default:
 				return null;
@@ -42,15 +49,15 @@ export default class I18ns {
 	}
 
 	// ['index:text','index2:text2','index3:text3'...]
-	public static fromStringArr(str: Array): I18ns {
-		if (!isInited)
-			cInit();
+	public static fromStringArr(str: string[]): I18ns {
+		if (!I18ns.isInited)
+			I18ns.cInit();
 
 		var returnT: I18ns = new I18ns();
 
 		if (str.length < 1 || str == null)
 			return returnT;
-		var str1: Array, k: string, v: string;
+		var str1: string[], k: string, v: string;
 		for (var value of str) {
 			str1 = String(value).split(':');
 
@@ -63,12 +70,12 @@ export default class I18ns {
 		return returnT;
 	}
 
-	public static getI18n(translation: I18ns, key: string): string {
+	public static getI18n(translation: I18ns, key: string): string | null {
 		return translation == null ? null : translation.getI18n(key);
 	}
 
 	// 'index:text','index2:text2','index3:text3','...'
-	public static fromStringArr2(...str): I18ns {
+	public static fromStringArr2(...str: string[]): I18ns {
 		return I18ns.fromStringArr(str);
 	}
 
@@ -82,11 +89,11 @@ export default class I18ns {
 
 	//====Init I18ns====//
 	protected static cInit(): boolean {
-		isInited = true;
-		EN_US = DefaultNativeI18ns.EN_US;
-		ZH_CN = DefaultNativeI18ns.ZH_CN;
+		I18ns.isInited = true;
+		I18ns.EN_US = DefaultNativeI18ns.EN_US;
+		I18ns.ZH_CN = DefaultNativeI18ns.ZH_CN;
 		// trace(ZH_CN.translationKeys.toString()+'\n'+ZH_CN.translationValues.toString())
-		_translationsList = new Array<I18ns>(I18ns.EN_US, I18ns.ZH_CN);
+		I18ns._translationsList = new Array<I18ns>(I18ns.EN_US, I18ns.ZH_CN);
 		return true;
 	}
 
@@ -102,8 +109,8 @@ export default class I18ns {
 	//============Constructor & Destructor============//
 	// 'index','text','index2','text2','index3','text3','...'
 	public constructor(...translations) {
-		if (!isInited)
-			cInit();
+		if (!I18ns.isInited)
+			I18ns.cInit();
 		this._getFunction = this.defaultGet;
 		this._setFunction = this.defaultSet;
 		for (var i: uint = 0; i + 1 < translations.length; i += 2) {
@@ -117,7 +124,7 @@ export default class I18ns {
 	}
 
 	public get translationKeys(): string[] {
-		var rV: string[] = new String[]();
+		var rV: string[] = new Array<String>();
 
 		for (var index in this._dictionary) {
 			rV.push(String(index));
@@ -126,7 +133,7 @@ export default class I18ns {
 	}
 
 	public get translationValues(): string[] {
-		var rV: string[] = new String[]();
+		var rV: string[] = new Array<String>();
 
 		for (var value of this._dictionary) {
 			rV.push(String(value));

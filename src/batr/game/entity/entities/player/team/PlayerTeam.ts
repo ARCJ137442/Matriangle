@@ -1,7 +1,8 @@
+import { uint } from "../../../../../legacy/AS3Legacy";
 
 export default class PlayerTeam {
 	//============Static Variables============//
-	public static readonly isInited: boolean = cInit();
+	public static readonly isInited: boolean = this.cInit();
 
 	//============Static Getter And Setter============//
 

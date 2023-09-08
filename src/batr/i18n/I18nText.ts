@@ -8,12 +8,24 @@
 // import batr.game.main.Game;
 // import batr.game.main.GameRule;
 
+import Game from "../game/main/Game.1";
+import BonusType from "../game/registry/BonusRegistry";
+import EffectType from "../game/registry/EffectRegistry";
+import EntityType from "../game/registry/EntityRegistry";
+import ToolType from "../game/registry/ToolType";
+import GameModeType from "../game/rule/GameModeType";
+import GameRule from "../game/rule/GameRule";
+import { uint } from "../legacy/AS3Legacy";
+import ForcedI18nText from "./ForcedI18nText";
+import I18nKey from "./I18nKey";
+import I18ns from "./I18ns";
+
 export default class I18nText {
 	//============Static Variables============//
 
 	//============Static Getter And Setter============//
 	public static getTextsByAllBlocks(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of BlockType._NORMAL_BLOCKS) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -21,7 +33,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByAllEntities(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of EntityType._ALL_ENTITY) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -29,7 +41,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByAllEffects(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of EffectType._ALL_EFFECT) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -37,7 +49,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByAllAvailableTools(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of ToolType._ALL_AVAILABLE_TOOL) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -45,7 +57,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByAllBonus(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of BonusType._ALL_TYPE) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -53,7 +65,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByAllGameModes(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var type of GameModeType._ALL_TYPE) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
@@ -61,7 +73,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByI18ns(translations: I18ns): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var t of I18ns.translationsList) {
 			result.push(new I18nText(translations, I18nKey.LANGUAGE));
 		}
@@ -69,7 +81,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByRuleTools(rule: GameRule, translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var i: uint = 0; i < rule.enableToolCount; i++) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enableTools[i], isDescription)));
 		}
@@ -77,7 +89,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByLanguages(): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var i: uint = 0; i < I18ns.numI18ns; i++) {
 			result.push(new I18nText(I18ns.translationsList[i], I18nKey.LANGUAGE_SELF));
 		}
@@ -85,7 +97,7 @@ export default class I18nText {
 	}
 
 	public static getTextsByMapNames(): I18nText[] {
-		var result: I18nText[] = new I18nText[]();
+		var result: I18nText[] = new Array<I18nText>();
 		for (var i: uint = 0; i < Game.VALID_MAP_COUNT; i++) {
 			result.push(new ForcedI18nText(null, null, Game.ALL_MAPS[i].name));
 		}

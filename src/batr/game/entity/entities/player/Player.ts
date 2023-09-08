@@ -1,4 +1,19 @@
+import { int, uint } from "../../../../legacy/AS3Legacy";
+import { Matrix } from "../../../../legacy/flash/geom";
+import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import BlockCommon from "../../../block/BlockCommon";
+import Game from "../../../main/Game.1";
+import EntityType from "../../../registry/EntityRegistry";
+import ToolType from "../../../registry/ToolType";
+import GameRule from "../../../rule/GameRule";
+import PlayerStats from "../../../stat/PlayerStats";
+import EntityCommon from "../../EntityCommon";
+import BonusBox from "../item/BonusBox";
+import AIPlayer from "./AIPlayer";
 import PlayerController from "./controller/PlayerController";
+import PlayerGUI from "./display/PlayerGUI";
+import IPlayerProfile from "./profile/IPlayerProfile";
+import PlayerTeam from "./team/PlayerTeam";
 
 
 // import batr.common.*;

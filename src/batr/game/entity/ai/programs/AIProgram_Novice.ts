@@ -2,6 +2,12 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { uint, int } from "../../../../legacy/AS3Legacy";
+import BonusBox from "../../entities/item/BonusBox";
+import AIPlayer from "../../entities/player/AIPlayer";
+import Player from "../../entities/player/Player";
+import IAIProgram from "../IAIProgram";
+
 // import batr.game.entity.ai.*;
 // import batr.game.entity.entity.*;
 // import batr.game.entity.entity.player.*;

@@ -2,6 +2,17 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { uint, int } from "../../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../../render/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import Game from "../../../main/Game.1";
+import BonusType from "../../../registry/BonusRegistry";
+import EntityType from "../../../registry/EntityRegistry";
+import ToolType from "../../../registry/ToolType";
+import EntityCommon from "../../EntityCommon";
+import Player from "../player/Player";
+import BonusBoxSymbol from "./display/BonusBoxSymbol.1";
+
 // import batr.game.entity.*;
 // import batr.game.entity.object.*;
 // import batr.game.entity.entity.player.*;

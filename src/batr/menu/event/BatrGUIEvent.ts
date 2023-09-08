@@ -1,6 +1,8 @@
 
 // import batr.menu.object.*;
 
+import BatrMenuGUI from "../object/BatrMenuGUI";
+
 // import flash.events.Event;
 
 export default class BatrGUIEvent extends Event {

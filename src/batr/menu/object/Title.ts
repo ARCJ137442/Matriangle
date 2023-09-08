@@ -1,6 +1,9 @@
 
 // import flash.display.*;
 
+import { X, Y } from "../../common/KeyCode";
+import TitleImg from "./TitleImg";
+
 export default class Title extends Bitmap {
 	//============Static Variables============//
 	public static readonly WIDTH: number = 2048.75;

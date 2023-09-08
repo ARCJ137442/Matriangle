@@ -4,6 +4,14 @@
 // import batr.game.model.*;
 // import batr.game.main.*;
 
+import { uint } from "../../../../legacy/AS3Legacy";
+import { IBatrShape } from "../../../../render/BatrDisplayInterfaces";
+import Game from "../../../main/Game.1";
+import EntityType from "../../../registry/EntityRegistry";
+import ToolType from "../../../registry/ToolType";
+import EntityCommon from "../../EntityCommon";
+import Player from "../player/Player";
+
 export default class ProjectileCommon extends EntityCommon {
 	//============Instance Variables============//
 	protected _owner: Player;

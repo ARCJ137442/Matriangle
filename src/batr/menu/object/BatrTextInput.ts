@@ -2,6 +2,9 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import Menu from "../main/Menu";
+import IBatrMenuElement from "./IBatrMenuElement";
+
 // import batr.menu.main.*;
 // import batr.menu.events.*;
 // import batr.menu.object.*;

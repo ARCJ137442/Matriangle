@@ -4,14 +4,61 @@
 
 import { iPoint } from "../../common/intPoint";
 import MainFont from "../../fonts/MainFont";
+import FixedI18nText from "../../i18n/FixedI18nText";
+import I18nKey from "../../i18n/I18nKey";
+import I18nText from "../../i18n/I18nText";
+import I18ns from "../../i18n/I18ns";
 import { int, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
 import { DisplayObject } from "../../legacy/flash/display";
 import { getTimer } from "../../legacy/flash/utils";
+import Background from "../../main/Background";
+import BatrSubject from "../../main/BatrSubject";
+import I18nsChangeEvent from "../../menu/event/I18nsChangeEvent";
+import Menu from "../../menu/main/Menu";
+import BatrTextField from "../../menu/object/BatrTextField";
 import { DEFAULT_SIZE } from "../../render/GlobalRenderVariables";
 import BlockAttributes from "../block/BlockAttributes";
 import BlockCommon, { BlockType } from "../block/BlockCommon";
+import IMap from "../block/system/IMap";
+import IMapDisplayer from "../block/system/IMapDisplayer";
+import MapDisplayer from "../block/system/main/MapDisplayer";
+import Map_V1 from "../block/system/main/Map_V1";
 import EffectCommon from "../effect/EffectCommon";
+import EffectSystem from "../effect/EffectSystem";
+import EffectBlockLight from "../effect/effects/EffectBlockLight";
+import EffectExplode from "../effect/effects/EffectExplode";
+import EffectPlayerDeathFadeout from "../effect/effects/EffectPlayerDeathAlpha";
+import EffectPlayerDeathLight from "../effect/effects/EffectPlayerDeathLight";
+import EffectPlayerHurt from "../effect/effects/EffectPlayerHurt";
+import EffectPlayerLevelup from "../effect/effects/EffectPlayerLevelup";
+import EffectSpawn from "../effect/effects/EffectSpawn";
+import EffectTeleport from "../effect/effects/EffectTeleport";
+import EntityCommon from "../entity/EntityCommon";
+import EntitySystem from "../entity/EntitySystem";
+import BonusBox from "../entity/entities/item/BonusBox";
+import BonusBoxSymbol from "../entity/entities/item/display/BonusBoxSymbol";
+import AIPlayer from "../entity/entities/player/AIPlayer";
+import Player from "../entity/entities/player/Player";
+import PlayerTeam from "../entity/entities/player/team/PlayerTeam";
+import BulletBasic from "../entity/entities/projectile/BulletBasic";
+import BulletNuke from "../entity/entities/projectile/BulletNuke";
+import BulletTracking from "../entity/entities/projectile/BulletTracking";
+import LaserAbsorption from "../entity/entities/projectile/LaserAbsorption";
+import LaserBasic from "../entity/entities/projectile/LaserBasic";
+import LaserPulse from "../entity/entities/projectile/LaserPulse";
+import LaserTeleport from "../entity/entities/projectile/LaserTeleport";
+import Lightning from "../entity/entities/projectile/Lightning";
+import ProjectileCommon from "../entity/entities/projectile/ProjectileCommon";
+import ShockWaveBase from "../entity/entities/projectile/ShockWaveBase";
+import SubBomber from "../entity/entities/projectile/SubBomber";
+import ThrownBlock from "../entity/entities/projectile/ThrownBlock";
 import { MoveableWall } from "../registry/BlockRegistry";
+import BonusType from "../registry/BonusRegistry";
+import ToolType from "../registry/ToolType";
+import GameRule from "../rule/GameRule";
+import GameRuleEvent from "../rule/GameRuleEvent";
+import GameResult from "../stat/GameResult";
+import GameStats from "../stat/GameStats";
 
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
@@ -420,7 +467,7 @@ export default class Game extends Sprite {
 	}
 
 	public getAlivePlayers(): Player[] {
-		var result: Player[] = new Player[]();
+		var result: Player[] = new Array<Player>();
 		for (var player of this._entitySystem.players) {
 			if (player == null)
 				continue;
@@ -431,7 +478,7 @@ export default class Game extends Sprite {
 	}
 
 	public getInMapPlayers(): Player[] {
-		var result: Player[] = new Player[]();
+		var result: Player[] = new Array<Player>();
 		for (var player of this._entitySystem.players) {
 			if (player == null)
 				continue;
@@ -1482,9 +1529,9 @@ export default class Game extends Sprite {
 	protected findFitSpawnPoint(player: Player, x: int, y: int): iPoint {
 		// Older Code uses Open List/Close List
 		/*{
-			var oP:uint[]=new <uint>[UintPointCompress.compressFromPoint(x,y)];
-			var wP:uint[]=new uint[]();
-			var cP:uint[]=new uint[]();
+			var oP:uint[]=[UintPointCompress.compressFromPoint(x,y)];
+			var wP:uint[]=new array<uint>();
+			var cP:uint[]=new array<uint>();
 			var tP:iPoint;
 			while(oP.length>0) {
 				for(var p of oP) {

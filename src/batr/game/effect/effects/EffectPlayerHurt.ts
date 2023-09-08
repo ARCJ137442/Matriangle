@@ -2,6 +2,13 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { uint } from "../../../legacy/AS3Legacy";
+import AIPlayer from "../../entity/entities/player/AIPlayer";
+import Player from "../../entity/entities/player/Player";
+import Game from "../../main/Game.1";
+import EffectType from "../../registry/EffectRegistry";
+import EffectPlayerDeathLight from "./EffectPlayerDeathLight";
+
 // import batr.game.entity.entity.player.*;
 // import batr.game.effect.*;
 // import batr.game.main.*;

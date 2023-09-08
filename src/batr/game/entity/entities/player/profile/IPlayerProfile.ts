@@ -1,3 +1,4 @@
+import { uint } from "../../../../../legacy/AS3Legacy";
 
 /**
  * ...

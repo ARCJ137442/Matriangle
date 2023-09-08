@@ -632,7 +632,7 @@ export default class Map_V1 extends NativeMapCommon {
 	}
 
 	override get allDefinedPositions(): iPoint[] {
-		var returnPoints: iPoint[] = new iPoint[]();
+		var returnPoints: iPoint[] = new Array<iPoint>();
 
 		if (this._Content == null)
 			return returnPoints;
@@ -644,7 +644,7 @@ export default class Map_V1 extends NativeMapCommon {
 	}
 
 	override get allMapPositions(): iPoint[] {
-		var returnPoints: iPoint[] = new iPoint[]();
+		var returnPoints: iPoint[] = new Array<iPoint>();
 
 		for (var x: uint = 0; x < this.mapWidth; x++) {
 			for (var y: uint = 0; y < this.mapHeight; y++) {

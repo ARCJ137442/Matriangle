@@ -2,25 +2,32 @@
 // import batr.i18n.*;
 // import batr.game.stat.PlayerStats;
 
+import PlayerStats from "../../../game/stat/PlayerStats";
+import ForcedI18nText from "../../../i18n/ForcedI18nText";
+import I18nKey from "../../../i18n/I18nKey";
+import I18nText from "../../../i18n/I18nText";
+import I18ns from "../../../i18n/I18ns";
+import { int, int$MAX_VALUE, int$MIN_VALUE } from "../../../legacy/AS3Legacy";
+
 export default class BatrSelectorContent {
 	//============Static Variables============//
 
 	//============Static Functions============//
 	public static createPositiveIntegerContent(initValue: int): BatrSelectorContent {
-		return new BatrSelectorContent().initAsInt(int.MAX_VALUE, 1, initValue).autoInitLoopSelect();
+		return new BatrSelectorContent().initAsInt(int$MAX_VALUE, 1, initValue).autoInitLoopSelect();
 	}
 
 	public static createUnsignedIntegerContent(initValue: int): BatrSelectorContent {
-		return new BatrSelectorContent().initAsInt(int.MAX_VALUE, 0, initValue).autoInitLoopSelect();
+		return new BatrSelectorContent().initAsInt(int$MAX_VALUE, 0, initValue).autoInitLoopSelect();
 	}
 
 	public static createPositiveIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
 		return new BatrSelectorContent().initAsEnum(
-			new < I18nText > [
+			[
 				tText
 			], 0, 0
 		).initAsInt(
-			int.MAX_VALUE, 0, initValue
+			int$MAX_VALUE, 0, initValue
 		).autoInitLoopSelect();
 	}
 
@@ -30,7 +37,7 @@ export default class BatrSelectorContent {
 				tText
 			], 0, 1
 		).initAsInt(
-			int.MAX_VALUE, -1, initValue
+			int$MAX_VALUE, -1, initValue
 		).autoInitLoopSelect();
 	}
 
@@ -78,8 +85,8 @@ export default class BatrSelectorContent {
 	protected _enableLoopRight: boolean = false;
 
 	//====Int====//
-	protected _intMax: int = int.MAX_VALUE;
-	protected _intMin: int = int.MIN_VALUE;
+	protected _intMax: int = int$MAX_VALUE;
+	protected _intMin: int = int$MIN_VALUE;
 
 	//====Enum====//
 	protected _enumTexts: I18nText[];
@@ -87,7 +94,7 @@ export default class BatrSelectorContent {
 
 	//============Constructor & Destructor============//
 	public constructor() {
-		this._enumTexts = new I18nText[]();
+		this._enumTexts = new Array<I18nText>();
 	}
 
 	public copyFrom(other: BatrSelectorContent): void {
@@ -130,7 +137,7 @@ export default class BatrSelectorContent {
 	}
 
 	public set currentValue(value: int) {
-		if (this._value > int.MIN_VALUE && this._value < int.MAX_VALUE) {
+		if (this._value > int$MIN_VALUE && this._value < int$MAX_VALUE) {
 			if (value > this._intMax)
 				value = this._enableLoopRight ? this._intMin : this._intMax;
 			else if (value < this._intMin)
@@ -231,8 +238,8 @@ export default class BatrSelectorContent {
 	}
 
 	public autoInitLoopSelect(): BatrSelectorContent {
-		this._enableLoopLeft = this._intMax < int.MAX_VALUE;
-		this._enableLoopRight = this._intMin > int.MIN_VALUE;
+		this._enableLoopLeft = this._intMax < int$MAX_VALUE;
+		this._enableLoopRight = this._intMin > int$MIN_VALUE;
 		return this;
 	}
 

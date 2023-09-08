@@ -1,6 +1,10 @@
 
 // import batr.general.*;
 
+import { uint, int, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
+import AIPlayer from "../AIPlayer";
+import Player from "../Player";
+
 // import batr.game.entity.entity.player.*;
 
 // import flash.display.Shape;

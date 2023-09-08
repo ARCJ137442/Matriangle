@@ -7,6 +7,12 @@
 // import batr.main.*;
 // import batr.i18n.*;
 
+import { int, uint } from "../../legacy/AS3Legacy";
+import { DisplayObject } from "../../legacy/flash/display";
+import BatrMenuGUI from "./BatrMenuGUI";
+import IBatrMenuElement from "./IBatrMenuElement";
+import IBatrMenuElementContainer from "./IBatrMenuElementContainer";
+
 // import flash.display.DisplayObject;
 // import flash.display.Sprite;
 // import flash.events.*;
@@ -23,7 +29,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 	public constructor(keepTitle: boolean = true) {
 		super(false);
 		this._keepTitle = keepTitle;
-		this._directElements = new IBatrMenuElement[]();
+		this._directElements = new Array<IBatrMenuElement>();
 	}
 
 	//============Destructor Function============//

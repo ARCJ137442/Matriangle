@@ -6,6 +6,8 @@
 // import batr.menu.object.*;
 // import batr.i18n.*;
 
+import I18ns from "../../i18n/I18ns";
+
 // import flash.events.Event;
 
 export default class I18nsChangeEvent extends Event {

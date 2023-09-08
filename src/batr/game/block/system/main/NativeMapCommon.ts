@@ -19,7 +19,7 @@ export default class NativeMapCommon implements IMap {
 	}
 
 	//============Instance Variables============//
-	protected _spawnPoints: uint[] = new uint[]();
+	protected _spawnPoints: uint[] = new array<uint>();
 	protected _arena: boolean = false;
 	protected _name: string;
 
@@ -214,7 +214,7 @@ export default class NativeMapCommon implements IMap {
 		var result: Vector.<Object[]> = new Vector.<Object[]>(this.mapHeight);
 		var vec: object[];
 		for (var i: uint = 0; i < this.mapHeight; i++) {
-			vec = new Object[](this.mapWidth);
+			vec = new Array<Object>(this.mapWidth);
 			result[i] = vec;
 		}
 		return result;
@@ -228,7 +228,7 @@ export default class NativeMapCommon implements IMap {
 		var result: Vector.<int[]> = new Vector.<int[]>(this.mapHeight);
 		var vec: int[];
 		for (var i: uint = 0; i < this.mapHeight; i++) {
-			vec = new int[](this.mapWidth);
+			vec = new array<int>(this.mapWidth);
 			result[i] = vec;
 		}
 		return result;
@@ -242,7 +242,7 @@ export default class NativeMapCommon implements IMap {
 		var result: Vector.<uint[]> = new Vector.<uint[]>(this.mapHeight);
 		var vec: uint[];
 		for (var i: uint = 0; i < this.mapHeight; i++) {
-			vec = new uint[](this.mapWidth);
+			vec = new array<uint>(this.mapWidth);
 			result[i] = vec;
 		}
 		return result;
@@ -256,7 +256,7 @@ export default class NativeMapCommon implements IMap {
 		var result: Vector.<Number[]> = new Vector.<Number[]>(this.mapHeight);
 		var vec: number[];
 		for (var i: uint = 0; i < this.mapHeight; i++) {
-			vec = new Number[](this.mapWidth);
+			vec = new Array<Number>(this.mapWidth);
 			result[i] = vec;
 		}
 		return result;
@@ -270,7 +270,7 @@ export default class NativeMapCommon implements IMap {
 		var result: Vector.<Boolean[]> = new Vector.<Boolean[]>(this.mapHeight);
 		var vec: boolean[];
 		for (var i: uint = 0; i < this.mapHeight; i++) {
-			vec = new Boolean[](this.mapWidth);
+			vec = new Array<Boolean>(this.mapWidth);
 			result[i] = vec;
 		}
 		return result;

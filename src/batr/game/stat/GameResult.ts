@@ -4,6 +4,13 @@
 // import batr.i18n.ForcedI18nText;
 // import batr.i18n.I18nText;
 
+import ForcedI18nText from "../../i18n/ForcedI18nText";
+import I18nText from "../../i18n/I18nText";
+import { int } from "../../legacy/AS3Legacy";
+import Game from "../main/Game";
+import GameStats from "./GameStats";
+import PlayerStats from "./PlayerStats";
+
 // import batr.game.block.*;
 // import batr.game.map.*;
 // import batr.game.main.*;

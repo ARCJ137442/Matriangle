@@ -2,6 +2,16 @@
 // import batr.common.*;
 // import batr.general.*;
 
+import { iPoint } from "../../../../common/intPoint";
+import { int, uint } from "../../../../legacy/AS3Legacy";
+import Game from "../../../main/Game.1";
+import EntityCommon from "../../EntityCommon";
+import BonusBox from "../../entities/item/BonusBox";
+import AIPlayer from "../../entities/player/AIPlayer";
+import Player from "../../entities/player/Player";
+import IAIProgram from "../IAIProgram";
+import AIProgram_Adventurer from "./AIProgram_Adventurer";
+
 // import batr.game.block.*;
 // import batr.game.entity.ai.*;
 // import batr.game.model.*;

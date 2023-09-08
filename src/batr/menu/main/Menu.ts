@@ -4,6 +4,33 @@
 // import batr.game.stat.PlayerStats;
 // import batr.menu.event.BatrGUIEvent;
 
+import MainFont from "../../fonts/MainFont";
+import Game from "../../game/main/Game";
+import GameRule from "../../game/rule/GameRule";
+import GameResult from "../../game/stat/GameResult";
+import PlayerStats from "../../game/stat/PlayerStats";
+import FixedI18nText from "../../i18n/FixedI18nText";
+import ForcedI18nText from "../../i18n/ForcedI18nText";
+import I18nKey from "../../i18n/I18nKey";
+import I18nText from "../../i18n/I18nText";
+import I18ns from "../../i18n/I18ns";
+import { int, uint } from "../../legacy/AS3Legacy";
+import Background from "../../main/Background";
+import BatrSubject from "../../main/BatrSubject";
+import { DEFAULT_SIZE } from "../../render/GlobalRenderVariables";
+import BatrGUIEvent from "../event/BatrGUIEvent";
+import I18nsChangeEvent from "../event/I18nsChangeEvent";
+import MenuEvent from "../event/MenuEvent";
+import BatrButton from "../object/BatrButton";
+import BatrButtonList from "../object/BatrButtonList";
+import BatrMenuSheet from "../object/BatrMenuSheet";
+import BatrTextField from "../object/BatrTextField";
+import BatrTextInput from "../object/BatrTextInput";
+import Title from "../object/Title";
+import BatrSelector from "../object/selector/BatrSelector";
+import BatrSelectorContent from "../object/selector/BatrSelectorContent";
+import BatrSelectorList from "../object/selector/BatrSelectorList";
+
 // import batr.game.block.*;
 // import batr.game.map.*;
 // import batr.game.main.*;

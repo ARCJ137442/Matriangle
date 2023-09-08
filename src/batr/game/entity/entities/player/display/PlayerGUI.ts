@@ -2,6 +2,10 @@
 // import batr.game.entity.entity.player.*;
 // import batr.general.*;
 
+import { uint } from "../../../../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../../../../render/GlobalRenderVariables";
+import Player from "../Player";
+
 // import flash.display.*;
 // import flash.text.*;
 /*
