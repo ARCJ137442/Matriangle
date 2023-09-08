@@ -672,7 +672,6 @@ class NodeHeap {
 	}
 
 	public NodeHeap(): void {
-
 	}
 
 	public add(node: PathNode): void {

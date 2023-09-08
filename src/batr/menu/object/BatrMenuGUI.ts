@@ -66,7 +66,6 @@ package batr.menu.objects {
 		}
 
 		protected drawShape(): void {
-
 		}
 
 		protected onClick(event: MouseEvent): void {
@@ -74,19 +73,15 @@ package batr.menu.objects {
 		}
 
 		protected onMouseRollOver(event: MouseEvent): void {
-
 		}
 
 		protected onMouseRollOut(event: MouseEvent): void {
-
 		}
 
 		protected onMouseHold(event: MouseEvent): void {
-
 		}
 
 		protected onMouseRelease(event: MouseEvent): void {
-
 		}
 	}
 }

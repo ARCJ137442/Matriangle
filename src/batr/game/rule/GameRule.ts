@@ -198,7 +198,6 @@
 				)
 					result[k] = v;
 				trace('Saving data', k, '=', result[k], '(' + v + ')');
-
 			}
 			return JSON.stringify(result, replacer, space);
 		}
@@ -416,7 +415,6 @@
 			return null;
 
 		return this._playerTeams[exMath.random(this._playerTeams.length)];
-
 	}
 
 	//====Rules====//
@@ -504,17 +502,14 @@ for (var i: int = _v.length - 1; i >= 0; i--) {
 		_v[i] = { type: _v[i], weight: 1 };
 
 		continue;
-
 	}
 	if (!(_v[i].type is BonusType) || !(_v[i].weight is Number)) {
 		_v.splice(i, 1);
 
 		continue;
-
 	}
 	if (isNaN(_v[i].weight)) {
 		_v[i].weight = 1;
-
 	}
 }
 onVariableUpdate(this._bonusBoxSpawnPotentials, _v);
@@ -572,17 +567,14 @@ for (var i: int = _v.length - 1; i >= 0; i--) {
 		_v[i] = { map: _v[i], weight: 1 };
 
 		continue;
-
 	}
 	if (!(_v[i].map is IMap) || !(_v[i].weight is Number)) {
 		_v.splice(i, 1);
 
 		continue;
-
 	}
 	if (isNaN(_v[i].weight)) {
 		_v[i].weight = 1;
-
 	}
 }
 onVariableUpdate(this._mapRandomPotentials, _v);
@@ -597,12 +589,10 @@ public get mapWeightsByGame(): number[] {
 		for (var map: object in this.mapRandomPotentials) {
 			if (map.map == Game.ALL_MAPS[i]) {
 				wv[i] = map.weight;
-
 			}
 		}
 	}
 	return wv;
-
 }
 
 public get initialMapID(): int {
@@ -736,7 +726,6 @@ this._remainLifesPlayer = value;
 
 public get remainLifesAI(): int {
 	return this._remainLifesAI;
-
 }
 
 public set remainLifesAI(value: int): void {

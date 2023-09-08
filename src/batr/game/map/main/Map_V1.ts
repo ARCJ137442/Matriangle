@@ -46,14 +46,12 @@ package batr.game.map.main {
 		//============Static Functions============//
 		public static function pointToIndex(x: int, y: int): string {
 			return String(x + '_' + y);
-
 		}
 
 		public static function indexToPoint(str: string): iPoint {
 			var s: Array = str.split('_');
 
 			return new iPoint(int(s[0]), int(s[1]));
-
 		}
 
 		protected static function cInit(): boolean {
@@ -69,7 +67,6 @@ package batr.game.map.main {
 				for (ix = 3; ix < _SIZE - 4; ix += 4) {
 					for (iy = 3; iy < _SIZE - 4; iy += 4) {
 						MAP_1.fillBlock(ix, iy, ix + 1, iy + 1, BlockType.WALL);
-
 					}
 				}
 			}
@@ -82,13 +79,11 @@ package batr.game.map.main {
 				MAP_2.fillBlock(13, 4, 19, 10, BlockType.WALL);
 
 				MAP_2.fillBlock(13, 13, 19, 19, BlockType.WALL);
-
 			}
 			//====Map 3====//
 			MAP_3.copyContentFrom(FRAME); {
 				for (iy = 3; iy < _SIZE - 4; iy += 4) {
 					MAP_3.fillBlock(3, iy, 20, iy + 1, BlockType.WATER);
-
 				}
 			}
 			//====Map 4====//
@@ -98,7 +93,6 @@ package batr.game.map.main {
 				MAP_4.fillBlock(3, 19, 20, 20, BlockType.WALL);
 
 				MAP_4.fillBlock(11, 5, 12, 18, BlockType.GLASS);
-
 			}
 			//====Map 5====//
 			MAP_5._generator = new MapGenerator(function (map: IMap): IMap {
@@ -179,7 +173,6 @@ package batr.game.map.main {
 				MAP_6.fillBlock(9, 9, 14, 14, BlockType.X_TRAP_HURT, true);
 
 				MAP_6.fillBlock(11, 11, 12, 12, BlockType.X_TRAP_KILL, true);
-
 			}
 			//====Map 7====//
 			MAP_7.copyContentFrom(FRAME); {
@@ -304,7 +297,6 @@ package batr.game.map.main {
 				MAP_B.fillBlock(21, 16, 21, 20, BlockType.X_TRAP_HURT);
 
 				MAP_B.fillBlock(19, 16, 19, 22, BlockType.WATER);
-
 			}
 			//====Map C====//
 			MAP_C.copyContentFrom(FRAME); {
@@ -382,7 +374,6 @@ package batr.game.map.main {
 
 				// XTrapHurt,r
 				MAP_D.fillBlock(13, 10, 16, 13, BlockType.X_TRAP_HURT);
-
 			}
 			//====Map E====//
 			MAP_E.copyContentFrom(FRAME); {
@@ -432,7 +423,6 @@ package batr.game.map.main {
 
 				// hurt,r
 				MAP_E.fillBlock(21, 4, 21, 19, BlockType.X_TRAP_HURT);
-
 			}
 			//====Map F====//
 			MAP_F.copyContentFrom(EMPTY); {
@@ -475,7 +465,6 @@ package batr.game.map.main {
 				setReflectMirrorBlock(MAP_F, true, true, 10, 8, BlockCommon.fromType(BlockType.BEDROCK));
 
 				setReflectMirrorBlock(MAP_F, true, true, 11, 8, BlockCommon.fromType(BlockType.GATE_OPEN));
-
 			}
 			//====Map G====//
 			MAP_G.copyContentFrom(FRAME); {
@@ -563,7 +552,6 @@ package batr.game.map.main {
 			map.setBlock(rootX + 1, 20, BlockCommon.fromType(BlockType.WALL));
 
 			map.setBlock(rootX - 1, 20, BlockCommon.fromType(BlockType.WALL));
-
 		}
 
 		protected static function drawLaserTrapUpPillar(map: Map_V1, rootX: uint): void {
@@ -584,7 +572,6 @@ package batr.game.map.main {
 			map.setBlock(rootX + 1, 3, BlockCommon.fromType(BlockType.WALL));
 
 			map.setBlock(rootX - 1, 3, BlockCommon.fromType(BlockType.WALL));
-
 		}
 
 		protected static function drawLaserTrapBox(map: Map_V1, x: int, y: int): void {
@@ -605,7 +592,6 @@ package batr.game.map.main {
 			map.setBlock(x + 1, y + 1, BlockCommon.fromType(BlockType.WALL));
 
 			map.setBlock(x - 1, y + 1, BlockCommon.fromType(BlockType.WALL));
-
 		}
 
 		//============Instance Variables============//
@@ -632,22 +618,18 @@ package batr.game.map.main {
 		//============Interface Functions============//
 		public override function get mapWidth(): uint {
 			return GlobalGameVariables.DISPLAY_GRIDS;
-
 		}
 
 		public override function get mapHeight(): uint {
 			return GlobalGameVariables.DISPLAY_GRIDS;
-
 		}
 
 		public override function get randomX(): int {
 			return exMath.random(this.mapWidth);
-
 		}
 
 		public override function get randomY(): int {
 			return exMath.random(this.mapHeight);
-
 		}
 
 		public override function get allDefinedPositions(): iPoint[] {
@@ -658,10 +640,8 @@ package batr.game.map.main {
 
 			for (var key: string in this._Content) {
 				returnPoints.push(indexToPoint(key));
-
 			}
 			return returnPoints;
-
 		}
 
 		public override function get allMapPositions(): iPoint[] {
@@ -670,11 +650,9 @@ package batr.game.map.main {
 			for (var x: uint = 0; x < this.mapWidth; x++) {
 				for (var y: uint = 0; y < this.mapHeight; y++) {
 					returnPoints.push(new iPoint(x, y));
-
 				}
 			}
 			return returnPoints;
-
 		}
 
 		/**
@@ -695,7 +673,6 @@ package batr.game.map.main {
 				block = createBlock ? block.clone() : block;
 
 				tempContent[index] = block;
-
 			}
 			// construct(included isArena)
 			var copy: Map_V1 = new Map_V1(this._name, tempContent, this._arena);
@@ -708,7 +685,6 @@ package batr.game.map.main {
 
 			// return
 			return copy;
-
 		}
 
 		public override function copyFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void {
@@ -731,11 +707,9 @@ package batr.game.map.main {
 			for (var point of points) {
 				block = target.getBlock(point.x, point.y);
 				this._setBlock(point.x, point.y, createBlock ? block.clone() : block);
-
 			}
 			// super
 			super.copyContentFrom(target, clearSelf, createBlock);
-
 		}
 
 		/**
@@ -756,10 +730,8 @@ package batr.game.map.main {
 				this._setVoid(x, y);
 
 				return false;
-
 			}
 			return this._Content.hasOwnProperty(pointToIndex(x, y));
-
 		}
 
 		public override function getBlock(x: int, y: int): BlockCommon {
@@ -834,7 +806,6 @@ package batr.game.map.main {
 				iLayer = iBlock.attributes.drawLayer;
 
 				NativeMapCommon.getTargetByLayer(iLayer, targetTop, targetBottom, targetMiddle).setBlock(ix, iy, iBlock);
-
 			}
 		}
 
@@ -868,7 +839,6 @@ package batr.game.map.main {
 				for (yi = yl; yi <= ym; yi++) {
 					if (!outline || outline && ((xi == xm || xi == xl) || (yi == ym || yi == yl))) {
 						this._setBlock(xi, yi, BlockCommon.fromType(type));
-
 					}
 				}
 			}
@@ -888,7 +858,6 @@ package batr.game.map.main {
 				for (yi = yl; yi <= ym; yi++) {
 					if (!outline || outline && ((xi == xm || xi == xl) || (yi == ym || yi == yl))) {
 						this._setBlock(xi, yi, block.clone());
-
 					}
 				}
 			}

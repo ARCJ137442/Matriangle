@@ -40,7 +40,6 @@ package batr.game.effect {
 			this._effects = null;
 
 			this._host = null;
-
 		}
 
 		//============Instance Getters And Setters============//
@@ -149,7 +148,6 @@ package batr.game.effect {
 			})*/
 			// UUIDMap
 			return this.hasValidUUID(effect);
-
 		}
 
 		public registerEffect(effect: EffectCommon): boolean {
@@ -162,7 +160,6 @@ package batr.game.effect {
 			if (!this.hasValidUUID(effect))
 				this.registerEffectforUUID(effect);
 			return true;
-
 		}
 
 		public removeEffect(effect: EffectCommon): boolean {
@@ -174,14 +171,12 @@ package batr.game.effect {
 			if (this.hasValidUUID(effect))
 				this.removeEffectforUUID(effect);
 			return true;
-
 		}
 
 		public addEffect(effect: EffectCommon): void {
 			this.registerEffect(effect);
 
 			this._host.addEffectChild(effect);
-
 		}
 
 		public removeEffect(effect: EffectCommon): void {
@@ -195,13 +190,11 @@ package batr.game.effect {
 			Utils.removeChildIfContains(this._host.effectContainerBottom, effect);
 
 			Utils.removeChildIfContains(this._host.effectContainerTop, effect);
-
 		}
 
 		public removeAllEffect(): void {
 			while (this._effects.length > 0) {
 				this.removeEffect(this._effects[0]);
-
 			}
 		}
 	}

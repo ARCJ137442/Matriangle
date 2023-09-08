@@ -34,7 +34,6 @@ package batr.translations {
 
 				default:
 					return null;
-
 			}
 		}
 
@@ -61,10 +60,8 @@ package batr.translations {
 				v = str1[1];
 
 				returnT.setI18n(k, v);
-
 			}
 			return returnT;
-
 		}
 
 		public static function getI18n(translation: I18ns, key: string): string {
@@ -74,7 +71,6 @@ package batr.translations {
 		// 'index:text','index2:text2','index3:text3','...'
 		public static function fromStringArr2(...str): I18ns {
 			return I18ns.fromStringArr(str);
-
 		}
 
 		public static function getIDFromI18n(translations: I18ns): int {
@@ -119,7 +115,6 @@ package batr.translations {
 		//============Instance Getter And Setter============//
 		public get enableToWrite(): boolean {
 			return this._enabledToWrite;
-
 		}
 
 		public get translationKeys(): string[] {
@@ -127,10 +122,8 @@ package batr.translations {
 
 			for (var index in this._dictionary) {
 				rV.push(String(index));
-
 			}
 			return rV;
-
 		}
 
 		public get translationValues(): string[] {
@@ -138,10 +131,8 @@ package batr.translations {
 
 			for (var value of this._dictionary) {
 				rV.push(String(value));
-
 			}
 			return rV;
-
 		}
 
 		//============Instance Functions============//
@@ -181,7 +172,6 @@ package batr.translations {
 				rS += String(index) + ':' + String(this._dictionary[index]) + ';';
 			}
 			return rS;
-
 		}
 	}
 }

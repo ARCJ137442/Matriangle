@@ -39,7 +39,6 @@ export default class KeyListener {
 
 		for (let k in this._pressedKeys) {
 			delete this._pressedKeys[k];
-
 		}
 		this._altKey = false;
 		this._ctrlKey = false;
@@ -60,7 +59,6 @@ export default class KeyListener {
 		if (this._listenTo != null) {
 			if (this._listenTo.hasEventListener(KeyboardEvent.KEY_DOWN)) {
 				this._listenTo.removeEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
-
 			}
 			if (this._listenTo.hasEventListener(KeyboardEvent.KEY_UP)) {
 				this._listenTo.removeEventListener(KeyboardEvent.KEY_UP, this.onKeyUp);
@@ -75,7 +73,6 @@ export default class KeyListener {
 		// Add Event Listeners
 		this._listenTo.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
 		this._listenTo.addEventListener(KeyboardEvent.KEY_UP, this.onKeyUp);
-
 	}
 
 	public get shiftKey(): boolean {
@@ -118,7 +115,6 @@ export default class KeyListener {
 
 		// Key.pressedKeys.push(Number(E.keyCode))
 		this._pressedKeys[E.keyCode] = true;
-
 	}
 
 	protected onKeyUp(E: KeyboardEvent): void {

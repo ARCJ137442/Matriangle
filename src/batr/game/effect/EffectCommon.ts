@@ -84,12 +84,10 @@ package batr.game.effect {
 
 		public get layer(): int {
 			return this.type.effectLayer;
-
 		}
 
 		//============Instance Functions============//
 		public onEffectTick(): void {
-
 		}
 
 		protected dealLife(): void {
@@ -100,7 +98,6 @@ package batr.game.effect {
 		}
 
 		public drawShape(): void {
-
 		}
 
 		//====Position Functions====//
@@ -132,14 +129,12 @@ package batr.game.effect {
 			this.setX(x);
 
 			this.setY(y);
-
 		}
 
 		public addXY(x: number, y: number): void {
 			this.addX(x);
 
 			this.addY(y);
-
 		}
 
 		public setPositions(x: number, y: number, rot: number = NaN): void {
@@ -147,7 +142,6 @@ package batr.game.effect {
 
 			if (!isNaN(rot))
 				this.rot = rot;
-
 		}
 
 		public addPositions(x: number, y: number, rot: number = NaN): void {
@@ -155,7 +149,6 @@ package batr.game.effect {
 
 			if (!isNaN(rot))
 				this.rot += rot;
-
 		}
 	}
 }

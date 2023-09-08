@@ -608,12 +608,10 @@
 				if (entity != null) {
 					if (entity.isActive) {
 						entity.tickFunction();
-
 					}
 				}
 				else {
 					this._entitySystem.GC();
-
 				}
 			}
 			//=====Player TickRun=====//
@@ -623,7 +621,6 @@
 					if (player.infinityLife || player.lives > 0) {
 						if (!player.isActive && player.respawnTick >= 0) {
 							player.dealRespawn();
-
 						}
 					}
 				}
@@ -633,17 +630,14 @@
 				if (effect != null) {
 					if (effect.isActive) {
 						effect.onEffectTick();
-
 					}
 				}
 				else {
 					this._effectSystem.GC();
-
 				}
 			}
 			//=====Random Tick=====//
 			this.onRandomTick(this._map.randomX, this._map.randomY);
-
 		}
 
 		//====Listener Functions====//
@@ -773,7 +767,6 @@
 		}
 
 		public onStageResize(E: Event): void {
-
 		}
 
 		//====Functions About Gameplay====//
@@ -817,7 +810,6 @@
 				return false;
 
 			return true;
-
 		}
 
 		/**
@@ -829,7 +821,6 @@
 				entity.getFrontY(distance),
 				asPlayer, asBullet, asLaser,
 				includePlayer, avoidTrap);
-
 		}
 
 		public testBonusBoxCanPlaceAt(x: int, y: int): boolean {
@@ -860,7 +851,6 @@
 				return false;
 
 			return true;
-
 		}
 
 		public testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
@@ -871,7 +861,6 @@
 			// Test Whether OldBlock can Support
 			// if(!testPlayerCanPass(player,oldX,oldY,includePlayer,avoidHurting)) return false;//don't support
 			return true;
-
 		}
 
 		public testPlayerCanPassToFront(player: Player, rotatedAsRot: uint = 5, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
@@ -880,7 +869,6 @@
 				PosTransform.alignToGrid(player.getFrontIntY(player.moveDistence, rotatedAsRot)),
 				player.gridX, player.gridY,
 				includePlayer, avoidTrap);
-
 		}
 
 		public testCarryableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
@@ -1045,14 +1033,12 @@
 			// All Player
 			for (var player of this._entitySystem.players) {
 				player.dealMoveInTest(player.entityX, player.entityY, true, false);
-
 			}
 			// BonusBox Displace by Asphyxia/Trap
 			for (var i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
 				var box: BonusBox = this._entitySystem.bonusBoxes[i];
 				if (box != null && !testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
 					this._entitySystem.removeBonusBox(box);
-
 				}
 			}
 		}
@@ -1126,7 +1112,6 @@
 			var type: BlockType = this.getBlockType(x, y);
 			if (type == BlockType.GATE_OPEN) {
 				this.setBlock(x, y, BlockCommon.fromType(BlockType.GATE_CLOSE));
-
 			}
 		}
 
@@ -1179,7 +1164,6 @@
 
 		public isVoid(x: int, y: int): boolean {
 			return this._map.isVoid(x, y);
-
 		}
 
 		/**
@@ -1204,7 +1188,6 @@
 
 		public updateMapDisplay(x: int, y: int, block: BlockCommon): void {
 			this._map.updateDisplayToLayers(x, y, block, this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
-
 		}
 
 		public getDisplayerThenLayer(layer: int): IMapDisplayer {
@@ -1263,7 +1246,6 @@
 				this._backGround.scaleX = this._backGround.scaleY = shouldScale;
 
 				this._backGround.updateGrid(mapGridWidth, mapGridHeight);
-
 			}
 		}
 
@@ -1326,11 +1308,9 @@
 
 				if (posNum < 0 || posNum >= posMaxNum) {
 					return true;
-
 				}
 			}
 			return false;
-
 		}
 
 		public isIntOutOfMap(x: int, y: int): boolean {
@@ -1340,7 +1320,6 @@
 		//====Functions About Player====//
 		protected createPlayer(x: int, y: int, id: uint, team: PlayerTeam, isActive: boolean = true): Player {
 			return new Player(this, x, y, team, id, isActive);
-
 		}
 
 		public addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): Player {
@@ -1381,7 +1360,6 @@
 
 		protected createAI(x: int, y: int, team: PlayerTeam, isActive: boolean = true): AIPlayer {
 			return new AIPlayer(this, x, y, team, isActive);
-
 		}
 
 		public addAI(team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): AIPlayer {
@@ -1421,7 +1399,6 @@
 			// Active Player
 			for each(player in this._entitySystem.players) {
 				player.isActive = true;
-
 			}
 		}
 
@@ -1541,18 +1518,15 @@
 		public spreadAllPlayer(): void {
 			for (var player of this._entitySystem.players) {
 				spreadPlayer(player);
-
 			}
 		}
 
 		public hitTestOfPlayer(p1: Player, p2: Player): boolean {
 			return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
-
 		}
 
 		public hitTestPlayer(player: Player, x: int, y: int): boolean {
 			return (x == player.gridX && y == player.gridY);
-
 		}
 
 		public isHitAnyPlayer(x: int, y: int): boolean {
@@ -1560,11 +1534,9 @@
 			for (var player of this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y))
 					return true;
-
 			}
 			// Return
 			return false;
-
 		}
 
 		public isHitAnotherPlayer(player: Player): boolean {
@@ -1575,11 +1547,9 @@
 
 				if (hitTestOfPlayer(player, p2))
 					return true;
-
 			}
 			// Return
 			return false;
-
 		}
 
 		public hitTestOfPlayers(...players): boolean {
@@ -1591,7 +1561,6 @@
 			for each(p in players) {
 				if(p is Player) {
 					_pv.push(p as Player);
-
 				}
 			}
 			// Test
@@ -1602,12 +1571,10 @@
 
 						if (hitTestOfPlayer(p1, p2))
 							return true;
-
 					}
 				}
 			// Return
 			return false;
-
 		}
 
 		public getHitPlayers(x: number, y: number): Player[] {
@@ -1618,12 +1585,10 @@
 			for (var player of this._entitySystem.players) {
 				if (hitTestPlayer(player, x, y)) {
 					returnV.push(player);
-
 				}
 			}
 			// Return
 			return returnV;
-
 		}
 
 		public getHitPlayerAt(x: int, y: int): Player {
@@ -1638,7 +1603,6 @@
 		public randomizeAllPlayerTeam(): void {
 			for (var player of this._entitySystem.players) {
 				this.randomizePlayerTeam(player);
-
 			}
 		}
 
@@ -1657,7 +1621,6 @@
 			for (var player of this._entitySystem.players) {
 				if (!Player.isAI(player))
 					player.team = tempTeam;
-
 			}
 		}
 
@@ -1667,7 +1630,6 @@
 			for (var player of this._entitySystem.players) {
 				if (Player.isAI(player))
 					player.team = tempTeam;
-
 			}
 		}
 
@@ -1677,7 +1639,6 @@
 
 			for (var player of this._entitySystem.players) {
 				player.weapon = weapon;
-
 			}
 		}
 
@@ -1686,7 +1647,6 @@
 				player.weapon = WeaponType.RANDOM_AVAILABLE;
 
 				player.weaponUsingCD = 0;
-
 			}
 		}
 
@@ -1705,7 +1665,6 @@
 				player.setXY(player.frontX, player.frontY);
 
 			this.onPlayerMove(player);
-
 		}
 
 		public playerUseWeapon(player: Player, rot: uint, chargePercent: number): void {
@@ -1839,10 +1798,8 @@
 
 				if (!_map.getBlockAttributes(cx, cy).laserCanPass)
 					break;
-
 			}
 			return i;
-
 		}
 
 		public lockEntityInMap(entity: EntityCommon): void {
@@ -1857,11 +1814,9 @@
 
 				if (posNum < 0) {
 					posFunc(posMaxNum + posNum);
-
 				}
 				if (posNum >= posMaxNum) {
 					posFunc(posNum - posMaxNum);
-
 				}
 			}
 		}
@@ -1877,7 +1832,6 @@
 
 			else
 				return posNum;
-
 		}
 
 		public lockIntPosInMap(posNum: int, returnAsX: boolean): int {
@@ -1891,7 +1845,6 @@
 
 			else
 				return posNum;
-
 		}
 
 		public lockIPointInMap(point: iPoint): iPoint {
@@ -1917,7 +1870,6 @@
 			for (var projectile of this._entitySystem.projectile) {
 				if (player == null || projectile.owner == player) {
 					projectile.drawShape();
-
 				}
 			}
 		}
@@ -1977,42 +1929,34 @@
 
 			else
 				this._effectContainerBottom.addChild(effect);
-
 		}
 
 		public addSpawnEffect(x: number, y: number): void {
 			this._effectSystem.addEffect(new EffectSpawn(this, x, y));
-
 		}
 
 		public addTeleportEffect(x: number, y: number): void {
 			this._effectSystem.addEffect(new EffectTeleport(this, x, y));
-
 		}
 
 		public addPlayerDeathLightEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
 			this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
-
 		}
 
 		public addPlayerDeathFadeoutEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
 			this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
-
 		}
 
 		public addPlayerDeathLightEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
-
 		}
 
 		public addPlayerDeathFadeoutEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
-
 		}
 
 		public addPlayerLevelupEffect(x: number, y: number, color: uint, scale: number): void {
 			this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
-
 		}
 
 		public addBlockLightEffect(x: number, y: number, color: uint, alpha: uint, reverse: boolean = false): void {
@@ -2025,16 +1969,13 @@
 
 		public addPlayerHurtEffect(player: Player, reverse: boolean = false): void {
 			this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
-
 		}
 
 		//======Hook Functions======//
 		public onPlayerMove(player: Player): void {
-
 		}
 
 		public onPlayerUse(player: Player, rot: uint, distance: number): void {
-
 		}
 
 		public onPlayerHurt(attacker: Player, victim: Player, damage: uint): void {
@@ -2061,7 +2002,6 @@
 
 					if (attacker.isAlly(victim))
 						attacker.stats.causeDamageOnAlly += damage;
-
 				}
 			}
 		}
@@ -2135,7 +2075,6 @@
 						victim.stats.deathByAllyCount++;
 
 					victim.stats.addDeathByPlayerCount(attacker);
-
 				}
 			}
 			// Add Bonus By Rule
@@ -2253,7 +2192,6 @@
 
 				// Add Effect
 				this.addBlockLightEffect2(PosTransform.alignToEntity(randomX), PosTransform.alignToEntity(randomY), block, false);
-
 			}
 		}
 
@@ -2293,7 +2231,6 @@
 				}
 			}
 			while (laserLength <= 0 && ++i < 0x10);
-
 		}
 
 		protected moveableWallMove(x: int, y: int, block: BlockCommon): void {
@@ -2316,7 +2253,6 @@
 				break;
 			}
 			while (++i < 0x10);
-
 		}
 	}
 }

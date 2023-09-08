@@ -28,12 +28,10 @@ package batr.game.block.blocks {
 		//============Instance Getter And Setter============//
 		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.COLOR_SPAWNER;
-
 		}
 
 		public override function get type(): BlockType {
 			return BlockType.COLOR_SPAWNER;
-
 		}
 
 		//============Instance Functions============//

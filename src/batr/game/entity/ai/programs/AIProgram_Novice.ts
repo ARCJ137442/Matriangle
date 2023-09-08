@@ -55,7 +55,6 @@ package batr.game.entity.ai.programs {
 
 		//============Constructor Function============//
 		public AIProgram_Novice() {
-
 		}
 
 		//============Destructor Function============//
@@ -145,7 +144,6 @@ package batr.game.entity.ai.programs {
 					return AIPlayerAction.getTrunActionFromEntityRot(this._tempRot);
 				}
 				this._moveSum++;
-
 			}
 			if (this._waitTime < 0)
 				this._waitTime++;

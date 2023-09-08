@@ -217,62 +217,50 @@ package batr.game.stat {
 		// Kill And Death By
 		public getKillPlayerCount(player: Player): uint {
 			return this._killPlayers.getPlayerValue(player);
-
 		}
 
 		public getDeathByPlayerCount(player: Player): uint {
 			return this._deathByPlayers.getPlayerValue(player);
-
 		}
 
 		public setKillPlayerCount(player: Player, value: uint): void {
 			this._killPlayers.setPlayerValue(player, value);
-
 		}
 
 		public setDeathByPlayerCount(player: Player, value: uint): void {
 			this._deathByPlayers.setPlayerValue(player, value);
-
 		}
 
 		public addKillPlayerCount(player: Player, value: uint = 1): void {
 			this._killPlayers.setPlayerValue(player, getKillPlayerCount(player) + value);
-
 		}
 
 		public addDeathByPlayerCount(player: Player, value: uint = 1): void {
 			this._deathByPlayers.setPlayerValue(player, getDeathByPlayerCount(player) + value);
-
 		}
 		// Cause Damage And Damage By
 		public getCauseDamagePlayerCount(player: Player): uint {
 			return this._causeDamagePlayers.getPlayerValue(player);
-
 		}
 
 		public getDamageByPlayerCount(player: Player): uint {
 			return this._damageByPlayers.getPlayerValue(player);
-
 		}
 
 		public setCauseDamagePlayerCount(player: Player, value: uint): void {
 			this._causeDamagePlayers.setPlayerValue(player, value);
-
 		}
 
 		public setDamageByPlayerCount(player: Player, value: uint): void {
 			this._damageByPlayers.setPlayerValue(player, value);
-
 		}
 
 		public addCauseDamagePlayerCount(player: Player, value: uint = 1): void {
 			this._causeDamagePlayers.setPlayerValue(player, getCauseDamagePlayerCount(player) + value);
-
 		}
 
 		public addDamageByPlayerCount(player: Player, value: uint = 1): void {
 			this._damageByPlayers.setPlayerValue(player, getDamageByPlayerCount(player) + value);
-
 		}
 	}
 }
@@ -288,7 +276,6 @@ class Stat_PlayerCount {
 	//============Constructor Function============//
 	public Stat_PlayerCount(...params): void {
 		setPlayerValues2(params);
-
 	}
 
 	//============Instance Functions============//
@@ -297,7 +284,6 @@ class Stat_PlayerCount {
 			return 0;
 
 		return uint(this._dictionary[player]);
-
 	}
 
 	public setPlayerValue(player: Player, value: uint): void {
@@ -305,12 +291,10 @@ class Stat_PlayerCount {
 			return;
 
 		this._dictionary[player] = value;
-
 	}
 
 	public setPlayerValues(...params): void {
 		setPlayerValues2(params);
-
 	}
 
 	public setPlayerValues2(params: Array): void {
@@ -322,7 +306,6 @@ class Stat_PlayerCount {
 			count = uint(params[i + 1]);
 
 			setPlayerValue(player, count);
-
 		}
 	}
 
@@ -331,15 +314,12 @@ class Stat_PlayerCount {
 			return;
 
 		this._dictionary[player] = 0;
-
 	}
 
 	public destructor(): void {
 		for (var p in this._dictionary) {
 			delete this._dictionary[p];
-
 		}
 		this._dictionary = null;
-
 	}
 }

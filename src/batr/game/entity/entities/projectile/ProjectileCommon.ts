@@ -58,11 +58,9 @@ package batr.game.entity.entity.projectile {
 		}
 
 		public onProjectileTick(): void {
-
 		}
 
 		public drawShape(): void {
-
 		}
 	}
 }

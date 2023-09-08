@@ -105,7 +105,6 @@ package batr.game.entity.entity.projectile {
 				this._host.waveHurtPlayers(this);
 			}
 			dealLife();
-
 		}
 
 		protected dealLife(): void {
@@ -114,7 +113,6 @@ package batr.game.entity.entity.projectile {
 
 			else {
 				this._host.entitySystem.removeProjectile(this);
-
 			}
 		}
 	}

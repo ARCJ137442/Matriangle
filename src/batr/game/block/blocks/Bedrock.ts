@@ -25,7 +25,6 @@ package batr.game.block.blocks {
 
 		public override function get type(): BlockType {
 			return BlockType.BEDROCK;
-
 		}
 
 		//============Instance Functions============//

@@ -177,7 +177,6 @@ package batr.menu.object.selector {
 		}
 
 		protected override function drawShape(): void {
-
 		}
 
 		public setLinkTo(target: BatrSelector): BatrSelector {

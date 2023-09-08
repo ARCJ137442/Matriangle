@@ -70,6 +70,5 @@ package batr.game.map {
 	function getMatrixNumber(): Vector.<Number[]>;
 
 	function getMatrixBoolean(): Vector.<Boolean[]>;
-
 }
 }

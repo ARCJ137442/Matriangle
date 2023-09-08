@@ -60,7 +60,6 @@ package batr.game.entity.entity.projectile {
 			this.onBulletTick();
 
 			this.onBulletCommonTick();
-
 		}
 
 		public onBulletCommonTick(): void {
@@ -84,18 +83,15 @@ package batr.game.entity.entity.projectile {
 			}
 			else {
 				this.explode();
-
 			}
 		}
 
 		public onBulletTick(): void {
-
 		}
 
 		protected explode(): void {
 			this._host.weaponCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
 			this._host.entitySystem.removeProjectile(this);
-
 		}
 
 		//====Graphics Functions====//

@@ -64,7 +64,6 @@ package batr.game.entity.entity.projectile {
 					false, true, false, false
 				) && !this._host.isHitAnyPlayer(this.gridX, this.gridY)) {
 				this.addXY(this.xSpeed, this.ySpeed);
-
 			}
 			else {
 				if (Game.debugMode)
@@ -72,7 +71,6 @@ package batr.game.entity.entity.projectile {
 				if (!this._host.isHitAnyPlayer(this.gridX, this.gridY))
 					this.addXY(-this.xSpeed, -this.ySpeed);
 				this.onBlockHit();
-
 			}
 		}
 
@@ -112,9 +110,7 @@ package batr.game.entity.entity.projectile {
 				this._carriedBlock.y = -this._carriedBlock.height / 2;
 
 				this.addChild(this._carriedBlock);
-
 			}
-
 		}
 	}
 }

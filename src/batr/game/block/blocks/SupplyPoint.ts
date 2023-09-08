@@ -30,12 +30,10 @@ package batr.game.block.blocks {
 		//============Instance Getter And Setter============//
 		public override function get attributes(): BlockAttributes {
 			return BlockAttributes.SUPPLY_POINT;
-
 		}
 
 		public override function get type(): BlockType {
 			return BlockType.SUPPLY_POINT;
-
 		}
 
 		//============Instance Functions============//

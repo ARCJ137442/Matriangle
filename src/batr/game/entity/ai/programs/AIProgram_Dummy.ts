@@ -21,7 +21,6 @@ package batr.game.entity.ai.programs {
 
 		//============Constructor Function============//
 		public AIProgram_Dummy(): void {
-
 		}
 
 		//============Destructor Function============//
@@ -66,55 +65,45 @@ package batr.game.entity.ai.programs {
 				do {
 					this._tempRot = GlobalRot.getRandom();
 					i++;
-
 				}
 				while (i <= 8 && !player.host.testPlayerCanPassToFront(player, this._tempRot, true));
 				player.addActionToThread(AIPlayerAction.DISABLE_CHARGE);
 
 				return AIPlayerAction.getTrunActionFromEntityRot(this._tempRot);
-
 			}
 			this._moveSum++;
 
 			return AIPlayerAction.MOVE_FORWARD;
 
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnMapTransfrom(player: AIPlayer): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 
 		public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
 			return AIPlayerAction.NULL;
-
 		}
 	}
 }

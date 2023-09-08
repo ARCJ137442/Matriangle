@@ -35,7 +35,6 @@ package batr.game.entity.entity.projectile {
 				scaleReverse = true;
 
 				this._host.laserHurtPlayers(this);
-
 			}
 			else if (this.scaleY <= -1)
 				scaleReverse = false;
@@ -51,7 +50,6 @@ package batr.game.entity.entity.projectile {
 			drawOwnerLine(SIZE / 4, SIZE / 2, 0.6);
 
 			drawOwnerLine(SIZE / 8, SIZE / 2, 0.5);
-
 		}
 	}
 }

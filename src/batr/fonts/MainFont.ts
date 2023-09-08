@@ -4,5 +4,4 @@ import { Font } from "../legacy/flash/text";
 
 //============Class============//
 export default class MainFont extends Font {
-
 }

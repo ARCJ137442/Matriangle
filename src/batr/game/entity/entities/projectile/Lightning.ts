@@ -41,7 +41,6 @@ package batr.game.entity.entity.projectile {
 
 		//============Destructor Function============//
 		public override function destructor(): void {
-
 		}
 
 		//============Instance Getter And Setter============//
@@ -145,7 +144,6 @@ package batr.game.entity.entity.projectile {
 		}
 
 		public override function drawShape(): void {
-
 		}
 
 		protected drawLightning(): void {

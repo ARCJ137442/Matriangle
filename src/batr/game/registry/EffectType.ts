@@ -37,20 +37,16 @@ package batr.game.effect {
 			for (var type of EffectType._ALL_EFFECT) {
 				if (type.name == str)
 					return type;
-
 			}
 			return NULL;
-
 		}
 
 		public static function isIncludeIn(type: EffectType, types: EffectType[]): boolean {
 			for (var type2 of types) {
 				if (type == type2)
 					return true;
-
 			}
 			return false;
-
 		}
 
 		//============Instance Variables============//
@@ -61,7 +57,6 @@ package batr.game.effect {
 			super(name);
 
 			this._effectLayer = effectLayer;
-
 		}
 
 		//============Instance Getter And Setter============//
@@ -80,7 +75,6 @@ package batr.game.effect {
 		 */
 		public get effectLayer(): int {
 			return this._effectLayer;
-
 		}
 	}
 }

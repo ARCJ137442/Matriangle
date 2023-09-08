@@ -141,7 +141,6 @@ package batr.game.entity.entity.players {
 			this._experience = value;
 			if (this._GUI != null)
 				this._GUI.updateExperience();
-
 		}
 
 		/**
@@ -346,7 +345,6 @@ package batr.game.entity.entity.players {
 
 		public get weaponUsingCD(): uint {
 			return this._weaponUsingCD;
-
 		}
 
 		public set weaponUsingCD(value: uint): void {
@@ -356,12 +354,10 @@ package batr.game.entity.entity.players {
 			this._weaponUsingCD = value;
 
 			this._GUI.updateCD();
-
 		}
 
 		public get weaponChargeTime(): int {
 			return this._weaponChargeTime;
-
 		}
 
 		public set weaponChargeTime(value: int): void {
@@ -371,12 +367,10 @@ package batr.game.entity.entity.players {
 			this._weaponChargeTime = value;
 
 			this._GUI.updateCharge();
-
 		}
 
 		public get weaponChargeMaxTime(): uint {
 			return this._weaponChargeMaxTime;
-
 		}
 
 		public set weaponChargeMaxTime(value: uint): void {
@@ -386,7 +380,6 @@ package batr.game.entity.entity.players {
 			this._weaponChargeMaxTime = value;
 
 			this._GUI.updateCharge();
-
 		}
 
 		public get weaponNeedsCD(): boolean {
@@ -394,7 +387,6 @@ package batr.game.entity.entity.players {
 				return false;
 
 			return this.weaponMaxCD > 0;
-
 		}
 
 		public get weaponMaxCD(): number {
@@ -410,7 +402,6 @@ package batr.game.entity.entity.players {
 				return 1;
 
 			return this._weaponUsingCD / this.weaponMaxCD;
-
 		}
 
 		public get weaponNeedsCharge(): boolean {
@@ -418,7 +409,6 @@ package batr.game.entity.entity.players {
 				return false;
 
 			return this._weapon.defaultChargeTime > 0;
-
 		}
 
 		public get isCharging(): boolean {
@@ -426,7 +416,6 @@ package batr.game.entity.entity.players {
 				return false;
 
 			return this._weaponChargeTime >= 0;
-
 		}
 
 		public get chargingPercent(): number { // 0~1
@@ -437,24 +426,20 @@ package batr.game.entity.entity.players {
 				return 0;
 
 			return this._weaponChargeTime / this._weaponChargeMaxTime;
-
 		}
 
 		// Color
 		public get lineColor(): uint {
 			return this._lineColor;
-
 		}
 
 		public get fillColor(): uint {
 			return this._fillColor;
-
 		}
 
 		// Health,MaxHealth,Life&Respawn
 		public get health(): uint {
 			return this._health;
-
 		}
 
 		public set health(value: uint): void {
@@ -465,12 +450,10 @@ package batr.game.entity.entity.players {
 
 			if (this._GUI != null)
 				this._GUI.updateHealth();
-
 		}
 
 		public get maxHealth(): uint {
 			return this._maxHealth;
-
 		}
 
 		public set maxHealth(value: uint): void {
@@ -483,17 +466,14 @@ package batr.game.entity.entity.players {
 				this._health = value;
 
 			this._GUI.updateHealth();
-
 		}
 
 		public get isFullHealth(): boolean {
 			return this._health >= this._maxHealth;
-
 		}
 
 		public get heal(): uint {
 			return this._heal;
-
 		}
 
 		public set heal(value: uint): void {
@@ -503,12 +483,10 @@ package batr.game.entity.entity.players {
 			this._heal = value;
 
 			this._GUI.updateHealth();
-
 		}
 
 		public get lives(): uint {
 			return this._lives;
-
 		}
 
 		public set lives(value: uint): void {
@@ -518,12 +496,10 @@ package batr.game.entity.entity.players {
 			this._lives = value;
 
 			this._GUI.updateHealth();
-
 		}
 
 		public get infinityLife(): boolean {
 			return this._infinityLife;
-
 		}
 
 		public set infinityLife(value: boolean): void {
@@ -533,17 +509,14 @@ package batr.game.entity.entity.players {
 			this._infinityLife = value;
 
 			this._GUI.updateHealth();
-
 		}
 
 		public get isRespawning(): boolean {
 			return this.respawnTick >= 0;
-
 		}
 
 		public get healthPercent(): number {
 			return this.health / this.maxHealth;
-
 		}
 
 		public get isCertainlyOut(): boolean {
@@ -559,12 +532,10 @@ package batr.game.entity.entity.players {
 			var lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
 
 			return healthText + healText + lifeText;
-
 		}
 
 		public get customName(): string {
 			return this._customName;
-
 		}
 
 		public set customName(value: string): void {
@@ -574,13 +545,11 @@ package batr.game.entity.entity.players {
 			this._customName = value;
 
 			this._GUI.updateName();
-
 		}
 
 		// Other
 		public get lastHurtbyPlayer(): Player {
 			return this._lastHurtbyPlayer;
-
 		}
 
 		// Key&Control
@@ -592,7 +561,6 @@ package batr.game.entity.entity.players {
 				this.isPress_Use /*||
 					this.isPress_Select_Left||
 					this.isPress_Selec_Right*/);
-
 		}
 
 		public get someMoveKeyDown(): boolean {
@@ -600,7 +568,6 @@ package batr.game.entity.entity.players {
 				this.isPress_Down ||
 				this.isPress_Left ||
 				this.isPress_Right);
-
 		}
 		/*
 		public get someSelectKeyDown():Boolean {
@@ -609,22 +576,18 @@ package batr.game.entity.entity.players {
 
 		public set pressLeft(turn: boolean): void {
 			this.isPress_Left = turn;
-
 		}
 
 		public set pressRight(turn: boolean): void {
 			this.isPress_Right = turn;
-
 		}
 
 		public set pressUp(turn: boolean): void {
 			this.isPress_Up = turn;
-
 		}
 
 		public set pressDown(turn: boolean): void {
 			this.isPress_Down = turn;
-
 		}
 
 		public set pressUse(turn: boolean): void {
@@ -635,10 +598,8 @@ package batr.game.entity.entity.players {
 					this.onDisableCharge();
 
 				return;
-
 			}
 			this.isPress_Use = turn;
-
 		}
 
 		/*public set pressLeftSelect(turn:Boolean):void {
@@ -652,7 +613,6 @@ package batr.game.entity.entity.players {
 		// Entity Type
 		public override function get type(): EntityType {
 			return EntityType.PLAYER;
-
 		}
 
 		//============Instance Functions============//
@@ -678,7 +638,6 @@ package batr.game.entity.entity.players {
 				this._weapon = uniformWeapon;
 			else
 				this._weapon = WeaponType.fromWeaponID(weaponID);
-
 		}
 
 		//====Functions About Health====//
@@ -686,7 +645,6 @@ package batr.game.entity.entity.players {
 			this.health += value;
 
 			this.onHeal(value, healer);
-
 		}
 
 		public removeHealth(value: uint, attacker: Player = null): void {
@@ -711,7 +669,6 @@ package batr.game.entity.entity.players {
 
 		//====Functions About Hook====//
 		protected onHeal(amount: uint, healer: Player = null): void {
-
 		}
 
 		protected onHurt(damage: uint, attacker: Player = null): void {
@@ -732,7 +689,6 @@ package batr.game.entity.entity.players {
 		}
 
 		protected onRespawn(): void {
-
 		}
 
 		public onMapTransform(): void {
@@ -741,7 +697,6 @@ package batr.game.entity.entity.players {
 		}
 
 		public onPickupBonusBox(box: BonusBox): void {
-
 		}
 
 		public override function preLocationUpdate(oldX: number, oldY: number): void {
@@ -773,7 +728,6 @@ package batr.game.entity.entity.players {
 			return (isEnemy(player) && weapon.weaponCanHurtEnemy ||
 				isSelf(player) && weapon.weaponCanHurtSelf ||
 				isAlly(player) && weapon.weaponCanHurtAlly);
-
 		}
 
 		public filterPlayersThisCanHurt(players: Player[], weapon: WeaponType): Player[] {
@@ -786,33 +740,27 @@ package batr.game.entity.entity.players {
 
 		public isEnemy(player: Player): boolean {
 			return (!isAlly(player, true));
-
 		}
 
 		public isSelf(player: Player): boolean {
 			return player === this;
-
 		}
 
 		public isAlly(player: Player, includeSelf: boolean = false): boolean {
 			return player != null && ((includeSelf || !isSelf(player)) &&
 				this.team === player.team);
-
 		}
 
 		public get carriedBlock(): BlockCommon {
 			return this._carriedBlock;
-
 		}
 
 		public get isCarriedBlock(): boolean {
 			return this._carriedBlock != null && this._carriedBlock.visible;
-
 		}
 
 		public dealMoveInTestOnLocationChange(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 			this.dealMoveInTest(x, y, ignoreDelay, isLocationChange);
-
 		}
 
 		public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
@@ -983,7 +931,6 @@ package batr.game.entity.entity.players {
 
 		public final function computeFinalLightningEnergy(defaultEnergy: uint): int {
 		return defaultEnergy * (1 + this._buffDamage / 20 + this._buffRadius / 10);
-
 	}
 
 	//====Functions About Graphics====//
@@ -1241,7 +1188,6 @@ break;*/
 		case GlobalRot.DOWN:
 			moveDown();
 			break;
-
 	}
 }
 

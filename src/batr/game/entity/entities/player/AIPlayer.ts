@@ -87,13 +87,11 @@ package batr.game.entity.entity.players {
 			this._AIProgram = null;
 
 			super.destructor();
-
 		}
 
 		//============Instance Getter And Setter============//
 		public override function get type(): EntityType {
 			return EntityType.AI_PLAYER;
-
 		}
 
 		public get AIProgram(): IAIProgram {
@@ -102,7 +100,6 @@ package batr.game.entity.entity.players {
 
 		public get AIRunSpeed(): number {
 			return GlobalGameVariables.TPS / this._AIRunDelay;
-
 		}
 
 		public set AIRunSpeed(speed: number): void {
@@ -134,7 +131,6 @@ package batr.game.entity.entity.players {
 
 		public resetAITick(): void {
 			this._AIRunDelay = this._AIRunMaxDelay;
-
 		}
 
 		// AI Shape
@@ -230,7 +226,6 @@ package batr.game.entity.entity.players {
 				action = this._actionThread.shift();
 
 				this.runAction(action);
-
 			}
 		}
 
@@ -352,7 +347,6 @@ package batr.game.entity.entity.players {
 		public runActions(actions: AIPlayerAction[]): void {
 			for (var i: uint = 0; i < actions.length; i++) {
 				runAction(actions[i]);
-
 			}
 		}
 
@@ -362,44 +356,36 @@ package batr.game.entity.entity.players {
 			for (var i: uint = 0; i < actions.length; i++) {
 				if (actions[i] is AIPlayerAction) {
 					runAction(actions[i] as AIPlayerAction);
-
 				}
 			}
 		}
 
 		public addActionToThread(action: AIPlayerAction): void {
 			this._actionThread.push(action);
-
 		}
 
 		public addActionsToThread(actions: AIPlayerAction[]): void {
 			this._actionThread = this._actionThread.concat(actions);
-
 		}
 
 		public addActionToThreadAtFirst(action: AIPlayerAction): void {
 			this._actionThread.unshift(action);
-
 		}
 
 		public addActionsToThreadAtFirst(actions: AIPlayerAction[]): void {
 			this._actionThread = actions.concat(this._actionThread);
-
 		}
 
 		public shiftActionToThread(): AIPlayerAction {
 			return this._actionThread.shift();
-
 		}
 
 		public popActionInThread(): AIPlayerAction {
 			return this._actionThread.pop();
-
 		}
 
 		public reverseActionThread(): void {
 			this._actionThread = this._actionThread.reverse();
-
 		}
 
 		public repeatActionThread(count: uint = 1): void {
@@ -409,21 +395,18 @@ package batr.game.entity.entity.players {
 
 			else if (count == 1) {
 				this._actionThread = this._actionThread.concat(this._actionThread);
-
 			}
 			else {
 				var tempActions: AIPlayerAction[] = this._actionThread.concat();
 
 				for (var i: uint = 0; i < count; i++) {
 					this._actionThread = this._actionThread.concat(tempActions);
-
 				}
 			}
 		}
 
 		public clearActionThread(): void {
 			this._actionThread.splice(0, this._actionThread.length);
-
 		}
 
 		public runAllActionsOfThreadImmediately(): void {
@@ -433,7 +416,6 @@ package batr.game.entity.entity.players {
 			this.runActions(this._actionThread);
 
 			this.clearActionThread();
-
 		}
 	}
 }

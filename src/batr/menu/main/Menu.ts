@@ -287,7 +287,6 @@
 
 		//========Event Functions========//
 		public onStageResize(E: Event): void {
-
 		}
 
 		protected onAddedToStage(E: Event): void {
@@ -409,7 +408,6 @@
 
 		// Menu Main
 		protected initDisplay(): void {
-
 		}
 
 		protected constructMainManu(event: MenuEvent): void {
@@ -769,7 +767,6 @@
 		}
 
 		protected onI18nChange(E: I18nsChangeEvent): void {
-
 		}
 
 		// GameRule Generation

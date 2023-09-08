@@ -73,14 +73,12 @@ export function fromLinearDistance(xD: int, yD: int): uint {
 				return UP;
 			else
 				return DOWN;
-
 		}
 		if (yD == 0) {
 			if (xD > 0)
 				return RIGHT;
 			else
 				return LEFT;
-
 		}
 	}
 	return NULL;
@@ -106,7 +104,6 @@ export function toRealIntRot(rot: int): int {
  */
 export function globalToLocal(currentRot: number, containerRot: number): number {
 	return lockToStandard(currentRot - containerRot);
-
 }
 
 /** Use for express the currentRot out the containerRot
@@ -117,7 +114,6 @@ export function globalToLocal(currentRot: number, containerRot: number): number 
  */
 export function localToGlobal(currentRot: number, containerRot: number): number {
 	return lockToStandard(containerRot + currentRot);
-
 }
 
 export function towardX(rot: number, radius: number = 1): number {

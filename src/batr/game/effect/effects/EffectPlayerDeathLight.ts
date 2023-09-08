@@ -43,7 +43,6 @@ package batr.game.effect.effects {
 		//============Instance Getter And Setter============//
 		public override function get type(): EffectType {
 			return EffectType.PLAYER_DEATH_LIGHT;
-
 		}
 
 		public get color(): uint {
@@ -53,7 +52,6 @@ package batr.game.effect.effects {
 		public set color(value: uint): void {
 			this._color = value;
 			this.drawShape();
-
 		}
 
 		//============Instance Functions============//
@@ -61,7 +59,6 @@ package batr.game.effect.effects {
 			this.alpha = this.reverse ? (1 - life / LIFE) : (life / LIFE);
 			this.scaleX = this.scaleY = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * (1 - this.alpha);
 			dealLife();
-
 		}
 
 		public override function drawShape(): void {

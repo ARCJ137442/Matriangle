@@ -284,7 +284,6 @@
 				0.9375 * GlobalGameVariables.DEFAULT_SIZE,
 				HEALTH_BAR_HEIGHT);
 			this._healthBarFrame.graphics.endFill();
-
 		}
 
 		protected drawCDBar(): void {

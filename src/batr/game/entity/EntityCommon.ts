@@ -118,7 +118,6 @@ package batr.game.entity {
 		//============Instance Functions============//
 		//====Tickrun Functions====//
 		public tickFunction(): void {
-
 		}
 
 		//====Position Functions====//
@@ -241,19 +240,15 @@ package batr.game.entity {
 
 		// Hook Functions
 		public onPositionUpdate(newX: number, newY: number, newRot: number): void {
-
 		}
 
 		public onLocationUpdate(newX: number, newY: number): void {
-
 		}
 
 		public preLocationUpdate(oldX: number, oldY: number): void {
-
 		}
 
 		public onRotationUpdate(newRot: number): void {
-
 		}
 	}
 }

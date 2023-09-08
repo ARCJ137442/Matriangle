@@ -112,7 +112,6 @@
 			_menu.onStageResize(E);
 
 			_game.onStageResize(E);
-
 		}
 
 		protected onAddedToStage(E: Event): void {
@@ -186,7 +185,6 @@
 
 		public resize(): void {
 			this.scaleX = this.scaleY = GlobalGameVariables.DEFAULT_SCALE;
-
 		}
 
 		public set emableAutoResize(value: boolean): void {
@@ -196,7 +194,6 @@
 				this.stage.align = StageAlign.TOP_LEFT;
 
 				this.stage.addEventListener(Event.RESIZE, onStageResize);
-
 			}
 			else {
 				this.stage.scaleMode = StageScaleMode.SHOW_ALL;
@@ -204,7 +201,6 @@
 				this.stage.align = StageAlign.TOP;
 
 				this.stage.removeEventListener(Event.RESIZE, onStageResize);
-
 			}
 		}
 

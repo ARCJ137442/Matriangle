@@ -22,5 +22,4 @@ export abstract class DisplayObjectContainer extends InteractiveObject {
 }
 
 export abstract class Stage extends DisplayObjectContainer {
-
 }

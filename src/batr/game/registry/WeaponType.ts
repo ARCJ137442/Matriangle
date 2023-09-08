@@ -57,43 +57,35 @@ package batr.game.model {
 
 		public static function get RANDOM_ID(): uint {
 			return exMath.random(_ALL_WEAPON.length);
-
 		}
 
 		public static function get RANDOM(): WeaponType {
 			return _ALL_WEAPON[WeaponType.RANDOM_ID];
-
 		}
 
 		public static function get RANDOM_AVAILABLE_ID(): uint {
 			return exMath.random(_ALL_AVALIABLE_WEAPON.length);
-
 		}
 
 		public static function get RANDOM_AVAILABLE(): WeaponType {
 			return _ALL_AVALIABLE_WEAPON[WeaponType.RANDOM_AVAILABLE_ID];
-
 		}
 
 		//============Static Functions============//
 		public static function isValidWeaponID(id: int): boolean {
 			return (id >= 0 && id < WeaponType._ALL_WEAPON.length);
-
 		}
 
 		public static function isValidAvailableWeaponID(id: int): boolean {
 			return (id >= 0 && id < WeaponType._ALL_AVALIABLE_WEAPON.length);
-
 		}
 
 		public static function fromString(str: string): WeaponType {
 			for (var type of WeaponType._ALL_WEAPON) {
 				if (type.name == str)
 					return type;
-
 			}
 			return NULL;
-
 		}
 
 		/**
@@ -146,7 +138,6 @@ package batr.game.model {
 
 		public static function isAvailableDroneNotUse(weapon: WeaponType): boolean {
 			return isDroneWeapon(weapon) || weapon == WeaponType.BLOCK_THROWER || weapon == WeaponType.MELEE || weapon == WeaponType.SUB_BOMBER;
-
 		}
 
 		//============Instance Variables============//
@@ -229,17 +220,14 @@ package batr.game.model {
 
 		public get defaultCD(): uint {
 			return this._defaultCD;
-
 		}
 
 		public get defaultDamage(): uint {
 			return this._defaultDamage;
-
 		}
 
 		public get defaultChargeTime(): uint {
 			return this._defaultChargeTime;
-
 		}
 
 		public get reverseCharge(): boolean {
@@ -248,22 +236,18 @@ package batr.game.model {
 
 		public get defaultDamageOutput(): uint {
 			return this._defaultDamage / (this._defaultCD + this._defaultChargeTime);
-
 		}
 
 		public get weaponCanHurtEnemy(): boolean {
 			return this._canHurtEnemy;
-
 		}
 
 		public get weaponCanHurtSelf(): boolean {
 			return this._canHurtSelf;
-
 		}
 
 		public get weaponCanHurtAlly(): boolean {
 			return this._canHurtAlly;
-
 		}
 
 		//====Extra Property====//
@@ -282,7 +266,6 @@ package batr.game.model {
 		// About Drone
 		public get chargePercentInDrone(): number {
 			return this._chargePercentInDrone;
-
 		}
 
 		//============Instance Functions============//

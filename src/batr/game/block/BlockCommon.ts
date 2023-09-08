@@ -75,6 +75,5 @@ export default class BlockCommon extends Shape {
 	}
 
 	protected drawMain(): void {
-
 	}
 }

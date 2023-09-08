@@ -40,7 +40,6 @@
 		//============Static Getter And Setter============//
 		public static function get RANDOM(): EntityType {
 			return _ALL_ENTITY[exMath.random(_ALL_ENTITY.length)];
-
 		}
 
 		//============Static Functions============//
@@ -48,10 +47,8 @@
 			for (var type of EntityType._ALL_ENTITY) {
 				if (type.name == str)
 					return type;
-
 			}
 			return NULL;
-
 		}
 
 		public static function isIncludeIn(type: EntityType, types: EntityType[]): boolean {

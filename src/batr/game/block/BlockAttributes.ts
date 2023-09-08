@@ -115,12 +115,10 @@ export default class BlockAttributes {
 		tempAttributes.defaultPixelColor = this.defaultPixelColor;
 
 		return tempAttributes;
-
 	}
 
 	//============Destructor Function============//
 	public destructor(): void {
-
 	}
 
 	//============Instance Getter And Setter============//
@@ -203,7 +201,6 @@ export default class BlockAttributes {
 		this.electricResistance = 80;
 
 		return this;
-
 	}
 
 	public loadAsLiquid(): BlockAttributes {
@@ -226,7 +223,6 @@ export default class BlockAttributes {
 		this.electricResistance = 160;
 
 		return this;
-
 	}
 
 	public loadAsGas(): BlockAttributes {
@@ -249,7 +245,6 @@ export default class BlockAttributes {
 		this.electricResistance = 10;
 
 		return this;
-
 	}
 
 	public loadAsTransParent(): BlockAttributes {
@@ -274,7 +269,6 @@ export default class BlockAttributes {
 		this.electricResistance = 120;
 
 		return this;
-
 	}
 
 	public loadAsUnbreakable(): BlockAttributes {
@@ -283,7 +277,6 @@ export default class BlockAttributes {
 		this.isBreakable = false;
 
 		return this;
-
 	}
 
 	public loadAsHurtZone(damage: int = 10): BlockAttributes {
@@ -292,7 +285,6 @@ export default class BlockAttributes {
 		this.electricResistance = 20;
 
 		return this;
-
 	}
 
 	public loadAsKillZone(): BlockAttributes {
@@ -301,7 +293,6 @@ export default class BlockAttributes {
 		this.electricResistance = 40;
 
 		return this;
-
 	}
 
 	public loadAsRotateZone(): BlockAttributes {
@@ -310,14 +301,12 @@ export default class BlockAttributes {
 		this.electricResistance = 20;
 
 		return this;
-
 	}
 
 	public loadAsMetal(): BlockAttributes {
 		this.electricResistance = 2;
 
 		return this;
-
 	}
 
 	public loadAsArenaBlock(): BlockAttributes {
@@ -367,7 +356,6 @@ export default class BlockAttributes {
 	}
 
 	//============Static Constants: Native Registry============//
-	public static readonly NULL: BlockAttributes | null = null;
 	public static readonly ABSTRACT: BlockAttributes = new BlockAttributes();
 
 	public static readonly VOID: BlockAttributes = new BlockAttributes(0xffffff, 0x0).asGas;
@@ -390,5 +378,4 @@ export default class BlockAttributes {
 	public static readonly GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
 
 	public static readonly MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;
-
 }

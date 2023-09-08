@@ -90,7 +90,6 @@
 				player.isRespawning || // not respawning
 				(this._owner != null && !this._owner.canUseWeaponHurtPlayer(player, this._currentWeapon)) // should can use it to hurt
 			);
-
 		}
 
 		protected getTargetRot(player: Player): int {

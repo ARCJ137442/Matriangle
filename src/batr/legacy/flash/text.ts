@@ -7,5 +7,4 @@ export declare class Font extends Object {
     public enumerateFonts(enumerateDeviceFonts?: boolean): Array<string>;
     public hasGlyphs(str: string): boolean;
     public registerFont(font: any): void;
-
 }

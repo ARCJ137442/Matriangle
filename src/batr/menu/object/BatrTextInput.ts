@@ -41,7 +41,6 @@
 
 		//============Destructor Function============//
 		public destructor(): void {
-
 		}
 
 		//============Instance Getter And Setter============//

@@ -51,17 +51,14 @@
 		//============Static Getter And Setter============//
 		public static function get RANDOM(): BonusType {
 			return _ALL_TYPE[exMath.random(_ALL_TYPE.length)];
-
 		}
 
 		public static function get RANDOM_AVALIABLE(): BonusType {
 			return _ALL_AVALIABLE_TYPE[exMath.random(_ALL_AVALIABLE_TYPE.length)];
-
 		}
 
 		public static function get RANDOM_BUFF(): BonusType {
 			return _ABOUT_BUFF[exMath.random(_ABOUT_BUFF.length)];
-
 		}
 
 		public static function get AVALIABLE_SPAWN_POTENTIALS(): object[] {

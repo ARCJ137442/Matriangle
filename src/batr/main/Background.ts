@@ -45,7 +45,6 @@ package batr.main {
 			drawFrame(width, height);
 
 			addChildren();
-
 		}
 
 		//============Destructor Function============//
@@ -61,7 +60,6 @@ package batr.main {
 			this.deleteFrame();
 
 			this._frame = null;
-
 		}
 
 		//============Instance Getter And Setter============//
@@ -70,7 +68,6 @@ package batr.main {
 				return false;
 
 			return _frame.visible;
-
 		}
 
 		public set frameVisible(value: boolean): void {
@@ -78,7 +75,6 @@ package batr.main {
 				return;
 
 			_frame.visible = value;
-
 		}
 
 		//============Instance Functions============//
@@ -167,10 +163,8 @@ package batr.main {
 
 				if (child is BlockCommon) {
 					(child as BlockCommon).destructor();
-
 				}
 				this._frame.removeChild(child);
-
 			}
 		}
 	}

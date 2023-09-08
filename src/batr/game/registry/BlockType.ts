@@ -122,5 +122,4 @@ export default class BlockType extends TypeCommon {
 	public static readonly _ALL_BLOCKS: BlockType[] = [
 
 	]
-
 }

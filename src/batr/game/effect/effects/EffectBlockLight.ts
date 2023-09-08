@@ -55,7 +55,6 @@ package batr.game.effect.effects {
 		public set color(value: uint): void {
 			this._color = value;
 			this.drawShape();
-
 		}
 
 		//============Instance Functions============//

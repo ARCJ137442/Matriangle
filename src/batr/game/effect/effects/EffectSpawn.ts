@@ -51,7 +51,6 @@ package batr.game.effect.effects {
 		//============Instance Functions============//
 		public override function drawShape(): void {
 			drawBlocks(EffectSpawn.DEFAULT_COLOR, EffectSpawn.SIZE);
-
 		}
 
 		public override function onEffectTick(): void {

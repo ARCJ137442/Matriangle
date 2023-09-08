@@ -48,7 +48,6 @@ export function removeChildIfContains(parent: DisplayObjectContainer, child: Dis
 export function removeAllChildren(container: DisplayObjectContainer): void {
 	while (container.numChildren > 0) {
 		container.removeChildAt(0);
-
 	}
 }
 
@@ -68,7 +67,6 @@ export function binaryToBooleans(bin: uint, length: uint = 0): boolean[] {
 		v[i] = Boolean(bin >> i & 1);
 	}
 	return v;
-
 }
 
 export function booleansToBinary(...boo: boolean[]): uint {
@@ -87,7 +85,6 @@ export function booleansToBinary2(boo: boolean[]): uint {
 
 	for (let i: int = l - 1; i >= 0; i--) {
 		uin |= uint(boo[i]) << i;
-
 	}
 	return uin;
 }
@@ -95,18 +92,15 @@ export function booleansToBinary2(boo: boolean[]): uint {
 //============String Methods============//
 export function hasSpellInString(spell: string, string: string): boolean {
 	return (string.toLowerCase().indexOf(spell) >= 0);
-
 }
 
 export function startswith(string: string, start: string): boolean {
 	return (string.indexOf(start) == 0);
-
 }
 
 //============Code Methods============//
 export function returnRandom<T>(...Paras: Array<T>): T {
 	return Paras[exMath.randomFloat(Paras.length)];
-
 }
 
 export function getPropertyInObjects(objects: object[], key: string): any[] {
@@ -128,7 +122,6 @@ export function copyObjectByBytes(object: object): object - {
 	tempObject.position = 0;
 
 	return tempObject.readObject() as Object;
-
 }
 
 /**
