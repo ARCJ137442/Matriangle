@@ -1,6 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import BlockWall from "./Wall";
 
@@ -9,6 +10,7 @@ export default class BlockMetal extends BlockWall {
 	//============Constructor & Destructor============//
 	public constructor(lineColor: uint = 0x444444, fillColor: uint = 0xdddddd) {
 		super(lineColor, fillColor);
+		this._attributes = NativeBlockAttributes.METAL
 	}
 
 	override destructor(): void {

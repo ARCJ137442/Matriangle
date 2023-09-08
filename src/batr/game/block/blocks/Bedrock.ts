@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockWall from "./Wall";
 
 export default class BlockBedrock extends BlockWall {
@@ -13,6 +13,6 @@ export default class BlockBedrock extends BlockWall {
 		fillColor: uint = BlockBedrock.FILL_COLOR
 	) {
 		super(lineColor, fillColor);
-		this._attributes = BlockAttributes.BEDROCK;
+		this._attributes = NativeBlockAttributes.BEDROCK;
 	}
 }

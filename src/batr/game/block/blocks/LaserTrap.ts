@@ -1,7 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import BlockBedrock from "./Bedrock";
 import BlockColorSpawner from "./ColorSpawner";
@@ -19,7 +19,7 @@ export default class BlockLaserTrap extends BlockCommon {
 
 	//============Constructor & Destructor============//
 	public constructor() {
-		super(BlockAttributes.LASER_TRAP);
+		super(NativeBlockAttributes.LASER_TRAP);
 	}
 
 	override destructor(): void {

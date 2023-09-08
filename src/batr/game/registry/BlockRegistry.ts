@@ -1,125 +1,140 @@
-// import batr.common.*;
-// import batr.general.*;
-
-import { Class, uint } from "../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
-import TypeCommon from "../template/TypeCommon";
-import * as exMath from "../../common/exMath";
+import { BlockType } from "../block/BlockCommon";
+
+//================Reexport Types================//
+import Bedrock from "../block/blocks/Bedrock";
+export { default as Bedrock } from "../block/blocks/Bedrock";
+
+import ColorSpawner from "../block/blocks/ColorSpawner";
+export { default as ColorSpawner } from "../block/blocks/ColorSpawner";
+
+import Gate from "../block/blocks/Gate";
+export { default as Gate } from "../block/blocks/Gate";
+
+import Glass from "../block/blocks/Glass";
+export { default as Glass } from "../block/blocks/Glass";
+
+import LaserTrap from "../block/blocks/LaserTrap";
+export { default as LaserTrap } from "../block/blocks/LaserTrap";
+
+import Metal from "../block/blocks/Metal";
+export { default as Metal } from "../block/blocks/Metal";
+
+import MoveableWall from "../block/blocks/MoveableWall";
+export { default as MoveableWall } from "../block/blocks/MoveableWall";
+
+import SpawnPointMark from "../block/blocks/SpawnPointMark";
+export { default as SpawnPointMark } from "../block/blocks/SpawnPointMark";
+
+import SupplyPoint from "../block/blocks/SupplyPoint";
+export { default as SupplyPoint } from "../block/blocks/SupplyPoint";
+
+import Wall from "../block/blocks/Wall";
+export { default as Wall } from "../block/blocks/Wall";
+
+import Water from "../block/blocks/Water";
+export { default as Water } from "../block/blocks/Water";
+
+import Void from "../block/blocks/Void";
+export { default as Void } from "../block/blocks/Void";
+
+import Colored from "../block/blocks/Colored";
+export { default as Colored } from "../block/blocks/Colored";
+
+import XTrapHurt from "../block/blocks/XTrapHurt";
+export { default as XTrapHurt } from "../block/blocks/XTrapHurt";
+
+import XTrapKill from "../block/blocks/XTrapKill";
+export { default as XTrapKill } from "../block/blocks/XTrapKill";
+
+import XTrapRotate from "../block/blocks/XTrapRotate";
+export { default as XTrapRotate } from "../block/blocks/XTrapRotate";
+
+
 
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
-export default class BlockType extends TypeCommon {
-	//============Static Getter And Setter============//
-	public static get RANDOM_NORMAL(): BlockType {
-		return BlockType._NORMAL_BLOCKS[exMath.random(BlockType._NORMAL_BLOCKS.length)];
-	}
+/**
+ * Define all attributes that is used for classes of blocks
+ * 
+ * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
+ * * So that it's unnecessarily to make a list to contain all of the attributes
+ * 
+ */
+export module NativeBlockAttributes {
 
-	//============Static Functions============//
-	/**
-	 * Get a BlockType from a string name
-	 * @param str The name of the BlockType
-	 * @param range the field where the function search, default the native registry
-	 * @returns if searched, return the type in the range, otherwise it is null
-	 */
-	public static fromString(str: string, range = BlockType._NORMAL_BLOCKS): BlockType | null {
-		for (var type of range) {
-			if (type.name == str)
-				return type;
-		}
-		return null;
-	}
+	export const VOID: BlockAttributes = new BlockAttributes(0xffffff, 0x0).asGas;
+	export const WALL: BlockAttributes = new BlockAttributes(0xBBBBBB).asSolid;
+	export const WATER: BlockAttributes = new BlockAttributes(0x2222FF, 0x40000000).asLiquid.asArenaBlock;
+	export const GLASS: BlockAttributes = new BlockAttributes(0x000000, 0x80000000).asTransparent.asArenaBlock;
+	export const BEDROCK: BlockAttributes = new BlockAttributes(0x888888).asSolid.asUnbreakable;
 
-	public static isIncludeIn(type: BlockType, types: BlockType[]): boolean {
-		for (var type2 of types) {
-			if (type == type2)
-				return true;
-		}
-		return false;
-	}
+	export const X_TRAP_HURT: BlockAttributes = new BlockAttributes(0xffff00, 0xc0000000).asGas.asHurtZone.asArenaBlock;
+	export const X_TRAP_KILL: BlockAttributes = new BlockAttributes(0xff0000, 0xc0000000).asGas.asKillZone.asArenaBlock;
+	export const X_TRAP_ROTATE: BlockAttributes = new BlockAttributes(0x0000ff, 0xc0000000).asGas.asRotateZone.asArenaBlock;
 
-	public static fromMapColor(color: uint): BlockType | null {
-		for (var type of BlockType._ALL_BLOCKS) {
-			if (type._mapColor == color)
-				return type;
-		}
-		return null;
-	}
+	export const COLORED_BLOCK: BlockAttributes = new BlockAttributes(0x000000).asSolid;
+	export const COLOR_SPAWNER: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
 
-	//============Instance Variables============//
-	protected _currentBlock: Class;
+	export const LASER_TRAP: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
+	export const METAL: BlockAttributes = new BlockAttributes(0x666666).asSolid.asMetal.asArenaBlock;
+	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(0x6666ff).asBase;
 
-	protected _currentAttributes: BlockAttributes;
+	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
+	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGate;
 
-	/**
-	 * Be use for BitMap importing.
-	 */
-	protected _mapColor: uint = 0xffffffff;
+	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
 
-	//============Constructor & Destructor============//
-	public constructor(name: string, currentBlock: Class, currentAttributes: BlockAttributes) {
-		super(name);
-		this._currentBlock = currentBlock;
-		this._currentAttributes = currentAttributes;
-	}
+	export const MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;
 
-	//============Instance Getter And Setter============//
-	override get label(): string {
-		return 'block';
-	}
+}
 
-	public get currentBlock(): Class {
-		return this._currentBlock;
-	}
+/**
+ * Define all `BlockType` of the native block types in the game
+ * 
+ * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
+ * * 
+ * 
+ */
+export module NativeBlockTypes {
 
-	public get currentAttributes(): BlockAttributes {
-		return this._currentAttributes;
-	}
+	export const VOID: BlockType = Void
+	export const WALL: BlockType = Wall
+	export const WATER: BlockType = Water
+	export const GLASS: BlockType = Glass
+	export const BEDROCK: BlockType = Bedrock
+	export const X_TRAP_HURT: BlockType = XTrapHurt
+	export const X_TRAP_KILL: BlockType = XTrapKill
+	export const X_TRAP_ROTATE: BlockType = XTrapRotate
+	export const COLORED: BlockType = Colored
+	export const COLOR_SPAWNER: BlockType = ColorSpawner
+	export const LASER_TRAP: BlockType = LaserTrap
+	export const METAL: BlockType = Metal
+	export const SPAWN_POINT_MARK: BlockType = SpawnPointMark
+	export const SUPPLY_POINT: BlockType = SupplyPoint
+	export const GATE_OPEN: BlockType = Gate
+	export const GATE_CLOSE: BlockType = Gate
+	export const MOVEABLE_WALL: BlockType = MoveableWall
 
-	public get mapColor(): uint {
-		return this._mapColor;
-	}
-
-	//============Instance Functions============//
-	protected setMapColor(color: uint): BlockType {
-		this._mapColor = color;
-		return this;
-	}
-
-	//============Static Constants: Native Registry============//
-	public static readonly ABSTRACT: BlockType = new BlockType('Abstract', null, BlockAttributes.ABSTRACT);
-
-	public static readonly VOID: BlockType = new BlockType('Void', null, BlockAttributes.VOID).setMapColor(0xffffff);
-	public static readonly WALL: BlockType = new BlockType('Wall', Wall, BlockAttributes.WALL).setMapColor(0x888888);
-	public static readonly WATER: BlockType = new BlockType('Water', Water, BlockAttributes.WATER).setMapColor(0x00b0ff);
-	public static readonly GLASS: BlockType = new BlockType('Glass', Glass, BlockAttributes.GLASS).setMapColor(0xeeeeee);
-	public static readonly BEDROCK: BlockType = new BlockType('BedRock', Bedrock, BlockAttributes.BEDROCK).setMapColor(0x444444);
-	public static readonly X_TRAP_HURT: BlockType = new BlockType('XTrapHurt', XTrap, BlockAttributes.X_TRAP_HURT).setMapColor(0xff8000);
-	public static readonly X_TRAP_KILL: BlockType = new BlockType('XTrapKill', XTrap, BlockAttributes.X_TRAP_KILL).setMapColor(0xff0000);
-	public static readonly X_TRAP_ROTATE: BlockType = new BlockType('XTrapRotate', XTrap, BlockAttributes.X_TRAP_ROTATE).setMapColor(0x0000ff);
-	public static readonly COLORED_BLOCK: BlockType = new BlockType('ColoredBlock', ColoredBlock, BlockAttributes.COLORED_BLOCK);
-	public static readonly COLOR_SPAWNER: BlockType = new BlockType('ColorSpawner', ColorSpawner, BlockAttributes.COLOR_SPAWNER).setMapColor(0xff00ff);
-	public static readonly LASER_TRAP: BlockType = new BlockType('LaserTrap', LaserTrap, BlockAttributes.LASER_TRAP).setMapColor(0x00ffff);
-	public static readonly METAL: BlockType = new BlockType('Metal', Metal, BlockAttributes.METAL).setMapColor(0x999999);
-	public static readonly SPAWN_POINT_MARK: BlockType = new BlockType('SpawnPointMark', SpawnPointMark, BlockAttributes.SPAWN_POINT_MARK).setMapColor(0x6600ff);
-	public static readonly SUPPLY_POINT: BlockType = new BlockType('Supplypoint', SupplyPoint, BlockAttributes.SUPPLY_POINT).setMapColor(0x66ff00);
-	public static readonly GATE_OPEN: BlockType = new BlockType('GateOpen', Gate, BlockAttributes.GATE_OPEN).setMapColor(0xcccccc);
-	public static readonly GATE_CLOSE: BlockType = new BlockType('GateClose', Gate, BlockAttributes.GATE_CLOSE).setMapColor(0x666666);
-	public static readonly MOVEABLE_WALL: BlockType = new BlockType('MoveableWall', MoveableWall, BlockAttributes.MOVEABLE_WALL).setMapColor(0x88cc88);
-
-	public static readonly _SOLID_BLOCKS: BlockType[] = new < BlockType > [
-	];
-	public static readonly _LIQUID_BLOCKS: BlockType[] = new Array<BlockType>(BlockType.WATER);
-
-	public static readonly _GAS_BLOCKS: BlockType[] = new Array < BlockType > [BlockType.GATE_OPEN];
-
-	public static readonly _BASE_BLOCKS: BlockType[] = new Array < BlockType > [BlockType.SUPPLY_POINT];
-
-	public static readonly _OTHER_BLOCKS: BlockType[] = new Array < BlockType > [BlockType.X_TRAP_HURT, BlockType.X_TRAP_KILL, BlockType.X_TRAP_ROTATE];
-	public static readonly _NORMAL_BLOCKS: BlockType[] = BlockType._SOLID_BLOCKS.concat(BlockType._LIQUID_BLOCKS).concat(BlockType._GAS_BLOCKS).concat(BlockType._OTHER_BLOCKS);
-	public static readonly _SPECIAL: BlockType[] = new Array<BlockType>(BlockType.VOID, BlockType.SPAWN_POINT_MARK);
-
-	public static readonly _ALL_BLOCKS: BlockType[] = [
-
+	export const ALL_NATIVE_BLOCKS: BlockType[] = [
+		VOID,
+		WALL,
+		WATER,
+		GLASS,
+		BEDROCK,
+		X_TRAP_HURT,
+		X_TRAP_KILL,
+		X_TRAP_ROTATE,
+		COLORED,
+		COLOR_SPAWNER,
+		LASER_TRAP,
+		METAL,
+		SPAWN_POINT_MARK,
+		SUPPLY_POINT,
+		GATE_OPEN,
+		GATE_CLOSE,
+		MOVEABLE_WALL,
 	]
+
 }

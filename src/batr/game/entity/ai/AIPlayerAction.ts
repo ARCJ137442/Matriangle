@@ -35,7 +35,7 @@ package batr.game.entity.ai {
 		public static readonly RELEASE_KEY_USE: AIPlayerAction = new AIPlayerAction('releaseKeyUse');
 		public static readonly DISABLE_CHARGE: AIPlayerAction = new AIPlayerAction('disableCharge');
 
-		public static readonly _ALL_ACTIONS: AIPlayerAction[] = new < AIPlayerAction > [
+		public static readonly _ALL_ACTIONS: AIPlayerAction[] = [
 			AIPlayerAction.MOVE_UP,
 			AIPlayerAction.MOVE_DOWN,
 			AIPlayerAction.MOVE_LEFT_ABS,

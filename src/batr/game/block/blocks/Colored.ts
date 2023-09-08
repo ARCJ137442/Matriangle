@@ -1,7 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 
 export default class BlockColored extends BlockCommon {
@@ -10,7 +10,7 @@ export default class BlockColored extends BlockCommon {
 
 	//============Constructor & Destructor============//
 	public constructor(color: uint = 0x000000) {
-		super(BlockAttributes.COLORED_BLOCK);
+		super(NativeBlockAttributes.COLORED_BLOCK);
 		this._color = color;
 	}
 

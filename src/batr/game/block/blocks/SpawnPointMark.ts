@@ -1,11 +1,11 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 
 // A Mark to SpawnPoint
-export default class SpawnPointMark extends BlockCommon {
+export default class BlockSpawnPointMark extends BlockCommon {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x808080;
 	public static readonly FILL_COLOR: uint = 0xcccccc;
@@ -17,7 +17,7 @@ export default class SpawnPointMark extends BlockCommon {
 
 	//============Constructor & Destructor============//
 	public constructor() {
-		super(BlockAttributes.SPAWN_POINT_MARK);
+		super(NativeBlockAttributes.SPAWN_POINT_MARK);
 	}
 
 	override destructor(): void {
@@ -25,21 +25,21 @@ export default class SpawnPointMark extends BlockCommon {
 	}
 
 	override clone(): BlockCommon {
-		return new SpawnPointMark();
+		return new BlockSpawnPointMark();
 	}
 
 	//============Display Implements============//
 	public shapeInit(shape: IBatrShape): void {
 		// Base
-		shape.graphics.beginFill(SpawnPointMark.LINE_COLOR, SpawnPointMark.BASE_ALPHA);
+		shape.graphics.beginFill(BlockSpawnPointMark.LINE_COLOR, BlockSpawnPointMark.BASE_ALPHA);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
-		shape.graphics.drawRect(SpawnPointMark.LINE_SIZE, SpawnPointMark.LINE_SIZE, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2);
+		shape.graphics.drawRect(BlockSpawnPointMark.LINE_SIZE, BlockSpawnPointMark.LINE_SIZE, DEFAULT_SIZE - BlockSpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - BlockSpawnPointMark.LINE_SIZE * 2);
 		shape.graphics.endFill();
-		shape.graphics.beginFill(SpawnPointMark.FILL_COLOR, SpawnPointMark.BASE_ALPHA);
-		shape.graphics.drawRect(SpawnPointMark.LINE_SIZE, SpawnPointMark.LINE_SIZE, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - SpawnPointMark.LINE_SIZE * 2);
+		shape.graphics.beginFill(BlockSpawnPointMark.FILL_COLOR, BlockSpawnPointMark.BASE_ALPHA);
+		shape.graphics.drawRect(BlockSpawnPointMark.LINE_SIZE, BlockSpawnPointMark.LINE_SIZE, DEFAULT_SIZE - BlockSpawnPointMark.LINE_SIZE * 2, DEFAULT_SIZE - BlockSpawnPointMark.LINE_SIZE * 2);
 		shape.graphics.endFill();
 		// Center
-		shape.graphics.lineStyle(SpawnPointMark.LINE_SIZE, SpawnPointMark.CENTER_COLOR);
+		shape.graphics.lineStyle(BlockSpawnPointMark.LINE_SIZE, BlockSpawnPointMark.CENTER_COLOR);
 		this.drawSpawnMark(
 			shape,
 			DEFAULT_SIZE / 2,

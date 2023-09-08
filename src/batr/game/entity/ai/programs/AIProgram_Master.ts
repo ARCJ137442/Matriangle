@@ -52,7 +52,7 @@ package batr.game.entity.ai.programs {
 
 		//========Dynamic A* PathFind========//
 		static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
-			var nearbyNodes: PathNode[] = new < PathNode > [
+			var nearbyNodes: PathNode[] = [
 				initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 				initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 				initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),

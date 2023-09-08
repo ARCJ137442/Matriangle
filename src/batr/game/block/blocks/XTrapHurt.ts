@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import AbstractBlockXTrap from "./AXTrap";
 
@@ -9,7 +9,7 @@ export default class BlockXTrapHurt extends AbstractBlockXTrap {
 
 	//============Constructor & Destructor============//
 	public constructor() {
-		super(BlockXTrapHurt.COLOR, BlockAttributes.X_TRAP_HURT);
+		super(BlockXTrapHurt.COLOR, NativeBlockAttributes.X_TRAP_HURT);
 	}
 
 	override clone(): BlockCommon {

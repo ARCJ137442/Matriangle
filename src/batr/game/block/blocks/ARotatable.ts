@@ -8,13 +8,14 @@ import BlockCommon from "../BlockCommon";
 export default abstract class AbstractBlockRotatable extends BlockCommon {
 	//============Constructor & Destructor============//
 	public constructor(
+		attributes: BlockAttributes,
 		/**
 		 * The direction of block
 		 * * default: see `GlobalRot.DEFAULT`
 		 */
-		protected _rot: uint = GlobalRot.DEFAULT
+		protected _rot: uint = GlobalRot.DEFAULT,
 	) {
-		super(BlockAttributes.ABSTRACT);
+		super(attributes);
 	}
 
 	//============Game Mechanics============//

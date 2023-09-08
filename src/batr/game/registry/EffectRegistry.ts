@@ -17,7 +17,7 @@ package batr.game.effect {
 		public static readonly PLAYER_LEVELUP: EffectType = new EffectType('PlayerLevelUp', 1);
 		public static readonly BLOCK_LIGHT: EffectType = new EffectType('BlockLight', 1);
 
-		public static readonly _ALL_EFFECT: EffectType[] = new < EffectType > [
+		public static readonly _ALL_EFFECT: EffectType[] = [
 			EffectType.EXPLODE,
 			EffectType.SPAWN,
 			EffectType.TELEPORT,

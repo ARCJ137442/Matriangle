@@ -1,6 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import Wall from "./Wall";
 import BlockWall from "./Wall";
@@ -20,6 +21,7 @@ export default class BlockMoveableWall extends BlockWall {
 	public constructor(virus: boolean = false) {
 		super(BlockMoveableWall.LINE_COLOR, BlockMoveableWall.FILL_COLOR);
 		this._virus = virus;
+		this._attributes = NativeBlockAttributes.MOVEABLE_WALL;
 	}
 
 	//============Destructor Function============//

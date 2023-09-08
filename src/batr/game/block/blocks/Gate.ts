@@ -1,6 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon from "../BlockCommon";
 
@@ -19,8 +20,8 @@ export default class BlockGate extends BlockCommon {
 	protected _open: boolean;
 
 	//============Constructor & Destructor============//
-	public constructor(open: boolean) {
-		super(BlockAttributes.ABSTRACT);
+	public constructor(open: boolean = true) {
+		super(NativeBlockAttributes.GATE_OPEN);
 		this._open = open;
 		this.updateAttributes();
 	}
@@ -37,7 +38,7 @@ export default class BlockGate extends BlockCommon {
 
 	//============Game Mechanics============//
 	public updateAttributes(): void {
-		this._attributes = this._open ? BlockAttributes.GATE_OPEN : BlockAttributes.GATE_CLOSE;
+		this._attributes = this._open ? NativeBlockAttributes.GATE_OPEN : NativeBlockAttributes.GATE_CLOSE;
 	}
 
 	public get open(): boolean {

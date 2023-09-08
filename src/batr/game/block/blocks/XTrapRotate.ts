@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import AbstractBlockXTrap from "./AXTrap";
 
@@ -9,7 +9,7 @@ export default class BlockXTrapRotate extends AbstractBlockXTrap {
 
 	//============Constructor & Destructor============//
 	public constructor() {
-		super(BlockXTrapRotate.COLOR, BlockAttributes.X_TRAP_ROTATE);
+		super(BlockXTrapRotate.COLOR, NativeBlockAttributes.X_TRAP_ROTATE);
 	}
 
 	override clone(): BlockCommon {

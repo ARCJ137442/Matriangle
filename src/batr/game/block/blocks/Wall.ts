@@ -1,7 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../render/GlobalRenderVariables";
-import BlockAttributes from "../BlockAttributes";
+import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import BlockColored from "./Colored";
 
@@ -15,7 +15,7 @@ export default class BlockWall extends BlockColored {
 	public constructor(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb) {
 		super(fillColor); // ! won't give the attributes
 		this._lineColor = lineColor;
-		this._attributes = BlockAttributes.COLORED_BLOCK;
+		this._attributes = NativeBlockAttributes.COLORED_BLOCK;
 	}
 
 	override destructor(): void {

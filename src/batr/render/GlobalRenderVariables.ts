@@ -1,6 +1,6 @@
+import MainFont from "../fonts/MainFont";
 import { uint } from "../legacy/AS3Legacy";
 
-import { MainFont } from "../fonts";
 import { Font } from "../legacy/flash/text";
 
 // import batr.fonts.*;

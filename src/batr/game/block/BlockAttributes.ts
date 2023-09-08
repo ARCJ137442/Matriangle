@@ -19,15 +19,18 @@ export default class BlockAttributes {
 
 	public laserCanPass: boolean = false;
 
-	public isTransParent: boolean = false;
+	/**
+	 * Allows player
+	 */
+	public isTransparent: boolean = false;
 
 	/**
-	 * GUI,HUD,EffectTop
-	 * <Top>:POSITIVE
+	 * GUI, HUD, EffectTop
+	 * <Top>: POSITIVE
 	 * Projectile
-	 * <Middle>:ZERO
+	 * <Middle>: ZERO
 	 * Player,EffectMiddle,BonusBox
-	 * <Bottom>:NEGATIVE
+	 * <Bottom>: NEGATIVE
 	 * EffectBottom,Background
 	 */
 	public drawLayer: int = 1;
@@ -35,7 +38,7 @@ export default class BlockAttributes {
 	/**
 	 * Tool:BlockThrower can carry
 	 */
-	public isCarryable: boolean = true;
+	public isCarriable: boolean = true;
 
 	/**
 	 * Tool:BlockThrower can carry
@@ -76,53 +79,48 @@ export default class BlockAttributes {
 	public defaultPixelColor: uint;
 
 	/**
-	 * Using UINT PERCENT!
+	 * ! Using UINT PERCENT
 	 */
 	public defaultPixelAlpha: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(defaultPixelColor: uint = 0xffffff, defaultPixelAlpha: uint = uint$MAX_VALUE) {
+	public constructor(
+		defaultPixelColor: uint = 0xffffff,
+		defaultPixelAlpha: uint = uint$MAX_VALUE
+	) {
 		this.defaultPixelColor = defaultPixelColor;
 		this.defaultPixelAlpha = defaultPixelAlpha;
 	}
 
 	public clone(): BlockAttributes {
 		var tempAttributes: BlockAttributes = new BlockAttributes();
-
-		tempAttributes.playerCanPass = this.playerCanPass;
-
-		tempAttributes.bulletCanPass = this.bulletCanPass;
-
-		tempAttributes.laserCanPass = this.laserCanPass;
-
-		tempAttributes.isTransParent = this.isTransParent;
-
-		tempAttributes.drawLayer = this.drawLayer;
-
-		tempAttributes.isCarryable = this.isCarryable;
-
-		tempAttributes.isBreakable = this.isBreakable;
-
-		tempAttributes.playerDamage = this.playerDamage;
-
-		tempAttributes.rotateWhenMoveIn = this.rotateWhenMoveIn;
-
-		tempAttributes.electricResistance = this.electricResistance;
-
-		tempAttributes.unbreakableInArenaMap = this.unbreakableInArenaMap;
-
-		tempAttributes.supplyingBonus = this.supplyingBonus;
-
-		tempAttributes.defaultPixelAlpha = this.defaultPixelAlpha;
-
-		tempAttributes.defaultPixelColor = this.defaultPixelColor;
-
+		// tempAttributes.playerCanPass = this.playerCanPass;
+		// tempAttributes.bulletCanPass = this.bulletCanPass;
+		// tempAttributes.laserCanPass = this.laserCanPass;
+		// tempAttributes.isTransparent = this.isTransparent;
+		// tempAttributes.drawLayer = this.drawLayer;
+		// tempAttributes.isCarriable = this.isCarriable;
+		// tempAttributes.isBreakable = this.isBreakable;
+		// tempAttributes.playerDamage = this.playerDamage;
+		// tempAttributes.rotateWhenMoveIn = this.rotateWhenMoveIn;
+		// tempAttributes.electricResistance = this.electricResistance;
+		// tempAttributes.unbreakableInArenaMap = this.unbreakableInArenaMap;
+		// tempAttributes.supplyingBonus = this.supplyingBonus;
+		// tempAttributes.defaultPixelAlpha = this.defaultPixelAlpha;
+		// tempAttributes.defaultPixelColor = this.defaultPixelColor;
+		/**
+		 * ! Now use `for in` to iterate over the replication properties in batch
+		 */
+		for (var key in this) {
+			if (this.hasOwnProperty(key)) {
+				(tempAttributes as any)[key] = this[key];
+			}
+		}
 		return tempAttributes;
 	}
 
 	//============Destructor Function============//
-	public destructor(): void {
-	}
+	public destructor(): void { }
 
 	//============Instance Getter And Setter============//
 	public get asSolid(): BlockAttributes {
@@ -137,8 +135,8 @@ export default class BlockAttributes {
 		return this.loadAsGas();
 	}
 
-	public get asTransParent(): BlockAttributes {
-		return this.loadAsTransParent();
+	public get asTransparent(): BlockAttributes {
+		return this.loadAsTransparent();
 	}
 
 	public get asUnbreakable(): BlockAttributes {
@@ -184,23 +182,14 @@ export default class BlockAttributes {
 	//============Instance Functions============//
 	public loadAsSolid(): BlockAttributes {
 		this.playerCanPass = false;
-
 		this.bulletCanPass = false;
-
 		this.laserCanPass = false;
-
-		this.isTransParent = false;
-
-		this.isCarryable = true;
-
+		this.isTransparent = false;
+		this.isCarriable = true;
 		this.isBreakable = true;
-
 		this.drawLayer = 0;
-
 		this.playerDamage = -1;
-
 		this.rotateWhenMoveIn = false;
-
 		this.electricResistance = 80;
 
 		return this;
@@ -208,21 +197,13 @@ export default class BlockAttributes {
 
 	public loadAsLiquid(): BlockAttributes {
 		this.playerCanPass = false;
-
 		this.bulletCanPass = true;
-
 		this.laserCanPass = true;
-
-		this.isTransParent = true;
-
-		this.isCarryable = false;
-
+		this.isTransparent = true;
+		this.isCarriable = false;
 		this.isBreakable = true;
-
 		this.drawLayer = -1;
-
 		this.rotateWhenMoveIn = false;
-
 		this.electricResistance = 160;
 
 		return this;
@@ -230,85 +211,59 @@ export default class BlockAttributes {
 
 	public loadAsGas(): BlockAttributes {
 		this.playerCanPass = true;
-
 		this.bulletCanPass = true;
-
 		this.laserCanPass = true;
-
-		this.isTransParent = true;
-
-		this.isCarryable = false;
-
+		this.isTransparent = true;
+		this.isCarriable = false;
 		this.isBreakable = true;
-
 		this.drawLayer = -1;
-
 		this.rotateWhenMoveIn = false;
-
 		this.electricResistance = 10;
 
 		return this;
 	}
 
-	public loadAsTransParent(): BlockAttributes {
+	public loadAsTransparent(): BlockAttributes {
 		this.playerCanPass = false;
-
 		this.bulletCanPass = false;
-
 		this.laserCanPass = true;
-
-		this.isTransParent = true;
-
-		this.isCarryable = true;
-
+		this.isTransparent = true;
+		this.isCarriable = true;
 		this.isBreakable = true;
-
 		this.drawLayer = 1;
-
 		this.playerDamage = -1;
-
 		this.rotateWhenMoveIn = false;
-
 		this.electricResistance = 120;
 
 		return this;
 	}
 
 	public loadAsUnbreakable(): BlockAttributes {
-		this.isCarryable = false;
-
+		this.isCarriable = false;
 		this.isBreakable = false;
-
 		return this;
 	}
 
 	public loadAsHurtZone(damage: int = 10): BlockAttributes {
 		this.playerDamage = damage;
-
 		this.electricResistance = 20;
-
 		return this;
 	}
 
 	public loadAsKillZone(): BlockAttributes {
 		this.playerDamage = int$MAX_VALUE;
-
 		this.electricResistance = 40;
-
 		return this;
 	}
 
 	public loadAsRotateZone(): BlockAttributes {
 		this.rotateWhenMoveIn = true;
-
 		this.electricResistance = 20;
-
 		return this;
 	}
 
 	public loadAsMetal(): BlockAttributes {
 		this.electricResistance = 2;
-
 		return this;
 	}
 
@@ -327,8 +282,8 @@ export default class BlockAttributes {
 		this.playerCanPass = true;
 		this.bulletCanPass = false;
 		this.laserCanPass = true;
-		this.isTransParent = true;
-		this.isCarryable = false;
+		this.isTransparent = true;
+		this.isCarriable = false;
 		this.isBreakable = false;
 		this.electricResistance = 100;
 		this.playerDamage = int$MIN_VALUE;
@@ -341,7 +296,7 @@ export default class BlockAttributes {
 	 */
 	public loadAsGate(): BlockAttributes {
 		this.loadAsGas();
-		this.isCarryable = true;
+		this.isCarriable = true;
 		this.unbreakableInArenaMap = true;
 		this.drawLayer = -1;
 		return this;
@@ -358,27 +313,4 @@ export default class BlockAttributes {
 		return this;
 	}
 
-	//============Static Constants: Native Registry============//
-	public static readonly ABSTRACT: BlockAttributes = new BlockAttributes();
-
-	public static readonly VOID: BlockAttributes = new BlockAttributes(0xffffff, 0x0).asGas;
-	public static readonly WALL: BlockAttributes = new BlockAttributes(0xBBBBBB).asSolid;
-	public static readonly WATER: BlockAttributes = new BlockAttributes(0x2222FF, 0x40000000).asLiquid.asArenaBlock;
-	public static readonly GLASS: BlockAttributes = new BlockAttributes(0x000000, 0x80000000).asTransParent.asArenaBlock;
-	public static readonly BEDROCK: BlockAttributes = new BlockAttributes(0x888888).asSolid.asUnbreakable;
-	public static readonly X_TRAP_HURT: BlockAttributes = new BlockAttributes(0xffff00, 0xc0000000).asGas.asHurtZone.asArenaBlock;
-	public static readonly X_TRAP_KILL: BlockAttributes = new BlockAttributes(0xff0000, 0xc0000000).asGas.asKillZone.asArenaBlock;
-	public static readonly X_TRAP_ROTATE: BlockAttributes = new BlockAttributes(0x0000ff, 0xc0000000).asGas.asRotateZone.asArenaBlock;
-	public static readonly COLORED_BLOCK: BlockAttributes = new BlockAttributes(0x000000).asSolid;
-	public static readonly COLOR_SPAWNER: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
-	public static readonly LASER_TRAP: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
-	public static readonly METAL: BlockAttributes = new BlockAttributes(0x666666).asSolid.asMetal.asArenaBlock;
-	public static readonly SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(0x6666ff).asBase;
-
-	public static readonly SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
-	public static readonly GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGate;
-
-	public static readonly GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
-
-	public static readonly MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;
 }

@@ -742,7 +742,7 @@ package batr.game.map.main {
 			if (hasBlock(x, y))
 				return this._getBlock(x, y).attributes;
 			else
-				return BlockAttributes.VOID;
+				return NativeBlockAttributes.VOID;
 		}
 
 		override getBlockType(x: int, y: int): BlockType {

@@ -39,7 +39,7 @@
 
 	export default class Game extends Sprite {
 		//============Static Variables============//
-		public static readonly ALL_MAPS: IMap[] = new < IMap > [
+		public static readonly ALL_MAPS: IMap[] = [
 			Map_V1.EMPTY,
 			Map_V1.FRAME,
 			Map_V1.MAP_1,
@@ -871,8 +871,8 @@
 				includePlayer, avoidTrap);
 		}
 
-		public testCarryableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
-			return blockAtt.isCarryable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
+		public testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
+			return blockAtt.isCarriable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
 		}
 
 		public testBreakableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
@@ -1752,7 +1752,7 @@
 					}
 					else if (chargePercent >= 1) {
 						// Carry
-						if (frontBlock != null && this.testCarryableWithMap(frontBlock.attributes, this.map)) {
+						if (frontBlock != null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
 							player.setCarriedBlock(frontBlock, false);
 							this.setBlock(carryX, carryY, null);
 							// Effect
@@ -2249,8 +2249,8 @@
 				this.entitySystem.registerProjectile(p);
 				this._projectileContainer.addChild(p);
 				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
-				if (!(block is MoveableWall && (block as MoveableWall).virus))
-				break;
+				if (!(block instanceof MoveableWall && (block as MoveableWall).virus))
+					break;
 			}
 			while (++i < 0x10);
 		}

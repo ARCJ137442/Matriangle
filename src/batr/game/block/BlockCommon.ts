@@ -14,6 +14,9 @@ export type BlockType = Class;
 
 /**
  * One of the fundamental element in BaTr
+ * 
+ * ! [20230908 21:13:57] The **Block** isn't contains information of "position"
+ * ! which is controlled by Game and Player
  */
 export default abstract class BlockCommon implements IBatrRenderable {
 

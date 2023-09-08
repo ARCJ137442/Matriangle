@@ -71,7 +71,7 @@ package batr.game.entity.ai.programs {
 		}
 
 		static detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
-			return !player.isCarriedBlock && blockAtt.isCarryable && player.host.testCarryableWithMap(blockAtt, player.host.map);
+			return !player.isCarriedBlock && blockAtt.isCarriable && player.host.testCarriableWithMap(blockAtt, player.host.map);
 		}
 
 		/*========A Star Algorithm========*/
@@ -146,7 +146,7 @@ protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
 
 protected static getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): PathNode[] {
 	// Set Rot in mapDealNode
-	return new < PathNode > [
+	return [
 		initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
 		initFGH(mapDealNode(new PathNode(n.x - 1, n.y, n), host, GlobalRot.LEFT), host, owner, target),
 		initFGH(mapDealNode(new PathNode(n.x, n.y + 1, n), host, GlobalRot.DOWN), host, owner, target),
@@ -200,7 +200,7 @@ protected static getPathWeight(node: PathNode, host: Game, player: Player): int 
 
 //========Dynamic A* PathFind========//
 static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
-	var nearbyNodes: PathNode[] = new < PathNode > [
+	var nearbyNodes: PathNode[] = [
 		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 		initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),

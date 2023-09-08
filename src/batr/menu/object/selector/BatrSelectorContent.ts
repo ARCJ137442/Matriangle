@@ -27,7 +27,7 @@ package batr.menu.object.selector {
 
 		public static createUnsignedIntegerAndOneSpecialContent(initValue: int, tText: I18nText): BatrSelectorContent {
 			return new BatrSelectorContent().initAsEnum(
-				new < I18nText > [
+				[
 					tText
 				], 0, 1
 			).initAsInt(

@@ -449,7 +449,7 @@
 			var pcS, acS, imS, pcS_2, acS_2, imS_2: BatrSelector;
 			var customLeftselectorX: uint = 10;
 			//===Build Sheets===//
-			this._sheets = new < BatrMenuSheet > [
+			this._sheets = [
 				// Main
 				this._sheetMain = this.buildSheet(I18nKey.MAIN_MENU, true).appendDirectElements(
 					(new BatrButtonList().appendDirectElements(
@@ -492,7 +492,7 @@
 					).appendSelectorAndText(
 						this._subject,
 						imS = this.quickselectorBuild(new BatrSelectorContent().initAsEnum(
-							(new < I18nText > [
+							([
 								this.quickI18nTextBuild(I18nKey.MAP_RANDOM)
 							]).concat(
 								I18nText.getTextsByMapNames()
@@ -573,7 +573,7 @@
 					).quickAppendSelector(
 						this,
 						new BatrSelectorContent().initAsEnum(
-							(new < I18nText > [
+							([
 								this.quickI18nTextBuild(I18nKey.COMPLETELY_RANDOM),
 								this.quickI18nTextBuild(I18nKey.UNIFORM_RANDOM)
 							]).concat(I18nText.getTextsByAllAvaliableTools(this.translations, false)),
