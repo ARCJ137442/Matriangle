@@ -1,7 +1,4 @@
 
-import intPoint from '../../../common/intPoint';
-import BlockAttributes from '../BlockAttributes';
-import BlockCommon from '../BlockCommon';
 import IMapLogic from './IMapLogic';
 import IMapStorage from "./IMapStorage";
 

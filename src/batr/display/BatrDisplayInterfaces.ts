@@ -1,5 +1,6 @@
 import { uint } from "../legacy/AS3Legacy";
 import { Matrix } from "../legacy/flash/geom";
+import IChildContainer from './../common/IChildContainer';
 
 /**
  * the interface faced to logical object that can manipulate its display status
@@ -32,22 +33,45 @@ export interface IBatrRenderable {
 
 /**
  * This interface is the unified management of all previous inherited flash Shape/MovieClip interface.
+ * 这个接口是所有以前继承flash形状/MovieClip接口的统一管理。
  * 
  * It abstracts the functionality of the original strong coupling with flash, 
+ * 它抽象了原来与flash强耦合的功能，
  * so that the logic can control the front-end rendering and separate from the concrete implementation of the display.
+ * 使逻辑可以控制前端的呈现，并与具体的显示实现分离。
  */
-export interface IBatrShape {
+export interface IBatrShape extends IBatrRenderable {
     /**
-     * migrate from Flash's Graphics object, which implements with another interface
+     * migrate from Flash's Graphics object, then implements with another interface
+     * 从Flash的Graphics对象迁移过来，并使用另一个接口实现
      */
     graphics: IBatrGraphicContext;
 
     /**
-     * The **rotation** of the shape, default is `0`.
+     * 图形（在容器中）的x坐标
+     */
+    get x(): number;
+    set x(x: number)
+
+    /**
+     * （在容器中）图形的y坐标
+     */;
+    get y(): number;
+    set y(y: number);
+
+    /**
+     * 图形的**旋转角度**
      */
     get rot(): number;
     set rot(rot: number);
 }
+
+/**
+ * 此接口用于容纳Shape对象，并对实现着要求实现各类「增删改查」特性
+ * * 目前使用数组作为容器存放子元素的「容器」，故其索引为自然数
+ */
+
+export interface IBatrShapeContainer extends IBatrShape, IChildContainer<IBatrShape, uint> { }
 
 /**
  * The migrated interface from `flash.display.Graphics`

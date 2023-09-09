@@ -1,4 +1,4 @@
-import { isExtend } from "../../common/Utils";
+import { isExtend } from "../../common/utils";
 import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE, Class } from "../../legacy/AS3Legacy";
 import BlockCommon from "./BlockCommon";
 

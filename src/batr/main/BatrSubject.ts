@@ -10,7 +10,7 @@ import I18ns from "../i18n/I18ns";
 import { uint } from "../legacy/AS3Legacy";
 import I18nsChangeEvent from "../menu/event/I18nsChangeEvent";
 import Menu from "../menu/main/Menu";
-import { DEFAULT_SIZE } from "../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../display/GlobalDisplayVariables";
 
 // import batr.game.main.*;
 // import batr.game.model.*;

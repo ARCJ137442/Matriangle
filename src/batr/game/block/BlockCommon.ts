@@ -2,7 +2,7 @@
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
-import { getClass } from "../../common/Utils";
+import { getClass } from "../../common/utils";
 import { Class, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
 import { IBatrRenderable, IBatrShape } from "../../display/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";

@@ -1,8 +1,12 @@
+import BlockCommon from "../../game/block/BlockCommon";
+import { int } from "../../legacy/AS3Legacy";
+import IMapDisplayer from "./IMapDisplayer";
 
-
-
-
-export default class MapDisplayer extends Sprite implements IMapDisplayer {
+/**
+ * Flash实现
+ * 
+ * ! 已弃用
+export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 	//============Static Functions============//
 	protected static isBlockLocationEquals(block: BlockCommon, x: int, y: int): boolean {
 		return PosTransform.realPosToLocalPos(block.x) == x && PosTransform.realPosToLocalPos(block.y) == y;
@@ -84,3 +88,4 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 		return this.getChildAt(index) as BlockCommon;
 	}
 }
+ */

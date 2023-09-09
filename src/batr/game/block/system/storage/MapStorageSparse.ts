@@ -24,6 +24,13 @@ export default class MapStorageSparse implements IMapStorage {
 
     protected readonly _dict: { [key: string]: BlockCommon } = {};
 
+    /**
+     * 缓存的「最上、最下、最左、最右」坐标
+     * * 形式：[x+, x-, y+, y-] | [右, 左, 上, 下]
+     * ? 或许可以改造成多维版本
+     */
+    protected readonly _border: [int, int, int, int] = [0, 0, 0, 0];
+
     //============Constructor & Destructor============//
 
     /**
@@ -43,11 +50,11 @@ export default class MapStorageSparse implements IMapStorage {
     //============Interface============//
 
     get mapWidth(): int {
-        throw new Error("Method not implemented.");
+        return this._border[1] - this._border[0];
     }
 
     get mapHeight(): int {
-        throw new Error("Method not implemented.");
+        return this._border[3] - this._border[2];
     }
 
     getMapSize(dim: int): int {

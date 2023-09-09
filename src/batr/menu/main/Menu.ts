@@ -17,7 +17,7 @@ import I18ns from "../../i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";
 import Background from "../../main/Background";
 import BatrSubject from "../../main/BatrSubject";
-import { DEFAULT_SIZE } from "../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../display/GlobalDisplayVariables";
 import BatrGUIEvent from "../event/BatrGUIEvent";
 import I18nsChangeEvent from "../event/I18nsChangeEvent";
 import MenuEvent from "../event/MenuEvent";

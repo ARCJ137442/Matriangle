@@ -150,5 +150,75 @@ export default interface IMapStorage {
 	 */
 	removeAllBlock(deleteBlock?: boolean/* = true*/): void;
 
+	/**
+	 * 【机制需要】获取所有重生点的位置
+	 */
+	get spawnPoints(): iPoint[];
+
+	/**
+	 * 【机制需要】获取重生点的数量
+	 */
+	get numSpawnPoints(): uint;
+
+	/**
+	 * 【机制需要】获取「是否有重生点」
+	 */
+	get hasSpawnPoint(): boolean;
+
+	/**
+	 * 【机制需要】随机获取一个重生点
+	 */
+	get randomSpawnPoint(): iPoint;
+
+	/**
+	 * 在地图上添加（注册）重生点
+	 * @param x x坐标
+	 * @param y y坐标
+	 */
+	addSpawnPoint(x: int, y: int): void;
+
+	/**
+	 * 在地图上移除（删除）重生点
+	 * @param x x坐标
+	 * @param y y坐标
+	 */
+	removeSpawnPoint(x: int, y: int): void;
+
+	/**
+	 * 移除地图上的所有重生点
+	 */
+	clearSpawnPoints(): void;
+
+	// AI About
+
+	/**
+	 * 【用于AI】获取地图上所有「有效点」构成的对象矩阵
+	 * ! 即将弃用
+	 */
+	getMatrixObject(): (Object[])[];
+
+	/**
+	 * 【用于AI】获取地图上所有「有效点」构成的有符号整数矩阵
+	 * ! 即将弃用
+	 */
+	getMatrixInt(): (int[])[];
+
+	/**
+	 * 【用于AI】获取地图上所有「有效点」构成的无符号整数矩阵
+	 * ! 即将弃用
+	 */
+	getMatrixUint(): (uint[])[];
+
+	/**
+	 * 【用于AI】获取地图上所有「有效点」构成的数值矩阵
+	 * ! 即将弃用
+	 */
+	getMatrixNumber(): (Number[])[];
+
+	/**
+	 * 【用于AI】获取地图上所有「有效点」构成的布尔值矩阵
+	 * ! 即将弃用
+	 */
+	getMatrixBoolean(): (Boolean[])[];
 
 }

@@ -1,9 +1,6 @@
 /**
- * Define all attributes that is used for classes of blocks
- * 
- * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
- * * So that it's unnecessarily to make a list to contain all of the attributes
- * 
+ * 定义所有游戏原生（自带）的地图
+ * ? 或许后续会独立出来作为「外置地图包」实现
  */
 export module NativeMaps {
 

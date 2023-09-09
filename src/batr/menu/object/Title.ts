@@ -1,7 +1,7 @@
 
 // import flash.display.*;
 
-import { X, Y } from "../../common/KeyCode";
+import { X, Y } from "../../common/keyCodes";
 import TitleImg from "./TitleImg";
 
 export default class Title extends Bitmap {

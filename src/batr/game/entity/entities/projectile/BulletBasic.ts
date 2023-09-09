@@ -2,7 +2,7 @@
 // import batr.general.*;
 // import batr.common.*;
 
-import { DEFAULT_SIZE } from "../../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
 import { BlockType } from "../../../block/BlockCommon";
 import Game from "../../../main/Game.1";
 import EntityType from "../../../registry/EntityRegistry";

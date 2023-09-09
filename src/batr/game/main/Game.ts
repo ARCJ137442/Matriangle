@@ -16,12 +16,12 @@ import BatrSubject from "../../main/BatrSubject";
 import I18nsChangeEvent from "../../menu/event/I18nsChangeEvent";
 import Menu from "../../menu/main/Menu";
 import BatrTextField from "../../menu/object/BatrTextField";
-import { DEFAULT_SIZE } from "../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../display/GlobalDisplayVariables";
 import BlockAttributes from "../block/BlockAttributes";
 import BlockCommon, { BlockType } from "../block/BlockCommon";
 import IMap from "../block/system/IMap";
-import IMapDisplayer from "../block/system/display/IMapDisplayer";
-import MapDisplayer from "../block/system/display/MapDisplayer";
+import IMapDisplayer from "../../display/map/IMapDisplayer";
+import MapDisplayer from "../../display/map/MapDisplayerFlash";
 import Map_V1 from "../block/system/Map_V1";
 import EffectCommon from "../effect/EffectCommon";
 import EffectSystem from "../effect/EffectSystem";
@@ -434,17 +434,11 @@ export default class Game extends Sprite {
 	}
 
 	public getBlockPlayerDamage(x: int, y: int): int {
-		let blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
-		if (blockAtt != null)
-			return blockAtt.playerDamage;
-		return 0;
+		//! TODO: 从地图处移植
 	}
 
 	public isKillZone(x: int, y: int): boolean {
-		let blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
-		if (blockAtt != null)
-			return blockAtt.playerDamage == int.MAX_VALUE;
-		return false;
+		//! TODO: 从地图处移植
 	}
 
 	//============Instance Functions============//

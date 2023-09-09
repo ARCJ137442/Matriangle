@@ -1,7 +1,7 @@
 // maybe need to scan all of the json in the folder `lang`
 import * as zh_hans from './lang/zh_hans.json'
 import * as en_us from './lang/en_us.json'
-import { flattenObject } from '../batr/common/Utils'
+import { flattenObject } from '../batr/common/utils'
 
 
 

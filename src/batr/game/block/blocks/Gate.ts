@@ -1,6 +1,6 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
-import { DEFAULT_SIZE } from "../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon from "../BlockCommon";

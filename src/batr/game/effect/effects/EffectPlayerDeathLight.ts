@@ -3,7 +3,7 @@
 // import batr.general.*;
 
 import { uint } from "../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import AIPlayer from "../../entity/entities/player/AIPlayer";
 import Player from "../../entity/entities/player/Player";
 import Game from "../../main/Game.1";

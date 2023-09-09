@@ -1,5 +1,5 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
 import Game from "../../../main/Game.1";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";

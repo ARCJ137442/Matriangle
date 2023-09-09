@@ -3,15 +3,15 @@
 // import batr.general.*;
 // import batr.game.block.blocks.XTrap;
 
-import { EMPTY } from "../../../common/KeyCode";
+import { EMPTY } from "../../../common/keyCodes";
 import { iPoint } from "../../../common/intPoint";
-import { DISPLAY_GRIDS } from "../../../display/GlobalRenderVariables";
+import { DISPLAY_GRIDS } from "../../../display/GlobalDisplayVariables";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon, { BlockType } from "../BlockCommon";
 import IMap from "./IMap";
-import IMapDisplayer from "./display/IMapDisplayer";
+import IMapDisplayer from "../../../display/map/IMapDisplayer";
 import IMapGenerator from "./maps/IMapGenerator";
 import MapGenerator from "./maps/MapGenerator";
 import NativeMapCommon from "./maps/NativeMapCommon";

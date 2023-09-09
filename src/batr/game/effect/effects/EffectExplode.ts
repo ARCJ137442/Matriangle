@@ -3,7 +3,7 @@
 // import batr.general.*;
 
 import { uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
 import EffectCommon from "../EffectCommon";

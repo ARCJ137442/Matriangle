@@ -5,7 +5,7 @@ import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../BlockAttributes";
 import BlockCommon, { BlockType } from "../../BlockCommon";
 import IMap from "../IMap";
-import IMapDisplayer from "../display/IMapDisplayer";
+import IMapDisplayer from "../../../../display/map/IMapDisplayer";
 
 
 /**

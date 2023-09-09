@@ -3,7 +3,7 @@
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../../display/BatrDisplayInterfaces";
-import { DEFAULT_SIZE } from "../../../../../display/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../../display/GlobalDisplayVariables";
 import EffectTeleport from "../../../../effect/effects/EffectTeleport";
 import BonusType from "../../../../registry/BonusRegistry";
 import PlayerGUI from "../../player/display/PlayerGUI";
