@@ -263,7 +263,7 @@ export module NativeMaps {
          * Spin 180*:x=23-x,y=23-y
          * for fill:cross imput
          */
-        // corner spawnpoint
+        // corner spawn point
         for (i = 0; i < 4; i++)
             addSpawnPointWithMark(MAP_B.storage, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
         // Metal Middle Line&Laser Trap

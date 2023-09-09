@@ -44,7 +44,7 @@ export default abstract class MapIntegrated implements IMap, IMapLogic, IMapStor
 	public abstract get numSpawnPoints(): number;
 	public abstract get hasSpawnPoint(): boolean;
 	public abstract get randomSpawnPoint(): intPoint;
-	public abstract addSpawnPoint(x: number, y: number): void;
+	public abstract addSpawnPointAt(x: number, y: number): void;
 	public abstract removeSpawnPoint(x: number, y: number): void;
 	public abstract clearSpawnPoints(): void;
 	public abstract getMatrixObject(): Object[][];

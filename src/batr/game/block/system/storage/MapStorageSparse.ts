@@ -1,6 +1,6 @@
 import intPoint, { iPoint } from "../../../../common/intPoint";
-import { identity } from "../../../../common/utils";
-import { int } from "../../../../legacy/AS3Legacy";
+import { identity, randomIn } from "../../../../common/utils";
+import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../BlockAttributes";
 import BlockCommon from "../../BlockCommon";
 import IMap from "../IMap";
@@ -60,34 +60,55 @@ export default class MapStorageSparse implements IMapStorage {
         return this.generatorF(this);
     }
 
-    // TODO: 有待实现
+    protected _spawnPoints: intPoint[] = [];
 
     get spawnPoints(): intPoint[] {
-        throw new Error("Method not implemented.");
+        return this._spawnPoints;
     }
 
-    get numSpawnPoints(): number {
-        throw new Error("Method not implemented.");
+    get numSpawnPoints(): int {
+        return this._spawnPoints.length;
     }
 
     get hasSpawnPoint(): boolean {
-        throw new Error("Method not implemented.");
+        return this._spawnPoints.length > 0;
     }
 
     get randomSpawnPoint(): intPoint {
-        throw new Error("Method not implemented.");
+        return randomIn(this._spawnPoints)
     }
 
-    addSpawnPoint(x: number, y: number): void {
-        throw new Error("Method not implemented.");
+    public addSpawnPointAt(x: int, y: int): void {
+        if (!this.hasSpawnPointAt(x, y))
+            this._spawnPoints.push(new intPoint(x, y))
     }
 
-    removeSpawnPoint(x: number, y: number): void {
-        throw new Error("Method not implemented.");
+    public hasSpawnPointAt(x: int, y: int): boolean {
+        for (let point of this._spawnPoints)
+            if (point.x == x && point.y == y)
+                return true;
+        return false
     }
 
-    clearSpawnPoints(): void {
-        throw new Error("Method not implemented.");
+    // ! 非接口实现
+    public indexSpawnPointOf(x: int, y: int): uint | -1 {
+        for (let index: uint = 0; index < this._spawnPoints.length; index++) {
+            let point: intPoint = this._spawnPoints[index];
+            if (point.x == x && point.y == y)
+                return index;
+        }
+        return -1;
+    }
+
+    public removeSpawnPoint(x: int, y: int): void {
+        let index: uint = this.indexSpawnPointOf(x, y);
+        if (index != -1)
+            this._spawnPoints.splice(index, 1);
+    }
+
+    public clearSpawnPoints(): void {
+        while (this._spawnPoints.length > 0)
+            this._spawnPoints.pop();
     }
 
     // AI相关

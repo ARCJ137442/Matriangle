@@ -295,6 +295,6 @@ export function drawLaserTrapBox(
 }
 
 export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
-    storage.addSpawnPoint(x, y);
+    storage.addSpawnPointAt(x, y);
     storage.setBlock(x, y, BlockSpawnPointMark.INSTANCE);
 }

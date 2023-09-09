@@ -119,10 +119,10 @@ export default class NativeMapCommon implements IMap {
 	}
 
 	/**
-	 * only copy spawnpoints
+	 * only copy spawn points
 	 */
 	public copyContentFrom(target: IMap, clearSelf: boolean = false, createBlock: boolean = true): void {
-		// spawnpoints
+		// spawn points
 		this._spawnPoints = target.spawnPoints.concat();
 	}
 

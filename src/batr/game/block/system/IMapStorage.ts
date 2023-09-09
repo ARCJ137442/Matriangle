@@ -181,7 +181,12 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	addSpawnPoint(x: int, y: int): void;
+	addSpawnPointAt(x: int, y: int): void;
+
+	/**
+	 * 【机制需要】获取某处「是否有重生点」
+	 */
+	hasSpawnPointAt(x: int, y: int): boolean;
 
 	/**
 	 * 在地图上移除（删除）重生点
