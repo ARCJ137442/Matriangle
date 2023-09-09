@@ -1,7 +1,9 @@
 import intPoint, { iPoint } from "../../../../common/intPoint";
+import { identity } from "../../../../common/utils";
 import { int } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../BlockAttributes";
 import BlockCommon from "../../BlockCommon";
+import IMap from "../IMap";
 import IMapStorage from "../IMapStorage";
 
 /**
@@ -31,6 +33,11 @@ export default class MapStorageSparse implements IMapStorage {
      */
     protected readonly _border: [int, int, int, int] = [0, 0, 0, 0];
 
+    /**
+     * 用于构建「随机结构生成」的「生成器函数」
+     */
+    public generatorF: (x: IMapStorage) => IMapStorage = identity<IMapStorage>;
+
     //============Constructor & Destructor============//
 
     /**
@@ -48,6 +55,59 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     //============Interface============//
+
+    generateNext(...args: any[]): IMapStorage {
+        return this.generatorF(this);
+    }
+
+    get spawnPoints(): intPoint[] {
+        throw new Error("Method not implemented.");
+    }
+
+    get numSpawnPoints(): number {
+        throw new Error("Method not implemented.");
+    }
+
+    get hasSpawnPoint(): boolean {
+        throw new Error("Method not implemented.");
+    }
+
+    get randomSpawnPoint(): intPoint {
+        throw new Error("Method not implemented.");
+    }
+
+    addSpawnPoint(x: number, y: number): void {
+        throw new Error("Method not implemented.");
+    }
+
+    removeSpawnPoint(x: number, y: number): void {
+        throw new Error("Method not implemented.");
+    }
+
+    clearSpawnPoints(): void {
+        throw new Error("Method not implemented.");
+    }
+
+    // AI相关
+    // getMatrixObject(): Object[][] {
+    //     throw new Error("Method not implemented.");
+    // }
+
+    // getMatrixInt(): number[][] {
+    //     throw new Error("Method not implemented.");
+    // }
+
+    // getMatrixUint(): number[][] {
+    //     throw new Error("Method not implemented.");
+    // }
+
+    // getMatrixNumber(): Number[][] {
+    //     throw new Error("Method not implemented.");
+    // }
+
+    // getMatrixBoolean(): Boolean[][] {
+    //     throw new Error("Method not implemented.");
+    // }
 
     get mapWidth(): int {
         return this._border[1] - this._border[0];
@@ -126,4 +186,39 @@ export default class MapStorageSparse implements IMapStorage {
     removeAllBlock(deleteBlock?: boolean | undefined): void {
         throw new Error("Method not implemented.");
     }
+
+    //============Display Implements============//
+
+    // TODO: 有待对接
+
+    // public setDisplayTo(target: IMapDisplayer): void {
+    // 	target.removeAllBlock();
+    // 	let ix: int, iy: int, iBlock: BlockCommon;
+    // 	for (let index: string in this._Content) {
+    // 		iBlock = this.storage.getBlock(ix, iy);
+    // 		target.setBlock(ix, iy, iBlock);
+    // 	}
+    // }
+
+    // public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void {
+    // 	targetBottom.removeAllBlock();
+    // 	targetMiddle.removeAllBlock();
+    // 	targetTop.removeAllBlock();
+    // 	let ix: int, iy: int, iBlock: BlockCommon, iLayer: int;
+
+    // 	for (let index: string in this._Content) {
+    // 		ix = Map_V1.indexToPoint(index).x;
+
+    // 		iy = Map_V1.indexToPoint(index).y;
+
+    // 		iBlock = this._getBlock(ix, iy);
+
+    // 		if (iBlock == null)
+    // 			continue;
+
+    // 		iLayer = iBlock.attributes.drawLayer;
+
+    // 		NativeMapCommon.getTargetByLayer(iLayer, targetTop, targetBottom, targetMiddle).setBlock(ix, iy, iBlock);
+    // 	}
+    // }
 }

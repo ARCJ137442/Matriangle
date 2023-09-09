@@ -2,8 +2,8 @@ import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../../registry/BlockRegistry";
-import BlockAttributes from "../BlockAttributes";
-import BlockCommon from "../BlockCommon";
+import BlockCommon, { BlockType } from "../BlockCommon";
+import { randomBoolean2 } from "../../../common/utils";
 
 export default class BlockGate extends BlockCommon {
 	//============Static Variables============//
@@ -14,7 +14,9 @@ export default class BlockGate extends BlockCommon {
 	public static readonly FILL_COLOR: uint = 0xbbbbbb;
 	public static readonly CENTER_COLOR: uint = 0x666666;
 
-	//============Constructor Functions============//
+	public static override randomInstance(type: BlockType): BlockCommon {
+		return new BlockGate(randomBoolean2());
+	}
 
 	//============Instance Variables============//
 	protected _open: boolean;

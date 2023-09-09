@@ -43,7 +43,7 @@ export abstract class Event extends Object {
     public static FULL_SCREEN: string = 'fullScreen'
     public static HTML_BOUNDS_CHANGE: string = 'htmlBoundsChange'
     public static HTML_DOM_INITIALIZE: string = 'htmlDOMInitialize'
-    public static HTML_RENDER: string = 'htmlRender'
+    public static HTML_RENDER: string = 'htmlDisplay'
     public static ID3: string = 'id3'
     public static INIT: string = 'init'
     public static LOCATION_CHANGE: string = 'locationChange'

@@ -2,9 +2,14 @@ import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../../registry/BlockRegistry";
-import BlockCommon from "../BlockCommon";
+import BlockCommon, { BlockType } from "../BlockCommon";
+import { randInt } from "../../../common/exMath";
 
 export default class BlockColored extends BlockCommon {
+
+	public static override randomInstance(type: BlockType): BlockCommon {
+		return new BlockColored(randInt(0xffffff));
+	}
 
 	protected _color: uint;
 

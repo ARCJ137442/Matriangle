@@ -4,7 +4,7 @@
 
 import { getClass } from "../../common/utils";
 import { Class, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
-import { IBatrRenderable, IBatrShape } from "../../display/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrShape } from "../../display/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 
 // import flash.display.Shape;
@@ -18,7 +18,7 @@ export type BlockType = Class;
  * ! [20230908 21:13:57] The **Block** isn't contains information of "position"
  * ! which is controlled by Game and Player
  */
-export default abstract class BlockCommon implements IBatrRenderable {
+export default abstract class BlockCommon implements IBatrDisplayable {
 
 	//============Static============//
 	/**
@@ -44,6 +44,16 @@ export default abstract class BlockCommon implements IBatrRenderable {
 	// 				return null;
 	// 	}
 	// }
+
+	/**
+	 * 从「方块类型」获取一个随机参数的实例
+	 * ! 在「方块类型=类(构造函数)」的情况下，type参数就是类自身
+	 * * 用于：地图生成「随机获取方块」
+	 * @param type 方块类型
+	 */
+	public static randomInstance(type: BlockType): BlockCommon {
+		return new (type as any)(); // ! 此处必将是构造函数，因此必能构造
+	}
 
 	// public static fromMapColor(color: uint): BlockCommon {
 	// 	return BlockCommon.fromType(BlockType.fromMapColor(color));

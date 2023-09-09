@@ -15,7 +15,13 @@ export default class BlockLaserTrap extends BlockCommon {
 
 	public static readonly LINE_SIZE: uint = BlockWall.LINE_SIZE;
 
-	//============Instance Variables============//
+	/**
+	 * 启用单例模式的方块，只有一个实例
+	 * 
+	 * ! 为属性安全，禁止一切对方块本身进行修改的行为
+	 */
+	public static readonly INSTANCE: BlockLaserTrap = new BlockLaserTrap();
+
 
 	//============Constructor & Destructor============//
 	public constructor() {

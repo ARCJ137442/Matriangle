@@ -13,7 +13,12 @@ export default class BlockColorSpawner extends BlockCommon {
 
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
 
-	//============Instance Variables============//
+	/**
+	 * 启用单例模式的方块，只有一个实例
+	 * 
+	 * ! 为属性安全，禁止一切对方块本身进行修改的行为
+	 */
+	public static readonly INSTANCE: BlockColorSpawner = new BlockColorSpawner();
 
 	//============Constructor & Destructor============//
 	public constructor() {
@@ -29,7 +34,6 @@ export default class BlockColorSpawner extends BlockCommon {
 	}
 
 	//============Display Implements============//
-
 	override shapeInit(shape: IBatrShape): void {
 		super.shapeInit(shape);
 		// Line

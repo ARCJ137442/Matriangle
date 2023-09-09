@@ -98,8 +98,12 @@ export function startswith(string: string, start: string): boolean {
 }
 
 //============Array Methods============//
-export function returnRandom<T>(...Paras: Array<T>): T {
-	return Paras[exMath.randomFloat(Paras.length)];
+export function randomIn<T>(array: T[]): T {
+	return array[exMath.randInt(array.length)];
+}
+
+export function randomInParas<T>(...paras: Array<T>): T {
+	return randomIn(paras);
 }
 
 export function getPropertyInObjects(objects: object[], key: string): any[] {
@@ -305,3 +309,9 @@ export function getClass(instance: any): Class {
 export function isExtend(C1: Class, C: Class): boolean {
 	return C1 === C || C1.prototype instanceof C
 }
+
+export function identity<T>(x: T): T {
+	return x;
+}
+
+identity(1)

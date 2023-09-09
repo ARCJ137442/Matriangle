@@ -1,5 +1,6 @@
 
 
+import ISelfModifyingGenerator from "../../../common/abstractInterfaces";
 import { iPoint } from "../../../common/intPoint";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
@@ -10,7 +11,7 @@ import BlockCommon, { BlockType } from "../BlockCommon";
  * 定义地图的「存储层」，定义地图的「存储结构」
  * * 用于「增删改查」地图中的方块信息
  */
-export default interface IMapStorage {
+export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage> {
 	//============Interface Functions============//
 
 	/**
@@ -76,13 +77,18 @@ export default interface IMapStorage {
 	 * @param clearSelf 是否先清除自身
 	 * @param createBlock 是否为深拷贝
 	 */
-	copyFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;
+	copyFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;/**
+
+	/**
+	* 用于构建「随机结构生成」的「生成器函数」
+	* * 接受自身作为参数
+	* * 返回自身作为返回值
+	*/
+	generatorF: (x: IMapStorage) => IMapStorage
 
 	/**
 	 * 【对接游戏】生成下一个地图变种
 	 * * 对于「使用随机方式生成的地图」，这种方法用于动态刷新地图对象
-	 *   * TODO: 「地图系统」文档
-	 * ! 疑似遗留特性
 	 */
 	generateNew(): IMapStorage;
 
@@ -191,34 +197,42 @@ export default interface IMapStorage {
 
 	// AI About
 
-	/**
-	 * 【用于AI】获取地图上所有「有效点」构成的对象矩阵
-	 * ! 即将弃用
-	 */
-	getMatrixObject(): (Object[])[];
+	// /**
+	//  * 【用于AI】获取地图上所有「有效点」构成的对象矩阵
+	//  * ! 即将弃用
+	//  */
+	// getMatrixObject(): (Object[])[];
 
-	/**
-	 * 【用于AI】获取地图上所有「有效点」构成的有符号整数矩阵
-	 * ! 即将弃用
-	 */
-	getMatrixInt(): (int[])[];
+	// /**
+	//  * 【用于AI】获取地图上所有「有效点」构成的有符号整数矩阵
+	//  * ! 即将弃用
+	//  */
+	// getMatrixInt(): (int[])[];
 
-	/**
-	 * 【用于AI】获取地图上所有「有效点」构成的无符号整数矩阵
-	 * ! 即将弃用
-	 */
-	getMatrixUint(): (uint[])[];
+	// /**
+	//  * 【用于AI】获取地图上所有「有效点」构成的无符号整数矩阵
+	//  * ! 即将弃用
+	//  */
+	// getMatrixUint(): (uint[])[];
 
-	/**
-	 * 【用于AI】获取地图上所有「有效点」构成的数值矩阵
-	 * ! 即将弃用
-	 */
-	getMatrixNumber(): (Number[])[];
+	// /**
+	//  * 【用于AI】获取地图上所有「有效点」构成的数值矩阵
+	//  * ! 即将弃用
+	//  */
+	// getMatrixNumber(): (Number[])[];
 
-	/**
-	 * 【用于AI】获取地图上所有「有效点」构成的布尔值矩阵
-	 * ! 即将弃用
-	 */
-	getMatrixBoolean(): (Boolean[])[];
+	// /**
+	//  * 【用于AI】获取地图上所有「有效点」构成的布尔值矩阵
+	//  * ! 即将弃用
+	//  */
+	// getMatrixBoolean(): (Boolean[])[];
+
+
+	//============Display Implements============//
+
+	// TODO: 有待对接
+
+	// public setDisplayTo(target: IMapDisplayer): void;
+	// public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
 
 }

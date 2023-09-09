@@ -1,9 +1,9 @@
 import { uint, int } from "../../legacy/AS3Legacy";
-import { IBatrRenderable, IBatrShape } from "../../display/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrShape } from "../../display/BatrDisplayInterfaces";
 import Game from "../main/Game.1";
 import EffectType from "../registry/EffectRegistry";
 
-export default class EffectCommon implements IBatrRenderable {
+export default class EffectCommon implements IBatrDisplayable {
 	//============Static Variables============//
 	protected static readonly DEFAULT_MAX_LIFE: uint = GlobalGameVariables.TPS;
 	protected static _NEXT_UUID: uint = 0;

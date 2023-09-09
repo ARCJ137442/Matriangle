@@ -1,8 +1,8 @@
 ﻿/**
- * 此接口用于通用地定义一个抽象的「容器」接口
+ * 用于通用地定义一个以「子元素+索引」为中心的「抽象容器接口」
  * * 使用「子元素」「索引」两个泛型实现通用化
  */
-export default interface IChildContainer<Child, Index> {
+export interface IChildContainer<Child, Index> {
 
 	/**
 	 * 获取所有子元素
@@ -76,4 +76,19 @@ export default interface IChildContainer<Child, Index> {
 	 */
 	removeAllChildren(): void;
 
+}
+
+
+/**
+ * 定义一个「自修改生成器」
+ * * 用于：根据自身状态与（可能的）外部参数，自我修改状态
+ */
+export default interface ISelfModifyingGenerator<Type> {
+
+	/**
+	 * 根据自身对象与外部参数，修改自身并最终返回自身
+	 * * 「自身对象」使用内部的`this`访问
+	 * @param args 外部参数（可在具体实现中限定更多）
+	 */
+	generateNext(...args: any[]): Type;
 }

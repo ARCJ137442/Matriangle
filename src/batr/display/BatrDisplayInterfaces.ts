@@ -1,12 +1,12 @@
 import { uint } from "../legacy/AS3Legacy";
 import { Matrix } from "../legacy/flash/geom";
-import IChildContainer from './../common/IChildContainer';
+import { IChildContainer } from '../common/abstractInterfaces';
 
 /**
  * the interface faced to logical object that can manipulate its display status
  * * it will manipulate an shape that corresponds itself
  */
-export interface IBatrRenderable {
+export interface IBatrDisplayable {
     /**
      * call when initial create/display the shape, usually contains the graphics context.
      * @param shape the display object corresponds `Shape` in Flash.
@@ -40,7 +40,7 @@ export interface IBatrRenderable {
  * so that the logic can control the front-end rendering and separate from the concrete implementation of the display.
  * 使逻辑可以控制前端的呈现，并与具体的显示实现分离。
  */
-export interface IBatrShape extends IBatrRenderable {
+export interface IBatrShape extends IBatrDisplayable {
     /**
      * migrate from Flash's Graphics object, then implements with another interface
      * 从Flash的Graphics对象迁移过来，并使用另一个接口实现

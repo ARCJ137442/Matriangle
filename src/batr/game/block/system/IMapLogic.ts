@@ -35,15 +35,18 @@ export default interface IMapLogic {
 
 	//============Game Mechanics============//
 
+	/**
+	 * 获取地图中方块对玩家的伤害值
+	 * @param x 方块x坐标
+	 * @param y 方块y坐标
+	 */
 	getBlockPlayerDamage(x: int, y: int): int
 
+	/**
+	 * 获取地图中方块「是否为死亡区」
+	 * @param x 方块x坐标
+	 * @param y 方块y坐标
+	 */
 	isKillZone(x: int, y: int): boolean
-
-	//============Display Implements============//
-	// setDisplayTo(target: IMapDisplayer): void;
-
-	// forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
-
-	// updateDisplayToLayers(x: int, y: int, block: BlockCommon, targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
 
 }
