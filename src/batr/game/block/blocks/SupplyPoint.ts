@@ -14,6 +14,13 @@ export default class BlockSupplyPoint extends BlockCommon {
 
 	public static readonly LINE_SIZE: number = BlockSupplyPoint.GRID_SIZE / 32;
 
+	/**
+ * 启用单例模式的方块，只有一个实例
+ * 
+ * ! 为属性安全，禁止一切对方块本身进行修改的行为
+ */
+	public static readonly INSTANCE: BlockSupplyPoint = new BlockSupplyPoint();
+
 	//============Instance Variables============//
 
 	//============Constructor & Destructor============//

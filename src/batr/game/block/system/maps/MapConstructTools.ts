@@ -1,6 +1,7 @@
 import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockCommon, { BlockType } from "../../BlockCommon";
+import BlockSpawnPointMark from "../../blocks/SpawnPointMark";
 import IMapStorage from "../IMapStorage";
 
 function cloneBlock(block: BlockCommon): BlockCommon {
@@ -291,4 +292,9 @@ export function drawLaserTrapBox(
     setBlock(storage, x - 1, y - 1, blockWall, clone);
     setBlock(storage, x + 1, y + 1, blockWall, clone);
     setBlock(storage, x - 1, y + 1, blockWall, clone);
+}
+
+export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
+    storage.addSpawnPoint(x, y);
+    storage.setBlock(x, y, BlockSpawnPointMark.INSTANCE);
 }

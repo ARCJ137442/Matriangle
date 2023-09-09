@@ -1,4 +1,4 @@
-
+// TODO: 待拆分，变成MAP_V1/MapLogic_V1的实现
 
 import { iPoint } from "../../../../common/intPoint";
 import { int, uint } from "../../../../legacy/AS3Legacy";
@@ -93,10 +93,6 @@ export default class NativeMapCommon implements IMap {
 	}
 
 	//============Tool Functions============//
-	public addSpawnPointWithMark(x: int, y: int): void {
-		this.addSpawnPoint(UintPointCompress.compressFromPoint(x, y));
-		this.setBlock(x, y, BlockCommon.fromType(BlockType.SPAWN_POINT_MARK));
-	}
 
 	protected removeDisplayerBlockAt(x: int, y: int, bottom: IMapDisplayer, middle: IMapDisplayer, top: IMapDisplayer): void {
 		if (bottom != null)

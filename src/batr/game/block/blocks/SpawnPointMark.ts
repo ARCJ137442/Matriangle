@@ -14,6 +14,12 @@ export default class BlockSpawnPointMark extends BlockCommon {
 
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
 
+	/**
+	 * 启用单例模式的方块，只有一个实例
+	 * 
+	 * ! 为属性安全，禁止一切对方块本身进行修改的行为
+	 */
+	public static readonly INSTANCE: BlockSpawnPointMark = new BlockSpawnPointMark();
 
 	//============Constructor & Destructor============//
 	public constructor() {

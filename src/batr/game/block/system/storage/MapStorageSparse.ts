@@ -60,6 +60,8 @@ export default class MapStorageSparse implements IMapStorage {
         return this.generatorF(this);
     }
 
+    // TODO: 有待实现
+
     get spawnPoints(): intPoint[] {
         throw new Error("Method not implemented.");
     }
