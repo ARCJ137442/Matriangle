@@ -2,7 +2,7 @@
 // import batr.common.*;
 // import batr.general.*;
 
-import Map_V1 from "../game/block/system/main/Map_V1";
+import Map_V1 from "../game/block/system/logic/Map_V1";
 import Game from "../game/main/Game";
 import ToolType from "../game/registry/ToolType";
 import GameRule from "../game/rule/GameRule";
@@ -10,7 +10,7 @@ import I18ns from "../i18n/I18ns";
 import { uint } from "../legacy/AS3Legacy";
 import I18nsChangeEvent from "../menu/event/I18nsChangeEvent";
 import Menu from "../menu/main/Menu";
-import { DEFAULT_SIZE } from "../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../display/GlobalRenderVariables";
 
 // import batr.game.main.*;
 // import batr.game.model.*;

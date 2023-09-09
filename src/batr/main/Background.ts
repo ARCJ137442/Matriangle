@@ -7,7 +7,7 @@ import BlockCommon from "../game/block/BlockCommon";
 import { Bedrock } from "../game/registry/BlockRegistry";
 import { uint, int } from "../legacy/AS3Legacy";
 import { DisplayObject } from "../legacy/flash/display";
-import { DEFAULT_SIZE } from "../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../display/GlobalRenderVariables";
 
 // import flash.display.*;
 

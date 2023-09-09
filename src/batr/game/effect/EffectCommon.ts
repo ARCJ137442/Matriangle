@@ -1,5 +1,5 @@
 import { uint, int } from "../../legacy/AS3Legacy";
-import { IBatrRenderable, IBatrShape } from "../../render/BatrDisplayInterfaces";
+import { IBatrRenderable, IBatrShape } from "../../display/BatrDisplayInterfaces";
 import Game from "../main/Game.1";
 import EffectType from "../registry/EffectRegistry";
 

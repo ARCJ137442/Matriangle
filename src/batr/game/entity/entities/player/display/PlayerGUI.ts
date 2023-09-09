@@ -3,7 +3,7 @@
 // import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../../../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../../display/GlobalRenderVariables";
 import Player from "../Player";
 
 // import flash.display.*;

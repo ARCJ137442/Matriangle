@@ -5,7 +5,7 @@ import { iPoint } from "../../../common/intPoint";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon, { BlockType } from "../BlockCommon";
-import IMapDisplayer from "./IMapDisplayer";
+import IMapDisplayer from "./display/IMapDisplayer";
 
 // import batr.game.block.*;
 

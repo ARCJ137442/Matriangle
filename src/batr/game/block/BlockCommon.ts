@@ -4,7 +4,7 @@
 
 import { getClass } from "../../common/Utils";
 import { Class, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
-import { IBatrRenderable, IBatrShape } from "../../render/BatrDisplayInterfaces";
+import { IBatrRenderable, IBatrShape } from "../../display/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 
 // import flash.display.Shape;

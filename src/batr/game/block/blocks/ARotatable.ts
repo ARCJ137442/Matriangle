@@ -1,6 +1,6 @@
 import * as GlobalRot from "../../../general/GlobalRot";
 import { uint } from "../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../render/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon from "../BlockCommon";
 

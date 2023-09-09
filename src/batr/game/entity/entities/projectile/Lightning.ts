@@ -5,7 +5,7 @@
 
 import { iPoint } from "../../../../common/intPoint";
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../display/GlobalRenderVariables";
 import BlockAttributes from "../../../block/BlockAttributes";
 import Game from "../../../main/Game.1";
 import ToolType from "../../../registry/ToolType";

@@ -4,7 +4,7 @@
 
 import I18ns from "../../i18n/I18ns";
 import { uint } from "../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../display/GlobalRenderVariables";
 import I18nsChangeEvent from "../event/I18nsChangeEvent";
 import Menu from "../main/Menu";
 import BatrMenuGUI from "./BatrMenuGUI";

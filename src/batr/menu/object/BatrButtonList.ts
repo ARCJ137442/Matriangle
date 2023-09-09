@@ -2,7 +2,7 @@
 // import batr.general.*;
 
 import { int } from "../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../display/GlobalRenderVariables";
 import BatrButton from "./BatrButton";
 import BatrMenuGUI from "./BatrMenuGUI";
 import IBatrMenuElement from "./IBatrMenuElement";

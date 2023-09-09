@@ -54,7 +54,7 @@ export abstract class Event extends Object {
     public static PREPARING: string = 'preparing'
     public static REMOVED: string = 'removed'
     public static REMOVED_FROM_STAGE: string = 'removedFromStage'
-    public static RENDER: string = 'render'
+    public static RENDER: string = 'display'
     public static RESIZE: string = 'resize'
     public static SCROLL: string = 'scroll'
     public static SELECT: string = 'select'

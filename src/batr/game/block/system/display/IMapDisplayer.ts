@@ -1,8 +1,8 @@
 
 // import batr.game.block.*;
 
-import { int } from "../../../legacy/AS3Legacy";
-import BlockCommon from "../BlockCommon";
+import { int } from "../../../../legacy/AS3Legacy";
+import BlockCommon from "../../BlockCommon";
 
 export default interface IMapDisplayer {
 	hasBlock(x: int, y: int): Boolean;

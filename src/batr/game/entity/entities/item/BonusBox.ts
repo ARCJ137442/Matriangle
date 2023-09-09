@@ -3,8 +3,8 @@
 // import batr.general.*;
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../../render/BatrDisplayInterfaces";
-import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import { IBatrShape } from "../../../../display/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../../display/GlobalRenderVariables";
 import Game from "../../../main/Game.1";
 import BonusType from "../../../registry/BonusRegistry";
 import EntityType from "../../../registry/EntityRegistry";

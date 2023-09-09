@@ -1,6 +1,6 @@
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import { Matrix } from "../../../../legacy/flash/geom";
-import { DEFAULT_SIZE } from "../../../../render/GlobalRenderVariables";
+import { DEFAULT_SIZE } from "../../../../display/GlobalRenderVariables";
 import BlockCommon from "../../../block/BlockCommon";
 import Game from "../../../main/Game.1";
 import EntityType from "../../../registry/EntityRegistry";

@@ -2,18 +2,20 @@ import { uint } from "../legacy/AS3Legacy";
 import { Matrix } from "../legacy/flash/geom";
 
 /**
- * the interface faced to logical object that can manipulate its render status
+ * the interface faced to logical object that can manipulate its display status
  * * it will manipulate an shape that corresponds itself
  */
 export interface IBatrRenderable {
     /**
-     * call when initial create/render the shape, usually contains the graphics context.
+     * call when initial create/display the shape, usually contains the graphics context.
      * @param shape the display object corresponds `Shape` in Flash.
      */
     shapeInit(shape: IBatrShape): void;
 
     /**
      * The same as `shapeInit`, but it will be called by object rerendering 
+     * 
+     * ! May contains position updates
      * @param shape the display object corresponds `Shape` in Flash.
      */
     shapeRefresh(shape: IBatrShape): void;
