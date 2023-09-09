@@ -22,6 +22,9 @@ bin-release/
 .vscode
 .code-workspace
 
+# Node
+node_modules/
+
 # Bash Log
 end
 *.stackdump

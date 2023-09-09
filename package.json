@@ -1,1 +1,5 @@
-{}
+{
+  "dependencies": {
+    "os-locale": "^6.0.2"
+  }
+}
