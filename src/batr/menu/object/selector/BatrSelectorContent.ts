@@ -62,7 +62,7 @@ export default class BatrSelectorContent {
 	}
 
 	public static createPlayerNamesContent(playerStats: PlayerStats[]): BatrSelectorContent {
-		var names: I18nText[] = ForcedI18nText.getTextsByPlayerNames(playerStats);
+		let names: I18nText[] = ForcedI18nText.getTextsByPlayerNames(playerStats);
 		return new BatrSelectorContent().initAsEnum(
 			names, 0, 0
 		).initAsInt(
@@ -111,7 +111,7 @@ export default class BatrSelectorContent {
 	}
 
 	public clone(): BatrSelectorContent {
-		var copy: BatrSelectorContent = new BatrSelectorContent();
+		let copy: BatrSelectorContent = new BatrSelectorContent();
 		copy.copyFrom(this);
 		return copy;
 	}
@@ -147,7 +147,7 @@ export default class BatrSelectorContent {
 	}
 
 	public get currentText(): string {
-		var t = this.enumText;
+		let t = this.enumText;
 		return (t == null) ? String(this.currentValue) : t;
 	}
 
@@ -273,7 +273,7 @@ export default class BatrSelectorContent {
 
 	public alignI18nsFrom(translations: I18ns): BatrSelectorContent {
 		if (this._enumTexts != null) {
-			for (var tText of this._enumTexts) {
+			for (let tText of this._enumTexts) {
 				tText.translations = translations;
 			}
 		}

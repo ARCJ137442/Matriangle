@@ -75,13 +75,13 @@ export default class Lightning extends ProjectileCommon {
 	 */
 	protected lightningWays(): void {
 		// Draw in location in this
-		var head: iPoint = new iPoint(this.gridX, this.gridY);
-		var ownerTool: ToolType = this.currentTool;
-		var vx: int, vy: int;
-		var cost: int = 0;
-		var player: Player = null;
-		var tRot: uint = this.owner.rot;
-		var nRot: uint = 0;
+		let head: iPoint = new iPoint(this.gridX, this.gridY);
+		let ownerTool: ToolType = this.currentTool;
+		let vx: int, vy: int;
+		let cost: int = 0;
+		let player: Player = null;
+		let tRot: uint = this.owner.rot;
+		let nRot: uint = 0;
 		// Loop to run
 		this._wayPoints.push(new iPoint(0, 0));
 		while (true) {
@@ -119,12 +119,12 @@ export default class Lightning extends ProjectileCommon {
 	}
 
 	protected getLeastWeightRot(x: int, y: int, nowRot: uint): uint {
-		var cx: int, cy: int;
-		var leastCost: int = operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
-		var cost: int;
-		var result: uint = GlobalRot.NULL;
+		let cx: int, cy: int;
+		let leastCost: int = operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
+		let cost: int;
+		let result: uint = GlobalRot.NULL;
 		nowRot = GlobalRot.lockIntToStandard(nowRot + exMath.random1());
-		for (var r: int = nowRot; r < nowRot + 4; r += 2) {
+		for (let r: int = nowRot; r < nowRot + 4; r += 2) {
 			cx = x + GlobalRot.towardXInt(r);
 			cy = y + GlobalRot.towardYInt(r);
 			cost = operateCost(cx, cy);
@@ -141,7 +141,7 @@ export default class Lightning extends ProjectileCommon {
 			return 5; // The electricResistance of player
 		if (this.host.isIntOutOfMap(x, y))
 			return int.MAX_VALUE; // The electricResistance out of world
-		var attributes: BlockAttributes = this.host.getBlockAttributes(x, y);
+		let attributes: BlockAttributes = this.host.getBlockAttributes(x, y);
 		if (attributes != null)
 			return attributes.electricResistance;
 		return 0;
@@ -156,9 +156,9 @@ export default class Lightning extends ProjectileCommon {
 
 	protected drawLightning(): void {
 		// These points uses local grid,for example the initial point is (0,0)
-		var point: iPoint = null, pointH: iPoint = null;
+		let point: iPoint = null, pointH: iPoint = null;
 		// drawLines
-		for (var i: uint = 0; i < this._wayPoints.length; i++) {
+		for (let i: uint = 0; i < this._wayPoints.length; i++) {
 			point = pointH;
 			pointH = this._wayPoints[i];
 			if (point != null && pointH != null) { // Head

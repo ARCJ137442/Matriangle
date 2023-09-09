@@ -53,12 +53,12 @@ export default class I18ns {
 		if (!I18ns.isInited)
 			I18ns.cInit();
 
-		var returnT: I18ns = new I18ns();
+		let returnT: I18ns = new I18ns();
 
 		if (str.length < 1 || str == null)
 			return returnT;
-		var str1: string[], k: string, v: string;
-		for (var value of str) {
+		let str1: string[], k: string, v: string;
+		for (let value of str) {
 			str1 = String(value).split(':');
 
 			k = str1[0];
@@ -113,7 +113,7 @@ export default class I18ns {
 			I18ns.cInit();
 		this._getFunction = this.defaultGet;
 		this._setFunction = this.defaultSet;
-		for (var i: uint = 0; i + 1 < translations.length; i += 2) {
+		for (let i: uint = 0; i + 1 < translations.length; i += 2) {
 			this.setI18n(translations[i], translations[i + 1]);
 		}
 	}
@@ -124,18 +124,18 @@ export default class I18ns {
 	}
 
 	public get translationKeys(): string[] {
-		var rV: string[] = new Array<String>();
+		let rV: string[] = new Array<String>();
 
-		for (var index in this._dictionary) {
+		for (let index in this._dictionary) {
 			rV.push(String(index));
 		}
 		return rV;
 	}
 
 	public get translationValues(): string[] {
-		var rV: string[] = new Array<String>();
+		let rV: string[] = new Array<String>();
 
-		for (var value of this._dictionary) {
+		for (let value of this._dictionary) {
 			rV.push(String(value));
 		}
 		return rV;
@@ -151,7 +151,7 @@ export default class I18ns {
 	}
 
 	protected defaultGet(key: string): string {
-		var value: string = String(this._dictionary[key]);
+		let value: string = String(this._dictionary[key]);
 		if (value == 'undefined' || value == 'null' || value == '')
 			return DefaultNativeI18ns.getDefaultI18n(key);
 		return value;
@@ -172,9 +172,9 @@ export default class I18ns {
 	}
 
 	public toString(): string {
-		var rS: string = '';
+		let rS: string = '';
 
-		for (var index in this._dictionary) {
+		for (let index in this._dictionary) {
 			rS += String(index) + ':' + String(this._dictionary[index]) + ';';
 		}
 		return rS;

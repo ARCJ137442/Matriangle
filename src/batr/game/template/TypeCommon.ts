@@ -10,7 +10,7 @@ export default class TypeCommon {
 
 	//============Static Functions============//
 	public static isIncludeIn(type: TypeCommon, types: TypeCommon[]): boolean {
-		for (var type2 of types) {
+		for (let type2 of types) {
 			if (type === type2)
 				return true;
 		}

@@ -54,11 +54,11 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 
 	//============Destructor Function============//
 	override destructor(): void {
-		for (var selector of this._selectors) {
+		for (let selector of this._selectors) {
 			selector.destructor();
 		}
 		this._selectors = null;
-		for (var textField of this._selectTextFields) {
+		for (let textField of this._selectTextFields) {
 			textField.destructor();
 		}
 		this._selectTextFields = null;
@@ -115,9 +115,9 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	}
 
 	protected initDisplay(): void {
-		var dy: number, i: int;
+		let dy: number, i: int;
 		if (this.selectTextFieldCount > 0) {
-			var textField: BatrTextField;
+			let textField: BatrTextField;
 			for (dy = i = 0; i < this.selectTextFieldCount; i++) {
 				textField = this._selectTextFields[i];
 				if (textField == null) {
@@ -131,7 +131,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 			}
 		}
 		if (this.selectorCount > 0) {
-			var selector: BatrSelector;
+			let selector: BatrSelector;
 			for (dy = i = 0; i < this.selectorCount; i++) {
 				selector = this._selectors[i];
 				if (selector == null) {
@@ -218,7 +218,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 		// selector
 		this._selectors.push(selector);
 		// Text
-		var textField: BatrTextField = BatrTextField.fromKey(host.translations, tKey);
+		let textField: BatrTextField = BatrTextField.fromKey(host.translations, tKey);
 		textField.initFormatAsMenu();
 		this._selectTextFields.push(textField);
 		host.addEventListener(I18nsChangeEvent.TYPE, textField.onI18nChange);
@@ -232,7 +232,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	}
 
 	public getSelectorByName(name: string): BatrSelector {
-		for (var selector of this._selectors) {
+		for (let selector of this._selectors) {
 			if (selector != null && selector.name == name)
 				return selector;
 		}
@@ -240,7 +240,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	}
 
 	public quickAppendSelector(menu: Menu, content: BatrSelectorContent, keyName: string, shiftEmptyLine: boolean = false, clickListener: Function = null, minTextBlockWidth: number = 0.5): BatrSelectorList {
-		var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
+		let selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 		selector.setName(keyName);
 		menu.subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
 		if (clickListener != null)

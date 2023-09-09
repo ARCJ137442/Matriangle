@@ -52,8 +52,6 @@ export { default as XTrapRotate } from "../block/blocks/XTrapRotate";
 
 
 
-// import batr.game.block.*;
-// import batr.game.block.blocks.*;
 
 /**
  * Define all attributes that is used for classes of blocks

@@ -52,7 +52,7 @@ export default class BulletTracking extends BulletBasic {
 	 * Cached some static properties, during the short lifespan of the bullet
 	 */
 	protected cacheTargets(): void {
-		for (var player of _host.entitySystem.players) {
+		for (let player of _host.entitySystem.players) {
 			if (player != null && // not null
 				(this._owner == null || this._owner.canUseToolHurtPlayer(player, this._currentTool)) // should can use it to hurt
 			)
@@ -61,10 +61,10 @@ export default class BulletTracking extends BulletBasic {
 	}
 
 	override onBulletTick(): void {
-		var tempRot: int;
+		let tempRot: int;
 		if (this._target == null) {
-			var player: Player;
-			for (var i: int = this._cachedTargets.length - 1; i >= 0; i--) {
+			let player: Player;
+			for (let i: int = this._cachedTargets.length - 1; i >= 0; i--) {
 				player = this._cachedTargets[i];
 				// check valid
 				if (this.checkTargetInvalid(player)) {
@@ -109,8 +109,8 @@ export default class BulletTracking extends BulletBasic {
 	}
 
 	protected getTargetRotWidely(player: Player): int {
-		var xDistance: int = this.gridX - player.gridX;
-		var yDistance: int = this.gridY - player.gridY;
+		let xDistance: int = this.gridX - player.gridX;
+		let yDistance: int = this.gridY - player.gridY;
 		if (Math.abs(xDistance) > Math.abs(yDistance)) {
 			return this.gridX > player.gridX ? GlobalRot.LEFT : GlobalRot.RIGHT;
 		}
@@ -128,7 +128,7 @@ export default class BulletTracking extends BulletBasic {
 
 	protected drawTrackingSign(): void {
 		graphics.beginFill(this.ownerLineColor);
-		var radius: number = BulletTracking.SIZE * 0.125;
+		let radius: number = BulletTracking.SIZE * 0.125;
 		graphics.moveTo(-radius, -radius);
 		graphics.lineTo(radius, 0);
 		graphics.lineTo(-radius, radius);

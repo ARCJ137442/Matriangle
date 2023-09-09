@@ -37,7 +37,7 @@ export default class EffectType extends TypeCommon {
 
 	//============Static Functions============//
 	public static fromString(str: string): EffectType {
-		for (var type of EffectType._ALL_EFFECT) {
+		for (let type of EffectType._ALL_EFFECT) {
 			if (type.name == str)
 				return type;
 		}
@@ -45,7 +45,7 @@ export default class EffectType extends TypeCommon {
 	}
 
 	public static isIncludeIn(type: EffectType, types: EffectType[]): boolean {
-		for (var type2 of types) {
+		for (let type2 of types) {
 			if (type == type2)
 				return true;
 		}

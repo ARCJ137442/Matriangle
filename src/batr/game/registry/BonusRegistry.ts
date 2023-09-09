@@ -64,8 +64,8 @@ export default class BonusType extends TypeCommon {
 	}
 
 	public static get AVAILABLE_SPAWN_POTENTIALS(): object[] {
-		var result: object[] = new Array<Object>();
-		for (var bType of _ALL_AVAILABLE_TYPE) {
+		let result: object[] = new Array<Object>();
+		for (let bType of _ALL_AVAILABLE_TYPE) {
 			result.push({
 				type: bType,
 				weight: 1.0
@@ -77,7 +77,7 @@ export default class BonusType extends TypeCommon {
 
 	//============Static Functions============//
 	public static fromString(str: string): BonusType {
-		for (var type of BonusType._ALL_TYPE) {
+		for (let type of BonusType._ALL_TYPE) {
 			if (type.name == str)
 				return type;
 		}
@@ -85,7 +85,7 @@ export default class BonusType extends TypeCommon {
 	}
 
 	public static isIncludeIn(type: BonusType, types: BonusType[]): boolean {
-		for (var type2 of types) {
+		for (let type2 of types) {
 			if (type == type2)
 				return true;
 		}

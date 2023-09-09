@@ -32,7 +32,7 @@ export default class SubBomber extends BulletBasic {
 
 	//============Constructor & Destructor============//
 	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number, fuel: int = 100) {
-		var scalePercent: number = (0.25 + chargePercent * 0.75);
+		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
 		this._currentTool = ToolType.SUB_BOMBER;
 		this.damage = this._currentTool.defaultDamage;
@@ -76,7 +76,7 @@ export default class SubBomber extends BulletBasic {
 	}
 
 	protected drawBomberSign(): void {
-		var realRadius: number = BulletBasic.SIZE * 0.15;
+		let realRadius: number = BulletBasic.SIZE * 0.15;
 		graphics.beginFill(this.ownerLineColor);
 		graphics.moveTo(-realRadius, -realRadius);
 		graphics.lineTo(realRadius, 0);

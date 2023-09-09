@@ -94,7 +94,7 @@ export default class Background extends Sprite {
 	}
 
 	protected drawGrid(x: int, y: int, width: uint, height: uint): void {
-		var dx: int = x, dy: int = y, mx: int = x + width, my: int = y + height;
+		let dx: int = x, dy: int = y, mx: int = x + width, my: int = y + height;
 		shape.graphics.lineStyle(GRID_SIZE, GRID_COLOR);
 		// V
 		while (dx <= mx) {
@@ -145,10 +145,10 @@ export default class Background extends Sprite {
 	protected drawFrame(width: uint, height: uint): void {
 		if (this._frame == null)
 			return;
-		for (var xi: uint = 0; xi < width; xi++) {
-			for (var yi: uint = 0; yi < height; yi++) {
+		for (let xi: uint = 0; xi < width; xi++) {
+			for (let yi: uint = 0; yi < height; yi++) {
 				if ((xi == 0 || xi == width - 1) || (yi == 0 || yi == height - 1)) {
-					var block: BlockCommon = new Bedrock();
+					let block: BlockCommon = new Bedrock();
 					block.x = DEFAULT_SIZE * xi;
 					block.y = DEFAULT_SIZE * yi;
 					_frame.addChild(block);
@@ -161,7 +161,7 @@ export default class Background extends Sprite {
 		if (this._frame == null)
 			return;
 
-		var child: DisplayObject;
+		let child: DisplayObject;
 
 		while (this._frame.numChildren > 0) {
 			child = this._frame.getChildAt(0);

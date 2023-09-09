@@ -546,11 +546,11 @@ export default class Player extends EntityCommon implements IPlayerProfile {
 
 	// Display for GUI
 	public get healthText(): string {
-		var healthText: string = this._health + '/' + this._maxHealth;
+		let healthText: string = this._health + '/' + this._maxHealth;
 
-		var healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
+		let healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
 
-		var lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
+		let lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
 
 		return healthText + healText + lifeText;
 	}
@@ -956,12 +956,12 @@ export default class Player extends EntityCommon implements IPlayerProfile {
 
 	//====Functions About Graphics====//
 	protected drawShape(Alpha: number = 1): void {
-	var realRadiusX: number = (SIZE - LINE_SIZE) / 2;
-	var realRadiusY: number = (SIZE - LINE_SIZE) / 2;
+	let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
+	let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
 	graphics.clear();
 	graphics.lineStyle(LINE_SIZE, this._lineColor);
 	// graphics.beginFill(this._fillColor,Alpha);
-	var m: Matrix = new Matrix();
+	let m: Matrix = new Matrix();
 	m.createGradientBox(DEFAULT_SIZE,
 		DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
 	graphics.beginGradientFill(GradientType.LINEAR,
@@ -987,7 +987,7 @@ this._fillColor = this._team.defaultColor;
 		else
 this._fillColor = uint(fillColor);
 // Deal lineColor
-var HSV: number[] = Color.HEXtoHSV(this._fillColor);
+let HSV: number[] = Color.HEXtoHSV(this._fillColor);
 this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
 if (isNaN(lineColor)) {
 	this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);

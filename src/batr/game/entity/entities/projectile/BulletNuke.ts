@@ -26,7 +26,7 @@ export default class BulletNuke extends BulletBasic {
 
 	//============Constructor & Destructor============//
 	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
-		var scalePercent: number = (0.25 + chargePercent * 0.75);
+		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(host, x, y, owner, DEFAULT_SPEED * (2 - scalePercent), DEFAULT_EXPLODE_RADIUS * (2 * scalePercent));
 		this._currentTool = ToolType.NUKE;
 		this.damage = this._currentTool.defaultDamage * scalePercent;

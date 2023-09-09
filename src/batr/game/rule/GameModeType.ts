@@ -31,7 +31,7 @@ export default class GameModeType extends TypeCommon {
 
 	//============Static Functions============//
 	public static fromString(str: string): GameModeType {
-		for (var type of GameModeType._ALL_TYPE) {
+		for (let type of GameModeType._ALL_TYPE) {
 			if (type.name == str)
 				return type;
 		}
@@ -39,7 +39,7 @@ export default class GameModeType extends TypeCommon {
 	}
 
 	public static isIncludeIn(type: GameModeType, types: GameModeType[]): boolean {
-		for (var type2 of types) {
+		for (let type2 of types) {
 			if (type === type2)
 				return true;
 		}

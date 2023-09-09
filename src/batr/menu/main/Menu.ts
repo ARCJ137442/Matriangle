@@ -126,7 +126,7 @@ export default class Menu extends Sprite {
 
 	//============Static Functions============//
 	protected static setFixedTextSuffix(text: BatrTextField, suffix: any): void {
-		var fText: FixedI18nText = text.translationalText as FixedI18nText;
+		let fText: FixedI18nText = text.translationalText as FixedI18nText;
 		if (fText != null) {
 			fText.suffix = '\t\t' + String(suffix);
 			text.updateByI18n();
@@ -305,7 +305,7 @@ export default class Menu extends Sprite {
 	protected popSheetHistory(): uint {
 		// Remove from the Head of UnsignedInteger
 		// trace('Before:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
-		var lSH: uint = this.lastSheetHistory;
+		let lSH: uint = this.lastSheetHistory;
 		this._sheetHistory -= this.lastSheetHistory * Math.pow(this.numSheet + 1, this.historyLength - 1);
 		// trace('After:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		return lSH;
@@ -359,7 +359,7 @@ export default class Menu extends Sprite {
 	//========Menu Build Methods========//
 	// Button Build
 	protected quickButtonBuild(tKey: string, clickListenerFunction: Function, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
-		var button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
+		let button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
 			DEFAULT_SIZE * blockHeight,
 			this.translations, tKey);
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
@@ -370,7 +370,7 @@ export default class Menu extends Sprite {
 
 	// quickButtonBuild with color
 	protected quickButtonBuild2(tKey: string, clickListenerFunction: Function, color: uint, blockWidth: number = 6, blockHeight: number = 1): BatrButton {
-		var button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
+		let button: BatrButton = new BatrButton(DEFAULT_SIZE * blockWidth,
 			DEFAULT_SIZE * blockHeight,
 			this.translations, tKey, true, color);
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
@@ -389,7 +389,7 @@ export default class Menu extends Sprite {
 
 	// TextField Build
 	protected quickTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
-		var textField: BatrTextField = BatrTextField.fromKey(this.translations, tKey, autoSize);
+		let textField: BatrTextField = BatrTextField.fromKey(this.translations, tKey, autoSize);
 		textField.x = DEFAULT_SIZE * blockX;
 		textField.y = DEFAULT_SIZE * blockY;
 		textField.initFormatAsMenu();
@@ -399,7 +399,7 @@ export default class Menu extends Sprite {
 
 	// StatTextField Build
 	protected quickStatTextFieldBuild(tKey: string, blockX: number = 0, blockY: number = 0, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
-		var textField: BatrTextField = new BatrTextField(new FixedI18nText(this.translations, tKey), autoSize);
+		let textField: BatrTextField = new BatrTextField(new FixedI18nText(this.translations, tKey), autoSize);
 		textField.x = DEFAULT_SIZE * blockX;
 		textField.y = DEFAULT_SIZE * blockY;
 		textField.initFormatAsMenu();
@@ -409,7 +409,7 @@ export default class Menu extends Sprite {
 
 	// StatTextField Build
 	protected quickTextInputBuild(text: string, blockX: number = 0, blockY: number = 0, blockW: number = 10, blockH: number = 5, autoSize: string = TextFieldAutoSize.LEFT): BatrTextInput {
-		var textInput: BatrTextInput = new BatrTextInput(text, autoSize);
+		let textInput: BatrTextInput = new BatrTextInput(text, autoSize);
 		textInput.x = DEFAULT_SIZE * blockX;
 		textInput.y = DEFAULT_SIZE * blockY;
 		textInput.width = DEFAULT_SIZE * blockW;
@@ -420,7 +420,7 @@ export default class Menu extends Sprite {
 	// selector Build
 	protected quickSelectorBuild(content: BatrSelectorContent,
 		minTextBlockWidth: number = 1, selectorClickFunction: Function = null): BatrSelector {
-		var selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
+		let selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
 		if (selectorClickFunction != null)
 			selector.addEventListener(BatrGUIEvent.CLICK, selectorClickFunction);
@@ -442,11 +442,11 @@ export default class Menu extends Sprite {
 		this.subject.onTitleComplete();
 		// Build Sheets
 		this.buildSheets();
-		for (var sheet of this._sheets)
+		for (let sheet of this._sheets)
 			sheet.addChildPerDirectElements();
 		this.nowSheet = this._sheetMain;
 		// Add VersionText
-		var versionText = new TextField();
+		let versionText = new TextField();
 		versionText.text = GlobalGameInformation.GAME_FULL_VERSION;
 		versionText.setTextFormat(Menu.VERSION_TEXT_FORMAT);
 		versionText.width = versionText.textWidth + 20;
@@ -472,8 +472,8 @@ export default class Menu extends Sprite {
 
 	protected buildSheets(): void {
 		// Set Variables
-		var pcS, acS, imS, pcS_2, acS_2, imS_2: BatrSelector;
-		var customLeftSelectorX: uint = 10;
+		let pcS, acS, imS, pcS_2, acS_2, imS_2: BatrSelector;
+		let customLeftSelectorX: uint = 10;
 		//===Build Sheets===//
 		this._sheets = [
 			// Main
@@ -721,14 +721,14 @@ export default class Menu extends Sprite {
 
 	// Sheet
 	public buildSheet(name: string, keepTitle: boolean = true): BatrMenuSheet {
-		var sheet: BatrMenuSheet = new BatrMenuSheet(keepTitle);
+		let sheet: BatrMenuSheet = new BatrMenuSheet(keepTitle);
 		sheet.x = sheet.y = 0;
 		sheet.name = name;
 		return sheet;
 	}
 
 	public getSheetByName(name: string): BatrMenuSheet {
-		for (var sheet of this._sheets) {
+		for (let sheet of this._sheets) {
 			if (sheet.name == name)
 				return sheet;
 		}
@@ -780,8 +780,8 @@ export default class Menu extends Sprite {
 	}
 
 	protected onTitleTimerTick(event: TimerEvent): void {
-		var percent: number = this._titleTimer.currentCount / this._titleTimer.repeatCount;
-		var forcePercent: number = this._isShowingMenu ? (1 - percent) : percent;
+		let percent: number = this._titleTimer.currentCount / this._titleTimer.repeatCount;
+		let forcePercent: number = this._isShowingMenu ? (1 - percent) : percent;
 		this._title.y = (forcePercent * _TITLE_HIDE_Y + (1 - forcePercent) * _TITLE_SHOW_Y);
 	}
 
@@ -797,56 +797,56 @@ export default class Menu extends Sprite {
 
 	// GameRule Generation
 	protected getRuleFromMenu(): GameRule {
-		var rule: GameRule = this._subject.gameRule;
+		let rule: GameRule = this._subject.gameRule;
 		try {
 			//====Select====//
 			// PlayerCount
-			var playerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
+			let playerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
 			rule.playerCount = playerCountSelector == null ? 4 : playerCountSelector.currentValue;
 			// AIPlayerCount
-			var AIPlayerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
+			let AIPlayerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
 			rule.AICount = AIPlayerCountSelector == null ? 6 : AIPlayerCountSelector.currentValue;
 			// InitialMap(Map)
-			var initialMapSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
+			let initialMapSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
 			rule.initialMapID = initialMapSelector == null ? -1 : initialMapSelector.currentValue - 1;
 			//========Advanced========//
 			//====Left====//
 			// DefaultHealth
-			var defaultHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
+			let defaultHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
 			rule.defaultHealth = defaultHealthSelector == null ? 100 : defaultHealthSelector.currentValue;
 			// DefaultMaxHealth
-			var defaultMaxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
+			let defaultMaxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
 			rule.defaultMaxHealth = defaultMaxHealthSelector == null ? 100 : defaultMaxHealthSelector.currentValue;
 			// DefaultLivesPlayer
-			var defaultLivesSelectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_PLAYER);
+			let defaultLivesSelectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_PLAYER);
 			rule.remainLivesPlayer = defaultLivesSelectorP == null ? -1 : defaultLivesSelectorP.currentValue;
 			// DefaultLivesAI
-			var defaultLivesSelectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_AI);
+			let defaultLivesSelectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_AI);
 			rule.remainLivesAI = defaultLivesSelectorA == null ? -1 : defaultLivesSelectorA.currentValue;
 			// DefaultRespawnTime
-			var defaultRespawnTimeSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
+			let defaultRespawnTimeSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
 			rule.defaultRespawnTime = defaultRespawnTimeSelector.currentValue * GlobalGameVariables.TPS;
 			// LockTeam
-			var lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
+			let lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
 			rule.allowPlayerChangeTeam = defaultRespawnTimeSelector.currentValue == 0; // inverted boolean
 			//====Right====//
 			// DefaultTool
-			var defaultToolSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
+			let defaultToolSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
 			rule.defaultToolID = defaultToolSelector == null ? -2 : defaultToolSelector.currentValue;
 			// ToolsNoCD
-			var toolsNoCDSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
+			let toolsNoCDSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
 			rule.toolsNoCD = toolsNoCDSelector.currentValue > 0;
 			// MapTransformTime
-			var mapTransformTimeSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
+			let mapTransformTimeSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAP_TRANSFORM_TIME);
 			rule.mapTransformTime = mapTransformTimeSelector.currentValue;
 			// BonusBoxMaxCount
-			var bonusBoxMaxCountSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAX_BONUS_COUNT);
+			let bonusBoxMaxCountSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.MAX_BONUS_COUNT);
 			rule.bonusBoxMaxCount = bonusBoxMaxCountSelector.currentValue;
 			// BonusBoxSpawnAfterDeath
-			var bonusBoxSpawnAfterDeathSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.BONUS_SPAWN_AFTER_DEATH);
+			let bonusBoxSpawnAfterDeathSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.BONUS_SPAWN_AFTER_DEATH);
 			rule.bonusBoxSpawnAfterPlayerDeath = bonusBoxSpawnAfterDeathSelector.currentValue > 0;
 			// AsphyxiaDamage
-			var asphyxiaDamageSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.ASPHYXIA_DAMAGE);
+			let asphyxiaDamageSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.ASPHYXIA_DAMAGE);
 			rule.playerAsphyxiaDamage = asphyxiaDamageSelector.currentValue;
 		}
 		catch (err: Error) {
@@ -861,7 +861,7 @@ export default class Menu extends Sprite {
 
 	// Game Button
 	protected onLinkageButtonClick(event: BatrGUIEvent): void {
-		for (var sheet of this._sheets) {
+		for (let sheet of this._sheets) {
 			if (sheet.name == (event.gui as BatrButton).sheetLinkage)
 				this.nowSheet = sheet;
 		}
@@ -895,10 +895,10 @@ export default class Menu extends Sprite {
 	}
 
 	protected onMapPreviewSwitch(event: BatrGUIEvent): void {
-		var selector: BatrSelector = event.gui as BatrSelector;
+		let selector: BatrSelector = event.gui as BatrSelector;
 		if (selector == null)
 			return;
-		var nowMapIndex: int = selector.currentValue;
+		let nowMapIndex: int = selector.currentValue;
 		// trace('Now Map ID: '+nowMapIndex);
 		// work in process
 	}
@@ -921,7 +921,7 @@ export default class Menu extends Sprite {
 
 	protected onCustomGameConfigStartButtonClick(event: BatrGUIEvent): void {
 		try {
-			var rule: GameRule = this.getRuleFromConfigField(this._gameRuleConfig);
+			let rule: GameRule = this.getRuleFromConfigField(this._gameRuleConfig);
 		}
 		catch (e: Error) {
 			trace('Load Rule Error:', e);
@@ -937,8 +937,8 @@ export default class Menu extends Sprite {
 	}
 
 	protected onMaxHealthSelectorClick(event: BatrGUIEvent): void {
-		var healthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
-		var maxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
+		let healthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
+		let maxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
 		if (healthSelector == null && maxHealthSelector != null)
 			return;
 		if (healthSelector.currentValue > maxHealthSelector.currentValue) {
@@ -950,7 +950,7 @@ export default class Menu extends Sprite {
 	protected onPlayerStatSelectorClick(event: BatrGUIEvent): void {
 		// Change Texts
 		try {
-			var currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatSelector.currentValue];
+			let currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatSelector.currentValue];
 			setFixedTextSuffix(this._playerStatCauseDamage, currentPlayer.causeDamage);
 			setFixedTextSuffix(this._playerStatDamageBy, currentPlayer.damageBy);
 			setFixedTextSuffix(this._playerStatDeath, currentPlayer.deathCount);

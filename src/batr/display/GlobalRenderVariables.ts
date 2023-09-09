@@ -3,9 +3,7 @@ import { uint } from "../legacy/AS3Legacy";
 
 import { Font } from "../legacy/flash/text";
 
-// import batr.fonts.*;
 
-// import flash.text.Font;
 
 export const MAIN_FONT: Font = new MainFont();
 

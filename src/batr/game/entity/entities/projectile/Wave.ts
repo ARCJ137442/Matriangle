@@ -70,7 +70,7 @@ export default class Wave extends ProjectileCommon {
 
 	//====Graphics Functions====//
 	override drawShape(): void {
-		var realRadius: number = SIZE / 2;
+		let realRadius: number = SIZE / 2;
 
 		graphics.clear();
 		graphics.beginFill(this.ownerColor, ALPHA);

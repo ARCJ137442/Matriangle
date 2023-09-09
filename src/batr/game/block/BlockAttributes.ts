@@ -93,7 +93,7 @@ export default class BlockAttributes {
 	}
 
 	public clone(): BlockAttributes {
-		var tempAttributes: BlockAttributes = new BlockAttributes();
+		let tempAttributes: BlockAttributes = new BlockAttributes();
 		// tempAttributes.playerCanPass = this.playerCanPass;
 		// tempAttributes.bulletCanPass = this.bulletCanPass;
 		// tempAttributes.laserCanPass = this.laserCanPass;
@@ -111,7 +111,7 @@ export default class BlockAttributes {
 		/**
 		 * ! Now use `for in` to iterate over the replication properties in batch
 		 */
-		for (var key in this) {
+		for (let key in this) {
 			if (this.hasOwnProperty(key)) {
 				(tempAttributes as any)[key] = this[key];
 			}

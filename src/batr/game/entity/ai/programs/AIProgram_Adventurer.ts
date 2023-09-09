@@ -35,11 +35,11 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	//============Static Functions============//
 	/*========AI Criteria========*/
 	static toolUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
-		var vx: int = GlobalRot.towardXInt(rot, 1);
-		var vy: int = GlobalRot.towardYInt(rot, 1);
-		var cx: int, cy: int;
-		var tool: ToolType = owner.tool;
-		for (var i: uint = 1; i < distance; i++) {
+		let vx: int = GlobalRot.towardXInt(rot, 1);
+		let vy: int = GlobalRot.towardYInt(rot, 1);
+		let cx: int, cy: int;
+		let tool: ToolType = owner.tool;
+		for (let i: uint = 1; i < distance; i++) {
 			cx = owner.gridX + vx * i;
 			cy = owner.gridY + vy * i;
 			if (host.isIntOutOfMap(cx, cy))
@@ -96,15 +96,15 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 		// trace('Name='+owner.customName)
 		// Operation
-		var openList: PathNode[] = new Array<PathNode>();
-		var closeList: PathNode[] = new Array<PathNode>();
+		let openList: PathNode[] = new Array<PathNode>();
+		let closeList: PathNode[] = new Array<PathNode>();
 
-		var endNode: PathNode = new PathNode(endX, endY, null);
-		var startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
-		var targetNode: PathNode = initFGH(new PathNode(endX, endY, null), host, owner, endNode);
-		var _leastNearbyNode: PathNode;
-		var _nearbyNodes: PathNode[];
-		var _tempNode: PathNode;
+		let endNode: PathNode = new PathNode(endX, endY, null);
+		let startNode: PathNode = initFGH(new PathNode(startX, startY, null), host, owner, endNode);
+		let targetNode: PathNode = initFGH(new PathNode(endX, endY, null), host, owner, endNode);
+		let _leastNearbyNode: PathNode;
+		let _nearbyNodes: PathNode[];
+		let _tempNode: PathNode;
 
 		openList.push(startNode);
 
@@ -136,7 +136,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
 	if (nodes.indexOf(node) >= 0)
 		return true;
-	for (var i: string in nodes) {
+	for (let i: string in nodes) {
 		if (node.equals(nodes[i]))
 			return true;
 	}
@@ -144,7 +144,7 @@ protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
 }
 
 protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
-	var i: int = nodes.indexOf(node);
+	let i: int = nodes.indexOf(node);
 	if (i >= 0) {
 		// trace('remove node'+node,'succeed!')
 		nodes.splice(i, 1);
@@ -167,9 +167,9 @@ protected static getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player
 protected static getLeastFNode(nodes: PathNode[]): PathNode {
 	if (nodes == null)
 		return null;
-	var _leastNode: PathNode = null;
-	var _leastF: int = int.MAX_VALUE;
-	for (var node of nodes) {
+	let _leastNode: PathNode = null;
+	let _leastF: int = int.MAX_VALUE;
+	for (let node of nodes) {
 		if (node == null)
 			continue;
 		if (node.F < _leastF) {
@@ -200,7 +200,7 @@ protected static mapDealNode(n: PathNode, host: Game, fromRot: uint): PathNode {
  * @return	A int will be multi with G.
  */
 protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
-	var damage: int = host.getBlockPlayerDamage(node.x, node.y);
+	let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 	if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 		return 1000;
 	if (damage > 0)
@@ -210,15 +210,15 @@ protected static getPathWeight(node: PathNode, host: Game, player: Player): int 
 
 //========Dynamic A* PathFind========//
 static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
-	var nearbyNodes: PathNode[] = [
+	let nearbyNodes: PathNode[] = [
 		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 		initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
 		initDynamicNode(new PathNode(start.x, start.y - 1).setFromRot(GlobalRot.UP), host, owner, target)
 	];
-	var _leastNode: PathNode = null;
-	var _leastF: int = int.MAX_VALUE;
-	for (var node of nearbyNodes) {
+	let _leastNode: PathNode = null;
+	let _leastF: int = int.MAX_VALUE;
+	for (let node of nearbyNodes) {
 		if (node == null || pointInRemember(node, remember) ||
 			host.isKillZone(node.x, node.y))
 			continue;
@@ -298,8 +298,8 @@ protected initRemember(host: Game): void {
 }
 
 protected resetRemember(): void {
-	for(var v of this._remember) {
-	for (var i: string in v) {
+	for(let v of this._remember) {
+	for (let i: string in v) {
 		v[i] = false;
 	}
 }
@@ -336,10 +336,10 @@ protected resetCloseTarget(): void {
 /*========AI Tools========*/
 public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 	// getManhattanDistance
-	var _nearestBox: BonusBox = null;
-	var _nearestDistance: int = int.MAX_VALUE;
-	var _tempDistance: int;
-	for (var box of host.entitySystem.bonusBoxes) {
+	let _nearestBox: BonusBox = null;
+	let _nearestDistance: int = int.MAX_VALUE;
+	let _tempDistance: int;
+	for (let box of host.entitySystem.bonusBoxes) {
 		if (box == null || this.inCloseTarget(box))
 			continue;
 		_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
@@ -353,11 +353,11 @@ public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 
 public getNearestEnemy(owner: Player, host: Game): Player {
 	// getManhattanDistance
-	var _nearestEnemy: Player = null;
-	var _nearestDistance: int = int.MAX_VALUE;
-	var _tempDistance: int;
-	var players: Player[] = host.getAlivePlayers();
-	for (var player of players) {
+	let _nearestEnemy: Player = null;
+	let _nearestDistance: int = int.MAX_VALUE;
+	let _tempDistance: int;
+	let players: Player[] = host.getAlivePlayers();
+	for (let player of players) {
 		if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 			player == null || this.inCloseTarget(player))
 			continue;
@@ -389,10 +389,10 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 	if (player == null)
 		return AIPlayerAction.NULL;
 	// Set Variables
-	var host: Game = player.host;
-	var ownerPoint: iPoint = player.gridPoint;
-	var lastTargetPlayer: Player = this._lastTarget as Player;
-	var lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
+	let host: Game = player.host;
+	let ownerPoint: iPoint = player.gridPoint;
+	let lastTargetPlayer: Player = this._lastTarget as Player;
+	let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
 	// Init remember
 	if (this._remember == null) {
 		this.initRemember(host);
@@ -409,7 +409,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 		// If Invalid Target,Get New Target
 		if (this._lastTarget == null || this._lastTarget == player) {
 			//========Find BonusBox========//
-			var target: EntityCommon = null;
+			let target: EntityCommon = null;
 			// set Player as Target
 			target = this._pickupFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 			// if cannot find player
@@ -429,7 +429,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 			}
 		}
 		else {
-			var tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
+			let tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
 			// Attack Enemy
 			if (GlobalRot.isValidRot(tempRot) &&
 				detectCarryBlock(player) &&
@@ -468,7 +468,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 				;
 				//==Decision==//
 				// Find Path
-				var finalNode: PathNode;
+				let finalNode: PathNode;
 				// Attack player
 				if (lastTargetPlayer != null) {
 					finalNode = getDynamicNode(
@@ -581,7 +581,7 @@ class PathNode extends iPoint {
 	}
 
 	public get rootParent(): PathNode {
-		var p: PathNode = this.parent;
+		let p: PathNode = this.parent;
 		while (p.parent != null && p.parent != this) {
 			p = p.parent;
 		}
@@ -592,8 +592,8 @@ class PathNode extends iPoint {
 	 * Didn't include the root
 	 */
 	public get pathToRoot(): PathNode[] {
-		var result: PathNode[] = new Array<PathNode>(this);
-		var p: PathNode = this.parent;
+		let result: PathNode[] = new Array<PathNode>(this);
+		let p: PathNode = this.parent;
 		while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 			p = p.parent;
 			result.push(p);
@@ -688,7 +688,7 @@ class NodeHeap {
 		if (node == null)
 			return;
 		this._list.push(node);
-		var index: uint = this.length - 1;
+		let index: uint = this.length - 1;
 		while (index > 0 && hasParent(index) && this._list[getParentIndex(index)].F > node.F) {
 			swapNode(index, getParentIndex(index));
 			index = getParentIndex(index);
@@ -698,7 +698,7 @@ class NodeHeap {
 	public remove(): void {
 		swapNode(0, this.length - 1);
 		this._list.length--;
-		var index: uint = 0;
+		let index: uint = 0;
 		while (index > 0 && hasNode(index) && this._list[index].F > leastChildF(index)) {
 			swapNode(index, getParentIndex(index));
 			index = getParentIndex(index);
@@ -751,7 +751,7 @@ class NodeHeap {
 
 	protected swapNode(i1: uint, i2: uint): void {
 		if (i1 < this.length && i2 < this.length) {
-			var temp: PathNode = this._list[i1];
+			let temp: PathNode = this._list[i1];
 			this._list[i1] = this._list[i2];
 			this._list[i2] = temp;
 		}

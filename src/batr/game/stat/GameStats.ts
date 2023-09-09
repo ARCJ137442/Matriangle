@@ -84,7 +84,7 @@ export default class GameStats {
 	}
 
 	public loadPlayers(players: Player[]): void {
-		for (var player of players)
+		for (let player of players)
 			this.addPlayer(player);
 	}
 
@@ -93,7 +93,7 @@ export default class GameStats {
 	}
 
 	public importPlayersFromGame(game: Game): void {
-		for (var player of game.entitySystem.players) {
+		for (let player of game.entitySystem.players) {
 			if (player != null)
 				this._players.push(player.stats);
 		}

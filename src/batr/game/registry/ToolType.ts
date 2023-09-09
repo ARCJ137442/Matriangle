@@ -84,7 +84,7 @@ export default class ToolType extends TypeCommon {
 	}
 
 	public static fromString(str: string): ToolType {
-		for (var type of ToolType._ALL_TOOL) {
+		for (let type of ToolType._ALL_TOOL) {
 			if (type.name == str)
 				return type;
 		}
@@ -124,7 +124,7 @@ export default class ToolType extends TypeCommon {
 	}
 
 	public static getRandomAvailableWithout(tool: ToolType): ToolType {
-		var tempW: ToolType, i: uint = 0;
+		let tempW: ToolType, i: uint = 0;
 		do {
 			tempW = ToolType.RANDOM_AVAILABLE;
 		}

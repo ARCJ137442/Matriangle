@@ -15,7 +15,7 @@ export default class Title extends Bitmap {
 	public constructor() {
 		super(new TitleImg()); // TitleImg.IMAGE_DATA
 		// AddBitMap
-		// var bitmap:Bitmap=new Bitmap();
+		// let bitmap:Bitmap=new Bitmap();
 		this.x = X;
 		this.y = Y;
 		this.width = WIDTH;

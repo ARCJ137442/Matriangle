@@ -94,8 +94,8 @@ export default class EffectSystem {
 	}
 
 	public getAllEffect(): EffectCommon[] {
-		var result: EffectCommon[] = new Array<EffectCommon>();
-		for (var obj of this._uuidDic) {
+		let result: EffectCommon[] = new Array<EffectCommon>();
+		for (let obj of this._uuidDic) {
 			if (obj != null && obj is EffectCommon)
 			result.push(obj as EffectCommon);
 		}
@@ -103,8 +103,8 @@ export default class EffectSystem {
 	}
 
 	public getAllUUID(): uint[] {
-		var result: uint[] = new array<uint>();
-		for (var obj of this._uuidDic) {
+		let result: uint[] = new array<uint>();
+		for (let obj of this._uuidDic) {
 			if (obj != null && obj is uint && isValidUUID(obj as uint))
 			result.push(obj as uint);
 		}
@@ -114,7 +114,7 @@ export default class EffectSystem {
 	public registerEffectForUUID(effect: EffectCommon): boolean {
 		if (effect == null)
 			return false;
-		var uuid: uint = this.nextUUID();
+		let uuid: uint = this.nextUUID();
 		if (this.isValidUUID(uuid)) {
 			this._uuidDic[effect] = uuid;
 			this._uuidDic[uuid] = effect;
@@ -124,7 +124,7 @@ export default class EffectSystem {
 	}
 
 	public removeEffectForUUID(effect: EffectCommon): boolean {
-		var uuid: uint = this.getUUIDByEffect(effect);
+		let uuid: uint = this.getUUIDByEffect(effect);
 		if (this.isValidUUID(uuid)) {
 			this._uuidDic[effect] = 0;
 			this._uuidDic[uuid] = null;

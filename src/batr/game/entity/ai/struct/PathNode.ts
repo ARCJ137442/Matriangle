@@ -31,7 +31,7 @@ class PathNode extends iPoint {
 	}
 
 	public get rootParent(): PathNode {
-		var p: PathNode = this.parent;
+		let p: PathNode = this.parent;
 		while (p.parent != null && p.parent != this) {
 			p = p.parent;
 		}
@@ -42,8 +42,8 @@ class PathNode extends iPoint {
 	 * Didn't include the root
 	 */
 	public get pathToRoot(): PathNode[] {
-		var result: PathNode[] = new Array<PathNode>(this);
-		var p: PathNode = this.parent;
+		let result: PathNode[] = new Array<PathNode>(this);
+		let p: PathNode = this.parent;
 		while (p != this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
 			p = p.parent;
 			result.push(p);

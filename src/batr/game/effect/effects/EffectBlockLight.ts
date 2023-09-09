@@ -71,8 +71,8 @@ export default class EffectBlockLight extends EffectCommon {
 	}
 
 	override drawShape(): void {
-		var realRadiusX: number = SIZE / 2;
-		var realRadiusY: number = SIZE / 2;
+		let realRadiusX: number = SIZE / 2;
+		let realRadiusY: number = SIZE / 2;
 		graphics.clear();
 		graphics.beginFill(this._color, Utils.uintToPercent(this._alpha));
 		graphics.drawRect(-realRadiusX, -realRadiusY, SIZE, SIZE);

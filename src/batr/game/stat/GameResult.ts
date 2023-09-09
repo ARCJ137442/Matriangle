@@ -55,10 +55,10 @@ export default class GameResult {
 
 	public get rankingText(): ForcedI18nText {
 		// W.I.P
-		var text: string = '';
-		var sortedStatList: PlayerStats[] = this._stats.player.concat().sort(scoreCompareFunc);
-		var currentStats: PlayerStats;
-		for (var i: int = 0; i < sortedStatList.length; i++) {
+		let text: string = '';
+		let sortedStatList: PlayerStats[] = this._stats.player.concat().sort(scoreCompareFunc);
+		let currentStats: PlayerStats;
+		for (let i: int = 0; i < sortedStatList.length; i++) {
 			currentStats = sortedStatList[i];
 			text += currentStats.profile.customName + '\t\t\t' + currentStats.totalScore + '\n';
 		}

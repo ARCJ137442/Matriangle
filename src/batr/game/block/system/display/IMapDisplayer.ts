@@ -1,5 +1,4 @@
 
-// import batr.game.block.*;
 
 import { int } from "../../../../legacy/AS3Legacy";
 import BlockCommon from "../../BlockCommon";

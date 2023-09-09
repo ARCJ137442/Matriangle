@@ -59,7 +59,7 @@ export default class LaserPulse extends LaserBasic {
 
 	override drawShape(): void {
 		shape.graphics.clear();
-		for (var i: uint = 0; i < 2; i++) { // 0,1
+		for (let i: uint = 0; i < 2; i++) { // 0,1
 			this.drawOwnerLine(-SIZE / Math.pow(2, i + 1),
 				SIZE / Math.pow(2, i + 1),
 				i * 0.1 + 0.2);

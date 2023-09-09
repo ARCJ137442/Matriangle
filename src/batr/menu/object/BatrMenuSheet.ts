@@ -34,7 +34,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 
 	//============Destructor Function============//
 	override destructor(): void {
-		for (var element of this._directElements) {
+		for (let element of this._directElements) {
 			element.destructor();
 		}
 	}
@@ -88,8 +88,8 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 	}
 
 	public appendDirectElements(...elements): IBatrMenuElement {
-		var element: IBatrMenuElement;
-		for (var i: int = 0; i < elements.length; i++) {
+		let element: IBatrMenuElement;
+		for (let i: int = 0; i < elements.length; i++) {
 			element = elements[i] as IBatrMenuElement;
 			if (element != null)
 				this._directElements.push(element);
@@ -98,7 +98,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 	}
 
 	public addChildPerDirectElements(): void {
-		for (var element of this._directElements) {
+		for (let element of this._directElements) {
 			if (element == null)
 				continue;
 			if (element is IBatrMenuElementContainer)
@@ -113,7 +113,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 	}
 
 	public getElementByName(name: string): BatrMenuGUI {
-		for (var element of this._directElements) {
+		for (let element of this._directElements) {
 			if (element != null &&
 				element is BatrMenuGUI &&
 					(element as DisplayObject).name == name)

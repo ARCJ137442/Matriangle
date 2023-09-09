@@ -1,16 +1,15 @@
 
-// import batr.common.exMath;
-// import batr.common.iPoint;
-// import batr.common.UintPointCompress;
 
-// import batr.game.map.IMapDisplayer;
-// import batr.game.block.BlockType;
-// import batr.game.block.BlockAttributes;
-// import batr.game.block.BlockCommon;
-// import batr.game.map.IMap;
+import { iPoint } from "../../../../common/intPoint";
+import { int, uint } from "../../../../legacy/AS3Legacy";
+import BlockAttributes from "../../BlockAttributes";
+import BlockCommon, { BlockType } from "../../BlockCommon";
+import IMap from "../IMap";
+import IMapDisplayer from "../display/IMapDisplayer";
+
 
 /**
- * This class only achieved spawnpoints
+ * This class only achieved spawn points
  */
 export default class NativeMapCommon implements IMap {
 	//============Static Functions============//
@@ -194,7 +193,7 @@ export default class NativeMapCommon implements IMap {
 	 * @param	p	the point uses UintPointCompress
 	 */
 	public removeSpawnPoint(p: uint): void {
-		for (var i: int = this._spawnPoints.length - 1; i > 0; --i) {
+		for (let i: int = this._spawnPoints.length - 1; i > 0; --i) {
 			if (this._spawnPoints[i] == p)
 				this._spawnPoints.splice(i, 1);
 		}
@@ -211,9 +210,9 @@ export default class NativeMapCommon implements IMap {
 	 * @return	The Matrix.
 	 */
 	public getMatrixObject(): Vector.<Object[]> {
-		var result: Vector.<Object[]> = new Vector.<Object[]>(this.mapHeight);
-		var vec: object[];
-		for (var i: uint = 0; i < this.mapHeight; i++) {
+		let result: Vector.<Object[]> = new Vector.<Object[]>(this.mapHeight);
+		let vec: object[];
+		for (let i: uint = 0; i < this.mapHeight; i++) {
 			vec = new Array<Object>(this.mapWidth);
 			result[i] = vec;
 		}
@@ -225,9 +224,9 @@ export default class NativeMapCommon implements IMap {
 	 * @return	The Matrix.
 	 */
 	public getMatrixInt(): Vector.<int[]> {
-		var result: Vector.<int[]> = new Vector.<int[]>(this.mapHeight);
-		var vec: int[];
-		for (var i: uint = 0; i < this.mapHeight; i++) {
+		let result: Vector.<int[]> = new Vector.<int[]>(this.mapHeight);
+		let vec: int[];
+		for (let i: uint = 0; i < this.mapHeight; i++) {
 			vec = new array<int>(this.mapWidth);
 			result[i] = vec;
 		}
@@ -239,9 +238,9 @@ export default class NativeMapCommon implements IMap {
 	 * @return	The Matrix.
 	 */
 	public getMatrixUint(): Vector.<uint[]> {
-		var result: Vector.<uint[]> = new Vector.<uint[]>(this.mapHeight);
-		var vec: uint[];
-		for (var i: uint = 0; i < this.mapHeight; i++) {
+		let result: Vector.<uint[]> = new Vector.<uint[]>(this.mapHeight);
+		let vec: uint[];
+		for (let i: uint = 0; i < this.mapHeight; i++) {
 			vec = new array<uint>(this.mapWidth);
 			result[i] = vec;
 		}
@@ -253,9 +252,9 @@ export default class NativeMapCommon implements IMap {
 	 * @return	The Matrix.
 	 */
 	public getMatrixNumber(): Vector.<Number[]> {
-		var result: Vector.<Number[]> = new Vector.<Number[]>(this.mapHeight);
-		var vec: number[];
-		for (var i: uint = 0; i < this.mapHeight; i++) {
+		let result: Vector.<Number[]> = new Vector.<Number[]>(this.mapHeight);
+		let vec: number[];
+		for (let i: uint = 0; i < this.mapHeight; i++) {
 			vec = new Array<Number>(this.mapWidth);
 			result[i] = vec;
 		}
@@ -267,9 +266,9 @@ export default class NativeMapCommon implements IMap {
 	 * @return	The Matrix.
 	 */
 	public getMatrixBoolean(): Vector.<Boolean[]> {
-		var result: Vector.<Boolean[]> = new Vector.<Boolean[]>(this.mapHeight);
-		var vec: boolean[];
-		for (var i: uint = 0; i < this.mapHeight; i++) {
+		let result: Vector.<Boolean[]> = new Vector.<Boolean[]>(this.mapHeight);
+		let vec: boolean[];
+		for (let i: uint = 0; i < this.mapHeight; i++) {
 			vec = new Array<Boolean>(this.mapWidth);
 			result[i] = vec;
 		}

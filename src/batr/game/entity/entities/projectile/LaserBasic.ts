@@ -56,7 +56,7 @@ export default class LaserBasic extends ProjectileCommon {
 	//============Instance Functions============//
 	override drawShape(): void {
 		shape.graphics.clear();
-		for (var i: uint = 0; i < 3; i++) { // 0,1,2
+		for (let i: uint = 0; i < 3; i++) { // 0,1,2
 			this.drawOwnerLine(-SIZE / Math.pow(2, i + 1), SIZE / Math.pow(2, i + 1), i * 0.1 + 0.5);
 		}
 	}
@@ -93,7 +93,7 @@ export default class LaserBasic extends ProjectileCommon {
 	protected drawLine(y1: number, y2: number,
 		color: uint = 0xffffff,
 		alpha: number = 1): void {
-		var yStart: number = Math.min(y1, y2);
+		let yStart: number = Math.min(y1, y2);
 		shape.graphics.beginFill(color, alpha);
 		shape.graphics.drawRect(0, yStart,
 			DEFAULT_SIZE,
@@ -103,7 +103,7 @@ export default class LaserBasic extends ProjectileCommon {
 
 	protected drawOwnerLine(y1: number, y2: number,
 		alpha: number = 1): void {
-		var yStart: number = Math.min(y1, y2);
+		let yStart: number = Math.min(y1, y2);
 		shape.graphics.beginFill(this.ownerColor, alpha);
 		shape.graphics.drawRect(0, yStart,
 			DEFAULT_SIZE,

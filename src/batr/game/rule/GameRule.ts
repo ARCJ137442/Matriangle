@@ -125,7 +125,7 @@ export default class GameRule extends EventDispatcher {
 	public static readonly DEFAULT_DRONE_TOOL: ToolType = ToolType.LASER;
 
 	protected static getBackgroundRule(): GameRule {
-		var rule: GameRule = new GameRule();
+		let rule: GameRule = new GameRule();
 		rule.playerCount = 0;
 		rule.AICount = 8;
 		rule.defaultToolID = -2;
@@ -145,9 +145,9 @@ export default class GameRule extends EventDispatcher {
 	 * @return	A list of PlayerTeam,contains different colors.
 	 */
 	protected static initPlayerTeams(coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
-		var returnTeams: PlayerTeam[] = new Array<PlayerTeam>();
-		var h: uint, s: number, v: number, color: uint;
-		var i: uint;
+		let returnTeams: PlayerTeam[] = new Array<PlayerTeam>();
+		let h: uint, s: number, v: number, color: uint;
+		let i: uint;
 		// Grayscale Team
 		h = 0;
 		s = 0;
@@ -169,15 +169,15 @@ export default class GameRule extends EventDispatcher {
 	}
 
 	public static toJSON(rule: GameRule, replacer: any = null, space: any = null): string {
-		var i = true;
+		let i = true;
 
 		// get all getter value
-		var o: object = JSON.parse(JSON.stringify(rule)); // if not: recursive reference problem
+		let o: object = JSON.parse(JSON.stringify(rule)); // if not: recursive reference problem
 		// filter
-		var k: string, v: any;
-		var result: object = {};
+		let k: string, v: any;
+		let result: object = {};
 
-		var blankRule: GameRule = new GameRule();
+		let blankRule: GameRule = new GameRule();
 		for (k in o) {
 			v = o[k];
 			// Make sure the property is writable
@@ -211,10 +211,10 @@ export default class GameRule extends EventDispatcher {
 	}
 
 	public static fromJSON(rule: string): GameRule {
-		var r: GameRule = new GameRule();
-		var o: object = JSON.parse(rule);
-		var v: any;
-		for (var k in o) {
+		let r: GameRule = new GameRule();
+		let o: object = JSON.parse(rule);
+		let v: any;
+		for (let k in o) {
 			try {
 				v = o[k];
 				// Infinity
@@ -358,19 +358,19 @@ export default class GameRule extends EventDispatcher {
 		return Game.ALL_MAPS[exMath.random(Game.ALL_MAPS.length)];
 	}
 	// Add
-	var maps: IMap[] = new Array<IMap>();
-	var weights: number[] = new Array<Number>();
-	var sum: number = 0;
-	for (var mapPotential of this._mapRandomPotentials) {
+	let maps: IMap[] = new Array<IMap>();
+	let weights: number[] = new Array<Number>();
+	let sum: number = 0;
+	for (let mapPotential of this._mapRandomPotentials) {
 		if (mapPotential['map'] is IMap && mapPotential['weight'] is Number) {
 			maps.push(mapPotential['map'] as IMap);
 			weights.push(Number(mapPotential['weight']));
 			sum += Number(mapPotential['weight']);
 		}
 	}
-	var randomNum: number = exMath.randomFloat(sum);
+	let randomNum: number = exMath.randomFloat(sum);
 	// Choose
-	for (var i: uint = 0; i < weights.length; i++) {
+	for (let i: uint = 0; i < weights.length; i++) {
 		if (weights[i] >= randomNum && randomNum < weights[i + 1]) {
 			return maps[i];
 		}
@@ -386,10 +386,10 @@ export default class GameRule extends EventDispatcher {
 		this._bonusBoxSpawnPotentials = BonusType.AVAILABLE_SPAWN_POTENTIALS;
 	}
 	// Add
-	var types: BonusType[] = new Array<BonusType>();
-	var weights: number[] = new Array<Number>();
-	var sum: number = 0;
-	for (var bonusPotential of this._bonusBoxSpawnPotentials) {
+	let types: BonusType[] = new Array<BonusType>();
+	let weights: number[] = new Array<Number>();
+	let sum: number = 0;
+	for (let bonusPotential of this._bonusBoxSpawnPotentials) {
 		if (bonusPotential['type'] is BonusType && bonusPotential['weight'] is Number) {
 			// Filter
 			if (
@@ -407,9 +407,9 @@ export default class GameRule extends EventDispatcher {
 			weights.push(sum);
 		}
 	}
-	var randomNum: number = exMath.randomFloat(sum);
+	let randomNum: number = exMath.randomFloat(sum);
 	// Choose
-	for (var i: uint = 0; i < weights.length; i++) {
+	for (let i: uint = 0; i < weights.length; i++) {
 		if (randomNum <= weights[i]) {
 			return types[i];
 		}
@@ -503,9 +503,9 @@ public set bonusBoxSpawnPotentials(value: object - []) {
 	if (value == this._bonusBoxSpawnPotentials)
 		return;
 
-	var _v: object[] = value;
+	let _v: object[] = value;
 
-	for (var i: int = _v.length - 1; i >= 0; i--) {
+	for (let i: int = _v.length - 1; i >= 0; i--) {
 		if (_v[i] is BonusType) {
 			_v[i] = { type: _v[i], weight: 1 };
 
@@ -568,9 +568,9 @@ public set mapRandomPotentials(value: object - []) {
 	if (value == this._mapRandomPotentials)
 		return;
 
-	var _v: object[] = value;
+	let _v: object[] = value;
 
-	for (var i: int = _v.length - 1; i >= 0; i--) {
+	for (let i: int = _v.length - 1; i >= 0; i--) {
 		if (_v[i] is IMap) {
 			_v[i] = { map: _v[i], weight: 1 };
 
@@ -591,10 +591,10 @@ public set mapRandomPotentials(value: object - []) {
 }
 
 public get mapWeightsByGame(): number[] {
-	var wv: number[] = new Array<Number>(Game.ALL_MAPS.length);
+	let wv: number[] = new Array<Number>(Game.ALL_MAPS.length);
 
-	for (var i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
-		for (var map: object in this.mapRandomPotentials) {
+	for (let i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
+		for (let map: object in this.mapRandomPotentials) {
 			if (map.map == Game.ALL_MAPS[i]) {
 				wv[i] = map.weight;
 			}

@@ -84,9 +84,9 @@ export default class ThrownBlock extends ProjectileCommon {
 
 	protected onBlockHit(): void {
 		// Locate
-		var lx: int = this.lockedGridX, ly: int = this.lockedGridY;
+		let lx: int = this.lockedGridX, ly: int = this.lockedGridY;
 		// Detect
-		var lba: BlockAttributes = this.host.getBlockAttributes(lx, ly);
+		let lba: BlockAttributes = this.host.getBlockAttributes(lx, ly);
 		// Hurt
 		this._host.thrownBlockHurtPlayer(this);
 		if (this.host.testBreakableWithMap(lba, this.host.map)) {

@@ -103,16 +103,16 @@ export default class BulletBasic extends ProjectileCommon {
 
 	//====Graphics Functions====//
 	override drawShape(): void {
-		var realRadiusX: number = SIZE / 2;
+		let realRadiusX: number = SIZE / 2;
 
-		var realRadiusY: number = SIZE / 2;
+		let realRadiusY: number = SIZE / 2;
 
 		with (shape.graphics) {
 			clear();
 			lineStyle(LINE_SIZE, this.ownerLineColor);
 			beginFill(this.ownerColor);
 			/* GRADIENT-FILL REMOVED
-			var m:Matrix=new Matrix()
+			let m:Matrix=new Matrix()
 			m.createGradientBox(SIZE,
 								SIZE,0,-realRadiusX,-realRadiusX)
 			beginGradientFill(GradientType.LINEAR,

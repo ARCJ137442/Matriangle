@@ -135,8 +135,8 @@ export default class AIPlayer extends Player {
 	// AI Shape
 	override drawShape(Alpha: number = 1): void {
 		// Basic Body
-		var realRadiusX: number = (SIZE - LINE_SIZE) / 2;
-		var realRadiusY: number = (SIZE - LINE_SIZE) / 2;
+		let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
+		let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
 		graphics.clear();
 		graphics.lineStyle(LINE_SIZE, this._lineColor);
 		graphics.beginFill(this._fillColor, Alpha);
@@ -167,7 +167,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onHurt(damage, attacker);
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnHurt(this, damage, attacker);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnHurt(this, damage, attacker);
 		this.runAction(action);
 	}
 
@@ -175,7 +175,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onDeath(damage, attacker);
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnDeath(this, damage, attacker);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnDeath(this, damage, attacker);
 		this.runAction(action);
 	}
 
@@ -183,7 +183,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onKillPlayer(victim, damage);
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnKill(this, damage, victim);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnKill(this, damage, victim);
 		this.runAction(action);
 	}
 
@@ -191,7 +191,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onPickupBonusBox(box);
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnPickupBonusBox(this, box);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnPickupBonusBox(this, box);
 		this.runAction(action);
 	}
 
@@ -199,7 +199,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onRespawn();
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnRespawn(this);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnRespawn(this);
 		this.runAction(action);
 	}
 
@@ -207,14 +207,14 @@ export default class AIPlayer extends Player {
 		// super
 		super.onMapTransform();
 		// act
-		var action: AIPlayerAction = this.AIProgram.requestActionOnMapTransform(this);
+		let action: AIPlayerAction = this.AIProgram.requestActionOnMapTransform(this);
 		this.runAction(action);
 	}
 
 	//========AI Control:The main auto-control of AI========//
 	protected AIControl(): void {
 		// Tick
-		var action: AIPlayerAction;
+		let action: AIPlayerAction;
 
 		action = this.AIProgram.requestActionOnTick(this);
 
@@ -344,15 +344,15 @@ export default class AIPlayer extends Player {
 	}
 
 	public runActions(actions: AIPlayerAction[]): void {
-		for (var i: uint = 0; i < actions.length; i++) {
+		for (let i: uint = 0; i < actions.length; i++) {
 			runAction(actions[i]);
 		}
 	}
 
 	public runActions2(...actions): void {
-		var runV: AIPlayerAction[] = new AIPlayerAction[];
+		let runV: AIPlayerAction[] = new AIPlayerAction[];
 
-		for (var i: uint = 0; i < actions.length; i++) {
+		for (let i: uint = 0; i < actions.length; i++) {
 			if (actions[i] is AIPlayerAction) {
 				runAction(actions[i] as AIPlayerAction);
 			}
@@ -396,9 +396,9 @@ export default class AIPlayer extends Player {
 			this._actionThread = this._actionThread.concat(this._actionThread);
 		}
 		else {
-			var tempActions: AIPlayerAction[] = this._actionThread.concat();
+			let tempActions: AIPlayerAction[] = this._actionThread.concat();
 
-			for (var i: uint = 0; i < count; i++) {
+			for (let i: uint = 0; i < count; i++) {
 				this._actionThread = this._actionThread.concat(tempActions);
 			}
 		}

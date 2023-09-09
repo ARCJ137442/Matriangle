@@ -34,8 +34,8 @@ export default class PlayerEffectOverlay extends Shape {
 
 	//============Instance Functions============//
 	protected drawShape(AILabel: string = null): void {
-		var realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
-		var realRadiusY: number = Player.SIZE / 2;
+		let realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
+		let realRadiusY: number = Player.SIZE / 2;
 		shape.graphics.clear();
 		// graphics.lineStyle(LINE_SIZE,this._lineColor);
 		shape.graphics.beginFill(this._color);

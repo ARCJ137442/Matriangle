@@ -68,7 +68,7 @@ export default class AIProgram_Dummy implements IAIProgram {
 		if (this._moveSum >= this._moveMaxSum ||
 			!player.host.testPlayerCanPassToFront(player)) {
 			this._moveSum = 0;
-			var i: uint = 0;
+			let i: uint = 0;
 			do {
 				this._tempRot = randomRot();
 				i++;

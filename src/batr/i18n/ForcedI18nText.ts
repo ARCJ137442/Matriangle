@@ -14,8 +14,8 @@ import I18ns from "./I18ns";
 export default class ForcedI18nText extends I18nText {
 	//============Static Getter And Setter============//
 	public static getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
-		var result: I18nText[] = new I18nText[];
-		for (var i: uint = 0; i < players.length; i++) {
+		let result: I18nText[] = new I18nText[];
+		for (let i: uint = 0; i < players.length; i++) {
 			result.push(
 				new ForcedI18nText(
 					null, null, players[i].profile.customName

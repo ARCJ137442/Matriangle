@@ -1,18 +1,8 @@
-
-// import batr.common.*;
-// import batr.general.*;
-
-// import batr.game.block.*;
-// import batr.game.block.blocks.*;
-// import batr.game.map.*;
-// import batr.game.map.main.*;
-
 /**
  * ...
  * @author ARCJ137442
  */
 export default class MapGenerator implements IMapGenerator {
-	//============Static Variables============//
 	protected static generateChaos: Function;
 
 	//============Static Getter and Setter============//

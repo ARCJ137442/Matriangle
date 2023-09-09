@@ -11,7 +11,7 @@ export const EN_US = DefaultNativeI18ns.en_us; // English
 export const ZH_HANS = DefaultNativeI18ns.zh_hans; // 简体中文
 
 export function getDefaultI18n(key: string): string {
-	var type: TypeCommon;
+	let type: TypeCommon;
 	// Block Type
 	for (let type of BlockType._NORMAL_BLOCKS) {
 		if (type == null)

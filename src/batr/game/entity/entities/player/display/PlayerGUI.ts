@@ -44,7 +44,7 @@ export default class PlayerGUI extends Sprite {
 
 	//============Instance Functions============//
 	public static getUnderBarY(barNum: uint = 0): number {
-		var result: number = UNDER_BAR_Y_0;
+		let result: number = UNDER_BAR_Y_0;
 		while (barNum > 0) {
 			result += UNDER_BAR_HEIGHT;
 			barNum--;
@@ -188,7 +188,7 @@ export default class PlayerGUI extends Sprite {
 	}
 
 	protected sortUnderBars(): void {
-		var sortCD: uint = 0, sortCharge: uint = 0; /*,sortExperience:uint=0*/
+		let sortCD: uint = 0, sortCharge: uint = 0; /*,sortExperience:uint=0*/
 		/*if(this.getVisibleExperience(false)) {
 			sortCD++;
 			sortCharge++;
@@ -265,8 +265,8 @@ export default class PlayerGUI extends Sprite {
 	}
 
 	protected drawPointerTriangle(graphics: Graphics): void {
-		var realRadiusX: number = 0.1875 * DEFAULT_SIZE;
-		var realRadiusY: number = 0.1875 * DEFAULT_SIZE;
+		let realRadiusX: number = 0.1875 * DEFAULT_SIZE;
+		let realRadiusY: number = 0.1875 * DEFAULT_SIZE;
 		graphics.clear();
 		graphics.beginFill(this._owner.fillColor);
 		graphics.moveTo(-realRadiusX, -realRadiusY);

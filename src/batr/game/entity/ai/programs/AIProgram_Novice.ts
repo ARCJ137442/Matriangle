@@ -24,8 +24,8 @@ export default class AIProgram_Novice implements IAIProgram {
 	protected static getLineEnemyPlayer(owner: AIPlayer): Player {
 		if (owner == null)
 			return null;
-		var mapPlayers: Player[] = owner.host.getInMapPlayers();
-		for (var player of mapPlayers) {
+		let mapPlayers: Player[] = owner.host.getInMapPlayers();
+		for (let player of mapPlayers) {
 			if (player == owner)
 				continue;
 			if (player.gridX == owner.gridX || player.gridY == owner.gridY) {
@@ -39,8 +39,8 @@ export default class AIProgram_Novice implements IAIProgram {
 	protected static getLineBonusBox(owner: AIPlayer): BonusBox {
 		if (owner == null)
 			return null;
-		var boxes: BonusBox[] = owner.host.allAvailableBonusBox;
-		for (var box of boxes) {
+		let boxes: BonusBox[] = owner.host.allAvailableBonusBox;
+		for (let box of boxes) {
 			if (box == null)
 				continue;
 			if (box.gridX == owner.gridX || box.gridY == owner.gridY) {
@@ -95,8 +95,8 @@ export default class AIProgram_Novice implements IAIProgram {
 		// Refresh Wait
 		if (this._waitTime >= this._maxWaitTime)
 			this._waitTime = -this._moveMaxSum;
-		var target: Player = AIProgram_Novice.getLineEnemyPlayer(player);
-		var lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
+		let target: Player = AIProgram_Novice.getLineEnemyPlayer(player);
+		let lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
 		// Auto Pickup BonusBox
 		if (lineBonus != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
 			// Turn
@@ -140,7 +140,7 @@ export default class AIProgram_Novice implements IAIProgram {
 			if (this._moveSum >= this._moveMaxSum ||
 				!player.host.testPlayerCanPassToFront(player)) {
 				this._moveSum = 0;
-				var i: uint = 0;
+				let i: uint = 0;
 				do {
 					this._tempRot = GlobalRot.getRandom();
 					i++;

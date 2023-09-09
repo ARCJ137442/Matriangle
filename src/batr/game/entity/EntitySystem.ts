@@ -94,8 +94,8 @@ export default class EntitySystem {
 	public get AICount(): uint {
 		if (this._players == null)
 			return 0;
-		var rU: uint;
-		for (var player of this._players) {
+		let rU: uint;
+		for (let player of this._players) {
 			if (Player.isAI(player))
 				rU++;
 		}
@@ -154,8 +154,8 @@ export default class EntitySystem {
 	}
 
 	public getAllEntity(): EntityCommon[] {
-		var result: EntityCommon[] = new Array<EntityCommon>();
-		for (var obj of this._uuidDic) {
+		let result: EntityCommon[] = new Array<EntityCommon>();
+		for (let obj of this._uuidDic) {
 			if (obj != null && obj is EntityCommon)
 			result.push(obj as EntityCommon);
 		}
@@ -163,8 +163,8 @@ export default class EntitySystem {
 	}
 
 	public getAllUUID(): uint[] {
-		var result: uint[] = new array<uint>();
-		for (var obj of this._uuidDic) {
+		let result: uint[] = new array<uint>();
+		for (let obj of this._uuidDic) {
 			if (obj != null && obj is uint && isValidUUID(obj as uint))
 			result.push(obj as uint);
 		}
@@ -174,7 +174,7 @@ export default class EntitySystem {
 	public registerEntityForUUID(entity: EntityCommon): boolean {
 		if (entity == null)
 			return false;
-		var uuid: uint = this.nextUUID();
+		let uuid: uint = this.nextUUID();
 		if (this.isValidUUID(uuid)) {
 			this._uuidDic[entity] = uuid;
 			this._uuidDic[uuid] = entity;
@@ -184,7 +184,7 @@ export default class EntitySystem {
 	}
 
 	public removeEntityForUUID(entity: EntityCommon): boolean {
-		var uuid: uint = this.getUUIDByEntity(entity);
+		let uuid: uint = this.getUUIDByEntity(entity);
 		if (this.isValidUUID(uuid)) {
 			this._uuidDic[entity] = 0;
 			this._uuidDic[uuid] = null;

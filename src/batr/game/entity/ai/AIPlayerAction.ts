@@ -65,7 +65,7 @@
 	];
 	//============Static Functions============//
 	public static fromString(str: string): AIPlayerAction {
-		for (var action of AIPlayerAction._ALL_ACTIONS) {
+		for (let action of AIPlayerAction._ALL_ACTIONS) {
 			if (action.name == str)
 				return action;
 		}

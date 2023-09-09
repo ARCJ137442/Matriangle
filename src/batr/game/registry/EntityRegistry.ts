@@ -46,7 +46,7 @@ export default class EntityType extends TypeCommon {
 
 	//============Static Functions============//
 	public static fromString(str: string): EntityType {
-		for (var type of EntityType._ALL_ENTITY) {
+		for (let type of EntityType._ALL_ENTITY) {
 			if (type.name == str)
 				return type;
 		}
@@ -54,7 +54,7 @@ export default class EntityType extends TypeCommon {
 	}
 
 	public static isIncludeIn(type: EntityType, types: EntityType[]): boolean {
-		for (var type2 of types) {
+		for (let type2 of types) {
 			if (type === type2)
 				return true;
 		}

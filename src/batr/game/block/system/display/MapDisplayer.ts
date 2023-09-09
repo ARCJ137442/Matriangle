@@ -1,10 +1,6 @@
 
-// import batr.general.*;
 
-// import batr.game.block.*;
-// import batr.game.map.*;
 
-// import flash.display.Sprite;
 
 export default class MapDisplayer extends Sprite implements IMapDisplayer {
 	//============Static Functions============//
@@ -24,8 +20,8 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 
 	//============Interface Functions============//
 	public hasBlock(x: int, y: int): boolean {
-		var b: BlockCommon;
-		for (var i: int = 0; i < this.numChildren; i++) {
+		let b: BlockCommon;
+		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
 			if (b == null)
 				continue;
@@ -36,8 +32,8 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 	}
 
 	public getBlock(x: int, y: int): BlockCommon {
-		var b: BlockCommon;
-		for (var i: int = 0; i < this.numChildren; i++) {
+		let b: BlockCommon;
+		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
 			if (b == null)
 				continue;
@@ -48,8 +44,8 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 	}
 
 	public removeBlock(x: int, y: int): void {
-		var b: BlockCommon;
-		for (var i: int = 0; i < this.numChildren; i++) {
+		let b: BlockCommon;
+		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
 			if (b == null)
 				continue;
@@ -61,8 +57,8 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 	}
 
 	public removeAllBlock(): void {
-		var b: BlockCommon;
-		for (var i: int = this.numChildren - 1; i >= 0; i--) {
+		let b: BlockCommon;
+		for (let i: int = this.numChildren - 1; i >= 0; i--) {
 			b = this.getBlockAsChildAt(i);
 			if (b != null)
 				b.destructor();
@@ -73,7 +69,7 @@ export default class MapDisplayer extends Sprite implements IMapDisplayer {
 	public setBlock(x: int, y: int, block: BlockCommon, overwrite: boolean = true): void {
 		if (block == null)
 			return;
-		var iBlock: BlockCommon = this.getBlock(x, y);
+		let iBlock: BlockCommon = this.getBlock(x, y);
 		if (overwrite || !block.displayEquals(iBlock))
 			this.removeBlock(x, y);
 		block.x = PosTransform.localPosToRealPos(x);

@@ -2,7 +2,7 @@
 // import batr.common.*;
 // import batr.general.*;
 
-import Map_V1 from "../game/block/system/logic/Map_V1";
+import Map_V1 from "../game/block/system/Map_V1";
 import Game from "../game/main/Game";
 import ToolType from "../game/registry/ToolType";
 import GameRule from "../game/rule/GameRule";
@@ -80,35 +80,35 @@ export default class BatrSubject extends Sprite {
 	//============Instance Functions============//
 	protected onStageResize(E: Event = null): void {
 		// Information
-		var originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
-		var originalStageHeight: number = originalStageWidth; // Square
-		var nowStageWidth: number = this.stage.stageWidth;
-		var nowStageHeight: number = this.stage.stageHeight;
-		var mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : GlobalGameVariables.DISPLAY_GRIDS;
-		var mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : GlobalGameVariables.DISPLAY_GRIDS;
-		var mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
-		var mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
-		// var distanceBetweenBorderX:Number=0(nowStageWidth-originalStageWidth)/2
-		// var distanceBetweenBorderY:Number=0(nowStageHeight-originalStageHeight)/2
+		let originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
+		let originalStageHeight: number = originalStageWidth; // Square
+		let nowStageWidth: number = this.stage.stageWidth;
+		let nowStageHeight: number = this.stage.stageHeight;
+		let mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : GlobalGameVariables.DISPLAY_GRIDS;
+		let mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : GlobalGameVariables.DISPLAY_GRIDS;
+		let mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
+		let mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
+		// let distanceBetweenBorderX:Number=0(nowStageWidth-originalStageWidth)/2
+		// let distanceBetweenBorderY:Number=0(nowStageHeight-originalStageHeight)/2
 		// Operation
-		var isMapDisplayWidthMax: boolean = mapDisplayWidth >= mapDisplayHeight;
+		let isMapDisplayWidthMax: boolean = mapDisplayWidth >= mapDisplayHeight;
 
-		var isStageWidthMax: boolean = nowStageWidth >= nowStageHeight;
+		let isStageWidthMax: boolean = nowStageWidth >= nowStageHeight;
 
-		var mapDisplaySizeMax: number = isMapDisplayWidthMax ? mapDisplayWidth : mapDisplayHeight;
+		let mapDisplaySizeMax: number = isMapDisplayWidthMax ? mapDisplayWidth : mapDisplayHeight;
 
-		var mapDisplaySizeMin: number = isMapDisplayWidthMax ? mapDisplayHeight : mapDisplayWidth;
+		let mapDisplaySizeMin: number = isMapDisplayWidthMax ? mapDisplayHeight : mapDisplayWidth;
 
-		var stageSizeMax: number = isStageWidthMax ? nowStageWidth : nowStageHeight;
+		let stageSizeMax: number = isStageWidthMax ? nowStageWidth : nowStageHeight;
 
-		var stageSizeMin: number = isStageWidthMax ? nowStageHeight : nowStageWidth;
+		let stageSizeMin: number = isStageWidthMax ? nowStageHeight : nowStageWidth;
 
 		// Output
-		var displayScale: number = stageSizeMin / mapDisplaySizeMin;
+		let displayScale: number = stageSizeMin / mapDisplaySizeMin;
 
-		var shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (nowStageWidth - mapDisplayWidth * displayScale) / 2 : 0);
-		var shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (nowStageHeight - mapDisplayHeight * displayScale) / 2);
-		var shouldScale: number = displayScale * GlobalGameVariables.DEFAULT_SCALE;
+		let shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (nowStageWidth - mapDisplayWidth * displayScale) / 2 : 0);
+		let shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (nowStageHeight - mapDisplayHeight * displayScale) / 2);
+		let shouldScale: number = displayScale * GlobalGameVariables.DEFAULT_SCALE;
 
 		// Deal
 		this.x = shouldX;
@@ -171,10 +171,10 @@ export default class BatrSubject extends Sprite {
 	}
 
 	protected onSubjectKeyDown(E: KeyboardEvent): void {
-		var code: uint = E.keyCode;
-		var ctrl: boolean = E.ctrlKey;
-		var alt: boolean = E.altKey;
-		var shift: boolean = E.shiftKey;
+		let code: uint = E.keyCode;
+		let ctrl: boolean = E.ctrlKey;
+		let alt: boolean = E.altKey;
+		let shift: boolean = E.shiftKey;
 		// P:Pause
 		if (code == KeyCode.P) { // &&!this.menuVisible
 			this.toggleGamePause();
@@ -182,8 +182,8 @@ export default class BatrSubject extends Sprite {
 	}
 
 	protected onI18nsChange(E: I18nsChangeEvent): void {
-		var nowT: I18ns = E.nowI18ns;
-		var oldT: I18ns = E.oldI18ns;
+		let nowT: I18ns = E.nowI18ns;
+		let oldT: I18ns = E.oldI18ns;
 	}
 
 	//====Methods====//
@@ -265,7 +265,7 @@ export default class BatrSubject extends Sprite {
 	}
 
 	public turnI18nsTo(translations: I18ns): void {
-		var oldI18ns: I18ns = this._translations;
+		let oldI18ns: I18ns = this._translations;
 		this._translations = translations;
 		this.dispatchEvent(new I18nsChangeEvent(this._translations, oldI18ns));
 	}

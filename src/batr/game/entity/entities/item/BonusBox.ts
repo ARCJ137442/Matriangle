@@ -78,7 +78,7 @@ export default class BonusBox extends EntityCommon {
 	//============Instance Functions============//
 	public shapeInit(shape: IBatrShape): void {
 		// Define
-		// var radius:Number=DEFAULT_SIZE/2;
+		// let radius:Number=DEFAULT_SIZE/2;
 		// Line
 		shape.graphics.beginFill(LINE_COLOR);
 		shape.graphics.drawRoundRect(borderSpace, borderSpace, BOX_SIZE, BOX_SIZE, BOX_ELLIPSE_SIZE, BOX_ELLIPSE_SIZE);
@@ -97,8 +97,8 @@ export default class BonusBox extends EntityCommon {
 		// Deactivate
 		this.isActive = false;
 		// Effect
-		var buffColor: int = -1;
-		var type: BonusType = forcedBonusType == null ? this._bonusType : forcedBonusType;
+		let buffColor: int = -1;
+		let type: BonusType = forcedBonusType == null ? this._bonusType : forcedBonusType;
 		switch (type) {
 			// Health,Heal&Life
 			case BonusType.ADD_HEALTH:

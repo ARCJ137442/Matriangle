@@ -72,8 +72,8 @@ export default class ShockWaveDrone extends ProjectileCommon {
 			this._moveDuration = ShockWaveDrone.MOVING_INTERVAL;
 			// Moving
 			this.moveForwardInt(1);
-			var ex: number = this.entityX;
-			var ey: number = this.entityY;
+			let ex: number = this.entityX;
+			let ey: number = this.entityY;
 			if (_host.isOutOfMap(ex, ey) || !this._host.testCanPass(ex, ey, false, true, false)) {
 				// Gone
 				this._host.entitySystem.removeProjectile(this);

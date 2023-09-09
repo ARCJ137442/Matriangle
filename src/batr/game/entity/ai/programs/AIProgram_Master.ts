@@ -49,7 +49,7 @@ export default class AIProgram_Master implements IAIProgram {
 	 * @return	A int will be multi with G.
 	 */
 	protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
-		var damage: int = host.getBlockPlayerDamage(node.x, node.y);
+		let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 		if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 			return 1000;
 		if (damage > 0)
@@ -61,15 +61,15 @@ export default class AIProgram_Master implements IAIProgram {
 
 	//========Dynamic A* PathFind========//
 	static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
-		var nearbyNodes: PathNode[] = [
+		let nearbyNodes: PathNode[] = [
 			initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 			initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
 			initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
 			initDynamicNode(new PathNode(start.x, start.y - 1).setFromRot(GlobalRot.UP), host, owner, target)
 		];
-		var _leastNode: PathNode = null;
-		var _leastF: int = int.MAX_VALUE;
-		for (var node of nearbyNodes) {
+		let _leastNode: PathNode = null;
+		let _leastF: int = int.MAX_VALUE;
+		for (let node of nearbyNodes) {
 			if (node == null || AIProgram_Adventurer.pointInRemember(node, remember) ||
 				host.computeFinalPlayerHurtDamage(owner, node.x, node.y, host.getBlockPlayerDamage(node.x, node.y)) >= owner.health)
 				continue;
@@ -117,8 +117,8 @@ export default class AIProgram_Master implements IAIProgram {
 	}
 
 	protected resetRemember(): void {
-		for (var v of this._remember) {
-			for (var i: string in v) {
+		for (let v of this._remember) {
+			for (let i: string in v) {
 				v[i] = false;
 			}
 		}
@@ -148,7 +148,7 @@ export default class AIProgram_Master implements IAIProgram {
 	}
 
 	protected resetCloseTarget(): void {
-		for (var i in this._closeTarget) {
+		for (let i in this._closeTarget) {
 			delete this._closeTarget[i];
 		}
 	}
@@ -156,10 +156,10 @@ export default class AIProgram_Master implements IAIProgram {
 	/*========AI Tools========*/
 	public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 		// getManhattanDistance
-		var _nearestBox: BonusBox = null;
-		var _nearestDistance: int = int.MAX_VALUE;
-		var _tempDistance: int;
-		for (var box of host.entitySystem.bonusBoxes) {
+		let _nearestBox: BonusBox = null;
+		let _nearestDistance: int = int.MAX_VALUE;
+		let _tempDistance: int;
+		for (let box of host.entitySystem.bonusBoxes) {
 			if (box == null || this.inCloseTarget(box))
 				continue;
 			_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
@@ -173,11 +173,11 @@ export default class AIProgram_Master implements IAIProgram {
 
 	public getNearestEnemy(owner: Player, host: Game): Player {
 		// getManhattanDistance
-		var _nearestEnemy: Player = null;
-		var _nearestDistance: int = int.MAX_VALUE;
-		var _tempDistance: int;
-		var players: Player[] = host.getAlivePlayers();
-		for (var player of players) {
+		let _nearestEnemy: Player = null;
+		let _nearestDistance: int = int.MAX_VALUE;
+		let _tempDistance: int;
+		let players: Player[] = host.getAlivePlayers();
+		for (let player of players) {
 			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 				player == null || this.inCloseTarget(player))
 				continue;
@@ -213,10 +213,10 @@ export default class AIProgram_Master implements IAIProgram {
 		if (player == null)
 			return AIPlayerAction.NULL;
 		// Set Variables
-		var host: Game = player.host;
-		var ownerPoint: iPoint = player.gridPoint;
-		var lastTargetPlayer: Player = this._lastTarget as Player;
-		var lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
+		let host: Game = player.host;
+		let ownerPoint: iPoint = player.gridPoint;
+		let lastTargetPlayer: Player = this._lastTarget as Player;
+		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
 		// Init remember
 		if (this._remember == null) {
 			this.initRemember(host);
@@ -242,7 +242,7 @@ export default class AIProgram_Master implements IAIProgram {
 			// If Invalid Target,Get New Target
 			if (this._lastTarget == null || this._lastTarget == player) {
 				//========Find BonusBox========//
-				var target: EntityCommon = null;
+				let target: EntityCommon = null;
 				// set Player as Target
 				target = this.pickBonusFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 				// if cannot find box/player
@@ -261,7 +261,7 @@ export default class AIProgram_Master implements IAIProgram {
 					this.resetCloseTarget();
 			}
 			else {
-				var tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
+				let tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
 				// Attack Enemy
 				if (GlobalRot.isValidRot(tempRot) &&
 					AIProgram_Adventurer.detectCarryBlock(player) &&
@@ -300,7 +300,7 @@ export default class AIProgram_Master implements IAIProgram {
 					;
 					//==Decision==//
 					// Find Path
-					var finalNode: PathNode;
+					let finalNode: PathNode;
 					// Attack player
 					if (lastTargetPlayer != null) {
 						finalNode = getDynamicNode(

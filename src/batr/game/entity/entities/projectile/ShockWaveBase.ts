@@ -89,8 +89,8 @@ export default class ShockWaveBase extends ProjectileCommon {
 		// Summon Drone
 		switch (this.mode) {
 			case 1:
-				var i: int = exMath.random1();
-				for (var u: int = 0; u < 4; u++)
+				let i: int = exMath.random1();
+				for (let u: int = 0; u < 4; u++)
 					this.summonDrone(u, u + i);
 				break;
 			default:
@@ -100,7 +100,7 @@ export default class ShockWaveBase extends ProjectileCommon {
 	}
 
 	public summonDrone(rot: int, toolRot: int = int.MIN_VALUE): void {
-		var drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._tool, toolRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(toolRot), this._toolChargePercent);
+		let drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._tool, toolRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(toolRot), this._toolChargePercent);
 		drone.rot = GlobalRot.lockIntToStandard(rot);
 		this.host.entitySystem.registerProjectile(drone);
 		this.host.projectileContainer.addChild(drone);

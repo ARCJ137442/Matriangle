@@ -30,7 +30,7 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 
 	//============Destructor Function============//
 	override destructor(): void {
-		for (var button of this._buttons) {
+		for (let button of this._buttons) {
 			button.destructor();
 		}
 		this._buttons = null;
@@ -69,9 +69,9 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 	protected initDisplay(): void {
 		if (this.buttonCount < 1)
 			return;
-		var dy: number = 0;
-		for (var i: int = 0; i < this._buttons.length; i++) {
-			var button: BatrButton = this._buttons[i];
+		let dy: number = 0;
+		for (let i: int = 0; i < this._buttons.length; i++) {
+			let button: BatrButton = this._buttons[i];
 			button.x = 0;
 			button.y = dy;
 			dy += this.verticalDistance + button.displayHeight;
@@ -91,8 +91,8 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 	}
 
 	public appendDirectElements(...elements): IBatrMenuElement {
-		var button: BatrButton;
-		for (var i: int = 0; i < elements.length; i++) {
+		let button: BatrButton;
+		for (let i: int = 0; i < elements.length; i++) {
 			button = elements[i] as BatrButton;
 			if (button != null)
 				this._buttons.push(button);
@@ -109,7 +109,7 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 	}
 
 	public getElementByName(name: string): BatrMenuGUI {
-		for (var button of this._buttons) {
+		for (let button of this._buttons) {
 			if (button != null && button.name == name)
 				return (button as BatrMenuGUI);
 		}

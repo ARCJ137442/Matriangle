@@ -21,8 +21,8 @@ import BlockAttributes from "../block/BlockAttributes";
 import BlockCommon, { BlockType } from "../block/BlockCommon";
 import IMap from "../block/system/IMap";
 import IMapDisplayer from "../block/system/display/IMapDisplayer";
-import MapDisplayer from "../block/system/logic/MapDisplayer";
-import Map_V1 from "../block/system/logic/Map_V1";
+import MapDisplayer from "../block/system/display/MapDisplayer";
+import Map_V1 from "../block/system/Map_V1";
 import EffectCommon from "../effect/EffectCommon";
 import EffectSystem from "../effect/EffectSystem";
 import EffectBlockLight from "../effect/effects/EffectBlockLight";
@@ -159,8 +159,8 @@ export default class Game extends Sprite {
 
 	// Tools
 	public static joinNamesFromPlayers(players: Player[]): string {
-		var result: string = '';
-		for (var i: uint = 0; i < players.length; i++) {
+		let result: string = '';
+		for (let i: uint = 0; i < players.length; i++) {
 			if (players[i] == null)
 				result += 'NULL';
 			else
@@ -377,8 +377,8 @@ export default class Game extends Sprite {
 	}
 
 	public get nextPlayerID(): uint {
-		var id: uint = 1;
-		for (var player of this._entitySystem.players) {
+		let id: uint = 1;
+		for (let player of this._entitySystem.players) {
 			if (!Player.isAI(player))
 				id++;
 		}
@@ -386,8 +386,8 @@ export default class Game extends Sprite {
 	}
 
 	public get nextAIID(): uint {
-		var id: uint = 1;
-		for (var player of this._entitySystem.players) {
+		let id: uint = 1;
+		for (let player of this._entitySystem.players) {
 			if (Player.isAI(player))
 				id++;
 		}
@@ -434,14 +434,14 @@ export default class Game extends Sprite {
 	}
 
 	public getBlockPlayerDamage(x: int, y: int): int {
-		var blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
+		let blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
 		if (blockAtt != null)
 			return blockAtt.playerDamage;
 		return 0;
 	}
 
 	public isKillZone(x: int, y: int): boolean {
-		var blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
+		let blockAtt: BlockAttributes = this._map.getBlockAttributes(x, y);
 		if (blockAtt != null)
 			return blockAtt.playerDamage == int.MAX_VALUE;
 		return false;
@@ -456,8 +456,8 @@ export default class Game extends Sprite {
 	protected isPlayersEnd(players: Player[]): boolean {
 		if (this.numPlayers < 2)
 			return false;
-		var team: PlayerTeam = null;
-		for (var player of players) {
+		let team: PlayerTeam = null;
+		for (let player of players) {
 			if (team == null)
 				team = player.team;
 			else if (player.team != team)
@@ -467,8 +467,8 @@ export default class Game extends Sprite {
 	}
 
 	public getAlivePlayers(): Player[] {
-		var result: Player[] = new Array<Player>();
-		for (var player of this._entitySystem.players) {
+		let result: Player[] = new Array<Player>();
+		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
 			if (!player.isCertainlyOut)
@@ -478,8 +478,8 @@ export default class Game extends Sprite {
 	}
 
 	public getInMapPlayers(): Player[] {
-		var result: Player[] = new Array<Player>();
-		for (var player of this._entitySystem.players) {
+		let result: Player[] = new Array<Player>();
+		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
 			if (player.health > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
@@ -489,7 +489,7 @@ export default class Game extends Sprite {
 	}
 
 	public testGameEnd(force: boolean = false): void {
-		var alivePlayers: Player[] = this.getAlivePlayers();
+		let alivePlayers: Player[] = this.getAlivePlayers();
 		if (this.isPlayersEnd(alivePlayers) || force) {
 			// if allowTeamVictory=false,reset team colors
 			if (!force && alivePlayers.length > 1 && !this.rule.allowTeamVictory) {
@@ -502,8 +502,8 @@ export default class Game extends Sprite {
 	}
 
 	protected resetPlayersTeamInDifferent(players: Player[]): void {
-		var tempTeamIndex: uint = exMath.random(this.rule.playerTeams.length);
-		for (var player of players) {
+		let tempTeamIndex: uint = exMath.random(this.rule.playerTeams.length);
+		for (let player of players) {
 			player.team = this.rule.playerTeams[tempTeamIndex];
 			tempTeamIndex = (tempTeamIndex + 1) % this.rule.playerTeams.length;
 		}
@@ -516,7 +516,7 @@ export default class Game extends Sprite {
 	}
 
 	protected getGameResult(winners: Player[]): GameResult {
-		var result: GameResult = new GameResult(this,
+		let result: GameResult = new GameResult(this,
 			this.getResultMessage(winners),
 			this._stat
 		);
@@ -660,7 +660,7 @@ export default class Game extends Sprite {
 			this.dealSecond();
 		}
 		//=====Entity TickRun=====//
-		for (var entity of this._entitySystem.entities) {
+		for (let entity of this._entitySystem.entities) {
 			if (entity != null) {
 				if (entity.isActive) {
 					entity.tickFunction();
@@ -671,7 +671,7 @@ export default class Game extends Sprite {
 			}
 		}
 		//=====Player TickRun=====//
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (player != null) {
 				// Respawn About
 				if (player.infinityLife || player.lives > 0) {
@@ -682,7 +682,7 @@ export default class Game extends Sprite {
 			}
 		}
 		//=====Effect TickRun=====//
-		for (var effect of this._effectSystem.effects) {
+		for (let effect of this._effectSystem.effects) {
 			if (effect != null) {
 				if (effect.isActive) {
 					effect.onEffectTick();
@@ -703,7 +703,7 @@ export default class Game extends Sprite {
 	}*/
 
 	protected onGameTick(E: Event): void {
-		var i: number = this._speed;
+		let i: number = this._speed;
 
 		// Frame Complement
 		if (this._enableFrameComplement) {
@@ -768,10 +768,10 @@ export default class Game extends Sprite {
 	}
 
 	protected onGameKeyDown(E: KeyboardEvent): void {
-		var code: uint = E.keyCode;
-		var ctrl: boolean = E.ctrlKey;
-		var alt: boolean = E.altKey;
-		var shift: boolean = E.shiftKey;
+		let code: uint = E.keyCode;
+		let ctrl: boolean = E.ctrlKey;
+		let alt: boolean = E.altKey;
+		let shift: boolean = E.shiftKey;
 		// End Game
 		if (shift && code == KeyCode.ESC) {
 			fscommand('quit');
@@ -788,7 +788,7 @@ export default class Game extends Sprite {
 
 	protected dealKeyDownWithPlayers(code: uint, isKeyDown: boolean): void {
 		if (this._entitySystem.playerCount > 0) {
-			for (var player of this._entitySystem.players) {
+			for (let player of this._entitySystem.players) {
 				// Detect - NOT USE:if(player.isRespawning) continue;
 				// Initial Action
 				if (isKeyDown && !player.isOwnKeyDown(code)) {
@@ -843,12 +843,12 @@ export default class Game extends Sprite {
 
 	public testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
 		// Debug: trace('testCanPass:'+arguments+';'+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
-		var mapX: int = this.lockPosInMap(x, true);
+		let mapX: int = this.lockPosInMap(x, true);
 
-		var mapY: int = this.lockPosInMap(y, false);
+		let mapY: int = this.lockPosInMap(y, false);
 
 		// if(isOutOfMap(gridX,gridY)) return true
-		var attributes: BlockAttributes = this.getBlockAttributes(mapX, mapY);
+		let attributes: BlockAttributes = this.getBlockAttributes(mapX, mapY);
 
 		if (avoidHurting && attributes.playerDamage > -1)
 			return false;
@@ -889,11 +889,11 @@ export default class Game extends Sprite {
 	public testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
 		// Debug: trace('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
 		// Define
-		var gridX: int = this.lockIntPosInMap(x, true);
+		let gridX: int = this.lockIntPosInMap(x, true);
 
-		var gridY: int = this.lockIntPosInMap(y, false);
+		let gridY: int = this.lockIntPosInMap(y, false);
 
-		var attributes: BlockAttributes = this.getBlockAttributes(gridX, gridY);
+		let attributes: BlockAttributes = this.getBlockAttributes(gridX, gridY);
 
 		// Test
 		// if(isOutOfMap(gridX,gridY)) return true
@@ -939,12 +939,12 @@ export default class Game extends Sprite {
 		damage: uint, projectile: ProjectileCommon,
 		color: uint, edgePercent: number = 1): void {
 		// Operate
-		var creator: Player = projectile.owner;
+		let creator: Player = projectile.owner;
 		// Effect
 		this._effectSystem.addEffect(new EffectExplode(this, x, y, finalRadius, color));
 		// Hurt Player
-		var distanceP: number;
-		for (var player of this._entitySystem.players) {
+		let distanceP: number;
+		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
 			distanceP = exMath.getDistanceSquare(x, y, player.entityX, player.entityY) / (finalRadius * finalRadius);
@@ -963,41 +963,41 @@ export default class Game extends Sprite {
 
 	public laserHurtPlayers(laser: LaserBasic): void {
 		// Set Variables
-		var attacker: Player = laser.owner;
+		let attacker: Player = laser.owner;
 
-		var damage: uint = laser.damage;
+		let damage: uint = laser.damage;
 
-		var length: uint = laser.length;
+		let length: uint = laser.length;
 
-		var rot: uint = laser.rot;
+		let rot: uint = laser.rot;
 
-		var teleport: boolean = laser is LaserTeleport;
+		let teleport: boolean = laser is LaserTeleport;
 
-		var absorption: boolean = laser is LaserAbsorption;
+		let absorption: boolean = laser is LaserAbsorption;
 
-		var pulse: boolean = laser is LaserPulse;
+		let pulse: boolean = laser is LaserPulse;
 
 		// Pos
-		var baseX: int = PosTransform.alignToGrid(laser.entityX);
+		let baseX: int = PosTransform.alignToGrid(laser.entityX);
 
-		var baseY: int = PosTransform.alignToGrid(laser.entityY);
+		let baseY: int = PosTransform.alignToGrid(laser.entityY);
 
-		var vx: int = GlobalRot.towardXInt(rot, 1);
+		let vx: int = GlobalRot.towardXInt(rot, 1);
 
-		var vy: int = GlobalRot.towardYInt(rot, 1);
+		let vy: int = GlobalRot.towardYInt(rot, 1);
 
-		var cx: int = baseX, cy: int = baseY, players: Player[];
+		let cx: int = baseX, cy: int = baseY, players: Player[];
 
-		// var nextBlockAtt:BlockAttributes
+		// let nextBlockAtt:BlockAttributes
 		// Damage
 		laser.isDamaged = true;
 
-		var finalDamage: uint;
-		for (var i: uint = 0; i < length; i++) {
+		let finalDamage: uint;
+		for (let i: uint = 0; i < length; i++) {
 			// nextBlockAtt=this.getBlockAttributes(cx+vx,cy+vy);
 			players = getHitPlayers(cx, cy);
 
-			for (var victim of players) {
+			for (let victim of players) {
 				if (victim == null)
 					continue;
 
@@ -1033,22 +1033,22 @@ export default class Game extends Sprite {
 
 	public waveHurtPlayers(wave: Wave): void {
 		// Set Variables
-		var attacker: Player = wave.owner;
+		let attacker: Player = wave.owner;
 
-		var damage: uint = wave.damage;
+		let damage: uint = wave.damage;
 
-		var scale: number = wave.finalScale;
+		let scale: number = wave.finalScale;
 
-		var rot: uint = wave.rot;
+		let rot: uint = wave.rot;
 
 		// Pos
-		var baseX: number = wave.entityX;
+		let baseX: number = wave.entityX;
 
-		var baseY: number = wave.entityY;
+		let baseY: number = wave.entityY;
 
-		var radius: number = scale;
+		let radius: number = scale;
 
-		for (var victim of this._entitySystem.players) {
+		for (let victim of this._entitySystem.players) {
 			if (victim == null)
 				continue;
 			// FinalDamage
@@ -1061,9 +1061,9 @@ export default class Game extends Sprite {
 	}
 
 	public thrownBlockHurtPlayer(block: ThrownBlock): void {
-		var attacker: Player = block.owner;
-		var damage: uint = block.damage;
-		for (var victim of this._entitySystem.players) {
+		let attacker: Player = block.owner;
+		let damage: uint = block.damage;
+		for (let victim of this._entitySystem.players) {
 			if (victim == null)
 				continue;
 			// FinalDamage
@@ -1076,8 +1076,8 @@ export default class Game extends Sprite {
 	}
 
 	public lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void {
-		var p: Player, d: uint;
-		for (var i: any in players) {
+		let p: Player, d: uint;
+		for (let i: any in players) {
 			p = players[i];
 			d = damages[i];
 			if (p != null)
@@ -1087,12 +1087,12 @@ export default class Game extends Sprite {
 
 	public moveInTestWithEntity(): void {
 		// All Player
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			player.dealMoveInTest(player.entityX, player.entityY, true, false);
 		}
 		// BonusBox Displace by Asphyxia/Trap
-		for (var i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
-			var box: BonusBox = this._entitySystem.bonusBoxes[i];
+		for (let i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
+			let box: BonusBox = this._entitySystem.bonusBoxes[i];
 			if (box != null && !testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
 				this._entitySystem.removeBonusBox(box);
 			}
@@ -1105,11 +1105,11 @@ export default class Game extends Sprite {
 	public moveInTestPlayer(player: Player, isLocationChange: boolean = false): boolean {
 		if (!player.isActive)
 			return false;
-		var x: int = player.gridX;
-		var y: int = player.gridY;
-		var type: BlockType = this.getBlockType(player.gridX, player.gridY);
-		var attributes: BlockAttributes = BlockAttributes.fromType(type);
-		var returnBoo: boolean = false;
+		let x: int = player.gridX;
+		let y: int = player.gridY;
+		let type: BlockType = this.getBlockType(player.gridX, player.gridY);
+		let attributes: BlockAttributes = BlockAttributes.fromType(type);
+		let returnBoo: boolean = false;
 		if (attributes != null) {
 			if (attributes.playerDamage == -1) {
 				player.removeHealth(this.computeFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
@@ -1165,7 +1165,7 @@ export default class Game extends Sprite {
 	public moveOutTestPlayer(player: Player, x: int, y: int, isLocationChange: boolean = false): void {
 		if (!player.isActive)
 			return;
-		var type: BlockType = this.getBlockType(x, y);
+		let type: BlockType = this.getBlockType(x, y);
 		if (type == BlockType.GATE_OPEN) {
 			this.setBlock(x, y, BlockCommon.fromType(BlockType.GATE_CLOSE));
 		}
@@ -1179,7 +1179,7 @@ export default class Game extends Sprite {
 			return false;
 		x = isNaN(x) ? player.gridX : x;
 		y = isNaN(y) ? player.gridY : y;
-		for (var bonusBox of this._entitySystem.bonusBoxes) {
+		for (let bonusBox of this._entitySystem.bonusBoxes) {
 			if (this.hitTestPlayer(player, bonusBox.gridX, bonusBox.gridY)) {
 				bonusBox.onPlayerPickup(player);
 				player.onPickupBonusBox(bonusBox);
@@ -1252,40 +1252,40 @@ export default class Game extends Sprite {
 
 	public updateMapSize(updateBackground: boolean = true): void {
 		// Information
-		var originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
+		let originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
 
-		var originalStageHeight: number = originalStageWidth;
+		let originalStageHeight: number = originalStageWidth;
 
 		// Square
-		var mapGridWidth: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapWidth;
+		let mapGridWidth: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapWidth;
 
-		var mapGridHeight: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
+		let mapGridHeight: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
 
-		var mapShouldDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
+		let mapShouldDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
 
-		var mapShouldDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
+		let mapShouldDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
 
 		// Operation
-		var isMapDisplayWidthMax: boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
+		let isMapDisplayWidthMax: boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
 
-		var isStageWidthMax: boolean = originalStageWidth >= originalStageHeight;
+		let isStageWidthMax: boolean = originalStageWidth >= originalStageHeight;
 
-		var mapShouldDisplaySizeMax: number = isMapDisplayWidthMax ? mapShouldDisplayWidth : mapShouldDisplayHeight;
+		let mapShouldDisplaySizeMax: number = isMapDisplayWidthMax ? mapShouldDisplayWidth : mapShouldDisplayHeight;
 
-		var mapShouldDisplaySizeMin: number = isMapDisplayWidthMax ? mapShouldDisplayHeight : mapShouldDisplayWidth;
+		let mapShouldDisplaySizeMin: number = isMapDisplayWidthMax ? mapShouldDisplayHeight : mapShouldDisplayWidth;
 
-		var stageSizeMax: number = isStageWidthMax ? originalStageWidth : originalStageHeight;
+		let stageSizeMax: number = isStageWidthMax ? originalStageWidth : originalStageHeight;
 
-		var stageSizeMin: number = isStageWidthMax ? originalStageHeight : originalStageWidth;
+		let stageSizeMin: number = isStageWidthMax ? originalStageHeight : originalStageWidth;
 
 		// Output
-		var displayScale: number = stageSizeMin / mapShouldDisplaySizeMin;
+		let displayScale: number = stageSizeMin / mapShouldDisplaySizeMin;
 
-		var shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (originalStageWidth - mapShouldDisplayWidth * displayScale) / 2 : 0);
+		let shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (originalStageWidth - mapShouldDisplayWidth * displayScale) / 2 : 0);
 
-		var shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (originalStageHeight - mapShouldDisplayHeight * displayScale) / 2);
+		let shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (originalStageHeight - mapShouldDisplayHeight * displayScale) / 2);
 
-		var shouldScale: number = displayScale;
+		let shouldScale: number = displayScale;
 
 		// Deal
 		this.x = shouldX;
@@ -1343,8 +1343,8 @@ export default class Game extends Sprite {
 		else
 			this.changeMap(destination, true, true);
 		// Call AI
-		var players: Player[] = this.getAlivePlayers();
-		for (var player of players) {
+		let players: Player[] = this.getAlivePlayers();
+		for (let player of players) {
 			if (player is Player)
 			(player as Player).onMapTransform();
 		}
@@ -1353,11 +1353,11 @@ export default class Game extends Sprite {
 	}
 
 	public isOutOfMap(x: number, y: number): boolean {
-		var outCount: uint = 0;
+		let outCount: uint = 0;
 
-		var posNum: number, posMaxNum: uint;
+		let posNum: number, posMaxNum: uint;
 
-		for (var i: uint = 0; i < 2; i++) {
+		for (let i: uint = 0; i < 2; i++) {
 			posNum = i == 0 ? x : y;
 
 			posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
@@ -1380,7 +1380,7 @@ export default class Game extends Sprite {
 
 	public addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): Player {
 		// Define
-		var p: Player = createPlayer(x, y, id, team, isActive);
+		let p: Player = createPlayer(x, y, id, team, isActive);
 		this._entitySystem.registerPlayer(p);
 		// Set
 		p.rot = rot;
@@ -1407,7 +1407,7 @@ export default class Game extends Sprite {
 
 	// Add a player uses random position and tool
 	public appendPlayer(controlKeyID: uint = 0): Player {
-		var id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
+		let id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
 		trace('Append Player in ID', id);
 		return this.setupPlayer(
 			this.addPlayer(id, this.rule.randomTeam, -1, -1, 0, false, null)
@@ -1420,7 +1420,7 @@ export default class Game extends Sprite {
 
 	public addAI(team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): AIPlayer {
 		// Define
-		var p: AIPlayer = createAI(x, y, team, isActive);
+		let p: AIPlayer = createAI(x, y, team, isActive);
 		this._entitySystem.registerPlayer(p);
 		// Set
 		p.rot = rot;
@@ -1442,7 +1442,7 @@ export default class Game extends Sprite {
 	}
 
 	public spawnPlayersByRule(): void {
-		var i: uint, player: Player;
+		let i: uint, player: Player;
 
 		// Setup Player
 		for (i = 0; i < this.rule.playerCount; i++) {
@@ -1478,8 +1478,8 @@ export default class Game extends Sprite {
 	public spreadPlayer(player: Player, rotatePlayer: boolean = true, createEffect: boolean = true): Player {
 		if (player == null || player.isRespawning)
 			return player;
-		var p: iPoint = new iPoint(0, 0);
-		for (var i: uint = 0; i < 0xff; i++) {
+		let p: iPoint = new iPoint(0, 0);
+		for (let i: uint = 0; i < 0xff; i++) {
 			p.x = this.map.randomX;
 			p.y = this.map.randomY;
 			if (testPlayerCanPass(player, p.x, p.y, true, true)) {
@@ -1500,7 +1500,7 @@ export default class Game extends Sprite {
 		// Test
 		if (player == null || player.isRespawning)
 			return player;
-		var p: iPoint = this.map.randomSpawnPoint;
+		let p: iPoint = this.map.randomSpawnPoint;
 		// Position offer
 		if (p != null)
 			p = this.findFitSpawnPoint(player, p.x, p.y);
@@ -1529,12 +1529,12 @@ export default class Game extends Sprite {
 	protected findFitSpawnPoint(player: Player, x: int, y: int): iPoint {
 		// Older Code uses Open List/Close List
 		/*{
-			var oP:uint[]=[UintPointCompress.compressFromPoint(x,y)];
-			var wP:uint[]=new array<uint>();
-			var cP:uint[]=new array<uint>();
-			var tP:iPoint;
+			let oP:uint[]=[UintPointCompress.compressFromPoint(x,y)];
+			let wP:uint[]=new array<uint>();
+			let cP:uint[]=new array<uint>();
+			let tP:iPoint;
 			while(oP.length>0) {
-				for(var p of oP) {
+				for(let p of oP) {
 					if(cP.indexOf(p)>=0) continue;
 					tP=UintPointCompress.releaseFromUint(p);
 					if(this.isIntOutOfMap(tP.x,tP.y)) continue;
@@ -1552,16 +1552,16 @@ export default class Game extends Sprite {
 			}
 		}*/
 		// Newest code uses subFindSpawnPoint
-		var p: iPoint = null;
-		for (var i: uint = 0; p == null && i < (this.mapWidth + this.mapHeight); i++) {
+		let p: iPoint = null;
+		for (let i: uint = 0; p == null && i < (this.mapWidth + this.mapHeight); i++) {
 			p = this.subFindSpawnPoint(player, x, y, i);
 		}
 		return p;
 	}
 
 	protected subFindSpawnPoint(player: Player, x: int, y: int, r: int): iPoint {
-		for (var cx: int = x - r; cx <= x + r; cx++) {
-			for (var cy: int = y - r; cy <= y + r; cy++) {
+		for (let cx: int = x - r; cx <= x + r; cx++) {
+			for (let cy: int = y - r; cy <= y + r; cy++) {
 				if (exMath.intAbs(cx - x) == r && exMath.intAbs(cy - y) == r) {
 					if (!this.isOutOfMap(cx, cy) && this.testPlayerCanPass(player, cx, cy, true, true))
 						return new iPoint(cx, cy);
@@ -1572,7 +1572,7 @@ export default class Game extends Sprite {
 	}
 
 	public spreadAllPlayer(): void {
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			spreadPlayer(player);
 		}
 	}
@@ -1587,7 +1587,7 @@ export default class Game extends Sprite {
 
 	public isHitAnyPlayer(x: int, y: int): boolean {
 		// Loop
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (hitTestPlayer(player, x, y))
 				return true;
 		}
@@ -1597,7 +1597,7 @@ export default class Game extends Sprite {
 
 	public isHitAnotherPlayer(player: Player): boolean {
 		// Loop
-		for (var p2 of this._entitySystem.players) {
+		for (let p2 of this._entitySystem.players) {
 			if (p2 == player)
 				continue;
 
@@ -1610,9 +1610,9 @@ export default class Game extends Sprite {
 
 	public hitTestOfPlayers(...players): boolean {
 		// Transform
-		var _pv: Player[] = new Player[];
+		let _pv: Player[] = new Player[];
 
-		var p: any;
+		let p: any;
 
 		for each(p in players) {
 			if(p is Player) {
@@ -1620,8 +1620,8 @@ export default class Game extends Sprite {
 			}
 		}
 			// Test
-			for (var p1 of _pv) {
-				for (var p2 of _pv) {
+			for (let p1 of _pv) {
+				for (let p2 of _pv) {
 					if (p1 == p2)
 						continue;
 
@@ -1635,10 +1635,10 @@ export default class Game extends Sprite {
 
 	public getHitPlayers(x: number, y: number): Player[] {
 		// Set
-		var returnV: Player[] = new Player[];
+		let returnV: Player[] = new Player[];
 
 		// Test
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (hitTestPlayer(player, x, y)) {
 				returnV.push(player);
 			}
@@ -1648,7 +1648,7 @@ export default class Game extends Sprite {
 	}
 
 	public getHitPlayerAt(x: int, y: int): Player {
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (hitTestPlayer(player, x, y)) {
 				return player;
 			}
@@ -1657,13 +1657,13 @@ export default class Game extends Sprite {
 	}
 
 	public randomizeAllPlayerTeam(): void {
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			this.randomizePlayerTeam(player);
 		}
 	}
 
 	public randomizePlayerTeam(player: Player): void {
-		var tempT: PlayerTeam, i: uint = 0;
+		let tempT: PlayerTeam, i: uint = 0;
 		do {
 			tempT = this.rule.randomTeam;
 		}
@@ -1672,18 +1672,18 @@ export default class Game extends Sprite {
 	}
 
 	public setATeamToNotAIPlayer(team: PlayerTeam = null): void {
-		var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (!Player.isAI(player))
 				player.team = tempTeam;
 		}
 	}
 
 	public setATeamToAIPlayer(team: PlayerTeam = null): void {
-		var tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			if (Player.isAI(player))
 				player.team = tempTeam;
 		}
@@ -1693,13 +1693,13 @@ export default class Game extends Sprite {
 		if (tool == null)
 			tool = ToolType.RANDOM_AVAILABLE;
 
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			player.tool = tool;
 		}
 	}
 
 	public changeAllPlayerToolRandomly(): void {
-		for (var player of this._entitySystem.players) {
+		for (let player of this._entitySystem.players) {
 			player.tool = ToolType.RANDOM_AVAILABLE;
 
 			player.toolUsingCD = 0;
@@ -1728,8 +1728,8 @@ export default class Game extends Sprite {
 		if (player.toolUsingCD > 0)
 			return;
 		// Set Variables
-		var spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-		var spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+		let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+		let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 		// Use
 		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 		// Set CD
@@ -1738,15 +1738,15 @@ export default class Game extends Sprite {
 
 	public playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
 		// Set Variables
-		var p: ProjectileCommon = null;
+		let p: ProjectileCommon = null;
 
-		var centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
+		let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
 
-		var centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
+		let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
 
-		var frontBlock: BlockCommon;
+		let frontBlock: BlockCommon;
 
-		var laserLength: number = this.rule.defaultLaserLength;
+		let laserLength: number = this.rule.defaultLaserLength;
 
 		if (ToolType.isIncludeIn(tool, ToolType._LASERS) &&
 			!_rule.allowLaserThroughAllBlock) {
@@ -1794,8 +1794,8 @@ export default class Game extends Sprite {
 
 				break;
 			case ToolType.BLOCK_THROWER:
-				var carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
-				var carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
+				let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
+				let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
 				frontBlock = this.getBlock(carryX, carryY);
 				if (player.isCarriedBlock) {
 					// Throw
@@ -1841,13 +1841,13 @@ export default class Game extends Sprite {
 	}
 
 	protected getLaserLength2(eX: number, eY: number, rot: uint): uint {
-		var vx: int = GlobalRot.towardX(rot);
+		let vx: int = GlobalRot.towardX(rot);
 
-		var vy: int = GlobalRot.towardY(rot);
+		let vy: int = GlobalRot.towardY(rot);
 
-		var cx: int, cy: int;
+		let cx: int, cy: int;
 
-		for (var i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
+		for (let i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
 			cx = PosTransform.alignToGrid(eX + vx * i);
 
 			cy = PosTransform.alignToGrid(eY + vy * i);
@@ -1859,9 +1859,9 @@ export default class Game extends Sprite {
 	}
 
 	public lockEntityInMap(entity: EntityCommon): void {
-		var posNum: number, posMaxNum: uint, posFunc: Function;
+		let posNum: number, posMaxNum: uint, posFunc: Function;
 
-		for (var i: uint = 0; i < 2; i++) {
+		for (let i: uint = 0; i < 2; i++) {
 			posNum = i == 0 ? entity.entityX : entity.entityY;
 
 			posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
@@ -1878,7 +1878,7 @@ export default class Game extends Sprite {
 	}
 
 	public lockPosInMap(posNum: number, returnAsX: boolean): number {
-		var posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
+		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 		if (posNum < 0)
 			return lockPosInMap(posMaxNum + posNum, returnAsX);
@@ -1891,7 +1891,7 @@ export default class Game extends Sprite {
 	}
 
 	public lockIntPosInMap(posNum: int, returnAsX: boolean): int {
-		var posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
+		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 		if (posNum < 0)
 			return lockIntPosInMap(posMaxNum + posNum, returnAsX);
@@ -1923,7 +1923,7 @@ export default class Game extends Sprite {
 	//======Entity Functions======//
 	public updateProjectilesColor(player: Player = null): void {
 		// null means update all projectiles
-		for (var projectile of this._entitySystem.projectile) {
+		for (let projectile of this._entitySystem.projectile) {
 			if (player == null || projectile.owner == player) {
 				projectile.drawShape();
 			}
@@ -1935,7 +1935,7 @@ export default class Game extends Sprite {
 		if (this.hasBonusBoxAt(x, y))
 			return;
 		// Execute
-		var bonusBox: BonusBox = new BonusBox(this, x, y, type);
+		let bonusBox: BonusBox = new BonusBox(this, x, y, type);
 		this._entitySystem.registerBonusBox(bonusBox);
 		this._bonusBoxContainer.addChild(bonusBox);
 		// Stat
@@ -1943,7 +1943,7 @@ export default class Game extends Sprite {
 	}
 
 	protected hasBonusBoxAt(x: int, y: int): boolean {
-		for (var box of this.entitySystem.bonusBoxes) {
+		for (let box of this.entitySystem.bonusBoxes) {
 			if (box.gridX == x && box.gridY == y)
 				return true;
 		}
@@ -1951,8 +1951,8 @@ export default class Game extends Sprite {
 	}
 
 	public randomAddBonusBox(type: BonusType): void {
-		var bonusBox: BonusBox = new BonusBox(this, x, y, type);
-		var i: uint = 0, rX: int, rY: int;
+		let bonusBox: BonusBox = new BonusBox(this, x, y, type);
+		let i: uint = 0, rX: int, rY: int;
 		do {
 			rX = this._map.randomX;
 			rY = this._map.randomY;
@@ -1967,8 +1967,8 @@ export default class Game extends Sprite {
 	}
 
 	public fillBonusBox(): void {
-		for (var x: uint = 0; x < this.map.mapWidth; x++) {
-			for (var y: uint = 0; y < this.map.mapHeight; y++) {
+		for (let x: uint = 0; x < this.map.mapWidth; x++) {
+			for (let y: uint = 0; y < this.map.mapHeight; y++) {
 				if (this.testBonusBoxCanPlaceAt(x, y))
 					this.addBonusBox(x, y, this.rule.randomBonusEnable);
 			}
@@ -2094,7 +2094,7 @@ export default class Game extends Sprite {
 			(victim as AIPlayer).resetAITick();
 
 		// Set Respawn
-		var deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
+		let deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
 
 		victim.setXY(this.rule.deadPlayerMoveToX, this.rule.deadPlayerMoveToY);
 
@@ -2174,9 +2174,9 @@ export default class Game extends Sprite {
 	}
 
 	public onPlayerLevelup(player: Player): void {
-		var color: uint;
-		var i: uint = 0;
-		var nowE: uint = exMath.random(4);
+		let color: uint;
+		let i: uint = 0;
+		let nowE: uint = exMath.random(4);
 		// Add buff of cd,resistance,radius,damage
 		while (i < 3) {
 			switch (nowE) {
@@ -2237,11 +2237,11 @@ export default class Game extends Sprite {
 
 	//====Block Functions====//
 	protected colorSpawnerSpawnBlock(x: int, y: int): void {
-		var randomX: int = x + exMath.random1() * (exMath.random(3));
+		let randomX: int = x + exMath.random1() * (exMath.random(3));
 
-		var randomY: int = y + exMath.random1() * (exMath.random(3));
+		let randomY: int = y + exMath.random1() * (exMath.random(3));
 
-		var block: ColoredBlock = new ColoredBlock(exMath.random(0xffffff));
+		let block: ColoredBlock = new ColoredBlock(exMath.random(0xffffff));
 
 		if (!this.isOutOfMap(randomX, randomY) && this.isVoid(randomX, randomY)) {
 			this.setBlock(randomX, randomY, block);
@@ -2252,10 +2252,10 @@ export default class Game extends Sprite {
 	}
 
 	protected laserTrapShootLaser(x: int, y: int): void {
-		var randomRot: uint, rotX: number, rotY: number, laserLength: number;
+		let randomRot: uint, rotX: number, rotY: number, laserLength: number;
 		// add laser by owner=null
-		var p: LaserBasic;
-		var i: uint;
+		let p: LaserBasic;
+		let i: uint;
 		do {
 			randomRot = GlobalRot.getRandom();
 			rotX = PosTransform.alignToEntity(x) + GlobalRot.towardIntX(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
@@ -2290,10 +2290,10 @@ export default class Game extends Sprite {
 	}
 
 	protected moveableWallMove(x: int, y: int, block: BlockCommon): void {
-		var randomRot: uint, rotX: number, rotY: number, laserLength: number;
+		let randomRot: uint, rotX: number, rotY: number, laserLength: number;
 		// add laser by owner=null
-		var p: ThrownBlock;
-		var i: uint;
+		let p: ThrownBlock;
+		let i: uint;
 		do {
 			randomRot = GlobalRot.getRandom();
 			rotX = x + GlobalRot.towardXInt(randomRot);

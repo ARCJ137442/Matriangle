@@ -69,8 +69,8 @@ export default class EffectPlayerDeathLight extends EffectCommon {
 	}
 
 	override drawShape(): void {
-		var realRadiusX: number = SIZE / 2;
-		var realRadiusY: number = SIZE / 2;
+		let realRadiusX: number = SIZE / 2;
+		let realRadiusY: number = SIZE / 2;
 		graphics.clear();
 		graphics.lineStyle(LINE_SIZE, this._color);
 		graphics.moveTo(-realRadiusX, -realRadiusY);

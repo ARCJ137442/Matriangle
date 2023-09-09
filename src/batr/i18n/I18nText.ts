@@ -25,80 +25,80 @@ export default class I18nText {
 
 	//============Static Getter And Setter============//
 	public static getTextsByAllBlocks(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of BlockType._NORMAL_BLOCKS) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of BlockType._NORMAL_BLOCKS) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByAllEntities(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of EntityType._ALL_ENTITY) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of EntityType._ALL_ENTITY) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByAllEffects(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of EffectType._ALL_EFFECT) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of EffectType._ALL_EFFECT) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByAllAvailableTools(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of ToolType._ALL_AVAILABLE_TOOL) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of ToolType._ALL_AVAILABLE_TOOL) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByAllBonus(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of BonusType._ALL_TYPE) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of BonusType._ALL_TYPE) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByAllGameModes(translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var type of GameModeType._ALL_TYPE) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let type of GameModeType._ALL_TYPE) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByI18ns(translations: I18ns): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var t of I18ns.translationsList) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let t of I18ns.translationsList) {
 			result.push(new I18nText(translations, I18nKey.LANGUAGE));
 		}
 		return result;
 	}
 
 	public static getTextsByRuleTools(rule: GameRule, translations: I18ns, isDescription: boolean): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var i: uint = 0; i < rule.enableToolCount; i++) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let i: uint = 0; i < rule.enableToolCount; i++) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enableTools[i], isDescription)));
 		}
 		return result;
 	}
 
 	public static getTextsByLanguages(): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var i: uint = 0; i < I18ns.numI18ns; i++) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let i: uint = 0; i < I18ns.numI18ns; i++) {
 			result.push(new I18nText(I18ns.translationsList[i], I18nKey.LANGUAGE_SELF));
 		}
 		return result;
 	}
 
 	public static getTextsByMapNames(): I18nText[] {
-		var result: I18nText[] = new Array<I18nText>();
-		for (var i: uint = 0; i < Game.VALID_MAP_COUNT; i++) {
+		let result: I18nText[] = new Array<I18nText>();
+		for (let i: uint = 0; i < Game.VALID_MAP_COUNT; i++) {
 			result.push(new ForcedI18nText(null, null, Game.ALL_MAPS[i].name));
 		}
 		return result;

@@ -302,9 +302,9 @@ class Stat_PlayerCount {
 	}
 
 	public setPlayerValues2(params: Array): void {
-		var player: Player, count: uint;
+		let player: Player, count: uint;
 
-		for (var i: uint = 0; i < params.length - 1; i += 2) {
+		for (let i: uint = 0; i < params.length - 1; i += 2) {
 			player = params[i] as Player;
 
 			count = uint(params[i + 1]);
@@ -321,7 +321,7 @@ class Stat_PlayerCount {
 	}
 
 	public destructor(): void {
-		for (var p in this._dictionary) {
+		for (let p in this._dictionary) {
 			delete this._dictionary[p];
 		}
 		this._dictionary = null;

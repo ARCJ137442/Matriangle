@@ -47,8 +47,8 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
 	}
 
 	override drawShape(): void {
-		var realRadiusX: number = SIZE / 2;
-		var realRadiusY: number = SIZE / 2;
+		let realRadiusX: number = SIZE / 2;
+		let realRadiusY: number = SIZE / 2;
 		graphics.clear();
 		graphics.beginFill(this._color, ALPHA);
 		graphics.moveTo(-realRadiusX, -realRadiusY);
