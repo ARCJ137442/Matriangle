@@ -1,0 +1,1 @@
+import batrFla from './../batrFla';
