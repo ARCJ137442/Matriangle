@@ -1,5 +1,11 @@
-import BlockAttributes from "../block/BlockAttributes";
 import { BlockType } from "../block/BlockCommon";
+
+/**
+ * 【20230910 9:39:23】
+ * ! 注意：不能与`NativeBlockAttributes`的注册表合并
+ * * 因为此处是默认`NativeBlockAttributes`与「各方块类」都定义的，而import语句在TS只能前置
+ * * 不这样做会产生「循环依赖」问题
+ */
 
 //================Reexport Types================//
 import Bedrock from "../block/blocks/Bedrock";
@@ -50,50 +56,12 @@ export { default as XTrapKill } from "../block/blocks/XTrapKill";
 import XTrapRotate from "../block/blocks/XTrapRotate";
 export { default as XTrapRotate } from "../block/blocks/XTrapRotate";
 
-
-
-
-/**
- * Define all attributes that is used for classes of blocks
- * 
- * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
- * * So that it's unnecessarily to make a list to contain all of the attributes
- * 
- */
-export module NativeBlockAttributes {
-
-	export const VOID: BlockAttributes = new BlockAttributes(0xffffff, 0x0).asGas;
-	export const WALL: BlockAttributes = new BlockAttributes(0xBBBBBB).asSolid;
-	export const WATER: BlockAttributes = new BlockAttributes(0x2222FF, 0x40000000).asLiquid.asArenaBlock;
-	export const GLASS: BlockAttributes = new BlockAttributes(0x000000, 0x80000000).asTransparent.asArenaBlock;
-	export const BEDROCK: BlockAttributes = new BlockAttributes(0x888888).asSolid.asUnbreakable;
-
-	export const X_TRAP_HURT: BlockAttributes = new BlockAttributes(0xffff00, 0xc0000000).asGas.asHurtZone.asArenaBlock;
-	export const X_TRAP_KILL: BlockAttributes = new BlockAttributes(0xff0000, 0xc0000000).asGas.asKillZone.asArenaBlock;
-	export const X_TRAP_ROTATE: BlockAttributes = new BlockAttributes(0x0000ff, 0xc0000000).asGas.asRotateZone.asArenaBlock;
-
-	export const COLORED_BLOCK: BlockAttributes = new BlockAttributes(0x000000).asSolid;
-	export const COLOR_SPAWNER: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
-
-	export const LASER_TRAP: BlockAttributes = new BlockAttributes(0x444444).asSolid.asArenaBlock;
-	export const METAL: BlockAttributes = new BlockAttributes(0x666666).asSolid.asMetal.asArenaBlock;
-	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(0x6666ff).asBase;
-
-	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
-	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGate;
-
-	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
-
-	export const MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;
-
-}
-
 /**
  * Define all `BlockType` of the native block types in the game
+ * 定义所有游戏内置的方块类型
  * 
  * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
- * * 
- * 
+ * ! 方块类型和其属性的连接之间的连接，是方块实例的属性“attributes”
  */
 export module NativeBlockTypes {
 

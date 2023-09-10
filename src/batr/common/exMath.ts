@@ -161,6 +161,7 @@ export function randomFloat(x: number): number {
 }
 
 /**
+ * 生成一个[0,x)的无符号整数
  * @param	x	:int.
  * @return	:int
  */
@@ -172,16 +173,18 @@ export function random1(): int {
 	return Math.random() < 0.5 ? -1 : 1;
 }
 
-export function randomBetween(x: number, y: number): number {
-	let h: number = Math.max(x, y);
-	let l: number = Math.min(x, y);
-	return l + randInt(h - l);
+export function randomBetween(min: number, max: number): number {
+	return min + Math.random() * (max - min);
 }
 
-export function randIntBetween(x: int, y: int): int {
-	let h: int = intMax(x, y);
-	let l: int = intMin(x, y);
-	return l + Math.random() * (h - l);
+/**
+ * 获取一个在指定连续整数区间内的随机数
+ * @param min 最小值（含）
+ * @param max 最大值（不含）
+ * @returns [最小值, 最大值)内的随机整数
+ */
+export function randIntBetween(min: int, max: int): int {
+	return min + randInt(max - min);
 }
 
 export function isBetween(

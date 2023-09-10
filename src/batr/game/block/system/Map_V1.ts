@@ -38,23 +38,19 @@ export default class Map_V1 extends MapLogic_V1 implements IMap {
 		return new iPoint(int(s[0]), int(s[1]));
 	}
 
-	//============Constructor============//
+	//============Constructor & Destructor============//
 	public constructor(name: string, storage: IMapStorage, isArena: boolean = false) {
 		super(name, storage, isArena);
 	}
-	get logic(): IMapLogic {
-		return this as IMapLogic;
-	}
-	get storage(): IMapStorage {
-		throw new Error("Method not implemented.");
-	}
 
-	//============Destructor============//
 	override destructor(): void {
-		// this.storage.removeAllBlock(); // ! 存储结构可能共用，不能陪葬
+		// this.storage.clearBlock(); // ! 存储结构可能共用，不能陪葬
 		super.destructor();
 	}
 
 	//============Instance Getter And Setter============//
+
+	public get logic(): IMapLogic { return this }
+	// public get storage(): IMapStorage { return this._storage }
 
 }

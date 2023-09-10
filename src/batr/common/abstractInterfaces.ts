@@ -74,7 +74,7 @@ export interface IChildContainer<Child, Index> {
 	 * 删除所有子元素
 	 * * 实质上相当于`removeChildBy`+「true」
 	 */
-	removeAllChildren(): void;
+	clearChildren(): void;
 
 }
 
@@ -83,7 +83,7 @@ export interface IChildContainer<Child, Index> {
  * 定义一个「自修改生成器」
  * * 用于：根据自身状态与（可能的）外部参数，自我修改状态
  */
-export default interface ISelfModifyingGenerator<Type> {
+export interface ISelfModifyingGenerator<Type> {
 
 	/**
 	 * 根据自身对象与外部参数，修改自身并最终返回自身
@@ -91,4 +91,28 @@ export default interface ISelfModifyingGenerator<Type> {
 	 * @param args 外部参数（可在具体实现中限定更多）
 	 */
 	generateNext(...args: any[]): Type;
+}
+
+/**
+ * 定义一类「可序列化」成JS原生object的对象
+ */
+export interface IBatrJSobject {
+
+	/**
+	 * 将该对象转换为通用可交换的object格式
+	 * * 该格式最大地保留了可操作性，并可直接通过`JSON.stringify`方法转化为JSON文本
+	 * 
+	 * ! 对object键的限制：只能为字符串
+	 * 
+	 * ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
+	 */
+	toObject(): object;
+
+	/**
+	 * 用object中的属性覆盖对象
+	 * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
+	 * @param obj 源头对象
+	 */
+	copyFromObject(obj: object): void;
+
 }

@@ -21,13 +21,13 @@ import IMapStorage from "./IMapStorage";
 export default class MapLogic_V1 implements IMapLogic {
 
 	protected _name: string;
-	get name(): string { return this._name; }
+	public get name(): string { return this._name; }
 
 	protected _storage: IMapStorage;
-	get storage(): IMapStorage { return this._storage; }
+	public get storage(): IMapStorage { return this._storage; }
 
 	protected _isArena: boolean;
-	get isArenaMap(): boolean { return this._isArena; }
+	public get isArenaMap(): boolean { return this._isArena; }
 
 	//============Constructor & Destructor============//
 	public constructor(name: string, storage: IMapStorage, isArena: boolean = false) {
@@ -40,7 +40,7 @@ export default class MapLogic_V1 implements IMapLogic {
 	 * 析构函数：删除所有方块（的引用）
 	 */
 	public destructor(): void {
-		// this.removeAllBlock(); //! 现在「存储结构」可能是公用的，所以不能「跟着陪葬」
+		// this.clearBlock(); //! 现在「存储结构」可能是公用的，所以不能「跟着陪葬」
 	}
 
 	//============Interface Functions============//

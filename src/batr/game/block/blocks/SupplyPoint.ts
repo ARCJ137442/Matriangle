@@ -1,7 +1,7 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
-import { NativeBlockAttributes } from "../../registry/BlockRegistry";
+import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
 import BlockCommon from "../BlockCommon";
 
 export default class BlockSupplyPoint extends BlockCommon {

@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import { NativeBlockAttributes } from "../../registry/BlockRegistry";
+import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
 import BlockWall from "./Wall";
 
 export default class BlockBedrock extends BlockWall {

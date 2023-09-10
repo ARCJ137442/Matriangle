@@ -158,7 +158,7 @@ export default class NativeMapCommon implements IMap {
 		return;
 	}
 
-	public removeAllBlock(deleteBlock: boolean = true): void {
+	public clearBlock(deleteBlock: boolean = true): void {
 		return;
 	}
 

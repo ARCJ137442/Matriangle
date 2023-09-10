@@ -21,7 +21,7 @@ import IMapStorage from "../block/system/IMapStorage";
 import Map_V1 from "../block/system/Map_V1";
 import { fillBlock, setBlock, drawLaserTrapDownPillar, drawLaserTrapUpPillar, fillReflectBlock, setReflectBlock, fillReflectMirrorBlock, setReflectMirrorBlock, addSpawnPointWithMark } from "../block/system/maps/MapConstructTools";
 import MapStorageSparse from "../block/system/storage/MapStorageSparse";
-import { NativeBlockTypes } from "./BlockRegistry";
+import { NativeBlockTypes } from "./BlockTypeRegistry";
 
 /**
  * 定义所有游戏原生（自带）的地图

@@ -19,7 +19,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 
 	//============Destructor Function============//
 	public destructor(): void {
-		this.removeAllBlock();
+		this.clearBlock();
 	}
 
 	//============Interface Functions============//
@@ -60,7 +60,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 		}
 	}
 
-	public removeAllBlock(): void {
+	public clearBlock(): void {
 		let b: BlockCommon;
 		for (let i: int = this.numChildren - 1; i >= 0; i--) {
 			b = this.getBlockAsChildAt(i);

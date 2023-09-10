@@ -1,6 +1,6 @@
 
 
-import ISelfModifyingGenerator from "../../../common/abstractInterfaces";
+import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
 import { iPoint } from "../../../common/intPoint";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
@@ -50,25 +50,28 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	get randomPoint(): iPoint;
 
 	/**
-	 * 【对接游戏、显示】获取地图上每个有效位置
-	 * * 用于地图的复制或遍历
+	 * 【对接游戏、显示】遍历地图上每个有效位置
+	 * * 用于地图的复制等
 	 * * 或将用于显示模块的非密集型处理
+	 * 
+	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
+	 * @param args ：用于在回调后附加的其它参数
 	 */
-	get allValidPositions(): iPoint[];
+	forEachValidPositions(f: (x: int, y: int, ...args: any[]) => void, ...args: any[]): void;
 
 	/**
 	 * 复制地图本身
-	 * @param createBlock 是否为深拷贝，即「复制所有其内的方块对象，而非仅复制引用」
+	 * @param deep 是否为深拷贝，即「复制所有其内的方块对象，而非仅复制引用」
 	 */
-	clone(createBlock?: boolean/* = true*/): IMapStorage;
+	clone(deep?: boolean/* = true*/): IMapStorage;
 
 	/**
 	 * 从另一个地图中复制所有内容（方块）
 	 * @param source 复制的来源
 	 * @param clearSelf 是否先清除自身（调用「清除方法」）
-	 * @param createBlock 是否为深拷贝
+	 * @param deep 是否为深拷贝
 	 */
-	copyContentFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;
+	copyContentFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, deep?: boolean/* = true*/): void;
 
 	/**
 	 * 从另一个地图中复制所有属性（包括「内容」）
@@ -89,11 +92,15 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	/**
 	 * 【对接游戏】生成下一个地图变种
 	 * * 对于「使用随机方式生成的地图」，这种方法用于动态刷新地图对象
+	 * * 【20230910 10:46:13】现在实现「自修改式生成器」，不再需要自行定义
 	 */
-	generateNew(): IMapStorage;
+	// generateNew(): IMapStorage;
 
 	/**
 	 * 获取地图上某位置「是否有方块」（与「VOID」对象兼容）
+	 * ! 原则上只需用于判断`getBlock`是否能获取到`BLockCommon`的实例
+	 * * 不要用于和`getBlock`无关的内容
+	 * 
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
@@ -154,7 +161,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * ! 对其中的「方块对象」调用析构函数，可能会因「改变其引用」而导致难以预料的后果
 	 * @param deleteBlock 是否在方块对象上调用析构函数
 	 */
-	removeAllBlock(deleteBlock?: boolean/* = true*/): void;
+	clearBlocks(deleteBlock?: boolean/* = true*/): void;
 
 	/**
 	 * 【机制需要】获取所有重生点的位置

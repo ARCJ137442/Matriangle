@@ -39,7 +39,7 @@ export default class EffectSystem {
 
 	//============Destructor Function============//
 	public destructor(): void {
-		this.removeAllEffect();
+		this.clearEffect();
 		this._effects = null;
 
 		this._host = null;
@@ -195,7 +195,7 @@ export default class EffectSystem {
 		Utils.removeChildIfContains(this._host.effectContainerTop, effect);
 	}
 
-	public removeAllEffect(): void {
+	public clearEffect(): void {
 		while (this._effects.length > 0) {
 			this.removeEffect(this._effects[0]);
 		}

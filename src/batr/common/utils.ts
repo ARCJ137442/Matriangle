@@ -44,7 +44,7 @@ export function removeChildIfContains(parent: DisplayObjectContainer, child: Dis
 		parent.removeChild(child);
 }
 
-export function removeAllChildren(container: DisplayObjectContainer): void {
+export function clearChildren(container: DisplayObjectContainer): void {
 	while (container.numChildren > 0) {
 		container.removeChildAt(0);
 	}

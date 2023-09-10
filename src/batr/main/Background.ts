@@ -4,7 +4,7 @@
 // import batr.game.block.blocks.*;
 
 import BlockCommon from "../game/block/BlockCommon";
-import { Bedrock } from "../game/registry/BlockRegistry";
+import { Bedrock } from "../game/registry/BlockTypeRegistry";
 import { uint, int } from "../legacy/AS3Legacy";
 import { DisplayObject } from "../legacy/flash/display";
 import { DEFAULT_SIZE } from "../display/GlobalDisplayVariables";

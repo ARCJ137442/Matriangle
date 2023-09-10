@@ -1,4 +1,5 @@
 import intPoint from "../../../common/intPoint";
+import { int, uint } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon from "../BlockCommon";
 import IMap from "./IMap";
@@ -13,43 +14,46 @@ import IMapStorage from "./IMapStorage";
  * ? 使用抽象类，但不实现：把实现的方法用「抽象方法」丢给其子类实现
  */
 export default abstract class MapIntegrated implements IMap, IMapLogic, IMapStorage {
+	public abstract generatorF: (x: IMapStorage) => IMapStorage;
+	public abstract generateNext(...args: any[]): IMapStorage;
 
 	// 实现逻辑结构
 	public abstract get name(): string;
 	public abstract get isArenaMap(): boolean;
-	public abstract getBlockPlayerDamage(x: number, y: number): number;
-	public abstract isKillZone(x: number, y: number): boolean;
+	public abstract getBlockPlayerDamage(x: int, y: int): int;
+	public abstract isKillZone(x: int, y: int): boolean;
 
 	// 实现存储结构
-	public abstract get mapWidth(): number;
-	public abstract get mapHeight(): number;
-	public abstract getMapSize(dim: number): number;
-	public abstract get randomX(): number;
-	public abstract get randomY(): number;
+	public abstract get mapWidth(): int;
+	public abstract get mapHeight(): int;
+	public abstract getMapSize(dim: int): int;
+	public abstract get randomX(): int;
+	public abstract get randomY(): int;
 	public abstract get randomPoint(): intPoint;
-	public abstract get allValidPositions(): intPoint[];
+	public abstract forEachValidPositions(f: (x: int, y: int, ...args: any[]) => void, ...args: any[]): void;
 	public abstract clone(createBlock?: boolean | undefined): IMapStorage;
 	public abstract copyContentFrom(source: IMapStorage, clearSelf?: boolean | undefined, createBlock?: boolean | undefined): void;
 	public abstract copyFrom(source: IMapStorage, clearSelf?: boolean | undefined, createBlock?: boolean | undefined): void;
 	public abstract generateNew(): IMapStorage;
-	public abstract hasBlock(x: number, y: number): boolean;
-	public abstract getBlock(x: number, y: number): BlockCommon | null;
-	public abstract getBlockAttributes(x: number, y: number): BlockAttributes | null;
-	public abstract getBlockType(x: number, y: number): Function | null;
-	public abstract setBlock(x: number, y: number, block: BlockCommon): void;
-	public abstract isVoid(x: number, y: number): boolean;
-	public abstract setVoid(x: number, y: number): void;
-	public abstract removeAllBlock(deleteBlock?: boolean | undefined): void;
+	public abstract hasBlock(x: int, y: int): boolean;
+	public abstract getBlock(x: int, y: int): BlockCommon | null;
+	public abstract getBlockAttributes(x: int, y: int): BlockAttributes | null;
+	public abstract getBlockType(x: int, y: int): Function | null;
+	public abstract setBlock(x: int, y: int, block: BlockCommon): void;
+	public abstract isVoid(x: int, y: int): boolean;
+	public abstract setVoid(x: int, y: int): void;
+	public abstract clearBlocks(deleteBlock?: boolean | undefined): void;
 	public abstract get spawnPoints(): intPoint[];
-	public abstract get numSpawnPoints(): number;
+	public abstract get numSpawnPoints(): uint;
 	public abstract get hasSpawnPoint(): boolean;
 	public abstract get randomSpawnPoint(): intPoint;
-	public abstract addSpawnPointAt(x: number, y: number): void;
-	public abstract removeSpawnPoint(x: number, y: number): void;
+	public abstract hasSpawnPointAt(x: int, y: int): boolean;
+	public abstract addSpawnPointAt(x: int, y: int): void;
+	public abstract removeSpawnPoint(x: int, y: int): void;
 	public abstract clearSpawnPoints(): void;
 	public abstract getMatrixObject(): Object[][];
-	public abstract getMatrixInt(): number[][];
-	public abstract getMatrixUint(): number[][];
+	public abstract getMatrixInt(): int[][];
+	public abstract getMatrixUint(): uint[][];
 	public abstract getMatrixNumber(): Number[][];
 	public abstract getMatrixBoolean(): Boolean[][];
 
@@ -57,14 +61,14 @@ export default abstract class MapIntegrated implements IMap, IMapLogic, IMapStor
 	 * 直接返回自身，因为自身「即是逻辑结构，又是存储结构」
 	 */
 	public get logic(): IMapLogic {
-		return this as IMapLogic;
+		return this;
 	}
 
 	/**
 	 * 直接返回自身，因为自身「即是逻辑结构，又是存储结构」
 	 */
 	public get storage(): IMapStorage {
-		return this as IMapStorage;
+		return this;
 	}
 
 	/**

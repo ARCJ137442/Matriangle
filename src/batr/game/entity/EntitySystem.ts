@@ -46,7 +46,7 @@ export default class EntitySystem {
 
 	//============Destructor Function============//
 	public destructor(): void {
-		this.removeAllEntity();
+		this.clearEntity();
 		this._entities = null;
 
 		this._players = null;
@@ -271,7 +271,7 @@ export default class EntitySystem {
 	/**
 	 * Remove All Entity!
 	 */
-	public removeAllEntity(): void {
+	public clearEntity(): void {
 		while (this._entities.length > 0) {
 			this.removeEntity(this._entities[0]);
 		}
@@ -316,7 +316,7 @@ export default class EntitySystem {
 		this.removeEntity(player);
 	}
 
-	public removeAllPlayer(): void {
+	public clearPlayer(): void {
 		while (this._players.length > 0) {
 			this.removePlayer(this._players[0]);
 		}
@@ -358,7 +358,7 @@ export default class EntitySystem {
 		this.removeEntity(projectile);
 	}
 
-	public removeAllProjectile(): void {
+	public clearProjectile(): void {
 		while (this._projectiles.length > 0) {
 			this.removeProjectile(this._projectiles[0]);
 		}
@@ -400,7 +400,7 @@ export default class EntitySystem {
 		this.removeEntity(bonusBox);
 	}
 
-	public removeAllBonusBox(): void {
+	public clearBonusBox(): void {
 		while (this._bonusBoxes.length > 0) {
 			this.removeBonusBox(this._bonusBoxes[0]);
 		}

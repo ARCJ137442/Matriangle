@@ -52,7 +52,7 @@ import ProjectileCommon from "../entity/entities/projectile/ProjectileCommon";
 import ShockWaveBase from "../entity/entities/projectile/ShockWaveBase";
 import SubBomber from "../entity/entities/projectile/SubBomber";
 import ThrownBlock from "../entity/entities/projectile/ThrownBlock";
-import { MoveableWall } from "../registry/BlockRegistry";
+import { MoveableWall } from "../registry/BlockTypeRegistry";
 import BonusType from "../registry/BonusRegistry";
 import ToolType from "../registry/ToolType";
 import GameRule from "../rule/GameRule";
@@ -627,11 +627,11 @@ export default class Game extends Sprite {
 		this._map = null;
 		this.forceMapDisplay();
 		this.updateMapSize(false);
-		this.removeAllPlayer(false);
+		this.clearPlayer(false);
 		// Entity
-		this._entitySystem.removeAllEntity(); // NonPlayer Entity
+		this._entitySystem.clearEntity(); // NonPlayer Entity
 		// Effect
-		this._effectSystem.removeAllEffect();
+		this._effectSystem.clearEffect();
 		// Return
 		return true;
 	}
@@ -1228,9 +1228,9 @@ export default class Game extends Sprite {
 
 	public forceMapDisplay(): void {
 		if (this._map == null) {
-			this._mapDisplayerBottom.removeAllBlock();
-			this._mapDisplayerMiddle.removeAllBlock();
-			this._mapDisplayerTop.removeAllBlock();
+			this._mapDisplayerBottom.clearBlock();
+			this._mapDisplayerMiddle.clearBlock();
+			this._mapDisplayerTop.clearBlock();
 		}
 		else
 			this._map.forceDisplayToLayers(this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
@@ -1330,8 +1330,8 @@ export default class Game extends Sprite {
 	}
 
 	public transformMap(destination: IMap = null): void {
-		this._entitySystem.removeAllProjectile();
-		this._entitySystem.removeAllBonusBox();
+		this._entitySystem.clearProjectile();
+		this._entitySystem.clearBonusBox();
 		if (destination == null)
 			this.loadMap(false, true, true);
 		else
@@ -1905,13 +1905,13 @@ export default class Game extends Sprite {
 		return point;
 	}
 
-	public removeAllPlayer(onlyDisplay: boolean = false): void {
+	public clearPlayer(onlyDisplay: boolean = false): void {
 		// Display
 		while (this._playerContainer.numChildren > 0)
 			this._playerContainer.removeChildAt(0);
 		// Entity
 		if (!onlyDisplay)
-			this._entitySystem.removeAllPlayer();
+			this._entitySystem.clearPlayer();
 	}
 
 	//======Entity Functions======//

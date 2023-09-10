@@ -1,14 +1,14 @@
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
-import { NativeBlockAttributes } from "../../registry/BlockRegistry";
 import BlockCommon from "../BlockCommon";
 import BlockBedrock from "./Bedrock";
+import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
 
 export default class BlockColorSpawner extends BlockCommon {
 	//============Static Variables============//
-	public static readonly LINE_COLOR: uint = BlockBedrock.LINE_COLOR;
-	public static readonly FILL_COLOR: uint = BlockBedrock.FILL_COLOR;
+	public static readonly LINE_COLOR: uint = 0x999999;
+	public static readonly FILL_COLOR: uint = 0xaaaaaa;
 	public static readonly CENTER_COLOR: uint = 0x444444;
 
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;

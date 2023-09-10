@@ -65,8 +65,8 @@ export default class batrFla extends MovieClip {
 				break;
 			// C: remove all projectiles/effects
 			case KeyCode.C:
-				if (shift) sub.gameObj.effectSystem.removeAllEffect();
-				else sub.gameObj.entitySystem.removeAllProjectile();
+				if (shift) sub.gameObj.effectSystem.clearEffect();
+				else sub.gameObj.entitySystem.clearProjectile();
 				break;
 			// V: change tools
 			case KeyCode.V:
@@ -76,7 +76,7 @@ export default class batrFla extends MovieClip {
 			// B: control bonus boxes
 			case KeyCode.B:
 				if (ctrl) sub.gameObj.fillBonusBox();
-				else if (shift) sub.gameObj.entitySystem.removeAllBonusBox();
+				else if (shift) sub.gameObj.entitySystem.clearBonusBox();
 				else sub.gameObj.randomAddRandomBonusBox();
 				break;
 			// ENTER: deal game tick

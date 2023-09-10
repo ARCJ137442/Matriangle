@@ -27,7 +27,7 @@ export default class CommonSystem<T> {
 
 	//============Destructor Function============//
 	public destructor(): void {
-		this.removeAll();
+		this.clear();
 		this._entries = [];
 	}
 
@@ -135,7 +135,7 @@ export default class CommonSystem<T> {
 	/**
 	 * Remove All Entry!
 	 */
-	public removeAll(): void {
+	public clear(): void {
 		for (let i: uint = 0; i < this._entries.length; i++)
 			delete this._entries[i];
 		this._temp_numEntries = 0;
