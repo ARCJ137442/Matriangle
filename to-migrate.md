@@ -12,7 +12,7 @@
   - [x] fonts
     - [x] \MainFont.ts
   - [ ] game
-    - [ ] block
+    - [x] block
       - [x] BlockAttributes.ts
       - [x] BlockCommon.ts
       - [x] RotatableBlock.ts
@@ -30,15 +30,15 @@
         - [x] Wall.ts
         - [x] Water.ts
         - [x] XTrap.ts
-      - [ ] system
-        - [ ] IMap.ts
-        - [ ] IMapDisplayer.ts
-        - [ ] IMapGenerator.ts
-        - [ ] main
-          - [ ] Map_V1.ts
-          - [ ] MapDisplayer.ts
-          - [ ] MapGenerator.ts
-          - [ ] NativeMapCommon.ts
+      - [x] system
+        - [x] IMap.ts
+        - [x] IMapDisplayer.ts
+        - [x] IMapGenerator.ts
+        - [x] main
+          - [x] Map_V1.ts
+          - [x] MapDisplayer.ts
+          - [x] MapGenerator.ts
+          - [x] NativeMapCommon.ts
     - [ ] effect
       - [ ] EffectCommon.ts
       - [ ] EffectSystem.ts

@@ -3,7 +3,7 @@
     "compilerOptions": {
         "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "target": "es5",
+        "target": "es2015",
         "module": "commonjs",
         "outDir": "./dist",
         "sourceMap": true, // 生成代码映射，以允许直接从JS开始调试

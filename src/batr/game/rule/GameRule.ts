@@ -594,7 +594,7 @@ public get mapWeightsByGame(): number[] {
 	let wv: number[] = new Array<Number>(Game.ALL_MAPS.length);
 
 	for (let i: uint = 0; i <= Game.ALL_MAPS.length; i++) {
-		for (let map: object in this.mapRandomPotentials) {
+		for (let map in this.mapRandomPotentials) {
 			if (map.map == Game.ALL_MAPS[i]) {
 				wv[i] = map.weight;
 			}

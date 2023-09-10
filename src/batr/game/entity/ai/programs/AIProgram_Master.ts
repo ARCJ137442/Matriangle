@@ -118,7 +118,7 @@ export default class AIProgram_Master implements IAIProgram {
 
 	protected resetRemember(): void {
 		for (let v of this._remember) {
-			for (let i: string in v) {
+			for (let i in v) {
 				v[i] = false;
 			}
 		}

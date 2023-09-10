@@ -136,7 +136,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
 	if (nodes.indexOf(node) >= 0)
 		return true;
-	for (let i: string in nodes) {
+	for (let i in nodes) {
 		if (node.equals(nodes[i]))
 			return true;
 	}
@@ -299,7 +299,7 @@ protected initRemember(host: Game): void {
 
 protected resetRemember(): void {
 	for(let v of this._remember) {
-	for (let i: string in v) {
+	for (let i in v) {
 		v[i] = false;
 	}
 }

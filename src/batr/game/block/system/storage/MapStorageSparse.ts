@@ -351,7 +351,7 @@ export default class MapStorageSparse implements IMapStorage {
     // public setDisplayTo(target: IMapDisplayer): void {
     // 	target.clearBlock();
     // 	let ix: int, iy: int, iBlock: BlockCommon;
-    // 	for (let index: string in this._Content) {
+    // 	for (let index in this._Content) {
     // 		iBlock = this.storage.getBlock(ix, iy);
     // 		target.setBlock(ix, iy, iBlock);
     // 	}
@@ -363,7 +363,7 @@ export default class MapStorageSparse implements IMapStorage {
     // 	targetTop.clearBlock();
     // 	let ix: int, iy: int, iBlock: BlockCommon, iLayer: int;
 
-    // 	for (let index: string in this._Content) {
+    // 	for (let index in this._Content) {
     // 		ix = Map_V1.indexToPoint(index).x;
 
     // 		iy = Map_V1.indexToPoint(index).y;

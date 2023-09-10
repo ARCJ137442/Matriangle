@@ -1071,7 +1071,7 @@ export default class Game extends Sprite {
 
 	public lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void {
 		let p: Player, d: uint;
-		for (let i: any in players) {
+		for (let i in players) {
 			p = players[i];
 			d = damages[i];
 			if (p != null)
