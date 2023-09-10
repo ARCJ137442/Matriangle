@@ -1,5 +1,10 @@
 {
   "dependencies": {
     "os-locale": "^6.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.15",
+    "@babel/core": "^7.22.17",
+    "@babel/preset-env": "^7.22.15"
   }
 }
