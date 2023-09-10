@@ -13,10 +13,6 @@ export default class BlockMetal extends BlockWall {
 		this._attributes = NativeBlockAttributes.METAL
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockMetal(this._lineColor, this._color);
 	}

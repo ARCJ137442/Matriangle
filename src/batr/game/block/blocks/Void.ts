@@ -19,10 +19,6 @@ export default class BlockVoid extends BlockCommon {
 		super(NativeBlockAttributes.VOID);
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockVoid();
 	}

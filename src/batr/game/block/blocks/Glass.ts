@@ -13,10 +13,6 @@ export default class BlockGlass extends BlockColored {
 		this._attributes = NativeBlockAttributes.GLASS;
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockGlass(this._color);
 	}

@@ -17,10 +17,6 @@ export default class BlockWater extends BlockColored {
 		this._attributes = NativeBlockAttributes.WATER;
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockWater(this._color);
 	}

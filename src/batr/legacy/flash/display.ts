@@ -21,5 +21,9 @@ export abstract class DisplayObjectContainer extends InteractiveObject {
     abstract get numChildren(): uint
 }
 
+export abstract class Shape extends DisplayObject { }
+export abstract class Sprite extends DisplayObjectContainer { }
+export abstract class MovieClip extends DisplayObjectContainer { }
+
 export abstract class Stage extends DisplayObjectContainer {
 }

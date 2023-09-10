@@ -31,17 +31,18 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 */
 	getMapSize(dim: uint): uint;
 
-	/**
-	 * 【对接游戏】获取地图中的一个（有效）随机x坐标
-	 * ! 与另一个维度上的坐标无关
-	*/
-	get randomX(): int;
+	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标
+	// /**
+	//  * 【对接游戏】获取地图中的一个（有效）随机x坐标
+	//  * ! 与另一个维度上的坐标无关
+	// */
+	// get randomX(): int;
 
-	/**
-	 * 【对接游戏】获取地图中的一个（有效）随机x坐标
-	 * ! 与另一个维度上的坐标无关
-	 */
-	get randomY(): int;
+	// /**
+	//  * 【对接游戏】获取地图中的一个（有效）随机x坐标
+	//  * ! 与另一个维度上的坐标无关
+	//  */
+	// get randomY(): int;
 
 	/**
 	 * 【对接游戏】获取地图上的一个（有效）随机位置

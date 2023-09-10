@@ -26,10 +26,6 @@ export default class BlockSpawnPointMark extends BlockCommon {
 		super(NativeBlockAttributes.SPAWN_POINT_MARK);
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockSpawnPointMark();
 	}

@@ -21,7 +21,6 @@ import BlockAttributes from "../block/BlockAttributes";
 import BlockCommon, { BlockType } from "../block/BlockCommon";
 import IMap from "../block/system/IMap";
 import IMapDisplayer from "../../display/map/IMapDisplayer";
-import MapDisplayer from "../../display/map/MapDisplayerFlash";
 import Map_V1 from "../block/system/Map_V1";
 import EffectCommon from "../effect/EffectCommon";
 import EffectSystem from "../effect/EffectSystem";
@@ -59,41 +58,9 @@ import GameRule from "../rule/GameRule";
 import GameRuleEvent from "../rule/GameRuleEvent";
 import GameResult from "../stat/GameResult";
 import GameStats from "../stat/GameStats";
+import IBatrGame from "./IBatrGame";
 
-// import batr.game.block.*;
-// import batr.game.block.blocks.*;
-
-// import batr.game.effect.*;
-// import batr.game.effect.effects.*;
-
-// import batr.game.entity.*;
-// import batr.game.entity.object.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.entity.projectile.*;
-
-// import batr.game.main.*;
-// import batr.game.map.*;
-// import batr.game.map.main.*;
-// import batr.game.model.*;
-// import batr.game.events.*;
-
-// import batr.menu.events.*;
-// import batr.menu.main.*;
-// import batr.menu.object.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.display.*;
-// import flash.text.*;
-// import flash.utils.*;
-// import flash.events.*;
-// import flash.geom.*;
-// import flash.system.fscommand;
-
-export default class Game extends Sprite {
+export default class Game implements IBatrGame {
 	//============Static Variables============//
 	public static readonly ALL_MAPS: IMap[] = [
 		Map_V1.EMPTY,
@@ -2227,81 +2194,5 @@ export default class Game extends Sprite {
 		this.updateMapDisplay(x, y, block);
 		this.updateMapSize();
 		this.moveInTestWithEntity();
-	}
-
-	//====Block Functions====//
-	protected colorSpawnerSpawnBlock(x: int, y: int): void {
-		let randomX: int = x + exMath.random1() * (exMath.random(3));
-
-		let randomY: int = y + exMath.random1() * (exMath.random(3));
-
-		let block: ColoredBlock = new ColoredBlock(exMath.random(0xffffff));
-
-		if (!this.isOutOfMap(randomX, randomY) && this.isVoid(randomX, randomY)) {
-			this.setBlock(randomX, randomY, block);
-
-			// Add Effect
-			this.addBlockLightEffect2(PosTransform.alignToEntity(randomX), PosTransform.alignToEntity(randomY), block, false);
-		}
-	}
-
-	protected laserTrapShootLaser(x: int, y: int): void {
-		let randomRot: uint, rotX: number, rotY: number, laserLength: number;
-		// add laser by owner=null
-		let p: LaserBasic;
-		let i: uint;
-		do {
-			randomRot = GlobalRot.getRandom();
-			rotX = PosTransform.alignToEntity(x) + GlobalRot.towardIntX(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-			rotY = PosTransform.alignToEntity(y) + GlobalRot.towardIntY(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-			if (isOutOfMap(rotX, rotY))
-				continue;
-			laserLength = getLaserLength2(rotX, rotY, randomRot);
-			if (laserLength <= 0)
-				continue;
-			switch (exMath.random(4)) {
-				case 1:
-					p = new LaserTeleport(this, rotX, rotY, null, laserLength);
-					break;
-				case 2:
-					p = new LaserAbsorption(this, rotX, rotY, null, laserLength);
-					break;
-				case 3:
-					p = new LaserPulse(this, rotX, rotY, null, laserLength);
-					break;
-				default:
-					p = new LaserBasic(this, rotX, rotY, null, laserLength, 1);
-					break;
-			}
-			if (p != null) {
-				p.rot = randomRot;
-				this.entitySystem.registerProjectile(p);
-				this._projectileContainer.addChild(p);
-				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
-			}
-		}
-		while (laserLength <= 0 && ++i < 0x10);
-	}
-
-	protected moveableWallMove(x: int, y: int, block: BlockCommon): void {
-		let randomRot: uint, rotX: number, rotY: number, laserLength: number;
-		// add laser by owner=null
-		let p: ThrownBlock;
-		let i: uint;
-		do {
-			randomRot = GlobalRot.getRandom();
-			rotX = x + GlobalRot.towardXInt(randomRot);
-			rotY = y + GlobalRot.towardYInt(randomRot);
-			if (this.isIntOutOfMap(rotX, rotY) || !this.testIntCanPass(rotX, rotY, false, true, false, false))
-				continue;
-			p = new ThrownBlock(this, PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), null, block.clone(), randomRot, Math.random());
-			this.setVoid(x, y);
-			this.entitySystem.registerProjectile(p);
-			this._projectileContainer.addChild(p);
-			// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
-			if (!(block instanceof MoveableWall && (block as MoveableWall).virus))
-				break;
-		}
-		while (++i < 0x10);
 	}
 }

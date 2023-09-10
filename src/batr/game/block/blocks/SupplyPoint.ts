@@ -28,10 +28,6 @@ export default class BlockSupplyPoint extends BlockCommon {
 		super(NativeBlockAttributes.SUPPLY_POINT);
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockSupplyPoint();
 	}

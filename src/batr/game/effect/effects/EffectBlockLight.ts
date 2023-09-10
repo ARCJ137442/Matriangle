@@ -45,9 +45,6 @@ export default class EffectBlockLight extends EffectCommon {
 	}
 
 	//============Destructor Function============//
-	override destructor(): void {
-		super.destructor();
-	}
 
 	//============Instance Getter And Setter============//
 	override get type(): EffectType {

@@ -6,6 +6,13 @@ import BlockCommon from "../BlockCommon";
 import BlockBedrock from "./Bedrock";
 import BlockColorSpawner from "./ColorSpawner";
 import BlockWall from "./Wall";
+import IBatrGame from "../../main/IBatrGame";
+import LaserAbsorption from "../../entity/entities/projectile/LaserAbsorption";
+import LaserBasic from "../../entity/entities/projectile/LaserBasic";
+import LaserPulse from "../../entity/entities/projectile/LaserPulse";
+import LaserTeleport from "../../entity/entities/projectile/LaserTeleport";
+import { alignToEntity } from "../../../general/PosTransform";
+import { getRandom } from "../../../general/GlobalRot";
 
 export default class BlockLaserTrap extends BlockCommon {
 	//============Static Variables============//
@@ -28,12 +35,55 @@ export default class BlockLaserTrap extends BlockCommon {
 		super(NativeBlockAttributes.LASER_TRAP);
 	}
 
-	override destructor(): void {
-		super.destructor();
-	}
-
 	override clone(): BlockCommon {
 		return new BlockLaserTrap();
+	}
+
+	//============Game Mechanics============//
+
+	/**
+	 * 原`laserTrapShootLaser`
+	 * @param host 调用的游戏主体
+	 * @param sourceX 被调用方块的x坐标
+	 * @param sourceY 被调用方块的y坐标
+	 */
+	public override onRandomTick(host: IBatrGame, sourceX: number, sourceY: number): void {
+
+		let randomRot: uint, rotX: number, rotY: number, laserLength: number;
+		// add laser by owner=null
+		let p: LaserBasic;
+		let i: uint;
+		do {
+			randomRot = getRandom();
+			rotX = alignToEntity(x) + GlobalRot.towardIntX(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			rotY = alignToEntity(y) + GlobalRot.towardIntY(randomRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			if (isOutOfMap(rotX, rotY))
+				continue;
+			laserLength = getLaserLength2(rotX, rotY, randomRot);
+			if (laserLength <= 0)
+				continue;
+			switch (exMath.random(4)) {
+				case 1:
+					p = new LaserTeleport(this, rotX, rotY, null, laserLength);
+					break;
+				case 2:
+					p = new LaserAbsorption(this, rotX, rotY, null, laserLength);
+					break;
+				case 3:
+					p = new LaserPulse(this, rotX, rotY, null, laserLength);
+					break;
+				default:
+					p = new LaserBasic(this, rotX, rotY, null, laserLength, 1);
+					break;
+			}
+			if (p != null) {
+				p.rot = randomRot;
+				this.entitySystem.registerProjectile(p);
+				this._projectileContainer.addChild(p);
+				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
+			}
+		}
+		while (laserLength <= 0 && ++i < 0x10);
 	}
 
 	//============Display Implements============//

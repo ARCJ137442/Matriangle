@@ -33,8 +33,8 @@ export default class ThrownBlock extends ProjectileCommon {
 
 	//============Constructor & Destructor============//
 	public constructor(host: Game, x: number, y: number,
-		owner: Player, block: BlockCommon,
-		rot: uint, chargePercent: number = 1): void {
+		owner: Player | null, block: BlockCommon,
+		rot: uint, chargePercent: number = 1) {
 		super(host, x, y, owner);
 		this._carriedBlock = block;
 
