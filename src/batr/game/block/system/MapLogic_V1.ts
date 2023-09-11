@@ -3,8 +3,12 @@
 // import batr.general.*;
 // import batr.game.block.blocks.XTrap;
 
-import { uint, int, int$MAX_VALUE } from "../../../legacy/AS3Legacy";
+import { intPoint } from "../../../common/geometricTools";
+import { int, int$MAX_VALUE } from "../../../legacy/AS3Legacy";
+import EntityCommon from "../../entity/EntityCommon";
+import Player from "../../entity/entities/player/Player";
 import BlockAttributes from "../BlockAttributes";
+import IMap from "./IMap";
 import IMapLogic from "./IMapLogic";
 import IMapStorage from "./IMapStorage";
 
@@ -46,14 +50,14 @@ export default class MapLogic_V1 implements IMapLogic {
 	//============Interface Functions============//
 
 	public getBlockPlayerDamage(x: int, y: int, defaultValue: int = 0): int {
-		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(x, y);
+		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes_2d(x, y);
 		if (blockAtt != null)
 			return blockAtt.playerDamage;
 		return defaultValue;
 	}
 
 	public isKillZone(x: int, y: int, defaultValue: boolean = false): boolean {
-		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(x, y);
+		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes_2d(x, y);
 		if (blockAtt != null)
 			return blockAtt.playerDamage == int$MAX_VALUE;
 		return defaultValue;

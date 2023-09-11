@@ -314,4 +314,9 @@ export function identity<T>(x: T): T {
 	return x;
 }
 
-identity(1)
+export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> {
+	let arr: Array<T> = new Array<T>(length);
+	for (let i = 0; i < length; i++)
+		arr[i] = f(i);
+	return arr;
+}

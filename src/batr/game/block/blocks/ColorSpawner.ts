@@ -35,6 +35,8 @@ export default class BlockColorSpawner extends BlockCommon {
 
 	/**
 	 * 原`colorSpawnerSpawnBlock`
+	 * TODO: 此举引入「游戏本体」与「实体实例」，已经扰乱了导入依赖
+	 * ? 要如何向外迁移？
 	 */
 	public override onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
 		// ? 是否还是要用高开销的「自定义对象」呢？不好扩展又性能妨碍
@@ -42,7 +44,7 @@ export default class BlockColorSpawner extends BlockCommon {
 		let x: int = randomPoint.x;
 		let y: int = randomPoint.y;
 		let block: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-		if (!host.map.logic.isOutOfMap(x, y) && host.map.storage.isVoid(x, y)) {
+		if (!host.map.logic.isInMap_F2d(x, y) && host.map.storage.isVoid_2d(x, y)) {
 			host.setBlock(x, y, block); // * 后续游戏需要处理「方块更新事件」
 			host.addBlockLightEffect2(
 				alignToEntity(x),

@@ -115,8 +115,8 @@ export module NativeMaps {
         let ix: int, iy: int;
         while (--randNum > 0) {
             ix = storage.randomX, iy = storage.randomY;
-            if (storage.getBlockType(ix, iy) == NativeBlockTypes.BEDROCK) {
-                storage.setVoid(ix, iy);
+            if (storage.getBlockType_2d(ix, iy) == NativeBlockTypes.BEDROCK) {
+                storage.setVoid_2d(ix, iy);
             } /*
 					else if(Utils.randomBoolean()) {
 						if(Utils.randomBoolean(1,3)) {
@@ -128,7 +128,7 @@ export module NativeMaps {
 					}*/
             else {
                 randType = randomIn(NativeBlockTypes.ALL_NATIVE_BLOCKS);
-                storage.setBlock(ix, iy, (randType as any).randomInstance(randType)); // ! 一定是BlockCommon的子类型
+                storage.setBlock_2d(ix, iy, (randType as any).randomInstance(randType)); // ! 一定是BlockCommon的子类型
             }
         }
         return storage;

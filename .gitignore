@@ -33,6 +33,7 @@ git status
 # Test
 *pictures/
 *.test.*
+tempCodeRunnerFile*
 
 # Executables
 *.air

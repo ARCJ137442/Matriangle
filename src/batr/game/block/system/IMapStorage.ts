@@ -1,7 +1,7 @@
 
 
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
-import { iPoint } from "../../../common/geometricTools";
+import { iPoint, intPoint } from "../../../common/geometricTools";
 import { intRot } from "../../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
@@ -30,10 +30,31 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * * 对二维地图而言：0=x, 1=y
 	 * @param dim 地图尺寸的具体维度
 	 */
-	getMapSize(dim: uint): uint;
+	getMapSizeAt(dim: uint): uint;
+
+	/**
+	 * 获取地图在所有轴向的尺寸
+	 * * 可以复用`getMapSizeAt`
+	 * @returns 所有轴向尺寸组成的一个整数点
+	 */
+	get size(): uint[];
+
+	/**
+	 * 仅在地图层面判断一个点是否「在地图之内」
+	 * @param x 判断用的x坐标
+	 * @param y 判断用的y坐标
+	 */
+	isInMap_2d(x: int, y: int): boolean;
+
+	/**
+	 * 仅在地图层面判断一个点是否「在地图之内」
+	 * @param p 判断用的位置
+	 */
+	isInMap(p: intPoint): boolean;
 
 	/**
 	 * 获取地图的维数
+	 * * 可以复用`size`
 	 */
 	get mapDimension(): uint;
 
@@ -47,13 +68,26 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	/**
 	 * 获取地图在某位置「可前进的所有方向」
 	 */
-	getForwardDirectionsAt(x: int, y: int): intRot[];
+	getForwardDirectionsAt_2d(x: int, y: int): intRot[];
+
+	/**
+	 * ! 高维版本
+	 * 获取地图在某位置「可前进的所有方向」
+	 */
+	getForwardDirectionsAt(p: iPoint): intRot[];
 
 	/**
 	 * 在某一处随机获取一个「可前进方向」
 	 * * 可以借用上面的代码
 	 */
-	randomForwardDirectionAt(x: int, y: int): intRot;
+	randomForwardDirectionAt_2d(x: int, y: int): intRot;
+
+	/**
+	 * ! 高维版本
+	 * 在某一处随机获取一个「可前进方向」
+	 * * 可以借用上面的代码
+	 */
+	randomForwardDirectionAt(p: iPoint): intRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标
 	// /**
@@ -70,7 +104,10 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 
 	/**
 	 * 【对接游戏】获取地图上的一个（有效）随机位置
+	 * 
 	 * ! 与两个维度都有关
+	 * 
+	 * ! 从此处获取的量是只读的
 	 */
 	get randomPoint(): iPoint;
 
@@ -82,7 +119,20 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
 	 * @param args ：用于在回调后附加的其它参数
 	 */
-	forEachValidPositions(f: (x: int, y: int, ...args: any[]) => void, ...args: any[]): void;
+	forEachValidPositions_2d(f: (x: int, y: int, ...args: any[]) => void, ...args: any[]): void;
+
+	/**
+	 * 【对接游戏、显示】遍历地图上每个有效位置
+	 * * 用于地图的复制等
+	 * * 或将用于显示模块的非密集型处理
+	 * 
+	 * TODO: 兼容性能的同时，完全使用通用系统
+	 * * 原则：能不`new`就尽可能不`new`
+	 * 
+	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
+	 * @param args ：用于在回调后附加的其它参数
+	 */
+	forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): void;
 
 	/**
 	 * 复制地图本身
@@ -129,7 +179,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	hasBlock(x: int, y: int): boolean;
+	hasBlock_2d(x: int, y: int): boolean;
+	hasBlock(p: iPoint): boolean;
 
 	/**
 	 * 获取地图上某位置的「方块实体」
@@ -137,7 +188,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlock(x: int, y: int): BlockCommon | null;
+	getBlock_2d(x: int, y: int): BlockCommon | null;
+	getBlock(p: iPoint): BlockCommon | null;
 
 	/**
 	 * 获取地图上某位置的方块属性
@@ -145,7 +197,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockAttributes(x: int, y: int): BlockAttributes | null;
+	getBlockAttributes_2d(x: int, y: int): BlockAttributes | null;
+	getBlockAttributes(p: iPoint): BlockAttributes | null;
 
 	/**
 	 * 获取地图上某位置的方块类型
@@ -154,7 +207,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockType(x: int, y: int): BlockType | null;
+	getBlockType_2d(x: int, y: int): BlockType | null;
+	getBlockType(p: iPoint): BlockType | null;
 
 	/**
 	 * 设置地图上某位置的方块
@@ -162,7 +216,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param y y坐标
 	 * @param block 方块对象
 	 */
-	setBlock(x: int, y: int, block: BlockCommon): void;
+	setBlock_2d(x: int, y: int, block: BlockCommon): void;
+	setBlock(p: iPoint, block: BlockCommon): void;
 
 	/**
 	 * 【快捷方式】获取地图上某个位置「是否是『空』」
@@ -170,7 +225,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	isVoid(x: int, y: int): boolean;
+	isVoid_2d(x: int, y: int): boolean;
+	isVoid(p: iPoint): boolean;
 
 	/**
 	 * 【快捷方式】将地图上某个位置设置成「空」
@@ -179,7 +235,8 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	setVoid(x: int, y: int): void;
+	setVoid_2d(x: int, y: int): void;
+	setVoid(p: iPoint): void;
 
 	/**
 	 * 删除地图上的所有方块
@@ -213,19 +270,22 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	addSpawnPointAt(x: int, y: int): void;
+	addSpawnPointAt_2d(x: int, y: int): void;
+	addSpawnPointAt(p: iPoint): void;
 
 	/**
 	 * 【机制需要】获取某处「是否有重生点」
 	 */
-	hasSpawnPointAt(x: int, y: int): boolean;
+	hasSpawnPointAt_2d(x: int, y: int): boolean;
+	hasSpawnPointAt(p: iPoint): boolean;
 
 	/**
 	 * 在地图上移除（删除）重生点
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	removeSpawnPoint(x: int, y: int): void;
+	removeSpawnPoint_2d(x: int, y: int): void;
+	removeSpawnPoint(p: iPoint): void;
 
 	/**
 	 * 移除地图上的所有重生点

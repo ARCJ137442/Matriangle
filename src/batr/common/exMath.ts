@@ -97,9 +97,25 @@ export function chi4(x: int): int {
  * ~(x&1) + (x+1)&2:
  *  -1 -2 -1 -2 -1 -2 -1 -2
  */
-
 export const chi = chi4;
 export const χ = chi4;
+
+/**
+ * 从「『右左下上』式方向」到「各个维度坐标」的「单位圆表征」
+ * * psi = ψ, 
+ * * psi(0, 1, 2, 3...) = psi(右, 左, 下, 上...) @ x轴 = 1, -1, 0, 0, 0, 0, 0, 0...
+ * * (~(x & 1) << 1) => -2, -4, -2, -4...
+ * * 对负数：皆为0
+ * 
+ * ! 不具有周期性
+ */
+// const a = [1, -1]
+export function psiN(rot: int): int {
+	return (rot >> 1 == 0) ? 0 : (~(rot & 1) << 1) + 3
+	// return Number(a[rot]) // ? 据说用这个也有挺好的性能
+}
+export const psi = psiN;
+export const ψ = psiN;
 
 /**
  * Get sign of number.

@@ -33,6 +33,16 @@ export abstract class xPoint<T> extends Array<T> {
 	public copy(): xPoint<T> { return this.slice() as xPoint<T> }
 
 	/**
+	 * 使用特定的「生成函数」填充一系列值
+	 * * 可以配合`new xPoint<T>(长度).generateFrom(f)`使用
+	 * * 例如：`new xPoint<T>(长度).generateFrom(f)`
+	 */
+	public generateFrom(f: (i: int) => T): void {
+		for (let i = 0; i < this.length; i++)
+			this[i] = f(i)
+	}
+
+	/**
 	 * 从其它点拷贝坐标到此处
 	 * * 原理：逐一赋值
 	 * 

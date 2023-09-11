@@ -1,4 +1,5 @@
 import * as exMath from "../common/exMath";
+import { iPoint } from "../common/geometricTools";
 import { int, uint, uint$MAX_VALUE } from "../legacy/AS3Legacy";
 
 // ! 有待后续更新：支持多个维度、解决「连续角度」等问题
@@ -158,7 +159,7 @@ export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
 }
 
 /**
- * ! 下面这些函数应该只在「地图存储结构」中使用，游戏主体不应直接调用
+ * ! 下面这些函数应该只在「地图逻辑结构」中使用，游戏主体不应直接调用
  * * 根据参数类型的不同，分别使用不同的方法
  *   * I 整数 int
  *   * F 浮点 number
@@ -167,39 +168,137 @@ export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
  */
 
 /**
- * 获得「前进的x增量」
- * @param rot 角度
- * @param radius 半径
+ * 获得「前进的x增量」：整数角度、整数半径
+ * * `chi`相当于cos
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度
+ * @param radius 整数半径
  * @returns 前进的增量x
  */
 export function towardX_II(rot: iRot, radius: int): int {
+	return exMath.chi(rot) * radius //
+}
+
+/**
+ * 获得「前进的y增量」：整数角度、整数半径
+ * * `chi(x+1)`相当于sin(x)
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度
+ * @param radius 整数半径
+ * @returns 前进的增量y
+ */
+export function towardY_II(rot: iRot, radius: int): int {
+	return exMath.chi(rot + 1) * radius //
+}
+
+/**
+ * 获得「前进的x增量」：整数角度、浮点半径
+ * * `chi`相当于cos
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度（浮点）
+ * @param radius 整数半径
+ * @returns 前进的增量x
+ */
+export function towardX_IF(rot: iRot, radius: number): number {
 	return exMath.chi(rot) * radius
 }
 
-export function towardX(rot: fRot, radius: number = 1): number {
-	if (uint(rot) == rot)
-		return towardIntX(rot, radius);
-	return exMath.redirectNum(radius * Math.cos(exMath.angleToArc(toRealRot(rot))), 10000);
+/**
+ * 获得「前进的y增量」：整数角度、浮点半径
+ * * `chi(x+1)`相当于sin(x)
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度（浮点）
+ * @param radius 整数半径
+ * @returns 前进的增量y
+ */
+export function towardY_IF(rot: iRot, radius: number): number {
+	return exMath.chi(rot + 1) * radius
 }
 
-export function towardY(rot: fRot, radius: number = 1): number {
-	if (uint(rot) == rot)
-		return towardIntY(rot, radius);
-	return exMath.redirectNum(radius * Math.sin(exMath.angleToArc(toRealRot(rot))), 10000);
+/**
+ * 获得「前进的x增量」：浮点角度、浮点半径
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度（浮点）
+ * @param radius 浮点半径
+ * @returns 前进的增量x
+ */
+export function towardX_FF(rot: fRot, radius: number): number {
+	return Math.cos(Math.PI / 2 * rot) * radius
 }
 
-export function towardIntX(rot: intRot, radius: number = 1): number {
-	return exMath.chi(rot + 1) * radius;
+/**
+ * 获得「前进的x增量」：浮点角度、浮点半径
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * @param rot 以「π/2=1」规格表示的角度（浮点）
+ * @param radius 浮点半径
+ * @returns 前进的增量x
+ */
+export function towardY_FF(rot: fRot, radius: number): number {
+	return Math.cos(Math.PI / 2 * rot) * radius
+	// return exMath.redirectNum(radius * Math.cos(exMath.angleToArc(toRealRot(rot))), 10000); // ! 原先的逻辑是保留四位小数
 }
 
-export function towardIntY(rot: intRot, radius: number = 1): number {
-	return exMath.chi(rot) * radius;
+// ! 不提供FI版本，并入FF版本，因为代码逻辑是一样的
+
+/**
+ * 获得「前进的x增量」：多维度角度、整数半径
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * 
+ * ! 因兼容N维，没有周期性
+ * @param rot 使用「x±→y±→z±…」机制的角度，即「右左下上」顺序
+ * @param radius 整数半径
+ */
+export function towardX_MI(rot: mRot, radius: int = 1): int {
+	return exMath.psi(rot) * radius
 }
 
-export function towardXInt(rot: intRot, radius: int = 1): int {
-	return exMath.chi(rot + 1) * radius;
+/**
+ * 获得「前进的x增量」：多维度角度、整数半径
+ * 
+ * ! 只提供「相对坐标」而非「绝对坐标」（后者在「地图逻辑结构」中实现）
+ * 
+ * ! 因兼容N维，没有周期性
+ * @param rot 使用「x±→y±→z±…」机制的角度，即「右左下上」顺序
+ * @param radius 整数半径
+ */
+export function towardY_MI(rot: mRot, radius: int = 1): int {
+	return exMath.psi(rot - 2) * radius
 }
 
-export function towardYInt(rot: intRot, radius: int = 1): int {
-	return exMath.chi(rot) * radius;
+/**
+ * 集成上述所有点的整数取向
+ * 
+ * ! 【20230911 20:56:04】现在是集成了两种朝向表示系统，
+ * * 一种是用「顺时针旋转90°」表示的「二维整数朝向」
+ * * 一种是用「x±、y±」表示的「任意维整数朝向」
+ * * 两种朝向体系目前还是较难兼容
+ * @param rot 使用「x±→y±→z±…」机制的朝向，即「右左下上」顺序
+ * @param radius 整数半径
+ * @param nDims 点的维数
+ * @returns 包括所有维度返回值的点
+ */
+export function toward_MI(rot: mRot, dim: uint, radius: int = 1): iPoint {
+	let p: iPoint = new iPoint();
+	for (let i = 0; i < dim; i++) {
+		p.push(
+			exMath.psi(rot - (i << 1)) *
+			radius
+		)
+	}
+	return p;
+}
+
+export function towardX_MF(rot: mRot, radius: number = 1): number {
+	return exMath.psi(rot) * radius
+}
+
+export function towardY_MF(rot: mRot, radius: number = 1): number {
+	return exMath.psi(rot - 2) * radius
 }

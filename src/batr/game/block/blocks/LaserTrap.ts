@@ -52,16 +52,19 @@ export default class BlockLaserTrap extends BlockCommon {
 	 */
 	public override onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
 
-		let randomR: intRot, rotX: number, rotY: number, laserLength: number;
+		let randomR: intRot, rotX: number, rotY: number, laserLength: number = 0;
 		// add laser by owner=null
 		let p: LaserBasic, tp: floatPoint;
-		let i: uint;
+		let i: uint = 0;
 		do {
-			randomR = host.map.storage.randomForwardDirectionAt(sourceX, sourceY);
-			tp = host.map.logic.towardWithRot(alignToEntity(sourceX), alignToEntity(sourceY), randomR, PROJECTILES_SPAWN_DISTANCE);
+			randomR = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
+			tp = host.map.logic.towardWithRot(
+				alignToEntity(sourceX), alignToEntity(sourceY),
+				randomR, PROJECTILES_SPAWN_DISTANCE
+			);
 			rotX = alignToEntity(sourceX) + tp.x;
 			rotY = alignToEntity(sourceY) + tp.y;
-			if (host.map.logic.isOutOfMap(rotX, rotY))
+			if (host.map.logic.isInMap_F2d(rotX, rotY))
 				continue;
 			laserLength = host.getLaserLength2(rotX, rotY, randomR);
 			if (laserLength <= 0)

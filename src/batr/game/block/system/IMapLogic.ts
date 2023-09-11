@@ -1,6 +1,6 @@
 
 
-import { iPoint } from "../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../common/geometricTools";
 import { intRot } from "../../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import EntityCommon from "../../entity/EntityCommon";
@@ -55,19 +55,33 @@ export default interface IMapLogic {
 	isKillZone(x: int, y: int): boolean
 
 	/**
-	 * 测试一个坐标是否「出界」
+	 * 测试一个坐标「是否在地图之内」
 	 * * 用于地图中对实体坐标的限制、有限无界机制等
 	 * @param x 被测试的x坐标（浮点）
 	 * @param y 被测试的y坐标（浮点）
 	 */
-	isOutOfMap(x: number, y: number): boolean
+	isInMap_F2d(x: number, y: number): boolean
 
 	/**
-	 * 测试一个整数坐标是否「出界」
+	 * 测试一个坐标「是否在地图之内」
+	 * * 用于地图中对实体坐标的限制、有限无界机制等
+	 */
+	isInMap_F(p: fPoint): boolean
+
+	/**
+	 * 测试一个整数坐标「是否在地图之内」
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	isIntOutOfMap(x: int, y: int): boolean
+	isInMap_I2d(x: int, y: int): boolean
+
+	/**
+	 * 测试一个整数坐标「是否在地图之内」
+	 * @param p 被测试的坐标整体
+	 */
+	isInMap_I(p: iPoint): boolean
+
+	// TODO: 更多「2d/通用」分离
 
 	/**
 	 * 从某位置向某方向「前进」，获取「前进到的坐标」

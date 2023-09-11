@@ -44,11 +44,11 @@ export default class BlockMoveableWall extends BlockWall {
 		let p: ThrownBlock;
 		let i: uint = 0;
 		do {
-			randomRot = host.map.storage.randomForwardDirectionAt(sourceX, sourceY);
+			randomRot = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
 			tPoint = host.map.logic.towardWithRot(sourceX, sourceY, randomRot);
 			rotX = tPoint.x;
 			rotY = tPoint.y;
-			if (host.map.logic.isIntOutOfMap(rotX, rotY) || !host.map.logic.testIntCanPass(rotX, rotY, false, true, false, false))
+			if (host.map.logic.isInMap_I2d(rotX, rotY) || !host.map.logic.testIntCanPass(rotX, rotY, false, true, false, false))
 				continue;
 			p = new ThrownBlock(
 				host,
@@ -58,7 +58,7 @@ export default class BlockMoveableWall extends BlockWall {
 				randomRot,
 				Math.random()
 			);
-			host.map.storage.setVoid(sourceX, sourceY); // TODO: 建议统一管理
+			host.map.storage.setVoid_2d(sourceX, sourceY); // TODO: 建议统一管理
 			host.entitySystem.registerProjectile(p);
 			// TODO: 推荐 host.entitySystem.addProjectile(p); // 坐标存储在实体自身中
 			// host.map.logic._projectileContainer.addChild(p);
