@@ -96,16 +96,7 @@ export default abstract class BlockCommon implements IBatrDisplayable {
 		return getClass(this);
 	}
 
-	/**
-	 * 响应游戏随机刻
-	 * * 可访问游戏实例，参与调用游戏API（生成实体、放置其它方块等）
-	 * @param host 调用此函数的游戏主体
-	 * @param sourceX 被调用的方块的x坐标（方块实例不存储）
-	 * @param sourceY 被调用的方块的y坐标（方块实例不存储）
-	 */
-	public onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
-
-	}
+	// ! 此处的「响应随机刻」因「循环导入问题」被移除
 
 	//============Display Implements============//
 

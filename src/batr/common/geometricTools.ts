@@ -28,18 +28,35 @@ export abstract class xPoint<T> extends Array<T> {
 	 * 拷贝自身为一个新点
 	 * ! 使用数组的方式拷贝，但类型不会变成数组
 	 * 
+	 * ! 注意：不能在频繁调用的函数中使用
+	 * * 最好不要在任何带循环的函数体中使用，会导致大量数组创建，进而占用巨量存储空间
+	 * * 其它可能导致「新对象创建」的函数同理
+	 * 
 	 * @returns 返回一个自身的拷贝，仍然是自身类型
 	 */
 	public copy(): xPoint<T> { return this.slice() as xPoint<T> }
 
 	/**
 	 * 使用特定的「生成函数」填充一系列值
-	 * * 可以配合`new xPoint<T>(长度).generateFrom(f)`使用
+	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).generateFrom(f)`
 	 */
-	public generateFrom(f: (i: int) => T): void {
+	public generate(f: (i: int) => T): xPoint<T> {
 		for (let i = 0; i < this.length; i++)
 			this[i] = f(i)
+		return this;
+	}
+
+	/**
+	 * 使用特定的「映射函数」从另一个（同长数组）批量更改其中的值，并将函数结果返回到自身对象之中
+	 * * 可以配合`new xPoint<T>(长度)`使用
+	 * * 例如：`new xPoint<T>(长度).inplace(f)`
+	 */
+	public inplaceMap<T2>(f: (t: T2) => T, source: xPoint<T2> | null = null): xPoint<T> {
+		source = source ?? (this as any);
+		for (let i = 0; i < this.length; i++)
+			this[i] = f((source as xPoint<T2>)[i])
+		return this;
 	}
 
 	/**
@@ -241,14 +258,17 @@ export abstract class xPoint<T> extends Array<T> {
 		return this;
 	}
 
-	/**
-	 * （原`getLineTargetPoint`）相对某个目标点进行「目标对齐」，但返回一个新对象
-	 * @param target 对齐的目标点
-	 * @param start 搜索的起始索引
-	 */
-	public getAbsMinDistancePoint(target: xPoint<T>, start: uint = 0): xPoint<T> {
-		return this.copy().alignAbsMinDistance(target, start);
-	}
+	// ! 【20230912 0:36:18】所有「返回新对象」的函数，一律使用「copy+对应函数」的方式
+	// /**
+	//  * （原`getLineTargetPoint`）相对某个目标点进行「目标对齐」
+	//  * * 但返回一个新对象
+	//  * 
+	//  * @param target 对齐的目标点
+	//  * @param start 搜索的起始索引
+	//  */
+	// public getAbsMinDistancePoint(target: xPoint<T>, start: uint = 0): xPoint<T> {
+	// 	return this.copy().alignAbsMinDistance(target, start);
+	// }
 
 	/**
 	 * 判断两个点「坐标是否相等」

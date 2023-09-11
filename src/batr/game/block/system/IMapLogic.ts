@@ -111,12 +111,30 @@ export default interface IMapLogic {
 	 * @param avoidHurting 避免伤害（主要用于AI）
 	 */
 	testCanPass(x: number, y: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+
+
 	testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+
+
 	testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidTrap?: boolean/* = false*/): boolean
+
+
 	testBonusBoxCanPlaceAt(x: int, y: int): boolean
+
+
 	testPlayerCanPass(player: Player, x: int, y: int, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+
+
 	testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+
+
 	testPlayerCanPassToFront(player: Player, rotatedAsRot?: uint/* = 5*/, includePlayer?: boolean/* = true*/, avoidTrap?: boolean/* = false*/): boolean
+
+
 	testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
+
+
 	testBreakableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
+
+
 }

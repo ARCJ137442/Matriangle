@@ -301,10 +301,11 @@ export function getClass(instance: any): Class {
 }
 
 /**
- * 
- * @param C1 the subclass
- * @param C the superclass
- * @returns whether the C1 can replaces the C
+ * 判断「一个类是否可以被另一个类所替换」
+ * 继承自Julia的`<:`运算符（使用如`C1 <: C`）
+ * @param C1 子类
+ * @param C 超类
+ * @returns 子类是否可替换超类
  */
 export function isExtend(C1: Class, C: Class): boolean {
 	return C1 === C || C1.prototype instanceof C

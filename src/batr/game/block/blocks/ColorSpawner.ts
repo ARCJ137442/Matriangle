@@ -1,13 +1,8 @@
-import { int, uint } from "../../../legacy/AS3Legacy";
+import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import BlockCommon from "../BlockCommon";
 import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
-import { iPoint } from "../../../common/geometricTools";
-import BlockColored from "./Colored";
-import { NativeBlockTypes } from "../../registry/BlockTypeRegistry";
-import { alignToEntity } from "../../../general/PosTransform";
-import IBatrGame from "../../main/IBatrGame";
 
 export default class BlockColorSpawner extends BlockCommon {
 	//============Static Variables============//
@@ -31,27 +26,6 @@ export default class BlockColorSpawner extends BlockCommon {
 
 	override clone(): BlockCommon {
 		return new BlockColorSpawner();
-	}
-
-	/**
-	 * 原`colorSpawnerSpawnBlock`
-	 * TODO: 此举引入「游戏本体」与「实体实例」，已经扰乱了导入依赖
-	 * ? 要如何向外迁移？
-	 */
-	public override onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
-		// ? 是否还是要用高开销的「自定义对象」呢？不好扩展又性能妨碍
-		let randomPoint: iPoint = host.map.storage.randomPoint;
-		let x: int = randomPoint.x;
-		let y: int = randomPoint.y;
-		let block: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-		if (!host.map.logic.isInMap_F2d(x, y) && host.map.storage.isVoid_2d(x, y)) {
-			host.setBlock(x, y, block); // * 后续游戏需要处理「方块更新事件」
-			host.addBlockLightEffect2(
-				alignToEntity(x),
-				alignToEntity(y),
-				block, false
-			);
-		}
 	}
 
 	//============Display Implements============//

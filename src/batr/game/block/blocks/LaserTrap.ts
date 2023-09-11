@@ -1,4 +1,4 @@
-import { int, uint } from "../../../legacy/AS3Legacy";
+import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
@@ -6,16 +6,6 @@ import BlockCommon from "../BlockCommon";
 import BlockBedrock from "./Bedrock";
 import BlockColorSpawner from "./ColorSpawner";
 import BlockWall from "./Wall";
-import IBatrGame from "../../main/IBatrGame";
-import LaserAbsorption from "../../entity/entities/projectile/LaserAbsorption";
-import LaserBasic from "../../entity/entities/projectile/LaserBasic";
-import LaserPulse from "../../entity/entities/projectile/LaserPulse";
-import LaserTeleport from "../../entity/entities/projectile/LaserTeleport";
-import { alignToEntity } from "../../../general/PosTransform";
-import { intRot, randomRot } from "../../../general/GlobalRot";
-import { PROJECTILES_SPAWN_DISTANCE } from "../../../general/GlobalGameVariables";
-import { randInt } from "../../../common/exMath";
-import { fPoint, floatPoint } from "../../../common/geometricTools";
 
 export default class BlockLaserTrap extends BlockCommon {
 	//============Static Variables============//
@@ -40,57 +30,6 @@ export default class BlockLaserTrap extends BlockCommon {
 
 	override clone(): BlockCommon {
 		return new BlockLaserTrap();
-	}
-
-	//============Game Mechanics============//
-
-	/**
-	 * 原`laserTrapShootLaser`
-	 * @param host 调用的游戏主体
-	 * @param sourceX 被调用方块的x坐标
-	 * @param sourceY 被调用方块的y坐标
-	 */
-	public override onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
-
-		let randomR: intRot, rotX: number, rotY: number, laserLength: number = 0;
-		// add laser by owner=null
-		let p: LaserBasic, tp: floatPoint;
-		let i: uint = 0;
-		do {
-			randomR = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
-			tp = host.map.logic.towardWithRot(
-				alignToEntity(sourceX), alignToEntity(sourceY),
-				randomR, PROJECTILES_SPAWN_DISTANCE
-			);
-			rotX = alignToEntity(sourceX) + tp.x;
-			rotY = alignToEntity(sourceY) + tp.y;
-			if (host.map.logic.isInMap_F2d(rotX, rotY))
-				continue;
-			laserLength = host.getLaserLength2(rotX, rotY, randomR);
-			if (laserLength <= 0)
-				continue;
-			switch (randInt(4)) {
-				case 1:
-					p = new LaserTeleport(host, rotX, rotY, null, laserLength);
-					break;
-				case 2:
-					p = new LaserAbsorption(host, rotX, rotY, null, laserLength);
-					break;
-				case 3:
-					p = new LaserPulse(host, rotX, rotY, null, laserLength);
-					break;
-				default:
-					p = new LaserBasic(host, rotX, rotY, null, laserLength, 1);
-					break;
-			}
-			if (p != null) {
-				p.rot = randomR;
-				host.entitySystem.registerProjectile(p);
-				// host.projectileContainer.addChild(p);
-				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
-			}
-		}
-		while (laserLength <= 0 && ++i < 0x10);
 	}
 
 	//============Display Implements============//

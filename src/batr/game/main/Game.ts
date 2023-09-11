@@ -2176,18 +2176,8 @@ export default class Game implements IBatrGame {
 		}
 		// Other
 		switch (this.getBlockType(x, y)) {
-			case BlockType.COLOR_SPAWNER:
-				this.colorSpawnerSpawnBlock(x, y);
-				break;
-			case BlockType.LASER_TRAP:
-				this.laserTrapShootLaser(x, y);
-				break;
-			case BlockType.MOVEABLE_WALL:
-				this.moveableWallMove(x, y, this.getBlock(x, y));
-				break;
-			case BlockType.GATE_CLOSE:
-				this.setBlock(x, y, BlockCommon.fromType(BlockType.GATE_OPEN));
-				break;
+			// TODO: 日后在这里建立派发机制
+
 		}
 	}
 
@@ -2196,4 +2186,9 @@ export default class Game implements IBatrGame {
 		this.updateMapSize();
 		this.moveInTestWithEntity();
 	}
+
+	/**
+	 * 基于「方块类型」实现多分派：使用「哈希值+字典」的形式
+	 */
+	protected _GameEventPatcher
 }
