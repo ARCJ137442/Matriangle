@@ -2,8 +2,21 @@ import * as exMath from "../common/exMath";
 import { int, uint, uint$MAX_VALUE } from "../legacy/AS3Legacy";
 
 // ! 有待后续更新：支持多个维度、解决「连续角度」等问题
+/**
+ * 「π/4⇔1」机制的角度（整数值）
+ */
 export type intRot = uint;
-export type floatRot = number; // TODO: 有待支持
+export type iRot = intRot;
+/**
+ * 「π/4⇔1」机制的角度（浮点值）
+ */
+export type floatRot = number;
+export type fRot = floatRot;
+/**
+ * 「x±→y±→z±…」机制的角度（整数值）
+ */
+export type multiDimRot = uint;
+export type mRot = multiDimRot;
 
 //============Static Variables============//
 export const NULL: intRot = uint$MAX_VALUE;
@@ -24,15 +37,40 @@ export function isValidRot(rot: intRot): boolean {
 	return rot != NULL;
 }
 
-export function toOpposite(rot: number): number {
-	return (rot + 2) & 3;
+/**
+ * 反转方向，上→下，左→右
+ * @param rot 「π/4⇔1」机制的角度
+ * @returns 旋转到反面的角度值
+ */
+export function toOpposite(rot: fRot): fRot {
+	return (rot + 2) % 4;
 }
 
+/**
+ * 反转方向，上→下，左→右
+ * @param rot 「π/4⇔1」机制的角度
+ * @returns 旋转到反面的角度值
+ */
 export function toOppositeInt(rot: intRot): intRot {
 	return (rot + 2) & 3;
 }
 
-export function rotate(rot: number, angle: number): number {
+/**
+ * （多维整数角度版本）反转方向，上→下，左→右
+ * @param rot 「x±→y±→z±…」机制的角度
+ * @returns 方向反转后的角度值
+ */
+export function toOppositeMDim(rot: intRot): intRot {
+	return (rot + 2) & 3;
+}
+
+/**
+ * 旋转⇒角度总和
+ * @param rot 采用「角度值/弧度制」连续值的角度
+ * @param angle 另一个同类角度
+ * @returns 两个角度的总和
+ */
+export function rotate(rot: fRot, angle: fRot): fRot {
 	// angle is Local Rot.
 	return lockToStandard(rot + angle);
 }
@@ -42,11 +80,12 @@ export function rotateInt(rot: intRot, angle: int): intRot {
 	return lockIntToStandard(rot + angle);
 }
 
-export function randomWithout(rot: intRot): intRot {
-	return lockIntToStandard(rot + 1 + exMath.randInt(3));
-}
+// ! 弃用：现在依赖于地图设置
+// export function randomWithout(rot: intRot): intRot {
+// 	return lockIntToStandard(rot + 1 + exMath.randInt(3));
+// }
 
-export function lockToStandard(rot: number): number {
+export function lockToStandard(rot: fRot): fRot {
 	if (isNaN(rot) || !isFinite(rot))
 		return DEFAULT;
 	if (rot < 0)
@@ -86,11 +125,11 @@ export function fromLinearDistance(xD: int, yD: int): intRot {
 	return NULL;
 }
 
-export function fromRealRot(rot: number): number {
+export function fromRealRot(rot: fRot): fRot {
 	return lockToStandard(rot / 90);
 }
 
-export function toRealRot(rot: number): number {
+export function toRealRot(rot: fRot): fRot {
 	return rot * 90;
 }
 
@@ -104,7 +143,7 @@ export function toRealIntRot(rot: int): int {
  * 	2.the object's rot is 90°(local:1),
  * 	3.then the value in of object is 315°(local:3.5).
  */
-export function globalToLocal(currentRot: number, containerRot: number): number {
+export function globalToLocal(currentRot: fRot, containerRot: fRot): fRot {
 	return lockToStandard(currentRot - containerRot);
 }
 
@@ -114,17 +153,36 @@ export function globalToLocal(currentRot: number, containerRot: number): number 
  * 	2.The object's rot is 90°(local:1),
  * 	3.Then the value out of object is 135°(local:1.5).
  */
-export function localToGlobal(currentRot: number, containerRot: number): number {
+export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
 	return lockToStandard(containerRot + currentRot);
 }
 
-export function towardX(rot: number, radius: number = 1): number {
+/**
+ * ! 下面这些函数应该只在「地图存储结构」中使用，游戏主体不应直接调用
+ * * 根据参数类型的不同，分别使用不同的方法
+ *   * I 整数 int
+ *   * F 浮点 number
+ *   * M 多维度 mRot(仅适用于方向)
+ * TODO: 重新整理并实现
+ */
+
+/**
+ * 获得「前进的x增量」
+ * @param rot 角度
+ * @param radius 半径
+ * @returns 前进的增量x
+ */
+export function towardX_II(rot: iRot, radius: int): int {
+	return exMath.chi(rot) * radius
+}
+
+export function towardX(rot: fRot, radius: number = 1): number {
 	if (uint(rot) == rot)
 		return towardIntX(rot, radius);
 	return exMath.redirectNum(radius * Math.cos(exMath.angleToArc(toRealRot(rot))), 10000);
 }
 
-export function towardY(rot: number, radius: number = 1): number {
+export function towardY(rot: fRot, radius: number = 1): number {
 	if (uint(rot) == rot)
 		return towardIntY(rot, radius);
 	return exMath.redirectNum(radius * Math.sin(exMath.angleToArc(toRealRot(rot))), 10000);

@@ -1,4 +1,4 @@
-import intPoint from "../../../common/geometricTools";
+import { intPoint } from "../../../common/geometricTools";
 import { int, uint } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon from "../BlockCommon";

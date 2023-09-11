@@ -53,7 +53,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * 在某一处随机获取一个「可前进方向」
 	 * * 可以借用上面的代码
 	 */
-	randomForwardDirectionsAt(x: int, y: int): intRot;
+	randomForwardDirectionAt(x: int, y: int): intRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标
 	// /**

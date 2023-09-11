@@ -1,6 +1,7 @@
-import { randIntBetween } from "../../../../common/exMath";
-import intPoint, { iPoint } from "../../../../common/geometricTools";
+import { randInt, randIntBetween } from "../../../../common/exMath";
+import { iPoint } from "../../../../common/geometricTools";
 import { identity, randomIn } from "../../../../common/utils";
+import { intRot } from "../../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import { NativeBlockTypes } from "../../../registry/BlockTypeRegistry";
 import BlockAttributes from "../../BlockAttributes";
@@ -82,6 +83,44 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     /**
+     * * 默认是二维
+     */
+    public get mapDimension(): uint {
+        return 2;
+    }
+
+    protected readonly _allDirection: intRot[] = [0, 1, 2, 3]
+    /**
+     * * 默认0~3（x+、x-、y+、y-）
+     * * 使用「实例常量缓存」提高性能
+     * 
+     * ! 不要对返回的数组进行任何修改
+     */
+    public get allDirection(): intRot[] {
+        return this._allDirection;
+    }
+
+    /**
+     * * 默认0~3（x+、x-、y+、y-）
+     * * 使用「实例常量缓存」提高性能
+     * 
+     * ! 不要对返回的数组进行任何修改
+     */
+    public getForwardDirectionsAt(x: int, y: int): intRot[] {
+        return this.allDirection;
+    }
+
+    /**
+     * * 默认（内联）就是随机取
+     * @param x x坐标
+     * @param y y坐标
+     * @returns 随机一个坐标方向
+     */
+    public randomForwardDirectionAt(x: int, y: int): intRot {
+        return randInt(4);
+    }
+
+    /**
      * 析构函数
      */
     public destructor(): void {
@@ -97,9 +136,9 @@ export default class MapStorageSparse implements IMapStorage {
     /**
      * 存储所有重生点的列表
      */
-    protected readonly _spawnPoints: intPoint[] = [];
+    protected readonly _spawnPoints: iPoint[] = [];
 
-    public get spawnPoints(): intPoint[] {
+    public get spawnPoints(): iPoint[] {
         return this._spawnPoints;
     }
 
@@ -111,13 +150,13 @@ export default class MapStorageSparse implements IMapStorage {
         return this._spawnPoints.length > 0;
     }
 
-    public get randomSpawnPoint(): intPoint {
+    public get randomSpawnPoint(): iPoint {
         return randomIn(this._spawnPoints)
     }
 
     public addSpawnPointAt(x: int, y: int): void {
         if (!this.hasSpawnPointAt(x, y))
-            this._spawnPoints.push(new intPoint(x, y))
+            this._spawnPoints.push(new iPoint(x, y))
     }
 
     public hasSpawnPointAt(x: int, y: int): boolean {
@@ -130,7 +169,7 @@ export default class MapStorageSparse implements IMapStorage {
     // ! 非接口实现
     public indexSpawnPointOf(x: int, y: int): uint | -1 {
         for (let index: uint = 0; index < this._spawnPoints.length; index++) {
-            let point: intPoint = this._spawnPoints[index];
+            let point: iPoint = this._spawnPoints[index];
             if (point.x == x && point.y == y)
                 return index;
         }
@@ -178,8 +217,8 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     // ! 默认其边界之内都为**合法**
-    public get randomPoint(): intPoint {
-        return new intPoint(this.randomX, this.randomY);
+    public get randomPoint(): iPoint {
+        return new iPoint(this.randomX, this.randomY);
     }
 
     // ! 边界之内，均为合法：会遍历边界内所有内容⇒直接对遍历到的点调用回调即可

@@ -1,4 +1,4 @@
-import { uint } from "../../../legacy/AS3Legacy";
+import { int, uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
@@ -12,10 +12,10 @@ import LaserBasic from "../../entity/entities/projectile/LaserBasic";
 import LaserPulse from "../../entity/entities/projectile/LaserPulse";
 import LaserTeleport from "../../entity/entities/projectile/LaserTeleport";
 import { alignToEntity } from "../../../general/PosTransform";
-import { randomRot } from "../../../general/GlobalRot";
+import { intRot, randomRot } from "../../../general/GlobalRot";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../general/GlobalGameVariables";
 import { randInt } from "../../../common/exMath";
-import { floatPoint } from "../../../common/geometricTools";
+import { fPoint, floatPoint } from "../../../common/geometricTools";
 
 export default class BlockLaserTrap extends BlockCommon {
 	//============Static Variables============//
@@ -50,20 +50,20 @@ export default class BlockLaserTrap extends BlockCommon {
 	 * @param sourceX 被调用方块的x坐标
 	 * @param sourceY 被调用方块的y坐标
 	 */
-	public override onRandomTick(host: IBatrGame, sourceX: number, sourceY: number): void {
+	public override onRandomTick(host: IBatrGame, sourceX: int, sourceY: int): void {
 
-		let randomRotPoint: f, rotX: number, rotY: number, laserLength: number;
+		let randomR: intRot, rotX: number, rotY: number, laserLength: number;
 		// add laser by owner=null
 		let p: LaserBasic, tp: floatPoint;
 		let i: uint;
 		do {
-			randomRotPoint = randomRotPoint();
-			tp = host.map.logic.towardWithRot(alignToEntity(sourceX), alignToEntity(sourceY), randomRotPoint, PROJECTILES_SPAWN_DISTANCE);
+			randomR = host.map.storage.randomForwardDirectionAt(sourceX, sourceY);
+			tp = host.map.logic.towardWithRot(alignToEntity(sourceX), alignToEntity(sourceY), randomR, PROJECTILES_SPAWN_DISTANCE);
 			rotX = alignToEntity(sourceX) + tp.x;
 			rotY = alignToEntity(sourceY) + tp.y;
 			if (host.map.logic.isOutOfMap(rotX, rotY))
 				continue;
-			laserLength = host.getLaserLength2(rotX, rotY, randomRotPoint);
+			laserLength = host.getLaserLength2(rotX, rotY, randomR);
 			if (laserLength <= 0)
 				continue;
 			switch (randInt(4)) {
@@ -81,7 +81,7 @@ export default class BlockLaserTrap extends BlockCommon {
 					break;
 			}
 			if (p != null) {
-				p.rot = randomRotPoint;
+				p.rot = randomR;
 				host.entitySystem.registerProjectile(p);
 				// host.projectileContainer.addChild(p);
 				// trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);

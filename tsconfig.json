@@ -12,6 +12,9 @@
     },
     "include": [
         "src",
-        "src/batr.ts"
+        "src/batr.ts",
+        "test/geometricTools.test.ts",
+        "test/lang.test.ts",
+        "test/map.test.ts"
     ],
 }

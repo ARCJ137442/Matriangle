@@ -44,7 +44,7 @@ export default class BlockMoveableWall extends BlockWall {
 		let p: ThrownBlock;
 		let i: uint = 0;
 		do {
-			randomRot = randomRot();
+			randomRot = host.map.storage.randomForwardDirectionAt(sourceX, sourceY);
 			tPoint = host.map.logic.towardWithRot(sourceX, sourceY, randomRot);
 			rotX = tPoint.x;
 			rotY = tPoint.y;
