@@ -21,7 +21,7 @@ export default class EffectTeleport extends EffectCommon {
 	protected block2: Shape = new Shape();
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, scale: number = EffectTeleport.SCALE) {
+	public constructor(host: IBatrGame, x: number, y: number, scale: number = EffectTeleport.SCALE) {
 		super(host, x, y, GlobalGameVariables.FIXED_TPS);
 		this.drawShape();
 		this.maxScale = scale;

@@ -4,7 +4,8 @@ import { flash } from '../legacy/FlashLegacy';
 // import flash.geom.Point;
 
 /**
- * The point only contains integer position
+ * 经过特殊定制的整数点支持
+ * TODO: 数组化重写，用数组形式提升代码性能
  */
 export default class intPoint { // don't extends Object, otherwise it will make the functions undefined!
 	//============Static Variables============//
@@ -140,6 +141,15 @@ export default class intPoint { // don't extends Object, otherwise it will make 
 	}
 }
 
+export class floatPoint extends Array<number> {
+	get x(): number { return this[0] }
+	set x(value: number) { this[0] = value }
+	get y(): number { return this[1] }
+	set y(value: number) { this[1] = value }
+}
+
 // Full alias
 export const iPoint = intPoint; // as class
 export type iPoint = intPoint; // as type
+export const fPoint = floatPoint; // as class
+export type fPoint = floatPoint; // as type

@@ -1,5 +1,5 @@
 import { randIntBetween } from "../../../../common/exMath";
-import intPoint, { iPoint } from "../../../../common/intPoint";
+import intPoint, { iPoint } from "../../../../common/geometricTools";
 import { identity, randomIn } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import { NativeBlockTypes } from "../../../registry/BlockTypeRegistry";

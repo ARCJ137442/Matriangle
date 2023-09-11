@@ -5,7 +5,7 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
 import { BlockType } from "../../../block/BlockCommon";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -38,7 +38,7 @@ export default class ShockWaveDrone extends ProjectileCommon {
 	protected _moveDuration: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, tool: ToolType, toolRot: uint, toolChargePercent: number) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
 		super(host, x, y, owner);
 		this._currentTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;

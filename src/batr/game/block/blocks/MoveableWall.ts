@@ -7,8 +7,8 @@ import Wall from "./Wall";
 import BlockWall from "./Wall";
 import IBatrGame from "../../main/IBatrGame";
 import ThrownBlock from "../../entity/entities/projectile/ThrownBlock";
-import { getRandom } from "../../../general/GlobalRot";
-import { iPoint } from "../../../common/intPoint";
+import { randomRot } from "../../../general/GlobalRot";
+import { iPoint } from "../../../common/geometricTools";
 import { alignToEntity } from "../../../general/PosTransform";
 
 // Move as thrown block.
@@ -44,7 +44,7 @@ export default class BlockMoveableWall extends BlockWall {
 		let p: ThrownBlock;
 		let i: uint = 0;
 		do {
-			randomRot = getRandom();
+			randomRot = randomRot();
 			tPoint = host.map.logic.towardWithRot(sourceX, sourceY, randomRot);
 			rotX = tPoint.x;
 			rotY = tPoint.y;

@@ -2,7 +2,7 @@
 // import batr.general.*;
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -31,7 +31,7 @@ export default class BulletTracking extends BulletBasic {
 	protected _cachedTargets: Player[] = new Array<Player>();
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
 		this._scalePercent = (1 + chargePercent * 0.5);
 		if (chargePercent >= 1)
 			this._trackingFunction = this.getTargetRotWidely;

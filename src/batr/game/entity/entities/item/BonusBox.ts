@@ -5,7 +5,7 @@
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import BonusType from "../../../registry/BonusRegistry";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
@@ -36,7 +36,7 @@ export default class BonusBox extends EntityCommon {
 	protected _symbol: BonusBoxSymbol;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: int, y: int, type: BonusType = BonusType.NULL) {
+	public constructor(host: IBatrGame, x: int, y: int, type: BonusType = BonusType.NULL) {
 		super(host, x, y);
 		this._bonusType = type;
 		this._symbol = new BonusBoxSymbol(this._bonusType);

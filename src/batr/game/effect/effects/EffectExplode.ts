@@ -23,7 +23,7 @@ export default class EffectExplode extends EffectCommon {
 	protected _color: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, radius: number = 1,
+	public constructor(host: IBatrGame, x: number, y: number, radius: number = 1,
 		color: uint = DEFAULT_COLOR): void {
 		super(host, x, y, GlobalGameVariables.TPS * 0.25);
 		this._color = color;

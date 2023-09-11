@@ -3,11 +3,11 @@
 // import batr.general.*;
 // import batr.game.model.ToolType;
 
-import { iPoint } from "../../../../common/intPoint";
+import { iPoint } from "../../../../common/geometricTools";
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
 import BlockAttributes from "../../../block/BlockAttributes";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import ProjectileCommon from "./ProjectileCommon";
@@ -40,7 +40,7 @@ export default class Lightning extends ProjectileCommon {
 	protected _hurtDefaultDamage: uint[] = new array<uint>();
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, rot: uint, owner: Player, energy: int) {
+	public constructor(host: IBatrGame, x: number, y: number, rot: uint, owner: Player | null, energy: int) {
 		super(host, x, y, owner);
 		this.rot = rot;
 		this._initialEnergy = this._energy = energy;

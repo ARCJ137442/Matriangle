@@ -1,23 +1,26 @@
 import * as exMath from "../common/exMath";
 import { int, uint, uint$MAX_VALUE } from "../legacy/AS3Legacy";
 
-// import batr.common.*;
-//============Static Variables============//
-export const NULL: uint = uint$MAX_VALUE;
+// ! 有待后续更新：支持多个维度、解决「连续角度」等问题
+export type intRot = uint;
+export type floatRot = number; // TODO: 有待支持
 
-export const UP: uint = 3;
-export const DOWN: uint = 1;
-export const LEFT: uint = 2;
-export const RIGHT: uint = 0;
-export const DEFAULT: uint = RIGHT;
+//============Static Variables============//
+export const NULL: intRot = uint$MAX_VALUE;
+
+export const UP: intRot = 3;
+export const DOWN: intRot = 1;
+export const LEFT: intRot = 2;
+export const RIGHT: intRot = 0;
+export const DEFAULT: intRot = RIGHT;
 
 //============Static Getter ANd Setter============//
-export function getRandom(): uint {
+export function randomRot(): intRot {
 	return exMath.randInt(4);
 }
 
 //============Static Functions============//
-export function isValidRot(rot: uint): boolean {
+export function isValidRot(rot: intRot): boolean {
 	return rot != NULL;
 }
 
@@ -25,7 +28,7 @@ export function toOpposite(rot: number): number {
 	return (rot + 2) & 3;
 }
 
-export function toOppositeInt(rot: uint): uint {
+export function toOppositeInt(rot: intRot): intRot {
 	return (rot + 2) & 3;
 }
 
@@ -34,12 +37,12 @@ export function rotate(rot: number, angle: number): number {
 	return lockToStandard(rot + angle);
 }
 
-export function rotateInt(rot: uint, angle: int): uint {
+export function rotateInt(rot: intRot, angle: int): intRot {
 	// angle is Local Rot.
 	return lockIntToStandard(rot + angle);
 }
 
-export function randomWithout(rot: uint): uint {
+export function randomWithout(rot: intRot): intRot {
 	return lockIntToStandard(rot + 1 + exMath.randInt(3));
 }
 
@@ -53,7 +56,7 @@ export function lockToStandard(rot: number): number {
 	return rot;
 }
 
-export function lockIntToStandard(rot: int): uint {
+export function lockIntToStandard(rot: int): intRot {
 	if (rot < 0)
 		return lockIntToStandard(rot + 4);
 	return rot & 3;
@@ -65,7 +68,7 @@ export function lockIntToStandard(rot: int): uint {
  * @param	yD	Distance Y.
  * @return
  */
-export function fromLinearDistance(xD: int, yD: int): uint {
+export function fromLinearDistance(xD: int, yD: int): intRot {
 	if ((xD * yD) == 0) {
 		if (xD == 0) {
 			if (yD < 0)
@@ -127,18 +130,18 @@ export function towardY(rot: number, radius: number = 1): number {
 	return exMath.redirectNum(radius * Math.sin(exMath.angleToArc(toRealRot(rot))), 10000);
 }
 
-export function towardIntX(rot: uint, radius: number = 1): number {
+export function towardIntX(rot: intRot, radius: number = 1): number {
 	return exMath.chi(rot + 1) * radius;
 }
 
-export function towardIntY(rot: uint, radius: number = 1): number {
+export function towardIntY(rot: intRot, radius: number = 1): number {
 	return exMath.chi(rot) * radius;
 }
 
-export function towardXInt(rot: uint, radius: int = 1): int {
+export function towardXInt(rot: intRot, radius: int = 1): int {
 	return exMath.chi(rot + 1) * radius;
 }
 
-export function towardYInt(rot: uint, radius: int = 1): int {
+export function towardYInt(rot: intRot, radius: int = 1): int {
 	return exMath.chi(rot) * radius;
 }

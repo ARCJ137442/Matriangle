@@ -19,14 +19,14 @@ export default class EffectPlayerHurt extends EffectPlayerDeathLight {
 	public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
 
 	//============Static Functions============//
-	public static fromPlayer(host: Game, player: Player, reverse: boolean = false): EffectPlayerHurt {
+	public static fromPlayer(host: IBatrGame, player: Player, reverse: boolean = false): EffectPlayerHurt {
 		return new EffectPlayerHurt(host, player.entityX, player.entityY, player.rot, FILL_COLOR, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
 	}
 
 	//============Instance Variables============//
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, rot: uint = 0, color: uint = EffectPlayerHurt.FILL_COLOR, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerHurt.LIFE) {
+	public constructor(host: IBatrGame, x: number, y: number, rot: uint = 0, color: uint = EffectPlayerHurt.FILL_COLOR, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerHurt.LIFE) {
 		super(host, x, y, rot, color, AILabel, reverse, life);
 	}
 

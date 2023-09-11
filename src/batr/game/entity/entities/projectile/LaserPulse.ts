@@ -4,7 +4,7 @@
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -25,7 +25,7 @@ export default class LaserPulse extends LaserBasic {
 	public isPull: boolean = false;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH, chargePercent: number = 1) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH, chargePercent: number = 1) {
 		super(host, x, y, owner, length, chargePercent);
 		this._currentTool = ToolType.PULSE_LASER;
 		this._life = LaserPulse.LIFE;

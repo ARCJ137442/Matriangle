@@ -3,7 +3,7 @@
 // import batr.general.*;
 // import batr.game.block.blocks.XTrap;
 
-import { iPoint } from "../../../common/intPoint";
+import { iPoint } from "../../../common/geometricTools";
 import { DISPLAY_GRIDS } from "../../../display/GlobalDisplayVariables";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import IMap from "./IMap";

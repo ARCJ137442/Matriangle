@@ -22,7 +22,7 @@ export default class EffectPlayerLevelup extends EffectCommon {
 	//============Instance Variables============//
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number,
+	public constructor(host: IBatrGame, x: number, y: number,
 		color: uint = DEFAULT_COLOR,
 		scale: number = 1): void {
 		super(host, x, y, GlobalGameVariables.TPS / 2);

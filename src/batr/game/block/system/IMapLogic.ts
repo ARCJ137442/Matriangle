@@ -1,6 +1,7 @@
 
 
-import { iPoint } from "../../../common/intPoint";
+import { iPoint } from "../../../common/geometricTools";
+import { intRot } from "../../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import EntityCommon from "../../entity/EntityCommon";
 import Player from "../../entity/entities/player/Player";
@@ -68,13 +69,22 @@ export default interface IMapLogic {
 	 */
 	isIntOutOfMap(x: int, y: int): boolean
 
-
 	/**
 	 * 从某位置向某方向「前进」，获取「前进到的坐标」
+	 * ! 截止至目前，所有「方向」都指的是「整数方向」
 	 * * 地图底层逻辑，与「逻辑结构」有关，但与「游戏整体机制」分离
 	 *   * 例如：实现「有限无界」逻辑，不能只是在「存储结构」中做事
 	 */
-	towardWithRot(x: int, y: int, rot: uint): iPoint
+	towardWithRot(x: number, y: number, rot: intRot, step?: int/* = 1*/): iPoint
+
+	/**
+	 * （整形优化版本）从某位置向某方向「前进」，获取「前进到的坐标」
+	 * * 地图底层逻辑，与「逻辑结构」有关，但与「游戏整体机制」分离
+	 *   * 例如：实现「有限无界」逻辑，不能只是在「存储结构」中做事
+	 */
+	towardWithRotInt(x: int, y: int, rot: intRot, step?: int/* = 1*/): iPoint
+
+	// TODO: 有待移植
 
 	/**
 	 * 测试一个地方「是否通过」

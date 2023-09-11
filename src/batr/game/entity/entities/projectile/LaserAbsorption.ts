@@ -5,11 +5,12 @@
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import LaserBasic from "./LaserBasic";
+import IBatrGame from "../../../main/IBatrGame";
 
 // import batr.game.entity.entity.player.*;
 // import batr.game.entity.*;
@@ -24,7 +25,7 @@ export default class LaserAbsorption extends LaserBasic {
 	protected scaleReverse: boolean = true;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, length: uint = LENGTH) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH) {
 		super(host, x, y, owner, length);
 		this._currentTool = ToolType.ABSORPTION_LASER;
 		this.damage = this._currentTool.defaultDamage;

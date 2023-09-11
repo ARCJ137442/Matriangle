@@ -22,7 +22,7 @@ export default class EffectBlockLight extends EffectCommon {
 	public static readonly MIN_SCALE: number = 1;
 
 	//============Static Functions============//
-	public static fromBlock(host: Game, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
+	public static fromBlock(host: IBatrGame, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
 		return new EffectBlockLight(host, x, y, block.pixelColor, block.pixelAlpha, reverse);
 	}
 
@@ -36,7 +36,7 @@ export default class EffectBlockLight extends EffectCommon {
 	public reverse: boolean = false;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: boolean = false, life: uint = EffectBlockLight.MAX_LIFE) {
+	public constructor(host: IBatrGame, x: number, y: number, color: uint = 0xffffff, alpha: uint = uint$MAX_VALUE, reverse: boolean = false, life: uint = EffectBlockLight.MAX_LIFE) {
 		super(host, x, y, life);
 		this._color = color;
 		this._alpha = alpha;

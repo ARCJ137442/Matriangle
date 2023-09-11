@@ -1,6 +1,6 @@
 // TODO: 待拆分，变成MAP_V1/MapLogic_V1的实现
 
-import { iPoint } from "../../../../common/intPoint";
+import { iPoint } from "../../../../common/geometricTools";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../BlockAttributes";
 import BlockCommon, { BlockType } from "../../BlockCommon";

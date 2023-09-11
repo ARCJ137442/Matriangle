@@ -15,13 +15,13 @@ export default class EffectCommon implements IBatrDisplayable {
 
 	//============Instance Variables============//
 	protected _uuid: uint;
-	protected _host: Game;
+	protected _host: IBatrGame;
 	protected _isActive: boolean;
 	protected life: uint;
 	protected LIFE: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, maxLife: uint = EffectCommon.DEFAULT_MAX_LIFE, active: boolean = true) {
+	public constructor(host: IBatrGame, x: number, y: number, maxLife: uint = EffectCommon.DEFAULT_MAX_LIFE, active: boolean = true) {
 		// Init ID
 		this._uuid = EffectCommon._NEXT_UUID++;
 		// Init Host

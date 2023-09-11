@@ -16,11 +16,11 @@ export default class EntityCommon extends Sprite {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _host: Game;
+	protected _host: IBatrGame;
 	protected _isActive: boolean;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game,
+	public constructor(host: IBatrGame,
 		x: number, y: number,
 		initActive: boolean = true): void {
 		super();

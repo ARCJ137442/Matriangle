@@ -1,6 +1,6 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -37,7 +37,7 @@ export default class Wave extends ProjectileCommon {
 	protected _finalScale: number;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
 		super(host, x, y, owner);
 		this._currentTool = ToolType.WAVE;
 		dealCharge(chargePercent);

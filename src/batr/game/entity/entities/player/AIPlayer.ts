@@ -68,7 +68,7 @@ export default class AIPlayer extends Player {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		host: Game,
+		host: IBatrGame,
 		x: number, y: number,
 		team: PlayerTeam,
 		isActive: boolean = true,

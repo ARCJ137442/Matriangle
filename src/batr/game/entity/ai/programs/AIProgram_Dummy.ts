@@ -6,7 +6,7 @@
 // import batr.game.entity.entity.player.*;
 
 import { randInt } from "../../../../common/exMath";
-import { getRandom as randomRot } from "../../../../general/GlobalRot";
+import { randomRot as randomRot } from "../../../../general/GlobalRot";
 import { uint } from "../../../../legacy/AS3Legacy";
 import BonusBox from "../../entities/item/BonusBox";
 import AIPlayer from "../../entities/player/AIPlayer";

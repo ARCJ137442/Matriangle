@@ -26,7 +26,7 @@ export default class EffectSpawn extends EffectTeleport {
 	protected _tempLife: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, scale: number = SCALE) {
+	public constructor(host: IBatrGame, x: number, y: number, scale: number = SCALE) {
 		super(host, x, y, scale);
 		this._animationStage = 0;
 	}

@@ -2,7 +2,7 @@
 // import batr.general.*;
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -31,7 +31,7 @@ export default class SubBomber extends BulletBasic {
 	protected _maxBombTick: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number, fuel: int = 100) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number, fuel: int = 100) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
 		this._currentTool = ToolType.SUB_BOMBER;

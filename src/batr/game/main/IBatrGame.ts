@@ -2,7 +2,7 @@
 // import batr.general.*;
 // import batr.game.stat.*;
 
-import { iPoint } from "../../common/intPoint";
+import { iPoint } from "../../common/geometricTools";
 import I18nText from "../../i18n/I18nText";
 import I18ns from "../../i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";

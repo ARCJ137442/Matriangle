@@ -23,7 +23,7 @@ export default class EntitySystem {
 	//============Static Variables============//
 
 	//============Instance Variables============//
-	protected _host: Game;
+	protected _host: IBatrGame;
 
 	// UUID
 
@@ -40,7 +40,7 @@ export default class EntitySystem {
 	protected _bonusBoxes: BonusBox[] = new BonusBox[];
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game) {
+	public constructor(host: IBatrGame) {
 		this._host = host;
 	}
 

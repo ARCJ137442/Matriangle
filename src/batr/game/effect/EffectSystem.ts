@@ -19,7 +19,7 @@ export default class EffectSystem {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _host: Game;
+	protected _host: IBatrGame;
 
 	// UUID
 
@@ -33,7 +33,7 @@ export default class EffectSystem {
 	protected _effects: EffectCommon[] = new EffectCommon[];
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game) {
+	public constructor(host: IBatrGame) {
 		this._host = host;
 	}
 

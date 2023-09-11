@@ -2,10 +2,10 @@
 // import batr.common.*;
 // import batr.general.*;
 
-import { iPoint } from "../../../../common/intPoint";
+import { iPoint } from "../../../../common/geometricTools";
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../block/BlockAttributes";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import ToolType from "../../../registry/ToolType";
 import EntityCommon from "../../EntityCommon";
 import BonusBox from "../../entities/item/BonusBox";
@@ -34,7 +34,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 
 	//============Static Functions============//
 	/*========AI Criteria========*/
-	static toolUseTestWall(owner: Player, host: Game, rot: uint, distance: uint): boolean {
+	static toolUseTestWall(owner: Player | null, host: IBatrGame, rot: uint, distance: uint): boolean {
 		let vx: int = GlobalRot.towardXInt(rot, 1);
 		let vy: int = GlobalRot.towardYInt(rot, 1);
 		let cx: int, cy: int;
@@ -93,7 +93,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	 * 2. [F=G+H]
 	 * @return	The Path From Target To Start
 	 */
-	protected static findPath(owner: Player, host: Game, startX: int, startY: int, endX: int, endY: int): PathNode[] {
+	protected static findPath(owner: Player | null, host: IBatrGame, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 		// trace('Name='+owner.customName)
 		// Operation
 		let openList: PathNode[] = new Array<PathNode>();
@@ -154,7 +154,7 @@ protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
 	return false;
 }
 
-protected static getNearbyNodesAndInitFGH(n: PathNode, host: Game, owner: Player, target: PathNode): PathNode[] {
+protected static getNearbyNodesAndInitFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: PathNode): PathNode[] {
 	// Set Rot in mapDealNode
 	return [
 		initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
@@ -180,14 +180,14 @@ protected static getLeastFNode(nodes: PathNode[]): PathNode {
 	return _leastNode;
 }
 
-protected static initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
+protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
 	// Set Rot in mapDealNode
 	n.G = getPathWeight(n, host, owner);
 	n.H = n.getManhattanDistance(target) * 10; // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
 	return n;
 }
 
-protected static mapDealNode(n: PathNode, host: Game, fromRot: uint): PathNode {
+protected static mapDealNode(n: PathNode, host: IBatrGame, fromRot: uint): PathNode {
 	n.fromRot = fromRot;
 	return host.lockIPointInMap(n) as PathNode;
 }
@@ -199,7 +199,7 @@ protected static mapDealNode(n: PathNode, host: Game, fromRot: uint): PathNode {
  * @param	player	The player.
  * @return	A int will be multi with G.
  */
-protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
+protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
 	let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 	if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 		return 1000;
@@ -209,7 +209,7 @@ protected static getPathWeight(node: PathNode, host: Game, player: Player): int 
 }
 
 //========Dynamic A* PathFind========//
-static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+static getDynamicNode(start: iPoint, target: iPoint, host: IBatrGame, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
 	let nearbyNodes: PathNode[] = [
 		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
@@ -257,12 +257,12 @@ static getEntityName(target: EntityCommon): string {
  * @param	owner	the owner.
  * @param	message	the text without AIPlayer name.
  */
-static traceLog(owner: Player, message: string): void {
+static traceLog(owner: Player | null, message: string): void {
 	if(DEBUG)
 		trace(owner.customName + ':', message);
 }
 
-protected static initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
+protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, target: iPoint): PathNode {
 	return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
 }
 
@@ -293,7 +293,7 @@ public destructor(): void {
 }
 
 //============Instance Functions============//
-protected initRemember(host: Game): void {
+protected initRemember(host: IBatrGame): void {
 	this._remember = host.map.getMatrixBoolean();
 }
 
@@ -334,7 +334,7 @@ protected resetCloseTarget(): void {
 }
 
 /*========AI Tools========*/
-public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
+public getNearestBonusBox(ownerPoint: iPoint, host: IBatrGame): BonusBox {
 	// getManhattanDistance
 	let _nearestBox: BonusBox = null;
 	let _nearestDistance: int = int.MAX_VALUE;
@@ -351,7 +351,7 @@ public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
 	return _nearestBox;
 }
 
-public getNearestEnemy(owner: Player, host: Game): Player {
+public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
 	// getManhattanDistance
 	let _nearestEnemy: Player = null;
 	let _nearestDistance: int = int.MAX_VALUE;
@@ -389,7 +389,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 	if (player == null)
 		return AIPlayerAction.NULL;
 	// Set Variables
-	let host: Game = player.host;
+	let host: IBatrGame = player.host;
 	let ownerPoint: iPoint = player.gridPoint;
 	let lastTargetPlayer: Player = this._lastTarget as Player;
 	let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;

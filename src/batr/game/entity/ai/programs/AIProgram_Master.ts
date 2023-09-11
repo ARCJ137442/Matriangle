@@ -2,9 +2,9 @@
 // import batr.common.*;
 // import batr.general.*;
 
-import { iPoint } from "../../../../common/intPoint";
+import { iPoint } from "../../../../common/geometricTools";
 import { int, uint } from "../../../../legacy/AS3Legacy";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityCommon from "../../EntityCommon";
 import BonusBox from "../../entities/item/BonusBox";
 import AIPlayer from "../../entities/player/AIPlayer";
@@ -34,7 +34,7 @@ export default class AIProgram_Master implements IAIProgram {
 	public static readonly DEBUG: boolean = false;
 
 	//============Static Functions============//
-	protected static initFGH(n: PathNode, host: Game, owner: Player, target: iPoint): PathNode {
+	protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
 		// Set Rot in mapDealNode
 		n.G = getPathWeight(n, host, owner);
 		n.H = target == null ? 0 : n.getManhattanDistance(target) * 10 // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
@@ -48,7 +48,7 @@ export default class AIProgram_Master implements IAIProgram {
 	 * @param	player	The player.
 	 * @return	A int will be multi with G.
 	 */
-	protected static getPathWeight(node: PathNode, host: Game, player: Player): int {
+	protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
 		let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 		if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 			return 1000;
@@ -60,7 +60,7 @@ export default class AIProgram_Master implements IAIProgram {
 	}
 
 	//========Dynamic A* PathFind========//
-	static getDynamicNode(start: iPoint, target: iPoint, host: Game, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+	static getDynamicNode(start: iPoint, target: iPoint, host: IBatrGame, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
 		let nearbyNodes: PathNode[] = [
 			initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
 			initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
@@ -81,7 +81,7 @@ export default class AIProgram_Master implements IAIProgram {
 		return _leastNode;
 	}
 
-	protected static initDynamicNode(n: PathNode, host: Game, owner: AIPlayer, target: iPoint): PathNode {
+	protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, target: iPoint): PathNode {
 		return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
 	}
 
@@ -112,7 +112,7 @@ export default class AIProgram_Master implements IAIProgram {
 	}
 
 	//============Instance Functions============//
-	protected initRemember(host: Game): void {
+	protected initRemember(host: IBatrGame): void {
 		this._remember = host.map.getMatrixBoolean();
 	}
 
@@ -154,7 +154,7 @@ export default class AIProgram_Master implements IAIProgram {
 	}
 
 	/*========AI Tools========*/
-	public getNearestBonusBox(ownerPoint: iPoint, host: Game): BonusBox {
+	public getNearestBonusBox(ownerPoint: iPoint, host: IBatrGame): BonusBox {
 		// getManhattanDistance
 		let _nearestBox: BonusBox = null;
 		let _nearestDistance: int = int.MAX_VALUE;
@@ -171,7 +171,7 @@ export default class AIProgram_Master implements IAIProgram {
 		return _nearestBox;
 	}
 
-	public getNearestEnemy(owner: Player, host: Game): Player {
+	public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
 		// getManhattanDistance
 		let _nearestEnemy: Player = null;
 		let _nearestDistance: int = int.MAX_VALUE;
@@ -213,7 +213,7 @@ export default class AIProgram_Master implements IAIProgram {
 		if (player == null)
 			return AIPlayerAction.NULL;
 		// Set Variables
-		let host: Game = player.host;
+		let host: IBatrGame = player.host;
 		let ownerPoint: iPoint = player.gridPoint;
 		let lastTargetPlayer: Player = this._lastTarget as Player;
 		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;

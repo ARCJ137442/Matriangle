@@ -3,7 +3,7 @@ import { IBatrShape } from "../../../display/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../display/GlobalDisplayVariables";
 import BlockCommon from "../BlockCommon";
 import { NativeBlockAttributes } from "../../registry/BlockAttributesRegistry";
-import { iPoint } from "../../../common/intPoint";
+import { iPoint } from "../../../common/geometricTools";
 import BlockColored from "./Colored";
 import { NativeBlockTypes } from "../../registry/BlockTypeRegistry";
 import { alignToEntity } from "../../../general/PosTransform";
@@ -42,7 +42,7 @@ export default class BlockColorSpawner extends BlockCommon {
 		let x: int = randomPoint.x;
 		let y: int = randomPoint.y;
 		let block: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-		if (!host.isOutOfMap(x, y) && host.map.storage.isVoid(x, y)) {
+		if (!host.map.logic.isOutOfMap(x, y) && host.map.storage.isVoid(x, y)) {
 			host.setBlock(x, y, block); // * 后续游戏需要处理「方块更新事件」
 			host.addBlockLightEffect2(
 				alignToEntity(x),

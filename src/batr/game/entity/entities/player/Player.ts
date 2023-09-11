@@ -2,7 +2,7 @@ import { int, uint } from "../../../../legacy/AS3Legacy";
 import { Matrix } from "../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
 import BlockCommon from "../../../block/BlockCommon";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import GameRule from "../../../rule/GameRule";
@@ -245,7 +245,7 @@ export default class Player extends EntityCommon implements IPlayerProfile {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		host: Game,
+		host: IBatrGame,
 		x: number,
 		y: number,
 		team: PlayerTeam,

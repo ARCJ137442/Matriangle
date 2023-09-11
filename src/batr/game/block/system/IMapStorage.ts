@@ -1,7 +1,8 @@
 
 
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
-import { iPoint } from "../../../common/intPoint";
+import { iPoint } from "../../../common/geometricTools";
+import { intRot } from "../../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../BlockAttributes";
 import BlockCommon, { BlockType } from "../BlockCommon";
@@ -30,6 +31,29 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param dim 地图尺寸的具体维度
 	 */
 	getMapSize(dim: uint): uint;
+
+	/**
+	 * 获取地图的维数
+	 */
+	get mapDimension(): uint;
+
+	/**
+	 * 获取地图中所有可用的方向
+	 * * 一般表示为自然数数组
+	 * * 是「所有位置的所有方向」的并集
+	 */
+	get allDirection(): intRot[];
+
+	/**
+	 * 获取地图在某位置「可前进的所有方向」
+	 */
+	getForwardDirectionsAt(x: int, y: int): intRot[];
+
+	/**
+	 * 在某一处随机获取一个「可前进方向」
+	 * * 可以借用上面的代码
+	 */
+	randomForwardDirectionsAt(x: int, y: int): intRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标
 	// /**

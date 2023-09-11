@@ -3,7 +3,7 @@
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -25,7 +25,7 @@ export default class LaserBasic extends ProjectileCommon {
 	public isDamaged: boolean = false;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, length: number = LENGTH, chargePercent: number = 1) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: number = LENGTH, chargePercent: number = 1) {
 		super(host, x, y, owner);
 		this._currentTool = ToolType.LASER;
 		this.damage = this._currentTool.defaultDamage;

@@ -19,14 +19,14 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
 	public static readonly MAX_LIFE: uint = GlobalGameVariables.TPS;
 
 	//============Static Functions============//
-	public static fromPlayer(host: Game, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
+	public static fromPlayer(host: IBatrGame, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
 		return new EffectPlayerDeathFadeout(host, x, y, player.rot, player.fillColor, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
 	}
 
 	//============Instance Variables============//
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathFadeout.MAX_LIFE) {
+	public constructor(host: IBatrGame, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathFadeout.MAX_LIFE) {
 		super(host, x, y, rot, color, AILabel, reverse, life);
 	}
 

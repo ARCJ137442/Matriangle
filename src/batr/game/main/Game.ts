@@ -2,7 +2,7 @@
 // import batr.general.*;
 // import batr.game.stat.*;
 
-import { iPoint } from "../../common/intPoint";
+import { iPoint } from "../../common/geometricTools";
 import MainFont from "../../fonts/MainFont";
 import FixedI18nText from "../../i18n/FixedI18nText";
 import I18nKey from "../../i18n/I18nKey";
@@ -59,6 +59,7 @@ import GameRuleEvent from "../rule/GameRuleEvent";
 import GameResult from "../stat/GameResult";
 import GameStats from "../stat/GameStats";
 import IBatrGame from "./IBatrGame";
+import { towardX, towardY } from "../../general/GlobalRot";
 
 export default class Game implements IBatrGame {
 	//============Static Variables============//
@@ -223,7 +224,7 @@ export default class Game implements IBatrGame {
 		this._effectSystem = new EffectSystem(this);
 		this.initDisplay();
 		this.isActive = active;
-		this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		this.addEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 	}
 
 	//============Instance Getter And Setter============//
@@ -254,8 +255,8 @@ export default class Game implements IBatrGame {
 		this._isActive = value;
 		if (value) {
 			// Key
-			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, onGameKeyDown);
-			this.stage.addEventListener(KeyboardEvent.KEY_UP, onGameKeyUp);
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.onGameKeyDown);
+			this.stage.addEventListener(KeyboardEvent.KEY_UP, this.onGameKeyUp);
 			// Timer
 			this._tickTimer.addEventListener(TimerEvent.TIMER, this.onGameTick);
 			this._tickTimer.start();
@@ -266,8 +267,8 @@ export default class Game implements IBatrGame {
 		}
 		else {
 			// Key
-			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onGameKeyDown);
-			this.stage.removeEventListener(KeyboardEvent.KEY_UP, onGameKeyUp);
+			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN, this.onGameKeyDown);
+			this.stage.removeEventListener(KeyboardEvent.KEY_UP, this.onGameKeyUp);
 			// Timer
 			this._tickTimer.removeEventListener(TimerEvent.TIMER, this.onGameTick);
 			this._tickTimer.stop();
@@ -502,14 +503,14 @@ export default class Game implements IBatrGame {
 			return new FixedI18nText(
 				this.translations,
 				winners.length > 1 ? I18nKey.WIN_MULTI_PLAYER : I18nKey.WIN_SINGLE_PLAYER,
-				joinNamesFromPlayers(winners)
+				Game.joinNamesFromPlayers(winners)
 			);
 		}
 	}
 
 	//====Functions About Init====//
 	protected onAddedToStage(E: Event): void {
-		this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		this.removeEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 		// this.addEventListener(Event.ENTER_FRAME,onEnterFrame);
 		this.subject.addEventListener(I18nsChangeEvent.TYPE, this.onI18nsChange);
 		this.addChildren();
@@ -518,10 +519,10 @@ export default class Game implements IBatrGame {
 	protected initDisplay(): void {
 		// HUD Text
 		this._mapTransformTimeText.setBlockPos(0, 23);
-		this._mapTransformTimeText.defaultTextFormat = MAP_TRANSFORM_TEXT_FORMAT;
+		this._mapTransformTimeText.defaultTextFormat = Game.MAP_TRANSFORM_TEXT_FORMAT;
 		this._mapTransformTimeText.selectable = false;
 		this._gamePlayingTimeText.setBlockPos(0, 0);
-		this._gamePlayingTimeText.defaultTextFormat = GAME_PLAYING_TIME_TEXT_FORMAT;
+		this._gamePlayingTimeText.defaultTextFormat = Game.GAME_PLAYING_TIME_TEXT_FORMAT;
 		this._gamePlayingTimeText.selectable = false;
 		// Initial HUD visible
 		this.visibleHUD = false;
@@ -744,7 +745,7 @@ export default class Game implements IBatrGame {
 
 	protected onGameKeyUp(E: KeyboardEvent): void {
 		// Player Control
-		dealKeyDownWithPlayers(E.keyCode, false);
+		this.dealKeyDownWithPlayers(E.keyCode, false);
 	}
 
 	protected dealKeyDownWithPlayers(code: uint, isKeyDown: boolean): void {
@@ -799,7 +800,7 @@ export default class Game implements IBatrGame {
 	 * @return	true if can pass.
 	 */
 	public testCanPass(x: number, y: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		return testIntCanPass(PosTransform.alignToGrid(x), PosTransform.alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
+		return this.testIntCanPass(PosTransform.alignToGrid(x), PosTransform.alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
 	}
 
 	public testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
@@ -823,7 +824,7 @@ export default class Game implements IBatrGame {
 		if (asLaser && !attributes.laserCanPass)
 			return false;
 
-		if (includePlayer && isHitAnyPlayer(mapX, mapY))
+		if (includePlayer && this.isHitAnyPlayer(mapX, mapY))
 			return false;
 
 		return true;
@@ -834,7 +835,7 @@ export default class Game implements IBatrGame {
 	 */
 	public testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
 		// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
-		return testCanPass(entity.getFrontX(distance),
+		return this.testCanPass(entity.getFrontX(distance),
 			entity.getFrontY(distance),
 			asPlayer, asBullet, asLaser,
 			includePlayer, avoidTrap);
@@ -864,7 +865,7 @@ export default class Game implements IBatrGame {
 		if (!attributes.playerCanPass)
 			return false;
 
-		if (includePlayer && isHitAnyPlayer(gridX, gridY))
+		if (includePlayer && this.isHitAnyPlayer(gridX, gridY))
 			return false;
 
 		return true;
@@ -873,7 +874,7 @@ export default class Game implements IBatrGame {
 	public testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
 		// Debug: trace('testFullPlayerCanPass:'+player.customName+','+x+','+y+','+oldX+','+oldY+','+includePlayer)
 		// Target can pass
-		if (!testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
+		if (!this.testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
 			return false;
 		// Test Whether OldBlock can Support
 		// if(!testPlayerCanPass(player,oldX,oldY,includePlayer,avoidHurting)) return false;//don't support
@@ -956,7 +957,7 @@ export default class Game implements IBatrGame {
 		let finalDamage: uint;
 		for (let i: uint = 0; i < length; i++) {
 			// nextBlockAtt=this.getBlockAttributes(cx+vx,cy+vy);
-			players = getHitPlayers(cx, cy);
+			players = this.getHitPlayers(cx, cy);
 
 			for (let victim of players) {
 				if (victim == null)
@@ -975,7 +976,7 @@ export default class Game implements IBatrGame {
 				}
 				if (victim != attacker && !victim.isRespawning) {
 					if (teleport) {
-						spreadPlayer(victim);
+						this.spreadPlayer(victim);
 					}
 					if (pulse) {
 						if ((laser as LaserPulse).isPull) {
@@ -1054,7 +1055,7 @@ export default class Game implements IBatrGame {
 		// BonusBox Displace by Asphyxia/Trap
 		for (let i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
 			let box: BonusBox = this._entitySystem.bonusBoxes[i];
-			if (box != null && !testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
+			if (box != null && !this.testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
 				this._entitySystem.removeBonusBox(box);
 			}
 		}
@@ -1272,7 +1273,7 @@ export default class Game implements IBatrGame {
 		if (isInitial && this.rule.initialMap != null)
 			this.changeMap(this.rule.initialMap, update, reSpreadPlayer);
 		else if (this.rule.mapRandomPotentials == null && this.rule.initialMapID)
-			this.changeMap(getRandomMap(), update, reSpreadPlayer);
+			this.changeMap(this.getRandomMap(), update, reSpreadPlayer);
 		else
 			this.changeMap(Game.ALL_MAPS[exMath.intMod(exMath.randomByWeightV(this.rule.mapWeightsByGame), Game.VALID_MAP_COUNT)], update, reSpreadPlayer);
 	}
@@ -1341,7 +1342,7 @@ export default class Game implements IBatrGame {
 
 	public addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): Player {
 		// Define
-		let p: Player = createPlayer(x, y, id, team, isActive);
+		let p: Player = this.createPlayer(x, y, id, team, isActive);
 		this._entitySystem.registerPlayer(p);
 		// Set
 		p.rot = rot;
@@ -1381,7 +1382,7 @@ export default class Game implements IBatrGame {
 
 	public addAI(team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): AIPlayer {
 		// Define
-		let p: AIPlayer = createAI(x, y, team, isActive);
+		let p: AIPlayer = this.createAI(x, y, team, isActive);
 		this._entitySystem.registerPlayer(p);
 		// Set
 		p.rot = rot;
@@ -1443,7 +1444,7 @@ export default class Game implements IBatrGame {
 		for (let i: uint = 0; i < 0xff; i++) {
 			p.x = this.map.randomX;
 			p.y = this.map.randomY;
-			if (testPlayerCanPass(player, p.x, p.y, true, true)) {
+			if (this.testPlayerCanPass(player, p.x, p.y, true, true)) {
 				this.teleportPlayerTo(player, p.x, p.y, (rotatePlayer ? GlobalRot.getRandom() : GlobalRot.NULL), createEffect);
 				break;
 			}
@@ -1534,7 +1535,7 @@ export default class Game implements IBatrGame {
 
 	public spreadAllPlayer(): void {
 		for (let player of this._entitySystem.players) {
-			spreadPlayer(player);
+			this.spreadPlayer(player);
 		}
 	}
 
@@ -1549,7 +1550,7 @@ export default class Game implements IBatrGame {
 	public isHitAnyPlayer(x: int, y: int): boolean {
 		// Loop
 		for (let player of this._entitySystem.players) {
-			if (hitTestPlayer(player, x, y))
+			if (this.hitTestPlayer(player, x, y))
 				return true;
 		}
 		// Return
@@ -1562,7 +1563,7 @@ export default class Game implements IBatrGame {
 			if (p2 == player)
 				continue;
 
-			if (hitTestOfPlayer(player, p2))
+			if (this.hitTestOfPlayer(player, p2))
 				return true;
 		}
 		// Return
@@ -1586,7 +1587,7 @@ export default class Game implements IBatrGame {
 					if (p1 == p2)
 						continue;
 
-					if (hitTestOfPlayer(p1, p2))
+					if (this.hitTestOfPlayer(p1, p2))
 						return true;
 				}
 			}
@@ -1600,7 +1601,7 @@ export default class Game implements IBatrGame {
 
 		// Test
 		for (let player of this._entitySystem.players) {
-			if (hitTestPlayer(player, x, y)) {
+			if (this.hitTestPlayer(player, x, y)) {
 				returnV.push(player);
 			}
 		}
@@ -1610,7 +1611,7 @@ export default class Game implements IBatrGame {
 
 	public getHitPlayerAt(x: int, y: int): Player {
 		for (let player of this._entitySystem.players) {
-			if (hitTestPlayer(player, x, y)) {
+			if (this.hitTestPlayer(player, x, y)) {
 				return player;
 			}
 		}
@@ -1678,7 +1679,7 @@ export default class Game implements IBatrGame {
 		*/
 		player.rot = rot;
 
-		if (testPlayerCanPassToFront(player))
+		if (this.testPlayerCanPassToFront(player))
 			player.setXY(player.frontX, player.frontY);
 
 		this.onPlayerMove(player);
@@ -1694,7 +1695,7 @@ export default class Game implements IBatrGame {
 		// Use
 		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
 		// Set CD
-		player.toolUsingCD = _rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : player.computeFinalCD(player.tool);
+		player.toolUsingCD = this._rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : player.computeFinalCD(player.tool);
 	}
 
 	public playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
@@ -1710,7 +1711,7 @@ export default class Game implements IBatrGame {
 		let laserLength: number = this.rule.defaultLaserLength;
 
 		if (ToolType.isIncludeIn(tool, ToolType._LASERS) &&
-			!_rule.allowLaserThroughAllBlock) {
+			!this._rule.allowLaserThroughAllBlock) {
 			laserLength = this.getLaserLength2(x, y, toolRot);
 
 			// -projectilesSpawnDistance
@@ -1798,13 +1799,13 @@ export default class Game implements IBatrGame {
 	}
 
 	protected getLaserLength(player: Player, rot: uint): uint {
-		return getLaserLength2(player.entityX, player.entityY, rot);
+		return this.getLaserLength2(player.entityX, player.entityY, rot);
 	}
 
 	protected getLaserLength2(eX: number, eY: number, rot: uint): uint {
-		let vx: int = GlobalRot.towardX(rot);
+		let vx: int = towardX(rot);
 
-		let vy: int = GlobalRot.towardY(rot);
+		let vy: int = towardY(rot);
 
 		let cx: int, cy: int;
 
@@ -1813,7 +1814,7 @@ export default class Game implements IBatrGame {
 
 			cy = PosTransform.alignToGrid(eY + vy * i);
 
-			if (!_map.getBlockAttributes(cx, cy).laserCanPass)
+			if (!this._map.getBlockAttributes(cx, cy).laserCanPass)
 				break;
 		}
 		return i;
@@ -1842,10 +1843,10 @@ export default class Game implements IBatrGame {
 		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 		if (posNum < 0)
-			return lockPosInMap(posMaxNum + posNum, returnAsX);
+			return this.lockPosInMap(posMaxNum + posNum, returnAsX);
 
 		else if (posNum >= posMaxNum)
-			return lockPosInMap(posNum - posMaxNum, returnAsX);
+			return this.lockPosInMap(posNum - posMaxNum, returnAsX);
 
 		else
 			return posNum;
@@ -1855,10 +1856,10 @@ export default class Game implements IBatrGame {
 		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
 		if (posNum < 0)
-			return lockIntPosInMap(posMaxNum + posNum, returnAsX);
+			return this.lockIntPosInMap(posMaxNum + posNum, returnAsX);
 
 		else if (posNum >= posMaxNum)
-			return lockIntPosInMap(posNum - posMaxNum, returnAsX);
+			return this.lockIntPosInMap(posNum - posMaxNum, returnAsX);
 
 		else
 			return posNum;
@@ -2037,9 +2038,9 @@ export default class Game implements IBatrGame {
 		// Clear Heal
 		victim.heal = 0;
 		// Add Effect
-		addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
+		this.addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
 
-		addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
+		this.addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
 
 		// Set Victim
 		victim.visible = false;
@@ -2124,8 +2125,8 @@ export default class Game implements IBatrGame {
 		if (!player.isActive || !player.visible)
 			return;
 		// TransForm Pos:Lock Player In Map
-		if (isOutOfMap(player.entityX, player.entityY))
-			lockEntityInMap(player);
+		if (this.isOutOfMap(player.entityX, player.entityY))
+			this.lockEntityInMap(player);
 		player.dealMoveInTestOnLocationChange(newX, newY, true, true);
 		this.bonusBoxTest(player, newX, newY);
 	}
@@ -2166,7 +2167,7 @@ export default class Game implements IBatrGame {
 
 	public onRandomTick(x: int, y: int): void {
 		// BonusBox(Supply)
-		if (testCanPass(x, y, true, false, false, true, true)) {
+		if (this.testCanPass(x, y, true, false, false, true, true)) {
 			if (this.getBlockAttributes(x, y).supplyingBonus ||
 				((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
 					Utils.randomBoolean2(this.rule.bonusBoxSpawnChance))) {

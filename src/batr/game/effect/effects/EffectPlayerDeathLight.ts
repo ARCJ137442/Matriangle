@@ -23,7 +23,7 @@ export default class EffectPlayerDeathLight extends EffectCommon {
 	public static readonly MIN_SCALE: number = 1;
 
 	//============Static Functions============//
-	public static fromPlayer(host: Game, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathLight {
+	public static fromPlayer(host: IBatrGame, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathLight {
 		return new EffectPlayerDeathLight(host, x, y, player.rot, player.fillColor, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
 	}
 
@@ -33,7 +33,7 @@ export default class EffectPlayerDeathLight extends EffectCommon {
 	public reverse: boolean = false;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathLight.MAX_LIFE) {
+	public constructor(host: IBatrGame, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathLight.MAX_LIFE) {
 		super(host, x, y, life);
 		this._color = color;
 		this.rot = rot;

@@ -4,7 +4,7 @@
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../display/GlobalDisplayVariables";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -49,7 +49,7 @@ export default class ShockWaveBase extends ProjectileCommon {
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, tool: ToolType, toolCharge: number, mode: uint = 0) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
 		super(host, x, y, owner);
 		this._currentTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;

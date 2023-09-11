@@ -2,7 +2,7 @@
 // import batr.general.*;
 
 import { uint } from "../../../../legacy/AS3Legacy";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -25,7 +25,7 @@ export default class BulletNuke extends BulletBasic {
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 6.4;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player, chargePercent: number) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(host, x, y, owner, DEFAULT_SPEED * (2 - scalePercent), DEFAULT_EXPLODE_RADIUS * (2 * scalePercent));
 		this._currentTool = ToolType.NUKE;

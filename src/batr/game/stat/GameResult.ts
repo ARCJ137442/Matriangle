@@ -32,7 +32,7 @@ export default class GameResult {
 	protected _message: I18nText;
 
 	//============Constructor============//
-	public constructor(host: Game, message: I18nText, stats: GameStats) {
+	public constructor(host: IBatrGame, message: I18nText, stats: GameStats) {
 		super();
 		this._message = message;
 		this._stats = stats;

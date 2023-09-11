@@ -6,7 +6,7 @@
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/BatrDisplayInterfaces";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import EntityCommon from "../../EntityCommon";
@@ -20,7 +20,7 @@ export default class ProjectileCommon extends EntityCommon {
 	public damage: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number, owner: Player) {
+	public constructor(host: IBatrGame, x: number, y: number, owner: Player) {
 		super(host, x, y);
 		this._owner = owner;
 		this._currentTool = ToolType.ABSTRACT;

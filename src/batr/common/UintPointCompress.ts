@@ -1,6 +1,6 @@
 
 import { uint } from '../legacy/AS3Legacy'
-import intPoint from './intPoint';
+import intPoint from './geometricTools';
 /**
  * This module compress uint 0x0~0xffffffff into point(x:uint,y:uint)
  * For example:

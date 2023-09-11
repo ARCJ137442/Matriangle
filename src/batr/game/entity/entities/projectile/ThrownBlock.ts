@@ -5,7 +5,7 @@
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../block/BlockAttributes";
 import BlockCommon from "../../../block/BlockCommon";
-import Game from "../../../main/Game.1";
+import Game from "../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
@@ -32,7 +32,7 @@ export default class ThrownBlock extends ProjectileCommon {
 	protected _carriedBlock: BlockCommon;
 
 	//============Constructor & Destructor============//
-	public constructor(host: Game, x: number, y: number,
+	public constructor(host: IBatrGame, x: number, y: number,
 		owner: Player | null, block: BlockCommon,
 		rot: uint, chargePercent: number = 1) {
 		super(host, x, y, owner);
