@@ -6,7 +6,6 @@ import { uint, int } from "../../../legacy/AS3Legacy";
 import EntityCommon from "../../entity/EntityCommon";
 import Player from "../../entity/entities/player/Player";
 import BlockAttributes from "../BlockAttributes";
-import IMap from "./IMap";
 import IMapStorage from "./IMapStorage";
 
 

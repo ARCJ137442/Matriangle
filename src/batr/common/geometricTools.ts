@@ -61,14 +61,18 @@ export abstract class xPoint<T> extends Array<T> {
 
 	/**
 	 * 从其它点拷贝坐标到此处
-	 * * 原理：逐一赋值
+	 * * 原理：根据源头点各分量逐一赋值
+	 * * 【20230912 16:31:39】现在循环采用的是「遍历对方的所有值」而非「遍历自己的所有值」
+	 *   * 这样可以保证「遍历到的`point[i]`始终有效」
+	 *   * 利用JS「设置数组值无需考虑边界问题」的特性，可以实现「自己只new未初始化到指定维度，仍然可以『开箱复制即用』」
+	 *     * 便于其它地方使用「数组缓存技术」：先初始化一个空数组，需要的时候再把内容copy过去，避免「未初始化的维数」这样的情况
 	 * 
 	 * ! 会修改自身
 	 * 
 	 * @returns 返回自身，与另一点相等
 	 */
 	public copyFrom(point: xPoint<T>): xPoint<T> {
-		for (let i = 0; i < this.length; i++) {
+		for (let i = 0; i < point.length; i++) {
 			this[i] = point[i];
 		}
 		return this;
@@ -326,3 +330,11 @@ export const iPoint = intPoint; // as class
 export type iPoint = intPoint; // as type
 export const fPoint = floatPoint; // as class
 export type fPoint = floatPoint; // as type
+
+//test
+let p: iPoint = new iPoint()
+
+let p2: iPoint = new iPoint(1, 2, 3)
+
+p.copyFrom(p2)
+console.log(p)

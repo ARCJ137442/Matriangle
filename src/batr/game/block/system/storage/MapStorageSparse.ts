@@ -1,7 +1,7 @@
-import { randInt, randIntBetween } from "../../../../common/exMath";
+import { randInt, randIntBetween, randomBetween } from "../../../../common/exMath";
 import { iPoint, intPoint } from "../../../../common/geometricTools";
 import { generateArray, identity, randomIn } from "../../../../common/utils";
-import { intRot } from "../../../../general/GlobalRot";
+import { intRot, mRot } from "../../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import { NativeBlockTypes } from "../../../registry/BlockTypeRegistry";
 import BlockAttributes from "../../BlockAttributes";
@@ -20,10 +20,6 @@ import IMapStorage from "../IMapStorage";
 export default class MapStorageSparse implements IMapStorage {
 
     //============Static Utils============//
-    public static pointToIndex_2d(x: int, y: int): string {
-        return `${x}_${y}`;
-    }
-
     public static pointToIndex(p: iPoint): string {
         return p.join('_');
     }
@@ -53,16 +49,9 @@ export default class MapStorageSparse implements IMapStorage {
     /**
      * * 默认是二维
      */
-    protected _nDim: uint = 2;
-    public get mapDimension(): uint { return this._nDim }
+    protected _nDim: uint;
+    public get numDimension(): uint { return this._nDim }
 
-    /**
-     * 缓存的「维度边界」坐标，始终是方形的
-     * * 一个存放最小值，一个存放最大值
-     * * 轴向顺序：x,y,z,w…
-     */
-    protected readonly _border_max: iPoint = new iPoint(this._nDim);
-    protected readonly _border_min: iPoint = new iPoint(this._nDim);
     /**
      * * 一系列为了明确概念的存取器方法
      */
@@ -79,63 +68,29 @@ export default class MapStorageSparse implements IMapStorage {
      */
     public generatorF: (x: IMapStorage) => IMapStorage = identity<IMapStorage>;
 
+    /**
+     * 保存的「维度边界」坐标，始终是方形的
+     * * 一个存放最小值，一个存放最大值
+     * * 轴向顺序：x,y,z,w…
+     */
+    protected readonly _border_max: iPoint;
+    protected readonly _border_min: iPoint;
+
     //============Constructor & Destructor============//
 
     /**
      * 构造函数
+     * @param numDimension 整个稀疏地图的维数，默认为2（传承BaTr Gamma的二维）
      */
-    public constructor() { }
-
-    isInMap_2d(x: number, y: number): boolean {
-        return (
-            (
-                this._border_min[0] <= x && x <= this._border_max[0]
-            ) && (
-                this._border_min[1] <= y && y <= this._border_max[1]
-            )
-        )
+    public constructor(numDimension: uint = 2) {
+        // 初始化维数
+        this._nDim = numDimension
+        // ! 特别初始化「边界长度」（因为它不是个临时变量）
+        this._border_max = new iPoint(this._nDim);
+        this._border_min = new iPoint(this._nDim);
     }
 
-    isInMap(p: intPoint): boolean {
-        for (let i: uint = 0; i < this._nDim; i++) {
-            if (
-                p[i] < this._border_min[i] || p[i] > this._border_max[i]
-            ) return false;
-        }
-        return true;
-    }
-    hasBlock(p: intPoint): boolean {
-        throw new Error("Method not implemented.");
-    }
-    getBlock(p: intPoint): BlockCommon | null {
-        throw new Error("Method not implemented.");
-    }
-    getBlockAttributes(p: intPoint): BlockAttributes | null {
-        throw new Error("Method not implemented.");
-    }
-    getBlockType(p: intPoint): Function | null {
-        throw new Error("Method not implemented.");
-    }
-    setBlock(p: intPoint, block: BlockCommon): void {
-        throw new Error("Method not implemented.");
-    }
-    isVoid(p: intPoint): boolean {
-        throw new Error("Method not implemented.");
-    }
-    setVoid(p: intPoint): void {
-        throw new Error("Method not implemented.");
-    }
-    addSpawnPointAt(p: intPoint): void {
-        throw new Error("Method not implemented.");
-    }
-    hasSpawnPointAt(p: intPoint): boolean {
-        throw new Error("Method not implemented.");
-    }
-    removeSpawnPoint(p: intPoint): void {
-        throw new Error("Method not implemented.");
-    }
-
-    protected _temp_size: iPoint = new iPoint(this._nDim)
+    protected _temp_size: iPoint = new iPoint() // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
     /**
      * 实现：max-min，矢量相减
      */
@@ -143,7 +98,8 @@ export default class MapStorageSparse implements IMapStorage {
         return this._temp_size.copyFrom(this._border_max).minusFrom(this._border_min);
     }
 
-    protected readonly _allDirection: intRot[] = generateArray(this._nDim << 1, identity);
+    // ! 现在使用getter方法动态获取，而非直接对变量进行静态闭包
+    protected readonly _allDirection: intRot[] = generateArray(this.numDimension << 1, identity);
     /**
      * * 默认0~3（x+、x-、y+、y-）
      * * 使用「实例常量缓存」提高性能
@@ -158,25 +114,20 @@ export default class MapStorageSparse implements IMapStorage {
      * 
      * ! 不要对返回的数组进行任何修改
      */
-    public getForwardDirectionsAt_2d(x: int, y: int): intRot[] {
-        return this.allDirection;
-    }
-
     public getForwardDirectionsAt(p: intPoint): number[] {
         return this.allDirection;
     }
 
     /**
      * * 默认（内联）就是随机取
+     * 
+     * ! 注意：返回值是mRot「多位朝向」
+     * 
      * @param x x坐标
      * @param y y坐标
-     * @returns 随机一个坐标方向
+     * @returns 随机一个坐标方向（mRot「多位朝向」）
      */
-    public randomForwardDirectionAt_2d(x: int, y: int): intRot {
-        return randInt(this._nDim << 1);
-    }
-
-    public randomForwardDirectionAt(p: intPoint): number {
+    public randomForwardDirectionAt(p: intPoint): mRot {
         return randInt(this._nDim << 1)
     }
 
@@ -191,6 +142,13 @@ export default class MapStorageSparse implements IMapStorage {
 
     generateNext(...args: any[]): IMapStorage {
         return this.generatorF(this);
+    }
+
+    public isInMap(p: intPoint): boolean {
+        for (let i: uint = 0; i < this._nDim; ++i)
+            if (this._border_min[i] > p[i] || this._border_max[i] < p[i])
+                return false
+        return true
     }
 
     /**
@@ -214,170 +172,101 @@ export default class MapStorageSparse implements IMapStorage {
         return randomIn(this._spawnPoints)
     }
 
-    public addSpawnPointAt_2d(x: int, y: int): void {
-        if (!this.hasSpawnPointAt_2d(x, y))
-            this._spawnPoints.push(new iPoint(x, y))
+    // ! 实现：会，因为这里的点不能保证「不是临时的」
+    public addSpawnPointAt(p: iPoint): void {
+        if (!this.hasSpawnPointAt(p))
+            this._spawnPoints.push(p.copy())
     }
 
-    public hasSpawnPointAt_2d(x: int, y: int): boolean {
+    public hasSpawnPointAt(p: iPoint): boolean {
         for (let point of this._spawnPoints)
-            if (point.x == x && point.y == y)
+            if (point.isEqual(p))
                 return true;
         return false
     }
 
-    // ! 非接口实现
-    public indexSpawnPointOf(x: int, y: int): uint | -1 {
+    public indexSpawnPointOf(p: iPoint): uint | -1 {
         for (let index: uint = 0; index < this._spawnPoints.length; index++) {
             let point: iPoint = this._spawnPoints[index];
-            if (point.x == x && point.y == y)
+            if (point.isEqual(p))
                 return index;
         }
         return -1;
     }
 
-    public removeSpawnPoint_2d(x: int, y: int): void {
-        let index: uint = this.indexSpawnPointOf(x, y);
-        if (index != -1)
-            this._spawnPoints.splice(index, 1);
+    public removeSpawnPoint(p: iPoint): boolean {
+        let point: iPoint;
+        for (let index: uint = 0; index < this._spawnPoints.length; index++) {
+            point = this._spawnPoints[index]
+            if (point.isEqual(p)) {
+                this._spawnPoints.splice(index, 1)
+                return true
+            }
+        }
+        return false;
     }
 
     public clearSpawnPoints(): void {
-        while (this._spawnPoints.length > 0)
-            this._spawnPoints.pop();
+        for (let i: int = this._spawnPoints.length; i > 0; --i)
+            this._spawnPoints.shift();
     }
 
-    public get mapWidth(): int {
+    public get mapWidth(): uint {
         return this.borderRight - this.borderLeft;
     }
 
-    public get mapHeight(): int {
+    public get mapHeight(): uint {
         return this.borderDown - this.borderUp;
     }
 
-    public getMapSizeAt(dim: int): int {
-        if (dim === 0) return this.mapWidth;
-        else if (dim === 1) return this.mapHeight;
-        else throw new Error(`getMapSize: 无效维度${dim}`);
-    }
-
-    /**
-     * 实现随机x坐标：直接在「最大尺寸」与「最小尺寸」中挑选
-     * ! 注意：随机是**含有**最大值的，因为要包含右边界
-     */
-    public get randomX(): int {
-        return randIntBetween(this.borderLeft, this.borderRight + 1);
-    }
-    /**
-     * 实现随机y坐标：直接在「最大尺寸」与「最小尺寸」中挑选
-     * ! 注意：随机是**含有**最大值的，因为要包含右边界
-     */
-    public get randomY(): int {
-        return randIntBetween(this.borderUp, this.borderDown + 1);
+    public getMapSizeAt(dim: uint): uint {
+        return this._border_max[dim] - this._border_min[dim];
     }
 
     /**
      * ! 默认其边界之内都为**合法**；使用缓存技术，因为获得的量是只读的
      */
-    protected readonly _temp_randomPoint: iPoint = new iPoint(this._nDim);
+    protected readonly _temp_randomPoint: iPoint = new iPoint(); // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
+    // 使用闭包在创建时预加载函数，避免大量创建函数
+    protected readonly _randomPGenerateF: (i: uint) => int = (i: uint): int => randIntBetween(this._border_max[i] + 1, this._border_min[i])
+    // 实现：直接调用缓存
     public get randomPoint(): iPoint {
-        this._temp_randomPoint.x = this.randomX;
-        this._temp_randomPoint.y = this.randomY;
-        return this._temp_randomPoint;
+        return this._temp_randomPoint.generate(this._randomPGenerateF);
     }
 
-    // ! 边界之内，均为合法：会遍历边界内所有内容⇒直接对遍历到的点调用回调即可
-    public forEachValidPositions_2d(f: (x: int, y: int, ...args: any[]) => void, ...args: any[]): void {
-        for (let x = this.borderLeft; x < this.borderRight; x++) {
-            for (let y = this.borderUp; y < this.borderDown; y++) {
-                f(x, y, ...args);
-            }
-        }
-    }
-
+    // 使用缓存
+    protected readonly _temp_forEachPoint: iPoint = new iPoint(this._nDim); // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
     /**
-     * * 遍历N维超方形测试
+     * 兼容任意维的「所有坐标遍历」
+     * * 思想：边界之内，均为合法：会遍历边界内所有内容⇒直接对遍历到的点调用回调即可
      * 
-     * ! 启发：
-     * 1. 确实可以用循环的方式实现N维遍历算法，虽较为复杂但更为高效
-     * 2. 可以直接传递「参数数组」而不用频繁「打包解包」
+     * ! 已知问题：直接使用args数组，TS编译会不通过
      * 
-     * TODO: 整合进多维遍历中
-     * 
-     * @param maxes 
-     * @param mins 
-     * @param f 
-     * @param args 
+     * @param f 用于遍历回调的函数
+     * @param args 用于附加的参数 // ? 是否需要把类型整得更精确些？
      */
-    public nDTraverse(
-        mins: number[], maxes: number[],
-        f: (point: number[], args: any[]) => void,
-        args: any[]
-    ): void {
+    public forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): void {
         // 检查
-        if (maxes.length !== mins.length) throw new Error('maxes and mins must have the same length');
+        if (this._border_max.length !== this._border_min.length) throw new Error('this._border_max and this._border_min must have the same length');
         // 通过数组长度获取维数
-        const nDim: number = maxes.length;
-        // 当前点坐标的表示：复制mins数组
-        const point: number[] = mins.slice();
+        const nDim: uint = this._border_max.length;
+        // 当前点坐标的表示：复制this._border_min数组
+        this._temp_forEachPoint.copyFrom(this._border_min);
         // 进位的临时变量
         let i: number;
         // 不断遍历，直到「最高位进位」后返回
         main: while (true) {
             // 执行当前点：调用回调函数
-            f(point, args)
+            f(this._temp_forEachPoint, ...args)
             // 迭代到下一个点：不断循环尝试进位
             i = 0;
             // 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
-            while (++point[i] > maxes[i]) {
+            while (++this._temp_forEachPoint[i] > this._border_max[i]) {
                 // 旧位清零
-                point[i] = mins[i];
+                this._temp_forEachPoint[i] = this._border_min[i];
                 // 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
                 if (++i >= nDim)
                     break main;
-            }
-        }
-    } /*
-    let n: number = 0;
-    nDTraverse(
-        [1, 2, 3],
-        [3, 4, 5],
-        (point: number[], args: any[]): void => {
-            console.log(`point:${point}, args: ${args}`)
-            n++;
-        },
-        ['arg1', 'arg2', 'arg3']
-    )
-    console.log(`一共遍历${n}次！`)
-    */
-
-
-    forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): void {
-        return this._forEachValidPositions(f, 0, ...args);
-    }
-
-    protected readonly _temp_forEachPoint: iPoint = new iPoint(this._nDim);
-    /**
-     * 内部实现：递归遍历超方形
-     * @param f 回调函数f
-     * @param args 除了「坐标点」外的附加参数
-     * @param fromAxis 目前正在遍历的轴向（x→y→z）
-     */
-    _forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, fromAxis: uint, ...args: any[]): void {
-        let i: int = this._border_min[fromAxis], l: int = this._border_max[fromAxis]
-        // 最后一维⇒遍历最后一维，并直接调用回调函数
-        if (fromAxis >= this._nDim) {
-            while (i <= l) {
-                f(this._temp_forEachPoint, ...args);
-                i++;
-            }
-        }
-        // 非倒数第二维：遍历当前维度，并递归遍历下一维
-        else {
-            while (i <= l) {
-                this._temp_forEachPoint[fromAxis] = i; // 设置参数，以转变「指针」位置
-                this._forEachValidPositions(f, fromAxis + 1, ...args);
-                i++;
             }
         }
     }
@@ -389,15 +278,15 @@ export default class MapStorageSparse implements IMapStorage {
         // 复制构造函数参数
         let nStorage: MapStorageSparse = new MapStorageSparse();
         // 复制内容
-        this.forEachValidPositions_2d(
-            (x: int, y: int, source: MapStorageSparse, target: MapStorageSparse): void =>
-                target.setBlock_2d(x, y, source.getBlock_2d(x, y)),
+        this.forEachValidPositions(
+            (p: iPoint, source: MapStorageSparse, target: MapStorageSparse): void =>
+                target.setBlock(p, source.getBlock(p)),
             this, nStorage
         )
         // 复制重生点
         for (const sP of this._spawnPoints) {
             if (deep)
-                nStorage.addSpawnPointAt_2d(sP.x, sP.y)
+                nStorage.addSpawnPointAt(sP)
             else nStorage._spawnPoints.push(sP);
         }
         // 复制边界信息
@@ -411,10 +300,10 @@ export default class MapStorageSparse implements IMapStorage {
             this.clearBlocks();
             this.clearSpawnPoints();
         }
-        source.forEachValidPositions_2d(
-            (x: int, y: int, source: IMapStorage, target: IMapStorage): void => {
-                if (source.getBlock_2d(x, y) !== null)
-                    target.setBlock_2d(x, y, source.getBlock_2d(x, y) as BlockCommon)
+        source.forEachValidPositions(
+            (p: iPoint, source: IMapStorage, target: IMapStorage): void => {
+                if (source.getBlock(p) !== null)
+                    target.setBlock(p, source.getBlock(p) as BlockCommon)
             }, // ? 这是否可以抽象出一个函数出来
             source, this
         )
@@ -431,7 +320,7 @@ export default class MapStorageSparse implements IMapStorage {
      * @param x x坐标
      * @param y y坐标
      */
-    public hasBlock_2d(x: int, y: int): true {
+    public hasBlock(p: iPoint): true {
         return true;
     }
 
@@ -446,8 +335,8 @@ export default class MapStorageSparse implements IMapStorage {
      * @param x x坐标
      * @param y y坐标
      */
-    public getBlock_2d(x: int, y: int): BlockCommon {
-        this._temp_block = this._dict[MapStorageSparse.pointToIndex_2d(x, y)];
+    public getBlock(p: iPoint): BlockCommon {
+        this._temp_block = this._dict[MapStorageSparse.pointToIndex(p)];
         if (this._temp_block === undefined)
             return this._defaultBlock;
         else return this._temp_block;
@@ -459,8 +348,8 @@ export default class MapStorageSparse implements IMapStorage {
      * @param y y坐标
      * @returns 返回的方块属性（一定有值）
      */
-    public getBlockAttributes_2d(x: int, y: int): BlockAttributes {
-        return this.getBlock_2d(x, y).attributes;
+    public getBlockAttributes(p: iPoint): BlockAttributes {
+        return this.getBlock(p).attributes;
     }
 
     /**
@@ -469,8 +358,8 @@ export default class MapStorageSparse implements IMapStorage {
      * @param y y坐标
      * @returns 返回的方块类型（一定有值）
      */
-    public getBlockType_2d(x: int, y: int): BlockType {
-        return this.getBlock_2d(x, y).type; // TODO: 具体的「.type」属性能否工作，还有待验证
+    public getBlockType(p: iPoint): BlockType {
+        return this.getBlock(p).type; // TODO: 具体的「.type」属性能否工作，还有待验证
     }
 
     /**
@@ -479,24 +368,22 @@ export default class MapStorageSparse implements IMapStorage {
      * @param ux 更新为「有效」的x坐标
      * @param uy 更新为「有效」的y坐标
      */
-    protected updateBorder(ux: int, uy: int): void {
-        // x
-        if (ux > this.borderRight)
-            this.borderRight = ux;
-        if (ux < this.borderLeft)
-            this.borderLeft = ux;
-        // y
-        if (uy > this.borderDown)
-            this.borderDown = uy;
-        if (uy < this.borderUp)
-            this.borderUp = uy;
+    protected updateBorder(p: iPoint): void {
+        let pi: int;
+        for (let i: int = 0; i < this._nDim; i++) {
+            pi = p[i]
+            if (pi > this._border_max[i])
+                this._border_max[i] = pi
+            if (pi < this._border_min[i])
+                this._border_min[i] = pi
+        }
     }
 
-    public setBlock_2d(x: int, y: int, block: BlockCommon): void {
+    public setBlock(p: iPoint, block: BlockCommon): void {
         // 放置方块
-        this._dict[MapStorageSparse.pointToIndex_2d(x, y)] = block;
+        this._dict[MapStorageSparse.pointToIndex(p)] = block;
         // 更新边界
-        this.updateBorder(x, y);
+        this.updateBorder(p);
     }
 
     /**
@@ -505,8 +392,8 @@ export default class MapStorageSparse implements IMapStorage {
      * @param x x坐标
      * @param y y坐标
      */
-    public isVoid_2d(x: int, y: int): boolean {
-        return this.getBlockType_2d(x, y) === NativeBlockTypes.VOID; // ! 已经锁定「默认方块」就是「空」
+    public isVoid(p: iPoint): boolean {
+        return this.getBlockType(p) === NativeBlockTypes.VOID; // ! 已经锁定「默认方块」就是「空」
     }
 
     /**
@@ -517,20 +404,20 @@ export default class MapStorageSparse implements IMapStorage {
      * @param x x坐标
      * @param y y坐标
      */
-    public setVoid_2d(x: int, y: int): void {
-        delete this._dict[MapStorageSparse.pointToIndex_2d(x, y)];
+    public setVoid(p: iPoint): void {
+        delete this._dict[MapStorageSparse.pointToIndex(p)];
     }
 
     public clearBlocks(deleteBlock?: boolean | undefined): void {
-        let deleteF: (x: int, y: int, target: IMapStorage) => void = (
+        let deleteF: (p: iPoint, target: IMapStorage) => void = (
             deleteBlock ?
-                (x: int, y: int, target: IMapStorage): void => {
-                    target.getBlock_2d(x, y)?.destructor();
-                    target.setVoid_2d(x, y);
+                (p: iPoint, target: IMapStorage): void => {
+                    target.getBlock(p)?.destructor();
+                    target.setVoid(p);
                 } :
-                (x: int, y: int, target: IMapStorage): void => target.setVoid_2d(x, y)
+                (p: iPoint, target: IMapStorage): void => target.setVoid(p)
         )
-        this.forEachValidPositions_2d(
+        this.forEachValidPositions(
             deleteF, this
         )
     }

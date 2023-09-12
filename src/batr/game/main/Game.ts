@@ -65,27 +65,27 @@ import { IBatrShape } from "../../display/BatrDisplayInterfaces";
 
 export default class Game implements IBatrGame {
 	//============Static Variables============//
-	public static readonly ALL_MAPS: IMap[] = [
-		Map_V1.EMPTY,
-		Map_V1.FRAME,
-		Map_V1.MAP_1,
-		Map_V1.MAP_2,
-		Map_V1.MAP_3,
-		Map_V1.MAP_4,
-		Map_V1.MAP_5,
-		Map_V1.MAP_6,
-		Map_V1.MAP_7,
-		Map_V1.MAP_8,
-		Map_V1.MAP_9,
-		Map_V1.MAP_A,
-		Map_V1.MAP_B,
-		Map_V1.MAP_C,
-		Map_V1.MAP_D,
-		Map_V1.MAP_E,
-		Map_V1.MAP_F,
-		Map_V1.MAP_G,
-		Map_V1.MAP_H
-	];
+	// public static readonly ALL_MAPS: IMap[] = [
+	// 	Map_V1.EMPTY,
+	// 	Map_V1.FRAME,
+	// 	Map_V1.MAP_1,
+	// 	Map_V1.MAP_2,
+	// 	Map_V1.MAP_3,
+	// 	Map_V1.MAP_4,
+	// 	Map_V1.MAP_5,
+	// 	Map_V1.MAP_6,
+	// 	Map_V1.MAP_7,
+	// 	Map_V1.MAP_8,
+	// 	Map_V1.MAP_9,
+	// 	Map_V1.MAP_A,
+	// 	Map_V1.MAP_B,
+	// 	Map_V1.MAP_C,
+	// 	Map_V1.MAP_D,
+	// 	Map_V1.MAP_E,
+	// 	Map_V1.MAP_F,
+	// 	Map_V1.MAP_G,
+	// 	Map_V1.MAP_H
+	// ];
 
 	public static readonly MAP_TRANSFORM_TEXT_FORMAT: TextFormat = new TextFormat(
 		new MainFont().fontName,

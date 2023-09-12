@@ -3,8 +3,10 @@
 // import batr.general.*;
 // import batr.game.block.blocks.XTrap;
 
-import { iPoint } from "../../../common/geometricTools";
+import { floatPoint, iPoint, intPoint } from "../../../common/geometricTools";
 import { int, int$MAX_VALUE } from "../../../legacy/AS3Legacy";
+import EntityCommon from "../../entity/EntityCommon";
+import Player from "../../entity/entities/player/Player";
 import BlockAttributes from "../BlockAttributes";
 import IMapLogic from "./IMapLogic";
 import IMapStorage from "./IMapStorage";
@@ -62,4 +64,42 @@ export default class MapLogic_V1 implements IMapLogic {
 
 	// TODO: 更多待迁移
 
+	// * 实现：取整→变到地图中
+	protected _temp_isImMap_P: iPoint = new iPoint()
+	isInMap_F(p: floatPoint): boolean {
+		throw new Error("Method not implemented.");
+	}
+	isInMap_I(p: intPoint): boolean {
+		throw new Error("Method not implemented.");
+	}
+	towardWithRot_F(p: floatPoint, rot: number, step?: number | undefined): floatPoint {
+		throw new Error("Method not implemented.");
+	}
+	towardWithRot_I(p: intPoint, rot: number, step?: number | undefined): intPoint {
+		throw new Error("Method not implemented.");
+	}
+	testCanPass_F(p: floatPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurting?: boolean | undefined): boolean {
+		throw new Error("Method not implemented.");
+	}
+	testCanPass_I(p: intPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurting?: boolean | undefined): boolean {
+		throw new Error("Method not implemented.");
+	}
+	testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
+		throw new Error("Method not implemented.");
+	}
+	testBonusBoxCanPlaceAt(p: intPoint): boolean {
+		throw new Error("Method not implemented.");
+	}
+	testPlayerCanGo(player: Player, p: intPoint, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
+		throw new Error("Method not implemented.");
+	}
+	testPlayerCanGoForward(player: Player, rotatedAsRot?: number | undefined, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
+		throw new Error("Method not implemented.");
+	}
+	isCarriable(blockAtt: BlockAttributes): boolean {
+		throw new Error("Method not implemented.");
+	}
+	isBreakable(blockAtt: BlockAttributes): boolean {
+		throw new Error("Method not implemented.");
+	}
 }
