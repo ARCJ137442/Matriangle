@@ -2,7 +2,7 @@ import { randInt } from "../../common/exMath";
 import { fPoint, iPoint } from "../../common/geometricTools";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../general/GlobalGameVariables";
 import { iRot } from "../../general/GlobalRot";
-import { alignToEntity } from "../../general/PosTransform";
+import { alignToEntity, alignToEntity_P } from "../../general/PosTransform";
 import { int, uint } from "../../legacy/AS3Legacy";
 import BlockCommon from "../block/BlockCommon";
 import BlockColored from "../block/blocks/Colored";
@@ -38,21 +38,18 @@ export module NativeGameEvents {
      * @param position 被调用方块的位置
      */
     const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: BlockCommon, position: iPoint): void => {
-        let randomRot: uint, tPoint: iPoint;
-        let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
-        let entityX: number, entityY: number;
+        let randomRot: uint, tPoint: fPoint;
         // add laser by owner=null
         let p: ThrownBlock;
         let i: uint = 0;
         do {
-            randomRot = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
-            tPoint = host.map.logic.towardWithRot(sourceX, sourceY, randomRot);
-            entityX = tPoint.x;
-            entityY = tPoint.y;
+            randomRot = host.map.storage.randomForwardDirectionAt(position);
+            tPoint = host.map.logic.towardWithRot_F(position, randomRot);
             if (
-                host.map.logic.isInMap_I2d(entityX, entityY) ||
-                !host.map.logic.testIntCanPass(entityX, entityY, false, true, false, false)
+                host.map.logic.isInMap_I(position) ||
+                !host.map.logic.testCanPass_F(tPoint, false, true, false, false)
             ) continue;
+            let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
             p = new ThrownBlock(
                 host,
                 alignToEntity(sourceX), alignToEntity(sourceY),
@@ -85,7 +82,7 @@ export module NativeGameEvents {
         let randomPoint: iPoint = host.map.storage.randomPoint;
         let x: int = randomPoint.x, y: int = randomPoint.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
         let newBlock: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-        if (!host.map.logic.isInMap_F2d(x, y) && host.map.storage.isVoid_2d(x, y)) {
+        if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid_2d(x, y)) {
             host.setBlock(x, y, newBlock); // * 后续游戏需要处理「方块更新事件」
             host.addBlockLightEffect2(
                 alignToEntity(x),
@@ -100,6 +97,8 @@ export module NativeGameEvents {
      * * 机制：当「激光陷阱」收到一个随机刻时，随机向周围可发射激光的方向发射随机种类的「无主激光」
      * * 原`laserTrapShootLaser`
      * 
+     * ! 性能提示：此处使用copy新建了多维点对象
+     * 
      * @param host 调用此函数的游戏主体
      * @param block 被调用的方块
      * @param position 被调用方块的位置
@@ -108,17 +107,18 @@ export module NativeGameEvents {
         let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
         let randomR: iRot, entityX: number, entityY: number, laserLength: number = 0;
         // add laser by owner=null
-        let p: LaserBasic, tp: fPoint;
+        let p: LaserBasic, tp: fPoint, entityP: fPoint;
         let i: uint = 0;
         do {
             randomR = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
-            tp = host.map.logic.towardWithRot(
-                alignToEntity(sourceX), alignToEntity(sourceY),
+            tp = host.map.logic.towardWithRot_F(
+                position,
                 randomR, PROJECTILES_SPAWN_DISTANCE
             );
-            entityX = alignToEntity(sourceX) + tp.x;
-            entityY = alignToEntity(sourceY) + tp.y;
-            if (host.map.logic.isInMap_F2d(entityX, entityY))
+            entityP = alignToEntity_P(position.copy()).addFrom(tp);
+            entityX = entityP.x;
+            entityY = entityP.y;
+            if (host.map.logic.isInMap_F(entityP))
                 continue;
             laserLength = host.getLaserLength2(entityX, entityY, randomR);
             if (laserLength <= 0)

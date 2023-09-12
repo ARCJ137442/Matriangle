@@ -1,4 +1,5 @@
 import { randInt } from "../../common/exMath";
+import { iPoint } from "../../common/geometricTools";
 import { randomBoolean2, randomIn, randomInParas } from "../../common/utils";
 import { uint, int } from "../../legacy/AS3Legacy";
 import BlockCommon, { BlockType } from "../block/BlockCommon";
@@ -112,23 +113,23 @@ export module NativeMaps {
     MAP_5.storage.generatorF = function (storage: IMapStorage): IMapStorage {
         storage.copyContentFrom(FRAME.storage);
         let randNum: int = 24 + randInt(47), randType: BlockType;
-        let ix: int, iy: int;
+        let iP: iPoint;
         while (--randNum > 0) {
-            ix = storage.randomX, iy = storage.randomY;
-            if (storage.getBlockType_2d(ix, iy) == NativeBlockTypes.BEDROCK) {
-                storage.setVoid_2d(ix, iy);
+            iP = storage.randomPoint;
+            if (storage.getBlockType(iP) == NativeBlockTypes.BEDROCK) {
+                storage.setVoid(iP);
             } /*
 					else if(Utils.randomBoolean()) {
 						if(Utils.randomBoolean(1,3)) {
-							map.setBlock(ix,iy,X_TRAP_KILL);
+							map.setBlock(iP, X_TRAP_KILL);
 						}
 						else {
-							map.setBlock(ix,iy,X_TRAP_HURT);
+							map.setBlock(iP, X_TRAP_HURT);
 						}
 					}*/
             else {
                 randType = randomIn(NativeBlockTypes.ALL_NATIVE_BLOCKS);
-                storage.setBlock_2d(ix, iy, (randType as any).randomInstance(randType)); // ! 一定是BlockCommon的子类型
+                storage.setBlock(iP, (randType as any).randomInstance(randType)); // ! 一定是BlockCommon的子类型
             }
         }
         return storage;

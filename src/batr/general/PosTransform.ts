@@ -35,7 +35,34 @@ export function alignToGrid_P(p: fPoint): iPoint {
 	return p.inplaceMap(alignToGrid);
 }
 
-export function alignToGrid(p: number): int {
+/**
+ * 同`alignToGrid_P`，但只是在单个维度上
+ * * 逻辑：取整对齐
+ * 
+ * 如下图：方格内任一点都会被对齐到整数点「#」内
+ * ```
+ * # - +
+ * |   |
+ * + - +
+ * ```
+ * 
+ * @param xi 单个维度的坐标
+ * @returns 对齐网格后的单维度坐标（取整）
+ */
+export function alignToGrid(xi: number): int {
 	// return p < 0 ? -1 : 0 + Math.floor(p); // ? 已经不知道这段代码到底是干什么用的了
-	return int(p);
+	return int(xi);
 }
+
+/**
+ * 别名：也用于实现「整数点」到「浮点数点」的转换
+ * 
+ * ! 会改变参数
+ */
+export const fPoint2iPoint: (fp: fPoint) => iPoint = (
+	(fp: fPoint): iPoint => alignToGrid_P(fp)
+);
+
+/**
+ * ? 是否还有`fPoint2iPoint`的必要
+ */

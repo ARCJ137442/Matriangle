@@ -60,6 +60,8 @@ import GameResult from "../stat/GameResult";
 import GameStats from "../stat/GameStats";
 import IBatrGame from "./IBatrGame";
 import { towardX, towardY } from "../../general/GlobalRot";
+import { alignToGrid } from "../../general/PosTransform";
+import { IBatrShape } from "../../display/BatrDisplayInterfaces";
 
 export default class Game implements IBatrGame {
 	//============Static Variables============//
@@ -95,6 +97,16 @@ export default class Game implements IBatrGame {
 		null,
 		null,
 		TextFormatAlign.LEFT);
+
+	/**
+	 * 用于专门「分层级显示实体」的「显示地图」
+	 * * 主要是为了后续与显示端对接，便于分层级管理（而无需使用额外容器）
+	 * 
+	 * ! 利用了JS中「数组可以跳跃式赋值，而不用担心越界」的特性
+	 * 
+	 * TODO: 后续专门提取出「显示对接模块」用于对接代码
+	 */
+	protected static readonly _displayLayer_Map: IBatrShape[][] = [];
 
 	public static readonly GAME_PLAYING_TIME_TEXT_FORMAT: TextFormat = new TextFormat(
 		new MainFont().fontName,
@@ -800,7 +812,7 @@ export default class Game implements IBatrGame {
 	 * @return	true if can pass.
 	 */
 	public testCanPass(x: number, y: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		return this.testIntCanPass(PosTransform.alignToGrid(x), PosTransform.alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
+		return this.testIntCanPass(alignToGrid(x), alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
 	}
 
 	public testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
@@ -835,10 +847,12 @@ export default class Game implements IBatrGame {
 	 */
 	public testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
 		// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
-		return this.testCanPass(entity.getFrontX(distance),
+		return this.testCanPass(
+			entity.getFrontX(distance),
 			entity.getFrontY(distance),
 			asPlayer, asBullet, asLaser,
-			includePlayer, avoidTrap);
+			includePlayer, avoidTrap
+		);
 	}
 
 	public testBonusBoxCanPlaceAt(x: int, y: int): boolean {
