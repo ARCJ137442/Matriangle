@@ -1,14 +1,21 @@
+import { iPoint } from "../../../../common/geometricTools";
 import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockCommon from "../../BlockCommon";
 import BlockSpawnPointMark from "../../blocks/SpawnPointMark";
 import IMapStorage from "../IMapStorage";
 
+// ! 保留目前2d特性，全模块通用的「临时数组」
+const _temp_point_2d: iPoint = new iPoint(2)
+
 /**
  * ! 目前这些「游戏内置地图」还是一种「迁移自BaTr Gamma」的情况，仍然是以二维为主
  */
 
-function cloneBlock(block: BlockCommon): BlockCommon {
+/**
+ * 该函数用于函数式编程中
+ */
+export function cloneBlock(block: BlockCommon): BlockCommon {
     return block.clone();
 }
 
@@ -27,7 +34,7 @@ export function setBlock(
     block: BlockCommon,
     clone: boolean = false
 ): void {
-    storage.setBlock(x, y, clone ? block.clone() : block);
+    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), clone ? block.clone() : block);
 }
 
 
@@ -63,23 +70,22 @@ export function fillBlock(
 
     // 外框
     for (xi = xl; xi <= xm; xi++) {
-        storage.setBlock(xi, yl, blockF(block))
-        storage.setBlock(xi, ym, blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xi, yl), blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xi, ym), blockF(block))
     }
     for (yi = yl; yi <= ym; yi++) {
-        storage.setBlock(xl, yi, blockF(block))
-        storage.setBlock(xm, yi, blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xl, yi), blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xm, yi), blockF(block))
     }
 
     // 内部
     if (!outline)
         for (xi = xl + 1; xi < xm; xi++) {
             for (yi = yl + 1; yi < ym; yi++) {
-                storage.setBlock(xi, yi, blockF(block));
+                storage.setBlock(_temp_point_2d.copyFromArgs(xi, yi), blockF(block));
             }
         }
 }
-
 /**
  * 镜面放置方块
  * @param storage 待操作的存储结构
@@ -105,13 +111,13 @@ export function setReflectBlock(
             cloneBlock :
             identity<BlockCommon>
     );
-    storage.setBlock(x, y, blockF(block));
+    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), blockF(block));
     if (rX)
-        storage.setBlock(lx - x, y, blockF(block));
+        storage.setBlock(_temp_point_2d.copyFromArgs(lx - x, y), blockF(block));
     if (rY) {
-        storage.setBlock(x, ly - y, blockF(block));
+        storage.setBlock(_temp_point_2d.copyFromArgs(x, ly - y), blockF(block));
         if (rX)
-            storage.setBlock(lx - x, ly - y, blockF(block));
+            storage.setBlock(_temp_point_2d.copyFromArgs(lx - x, ly - y), blockF(block));
     }
 }
 
@@ -299,6 +305,6 @@ export function drawLaserTrapBox(
 }
 
 export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
-    storage.addSpawnPointAt_2d(x, y);
-    storage.setBlock(x, y, BlockSpawnPointMark.INSTANCE);
+    storage.addSpawnPointAt(_temp_point_2d.copyFromArgs(x, y));
+    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), BlockSpawnPointMark.INSTANCE);
 }

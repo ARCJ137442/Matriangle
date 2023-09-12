@@ -79,6 +79,17 @@ export abstract class xPoint<T> extends Array<T> {
 	}
 
 	/**
+	 * 从一系列参数中拷贝坐标到此处
+	 * * 原理：遍历分量，逐一赋值（类似`copyFrom`方法）
+	 */
+	public copyFromArgs(...args: T[]): xPoint<T> {
+		for (let i = 0; i < this.length; i++) {
+			this[i] = args[i];
+		}
+		return this;
+	}
+
+	/**
 	 * 从其它点附加坐标到此处
 	 * * 原理：逐一增量赋值
 	 * 

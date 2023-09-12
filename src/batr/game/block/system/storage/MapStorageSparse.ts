@@ -8,6 +8,7 @@ import BlockAttributes from "../../BlockAttributes";
 import BlockCommon, { BlockType } from "../../BlockCommon";
 import { BLOCK_VOID } from "../../blocks/Void";
 import IMapStorage from "../IMapStorage";
+import { cloneBlock } from "../maps/MapConstructTools";
 
 /**
  * 稀疏地图
@@ -21,12 +22,21 @@ export default class MapStorageSparse implements IMapStorage {
 
     //============Static Utils============//
     public static pointToIndex(p: iPoint): string {
+        // ! （开发用）空值报错
+        if (p.some((v): boolean => v === undefined || isNaN(v))) throw new Error(`MapStorageSparse.pointToIndex: 参数错误 @ ${p}`);
         return p.join('_');
     }
 
-    public static indexToPoint(str: string): iPoint {
+    /**
+     * 从字符串坐标返回新点
+     * 
+     * @param str 缓存的坐标
+     * @param cachedTo 需要被缓存的对象，若没提供自动创建
+     * @returns 返回的**新**点
+     */
+    public static indexToPoint(str: string, cachedTo: iPoint = new iPoint()): iPoint {
         let s: string[] = str.split('_');
-        return new iPoint(...s.map(int));
+        return cachedTo.copyFromArgs(...s.map(int));
     }
 
     /**
@@ -239,6 +249,7 @@ export default class MapStorageSparse implements IMapStorage {
     /**
      * 兼容任意维的「所有坐标遍历」
      * * 思想：边界之内，均为合法：会遍历边界内所有内容⇒直接对遍历到的点调用回调即可
+     * * 【20230913 0:08:06】暂时不调用geometricTools中的方法，将其内联以提升性能
      * 
      * ! 已知问题：直接使用args数组，TS编译会不通过
      * 
@@ -297,10 +308,16 @@ export default class MapStorageSparse implements IMapStorage {
             this.clearBlocks();
             this.clearSpawnPoints();
         }
+        // * 函数式编程：决定是「原样」还是「拷贝」
+        let blockF: (block: BlockCommon) => BlockCommon = (
+            deep ?
+                cloneBlock :
+                identity<BlockCommon>
+        );
         source.forEachValidPositions(
             (p: iPoint, source: IMapStorage, target: IMapStorage): void => {
                 if (source.getBlock(p) !== null)
-                    target.setBlock(p, source.getBlock(p) as BlockCommon)
+                    target.setBlock(p, blockF(source.getBlock(p) as BlockCommon))
             }, // ? 这是否可以抽象出一个函数出来
             source, this
         )

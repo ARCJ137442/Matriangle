@@ -11,10 +11,12 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\module_test\\src\\run.ts",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            // "program": "${workspaceFolder}\\test\\test.ts",
+            "program": "${file}",
+            // "outFiles": [
+            //     "${workspaceFolder}/**/*.js"
+            // ],
+            "runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
         }
     ]
 }
