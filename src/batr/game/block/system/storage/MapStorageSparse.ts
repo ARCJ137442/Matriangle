@@ -295,6 +295,63 @@ export default class MapStorageSparse implements IMapStorage {
         }
     }
 
+    /**
+     * * 遍历N维超方形测试
+     * 
+     * ! 启发：
+     * 1. 确实可以用循环的方式实现N维遍历算法，虽较为复杂但更为高效
+     * 2. 可以直接传递「参数数组」而不用频繁「打包解包」
+     * 
+     * TODO: 整合进多维遍历中
+     * 
+     * @param maxes 
+     * @param mins 
+     * @param f 
+     * @param args 
+     */
+    public nDTraverse(
+        mins: number[], maxes: number[],
+        f: (point: number[], args: any[]) => void,
+        args: any[]
+    ): void {
+        // 检查
+        if (maxes.length !== mins.length) throw new Error('maxes and mins must have the same length');
+        // 通过数组长度获取维数
+        const nDim: number = maxes.length;
+        // 当前点坐标的表示：复制mins数组
+        const point: number[] = mins.slice();
+        // 进位的临时变量
+        let i: number;
+        // 不断遍历，直到「最高位进位」后返回
+        main: while (true) {
+            // 执行当前点：调用回调函数
+            f(point, args)
+            // 迭代到下一个点：不断循环尝试进位
+            i = 0;
+            // 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
+            while (++point[i] > maxes[i]) {
+                // 旧位清零
+                point[i] = mins[i];
+                // 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
+                if (++i >= nDim)
+                    break main;
+            }
+        }
+    } /*
+    let n: number = 0;
+    nDTraverse(
+        [1, 2, 3],
+        [3, 4, 5],
+        (point: number[], args: any[]): void => {
+            console.log(`point:${point}, args: ${args}`)
+            n++;
+        },
+        ['arg1', 'arg2', 'arg3']
+    )
+    console.log(`一共遍历${n}次！`)
+    */
+
+
     forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): void {
         return this._forEachValidPositions(f, 0, ...args);
     }
