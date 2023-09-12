@@ -58,7 +58,7 @@ export module NativeGameEvents {
                 randomRot,
                 Math.random()
             );
-            host.map.storage.setVoid_2d(sourceX, sourceY); // TODO: 建议统一管理
+            host.map.storage.setVoid(position); // TODO: 建议统一管理
             host.entitySystem.registerProjectile(p);
             // TODO: 推荐 host.entitySystem.addProjectile(p); // 坐标存储在实体自身中
             // host.map.logic._projectileContainer.addChild(p);
@@ -82,7 +82,7 @@ export module NativeGameEvents {
         let randomPoint: iPoint = host.map.storage.randomPoint;
         let x: int = randomPoint.x, y: int = randomPoint.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
         let newBlock: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-        if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid_2d(x, y)) {
+        if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
             host.setBlock(x, y, newBlock); // * 后续游戏需要处理「方块更新事件」
             host.addBlockLightEffect2(
                 alignToEntity(x),
@@ -110,7 +110,7 @@ export module NativeGameEvents {
         let p: LaserBasic, tp: fPoint, entityP: fPoint;
         let i: uint = 0;
         do {
-            randomR = host.map.storage.randomForwardDirectionAt_2d(sourceX, sourceY);
+            randomR = host.map.storage.randomForwardDirectionAt(position);
             tp = host.map.logic.towardWithRot_F(
                 position,
                 randomR, PROJECTILES_SPAWN_DISTANCE

@@ -235,7 +235,7 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     // 使用缓存
-    protected readonly _temp_forEachPoint: iPoint = new iPoint(this._nDim); // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
+    protected readonly _temp_forEachPoint: iPoint = new iPoint(); // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
     /**
      * 兼容任意维的「所有坐标遍历」
      * * 思想：边界之内，均为合法：会遍历边界内所有内容⇒直接对遍历到的点调用回调即可
@@ -253,20 +253,17 @@ export default class MapStorageSparse implements IMapStorage {
         // 当前点坐标的表示：复制this._border_min数组
         this._temp_forEachPoint.copyFrom(this._border_min);
         // 进位的临时变量
-        let i: number;
+        let i: uint = 0;
         // 不断遍历，直到「最高位进位」后返回
-        main: while (true) {
+        while (i < nDim) {
             // 执行当前点：调用回调函数
             f(this._temp_forEachPoint, ...args)
             // 迭代到下一个点：不断循环尝试进位
-            i = 0;
             // 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
-            while (++this._temp_forEachPoint[i] > this._border_max[i]) {
+            for (i = 0; ++this._temp_forEachPoint[i] > this._border_max[i]; ++i) {
                 // 旧位清零
                 this._temp_forEachPoint[i] = this._border_min[i];
                 // 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
-                if (++i >= nDim)
-                    break main;
             }
         }
     }

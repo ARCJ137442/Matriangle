@@ -1,8 +1,7 @@
 ﻿import { iPoint } from "../../common/geometricTools";
 import { PatchIndexType, GameEventType } from "../../general/GlobalGameVariables";
 import { uint } from "../../legacy/AS3Legacy";
-import BlockCommon, { BlockType } from "../block/BlockCommon";
-import { hashBlockType } from "../registry/BlockTypeRegistry";
+import BlockCommon from "../block/BlockCommon";
 import IBatrGame from "./IBatrGame";
 
 /**
@@ -54,7 +53,12 @@ export module GameEventTypes {
 /**
  * 游戏事件分派器
  * * 使用**函数式编程**，集中管理与游戏方块、游戏实体等相关的游戏事件
+ * 
  * ! 最初是为了解决「事件处理函数定义在方块类内，导致『方块 import 实体 import 游戏主体 import 地图 import 方块』循环导入」的问题
+ * 
+ * TODO: 整合进整体游戏逻辑中
+ * 
+ * ? 是否要「内置事件」与「自定义事件」分离开来？是否要实现整个事件系统？
  */
 export default class GameEventPatcher {
 	/**

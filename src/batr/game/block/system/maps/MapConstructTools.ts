@@ -1,8 +1,12 @@
 import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
-import BlockCommon, { BlockType } from "../../BlockCommon";
+import BlockCommon from "../../BlockCommon";
 import BlockSpawnPointMark from "../../blocks/SpawnPointMark";
 import IMapStorage from "../IMapStorage";
+
+/**
+ * ! 目前这些「游戏内置地图」还是一种「迁移自BaTr Gamma」的情况，仍然是以二维为主
+ */
 
 function cloneBlock(block: BlockCommon): BlockCommon {
     return block.clone();
@@ -23,7 +27,7 @@ export function setBlock(
     block: BlockCommon,
     clone: boolean = false
 ): void {
-    storage.setBlock_2d(x, y, clone ? block.clone() : block);
+    storage.setBlock(x, y, clone ? block.clone() : block);
 }
 
 
@@ -59,19 +63,19 @@ export function fillBlock(
 
     // 外框
     for (xi = xl; xi <= xm; xi++) {
-        storage.setBlock_2d(xi, yl, blockF(block))
-        storage.setBlock_2d(xi, ym, blockF(block))
+        storage.setBlock(xi, yl, blockF(block))
+        storage.setBlock(xi, ym, blockF(block))
     }
     for (yi = yl; yi <= ym; yi++) {
-        storage.setBlock_2d(xl, yi, blockF(block))
-        storage.setBlock_2d(xm, yi, blockF(block))
+        storage.setBlock(xl, yi, blockF(block))
+        storage.setBlock(xm, yi, blockF(block))
     }
 
     // 内部
     if (!outline)
         for (xi = xl + 1; xi < xm; xi++) {
             for (yi = yl + 1; yi < ym; yi++) {
-                storage.setBlock_2d(xi, yi, blockF(block));
+                storage.setBlock(xi, yi, blockF(block));
             }
         }
 }
@@ -101,13 +105,13 @@ export function setReflectBlock(
             cloneBlock :
             identity<BlockCommon>
     );
-    storage.setBlock_2d(x, y, blockF(block));
+    storage.setBlock(x, y, blockF(block));
     if (rX)
-        storage.setBlock_2d(lx - x, y, blockF(block));
+        storage.setBlock(lx - x, y, blockF(block));
     if (rY) {
-        storage.setBlock_2d(x, ly - y, blockF(block));
+        storage.setBlock(x, ly - y, blockF(block));
         if (rX)
-            storage.setBlock_2d(lx - x, ly - y, blockF(block));
+            storage.setBlock(lx - x, ly - y, blockF(block));
     }
 }
 
@@ -296,5 +300,5 @@ export function drawLaserTrapBox(
 
 export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
     storage.addSpawnPointAt_2d(x, y);
-    storage.setBlock_2d(x, y, BlockSpawnPointMark.INSTANCE);
+    storage.setBlock(x, y, BlockSpawnPointMark.INSTANCE);
 }

@@ -325,16 +325,50 @@ export class intPoint extends xPoint<int> {
  */
 export class floatPoint extends xPoint<number> { }
 
-// Full alias
+// 别名
 export const iPoint = intPoint; // as class
 export type iPoint = intPoint; // as type
 export const fPoint = floatPoint; // as class
 export type fPoint = floatPoint; // as type
 
-//test
-let p: iPoint = new iPoint()
-
-let p2: iPoint = new iPoint(1, 2, 3)
-
-p.copyFrom(p2)
-console.log(p)
+// ! 缓存的变量
+const _temp_forEachPoint: iPoint = new iPoint();
+/**
+ * 循环遍历任意维超方形
+ * * 由先前「地图遍历」算法迁移而来
+ * * 基本逻辑：「数值进位」思想
+ * * 性能🆚递归：复杂度更胜一筹，处理高维大规模均胜过递归算法
+ * 
+ * ! 已知问题：直接使用args数组，TS编译会不通过
+ * 
+ * ! 注意：处于性能考虑，不会对pMax与pMin的长度一致性进行检查
+ * 
+ * @param pMin 所有坐标的最小值
+ * @param pMax 所有坐标的最大值，其长度决定遍历的维数
+ * @param f 回调函数：第一个回传的参数是「遍历到的点的坐标」
+ * @param args 附加在「点坐标」后的参数
+ */
+export function traverseNDSquare(
+	pMin: iPoint, pMax: iPoint,
+	f: (p: iPoint, ...args: any[]) => void,
+	...args: any[]
+): void {
+	// 通过数组长度获取维数
+	const nDim: uint = pMax.length;
+	// 当前点坐标的表示：复制mins数组
+	_temp_forEachPoint.copyFrom(pMin);
+	// 进位的临时变量
+	let i: uint = 0;
+	// 不断遍历，直到「最高位进位」后返回
+	while (i < nDim) {
+		// 执行当前点：调用回调函数
+		f(_temp_forEachPoint, ...args)
+		// 迭代到下一个点：不断循环尝试进位
+		// 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
+		for (i = 0; ++_temp_forEachPoint[i] > pMax[i]; ++i) {
+			// 旧位清零
+			_temp_forEachPoint[i] = pMin[i];
+			// 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
+		}
+	}
+}
