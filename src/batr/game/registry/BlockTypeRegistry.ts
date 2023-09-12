@@ -54,6 +54,7 @@ import XTrapKill from "../block/blocks/XTrapKill";
 export { default as XTrapKill } from "../block/blocks/XTrapKill";
 
 import XTrapRotate from "../block/blocks/XTrapRotate";
+import { PatchIndexType } from "../../general/GlobalGameVariables";
 export { default as XTrapRotate } from "../block/blocks/XTrapRotate";
 
 /**
@@ -103,4 +104,13 @@ export module NativeBlockTypes {
 		MOVEABLE_WALL,
 	]
 
+}
+
+/**
+ * 散列化一个「方块类型」，使之能用于「事件派发」机制中
+ * @param blockType 用于事件派发的方块类型
+ * @returns 用于事件派发的索引
+ */
+export function hashBlockType(blockType: BlockType): PatchIndexType {
+	return blockType.name
 }

@@ -2190,7 +2190,7 @@ export default class Game implements IBatrGame {
 		}
 		// Other
 		switch (this.getBlockType(x, y)) {
-			// TODO: 日后在这里建立派发机制
+			// TODO: 日后在这里建立分派机制
 
 		}
 	}
