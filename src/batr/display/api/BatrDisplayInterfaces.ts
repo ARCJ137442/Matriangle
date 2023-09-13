@@ -4,27 +4,36 @@ import { IChildContainer } from '../../common/abstractInterfaces';
 
 /**
  * the interface faced to logical object that can manipulate its display status
+ * 一个面对逻辑对象的接口，使逻辑对象可以操纵其显示状态
  * * it will manipulate an shape that corresponds itself
+ * * 它将操作一个与自己对应的显示对象
  */
 export interface IBatrDisplayable {
     /**
      * call when initial create/display the shape, usually contains the graphics context.
+     * * 当第一次加载时调用，用于显示对象的初始化
+     * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
     shapeInit(shape: IBatrShape): void;
 
     /**
-     * The same as `shapeInit`, but it will be called by object rerendering 
+     * The same as `shapeInit`, but it will be called by object refreshing 
+     * * 在显示对象内部需要重绘（内部几何线条图形、颜色等……）
      * 
      * ! May contains position updates
+     * ! 【20230913 23:25:03】目前不包括平移、旋转等操作
+     * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
     shapeRefresh(shape: IBatrShape): void;
 
     /**
      * The destructor of shape, it will be called by object rerendering 
+     * * 当显示对象需要被销毁时调用的函数
      * 
      * ! It may not call after the destructor instantly 
+     * ! 这不一定会紧跟在「显示对象的析构函数」后调用
      * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
@@ -33,19 +42,26 @@ export interface IBatrDisplayable {
 
 /**
  * This interface is the unified management of all previous inherited flash Shape/MovieClip interface.
- * 这个接口是所有以前继承flash形状/MovieClip接口的统一管理。
+ * * 这个接口是所有以前继承flash形状/MovieClip接口的统一管理。
  * 
  * It abstracts the functionality of the original strong coupling with flash, 
- * 它抽象了原来与flash强耦合的功能，
+ * * 它抽象了原来与flash强耦合的功能，
  * so that the logic can control the front-end rendering and separate from the concrete implementation of the display.
- * 使逻辑可以控制前端的呈现，并与具体的显示实现分离。
+ * * 使逻辑端可以控制显示端的呈现，并与「具体显示平台实现」分离。
+ *   * 如：逻辑端只需要调用这个文件里接口有的方法，不需要管这个IBaTrShape到底是用H5还是QT实现的
  */
 export interface IBatrShape extends IBatrDisplayable {
     /**
      * migrate from Flash's Graphics object, then implements with another interface
      * 从Flash的Graphics对象迁移过来，并使用另一个接口实现
      */
-    graphics: IBatrGraphicContext;
+    get graphics(): IBatrGraphicContext;
+
+    /**
+     * 图形「是否显示」
+     */
+    get isVisible(): boolean;
+    set isVisible(value: boolean);
 
     /**
      * 图形（在容器中）的x坐标
@@ -75,6 +91,7 @@ export interface IBatrShapeContainer extends IBatrShape, IChildContainer<IBatrSh
 
 /**
  * The migrated interface from `flash.display.Graphics`
+ * 迁移自Flash的Graphics类
  * * Reference: https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/Graphics.html
  */
 export interface IBatrGraphicContext {

@@ -1,11 +1,8 @@
 import { uint, int } from "../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
-import Game from "../main/Game.1";
-import EffectType from "../registry/EffectRegistry";
 
 export default class EffectCommon implements IBatrDisplayable {
 	//============Static Variables============//
-	protected static readonly DEFAULT_MAX_LIFE: uint = GlobalGameVariables.TPS;
 	protected static _NEXT_UUID: uint = 0;
 
 	//============Static Functions============//
@@ -42,7 +39,6 @@ export default class EffectCommon implements IBatrDisplayable {
 	}
 
 	public destructor(): void {
-		shape.graphics.clear();
 		this._uuid = 0;
 		this.isActive = false;
 		this.life = this.LIFE = 0;
