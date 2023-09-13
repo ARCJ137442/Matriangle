@@ -5,7 +5,6 @@
 
 import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
 import { mRot } from "../../../api/general/GlobalRot";
-import { alignToGrid_P } from "../../../api/general/PosTransform";
 import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import EntityCommon from "../../../api/entity/EntityCommon";
 import Player from "../entities/player/Player";
@@ -149,3 +148,7 @@ export default class MapLogic_V1 implements IMapLogic {
 		return blockAtt.isBreakable && !(this.isArenaMap && blockAtt.unbreakableInArenaMap);
 	}
 }
+function alignToGrid_P(p: floatPoint, _temp_testCanPass_IP: intPoint): intPoint {
+	throw new Error("Function not implemented.");
+}
+
