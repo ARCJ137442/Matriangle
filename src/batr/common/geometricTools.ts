@@ -83,7 +83,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 * * 原理：遍历分量，逐一赋值（类似`copyFrom`方法）
 	 */
 	public copyFromArgs(...args: T[]): xPoint<T> {
-		for (let i = 0; i < this.length; i++) {
+		for (let i = 0; i < args.length; i++) {
 			this[i] = args[i];
 		}
 		return this;
@@ -98,7 +98,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 * @returns 返回自身，与另一点相等
 	 */
 	public addFrom(point: xPoint<T>): xPoint<T> {
-		for (let i = 0; i < this.length; i++) {
+		for (let i = 0; i < point.length; i++) {
 			this[i] += point[i] as any;
 		}
 		return this;
@@ -113,7 +113,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 * @returns 返回自身，与另一点相等
 	 */
 	public minusFrom(point: xPoint<T>): xPoint<T> {
-		for (let i = 0; i < this.length; i++) {
+		for (let i = 0; i < point.length; i++) {
 			(this[i] as any) -= point[i] as any;
 		}
 		return this;
@@ -134,7 +134,7 @@ export abstract class xPoint<T> extends Array<T> {
 	public getDistance(point: xPoint<T>): T {
 		let distanceSquare: T = ((this[0] as any) - (point[0] as any)) as T;
 		let tempDistance: T;
-		for (let i: uint = 1; i < this.length; i++) {
+		for (let i: uint = 1; i < point.length; i++) {
 			tempDistance = ((this[i] as any) - (point[i] as any)) as T
 			distanceSquare += ((tempDistance as any) * (tempDistance as any)) as any
 		}
@@ -151,7 +151,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 */
 	public getManhattanDistance(point: xPoint<T>): T {
 		let tempDistance: T = this[0]
-		for (let i: uint = 1; i < this.length; i++) {
+		for (let i: uint = 1; i < point.length; i++) {
 			tempDistance += this.getAbsDistanceAt(point, i) as any;
 		}
 		return tempDistance;
@@ -193,7 +193,7 @@ export abstract class xPoint<T> extends Array<T> {
 	public getAbsMinDistance(point: xPoint<T>, start: uint = 0): T {
 		let minDistance: T | undefined = undefined;
 		let tempDistance: T | undefined = undefined;
-		for (let i = start; i < this.length; i++) {
+		for (let i = start; i < point.length; i++) {
 			tempDistance = this.getAbsDistanceAt(point, i);
 			if (minDistance === undefined || (minDistance as T) > tempDistance) {
 				minDistance = tempDistance
@@ -215,7 +215,7 @@ export abstract class xPoint<T> extends Array<T> {
 		let result: uint = 0;
 		let minDistance: T | undefined = undefined;
 		let tempDistance: T | undefined = undefined;
-		for (let i = start; i < this.length; i++) {
+		for (let i = start; i < point.length; i++) {
 			tempDistance = this.getAbsDistanceAt(point, i);
 			if (minDistance === undefined || (minDistance as T) > tempDistance) {
 				result = i
@@ -256,7 +256,7 @@ export abstract class xPoint<T> extends Array<T> {
 		let tempT: T | undefined = undefined;
 		let i: uint;
 		// 获得「最小绝对距离」
-		for (i = start; i < this.length; i++) {
+		for (i = start; i < target.length; i++) {
 			tempT = this.getAbsDistanceAt(target, i);
 			if (minDistance === undefined || (minDistance as T) > tempT) {
 				index = i
@@ -289,7 +289,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 * @returns 两个点的坐标是否相等
 	 */
 	public isEqual(p: xPoint<T>): boolean {
-		for (let i: uint = 0; i < this.length; i++) {
+		for (let i: uint = 0; i < p.length; i++) {
 			if (this[i] !== p[i]) return false
 		}
 		return true
@@ -303,7 +303,7 @@ export abstract class xPoint<T> extends Array<T> {
 	 * @returns 两个点的坐标是否有一处相等
 	 */
 	public isAnyAxisEqual(p: xPoint<T>): boolean {
-		for (let i: uint = 0; i < this.length; i++) {
+		for (let i: uint = 0; i < p.length; i++) {
 			if (this[i] === p[i]) return true
 		}
 		return false
