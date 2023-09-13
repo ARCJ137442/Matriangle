@@ -49,69 +49,93 @@ export module NativeMaps {
     const LASER_TRAP: BlockCommon = BlockLaserTrap.INSTANCE;
     const SUPPLY_POINT: BlockCommon = BlockSupplyPoint.INSTANCE;
 
-    // 所有地图的常量
-    export const EMPTY: IMap = new Map_V1('EMPTY', new MapStorageSparse());
-    export const FRAME: IMap = new Map_V1('FRAME', new MapStorageSparse());
-    export const MAP_1: IMap = new Map_V1('1', new MapStorageSparse());
-    export const MAP_2: IMap = new Map_V1('2', new MapStorageSparse());
-    export const MAP_3: IMap = new Map_V1('3', new MapStorageSparse());
-    export const MAP_4: IMap = new Map_V1('4', new MapStorageSparse());
-    export const MAP_5: IMap = new Map_V1('5', new MapStorageSparse());
-    export const MAP_6: IMap = new Map_V1('6', new MapStorageSparse());
-    export const MAP_7: IMap = new Map_V1('7', new MapStorageSparse());
-    export const MAP_8: IMap = new Map_V1('8', new MapStorageSparse());
-    export const MAP_9: IMap = new Map_V1('9', new MapStorageSparse());
-    export const MAP_A: IMap = new Map_V1('A', new MapStorageSparse(), true);
-    export const MAP_B: IMap = new Map_V1('B', new MapStorageSparse(), true);
-    export const MAP_C: IMap = new Map_V1('C', new MapStorageSparse(), true);
-    export const MAP_D: IMap = new Map_V1('D', new MapStorageSparse(), true);
-    export const MAP_E: IMap = new Map_V1('E', new MapStorageSparse(), true);
-    export const MAP_F: IMap = new Map_V1('F', new MapStorageSparse(), true);
-    export const MAP_G: IMap = new Map_V1('G', new MapStorageSparse(), true);
-    export const MAP_H: IMap = new Map_V1('H', new MapStorageSparse(), true);
+    // 所有地图存储的常量
+    const STORAGE_EMPTY: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_FRAME: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_2: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_1: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_3: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_4: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_5: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_6: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_7: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_8: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_9: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_A: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_B: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_C: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_D: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_E: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_F: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_G: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_H: MapStorageSparse = new MapStorageSparse();
 
-    // if(isInited) return
+    // 所有地图的常量
+    export const EMPTY: IMap = new Map_V1('EMPTY', STORAGE_EMPTY);
+    export const FRAME: IMap = new Map_V1('FRAME', STORAGE_FRAME);
+    export const MAP_1: IMap = new Map_V1('1', STORAGE_1);
+    export const MAP_2: IMap = new Map_V1('2', STORAGE_2);
+    export const MAP_3: IMap = new Map_V1('3', STORAGE_3);
+    export const MAP_4: IMap = new Map_V1('4', STORAGE_4);
+    export const MAP_5: IMap = new Map_V1('5', STORAGE_5);
+    export const MAP_6: IMap = new Map_V1('6', STORAGE_6);
+    export const MAP_7: IMap = new Map_V1('7', STORAGE_7);
+    export const MAP_8: IMap = new Map_V1('8', STORAGE_8);
+    export const MAP_9: IMap = new Map_V1('9', STORAGE_9);
+    export const MAP_A: IMap = new Map_V1('A', STORAGE_A, true);
+    export const MAP_B: IMap = new Map_V1('B', STORAGE_B, true);
+    export const MAP_C: IMap = new Map_V1('C', STORAGE_C, true);
+    export const MAP_D: IMap = new Map_V1('D', STORAGE_D, true);
+    export const MAP_E: IMap = new Map_V1('E', STORAGE_E, true);
+    export const MAP_F: IMap = new Map_V1('F', STORAGE_F, true);
+    export const MAP_G: IMap = new Map_V1('G', STORAGE_G, true);
+    export const MAP_H: IMap = new Map_V1('H', STORAGE_H, true);
+    // ! 后面都是直接对引用的对象进行修改，故预先声明有效
+
     //========Init Maps========//
     let i: uint, ix: uint, iy: uint;
 
+    //====Empty====//
+    STORAGE_EMPTY.setBorder(
+        new iPoint(0, 0),
+        new iPoint(MAP_MAX_X, MAP_MAX_Y)
+    ); // ! 有必要给空地图整理好边界
+
     //====Basic Frame====//
-    fillBlock(FRAME.storage, 0, 0, MAP_MAX_X - 1, MAP_MAX_Y - 1, BEDROCK, true);
+    fillBlock(STORAGE_FRAME.copyBorderFrom(STORAGE_EMPTY), 0, 0, MAP_MAX_X, MAP_MAX_Y, BEDROCK, true);
 
     //====Map 1====//
-    MAP_1.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_1.copyFrom(STORAGE_FRAME); {
         for (ix = 3; ix < MAP_MAX_X - 4; ix += 4) {
             for (iy = 3; iy < MAP_MAX_Y - 4; iy += 4) {
-                fillBlock(MAP_1.storage, ix, iy, ix + 1, iy + 1, WALL);
+                fillBlock(STORAGE_1, ix, iy, ix + 1, iy + 1, WALL);
             }
         }
     }
     //====Map 2====//
-    MAP_2.storage.copyContentFrom(FRAME.storage); {
-        fillBlock(MAP_2.storage, 4, 4, 10, 10, WALL);
-
-        fillBlock(MAP_2.storage, 4, 13, 10, 19, WALL);
-
-        fillBlock(MAP_2.storage, 13, 4, 19, 10, WALL);
-
-        fillBlock(MAP_2.storage, 13, 13, 19, 19, WALL);
+    STORAGE_2.copyFrom(STORAGE_FRAME); {
+        fillBlock(STORAGE_2, 4, 4, 10, 10, WALL);
+        fillBlock(STORAGE_2, 4, 13, 10, 19, WALL);
+        fillBlock(STORAGE_2, 13, 4, 19, 10, WALL);
+        fillBlock(STORAGE_2, 13, 13, 19, 19, WALL);
     }
     //====Map 3====//
-    MAP_3.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_3.copyFrom(STORAGE_FRAME); {
         for (iy = 3; iy < MAP_MAX_Y - 4; iy += 4) {
-            fillBlock(MAP_3.storage, 3, iy, 20, iy + 1, WATER);
+            fillBlock(STORAGE_3, 3, iy, 20, iy + 1, WATER);
         }
     }
     //====Map 4====//
-    MAP_4.storage.copyContentFrom(FRAME.storage); {
-        fillBlock(MAP_4.storage, 3, 3, 20, 4, WALL);
+    STORAGE_4.copyFrom(STORAGE_FRAME); {
+        fillBlock(STORAGE_4, 3, 3, 20, 4, WALL);
 
-        fillBlock(MAP_4.storage, 3, 19, 20, 20, WALL);
+        fillBlock(STORAGE_4, 3, 19, 20, 20, WALL);
 
-        fillBlock(MAP_4.storage, 11, 5, 12, 18, GLASS);
+        fillBlock(STORAGE_4, 11, 5, 12, 18, GLASS);
     }
     //====Map 5====//
-    MAP_5.storage.generatorF = function (storage: IMapStorage): IMapStorage {
-        storage.copyContentFrom(FRAME.storage);
+    STORAGE_5.generatorF = function (storage: IMapStorage): IMapStorage {
+        storage.copyFrom(STORAGE_FRAME);
         let randNum: int = 24 + randInt(47), randType: BlockType;
         let iP: iPoint;
         while (--randNum > 0) {
@@ -135,374 +159,369 @@ export module NativeMaps {
         return storage;
     };
     //====Map 6====//
-    MAP_6.storage.copyContentFrom(FRAME.storage); {
-        setBlock(MAP_6.storage, 3, 3, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 3, 20, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 20, 3, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 20, 20, BlockColorSpawner.INSTANCE);
+    STORAGE_6.copyFrom(STORAGE_FRAME); {
+        setBlock(STORAGE_6, 3, 3, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 3, 20, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 20, 3, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 20, 20, BlockColorSpawner.INSTANCE);
 
         // 1
-        setBlock(MAP_6.storage, 20, 9, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 20, 14, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 20, 9, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 20, 14, BlockColorSpawner.INSTANCE);
 
         // x+
-        setBlock(MAP_6.storage, 3, 9, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 3, 14, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 3, 9, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 3, 14, BlockColorSpawner.INSTANCE);
 
         // x-
-        setBlock(MAP_6.storage, 9, 20, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 14, 20, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 9, 20, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 14, 20, BlockColorSpawner.INSTANCE);
 
         // y+
-        setBlock(MAP_6.storage, 9, 3, BlockColorSpawner.INSTANCE);
-        setBlock(MAP_6.storage, 14, 3, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 9, 3, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 14, 3, BlockColorSpawner.INSTANCE);
 
         // y-
-        fillBlock(MAP_6.storage, 4, 20, 8, 20, GLASS);
-        fillBlock(MAP_6.storage, 15, 20, 19, 20, GLASS);
+        fillBlock(STORAGE_6, 4, 20, 8, 20, GLASS);
+        fillBlock(STORAGE_6, 15, 20, 19, 20, GLASS);
 
         // #y+
-        fillBlock(MAP_6.storage, 4, 3, 8, 3, GLASS);
-        fillBlock(MAP_6.storage, 15, 3, 19, 3, GLASS);
+        fillBlock(STORAGE_6, 4, 3, 8, 3, GLASS);
+        fillBlock(STORAGE_6, 15, 3, 19, 3, GLASS);
 
         // #y-
-        fillBlock(MAP_6.storage, 20, 4, 20, 8, GLASS);
-        fillBlock(MAP_6.storage, 20, 15, 20, 19, GLASS);
+        fillBlock(STORAGE_6, 20, 4, 20, 8, GLASS);
+        fillBlock(STORAGE_6, 20, 15, 20, 19, GLASS);
 
         // #x+
-        fillBlock(MAP_6.storage, 3, 4, 3, 8, GLASS);
-        fillBlock(MAP_6.storage, 3, 15, 3, 19, GLASS);
+        fillBlock(STORAGE_6, 3, 4, 3, 8, GLASS);
+        fillBlock(STORAGE_6, 3, 15, 3, 19, GLASS);
 
         // #x-
-        fillBlock(MAP_6.storage, 9, 9, 14, 14, X_TRAP_HURT, true);
-        fillBlock(MAP_6.storage, 11, 11, 12, 12, X_TRAP_KILL, true);
+        fillBlock(STORAGE_6, 9, 9, 14, 14, X_TRAP_HURT, true);
+        fillBlock(STORAGE_6, 11, 11, 12, 12, X_TRAP_KILL, true);
     }
     //====Map 7====//
-    MAP_7.storage.copyContentFrom(FRAME.storage); {
-        fillBlock(MAP_7.storage, 1, 5, 22, 6, WATER);
+    STORAGE_7.copyFrom(STORAGE_FRAME); {
+        fillBlock(STORAGE_7, 1, 5, 22, 6, WATER);
 
         // up side
-        fillBlock(MAP_7.storage, 1, 17, 22, 18, WATER);
+        fillBlock(STORAGE_7, 1, 17, 22, 18, WATER);
 
         // down side
-        setBlock(MAP_7.storage, 10, 10, COLOR_SPAWNER);
+        setBlock(STORAGE_7, 10, 10, COLOR_SPAWNER);
+        setBlock(STORAGE_7, 10, 13, COLOR_SPAWNER);
+        setBlock(STORAGE_7, 13, 10, COLOR_SPAWNER);
+        setBlock(STORAGE_7, 13, 13, COLOR_SPAWNER);
 
-        setBlock(MAP_7.storage, 10, 13, COLOR_SPAWNER);
-
-        setBlock(MAP_7.storage, 13, 10, COLOR_SPAWNER);
-
-        setBlock(MAP_7.storage, 13, 13, COLOR_SPAWNER);
-
-        fillBlock(MAP_7.storage, 9, 11, 9, 12, X_TRAP_KILL);
+        fillBlock(STORAGE_7, 9, 11, 9, 12, X_TRAP_KILL);
 
         // x-
-        fillBlock(MAP_7.storage, 11, 9, 12, 9, X_TRAP_KILL);
+        fillBlock(STORAGE_7, 11, 9, 12, 9, X_TRAP_KILL);
 
         // y-
-        fillBlock(MAP_7.storage, 14, 11, 14, 12, X_TRAP_KILL);
+        fillBlock(STORAGE_7, 14, 11, 14, 12, X_TRAP_KILL);
 
         // x+
-        fillBlock(MAP_7.storage, 11, 14, 12, 14, X_TRAP_KILL);
+        fillBlock(STORAGE_7, 11, 14, 12, 14, X_TRAP_KILL);
 
         // y+
     }
     //====Map 8====//
-    MAP_8.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_8.copyFrom(STORAGE_FRAME); {
         // hole
-        fillBlock(MAP_8.storage, 0, 12, 0, 13, VOID);
-
-        fillBlock(MAP_8.storage, 23, 12, 23, 13, VOID);
+        fillBlock(STORAGE_8, 0, 12, 0, 13, VOID);
+        fillBlock(STORAGE_8, 23, 12, 23, 13, VOID);
 
         // down
         drawLaserTrapDownPillar(
-            MAP_8.storage, 4,
+            STORAGE_8, 4,
             WALL, GLASS, BEDROCK, LASER_TRAP
         );
         drawLaserTrapDownPillar(
-            MAP_8.storage, 14,
+            STORAGE_8, 14,
             WALL, GLASS, BEDROCK, LASER_TRAP
         );
         // up
         drawLaserTrapUpPillar(
-            MAP_8.storage, 9,
+            STORAGE_8, 9,
             WALL, GLASS, BEDROCK, LASER_TRAP
         );
         drawLaserTrapUpPillar(
-            MAP_8.storage, 19,
+            STORAGE_8, 19,
             WALL, GLASS, BEDROCK, LASER_TRAP
         );
     }
     //====Map 9====//
-    MAP_9.storage.copyContentFrom(EMPTY.storage); {
+    STORAGE_9.copyFrom(STORAGE_EMPTY); {
         // left
-        fillBlock(MAP_9.storage, 0, 0, 0, 23, LASER_TRAP);
+        fillBlock(STORAGE_9, 0, 0, 0, 23, LASER_TRAP);
         // right
-        fillBlock(MAP_9.storage, 23, 0, 23, 23, LASER_TRAP);
+        fillBlock(STORAGE_9, 23, 0, 23, 23, LASER_TRAP);
         // center
-        fillBlock(MAP_9.storage, 11, 11, 12, 12, COLOR_SPAWNER);
+        fillBlock(STORAGE_9, 11, 11, 12, 12, COLOR_SPAWNER);
 
         // up side
     }
     //======Arena Maps======//
     //====Map A====//
-    MAP_A.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_A.copyFrom(STORAGE_FRAME); {
         for (i = 0; i < 5; i++) {
             // base
-            fillBlock(MAP_A.storage, 5, 5 + 3 * i, 18, 6 + 3 * i, WALL);
+            fillBlock(STORAGE_A, 5, 5 + 3 * i, 18, 6 + 3 * i, WALL);
             if (i < 4) {
                 // lines
-                fillBlock(MAP_A.storage, 6, 7 + 3 * i, 17, 7 + 3 * i, METAL);
+                fillBlock(STORAGE_A, 6, 7 + 3 * i, 17, 7 + 3 * i, METAL);
                 // corner
-                fillBlock(MAP_A.storage, 1 + (i >> 1) * 20, 1 + (i & 1) * 20, 2 + (i >> 1) * 20, 2 + (i & 1) * 20, X_TRAP_ROTATE);
-                addSpawnPointWithMark(MAP_A.storage, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
+                fillBlock(STORAGE_A, 1 + (i >> 1) * 20, 1 + (i & 1) * 20, 2 + (i >> 1) * 20, 2 + (i & 1) * 20, X_TRAP_ROTATE);
+                addSpawnPointWithMark(STORAGE_A, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
             }
         }
     }
     //====Map B====//
-    MAP_B.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_B.copyFrom(STORAGE_FRAME); {
         /**
          * Spin 180*:x=23-x,y=23-y
-         * for fill:cross imput
+         * for fill:cross input
          */
         // corner spawn point
         for (i = 0; i < 4; i++)
-            addSpawnPointWithMark(MAP_B.storage, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
+            addSpawnPointWithMark(STORAGE_B, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
         // Metal Middle Line&Laser Trap
         // l
-        fillBlock(MAP_B.storage, 0, 9, 13, 9, METAL);
-        setBlock(MAP_B.storage, 14, 9, LASER_TRAP);
+        fillBlock(STORAGE_B, 0, 9, 13, 9, METAL);
+        setBlock(STORAGE_B, 14, 9, LASER_TRAP);
         // r
-        fillBlock(MAP_B.storage, 10, 14, 23, 14, METAL);
-        setBlock(MAP_B.storage, 9, 14, LASER_TRAP);
+        fillBlock(STORAGE_B, 10, 14, 23, 14, METAL);
+        setBlock(STORAGE_B, 9, 14, LASER_TRAP);
         // center X_TRAP_KILL
-        fillBlock(MAP_B.storage, 11, 11, 12, 12, X_TRAP_KILL);
+        fillBlock(STORAGE_B, 11, 11, 12, 12, X_TRAP_KILL);
         // side water&spawner
         // l
-        fillBlock(MAP_B.storage, 6, 10, 6, 17, WATER);
+        fillBlock(STORAGE_B, 6, 10, 6, 17, WATER);
 
-        setBlock(MAP_B.storage, 3, 16, COLOR_SPAWNER);
-        setBlock(MAP_B.storage, 3, 12, COLOR_SPAWNER);
+        setBlock(STORAGE_B, 3, 16, COLOR_SPAWNER);
+        setBlock(STORAGE_B, 3, 12, COLOR_SPAWNER);
         // r
-        fillBlock(MAP_B.storage, 17, 6, 17, 13, WATER);
+        fillBlock(STORAGE_B, 17, 6, 17, 13, WATER);
 
-        setBlock(MAP_B.storage, 20, 7, COLOR_SPAWNER);
-        setBlock(MAP_B.storage, 20, 11, COLOR_SPAWNER);
+        setBlock(STORAGE_B, 20, 7, COLOR_SPAWNER);
+        setBlock(STORAGE_B, 20, 11, COLOR_SPAWNER);
         // up&down side X_TRAP_HURT/WATER/BEDROCK
         // u
-        fillBlock(MAP_B.storage, 19, 4, 22, 4, BEDROCK);
+        fillBlock(STORAGE_B, 19, 4, 22, 4, BEDROCK);
 
-        fillBlock(MAP_B.storage, 6, 4, 18, 4, WATER);
+        fillBlock(STORAGE_B, 6, 4, 18, 4, WATER);
 
-        fillBlock(MAP_B.storage, 6, 2, 20, 2, X_TRAP_HURT);
+        fillBlock(STORAGE_B, 6, 2, 20, 2, X_TRAP_HURT);
 
         // d
-        fillBlock(MAP_B.storage, 1, 19, 4, 19, BEDROCK);
+        fillBlock(STORAGE_B, 1, 19, 4, 19, BEDROCK);
 
-        fillBlock(MAP_B.storage, 5, 19, 17, 19, WATER);
+        fillBlock(STORAGE_B, 5, 19, 17, 19, WATER);
 
-        fillBlock(MAP_B.storage, 3, 21, 17, 21, X_TRAP_HURT);
+        fillBlock(STORAGE_B, 3, 21, 17, 21, X_TRAP_HURT);
 
         // corner X_TRAP_HURT/WATER
         // ul
-        fillBlock(MAP_B.storage, 2, 3, 2, 7, X_TRAP_HURT);
+        fillBlock(STORAGE_B, 2, 3, 2, 7, X_TRAP_HURT);
 
-        fillBlock(MAP_B.storage, 4, 1, 4, 7, WATER);
+        fillBlock(STORAGE_B, 4, 1, 4, 7, WATER);
 
         // dr
-        fillBlock(MAP_B.storage, 21, 16, 21, 20, X_TRAP_HURT);
+        fillBlock(STORAGE_B, 21, 16, 21, 20, X_TRAP_HURT);
 
-        fillBlock(MAP_B.storage, 19, 16, 19, 22, WATER);
+        fillBlock(STORAGE_B, 19, 16, 19, 22, WATER);
     }
     //====Map C====//
-    MAP_C.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_C.copyFrom(STORAGE_FRAME); {
         // center C
         // h
-        fillBlock(MAP_C.storage, 6, 6, 17, 6, BEDROCK);
+        fillBlock(STORAGE_C, 6, 6, 17, 6, BEDROCK);
 
-        fillBlock(MAP_C.storage, 6, 17, 17, 17, BEDROCK);
+        fillBlock(STORAGE_C, 6, 17, 17, 17, BEDROCK);
 
         // l
-        fillBlock(MAP_C.storage, 6, 6, 6, 17, BEDROCK);
+        fillBlock(STORAGE_C, 6, 6, 6, 17, BEDROCK);
 
         for (i = 0; i < 4; i++) {
             if (i < 2) {
                 // 10*Spawner
-                setBlock(MAP_C.storage, 6, 6 + i * 11, COLOR_SPAWNER);
-                setBlock(MAP_C.storage, 10, 6 + i * 11, COLOR_SPAWNER);
-                setBlock(MAP_C.storage, 13, 6 + i * 11, COLOR_SPAWNER);
-                setBlock(MAP_C.storage, 17, 6 + i * 11, COLOR_SPAWNER);
-                setBlock(MAP_C.storage, 6, 10 + i * 3, COLOR_SPAWNER);
+                setBlock(STORAGE_C, 6, 6 + i * 11, COLOR_SPAWNER);
+                setBlock(STORAGE_C, 10, 6 + i * 11, COLOR_SPAWNER);
+                setBlock(STORAGE_C, 13, 6 + i * 11, COLOR_SPAWNER);
+                setBlock(STORAGE_C, 17, 6 + i * 11, COLOR_SPAWNER);
+                setBlock(STORAGE_C, 6, 10 + i * 3, COLOR_SPAWNER);
                 // Spawnpoint/Wall,l
-                addSpawnPointWithMark(MAP_C.storage, 3, 11 + i);
-                setBlock(MAP_C.storage, 3, 10 + i * 3, WALL);
+                addSpawnPointWithMark(STORAGE_C, 3, 11 + i);
+                setBlock(STORAGE_C, 3, 10 + i * 3, WALL);
                 // water/wall,r
-                setBlock(MAP_C.storage, 20, 11 + i, WATER);
-                setBlock(MAP_C.storage, 20, 10 + i * 3, WALL);
+                setBlock(STORAGE_C, 20, 11 + i, WATER);
+                setBlock(STORAGE_C, 20, 10 + i * 3, WALL);
             }
             // Spawnpoint/Wall,u&d
-            addSpawnPointWithMark(MAP_C.storage, 11 + (i & 1), 3 + 17 * (i >> 1));
-            setBlock(MAP_C.storage, 10 + (i & 1) * 3, 3 + 17 * (i >> 1), WALL);
+            addSpawnPointWithMark(STORAGE_C, 11 + (i & 1), 3 + 17 * (i >> 1));
+            setBlock(STORAGE_C, 10 + (i & 1) * 3, 3 + 17 * (i >> 1), WALL);
             // corner LaserTrap/XTrapHurt
-            setBlock(MAP_C.storage, 3 + (i >> 1) * 17, 3 + (i & 1) * 17, LASER_TRAP);
-            setBlock(MAP_C.storage, 2 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT);
-            setBlock(MAP_C.storage, 3 + (i >> 1) * 17, 2 + (i & 1) * 17, X_TRAP_HURT);
-            setBlock(MAP_C.storage, 4 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT);
-            setBlock(MAP_C.storage, 3 + (i >> 1) * 17, 4 + (i & 1) * 17, X_TRAP_HURT);
+            setBlock(STORAGE_C, 3 + (i >> 1) * 17, 3 + (i & 1) * 17, LASER_TRAP);
+            setBlock(STORAGE_C, 2 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT);
+            setBlock(STORAGE_C, 3 + (i >> 1) * 17, 2 + (i & 1) * 17, X_TRAP_HURT);
+            setBlock(STORAGE_C, 4 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT);
+            setBlock(STORAGE_C, 3 + (i >> 1) * 17, 4 + (i & 1) * 17, X_TRAP_HURT);
         }
     }
     //====Map D====//
-    MAP_D.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_D.copyFrom(STORAGE_FRAME); {
         for (i = 0; i < 4; i++) {
             // Water Circle
             // long_line
-            fillBlock(MAP_D.storage, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, 4 + (i & 1) * 15, WATER);
+            fillBlock(STORAGE_D, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, 4 + (i & 1) * 15, WATER);
 
-            fillBlock(MAP_D.storage, 4 + (i & 1) * 15, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, WATER);
+            fillBlock(STORAGE_D, 4 + (i & 1) * 15, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, WATER);
 
             // 2x line
             // h
-            setBlock(MAP_D.storage, 7 + (i >> 1) * 8, 5 + (i & 1) * 13, WATER);
-            setBlock(MAP_D.storage, 8 + (i >> 1) * 8, 5 + (i & 1) * 13, WATER);
+            setBlock(STORAGE_D, 7 + (i >> 1) * 8, 5 + (i & 1) * 13, WATER);
+            setBlock(STORAGE_D, 8 + (i >> 1) * 8, 5 + (i & 1) * 13, WATER);
             // v
-            setBlock(MAP_D.storage, 5 + (i & 1) * 13, 7 + (i >> 1) * 8, WATER);
-            setBlock(MAP_D.storage, 5 + (i & 1) * 13, 8 + (i >> 1) * 8, WATER);
+            setBlock(STORAGE_D, 5 + (i & 1) * 13, 7 + (i >> 1) * 8, WATER);
+            setBlock(STORAGE_D, 5 + (i & 1) * 13, 8 + (i >> 1) * 8, WATER);
             // point
-            setBlock(MAP_D.storage, 6 + (i >> 1) * 11, 6 + (i & 1) * 11, WATER);
+            setBlock(STORAGE_D, 6 + (i >> 1) * 11, 6 + (i & 1) * 11, WATER);
             if (i < 2) {
                 // Spawnpoint/Wall,d
-                addSpawnPointWithMark(MAP_D.storage, 11 + i, 21);
-                setBlock(MAP_D.storage, 10 + i * 3, 21, WALL);
+                addSpawnPointWithMark(STORAGE_D, 11 + i, 21);
+                setBlock(STORAGE_D, 10 + i * 3, 21, WALL);
             }
             // corner spawner
-            setBlock(MAP_D.storage, 4 + (i >> 1) * 15, 4 + (i & 1) * 15, COLOR_SPAWNER);
+            setBlock(STORAGE_D, 4 + (i >> 1) * 15, 4 + (i & 1) * 15, COLOR_SPAWNER);
             // Spawnpoint/Wall,l&r
-            addSpawnPointWithMark(MAP_D.storage, 2 + 19 * (i >> 1), 11 + (i & 1));
-            setBlock(MAP_D.storage, 2 + 19 * (i >> 1), 10 + (i & 1) * 3, WALL);
+            addSpawnPointWithMark(STORAGE_D, 2 + 19 * (i >> 1), 11 + (i & 1));
+            setBlock(STORAGE_D, 2 + 19 * (i >> 1), 10 + (i & 1) * 3, WALL);
             // center band
-            setBlock(MAP_D.storage, 11 + (i >> 1), 10 + (i & 1) * 3, LASER_TRAP);
+            setBlock(STORAGE_D, 11 + (i >> 1), 10 + (i & 1) * 3, LASER_TRAP);
         }
         // XTrapRotate,u
-        fillBlock(MAP_D.storage, 11, 3, 12, 4, X_TRAP_ROTATE);
+        fillBlock(STORAGE_D, 11, 3, 12, 4, X_TRAP_ROTATE);
 
         // XTrapKill,l
-        fillBlock(MAP_D.storage, 7, 10, 10, 13, X_TRAP_KILL);
+        fillBlock(STORAGE_D, 7, 10, 10, 13, X_TRAP_KILL);
 
         // XTrapHurt,r
-        fillBlock(MAP_D.storage, 13, 10, 16, 13, X_TRAP_HURT);
+        fillBlock(STORAGE_D, 13, 10, 16, 13, X_TRAP_HURT);
     }
     //====Map E====//
-    MAP_E.storage.copyContentFrom(FRAME.storage); {
+    STORAGE_E.copyFrom(STORAGE_FRAME); {
         for (i = 0; i < 4; i++)
-            addSpawnPointWithMark(MAP_E.storage, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
+            addSpawnPointWithMark(STORAGE_E, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
         // Center E
-        fillReflectBlock(MAP_E.storage, false, true, 6, 6, 17, 7, BEDROCK);
+        fillReflectBlock(STORAGE_E, false, true, 6, 6, 17, 7, BEDROCK);
 
-        fillBlock(MAP_E.storage, 6, 8, 7, 15, BEDROCK);
+        fillBlock(STORAGE_E, 6, 8, 7, 15, BEDROCK);
 
-        fillBlock(MAP_E.storage, 6, 11, 17, 12, BEDROCK);
+        fillBlock(STORAGE_E, 6, 11, 17, 12, BEDROCK);
 
         // corner water/laserTrap
-        fillReflectBlock(MAP_E.storage, true, true, 4, 1, 4, 5, WATER);
-        setReflectBlock(MAP_E.storage, true, true, 6, 6, LASER_TRAP);
+        fillReflectBlock(STORAGE_E, true, true, 4, 1, 4, 5, WATER);
+        setReflectBlock(STORAGE_E, true, true, 6, 6, LASER_TRAP);
 
         // 1x1 Water,l
-        setReflectBlock(MAP_E.storage, false, true, 2, 4, WATER);
+        setReflectBlock(STORAGE_E, false, true, 2, 4, WATER);
 
         // killTrap/spawner,l
-        setReflectBlock(MAP_E.storage, false, true, 3, 11, COLOR_SPAWNER);
+        setReflectBlock(STORAGE_E, false, true, 3, 11, COLOR_SPAWNER);
 
-        setReflectBlock(MAP_E.storage, false, true, 1, 11, X_TRAP_KILL);
+        setReflectBlock(STORAGE_E, false, true, 1, 11, X_TRAP_KILL);
 
-        setReflectBlock(MAP_E.storage, false, true, 5, 11, X_TRAP_KILL);
+        setReflectBlock(STORAGE_E, false, true, 5, 11, X_TRAP_KILL);
 
-        fillReflectBlock(MAP_E.storage, false, true, 1, 7, 2, 7, X_TRAP_KILL);
+        fillReflectBlock(STORAGE_E, false, true, 1, 7, 2, 7, X_TRAP_KILL);
 
-        fillReflectBlock(MAP_E.storage, false, true, 4, 7, 5, 7, X_TRAP_KILL);
+        fillReflectBlock(STORAGE_E, false, true, 4, 7, 5, 7, X_TRAP_KILL);
 
-        fillReflectBlock(MAP_E.storage, false, true, 2, 9, 4, 9, X_TRAP_KILL);
+        fillReflectBlock(STORAGE_E, false, true, 2, 9, 4, 9, X_TRAP_KILL);
 
         // water/rotate/supply,u&d
-        fillReflectBlock(MAP_E.storage, false, true, 6, 4, 18, 4, WATER);
+        fillReflectBlock(STORAGE_E, false, true, 6, 4, 18, 4, WATER);
 
-        fillReflectBlock(MAP_E.storage, false, true, 9, 9, 18, 9, WATER);
+        fillReflectBlock(STORAGE_E, false, true, 9, 9, 18, 9, WATER);
 
-        fillBlock(MAP_E.storage, 19, 6, 19, 17, WATER);
+        fillBlock(STORAGE_E, 19, 6, 19, 17, WATER);
 
-        fillReflectBlock(MAP_E.storage, false, true, 15, 1, 15, 3, X_TRAP_ROTATE);
+        fillReflectBlock(STORAGE_E, false, true, 15, 1, 15, 3, X_TRAP_ROTATE);
 
-        setBlock(MAP_E.storage, 19, 11, X_TRAP_ROTATE);
+        setBlock(STORAGE_E, 19, 11, X_TRAP_ROTATE);
 
-        setBlock(MAP_E.storage, 19, 12, X_TRAP_ROTATE);
+        setBlock(STORAGE_E, 19, 12, X_TRAP_ROTATE);
 
-        setReflectBlock(MAP_E.storage, false, true, 17, 2, SUPPLY_POINT);
+        setReflectBlock(STORAGE_E, false, true, 17, 2, SUPPLY_POINT);
 
         // hurt,r
-        fillBlock(MAP_E.storage, 21, 4, 21, 19, X_TRAP_HURT);
+        fillBlock(STORAGE_E, 21, 4, 21, 19, X_TRAP_HURT);
     }
     //====Map F====//
-    MAP_F.storage.copyContentFrom(EMPTY.storage); {
+    STORAGE_F.copyFrom(STORAGE_EMPTY); {
         // Center spawnPoint
         for (i = 0; i < 4; i++)
-            addSpawnPointWithMark(MAP_F.storage, 11 + (i >> 1), 11 + (i & 1));
+            addSpawnPointWithMark(STORAGE_F, 11 + (i >> 1), 11 + (i & 1));
         // Bedrock&Gate
-        setReflectBlock(MAP_F.storage, true, true, 1, 1, BEDROCK);
+        setReflectBlock(STORAGE_F, true, true, 1, 1, BEDROCK);
 
-        fillReflectMirrorBlock(MAP_F.storage, true, true, 2, 1, 8, 1, BEDROCK);
+        fillReflectMirrorBlock(STORAGE_F, true, true, 2, 1, 8, 1, BEDROCK);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 1, 0, new BlockGate(true));
+        setReflectMirrorBlock(STORAGE_F, true, true, 1, 0, new BlockGate(true));
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 9, 1, new BlockGate(true));
+        setReflectMirrorBlock(STORAGE_F, true, true, 9, 1, new BlockGate(true));
 
         // Traps/gate/supply
-        setReflectBlock(MAP_F.storage, true, true, 3, 3, X_TRAP_KILL);
+        setReflectBlock(STORAGE_F, true, true, 3, 3, X_TRAP_KILL);
 
-        setReflectBlock(MAP_F.storage, true, true, 5, 5, X_TRAP_HURT);
+        setReflectBlock(STORAGE_F, true, true, 5, 5, X_TRAP_HURT);
 
-        setReflectBlock(MAP_F.storage, true, true, 7, 7, X_TRAP_HURT);
+        setReflectBlock(STORAGE_F, true, true, 7, 7, X_TRAP_HURT);
 
-        setReflectBlock(MAP_F.storage, true, true, 6, 6, SUPPLY_POINT);
+        setReflectBlock(STORAGE_F, true, true, 6, 6, SUPPLY_POINT);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 7, 5, X_TRAP_HURT);
+        setReflectMirrorBlock(STORAGE_F, true, true, 7, 5, X_TRAP_HURT);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 6, 5, X_TRAP_ROTATE);
+        setReflectMirrorBlock(STORAGE_F, true, true, 6, 5, X_TRAP_ROTATE);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 7, 6, X_TRAP_ROTATE);
+        setReflectMirrorBlock(STORAGE_F, true, true, 7, 6, X_TRAP_ROTATE);
 
         // Water/Trap/spawner/gate,c
-        fillReflectMirrorBlock(MAP_F.storage, true, true, 10, 1, 10, 6, WATER);
+        fillReflectMirrorBlock(STORAGE_F, true, true, 10, 1, 10, 6, WATER);
 
-        setReflectBlock(MAP_F.storage, true, true, 8, 8, COLOR_SPAWNER);
+        setReflectBlock(STORAGE_F, true, true, 8, 8, COLOR_SPAWNER);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 9, 8, LASER_TRAP);
+        setReflectMirrorBlock(STORAGE_F, true, true, 9, 8, LASER_TRAP);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 10, 7, new BlockGate(true), true);
+        setReflectMirrorBlock(STORAGE_F, true, true, 10, 7, new BlockGate(true), true);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 10, 8, BEDROCK);
+        setReflectMirrorBlock(STORAGE_F, true, true, 10, 8, BEDROCK);
 
-        setReflectMirrorBlock(MAP_F.storage, true, true, 11, 8, new BlockGate(true), true);
+        setReflectMirrorBlock(STORAGE_F, true, true, 11, 8, new BlockGate(true), true);
     }
     //====Map G====//
-    MAP_G.storage.copyContentFrom(FRAME.storage); {
-        fillReflectMirrorBlock(MAP_G.storage, true, true, 3, 3, 8, 3, BEDROCK);
-        setReflectMirrorBlock(MAP_G.storage, true, true, 1, 1, MOVEABLE_WALL);
-        fillBlock(MAP_G.storage, 4, 4, 19, 19, new BlockGate(true), false, true);
+    STORAGE_G.copyFrom(STORAGE_FRAME); {
+        fillReflectMirrorBlock(STORAGE_G, true, true, 3, 3, 8, 3, BEDROCK);
+        setReflectMirrorBlock(STORAGE_G, true, true, 1, 1, MOVEABLE_WALL);
+        fillBlock(STORAGE_G, 4, 4, 19, 19, new BlockGate(true), false, true);
         for (i = 0; i < 4; i++)
-            addSpawnPointWithMark(MAP_G.storage, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
+            addSpawnPointWithMark(STORAGE_G, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
     }
     //====Map H====//
-    MAP_H.storage.copyContentFrom(FRAME.storage); {
-        fillReflectMirrorBlock(MAP_H.storage, true, true, 4, 4, 9, 4, BEDROCK);
+    STORAGE_H.copyFrom(STORAGE_FRAME); {
+        fillReflectMirrorBlock(STORAGE_H, true, true, 4, 4, 9, 4, BEDROCK);
         ix = randomBoolean2() ? 0 : 9;
         iy = randomBoolean2() ? 0 : 9;
-        fillBlock(MAP_H.storage, 5 + ix, 5 + iy, 9 + ix, 9 + iy, MOVEABLE_WALL, false);
+        fillBlock(STORAGE_H, 5 + ix, 5 + iy, 9 + ix, 9 + iy, MOVEABLE_WALL, false);
         for (i = 10; i <= 13; i++) {
             // x
-            addSpawnPointWithMark(MAP_H.storage, i, 4);
-            addSpawnPointWithMark(MAP_H.storage, i, 19);
+            addSpawnPointWithMark(STORAGE_H, i, 4);
+            addSpawnPointWithMark(STORAGE_H, i, 19);
             // y
-            addSpawnPointWithMark(MAP_H.storage, 4, i);
-            addSpawnPointWithMark(MAP_H.storage, 19, i);
+            addSpawnPointWithMark(STORAGE_H, 4, i);
+            addSpawnPointWithMark(STORAGE_H, 19, i);
         }
     }
-
 }

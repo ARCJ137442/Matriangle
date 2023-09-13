@@ -108,7 +108,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
 	 * @param args ：用于在回调后附加的其它参数
 	 */
-	forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): void;
+	forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): IMapStorage;
 
 	/**
 	 * 复制地图本身
@@ -122,7 +122,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param clearSelf 是否先清除自身（调用「清除方法」）
 	 * @param deep 是否为深拷贝
 	 */
-	copyContentFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, deep?: boolean/* = true*/): void;
+	copyContentFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, deep?: boolean/* = true*/): IMapStorage;
 
 	/**
 	 * 从另一个地图中复制所有属性（包括「内容」）
@@ -131,7 +131,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param clearSelf 是否先清除自身
 	 * @param createBlock 是否为深拷贝
 	 */
-	copyFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): void;/**
+	copyFrom(source: IMapStorage, clearSelf?: boolean/* = false*/, createBlock?: boolean/* = true*/): IMapStorage;/**
 
 	/**
 	* 用于构建「随机结构生成」的「生成器函数」
@@ -188,7 +188,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param y y坐标
 	 * @param block 方块对象
 	 */
-	setBlock(p: iPoint, block: BlockCommon): void;
+	setBlock(p: iPoint, block: BlockCommon): IMapStorage;
 
 	/**
 	 * 【快捷方式】获取地图上某个位置「是否是『空』」
@@ -205,14 +205,14 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	setVoid(p: iPoint): void;
+	setVoid(p: iPoint): IMapStorage;
 
 	/**
 	 * 删除地图上的所有方块
 	 * ! 对其中的「方块对象」调用析构函数，可能会因「改变其引用」而导致难以预料的后果
 	 * @param deleteBlock 是否在方块对象上调用析构函数
 	 */
-	clearBlocks(deleteBlock?: boolean/* = true*/): void;
+	clearBlocks(deleteBlock?: boolean/* = true*/): IMapStorage;
 
 	/**
 	 * 【机制需要】获取所有重生点的位置
@@ -239,7 +239,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	addSpawnPointAt(p: iPoint): void;
+	addSpawnPointAt(p: iPoint): IMapStorage;
 
 	/**
 	 * 【机制需要】获取某处「是否有重生点」
@@ -256,7 +256,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	/**
 	 * 移除地图上的所有重生点
 	 */
-	clearSpawnPoints(): void;
+	clearSpawnPoints(): IMapStorage;
 
 	// AI About
 
@@ -270,7 +270,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 
 	// TODO: 有待对接
 
-	// public setDisplayTo(target: IMapDisplayer): void;
-	// public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void;
+	// public setDisplayTo(target: IMapDisplayer): IMapStorage;
+	// public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): IMapStorage;
 
 }

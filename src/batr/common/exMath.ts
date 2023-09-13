@@ -195,6 +195,7 @@ export function randomBetween(min: number, max: number): number {
 
 /**
  * 获取一个在指定连续整数区间内的随机数
+ * 
  * @param min 最小值（含）
  * @param max 最大值（不含）
  * @returns [最小值, 最大值)内的随机整数

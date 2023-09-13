@@ -24,6 +24,28 @@ export abstract class xPoint<T> extends Array<T> {
 	public set w(value: T) { this[3] = value }
 
 	//================Util Functions================//
+
+	/**
+	 * 显示点是否（在其长度内）有未定义量
+	 */
+	public get hasUndefined(): boolean {
+		for (let i = 0; i < this.length; i++)
+			if (this[i] === undefined) return true;
+		return false
+	}
+
+	/**
+	 * 显示点是否含有`undefined`与`NaN`
+	 * * 不能用全等判断`NaN`
+	 * 
+	 * ! 使用的必须是类型参数T为数值的类型
+	*/
+	public get invalid(): boolean {
+		for (let i = 0; i < this.length; i++)
+			if (this[i] === undefined || isNaN(this[i] as number)) return true;
+		return false
+	}
+
 	/**
 	 * 拷贝自身为一个新点
 	 * ! 使用数组的方式拷贝，但类型不会变成数组
@@ -41,8 +63,8 @@ export abstract class xPoint<T> extends Array<T> {
 	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).generateFrom(f)`
 	 */
-	public generate(f: (i: int) => T): xPoint<T> {
-		for (let i = 0; i < this.length; i++)
+	public generate(f: (i: int) => T, length: uint = this.length): xPoint<T> {
+		for (let i = 0; i < length; i++)
 			this[i] = f(i)
 		return this;
 	}
@@ -372,7 +394,7 @@ export function traverseNDSquare(
 		f(_temp_forEachPoint, ...args)
 		// 迭代到下一个点：不断循环尝试进位
 		// 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
-		for (i = 0; ++_temp_forEachPoint[i] > pMax[i]; ++i) {
+		for (i = 0; i < nDim && ++_temp_forEachPoint[i] > pMax[i]; ++i) {
 			// 旧位清零
 			_temp_forEachPoint[i] = pMin[i];
 			// 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
