@@ -1,7 +1,7 @@
 ﻿import { iPoint } from "../../common/geometricTools";
-import { PatchIndexType, GameEventType } from "../../general/GlobalGameVariables";
+import { PatchIndexType, GameEventType } from "./GlobalGameVariables";
 import { uint } from "../../legacy/AS3Legacy";
-import BlockCommon from "../block/BlockCommon";
+import BlockCommon from "../api/block/BlockCommon";
 import IBatrGame from "./IBatrGame";
 
 /**

@@ -167,11 +167,6 @@ export default class RandomGenerator {
 		}
 	}
 
-	public constructor(buff: number = 1, next: boolean = true) {
-		// index Start At 1
-		return this.getRandomAt(next ? 0 : this.numCount - 1) / this._mode * buff;
-	}
-
 	public reset(): void {
 		this._randomList.length = 1;
 		this.dealReset();

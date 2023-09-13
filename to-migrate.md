@@ -158,7 +158,7 @@
 1. ~~common~~
 2. ~~fonts~~
 3. ~~general~~
-4. i18n
-5. game
-6. menu
-7. main
+4. game
+5. main
+6. i18n
+7. menu

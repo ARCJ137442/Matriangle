@@ -154,8 +154,8 @@ export abstract class xPoint<T> extends Array<T> {
 	 * ! 使用`as any`断言T支持减法
 	 */
 	public getDistance(point: xPoint<T>): T {
-		let distanceSquare: T = ((this[0] as any) - (point[0] as any)) as T;
-		let tempDistance: T;
+		let tempDistance: T = ((this[0] as any) - (point[0] as any)) as T;
+		let distanceSquare: T = ((tempDistance as any) * (tempDistance as any)) as any;
 		for (let i: uint = 1; i < point.length; i++) {
 			tempDistance = ((this[i] as any) - (point[i] as any)) as T
 			distanceSquare += ((tempDistance as any) * (tempDistance as any)) as any

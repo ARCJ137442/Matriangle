@@ -44,7 +44,7 @@ export function isPrime(x: uint): boolean {
 }
 
 function increasePrime(to: uint): void {
-	for (let n: uint = getLastPrime(); n <= to; n++) {
+	for (let n: uint = getLastPrime() + 1; n <= to; n++) {
 		if (isPrime_local(n)) {
 			PRIME_LIST.push(n);
 		}

@@ -3,31 +3,31 @@
 // import batr.game.stat.*;
 
 import { iPoint } from "../../common/geometricTools";
-import I18nText from "../../i18n/I18nText";
-import I18ns from "../../i18n/I18ns";
+import I18nText from "../../display/api/i18n/I18nText";
+import I18ns from "../../display/api/i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";
-import BlockAttributes from "../block/BlockAttributes";
-import BlockCommon, { BlockType } from "../block/BlockCommon";
-import IMap from "../block/system/IMap";
-import IMapDisplayer from "../../display/map/IMapDisplayer";
-import EffectCommon from "../effect/EffectCommon";
-import EffectSystem from "../effect/EffectSystem";
-import EntityCommon from "../entity/EntityCommon";
-import EntitySystem from "../entity/EntitySystem";
-import BonusBox from "../entity/entities/item/BonusBox";
-import AIPlayer from "../entity/entities/player/AIPlayer";
-import Player from "../entity/entities/player/Player";
-import PlayerTeam from "../entity/entities/player/team/PlayerTeam";
-import Lightning from "../entity/entities/projectile/Lightning";
-import ProjectileCommon from "../entity/entities/projectile/ProjectileCommon";
-import ThrownBlock from "../entity/entities/projectile/ThrownBlock";
-import BonusType from "../registry/BonusRegistry";
-import ToolType from "../registry/ToolType";
-import GameRule from "../rule/GameRule";
-import GameRuleEvent from "../rule/GameRuleEvent";
-import GameResult from "../stat/GameResult";
-import Wave from "../entity/entities/projectile/Wave";
-import { IBatrShapeContainer } from "../../display/BatrDisplayInterfaces";
+import BlockAttributes from "../api/block/BlockAttributes";
+import BlockCommon, { BlockType } from "../api/block/BlockCommon";
+import IMap from "../api/map/IMap";
+import IMapDisplayer from "../../display/api/map/IMapDisplayer";
+import EffectCommon from "../api/entity/EffectCommon";
+import EffectSystem from "../api/entity/EffectSystem";
+import EntityCommon from "../api/entity/EntityCommon";
+import EntitySystem from "../api/entity/EntitySystem";
+import BonusBox from "../mods/native/entities/item/BonusBox";
+import AIPlayer from "../mods/native/entities/player/AIPlayer";
+import Player from "../mods/native/entities/player/Player";
+import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
+import Lightning from "../mods/native/entities/projectile/Lightning";
+import ProjectileCommon from "../mods/native/entities/projectile/ProjectileCommon";
+import ThrownBlock from "../mods/native/entities/projectile/ThrownBlock";
+import GameRule from "../api/rule/GameRule";
+import GameRuleEvent from "../api/rule/GameRuleEvent";
+import GameResult from "../mods/native/stat/GameResult";
+import Wave from "../mods/native/entities/projectile/Wave";
+import { IBatrShapeContainer } from "../../display/api/BatrDisplayInterfaces";
+import ToolType from "../mods/native/ToolType";
+import BonusType from "../mods/native/registry/BonusRegistry";
 
 // import flash.display.*;
 // import flash.text.*;
@@ -36,10 +36,23 @@ import { IBatrShapeContainer } from "../../display/BatrDisplayInterfaces";
 // import flash.geom.*;
 // import flash.system.fscommand;
 
+
 /**
  * TODO: 有待施工
- * 1. 抽象出一个带说明、包含「事件处理」「显示管理」的「游戏接口」
+ * 1. 抽象出一个带说明、包含「事件处理」的「游戏接口」
  * 2. 让游戏实现这个接口
+ * 
+ * ```
+ * 游戏只需要提供一个通用的API
+ * 负责最基本的加载（方块内容、实体内容、地图内容）
+ * 以及运行（游戏时钟、事件分派）
+ * 基本就够了
+ * 
+ * 剩下的一些与本身运作模式毫不相干的东西
+ * 完全可以外包到某个 / 某些「注册机制」（或者更简单的说，「游戏模组」）里
+ * 机制（内容）与运作（形式）分离
+ * 这样就可以最大化其中的通用性……
+ * ```
  */
 
 export default interface IBatrGame {
