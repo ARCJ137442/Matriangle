@@ -86,23 +86,39 @@ export default interface IMapLogic {
 
 	/**
 	 * 从某位置向某方向「前进」，获取「前进到的坐标」
-	 * ! 截止至目前，所有「方向」都指的是「整数方向」
+	 * 
+	 * ! 这里使用的是「任意维整数角」，二维呈现上是「右左下上」而非先前的「右下左上」
+	 * 
 	 * * 地图底层逻辑，与「逻辑结构」有关，但与「游戏整体机制」分离
 	 *   * 例如：实现「有限无界」逻辑，不能只是在「存储结构」中做事
+	 * 
+	 * @param p 前进前所在的点
+	 * @param rot 任意维整数角
+	 * @param step 前进的步长（浮点）
 	 */
 	towardWithRot_F(p: fPoint, rot: intRot, step?: number/* = 1*/): fPoint
 
 	/**
 	 * （整形优化版本）从某位置向某方向「前进」，获取「前进到的坐标」
+	 * 
+	 * ! 这里使用的是「任意维整数角」，二维呈现上是「右左下上」而非先前的「右下左上」
+	 * 
 	 * * 地图底层逻辑，与「逻辑结构」有关，但与「游戏整体机制」分离
 	 *   * 例如：实现「有限无界」逻辑，不能只是在「存储结构」中做事
+	 * 
+	 * @param p 前进前所在的点
+	 * @param rot 任意维整数角
+	 * @param step 前进的步长（整数）
 	 */
 	towardWithRot_I(p: iPoint, rot: intRot, step?: int/* = 1*/): iPoint
 
 	// TODO: 有待移植
 
 	/**
-	 * 判断一个地方「是否通过」
+	 * 判断一个地方「是否可通过」
+	 * 
+	 * ! 不要在地图边界外使用这个
+	 * 
 	 * @param p 要判断的坐标（浮点）
 	 * @param asPlayer 作为玩家
 	 * @param asBullet 作为子弹
@@ -114,6 +130,9 @@ export default interface IMapLogic {
 
 	/**
 	 * 判断一个「整数位置」是否「可通过」
+	 * 
+	 * ! 不要在地图边界外使用这个
+	 * 
 	 * @param p 要判断的坐标（整数）
 	 * @param asPlayer 作为玩家
 	 * @param asBullet 作为子弹

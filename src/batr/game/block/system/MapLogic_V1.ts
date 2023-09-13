@@ -3,7 +3,10 @@
 // import batr.general.*;
 // import batr.game.block.blocks.XTrap;
 
-import { floatPoint, iPoint, intPoint } from "../../../common/geometricTools";
+import { psi } from "../../../common/exMath";
+import { fPoint, floatPoint, iPoint, intPoint } from "../../../common/geometricTools";
+import { mRot } from "../../../general/GlobalRot";
+import { alignToGrid, alignToGrid_P } from "../../../general/PosTransform";
 import { int, int$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import EntityCommon from "../../entity/EntityCommon";
 import Player from "../../entity/entities/player/Player";
@@ -65,41 +68,85 @@ export default class MapLogic_V1 implements IMapLogic {
 	// TODO: 更多待迁移
 
 	// * 实现：取整→变到地图中
-	protected _temp_isImMap_P: iPoint = new iPoint()
-	isInMap_F(p: floatPoint): boolean {
+	protected _temp_isInMap_P: iPoint = new iPoint()
+	public isInMap_F(p: floatPoint): boolean {
+		return this.isInMap_I(
+			alignToGrid_P(
+				p, this._temp_isInMap_P // ! 使用缓存
+			)
+		);
+	}
+
+	// 实现：直接用地图的方法
+	public isInMap_I(p: intPoint): boolean {
+		return this.storage.isInMap(p);
+	}
+
+
+	// 实现：直接用
+	public towardWithRot_F(p: floatPoint, rot: mRot, step: number = 1.0): floatPoint {
+		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
+		return p
+	}
+
+	public towardWithRot_I(p: intPoint, rot: mRot, step: int = 1): intPoint {
+		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
+		return p
+	}
+
+	// protected _temp_testCanPass_FP: fPoint = new fPoint()
+	protected _temp_testCanPass_IP: iPoint = new iPoint()
+	// 断言：永远在地图内
+	public testCanPass_F(p: floatPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = false, avoidHurting: boolean = false): boolean {
+		return this.testCanPass_I(
+			alignToGrid_P(
+				p, this._temp_testCanPass_IP // ! 使用缓存
+			),
+			asPlayer, asBullet, asLaser, includePlayer, avoidHurting
+		)
+	}
+	// * 原理：根据属性逐步判断（断言：永远在地图内）
+	public testCanPass_I(p: intPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = false, avoidHurting: boolean = false): boolean {
+
+		// if(isOutOfMap(gridX,gridY)) return true
+		let attributes: BlockAttributes | null = this.storage.getBlockAttributes(p);
+		if (attributes === null) return false // ! 默认行为：不可通过（【20230913 20:04:42】有助于找出bug）
+
+		if (avoidHurting && attributes.playerDamage > -1) return false;
+		if (asPlayer && !attributes.playerCanPass) return false;
+		if (asBullet && !attributes.bulletCanPass) return false;
+		if (asLaser && !attributes.laserCanPass) return false;
+		// if (includePlayer && this.isHitAnyPlayer(p)) return false; // TODO: 这段有关「玩家(格点实体)」的代码，后续要重构
+
+		return true;
+	}
+
+	// TODO: 后续完善实体系统后，再进行处理
+	public testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
+		// return this.towardWithRot_F
 		throw new Error("Method not implemented.");
 	}
-	isInMap_I(p: intPoint): boolean {
+
+	// TODO: 后续完善实体系统后，再进行处理
+	public testBonusBoxCanPlaceAt(p: intPoint): boolean {
 		throw new Error("Method not implemented.");
 	}
-	towardWithRot_F(p: floatPoint, rot: number, step?: number | undefined): floatPoint {
+
+	// TODO: 后续完善实体系统后，再进行处理
+	public testPlayerCanGo(player: Player, p: intPoint, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
 		throw new Error("Method not implemented.");
 	}
-	towardWithRot_I(p: intPoint, rot: number, step?: number | undefined): intPoint {
+
+	// TODO: 后续完善实体系统后，再进行处理
+	public testPlayerCanGoForward(player: Player, rotatedAsRot?: number | undefined, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
 		throw new Error("Method not implemented.");
 	}
-	testCanPass_F(p: floatPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurting?: boolean | undefined): boolean {
-		throw new Error("Method not implemented.");
+
+	public isCarriable(blockAtt: BlockAttributes): boolean {
+		return blockAtt.isCarriable && !(this._isArena && blockAtt.unbreakableInArenaMap);
 	}
-	testCanPass_I(p: intPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurting?: boolean | undefined): boolean {
-		throw new Error("Method not implemented.");
-	}
-	testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
-		throw new Error("Method not implemented.");
-	}
-	testBonusBoxCanPlaceAt(p: intPoint): boolean {
-		throw new Error("Method not implemented.");
-	}
-	testPlayerCanGo(player: Player, p: intPoint, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
-		throw new Error("Method not implemented.");
-	}
-	testPlayerCanGoForward(player: Player, rotatedAsRot?: number | undefined, includePlayer?: boolean | undefined, avoidHurt?: boolean | undefined): boolean {
-		throw new Error("Method not implemented.");
-	}
-	isCarriable(blockAtt: BlockAttributes): boolean {
-		throw new Error("Method not implemented.");
-	}
-	isBreakable(blockAtt: BlockAttributes): boolean {
-		throw new Error("Method not implemented.");
+	// ! 目前这俩函数还没啥不同
+	public isBreakable(blockAtt: BlockAttributes): boolean {
+		return blockAtt.isBreakable && !(this.isArenaMap && blockAtt.unbreakableInArenaMap);
 	}
 }

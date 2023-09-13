@@ -14,13 +14,14 @@ export function alignToEntity(p: number): number {
  * 将一个「浮点数点」对齐「网格」得到「整数点」
  * 在实体环境下从「以中心为缩放点」变成「以左上角为缩放点」
  * 
- * ! 就地运算：会改变「点对象」本身
+ * * 【20230913 19:44:29】现在因类型问题，不再就地更改`p`
  * 
  * @param p 待对齐的位置
+ * @param destination 对齐后的「目标点」（会被就地更改）
  * @returns 对齐网格后的「整数点」
  */
-export function alignToEntity_P(p: iPoint): fPoint {
-	return p.inplaceMap(alignToEntity);
+export function alignToEntity_P(p: iPoint, destination: fPoint): fPoint {
+	return destination.copyFrom(p).inplaceMap(alignToEntity);
 }
 
 /**
@@ -31,8 +32,8 @@ export function alignToEntity_P(p: iPoint): fPoint {
  * @param p 待对齐的位置
  * @returns 对齐网格后的「整数点」
  */
-export function alignToGrid_P(p: fPoint): iPoint {
-	return p.inplaceMap(alignToGrid);
+export function alignToGrid_P(p: fPoint, destination: iPoint): iPoint {
+	return destination.copyFrom(p.inplaceMap(alignToGrid)) as iPoint; // ! 先转换成整数，然后再复制到目标地去
 }
 
 /**
@@ -55,12 +56,12 @@ export function alignToGrid(xi: number): int {
 }
 
 /**
- * 别名：也用于实现「整数点」到「浮点数点」的转换
+ * * 别名@`alignToGrid`
  * 
  * ! 会改变参数
  */
-export const fPoint2iPoint: (fp: fPoint) => iPoint = (
-	(fp: fPoint): iPoint => alignToGrid_P(fp)
+export const fPoint2iPoint: (fp: fPoint, destination: iPoint) => iPoint = (
+	(fp: fPoint, destination: iPoint): iPoint => alignToGrid_P(fp, destination)
 );
 
 /**
