@@ -117,7 +117,10 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	clone(deep?: boolean/* = true*/): IMapStorage;
 
 	/**
-	 * 从另一个地图中复制所有内容（方块）
+	 * 从另一个地图中复制所有内容
+	 * * 方块
+	 * * 重生点
+	 * 
 	 * @param source 复制的来源
 	 * @param clearSelf 是否先清除自身（调用「清除方法」）
 	 * @param deep 是否为深拷贝

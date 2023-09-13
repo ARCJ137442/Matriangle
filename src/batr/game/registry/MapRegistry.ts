@@ -50,25 +50,25 @@ export module NativeMaps {
     const SUPPLY_POINT: BlockCommon = BlockSupplyPoint.INSTANCE;
 
     // 所有地图存储的常量
-    const STORAGE_EMPTY: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_FRAME: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_2: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_1: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_3: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_4: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_5: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_6: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_7: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_8: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_9: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_A: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_B: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_C: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_D: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_E: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_F: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_G: MapStorageSparse = new MapStorageSparse();
-    const STORAGE_H: MapStorageSparse = new MapStorageSparse();
+    const STORAGE_EMPTY: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_FRAME: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_2: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_1: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_3: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_4: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_5: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_6: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_7: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_8: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_9: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_A: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_B: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_C: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_D: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_E: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_F: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_G: MapStorageSparse = new MapStorageSparse(2);
+    const STORAGE_H: MapStorageSparse = new MapStorageSparse(2);
 
     // 所有地图的常量
     export const EMPTY: IMap = new Map_V1('EMPTY', STORAGE_EMPTY);
@@ -90,6 +90,28 @@ export module NativeMaps {
     export const MAP_F: IMap = new Map_V1('F', STORAGE_F, true);
     export const MAP_G: IMap = new Map_V1('G', STORAGE_G, true);
     export const MAP_H: IMap = new Map_V1('H', STORAGE_H, true);
+
+    export const ALL_NATIVE_MAPS: IMap[] = [
+        EMPTY,
+        FRAME,
+        MAP_1,
+        MAP_2,
+        MAP_3,
+        MAP_4,
+        MAP_5,
+        MAP_6,
+        MAP_7,
+        MAP_8,
+        MAP_9,
+        MAP_A,
+        MAP_B,
+        MAP_C,
+        MAP_D,
+        MAP_E,
+        MAP_F,
+        MAP_G,
+        MAP_H,
+    ];
     // ! 后面都是直接对引用的对象进行修改，故预先声明有效
 
     //========Init Maps========//
@@ -106,8 +128,8 @@ export module NativeMaps {
 
     //====Map 1====//
     STORAGE_1.copyFrom(STORAGE_FRAME); {
-        for (ix = 3; ix < MAP_MAX_X - 4; ix += 4) {
-            for (iy = 3; iy < MAP_MAX_Y - 4; iy += 4) {
+        for (ix = 3; ix <= MAP_MAX_X; ix += 4) {
+            for (iy = 3; iy <= MAP_MAX_Y; iy += 4) {
                 fillBlock(STORAGE_1, ix, iy, ix + 1, iy + 1, WALL);
             }
         }
@@ -121,21 +143,19 @@ export module NativeMaps {
     }
     //====Map 3====//
     STORAGE_3.copyFrom(STORAGE_FRAME); {
-        for (iy = 3; iy < MAP_MAX_Y - 4; iy += 4) {
+        for (iy = 3; iy <= MAP_MAX_Y; iy += 4) {
             fillBlock(STORAGE_3, 3, iy, 20, iy + 1, WATER);
         }
     }
     //====Map 4====//
     STORAGE_4.copyFrom(STORAGE_FRAME); {
         fillBlock(STORAGE_4, 3, 3, 20, 4, WALL);
-
         fillBlock(STORAGE_4, 3, 19, 20, 20, WALL);
-
         fillBlock(STORAGE_4, 11, 5, 12, 18, GLASS);
     }
     //====Map 5====//
-    STORAGE_5.generatorF = function (storage: IMapStorage): IMapStorage {
-        storage.copyFrom(STORAGE_FRAME);
+    STORAGE_5.generatorF = (storage: IMapStorage): IMapStorage => {
+        storage.copyFrom(STORAGE_FRAME, true, false);
         let randNum: int = 24 + randInt(47), randType: BlockType;
         let iP: iPoint;
         while (--randNum > 0) {
@@ -158,6 +178,7 @@ export module NativeMaps {
         }
         return storage;
     };
+    STORAGE_5.generateNext()
     //====Map 6====//
     STORAGE_6.copyFrom(STORAGE_FRAME); {
         setBlock(STORAGE_6, 3, 3, BlockColorSpawner.INSTANCE);
@@ -213,7 +234,6 @@ export module NativeMaps {
         setBlock(STORAGE_7, 10, 13, COLOR_SPAWNER);
         setBlock(STORAGE_7, 13, 10, COLOR_SPAWNER);
         setBlock(STORAGE_7, 13, 13, COLOR_SPAWNER);
-
         fillBlock(STORAGE_7, 9, 11, 9, 12, X_TRAP_KILL);
 
         // x-
@@ -299,38 +319,30 @@ export module NativeMaps {
         // side water&spawner
         // l
         fillBlock(STORAGE_B, 6, 10, 6, 17, WATER);
-
         setBlock(STORAGE_B, 3, 16, COLOR_SPAWNER);
         setBlock(STORAGE_B, 3, 12, COLOR_SPAWNER);
         // r
         fillBlock(STORAGE_B, 17, 6, 17, 13, WATER);
-
         setBlock(STORAGE_B, 20, 7, COLOR_SPAWNER);
         setBlock(STORAGE_B, 20, 11, COLOR_SPAWNER);
         // up&down side X_TRAP_HURT/WATER/BEDROCK
         // u
         fillBlock(STORAGE_B, 19, 4, 22, 4, BEDROCK);
-
         fillBlock(STORAGE_B, 6, 4, 18, 4, WATER);
-
         fillBlock(STORAGE_B, 6, 2, 20, 2, X_TRAP_HURT);
 
         // d
         fillBlock(STORAGE_B, 1, 19, 4, 19, BEDROCK);
-
         fillBlock(STORAGE_B, 5, 19, 17, 19, WATER);
-
         fillBlock(STORAGE_B, 3, 21, 17, 21, X_TRAP_HURT);
 
         // corner X_TRAP_HURT/WATER
         // ul
         fillBlock(STORAGE_B, 2, 3, 2, 7, X_TRAP_HURT);
-
         fillBlock(STORAGE_B, 4, 1, 4, 7, WATER);
 
         // dr
         fillBlock(STORAGE_B, 21, 16, 21, 20, X_TRAP_HURT);
-
         fillBlock(STORAGE_B, 19, 16, 19, 22, WATER);
     }
     //====Map C====//
@@ -338,7 +350,6 @@ export module NativeMaps {
         // center C
         // h
         fillBlock(STORAGE_C, 6, 6, 17, 6, BEDROCK);
-
         fillBlock(STORAGE_C, 6, 17, 17, 17, BEDROCK);
 
         // l
@@ -352,14 +363,14 @@ export module NativeMaps {
                 setBlock(STORAGE_C, 13, 6 + i * 11, COLOR_SPAWNER);
                 setBlock(STORAGE_C, 17, 6 + i * 11, COLOR_SPAWNER);
                 setBlock(STORAGE_C, 6, 10 + i * 3, COLOR_SPAWNER);
-                // Spawnpoint/Wall,l
+                // Spawn Point/Wall,l
                 addSpawnPointWithMark(STORAGE_C, 3, 11 + i);
                 setBlock(STORAGE_C, 3, 10 + i * 3, WALL);
                 // water/wall,r
                 setBlock(STORAGE_C, 20, 11 + i, WATER);
                 setBlock(STORAGE_C, 20, 10 + i * 3, WALL);
             }
-            // Spawnpoint/Wall,u&d
+            // Spawn Point/Wall,u&d
             addSpawnPointWithMark(STORAGE_C, 11 + (i & 1), 3 + 17 * (i >> 1));
             setBlock(STORAGE_C, 10 + (i & 1) * 3, 3 + 17 * (i >> 1), WALL);
             // corner LaserTrap/XTrapHurt
@@ -376,7 +387,6 @@ export module NativeMaps {
             // Water Circle
             // long_line
             fillBlock(STORAGE_D, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, 4 + (i & 1) * 15, WATER);
-
             fillBlock(STORAGE_D, 4 + (i & 1) * 15, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, WATER);
 
             // 2x line
@@ -389,13 +399,13 @@ export module NativeMaps {
             // point
             setBlock(STORAGE_D, 6 + (i >> 1) * 11, 6 + (i & 1) * 11, WATER);
             if (i < 2) {
-                // Spawnpoint/Wall,d
+                // Spawn Point/Wall,d
                 addSpawnPointWithMark(STORAGE_D, 11 + i, 21);
                 setBlock(STORAGE_D, 10 + i * 3, 21, WALL);
             }
             // corner spawner
             setBlock(STORAGE_D, 4 + (i >> 1) * 15, 4 + (i & 1) * 15, COLOR_SPAWNER);
-            // Spawnpoint/Wall,l&r
+            // Spawn Point/Wall,l&r
             addSpawnPointWithMark(STORAGE_D, 2 + 19 * (i >> 1), 11 + (i & 1));
             setBlock(STORAGE_D, 2 + 19 * (i >> 1), 10 + (i & 1) * 3, WALL);
             // center band
@@ -416,9 +426,7 @@ export module NativeMaps {
             addSpawnPointWithMark(STORAGE_E, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
         // Center E
         fillReflectBlock(STORAGE_E, false, true, 6, 6, 17, 7, BEDROCK);
-
         fillBlock(STORAGE_E, 6, 8, 7, 15, BEDROCK);
-
         fillBlock(STORAGE_E, 6, 11, 17, 12, BEDROCK);
 
         // corner water/laserTrap
@@ -430,75 +438,50 @@ export module NativeMaps {
 
         // killTrap/spawner,l
         setReflectBlock(STORAGE_E, false, true, 3, 11, COLOR_SPAWNER);
-
         setReflectBlock(STORAGE_E, false, true, 1, 11, X_TRAP_KILL);
-
         setReflectBlock(STORAGE_E, false, true, 5, 11, X_TRAP_KILL);
-
         fillReflectBlock(STORAGE_E, false, true, 1, 7, 2, 7, X_TRAP_KILL);
-
         fillReflectBlock(STORAGE_E, false, true, 4, 7, 5, 7, X_TRAP_KILL);
-
         fillReflectBlock(STORAGE_E, false, true, 2, 9, 4, 9, X_TRAP_KILL);
 
         // water/rotate/supply,u&d
         fillReflectBlock(STORAGE_E, false, true, 6, 4, 18, 4, WATER);
-
         fillReflectBlock(STORAGE_E, false, true, 9, 9, 18, 9, WATER);
-
         fillBlock(STORAGE_E, 19, 6, 19, 17, WATER);
-
         fillReflectBlock(STORAGE_E, false, true, 15, 1, 15, 3, X_TRAP_ROTATE);
-
         setBlock(STORAGE_E, 19, 11, X_TRAP_ROTATE);
-
         setBlock(STORAGE_E, 19, 12, X_TRAP_ROTATE);
-
         setReflectBlock(STORAGE_E, false, true, 17, 2, SUPPLY_POINT);
 
         // hurt,r
         fillBlock(STORAGE_E, 21, 4, 21, 19, X_TRAP_HURT);
     }
     //====Map F====//
-    STORAGE_F.copyFrom(STORAGE_EMPTY); {
+    STORAGE_F.copyFrom(STORAGE_EMPTY); { // ! 【20230913 17:47:00】注意：因为「方块类」是用于存储「方块状态」的，故这里的Gate状态不能共用
         // Center spawnPoint
         for (i = 0; i < 4; i++)
             addSpawnPointWithMark(STORAGE_F, 11 + (i >> 1), 11 + (i & 1));
         // Bedrock&Gate
         setReflectBlock(STORAGE_F, true, true, 1, 1, BEDROCK);
-
         fillReflectMirrorBlock(STORAGE_F, true, true, 2, 1, 8, 1, BEDROCK);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 1, 0, new BlockGate(true));
-
         setReflectMirrorBlock(STORAGE_F, true, true, 9, 1, new BlockGate(true));
 
         // Traps/gate/supply
         setReflectBlock(STORAGE_F, true, true, 3, 3, X_TRAP_KILL);
-
         setReflectBlock(STORAGE_F, true, true, 5, 5, X_TRAP_HURT);
-
         setReflectBlock(STORAGE_F, true, true, 7, 7, X_TRAP_HURT);
-
         setReflectBlock(STORAGE_F, true, true, 6, 6, SUPPLY_POINT);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 7, 5, X_TRAP_HURT);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 6, 5, X_TRAP_ROTATE);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 7, 6, X_TRAP_ROTATE);
 
         // Water/Trap/spawner/gate,c
         fillReflectMirrorBlock(STORAGE_F, true, true, 10, 1, 10, 6, WATER);
-
         setReflectBlock(STORAGE_F, true, true, 8, 8, COLOR_SPAWNER);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 9, 8, LASER_TRAP);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 10, 7, new BlockGate(true), true);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 10, 8, BEDROCK);
-
         setReflectMirrorBlock(STORAGE_F, true, true, 11, 8, new BlockGate(true), true);
     }
     //====Map G====//
@@ -510,7 +493,8 @@ export module NativeMaps {
             addSpawnPointWithMark(STORAGE_G, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
     }
     //====Map H====//
-    STORAGE_H.copyFrom(STORAGE_FRAME); {
+    STORAGE_H.generatorF = (storage: IMapStorage): IMapStorage => {
+        storage.copyFrom(STORAGE_FRAME, true, false);
         fillReflectMirrorBlock(STORAGE_H, true, true, 4, 4, 9, 4, BEDROCK);
         ix = randomBoolean2() ? 0 : 9;
         iy = randomBoolean2() ? 0 : 9;
@@ -523,5 +507,7 @@ export module NativeMaps {
             addSpawnPointWithMark(STORAGE_H, 4, i);
             addSpawnPointWithMark(STORAGE_H, 19, i);
         }
-    }
+        return storage
+    };
+    STORAGE_H.generateNext()
 }

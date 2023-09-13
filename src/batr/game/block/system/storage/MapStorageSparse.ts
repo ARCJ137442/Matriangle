@@ -74,8 +74,10 @@ export default class MapStorageSparse implements IMapStorage {
     protected set borderUp(v: int) { this._border_min[1] = v };
     /**
      * 用于构建「随机结构生成」的「生成器函数」
+     * 
+     * ! `args`虽然在默认情况用不到，但可能会被后期修改
      */
-    public generatorF: (x: IMapStorage) => IMapStorage = identity<IMapStorage>;
+    public generatorF: (x: IMapStorage, ...args: any[]) => IMapStorage = identity<IMapStorage>;
 
     /**
      * 保存的「维度边界」坐标，始终是方形的
@@ -89,9 +91,9 @@ export default class MapStorageSparse implements IMapStorage {
 
     /**
      * 构造函数
-     * @param numDimension 整个稀疏地图的维数，默认为2（传承BaTr Gamma的二维）
+     * @param numDimension 整个稀疏地图的维数
      */
-    public constructor(numDimension: uint = 2) {
+    public constructor(numDimension: uint) {
         // 初始化维数
         this._nDim = numDimension
         // 初始化「所有朝向」
@@ -152,7 +154,7 @@ export default class MapStorageSparse implements IMapStorage {
     //============Interface============//
 
     generateNext(...args: any[]): IMapStorage {
-        return this.generatorF(this);
+        return this.generatorF(this, ...args);
     }
 
     public isInMap(p: intPoint): boolean {
@@ -274,7 +276,7 @@ export default class MapStorageSparse implements IMapStorage {
         // 当前点坐标的表示：复制this._border_min数组
         this._temp_forEachPoint.copyFrom(this._border_min);
         // 不断遍历，直到「最高位进位」后返回
-        while (i < this._nDim) {
+        for (i = 0; i < this._nDim;) {
             // 执行当前点：调用回调函数
             f(this._temp_forEachPoint, ...args)
             // 迭代到下一个点：不断循环尝试进位
@@ -315,17 +317,23 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     protected static _temp_copyContent_F(p: iPoint, source: IMapStorage, target: IMapStorage): void {
-        if (source.getBlock(p) !== null)
+        if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
             target.setBlock(p, source.getBlock(p) as BlockCommon)
     }
     protected static _temp_copyContent_F_deep(p: iPoint, source: IMapStorage, target: IMapStorage): void {
-        if (source.getBlock(p) !== null)
+        if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
             target.setBlock(p, (source.getBlock(p) as BlockCommon).clone())
     }
     public copyContentFrom(source: IMapStorage, clearSelf: boolean = false, deep: boolean = false): IMapStorage {
         if (clearSelf) {
             this.clearBlocks();
             this.clearSpawnPoints();
+        }
+        // 复制重生点
+        for (const sP of source.spawnPoints) {
+            if (deep)
+                this.addSpawnPointAt(sP)
+            else this._spawnPoints.push(sP);
         }
         // * 函数式编程：决定是「原样」还是「拷贝」
         let blockF: (p: iPoint, source: IMapStorage, target: IMapStorage) => void = (
@@ -341,12 +349,6 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     public copyFrom(source: IMapStorage, clearSelf?: boolean | undefined, deep?: boolean | undefined): IMapStorage {
-        // 复制重生点
-        for (const sP of source.spawnPoints) {
-            if (deep)
-                this.addSpawnPointAt(sP)
-            else this._spawnPoints.push(sP);
-        }
         // 若类型相同
         if (source instanceof MapStorageSparse) {
             // * 复制边界
@@ -378,10 +380,7 @@ export default class MapStorageSparse implements IMapStorage {
      * @param y y坐标
      */
     public getBlock(p: iPoint): BlockCommon {
-        this._temp_block = this._dict[MapStorageSparse.pointToIndex(p)];
-        if (this._temp_block === undefined)
-            return this._defaultBlock;
-        else return this._temp_block;
+        return this._dict?.[MapStorageSparse.pointToIndex(p)] ?? this._defaultBlock;
     }
 
     /**
