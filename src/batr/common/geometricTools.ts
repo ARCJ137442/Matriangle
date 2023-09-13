@@ -235,20 +235,20 @@ export abstract class xPoint<T> extends Array<T> {
 	 * 
 	 * ! 技术手段：通过`this.constructor as any`获取构造函数，从而根据实际的类型调用构造函数，绕过「抽象类不能进行构造」的限制
 	 * 
-	 * ? 三维乃至高维空间下，寻路等操作似乎应该是「一个个对齐维度」而非「对齐维度到只剩下一个」
+	 * ! 【20230913 13:25:46】现在采用「一次对齐一个轴向」的方式
 	 * 
 	 * 二维示例：
 	 * ```
-	 * R---S
-	 * |   |
-	 * |   |
-	 * |   |
-	 * T======
+	 * #--5--S
+	 * |     |
+	 * |     3
+	 * |     |
+	 * T=====R
 	 * ```
 	 * @param this 起始点
 	 * @param target 目标点
 	 * @param start 寻找开始的索引
-	 * @return this 使「单维度距离最小」
+	 * @return this 使「其中一个维度坐标一致」的方法
 	 */
 	public alignAbsMinDistance(target: xPoint<T>, start: uint = 0): xPoint<T> {
 		let index: uint = 0;
@@ -263,13 +263,9 @@ export abstract class xPoint<T> extends Array<T> {
 				minDistance = tempT
 			}
 		}
-		tempT = this[index] // * 复用变量存储设置值
-		// 对齐自身坐标
-		i = 0;
-		while (i < this.length) {
-			this[i] = target[i++] // ! 直接拷贝，且计算顺序「左边索引→右边索引→赋值」（20230911 测试无碍）
-		}
-		this[index] = tempT // * 只保留在「最短距离」处的距离
+		// ! 注意：这里假定for循环至少执行了一次（不是零维的）
+		// * 运算后，index即「最小值索引」
+		this[index] = target[index] // * 只抹除在「最短距离」处的距离
 		return this;
 	}
 
