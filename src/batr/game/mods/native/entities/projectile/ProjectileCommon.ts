@@ -1,18 +1,21 @@
-
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-import { uint } from "../../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
-import Game from "../../../../main/Game";
-import EntityType from "../../../registry/EntityRegistry";
-import ToolType from "../../../registry/ToolType";
-import EntityCommon from "../../../../api/entity/EntityCommon";
+import { uint } from "../../../../../legacy/AS3Legacy";
+import Entity from "../../../../api/entity/Entity";
+import { IEntityActive, IEntityDisplayable, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
+import IBatrGame from "../../../../main/IBatrGame";
+import ToolType from "../../ToolType";
+import EntityType from "../../registry/EntityRegistry";
 import Player from "../player/Player";
 
-export default class ProjectileCommon extends EntityCommon {
+/**
+ * 「抛射体」是
+ * ①生命周期短的
+ * ②会使用并触发游戏逻辑的
+ * ③时刻要刷新的
+ * // ④对坐标要求精确到浮点数的
+ * 高活跃实体
+ */
+export default class ProjectileCommon extends Entity implements IEntityActive, IEntityWithDirection, IEntityDisplayable {
 	//============Instance Variables============//
 	protected _owner: Player;
 	protected _currentTool: ToolType;
@@ -67,6 +70,9 @@ export default class ProjectileCommon extends EntityCommon {
 	public onProjectileTick(): void {
 	}
 
-	public shapeInit(shape: IBatrShape): void {
-	}
+	public shapeInit(shape: IBatrShape): void { }
+
+	public shapeRefresh(shape: IBatrShape): void { }
+
+	public shapeDestruct(shape: IBatrShape): void { }
 }

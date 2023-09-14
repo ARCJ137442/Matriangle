@@ -4,7 +4,7 @@ import { PROJECTILES_SPAWN_DISTANCE } from "../../general/GlobalGameVariables";
 import { iRot } from "../../general/GlobalRot";
 import { alignToEntity, alignToEntity_P } from "../api/general/PosTransform";
 import { int, uint } from "../../legacy/AS3Legacy";
-import BlockCommon from "../block/BlockCommon";
+import Block from "../block/Block";
 import BlockColored from "../block/blocks/Colored";
 import BlockGate from "../block/blocks/Gate";
 import LaserAbsorption from "../entity/entities/projectile/LaserAbsorption";
@@ -32,12 +32,12 @@ export module NativeGameEvents {
      * * 机制：「可移动的墙」在收到一个随机刻时，开始朝周围可以移动的方向进行移动
      * * 原`moveableWallMove`
      * 
-     * ? 是否可以放开一点，通过TS合法手段让`block`成为任意`BlockCommon`的子类
+     * ? 是否可以放开一点，通过TS合法手段让`block`成为任意`Block`的子类
      * @param host 调用此函数的游戏主体
      * @param block 被调用的方块
      * @param position 被调用方块的位置
      */
-    const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: BlockCommon, position: iPoint): void => {
+    const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
         let randomRot: uint, tPoint: fPoint;
         // add laser by owner=null
         let p: ThrownBlock;
@@ -78,10 +78,10 @@ export module NativeGameEvents {
      * @param block 被调用的方块
      * @param position 被调用方块的位置
      */
-    const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: BlockCommon, position: iPoint): void => {
+    const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
         let randomPoint: iPoint = host.map.storage.randomPoint;
         let x: int = randomPoint.x, y: int = randomPoint.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
-        let newBlock: BlockCommon = BlockColored.randomInstance(NativeBlockTypes.COLORED);
+        let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
         if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
             host.setBlock(x, y, newBlock); // * 后续游戏需要处理「方块更新事件」
             host.addBlockLightEffect2(
@@ -103,7 +103,7 @@ export module NativeGameEvents {
      * @param block 被调用的方块
      * @param position 被调用方块的位置
      */
-    const randomTick_LaserTrap: randomTickEventF = (host: IBatrGame, block: BlockCommon, position: iPoint): void => {
+    const randomTick_LaserTrap: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
         let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
         let randomR: iRot, entityX: number, entityY: number, laserLength: number = 0;
         // add laser by owner=null
@@ -155,7 +155,7 @@ export module NativeGameEvents {
      * @param block 被调用的方块
      * @param position 被调用方块的位置
      */
-    const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: BlockCommon, position: iPoint): void => {
+    const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
         let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
         let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
         newBlock.open = true;

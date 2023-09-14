@@ -1,10 +1,10 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
 
-export default class BlockColorSpawner extends BlockCommon {
+export default class BlockColorSpawner extends Block {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x999999;
 	public static readonly FILL_COLOR: uint = 0xaaaaaa;
@@ -24,7 +24,7 @@ export default class BlockColorSpawner extends BlockCommon {
 		super(NativeBlockAttributes.COLOR_SPAWNER);
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockColorSpawner();
 	}
 

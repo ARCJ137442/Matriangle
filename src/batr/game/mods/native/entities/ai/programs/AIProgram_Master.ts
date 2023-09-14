@@ -5,7 +5,7 @@
 import { iPoint } from "../../../../../../common/geometricTools";
 import { int, uint } from "../../../../../../legacy/AS3Legacy";
 import Game from "../../../../../main/Game";
-import EntityCommon from "../../../../../api/entity/EntityCommon";
+import Entity from "../../../../../api/entity/Entity";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
@@ -94,7 +94,7 @@ export default class AIProgram_Master implements IAIProgram {
 
 	protected _closeTarget: Dictionary;
 
-	protected _lastTarget: EntityCommon;
+	protected _lastTarget: Entity;
 
 	// AI Judging about
 	protected _pickupWeight: int = exMath.random(50) * exMath.random1();
@@ -125,7 +125,7 @@ export default class AIProgram_Master implements IAIProgram {
 		// trace('remember resetted!')
 	}
 
-	protected changeTarget(owner: AIPlayer, target: EntityCommon): void {
+	protected changeTarget(owner: AIPlayer, target: Entity): void {
 		if (this._lastTarget == target)
 			return;
 		this._lastTarget = target;
@@ -139,11 +139,11 @@ export default class AIProgram_Master implements IAIProgram {
 		this.resetRemember();
 	}
 
-	protected inCloseTarget(target: EntityCommon): boolean {
+	protected inCloseTarget(target: Entity): boolean {
 		return Boolean(this._closeTarget[target]);
 	}
 
-	protected addCloseTarget(target: EntityCommon): void {
+	protected addCloseTarget(target: Entity): void {
 		this._closeTarget[target] = true;
 	}
 
@@ -242,7 +242,7 @@ export default class AIProgram_Master implements IAIProgram {
 			// If Invalid Target,Get New Target
 			if (this._lastTarget == null || this._lastTarget == player) {
 				//========Find BonusBox========//
-				let target: EntityCommon = null;
+				let target: Entity = null;
 				// set Player as Target
 				target = this.pickBonusFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 				// if cannot find box/player

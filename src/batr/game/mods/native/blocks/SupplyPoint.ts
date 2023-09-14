@@ -2,9 +2,9 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 
-export default class BlockSupplyPoint extends BlockCommon {
+export default class BlockSupplyPoint extends Block {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x444444;
 	public static readonly FILL_COLOR: uint = 0xdddddd;
@@ -28,7 +28,7 @@ export default class BlockSupplyPoint extends BlockCommon {
 		super(NativeBlockAttributes.SUPPLY_POINT);
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockSupplyPoint();
 	}
 	//============Instance Getter And Setter============//

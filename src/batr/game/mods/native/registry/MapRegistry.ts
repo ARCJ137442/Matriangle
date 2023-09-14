@@ -2,7 +2,7 @@ import { randInt } from "../../../../common/exMath";
 import { iPoint } from "../../../../common/geometricTools";
 import { randomIn, randomBoolean2 } from "../../../../common/utils";
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import BlockCommon, { BlockType } from "../../../api/block/BlockCommon";
+import Block, { BlockType } from "../../../api/block/Block";
 import IMap from "../../../api/map/IMap";
 import IMapStorage from "../../../api/map/IMapStorage";
 import BlockBedrock from "../blocks/Bedrock";
@@ -35,19 +35,19 @@ export module NativeMaps {
     export const MAP_MAX_X: uint = MAP_SIZE - 1;
     export const MAP_MAX_Y: uint = MAP_SIZE - 1;
 
-    const VOID: BlockCommon = BlockVoid.INSTANCE;
-    const BEDROCK: BlockCommon = new BlockBedrock();
-    const WALL: BlockCommon = new BlockWall();
-    const WATER: BlockCommon = new BlockWater();
-    const GLASS: BlockCommon = new BlockGlass();
-    const METAL: BlockCommon = new BlockMetal();
-    const MOVEABLE_WALL: BlockCommon = new BlockMoveableWall();
-    const X_TRAP_HURT: BlockCommon = BlockXTrapHurt.INSTANCE;
-    const X_TRAP_KILL: BlockCommon = BlockXTrapKill.INSTANCE;
-    const X_TRAP_ROTATE: BlockCommon = BlockXTrapRotate.INSTANCE;
-    const COLOR_SPAWNER: BlockCommon = BlockColorSpawner.INSTANCE;
-    const LASER_TRAP: BlockCommon = BlockLaserTrap.INSTANCE;
-    const SUPPLY_POINT: BlockCommon = BlockSupplyPoint.INSTANCE;
+    const VOID: Block = BlockVoid.INSTANCE;
+    const BEDROCK: Block = new BlockBedrock();
+    const WALL: Block = new BlockWall();
+    const WATER: Block = new BlockWater();
+    const GLASS: Block = new BlockGlass();
+    const METAL: Block = new BlockMetal();
+    const MOVEABLE_WALL: Block = new BlockMoveableWall();
+    const X_TRAP_HURT: Block = BlockXTrapHurt.INSTANCE;
+    const X_TRAP_KILL: Block = BlockXTrapKill.INSTANCE;
+    const X_TRAP_ROTATE: Block = BlockXTrapRotate.INSTANCE;
+    const COLOR_SPAWNER: Block = BlockColorSpawner.INSTANCE;
+    const LASER_TRAP: Block = BlockLaserTrap.INSTANCE;
+    const SUPPLY_POINT: Block = BlockSupplyPoint.INSTANCE;
 
     // 所有地图存储的常量
     const STORAGE_EMPTY: MapStorageSparse = new MapStorageSparse(2);
@@ -173,7 +173,7 @@ export module NativeMaps {
 					}*/
             else {
                 randType = randomIn(NativeBlockTypes.ALL_NATIVE_BLOCKS);
-                storage.setBlock(iP, (randType as any).randomInstance(randType)); // ! 一定是BlockCommon的子类型
+                storage.setBlock(iP, (randType as any).randomInstance(randType)); // ! 一定是Block的子类型
             }
         }
         return storage;

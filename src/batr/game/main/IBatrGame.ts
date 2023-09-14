@@ -7,12 +7,12 @@ import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";
 import BlockAttributes from "../api/block/BlockAttributes";
-import BlockCommon, { BlockType } from "../api/block/BlockCommon";
+import Block, { BlockType } from "../api/block/Block";
 import IMap from "../api/map/IMap";
 import IMapDisplayer from "../../display/api/map/IMapDisplayer";
-import EffectCommon from "../api/entity/EffectCommon";
+import EntityEffect from "../api/entity/EntityEffect";
 import EffectSystem from "../api/entity/EffectSystem";
-import EntityCommon from "../api/entity/EntityCommon";
+import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import BonusBox from "../mods/native/entities/item/BonusBox";
 import AIPlayer from "../mods/native/entities/player/AIPlayer";
@@ -223,7 +223,7 @@ export default interface IBatrGame {
 	/**
 	 * return testCanPass in player's front position.
 	 */
-	testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
+	testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
 	testBonusBoxCanPlaceAt(x: int, y: int): boolean
 
@@ -286,7 +286,7 @@ export default interface IBatrGame {
 	//====Functions About Map====//
 	hasBlock(x: int, y: int): boolean
 
-	getBlock(x: int, y: int): BlockCommon
+	getBlock(x: int, y: int): Block
 
 	getBlockAttributes(x: int, y: int): BlockAttributes
 
@@ -298,7 +298,7 @@ export default interface IBatrGame {
 	 * @param	y	the Block position y.
 	 * @param	block	the current Block.
 	 */
-	setBlock(x: int, y: int, block: BlockCommon): void
+	setBlock(x: int, y: int, block: Block): void
 
 	isVoid(x: int, y: int): boolean
 
@@ -311,7 +311,7 @@ export default interface IBatrGame {
 
 	forceMapDisplay(): void
 
-	updateMapDisplay(x: int, y: int, block: BlockCommon): void
+	updateMapDisplay(x: int, y: int, block: Block): void
 
 	getDisplayerThenLayer(layer: int): IMapDisplayer
 
@@ -410,7 +410,7 @@ export default interface IBatrGame {
 
 	getLaserLength2(eX: number, eY: number, rot: uint): uint
 
-	lockEntityInMap(entity: EntityCommon): void
+	lockEntityInMap(entity: Entity): void
 
 	lockPosInMap(posNum: number, returnAsX: boolean): number
 
@@ -430,7 +430,7 @@ export default interface IBatrGame {
 	randomAddRandomBonusBox(): void
 
 	fillBonusBox(): void
-	addEffectChild(effect: EffectCommon): void
+	addEffectChild(effect: EntityEffect): void
 
 	addSpawnEffect(x: number, y: number): void
 
@@ -448,7 +448,7 @@ export default interface IBatrGame {
 
 	addBlockLightEffect(x: number, y: number, color: uint, alpha: uint, reverse: boolean/* = false*/): void
 
-	addBlockLightEffect2(x: number, y: number, block: BlockCommon, reverse: boolean/* = false*/): void
+	addBlockLightEffect2(x: number, y: number, block: Block, reverse: boolean/* = false*/): void
 
 	addPlayerHurtEffect(player: Player, reverse: boolean/* = false*/): void
 
@@ -479,6 +479,6 @@ export default interface IBatrGame {
 
 	onRandomTick(x: int, y: int): void
 
-	onBlockUpdate(x: int, y: int, block: BlockCommon): void
+	onBlockUpdate(x: int, y: int, block: Block): void
 
 }

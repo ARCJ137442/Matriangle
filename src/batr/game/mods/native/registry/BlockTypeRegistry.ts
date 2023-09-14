@@ -1,6 +1,6 @@
-// import { BlockType } from "../BlockCommon";
+// import { BlockType } from "../Block";
 
-import { BlockType } from "../../../api/block/BlockCommon";
+import { BlockType } from "../../../api/block/Block";
 
 /**
  * 【20230910 9:39:23】

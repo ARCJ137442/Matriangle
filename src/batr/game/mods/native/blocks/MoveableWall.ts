@@ -2,7 +2,7 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import Wall from "./Wall";
 import BlockWall from "./Wall";
 
@@ -24,7 +24,7 @@ export default class BlockMoveableWall extends BlockWall {
 		this._attributes = NativeBlockAttributes.MOVEABLE_WALL;
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockMoveableWall(this._virus);
 	}
 

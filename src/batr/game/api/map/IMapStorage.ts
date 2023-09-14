@@ -1,11 +1,9 @@
-
-
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
 import { iPoint, intPoint } from "../../../common/geometricTools";
 import { intRot } from "../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
-import BlockCommon, { BlockType } from "../block/BlockCommon";
+import Block, { BlockType } from "../block/Block";
 
 
 /**
@@ -166,7 +164,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlock(p: iPoint): BlockCommon | null;
+	getBlock(p: iPoint): Block | null;
 
 	/**
 	 * 获取地图上某位置的方块属性
@@ -191,7 +189,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param y y坐标
 	 * @param block 方块对象
 	 */
-	setBlock(p: iPoint, block: BlockCommon): IMapStorage;
+	setBlock(p: iPoint, block: Block): IMapStorage;
 
 	/**
 	 * 【快捷方式】获取地图上某个位置「是否是『空』」

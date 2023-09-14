@@ -38,6 +38,18 @@ export interface IBatrDisplayable {
      * @param shape the display object corresponds `Shape` in Flash.
      */
     shapeDestruct(shape: IBatrShape): void;
+
+    /**
+     * 控制对象显示堆叠时的「相对层级」
+     * * 用于在原先以「对象容器の层级」表示的「显示层级系统」
+     * 
+     * * 例如：Wall应该在玩家之上，而「SpawnPointMark」应在玩家之下
+     * 
+     * ! 协议：「显示层级被更改」需要告知显示方「需要更新」
+     * ? 或许会加入类似「事件侦听器」这样的东西
+     */
+    get zIndex(): uint;
+    set zIndex(value: uint);
 }
 
 /**

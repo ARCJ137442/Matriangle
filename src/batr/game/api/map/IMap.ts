@@ -1,4 +1,3 @@
-
 import IMapLogic from './IMapLogic';
 import IMapStorage from "./IMapStorage";
 

@@ -2,12 +2,12 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon, { BlockType } from "../../../api/block/BlockCommon";
+import Block, { BlockType } from "../../../api/block/Block";
 import { randInt } from "../../../../common/exMath";
 
-export default class BlockColored extends BlockCommon {
+export default class BlockColored extends Block {
 
-	public static override randomInstance(type: BlockType): BlockCommon {
+	public static override randomInstance(type: BlockType): Block {
 		return new BlockColored(randInt(0xffffff));
 	}
 
@@ -24,7 +24,7 @@ export default class BlockColored extends BlockCommon {
 		super.destructor();
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockColored(this._color);
 	}
 

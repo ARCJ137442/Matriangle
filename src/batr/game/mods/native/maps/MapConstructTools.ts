@@ -1,7 +1,7 @@
 import { iPoint } from "../../../../common/geometricTools";
 import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import BlockSpawnPointMark from "../blocks/SpawnPointMark";
 import IMapStorage from "../../../api/map/IMapStorage";
 
@@ -15,7 +15,7 @@ const _temp_point_2d: iPoint = new iPoint(2)
 /**
  * 该函数用于函数式编程中
  */
-export function cloneBlock(block: BlockCommon): BlockCommon {
+export function cloneBlock(block: Block): Block {
     return block.clone();
 }
 
@@ -31,7 +31,7 @@ export function setBlock(
     storage: IMapStorage,
     x: int,
     y: int,
-    block: BlockCommon,
+    block: Block,
     clone: boolean = false
 ): void {
     storage.setBlock(_temp_point_2d.copyFromArgs(x, y), clone ? block.clone() : block);
@@ -54,7 +54,7 @@ export function setBlock(
 export function fillBlock(
     storage: IMapStorage,
     x1: int, y1: int, x2: int, y2: int,
-    block: BlockCommon,
+    block: Block,
     outline: boolean = false,
     clone: boolean = false,
 ): void {
@@ -62,10 +62,10 @@ export function fillBlock(
     let yl: int = Math.min(y1, y2), ym: int = Math.max(y1, y2);
     let xi: int, yi: int;
     // * 函数式编程：决定是「原样」还是「拷贝」
-    let blockF: (block: BlockCommon) => BlockCommon = (
+    let blockF: (block: Block) => Block = (
         clone ?
             cloneBlock :
-            identity<BlockCommon>
+            identity<Block>
     );
 
     // 外框
@@ -102,14 +102,14 @@ export function setReflectBlock(
     storage: IMapStorage,
     rX: boolean, rY: boolean,
     x: int, y: int,
-    block: BlockCommon,
+    block: Block,
     clone: boolean = false,
     lx: int = 23, ly: int = 23,
 ): void {
-    let blockF: (block: BlockCommon) => BlockCommon = (
+    let blockF: (block: Block) => Block = (
         clone ?
             cloneBlock :
-            identity<BlockCommon>
+            identity<Block>
     );
     storage.setBlock(_temp_point_2d.copyFromArgs(x, y), blockF(block));
     if (rX)
@@ -140,7 +140,7 @@ export function fillReflectBlock(
     storage: IMapStorage,
     rX: boolean, rY: boolean,
     x1: int, y1: int, x2: int, y2: int,
-    block: BlockCommon,
+    block: Block,
     outline: boolean = false,
     clone: boolean = false,
     lx: int = 23, ly: int = 23,
@@ -174,7 +174,7 @@ export function setReflectMirrorBlock(
     storage: IMapStorage,
     rX: boolean, rY: boolean,
     x: int, y: int,
-    block: BlockCommon,
+    block: Block,
     clone: boolean = false,
     lx: int = 23, ly: int = 23,
 ): void {
@@ -202,7 +202,7 @@ export function fillReflectMirrorBlock(
     rX: boolean, rY: boolean,
     x1: int, y1: int,
     x2: int, y2: int,
-    type: BlockCommon,
+    type: Block,
     outline: boolean = false,
     clone: boolean = false,
     lx: int = 23, ly: int = 23,
@@ -227,10 +227,10 @@ export function fillReflectMirrorBlock(
 export function drawLaserTrapDownPillar(
     storage: IMapStorage,
     rootX: uint,
-    blockWall: BlockCommon,
-    blockGlass: BlockCommon,
-    blockBedrock: BlockCommon,
-    blockLaserTrap: BlockCommon,
+    blockWall: Block,
+    blockGlass: Block,
+    blockBedrock: Block,
+    blockLaserTrap: Block,
     clone: boolean = false
 ): void {
     fillBlock(storage, rootX - 1, 1, rootX - 1, 18, blockWall, clone);
@@ -258,10 +258,10 @@ export function drawLaserTrapDownPillar(
 export function drawLaserTrapUpPillar(
     storage: IMapStorage,
     rootX: uint,
-    blockWall: BlockCommon,
-    blockGlass: BlockCommon,
-    blockBedrock: BlockCommon,
-    blockLaserTrap: BlockCommon,
+    blockWall: Block,
+    blockGlass: Block,
+    blockBedrock: Block,
+    blockLaserTrap: Block,
     clone: boolean = false
 ): void {
     fillBlock(storage, rootX - 1, 22, rootX - 1, 5, blockWall, clone);
@@ -288,9 +288,9 @@ export function drawLaserTrapUpPillar(
  */
 export function drawLaserTrapBox(
     storage: IMapStorage, x: int, y: int,
-    blockWall: BlockCommon,
-    blockGlass: BlockCommon,
-    blockLaserTrap: BlockCommon,
+    blockWall: Block,
+    blockGlass: Block,
+    blockLaserTrap: Block,
     clone: boolean = false
 ): void {
     setBlock(storage, x, y, blockLaserTrap, clone);

@@ -4,7 +4,7 @@ import { generateArray, identity, randomIn } from "../../../../common/utils";
 import { intRot, mRot } from "../../../api/general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import BlockCommon, { BlockType } from "../../../api/block/BlockCommon";
+import Block, { BlockType } from "../../../api/block/Block";
 import { BLOCK_VOID } from "../blocks/Void";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { NativeBlockTypes } from "../registry/BlockTypeRegistry";
@@ -44,7 +44,7 @@ export default class MapStorageSparse implements IMapStorage {
      * 
      * ! 在没有相应键时，会返回undefined
      */
-    protected readonly _dict: { [key: string]: BlockCommon } = {};
+    protected readonly _dict: { [key: string]: Block } = {};
 
     /**
      * 用于在「没有存储键」时返回的默认值
@@ -53,7 +53,7 @@ export default class MapStorageSparse implements IMapStorage {
      * 
      * ! 【20230910 11:16:05】现在强制这个值为「空」
      */
-    protected readonly _defaultBlock: BlockCommon = BLOCK_VOID;
+    protected readonly _defaultBlock: Block = BLOCK_VOID;
 
     /**
      * * 默认是二维
@@ -318,11 +318,11 @@ export default class MapStorageSparse implements IMapStorage {
 
     protected static _temp_copyContent_F(p: iPoint, source: IMapStorage, target: IMapStorage): void {
         if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
-            target.setBlock(p, source.getBlock(p) as BlockCommon)
+            target.setBlock(p, source.getBlock(p) as Block)
     }
     protected static _temp_copyContent_F_deep(p: iPoint, source: IMapStorage, target: IMapStorage): void {
         if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
-            target.setBlock(p, (source.getBlock(p) as BlockCommon).clone())
+            target.setBlock(p, (source.getBlock(p) as Block).clone())
     }
     public copyContentFrom(source: IMapStorage, clearSelf: boolean = false, deep: boolean = false): IMapStorage {
         if (clearSelf) {
@@ -372,14 +372,14 @@ export default class MapStorageSparse implements IMapStorage {
      * 用于提升获取效率用的「临时寄存器」
      * * 这样不需要频繁`let`占空间
      */
-    protected _temp_block: BlockCommon | undefined = undefined;
+    protected _temp_block: Block | undefined = undefined;
 
     /**
      * * 找不到方块(undefined)⇒返回默认
      * @param x x坐标
      * @param y y坐标
      */
-    public getBlock(p: iPoint): BlockCommon {
+    public getBlock(p: iPoint): Block {
         return this._dict?.[MapStorageSparse.pointToIndex(p)] ?? this._defaultBlock;
     }
 
@@ -420,7 +420,7 @@ export default class MapStorageSparse implements IMapStorage {
         }
     }
 
-    public setBlock(p: iPoint, block: BlockCommon): IMapStorage {
+    public setBlock(p: iPoint, block: Block): IMapStorage {
         // 放置方块
         this._dict[MapStorageSparse.pointToIndex(p)] = block;
         // 更新边界
@@ -473,7 +473,7 @@ export default class MapStorageSparse implements IMapStorage {
 
     // public setDisplayTo(target: IMapDisplayer): void {
     // 	target.clearBlock();
-    // 	let ix: int, iy: int, iBlock: BlockCommon;
+    // 	let ix: int, iy: int, iBlock: Block;
     // 	for (let index in this._Content) {
     // 		iBlock = this.storage.getBlock(ix, iy);
     // 		target.setBlock(ix, iy, iBlock);
@@ -484,7 +484,7 @@ export default class MapStorageSparse implements IMapStorage {
     // 	targetBottom.clearBlock();
     // 	targetMiddle.clearBlock();
     // 	targetTop.clearBlock();
-    // 	let ix: int, iy: int, iBlock: BlockCommon, iLayer: int;
+    // 	let ix: int, iy: int, iBlock: Block, iLayer: int;
 
     // 	for (let index in this._Content) {
     // 		ix = Map_V1.indexToPoint(index).x;

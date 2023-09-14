@@ -2,7 +2,7 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import BlockColored from "./Colored";
 
 export default class BlockWater extends BlockColored {
@@ -17,7 +17,7 @@ export default class BlockWater extends BlockColored {
 		this._attributes = NativeBlockAttributes.WATER;
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockWater(this._color);
 	}
 

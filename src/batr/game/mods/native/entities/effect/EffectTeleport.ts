@@ -6,7 +6,7 @@
 
 // import flash.display.*;
 
-export default class EffectTeleport extends EffectCommon {
+export default class EffectTeleport extends EntityEffect {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x44ff44;
 	public static readonly LINE_ALPHA: number = 0.6;

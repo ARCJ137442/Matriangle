@@ -1,12 +1,14 @@
 
 import { uint } from '../legacy/AS3Legacy'
 import { intPoint } from './geometricTools';
+
 /**
- * This module compress uint 0x0~0xffffffff into point(x:uint,y:uint)
+ * The module compress uint 0x0~0xffffffff into point(x:uint,y:uint)
  * For example:
  * x=0xa6cf,y=0x8ab will compress into 0x(a6cf 08ab)
  * @author ARCJ137442
  */
+
 /**
  * @param	x	position x.
  * @param	y	position y.

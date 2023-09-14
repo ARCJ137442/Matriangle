@@ -13,11 +13,19 @@ export default class CommonSystem<T> {
 	/**
 	 * The list of entry also uses to represent UUIDs for entries,
 	 * the UUID for every entry is just its unique immutable index 
+	 * 所有实体的列表，每个实体都有一个固定的UUID
 	 * 
 	 * Remove an entry will ony `delete` the reference and change it to `undefined`
+	 * ! 删除实体只会使用`delete`运算符，然后把所删除位置的值变成`undefined`
 	 */
 	protected _entries: T[];
 
+	/**
+	 * 控制是否复用UUID
+	 * * 若启用，则添加实体时，会搜索整个数组并寻找UUID
+	 * * 一般在「需要避免数组过长」的地方使用
+	 *   * 比如「抛射体」「特效」这类「生命周期短」的实体
+	 */
 	public reuseUUID: boolean = false;
 
 	//============Constructor & Destructor============//

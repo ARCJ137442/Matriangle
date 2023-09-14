@@ -7,7 +7,7 @@ import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../../../api/block/BlockAttributes";
 import Game from "../../../../../main/Game";
 import ToolType from "../../../registry/ToolType";
-import EntityCommon from "../../../../../api/entity/EntityCommon";
+import Entity from "../../../../../api/entity/Entity";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
@@ -244,7 +244,7 @@ static writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolea
 	remember[p.x][p.y] = value;
 }
 
-static getEntityName(target: EntityCommon): string {
+static getEntityName(target: Entity): string {
 	if (target == null)
 		return 'null';
 	if (target is Player)
@@ -273,9 +273,9 @@ protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, 
  */
 protected _remember: Vector.<Boolean[]>;
 
-protected _closeTarget: EntityCommon[];
+protected _closeTarget: Entity[];
 
-protected _lastTarget: EntityCommon;
+protected _lastTarget: Entity;
 
 // AI Judging about
 protected _pickupFirst: boolean = true;
@@ -283,7 +283,7 @@ protected _pickupFirst: boolean = true;
 //============Constructor & Destructor============//
 public constructor() {
 	this._lastTarget = null;
-	this._closeTarget = new Array<EntityCommon>();
+	this._closeTarget = new Array<Entity>();
 }
 
 //============Destructor Function============//
@@ -306,7 +306,7 @@ protected resetRemember(): void {
 	// trace('remember resetted!')
 }
 
-protected changeTarget(owner: AIPlayer, target: EntityCommon): void {
+protected changeTarget(owner: AIPlayer, target: Entity): void {
 	if(this._lastTarget == target)
 	return;
 	this._lastTarget = target;
@@ -320,11 +320,11 @@ protected resetTarget(): void {
 	this.resetRemember();
 }
 
-protected inCloseTarget(target: EntityCommon): boolean {
+protected inCloseTarget(target: Entity): boolean {
 	return this._closeTarget.indexOf(target) >= 0;
 }
 
-protected addCloseTarget(target: EntityCommon): void {
+protected addCloseTarget(target: Entity): void {
 	if(!this.inCloseTarget(target))
 	this._closeTarget.push(target);
 }
@@ -409,7 +409,7 @@ public requestActionOnTick(player: AIPlayer): AIPlayerAction {
 		// If Invalid Target,Get New Target
 		if (this._lastTarget == null || this._lastTarget == player) {
 			//========Find BonusBox========//
-			let target: EntityCommon = null;
+			let target: Entity = null;
 			// set Player as Target
 			target = this._pickupFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 			// if cannot find player

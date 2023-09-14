@@ -4,7 +4,7 @@
 
 import { uint, int } from "../../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../../api/block/BlockAttributes";
-import BlockCommon from "../../../../api/block/BlockCommon";
+import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
@@ -29,11 +29,11 @@ export default class ThrownBlock extends ProjectileCommon {
 	//============Instance Variables============//
 	public xSpeed: number;
 	public ySpeed: number;
-	protected _carriedBlock: BlockCommon;
+	protected _carriedBlock: Block;
 
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number,
-		owner: Player | null, block: BlockCommon,
+		owner: Player | null, block: Block,
 		rot: uint, chargePercent: number = 1) {
 		super(host, x, y, owner);
 		this._carriedBlock = block;
@@ -59,7 +59,7 @@ export default class ThrownBlock extends ProjectileCommon {
 		return EntityType.THROWN_BLOCK;
 	}
 
-	public get carriedBlock(): BlockCommon {
+	public get carriedBlock(): Block {
 		return this._carriedBlock;
 	}
 

@@ -2,10 +2,10 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon, { BlockType } from "../../../api/block/BlockCommon";
+import Block, { BlockType } from "../../../api/block/Block";
 import { randomBoolean2 } from "../../../../common/utils";
 
-export default class BlockGate extends BlockCommon {
+export default class BlockGate extends Block {
 	//============Static Variables============//
 	protected static readonly BLOCK_SIZE: uint = DEFAULT_SIZE;
 	protected static readonly LINE_SIZE: uint = this.BLOCK_SIZE / 20;
@@ -14,7 +14,7 @@ export default class BlockGate extends BlockCommon {
 	public static readonly FILL_COLOR: uint = 0xbbbbbb;
 	public static readonly CENTER_COLOR: uint = 0x666666;
 
-	public static override randomInstance(type: BlockType): BlockCommon {
+	public static override randomInstance(type: BlockType): Block {
 		return new BlockGate(randomBoolean2());
 	}
 
@@ -33,7 +33,7 @@ export default class BlockGate extends BlockCommon {
 		super.destructor();
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockGate(this._open);
 	}
 

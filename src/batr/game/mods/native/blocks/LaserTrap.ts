@@ -2,12 +2,12 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import BlockBedrock from "./Bedrock";
 import BlockColorSpawner from "./ColorSpawner";
 import BlockWall from "./Wall";
 
-export default class BlockLaserTrap extends BlockCommon {
+export default class BlockLaserTrap extends Block {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = BlockBedrock.LINE_COLOR;
 	public static readonly FILL_COLOR: uint = BlockBedrock.FILL_COLOR;
@@ -28,7 +28,7 @@ export default class BlockLaserTrap extends BlockCommon {
 		super(NativeBlockAttributes.LASER_TRAP);
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockLaserTrap();
 	}
 

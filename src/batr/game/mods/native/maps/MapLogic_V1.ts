@@ -6,7 +6,7 @@
 import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
 import { mRot } from "../../../api/general/GlobalRot";
 import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
-import EntityCommon from "../../../api/entity/EntityCommon";
+import Entity from "../../../api/entity/Entity";
 import Player from "../entities/player/Player";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import IMapLogic from "../../../api/map/IMapLogic";
@@ -20,7 +20,7 @@ import IMapStorage from "../../../api/map/IMapStorage";
 // import flash.utils.getQualifiedClassName;
 
 /* This's a Game Map<Version 1>
- * This Map only save BlockType,not BlockCommon
+ * This Map only save BlockType,not Block
  */
 export default class MapLogic_V1 implements IMapLogic {
 
@@ -120,7 +120,7 @@ export default class MapLogic_V1 implements IMapLogic {
 	}
 
 	// TODO: 后续完善实体系统后，再进行处理
-	public testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
+	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
 		// return this.towardWithRot_F
 		throw new Error("Method not implemented.");
 	}

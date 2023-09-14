@@ -18,11 +18,11 @@ import Menu from "../../menu/main/Menu";
 import BatrTextField from "../../menu/object/BatrTextField";
 import { DEFAULT_SIZE } from "../../display/api/GlobalDisplayVariables";
 import BlockAttributes from "../api/block/BlockAttributes";
-import BlockCommon, { BlockType } from "../api/block/BlockCommon";
+import Block, { BlockType } from "../api/block/Block";
 import IMap from "../api/map/IMap";
 import IMapDisplayer from "../../display/api/map/IMapDisplayer";
 import Map_V1 from "../mods/native/maps/Map_V1";
-import EffectCommon from "../api/entity/EffectCommon";
+import EntityEffect from "../api/entity/EntityEffect";
 import EffectSystem from "../api/entity/EffectSystem";
 import EffectBlockLight from "../mods/native/entities/effect/EffectBlockLight";
 import EffectExplode from "../mods/native/entities/effect/EffectExplode";
@@ -32,7 +32,7 @@ import EffectPlayerHurt from "../mods/native/entities/effect/EffectPlayerHurt";
 import EffectPlayerLevelup from "../mods/native/entities/effect/EffectPlayerLevelup";
 import EffectSpawn from "../mods/native/entities/effect/EffectSpawn";
 import EffectTeleport from "../mods/native/entities/effect/EffectTeleport";
-import EntityCommon from "../api/entity/EntityCommon";
+import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import BonusBox from "../mods/native/entities/item/BonusBox";
 import BonusBoxSymbol from "../../display/mods/native/entity/BonusBoxSymbol";
@@ -64,6 +64,10 @@ import { alignToGrid } from "../api/general/PosTransform";
 import { IBatrShape } from "../../display/api/BatrDisplayInterfaces";
 
 export default class Game implements IBatrGame {
+
+	// TODO: 🏗事件订阅、分派机制完善
+	protected _eventBus: Function[] = [];//EventBus;
+
 	//============Static Variables============//
 	// public static readonly ALL_MAPS: IMap[] = [
 	// 	Map_V1.EMPTY,
@@ -845,7 +849,7 @@ export default class Game implements IBatrGame {
 	/**
 	 * return testCanPass in player's front position.
 	 */
-	public testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
+	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
 		// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
 		return this.testCanPass(
 			entity.getFrontX(distance),
@@ -1143,7 +1147,7 @@ export default class Game implements IBatrGame {
 			return;
 		let type: BlockType = this.getBlockType(x, y);
 		if (type == BlockType.GATE_OPEN) {
-			this.setBlock(x, y, BlockCommon.fromType(BlockType.GATE_CLOSE));
+			this.setBlock(x, y, Block.fromType(BlockType.GATE_CLOSE));
 		}
 	}
 
@@ -1171,7 +1175,7 @@ export default class Game implements IBatrGame {
 		return this._map.hasBlock(x, y);
 	}
 
-	public getBlock(x: int, y: int): BlockCommon {
+	public getBlock(x: int, y: int): Block {
 		return this._map.getBlock(x, y);
 	}
 
@@ -1189,7 +1193,7 @@ export default class Game implements IBatrGame {
 	 * @param	y	the Block position y.
 	 * @param	block	the current Block.
 	 */
-	public setBlock(x: int, y: int, block: BlockCommon): void {
+	public setBlock(x: int, y: int, block: Block): void {
 		this._map.setBlock(x, y, block);
 		this.onBlockUpdate(x, y, block);
 	}
@@ -1218,7 +1222,7 @@ export default class Game implements IBatrGame {
 			this._map.forceDisplayToLayers(this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
 	}
 
-	public updateMapDisplay(x: int, y: int, block: BlockCommon): void {
+	public updateMapDisplay(x: int, y: int, block: Block): void {
 		this._map.updateDisplayToLayers(x, y, block, this._mapDisplayerBottom, this._mapDisplayerMiddle, this._mapDisplayerTop);
 	}
 
@@ -1720,7 +1724,7 @@ export default class Game implements IBatrGame {
 
 		let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
 
-		let frontBlock: BlockCommon;
+		let frontBlock: Block;
 
 		let laserLength: number = this.rule.defaultLaserLength;
 
@@ -1834,7 +1838,7 @@ export default class Game implements IBatrGame {
 		return i;
 	}
 
-	public lockEntityInMap(entity: EntityCommon): void {
+	public lockEntityInMap(entity: Entity): void {
 		let posNum: number, posMaxNum: uint, posFunc: Function;
 
 		for (let i: uint = 0; i < 2; i++) {
@@ -1952,7 +1956,7 @@ export default class Game implements IBatrGame {
 	}
 
 	//======Effect Functions======//
-	public addEffectChild(effect: EffectCommon): void {
+	public addEffectChild(effect: EntityEffect): void {
 		if (effect.layer > 0)
 			this._effectContainerTop.addChild(effect);
 
@@ -1995,7 +1999,7 @@ export default class Game implements IBatrGame {
 		this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
 	}
 
-	public addBlockLightEffect2(x: number, y: number, block: BlockCommon, reverse: boolean = false): void {
+	public addBlockLightEffect2(x: number, y: number, block: Block, reverse: boolean = false): void {
 		this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
 	}
 
@@ -2195,7 +2199,7 @@ export default class Game implements IBatrGame {
 		}
 	}
 
-	protected onBlockUpdate(x: int, y: int, block: BlockCommon): void {
+	protected onBlockUpdate(x: int, y: int, block: Block): void {
 		this.updateMapDisplay(x, y, block);
 		this.updateMapSize();
 		this.moveInTestWithEntity();

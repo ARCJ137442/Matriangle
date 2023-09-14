@@ -8,13 +8,13 @@ import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
 import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EffectCommon from "../../../../api/entity/EffectCommon";
+import EntityEffect from "../../../../api/entity/EntityEffect";
 
 // import batr.game.entity.entity.player.*;
 // import batr.game.effect.*;
 // import batr.game.main.*;
 
-export default class EffectPlayerDeathLight extends EffectCommon {
+export default class EffectPlayerDeathLight extends EntityEffect {
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 16;

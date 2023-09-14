@@ -1,9 +1,7 @@
-
-
 import { fPoint, iPoint } from "../../../common/geometricTools";
 import { intRot } from "../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
-import EntityCommon from "../entity/EntityCommon";
+import Entity from "../entity/Entity";
 import Player from "../../mods/native/entities/player/Player";
 import BlockAttributes from "../block/BlockAttributes";
 import IMapStorage from "./IMapStorage";
@@ -154,7 +152,7 @@ export default interface IMapLogic {
 	 * @param includePlayer 是否包括其他玩家
 	 * @param avoidHurt 避免伤害（主要用于AI）
 	 */
-	testFrontCanPass(entity: EntityCommon, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
+	testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
 
 	/**
 	 * 判断一个位置是否「可放置奖励箱」

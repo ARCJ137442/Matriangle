@@ -4,7 +4,7 @@
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import { BlockType } from "../../../../api/block/BlockCommon";
+import { BlockType } from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";

@@ -4,16 +4,16 @@
 
 import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import BlockCommon from "../../../../api/block/BlockCommon";
+import Block from "../../../../api/block/Block";
 import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EffectCommon from "../../../../api/entity/EffectCommon";
+import EntityEffect from "../../../../api/entity/EntityEffect";
 
 // import batr.game.block.*;
 // import batr.game.effect.*;
 // import batr.game.main.*;
 
-export default class EffectBlockLight extends EffectCommon {
+export default class EffectBlockLight extends EntityEffect {
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
@@ -22,7 +22,7 @@ export default class EffectBlockLight extends EffectCommon {
 	public static readonly MIN_SCALE: number = 1;
 
 	//============Static Functions============//
-	public static fromBlock(host: IBatrGame, x: number, y: number, block: BlockCommon, reverse: boolean = false): EffectBlockLight {
+	public static fromBlock(host: IBatrGame, x: number, y: number, block: Block, reverse: boolean = false): EffectBlockLight {
 		return new EffectBlockLight(host, x, y, block.pixelColor, block.pixelAlpha, reverse);
 	}
 

@@ -9,7 +9,7 @@ import Game from "../../../../main/Game";
 import BonusType from "../../../registry/BonusRegistry";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
-import EntityCommon from "../../../../api/entity/EntityCommon";
+import Entity from "../../../../api/entity/Entity";
 import Player from "../player/Player";
 import BonusBoxSymbol from "./display/BonusBoxSymbol.1";
 
@@ -19,7 +19,7 @@ import BonusBoxSymbol from "./display/BonusBoxSymbol.1";
 // import batr.game.model.*;
 // import batr.game.main.*;
 
-export default class BonusBox extends EntityCommon {
+export default class BonusBox extends Entity {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x777777;
 	public static readonly FILL_COLOR: uint = 0xdddddd;

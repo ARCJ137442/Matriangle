@@ -6,12 +6,12 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EffectCommon from "../../../../api/entity/EffectCommon";
+import EntityEffect from "../../../../api/entity/EntityEffect";
 
 // import batr.game.effect.*;
 // import batr.game.main.*;
 
-export default class EffectPlayerLevelup extends EffectCommon {
+export default class EffectPlayerLevelup extends EntityEffect {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x000000;
 	public static readonly LINE_ALPHA: number = 0.8;

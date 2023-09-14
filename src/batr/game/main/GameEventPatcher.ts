@@ -1,7 +1,7 @@
 ﻿import { iPoint } from "../../common/geometricTools";
 import { PatchIndexType, GameEventType } from "./GlobalGameVariables";
 import { uint } from "../../legacy/AS3Legacy";
-import BlockCommon from "../api/block/BlockCommon";
+import Block from "../api/block/Block";
 import IBatrGame from "./IBatrGame";
 
 /**
@@ -28,7 +28,7 @@ export type GameEventPatchMap = {
  */
 export type randomTickEventF = (
 	host: IBatrGame,
-	block: BlockCommon,
+	block: Block,
 	position: iPoint
 ) => void;
 
@@ -37,7 +37,7 @@ export type randomTickEventF = (
  */
 export type blockTickEventF = (
 	host: IBatrGame,
-	block: BlockCommon,
+	block: Block,
 	position: iPoint,
 	time: uint
 ) => void;

@@ -2,10 +2,14 @@ import * as GlobalRot from "../general/GlobalRot";
 import { uint } from "../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
-import BlockCommon from "./BlockCommon";
+import Block from "./Block";
 
-// Abstract
-export default abstract class AbstractBlockRotatable extends BlockCommon {
+/**
+ * 预定义所有「需要朝向的方块」的基类
+ * 
+ * TODO: 正式得到使用
+ */
+export default abstract class AbstractBlockRotatable extends Block {
 	//============Constructor & Destructor============//
 	public constructor(
 		attributes: BlockAttributes,

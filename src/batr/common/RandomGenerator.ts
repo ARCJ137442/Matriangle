@@ -1,5 +1,8 @@
 ﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
 
+/**
+ * 使用「多项式线性同余法」的随机数生成器
+ */
 export default class RandomGenerator {
 	//============Static Variables============//
 	public static readonly DEFAULT_BUFFER: number[] = new Array<number>(1, 2, 3);

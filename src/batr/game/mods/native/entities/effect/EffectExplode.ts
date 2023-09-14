@@ -6,12 +6,12 @@ import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EffectCommon from "../../../../api/entity/EffectCommon";
+import EntityEffect from "../../../../api/entity/EntityEffect";
 
 // import batr.game.effect.*;
 // import batr.game.main.*;
 
-export default class EffectExplode extends EffectCommon {
+export default class EffectExplode extends EntityEffect {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0xffdd00;
 	public static readonly LINE_ALPHA: uint = 5 * (uint$MAX_VALUE >> 3); // 5/8

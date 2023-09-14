@@ -2,10 +2,6 @@
 import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
 import * as exMath from './exMath';
 
-// import flash.getTimer;
-// import flash.ByteArray;
-// import *;
-
 //============Math Methods============//
 export function NumberToPercent(x: number, floatCount: uint = 0): string {
 	if (floatCount > 0) {

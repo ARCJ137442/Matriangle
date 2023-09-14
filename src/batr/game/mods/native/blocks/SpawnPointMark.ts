@@ -2,10 +2,10 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 
 // A Mark to SpawnPoint
-export default class BlockSpawnPointMark extends BlockCommon {
+export default class BlockSpawnPointMark extends Block {
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x808080;
 	public static readonly FILL_COLOR: uint = 0xcccccc;
@@ -26,7 +26,7 @@ export default class BlockSpawnPointMark extends BlockCommon {
 		super(NativeBlockAttributes.SPAWN_POINT_MARK);
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockSpawnPointMark();
 	}
 

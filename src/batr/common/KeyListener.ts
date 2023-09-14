@@ -1,7 +1,4 @@
-﻿// // Flash
-// import flash.display.Stage;
-// import flash.events.KeyboardEvent;
-import { flash } from '../legacy/FlashLegacy';
+﻿import { flash } from '../legacy/FlashLegacy';
 
 type Stage = flash.display.Stage
 const Stage = flash.display.Stage

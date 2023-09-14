@@ -1,13 +1,13 @@
 import { isExtend } from "../../../common/utils";
 import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE, Class } from "../../../legacy/AS3Legacy";
-import BlockCommon from "./BlockCommon";
+import Block from "./Block";
 
 export default class BlockAttributes {
 
 	//============Static Functions============//
 	public static fromType(type: Class): BlockAttributes {
-		if (isExtend(type, BlockCommon))
-			return (type as any).DEFAULT_ATTRIBUTES; // * ensured `type extends BlockCommon`
+		if (isExtend(type, Block))
+			return (type as any).DEFAULT_ATTRIBUTES; // * ensured `type extends Block`
 		throw new Error("Unknown BlockType");
 	}
 

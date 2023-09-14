@@ -1,6 +1,6 @@
 import { IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
-import EntityCommon from "./EntityCommon";
+import Entity from "./Entity";
 
 /**
  * * 【20230913 23:18:15】现在将原本独立的「特效」也归入「实体」范畴了
@@ -13,7 +13,7 @@ import EntityCommon from "./EntityCommon";
  * ```
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量
  */
-export default class AbstractEffect extends EntityCommon {
+export default abstract class AbstractEffect extends Entity {
 
     /**
      * 当前的剩余生命时长
@@ -35,15 +35,6 @@ export default class AbstractEffect extends EntityCommon {
         this.life = this.LIFE;
     }
 
-
     //============Display Implements============//
-    public shapeInit(shape: IBatrShape): void {
-        throw new Error("Method not implemented.");
-    }
-    public shapeRefresh(shape: IBatrShape): void {
-        throw new Error("Method not implemented.");
-    }
-    public shapeDestruct(shape: IBatrShape): void {
-        throw new Error("Method not implemented.");
-    }
+    // 这其中已经有抽象类`Entity`了
 }

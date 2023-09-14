@@ -3,7 +3,7 @@
 // import batr.game.block.*;
 // import batr.game.block.blocks.*;
 
-import BlockCommon from "../../game/api/block/BlockCommon";
+import Block from "../../game/api/block/Block";
 import { Bedrock } from "../game/registry/BlockTypeRegistry";
 import { uint, int } from "../../legacy/AS3Legacy";
 import { DisplayObject } from "../../legacy/flash/display";
@@ -148,7 +148,7 @@ export default class Background extends Sprite {
 		for (let xi: uint = 0; xi < width; xi++) {
 			for (let yi: uint = 0; yi < height; yi++) {
 				if ((xi == 0 || xi == width - 1) || (yi == 0 || yi == height - 1)) {
-					let block: BlockCommon = new Bedrock();
+					let block: Block = new Bedrock();
 					block.x = DEFAULT_SIZE * xi;
 					block.y = DEFAULT_SIZE * yi;
 					_frame.addChild(block);
@@ -166,8 +166,8 @@ export default class Background extends Sprite {
 		while (this._frame.numChildren > 0) {
 			child = this._frame.getChildAt(0);
 
-			if (child is BlockCommon) {
-				(child as BlockCommon).destructor();
+			if (child is Block) {
+				(child as Block).destructor();
 			}
 			this._frame.removeChild(child);
 		}

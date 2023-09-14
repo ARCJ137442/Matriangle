@@ -1,11 +1,11 @@
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 
 /**
  * 定义一个「空」方块，作为游戏的空值元素
  * ! 此类使用**单例模式**构建其对象，以替代AS3版本中的`null`
  */
-export default class BlockVoid extends BlockCommon {
+export default class BlockVoid extends Block {
 
 	/**
 	 * 启用单例模式的方块，只有一个实例
@@ -19,10 +19,10 @@ export default class BlockVoid extends BlockCommon {
 		super(NativeBlockAttributes.VOID);
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockVoid();
 	}
 }
 
 // 导出单例
-export const BLOCK_VOID: BlockCommon = BlockVoid.INSTANCE;
+export const BLOCK_VOID: Block = BlockVoid.INSTANCE;

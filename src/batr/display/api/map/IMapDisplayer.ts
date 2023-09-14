@@ -1,7 +1,7 @@
 
 
 import { int } from "../../../legacy/AS3Legacy";
-import BlockCommon from "../../../game/api/block/BlockCommon";
+import Block from "../../../game/api/block/Block";
 import IMapStorage from "../../../game/api/map/IMapStorage";
 
 /**
@@ -19,8 +19,8 @@ import IMapStorage from "../../../game/api/map/IMapStorage";
 export default interface IMapDisplayer {
 	get storage(): IMapStorage;
 	hasBlock(x: int, y: int): Boolean;
-	getBlock(x: int, y: int): BlockCommon;
+	getBlock(x: int, y: int): Block;
 	removeBlock(x: int, y: int): void;
 	clearBlock(): void;
-	setBlock(x: int, y: int, block: BlockCommon, overwrite?: Boolean/* = true*/): void;
+	setBlock(x: int, y: int, block: Block, overwrite?: Boolean/* = true*/): void;
 }

@@ -1,13 +1,13 @@
 import { int, uint } from "../../../../../legacy/AS3Legacy";
 import { Matrix } from "../../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import BlockCommon from "../../../../api/block/BlockCommon";
+import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import GameRule from "../../../../api/rule/GameRule";
 import PlayerStats from "../../stat/PlayerStats";
-import EntityCommon from "../../../../api/entity/EntityCommon";
+import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
 import AIPlayer from "./AIPlayer";
 import PlayerController from "./controller/PlayerController";
@@ -32,7 +32,7 @@ import PlayerTeam from "./team/PlayerTeam";
 // import flash.display.*;
 // import flash.geom.*;
 
-export default class Player extends EntityCommon implements IPlayerProfile {
+export default class Player extends Entity implements IPlayerProfile {
 	//============Static Variables============//
 	public static readonly SIZE: number = 1 * DEFAULT_SIZE;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 96;
@@ -67,7 +67,7 @@ export default class Player extends EntityCommon implements IPlayerProfile {
 	// TODO: remove the _GUI to remove the reliances
 	protected _GUI: PlayerGUI;
 
-	protected _carriedBlock: BlockCommon;
+	protected _carriedBlock: Block;
 
 	// TODO: uses the controller, not set the control keys!
 	protected _controller: PlayerController
@@ -772,7 +772,7 @@ export default class Player extends EntityCommon implements IPlayerProfile {
 			this.team === player.team);
 	}
 
-	public get carriedBlock(): BlockCommon {
+	public get carriedBlock(): Block {
 		return this._carriedBlock;
 	}
 
@@ -996,7 +996,7 @@ else
 	this._lineColor = uint(lineColor);
 }
 
-	public setCarriedBlock(block: BlockCommon, copyBlock: boolean = true): void {
+	public setCarriedBlock(block: Block, copyBlock: boolean = true): void {
 	if(block == null) {
 	this._carriedBlock.visible = false;
 }

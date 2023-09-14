@@ -2,7 +2,7 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
-import BlockCommon from "../../../api/block/BlockCommon";
+import Block from "../../../api/block/Block";
 import BlockColored from "./Colored";
 
 export default class BlockWall extends BlockColored {
@@ -23,7 +23,7 @@ export default class BlockWall extends BlockColored {
 		super.destructor();
 	}
 
-	override clone(): BlockCommon {
+	override clone(): Block {
 		return new BlockWall(this._lineColor, this._color);
 	}
 
