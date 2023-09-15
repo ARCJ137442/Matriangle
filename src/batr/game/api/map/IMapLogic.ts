@@ -1,5 +1,5 @@
 import { fPoint, iPoint } from "../../../common/geometricTools";
-import { intRot } from "../general/GlobalRot";
+import { intRot, mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import Entity from "../entity/Entity";
 import Player from "../../mods/native/entities/player/Player";
@@ -81,6 +81,8 @@ export default interface IMapLogic {
 	/**
 	 * 从某位置向某方向「前进」，获取「前进到的坐标」
 	 * 
+	 * ! 注意：对`p`是破坏性操作——会改变`p`的值
+	 * 
 	 * ! 这里使用的是「任意维整数角」，二维呈现上是「右左下上」而非先前的「右下左上」
 	 * 
 	 * * 地图底层逻辑，与「逻辑结构」有关，但与「游戏整体机制」分离
@@ -90,10 +92,12 @@ export default interface IMapLogic {
 	 * @param rot 任意维整数角
 	 * @param step 前进的步长（浮点）
 	 */
-	towardWithRot_F(p: fPoint, rot: intRot, step?: number/* = 1*/): fPoint
+	towardWithRot_FF(p: fPoint, rot: mRot, step?: number/* = 1*/): fPoint
 
 	/**
 	 * （整形优化版本）从某位置向某方向「前进」，获取「前进到的坐标」
+	 * 
+	 * ! 注意：对`p`是破坏性操作——会改变`p`的值
 	 * 
 	 * ! 这里使用的是「任意维整数角」，二维呈现上是「右左下上」而非先前的「右下左上」
 	 * 
@@ -104,7 +108,7 @@ export default interface IMapLogic {
 	 * @param rot 任意维整数角
 	 * @param step 前进的步长（整数）
 	 */
-	towardWithRot_I(p: iPoint, rot: intRot, step?: int/* = 1*/): iPoint
+	towardWithRot_II(p: iPoint, rot: mRot, step?: int/* = 1*/): iPoint
 
 	// TODO: 有待移植
 

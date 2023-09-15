@@ -4,13 +4,14 @@
 // import batr.game.block.blocks.XTrap;
 
 import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
-import { mRot } from "../../../api/general/GlobalRot";
+import { mRot } from "../../../general/GlobalRot";
 import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Entity from "../../../api/entity/Entity";
 import Player from "../entities/player/Player";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import IMapLogic from "../../../api/map/IMapLogic";
 import IMapStorage from "../../../api/map/IMapStorage";
+import { alignToGrid_P } from "../../../general/PosTransform";
 
 // import batr.game.map.*;
 // import batr.game.block.*;
@@ -78,14 +79,14 @@ export default class MapLogic_V1 implements IMapLogic {
 		return this.storage.isInMap(p);
 	}
 
-
 	// 实现：直接用
-	public towardWithRot_F(p: floatPoint, rot: mRot, step: number = 1.0): floatPoint {
+	public towardWithRot_FF(p: floatPoint, rot: mRot, step: number = 1.0): floatPoint {
 		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
 		return p
 	}
 
-	public towardWithRot_I(p: intPoint, rot: mRot, step: int = 1): intPoint {
+	// 实现：直接用
+	public towardWithRot_II(p: intPoint, rot: mRot, step: int = 1): intPoint {
 		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
 		return p
 	}
@@ -146,7 +147,3 @@ export default class MapLogic_V1 implements IMapLogic {
 		return blockAtt.isBreakable && !(this.isArenaMap && blockAtt.unbreakableInArenaMap);
 	}
 }
-function alignToGrid_P(p: floatPoint, _temp_testCanPass_IP: intPoint): intPoint {
-	throw new Error("Function not implemented.");
-}
-

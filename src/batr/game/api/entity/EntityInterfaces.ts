@@ -12,7 +12,7 @@ import { IBatrDisplayable } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import IBatrGame from "../../main/IBatrGame";
 import GameStats from "../../mods/native/stat/GameStats";
-import { mRot } from "../general/GlobalRot";
+import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
 

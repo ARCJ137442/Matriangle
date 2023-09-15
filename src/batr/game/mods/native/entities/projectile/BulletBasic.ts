@@ -1,10 +1,12 @@
-import { fPoint, floatPoint } from "../../../../../common/geometricTools";
+import { random1 } from "../../../../../common/exMath";
+import { fPoint, floatPoint, iPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { localPosToRealPos } from "../../../../../display/api/PosTransform";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Block, { BlockType } from "../../../../api/block/Block";
 import { IEntityOutGrid } from "../../../../api/entity/EntityInterfaces";
+import { alignToGrid_P } from "../../../../general/PosTransform";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../main/IBatrGame";
 import ToolType from "../../ToolType";
@@ -37,23 +39,28 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	/** 现在所在的方块类型 */
 	public nowBlock: Block | null = null;
 
+	/** （缓存用）现在所在的网格位置（整数点） */
+	protected _position_I: iPoint = new iPoint()
+
 	/** 子弹的「直接或间接」伤害 */
 	public damage: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number,
+	public constructor(host: IBatrGame, position: fPoint,
 		owner: Player,
 		speed: number = BulletBasic.DEFAULT_SPEED,
-		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS): void {
+		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS) {
 		super(owner);
 		this.speed = speed;
+		this._position.copyFrom(position)
 
-		this.finalExplodeRadius = owner == null ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
-		// TODO: 这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
+
+		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
+		this.finalExplodeRadius = defaultExplodeRadius;
+		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
 		this._ownerTool = ToolType.BULLET;
 
 		this.damage = this._ownerTool.defaultDamage;
-		this.drawShape();
 	}
 
 	//============Interface Methods============//
@@ -85,21 +92,25 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 		// Detect
 		// if (host == null) return;
 		this.nowBlock = host.map.storage.getBlock(this.position);
+		// 在移动进去之前
 		if (this.lastBlock != this.nowBlock) {
 			// Random rotate
 			if (this.nowBlock != null &&
-				this.nowBlock.currentAttributes.rotateWhenMoveIn) {
-				this.rot += exMath.random1();
+				this.nowBlock.attributes.rotateWhenMoveIn) {
+				this.direction = host.map.storage.randomRotateDirectionAt(this._position_I, this._direction, 1);
 			}
 		}
-		this.moveForward(this.speed);
-
+		// 移动
+		host.map.logic.towardWithRot_FF(this._position, this._direction, this.speed);
+		// 更新整数坐标
+		alignToGrid_P(this._position, this._position_I);
+		// 移动进去之后
 		if (host.map.logic.isInMap_F(this.position) &&
 			host.map.logic.testCanPass_F(this._position, false, true, false)) {
 			this.lastBlock = this.nowBlock;
 		}
 		else {
-			this.explode();
+			this.explode(host);
 		}
 	}
 
@@ -117,7 +128,30 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	 */
 
 	public shapeInit(shape: IBatrShape): void {
+		let realRadiusX: number = BulletBasic.SIZE / 2;
+		let realRadiusY: number = BulletBasic.SIZE / 2;
 
+		shape.graphics.clear();
+		shape.graphics.lineStyle(BulletBasic.LINE_SIZE, this.ownerLineColor);
+		shape.graphics.beginFill(this.ownerColor);
+		/* GRADIENT-FILL REMOVED
+		let m:Matrix=new Matrix()
+		m.createGradientBox(SIZE,
+							SIZE,0,-realRadiusX,-realRadiusX)
+		beginGradientFill(GradientType.LINEAR,
+		[this.ownerColor,ownerLineColor],
+		[1,1],
+		[63,255],
+		m,
+		SpreadMethod.PAD,
+		InterpolationMethod.RGB,
+		1)
+		*/
+		shape.graphics.moveTo(-realRadiusX, -realRadiusY);
+		shape.graphics.lineTo(realRadiusX, 0);
+		shape.graphics.lineTo(-realRadiusX, realRadiusY);
+		shape.graphics.lineTo(-realRadiusX, -realRadiusY);
+		shape.graphics.endFill();
 	}
 
 	public shapeRefresh(shape: IBatrShape): void {
@@ -129,39 +163,10 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	}
 
 	//============Game Mechanics============//
-	protected explode(): void {
-		host.toolCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
-		host.entitySystem.removeProjectile(this);
+	protected explode(host: IBatrGame): void {
+		// TODO: 待完善游戏接口再使用——①创建爆炸（+效果但不仅仅效果）②移除自身
+		// host.toolCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
+		// host.entitySystem.removeProjectile(this);
 	}
 
-	//====Graphics Functions====//
-	override drawShape(): void {
-		let realRadiusX: number = BulletBasic.SIZE / 2;
-
-		let realRadiusY: number = BulletBasic.SIZE / 2;
-
-		with (shape.graphics) {
-			clear();
-			lineStyle(LINE_SIZE, this.ownerLineColor);
-			beginFill(this.ownerColor);
-			/* GRADIENT-FILL REMOVED
-			let m:Matrix=new Matrix()
-			m.createGradientBox(SIZE,
-								SIZE,0,-realRadiusX,-realRadiusX)
-			beginGradientFill(GradientType.LINEAR,
-			[this.ownerColor,ownerLineColor],
-			[1,1],
-			[63,255],
-			m,
-			SpreadMethod.PAD,
-			InterpolationMethod.RGB,
-			1)
-			*/
-			moveTo(-realRadiusX, -realRadiusY);
-			lineTo(realRadiusX, 0);
-			lineTo(-realRadiusX, realRadiusY);
-			lineTo(-realRadiusX, -realRadiusY);
-			endFill();
-		}
-	}
 }

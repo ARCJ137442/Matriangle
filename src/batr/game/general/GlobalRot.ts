@@ -1,6 +1,6 @@
-import * as exMath from "../../../common/exMath";
-import { iPoint } from "../../../common/geometricTools";
-import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
+import * as exMath from "../../common/exMath";
+import { iPoint } from "../../common/geometricTools";
+import { int, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
 
 // ! 有待后续更新：支持多个维度、解决「连续角度」等问题
 /**
@@ -43,7 +43,7 @@ export function isValidRot(rot: intRot): boolean {
  * @param rot 「π/4⇔1」机制的角度
  * @returns 旋转到反面的角度值
  */
-export function toOpposite(rot: fRot): fRot {
+export function toOpposite_F(rot: fRot): fRot {
 	return (rot + 2) % 4;
 }
 
@@ -52,17 +52,18 @@ export function toOpposite(rot: fRot): fRot {
  * @param rot 「π/4⇔1」机制的角度
  * @returns 旋转到反面的角度值
  */
-export function toOppositeInt(rot: intRot): intRot {
+export function toOpposite_I(rot: intRot): intRot {
 	return (rot + 2) & 3;
 }
 
 /**
  * （多维整数角度版本）反转方向，上→下，左→右
+ * * 原理：直接使用按位异或`1`
  * @param rot 「x±→y±→z±…」机制的角度
  * @returns 方向反转后的角度值
  */
-export function toOppositeMDim(rot: intRot): intRot {
-	return (rot + 2) & 3;
+export function toOpposite_M(rot: intRot): intRot {
+	return rot ^ 1;
 }
 
 /**
@@ -71,14 +72,69 @@ export function toOppositeMDim(rot: intRot): intRot {
  * @param angle 另一个同类角度
  * @returns 两个角度的总和
  */
-export function rotate(rot: fRot, angle: fRot): fRot {
+export function rotate_F(rot: fRot, angle: fRot): fRot {
 	// angle is Local Rot.
-	return lockToStandard(rot + angle);
+	return lockRot_F(rot + angle);
 }
 
-export function rotateInt(rot: intRot, angle: int): intRot {
-	// angle is Local Rot.
-	return lockIntToStandard(rot + angle);
+/**
+ * 旋转⇒角度综合
+ * @param rot 离散整数角
+ * @param angle 附加的整数角（可正可负）
+ * @returns 旋转后的整数角
+ */
+export function rotate_I(rot: iRot, angle: int): iRot {
+	return lockRot_I(rot + angle);
+}
+
+/**
+ * 任意维整数角的「旋转」
+ * * 通用于N维空间
+ * * 举例：x+朝向在xOy平面的旋转，只需要调用「y+|y-」即可。其中：
+ *   * 「y」用`coAxis = 1`表示
+ *   * 「+|-」用`step`的正负号表示
+ * 
+ * 关于「旋转角数」的规律：
+ * * `&3=0`是「原朝向」
+ * * `&3=1`是「协面轴+」
+ * * `&3=2`是「反方向」
+ * * `&3=3`是「协面轴-」
+ * 
+ * ! 若「待算轴」与「协面轴」相同，则「正负方向」会以4为周期重复
+ * * 例如：xOx+ -> x+, x+, x-, x-, ...
+ * 
+ * @param rot 待计算的朝向⇒「待算轴」
+ * @param coAxis 与「待算轴」构成「旋转平面」的「协面轴」
+ * @param step 旋转角数
+ */
+export function rotate_M(rot: mRot, coAxis: uint, step: int): mRot {
+	// if (coAxis === rotAxis) return rot; // ! 待算轴与目标轴本不应该相同（需要构成旋转平面），但需要能用
+	switch (step & 3) {
+		default: return rot; // 原朝向
+		case 1: return coAxis << 1; // 协面轴+
+		case 2: return toOpposite_M(rot); // 反方向
+		case 3: return (coAxis << 1) + 1 //协面轴-
+	}
+}
+
+/** 内置的「轴向名」 */
+const NATIVE_N_DIM_AXISES: string = 'xyzw';
+/**
+ * 用于返回一个轴向的名称
+ * * 逻辑：第1~4维（对应0~3轴向）按顺序称作xyzw，然后叫x5、x6、……
+ * @param axis 轴向
+ * @returns 轴向名
+ */
+export function nameOfAxis_M(axis: uint): string {
+	return NATIVE_N_DIM_AXISES[axis] ?? `x${axis + 1}`
+}
+/**
+ * 用于显示角度名：轴向+正负
+ * @param rot 任意维整数角
+ * @returns 这个角度的名字
+ */
+export function nameOfRot_M(rot: mRot): string {
+	return nameOfAxis_M(rot >> 1) + '+-'[rot & 1]
 }
 
 // ! 弃用：现在依赖于地图设置
@@ -86,19 +142,19 @@ export function rotateInt(rot: intRot, angle: int): intRot {
 // 	return lockIntToStandard(rot + 1 + exMath.randInt(3));
 // }
 
-export function lockToStandard(rot: fRot): fRot {
+export function lockRot_F(rot: fRot): fRot {
 	if (isNaN(rot) || !isFinite(rot))
 		return DEFAULT;
 	if (rot < 0)
-		return lockToStandard(rot + 4);
+		return lockRot_F(rot + 4);
 	if (rot >= 4)
-		return lockToStandard(rot - 4);
+		return lockRot_F(rot - 4);
 	return rot;
 }
 
-export function lockIntToStandard(rot: int): intRot {
+export function lockRot_I(rot: int): intRot {
 	if (rot < 0)
-		return lockIntToStandard(rot + 4);
+		return lockRot_I(rot + 4);
 	return rot & 3;
 }
 
@@ -127,7 +183,7 @@ export function fromLinearDistance(xD: int, yD: int): intRot {
 }
 
 export function fromRealRot(rot: fRot): fRot {
-	return lockToStandard(rot / 90);
+	return lockRot_F(rot / 90);
 }
 
 export function toRealRot(rot: fRot): fRot {
@@ -145,7 +201,7 @@ export function toRealIntRot(rot: int): int {
  * 	3.then the value in of object is 315°(local:3.5).
  */
 export function globalToLocal(currentRot: fRot, containerRot: fRot): fRot {
-	return lockToStandard(currentRot - containerRot);
+	return lockRot_F(currentRot - containerRot);
 }
 
 /** Use for express the currentRot out the containerRot
@@ -155,7 +211,7 @@ export function globalToLocal(currentRot: fRot, containerRot: fRot): fRot {
  * 	3.Then the value out of object is 135°(local:1.5).
  */
 export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
-	return lockToStandard(containerRot + currentRot);
+	return lockRot_F(containerRot + currentRot);
 }
 
 /**

@@ -1032,8 +1032,8 @@
 				}
 			}
 			if (attributes.rotateWhenMoveIn) {
-				player.rot = GlobalRot.randomWithout(player.rot);
-				returnBoo = true;
+				player.rot = ?//GlobalRot.randomWithout(player.rot); // TODO: 随机向某方向旋转
+					returnBoo = true;
 			}
 		}
 		return returnBoo;

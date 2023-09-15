@@ -7,6 +7,7 @@ import { Font } from "../../legacy/flash/text";
 
 export const MAIN_FONT: Font = new MainFont();
 
+/** 一个标准的「方块」的展示大小；决定几乎所有游戏元素（方块、实体）的绘制尺度 */
 export const DEFAULT_SIZE: uint = 100;
 export const DEFAULT_SIZE_FRACTION: number = 1 / DEFAULT_SIZE;
 export const DEFAULT_SCALE: number = 32 / 100;

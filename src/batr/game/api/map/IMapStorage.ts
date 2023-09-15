@@ -1,6 +1,6 @@
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
 import { iPoint, intPoint } from "../../../common/geometricTools";
-import { intRot } from "../general/GlobalRot";
+import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
 import Block, { BlockType } from "../block/Block";
@@ -56,32 +56,31 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * * 一般表示为自然数数组
 	 * * 是「所有位置的所有方向」的并集
 	 */
-	get allDirection(): intRot[];
-
-	/** 获取地图在某位置「可前进的所有方向」 */
+	get allDirection(): mRot[];
 
 	/**
 	 * ! 高维版本
 	 * 获取地图在某位置「可前进的所有方向」
 	 */
-	getForwardDirectionsAt(p: iPoint): intRot[];
+	getForwardDirectionsAt(p: iPoint): mRot[];
 
 	/**
-	 * 在某一处随机获取一个「可前进方向」
+	 * 在某一处**等概率**随机获取一个「可前进方向」
 	 * * 可以借用上面的代码
 	 */
-
+	randomForwardDirectionAt(p: iPoint): mRot;
 	/**
-	 * ! 高维版本
-	 * 在某一处随机获取一个「可前进方向」
+	 * 在某一处**等概率**随机旋转「可前进方向」
+	 * 
+	 * !出于性能考虑，不会检查原朝向（轴向）是否合法
 	 * * 可以借用上面的代码
 	 */
-	randomForwardDirectionAt(p: iPoint): intRot;
+	randomRotateDirectionAt(p: iPoint, rot: mRot, step: int): mRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标，即便只用其中几个分量也是如此
 
 	/**
-	 * 【对接游戏】获取地图上的一个（有效）随机位置
+	 * 【对接游戏】**等概率**获取地图上的一个（有效）随机位置
 	 * 
 	 * ! 与两个维度都有关
 	 * 

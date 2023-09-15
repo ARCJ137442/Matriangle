@@ -2,7 +2,7 @@ import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
-import { mRot } from "../../../../api/general/GlobalRot";
+import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
 import ToolType from "../../ToolType";
 import EntityType from "../../registry/EntityRegistry";

@@ -1,7 +1,7 @@
 import { randInt, randIntBetween, randomBetween } from "../../../../common/exMath";
-import { iPoint, intPoint } from "../../../../common/geometricTools";
+import { iPoint } from "../../../../common/geometricTools";
 import { generateArray, identity, randomIn } from "../../../../common/utils";
-import { intRot, mRot } from "../../../api/general/GlobalRot";
+import { mRot, rotate_M, toOpposite_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import Block, { BlockType } from "../../../api/block/Block";
@@ -112,14 +112,14 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     // ! 现在使用getter方法动态获取，而非直接对变量进行静态闭包
-    protected readonly _allDirection: intRot[];
+    protected readonly _allDirection: mRot[];
     /**
      * * 默认0~3（x+、x-、y+、y-）
      * * 使用「实例常量缓存」提高性能
      * 
      * ! 不要对返回的数组进行任何修改
      */
-    public get allDirection(): intRot[] { return this._allDirection; }
+    public get allDirection(): mRot[] { return this._allDirection; }
 
     /**
      * * 默认0~3（x+、x-、y+、y-）
@@ -127,8 +127,31 @@ export default class MapStorageSparse implements IMapStorage {
      * 
      * ! 不要对返回的数组进行任何修改
      */
-    public getForwardDirectionsAt(p: intPoint): number[] {
-        return this.allDirection;
+    public getForwardDirectionsAt(p: iPoint): number[] { return this.allDirection; }
+
+    /**
+     * * 默认（内联）就是随机取
+     * 
+     * ! 注意：返回值是mRot「多位朝向」
+     * 
+     * @param x x坐标
+     * @param y y坐标
+     * @returns 随机一个坐标方向（mRot「多位朝向」）
+     */
+    public randomForwardDirectionAt(p: iPoint): mRot {
+        return randInt(this._nDim << 1)
+    }
+
+    /**
+     * 随机取一个「不是当前『任意维整数角』」的角度
+     * * 原理：利用「取余忽略」
+     * 
+     * ! 假设：在「稀疏地图」中，可用朝向与位置无关（平移不变性）
+     * 
+     * ? 暂时没算入接口，因为这函数暂时没被其它地方用到
+     */
+    public randomWithoutForwardDirectionAt(p: iPoint, rot: mRot): mRot {
+        return (rot + randInt((this._nDim << 1) - 1)) % this._nDim
     }
 
     /**
@@ -140,24 +163,27 @@ export default class MapStorageSparse implements IMapStorage {
      * @param y y坐标
      * @returns 随机一个坐标方向（mRot「多位朝向」）
      */
-    public randomForwardDirectionAt(p: intPoint): mRot {
-        return randInt(this._nDim << 1)
+    public randomRotateDirectionAt(p: iPoint, rot: mRot, step: int): mRot {
+        // 使用随机轴向，直接按步长旋转（算入「步长为2」的特殊情况）
+        return rotate_M(
+            rot,
+            ((rot >> 1) + randomBetween(1, this._nDim - 1)) % this._nDim, // 等概率获取一个不是自身轴向的随机轴向
+            step
+        )
     }
 
     /**
      * 析构函数
      */
-    public destructor(): void {
-
-    }
+    public destructor(): void { }
 
     //============Interface============//
 
-    generateNext(...args: any[]): IMapStorage {
+    public generateNext(...args: any[]): IMapStorage {
         return this.generatorF(this, ...args);
     }
 
-    public isInMap(p: intPoint): boolean {
+    public isInMap(p: iPoint): boolean {
         for (let i: uint = 0; i < this._nDim; ++i)
             if (this._border_min[i] > p[i] || this._border_max[i] < p[i])
                 return false
@@ -303,7 +329,7 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     // ! 非接口方法
-    public setBorder(border_min: intPoint, border_max: intPoint): IMapStorage {
+    public setBorder(border_min: iPoint, border_max: iPoint): IMapStorage {
         this._border_max.copyFrom(border_max);
         this._border_min.copyFrom(border_min);
         return this;
