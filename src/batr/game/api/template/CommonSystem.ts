@@ -140,9 +140,7 @@ export default class CommonSystem<T> {
 		return true;
 	}
 
-	/**
-	 * Remove All Entry!
-	 */
+	/** Remove All Entry! */
 	public clear(): void {
 		for (let i: uint = 0; i < this._entries.length; i++)
 			delete this._entries[i];

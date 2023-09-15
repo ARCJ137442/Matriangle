@@ -164,9 +164,7 @@ export default class Player extends Entity implements IPlayerProfile {
 			this._GUI.updateExperience();
 	}
 
-	/**
-	 * If the experience up to levelupExperience,level++
-	 */
+	/** If the experience up to levelupExperience,level++ */
 	protected _level: uint = 0;
 
 	public get level(): uint {
@@ -341,9 +339,7 @@ export default class Player extends Entity implements IPlayerProfile {
 		return this._tool;
 	}
 
-	/**
-	 * This tool is used by drones created from another tool
-	 */
+	/** This tool is used by drones created from another tool */
 	public get droneTool(): ToolType {
 		return this._droneTool;
 	}
@@ -352,9 +348,7 @@ export default class Player extends Entity implements IPlayerProfile {
 		this._droneTool = value;
 	}
 
-	/**
-	 * Also Reset CD&Charge
-	 */
+	/** Also Reset CD&Charge */
 	public set tool(value: ToolType) {
 		if (value == this._tool)
 			return;

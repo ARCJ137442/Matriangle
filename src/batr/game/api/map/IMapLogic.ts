@@ -32,14 +32,10 @@ import IMapStorage from "./IMapStorage";
  */
 export default interface IMapLogic {
 	//============Interface Functions============//
-	/**
-	 * 【对接显示】获取（经国际化的）地图的显示名称
-	 */
+	/** 【对接显示】获取（经国际化的）地图的显示名称 */
 	get name(): string;
 
-	/**
-	 * 用于获取其链接的「存储结构」
-	 */
+	/** 用于获取其链接的「存储结构」 */
 	get storage(): IMapStorage;
 
 	/**

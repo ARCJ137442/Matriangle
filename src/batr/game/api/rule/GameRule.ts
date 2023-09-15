@@ -33,18 +33,14 @@ export default class GameRule extends EventDispatcher {
 	protected static readonly d_grayscaleTeamCount: uint = 3;
 	protected static readonly d_playerTeams: PlayerTeam[] = initPlayerTeams(d_coloredTeamCount, d_grayscaleTeamCount);
 
-	/**
-	 * Allows players change their teams by general means
-	 */
+	/** Allows players change their teams by general means */
 	protected static readonly d_allowPlayerChangeTeam: boolean = true;
 
 	//====GamePlay====//
 	protected static readonly d_defaultHealth: uint = 100;
 	protected static readonly d_defaultMaxHealth: uint = 100;
 
-	/**
-	 * Use as a int with negative numbers means infinity
-	 */
+	/** Use as a int with negative numbers means infinity */
 	protected static readonly d_remainLivesPlayer: int = -1;
 
 	protected static readonly d_remainLivesAI: int = -1;
@@ -56,45 +52,31 @@ export default class GameRule extends EventDispatcher {
 
 	protected static readonly d_recordPlayerStats: boolean = true;
 
-	/**
-	 * Negative Number means asphyxia can kill player
-	 */
+	/** Negative Number means asphyxia can kill player */
 	protected static readonly d_playerAsphyxiaDamage: int = 15;
 
 	//====Bonus====//
 
-	/**
-	 * negative number means infinity
-	 */
+	/** negative number means infinity */
 	protected static readonly d_bonusBoxMaxCount: int = 8;
 
-	/**
-	 * [{Type:<Type>,Weight:<Number>},...]
-	 */
+	/** [{Type:<Type>,Weight:<Number>},...] */
 	protected static readonly d_bonusBoxSpawnPotentials: object[] = null;
 
-	/**
-	 * null means all type can be spawned and they have same weight
-	 */
+	/** null means all type can be spawned and they have same weight */
 	protected static readonly d_bonusBoxSpawnAfterPlayerDeath: boolean = true;
 
 	//====Bonus's Buff====//
 
-	/**
-	 * Determines bonus(type=buffs)'s amount of addition
-	 */
+	/** Determines bonus(type=buffs)'s amount of addition */
 	protected static readonly d_bonusBuffAdditionAmount: uint = 1;
 
-	/**
-	 * Determines bonus(type=ADD_LIFE)'s amount of addition
-	 */
+	/** Determines bonus(type=ADD_LIFE)'s amount of addition */
 	protected static readonly d_bonusMaxHealthAdditionAmount: uint = 5;
 
 	//====Map====//
 
-	/**
-	 * [{map:<MAP>,weight:<Number>},...]
-	 */
+	/** [{map:<MAP>,weight:<Number>},...] */
 	protected static readonly d_mapRandomPotentials: object[] = null;
 
 	protected static readonly d_initialMapID: int = -1;
@@ -276,9 +258,7 @@ export default class GameRule extends EventDispatcher {
 
 	// Bonus
 
-	/**
-	 * Negative number means infinity
-	 */
+	/** Negative number means infinity */
 	protected _bonusBoxMaxCount: int;
 
 	protected _bonusBoxSpawnChance: number = 1 / GlobalGameVariables.TPS / 8;

@@ -40,9 +40,7 @@ export default class MapLogic_V1 implements IMapLogic {
 		this._isArena = isArena;
 	}
 
-	/**
-	 * 析构函数：删除所有方块（的引用）
-	 */
+	/** 析构函数：删除所有方块（的引用） */
 	public destructor(): void {
 		// this.clearBlock(); //! 现在「存储结构」可能是公用的，所以不能「跟着陪葬」
 	}

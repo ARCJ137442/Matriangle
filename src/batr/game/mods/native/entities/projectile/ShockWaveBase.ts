@@ -8,7 +8,7 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
 
 // import batr.game.entity.*;
@@ -23,13 +23,11 @@ import ShockWaveDrone from "./ShockWaveDrone";
  * ...
  * @author ARCJ137442
  */
-export default class ShockWaveBase extends ProjectileCommon {
+export default class ShockWaveBase extends Projectile {
 	//============Static Variables============//
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2;
 
-	/**
-	 * Life For Charge
-	 */
+	/** Life For Charge */
 	public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS;
 
 	//============Static Functions============//
@@ -43,15 +41,13 @@ export default class ShockWaveBase extends ProjectileCommon {
 	protected _tool: ToolType;
 	protected _toolChargePercent: number;
 
-	/**
-	 * Default is 0,Vortex is 1
-	 */
+	/** Default is 0,Vortex is 1 */
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
 		super(host, x, y, owner);
-		this._currentTool = ToolType.SHOCKWAVE_ALPHA;
+		this._ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this.mode = mode;
 		this._toolChargePercent = toolCharge;

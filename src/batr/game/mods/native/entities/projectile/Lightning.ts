@@ -10,7 +10,7 @@ import BlockAttributes from "../../../../api/block/BlockAttributes";
 import Game from "../../../../main/Game";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 
 // import batr.game.block.*;
 // import batr.game.entity.entity.player.*;
@@ -20,7 +20,7 @@ import ProjectileCommon from "./ProjectileCommon";
  * ...
  * @author ARCJ137442
  */
-export default class Lightning extends ProjectileCommon {
+export default class Lightning extends Projectile {
 	//============Static Variables============//
 	public static readonly LIGHT_ALPHA: number = 0.5;
 	public static readonly LIGHT_BLOCK_WIDTH: number = 0.2;
@@ -44,7 +44,7 @@ export default class Lightning extends ProjectileCommon {
 		super(host, x, y, owner);
 		this.rot = rot;
 		this._initialEnergy = this._energy = energy;
-		this._currentTool = ToolType.LIGHTNING;
+		this._ownerTool = ToolType.LIGHTNING;
 	}
 
 	//============Destructor Function============//
@@ -70,9 +70,7 @@ export default class Lightning extends ProjectileCommon {
 			this._host.entitySystem.removeProjectile(this);
 	}
 
-	/**
-	 * Init the way of lightning
-	 */
+	/** Init the way of lightning */
 	protected lightningWays(): void {
 		// Draw in location in this
 		let head: iPoint = new iPoint(this.gridX, this.gridY);

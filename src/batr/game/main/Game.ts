@@ -93,15 +93,11 @@
 	//============Instance Variables============//
 	// General
 
-	/**
-	 * The reference of Subject
-	 */
+	/** The reference of Subject */
 	protected _subject: BatrSubject;
 	protected _map: IMap;
 
-	/**
-	 * Internal GameRule copy from Subject
-	 */
+	/** Internal GameRule copy from Subject */
 	protected _rule: GameRule;
 
 	protected _stat: GameStats;
@@ -363,9 +359,7 @@
 	//============Instance Functions============//
 	//========About Game End========//
 
-	/**
-	 * Condition: Only one team's player alive.
-	 */
+	/** Condition: Only one team's player alive. */
 	protected isPlayersEnd(players: Player[]): boolean {
 		if (this.numPlayers < 2)
 			return false;
@@ -781,9 +775,7 @@
 		return true;
 	}
 
-	/**
-	 * return testCanPass in player's front position.
-	 */
+	/** return testCanPass in player's front position. */
 	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
 		// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
 		return this.testCanPass(
@@ -798,9 +790,7 @@
 		return this.testIntCanPass(x, y, true, false, false, true, true);
 	}
 
-	/**
-	 * return testCanPass as player in other position.
-	 */
+	/** return testCanPass as player in other position. */
 	public testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
 		// Debug: trace('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
 		// Define
@@ -851,7 +841,7 @@
 	}
 
 	public toolCreateExplode(x: number, y: number, finalRadius: number,
-		damage: uint, projectile: ProjectileCommon,
+		damage: uint, projectile: Projectile,
 		color: uint, edgePercent: number = 1): void {
 		// Operate
 		let creator: Player = projectile.owner;
@@ -1014,9 +1004,7 @@
 		}
 	}
 
-	/**
-	 * Execute when Player Move in block
-	 */
+	/** Execute when Player Move in block */
 	public moveInTestPlayer(player: Player, isLocationChange: boolean = false): boolean {
 		if (!player.isActive)
 			return false;
@@ -1086,9 +1074,7 @@
 		}
 	}
 
-	/**
-	 * Function about Player pickup BonusBox
-	 */
+	/** Function about Player pickup BonusBox */
 	public bonusBoxTest(player: Player, x: number = NaN, y: number = NaN): boolean {
 		if (!player.isActive)
 			return false;
@@ -1653,7 +1639,7 @@
 
 	public playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
 		// Set Variables
-		let p: ProjectileCommon = null;
+		let p: Projectile = null;
 
 		let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
 
@@ -2140,8 +2126,6 @@
 		this.moveInTestWithEntity();
 	}
 
-	/**
-	 * 基于「方块类型」实现多分派：使用「哈希值+字典」的形式
-	 */
+	/** 基于「方块类型」实现多分派：使用「哈希值+字典」的形式 */
 	protected _GameEventPatcher
 }

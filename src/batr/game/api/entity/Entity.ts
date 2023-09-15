@@ -13,9 +13,7 @@ export default abstract class Entity {
 	 */
 	private _isActive: boolean = false;
 
-	/**
-	 * 读写「实体是否激活」
-	 */
+	/** 读写「实体是否激活」 */
 	public get isActive(): boolean { return this._isActive }
 	public set isActive(value: boolean) { this._isActive = value }
 

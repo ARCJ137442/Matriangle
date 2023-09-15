@@ -37,10 +37,7 @@ export interface IEntityInGrid extends Entity {
      */
     readonly i_InGrid: true;
 
-    /**
-     * 强制实现者实现此类，用于「制造冲突」
-     */
-    _position: iPoint;
+    // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     get position(): iPoint;
     set position(value: iPoint);
 }
@@ -62,10 +59,7 @@ export interface IEntityOutGrid extends Entity {
      */
     readonly i_InGrid: false;
 
-    /**
-     * 强制实现者实现此类，用于「制造冲突」
-     */
-    _position: fPoint;
+    // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     get position(): fPoint;
     set position(value: fPoint);
 
@@ -90,7 +84,6 @@ export interface IEntityWithDirection extends Entity {
      */
     readonly i_hasDirection: true;
 
-    _direction: mRot;
     get direction(): mRot;
     set direction(value: mRot);
 }

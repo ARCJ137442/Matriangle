@@ -29,9 +29,7 @@ export default class EffectBlockLight extends EntityEffect {
 	//============Instance Variables============//
 	protected _color: uint = 0x000000;
 
-	/**
-	 * The uint percent.
-	 */
+	/** The uint percent. */
 	protected _alpha: uint;
 	public reverse: boolean = false;
 

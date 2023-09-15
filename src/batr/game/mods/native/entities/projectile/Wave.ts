@@ -4,7 +4,7 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 
 // import batr.general.*;
 
@@ -17,7 +17,7 @@ import ProjectileCommon from "./ProjectileCommon";
 // import flash.display.*;
 // import flash.geom.*;
 
-export default class Wave extends ProjectileCommon {
+export default class Wave extends Projectile {
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;
 	public static readonly ALPHA: number = 0.64;
@@ -39,7 +39,7 @@ export default class Wave extends ProjectileCommon {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
 		super(host, x, y, owner);
-		this._currentTool = ToolType.WAVE;
+		this._ownerTool = ToolType.WAVE;
 		dealCharge(chargePercent);
 		this.drawShape();
 	}
@@ -65,7 +65,7 @@ export default class Wave extends ProjectileCommon {
 	public dealCharge(percent: number): void {
 		this.tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * percent;
 		this.finalScale = this._owner == null ? tempScale : (1 + this._owner.computeFinalRadius(this.tempScale) / 2);
-		this.damage = this._currentTool.defaultDamage * tempScale / Wave.MAX_SCALE;
+		this.damage = this._ownerTool.defaultDamage * tempScale / Wave.MAX_SCALE;
 	}
 
 	//====Graphics Functions====//

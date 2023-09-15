@@ -25,9 +25,7 @@ export abstract class xPoint<T> extends Array<T> {
 
 	//================Util Functions================//
 
-	/**
-	 * 显示点是否（在其长度内）有未定义量
-	 */
+	/** 显示点是否（在其长度内）有未定义量 */
 	public get hasUndefined(): boolean {
 		for (let i = 0; i < this.length; i++)
 			if (this[i] === undefined) return true;

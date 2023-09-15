@@ -17,7 +17,7 @@ import AIPlayer from "../mods/native/entities/player/AIPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Lightning from "../mods/native/entities/projectile/Lightning";
-import ProjectileCommon from "../mods/native/entities/projectile/ProjectileCommon";
+import Projectile from "../mods/native/entities/projectile/Projectile";
 import ThrownBlock from "../mods/native/entities/projectile/ThrownBlock";
 import GameRule from "../api/rule/GameRule";
 import GameRuleEvent from "../api/rule/GameRuleEvent";
@@ -74,9 +74,7 @@ export default interface IBatrGame {
 	//============Display Implements============//
 	get translations(): I18ns
 
-	/**
-	 * * 在设置「是否激活」的时候，可能需要「更改侦听器」等附加动作辅助
-	 */
+	/** * 在设置「是否激活」的时候，可能需要「更改侦听器」等附加动作辅助 */
 	get isActive(): boolean;
 
 	set isActive(value: boolean);
@@ -141,9 +139,7 @@ export default interface IBatrGame {
 	//============Instance Functions============//
 	//========About Game End========//
 
-	/**
-	 * Condition: Only one team's player alive.
-	 */
+	/** Condition: Only one team's player alive. */
 	isPlayersEnd(players: Player[]): boolean
 
 	getAlivePlayers(): Player[]
@@ -214,16 +210,12 @@ export default interface IBatrGame {
 
 	testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	/**
-	 * return testCanPass in player's front position.
-	 */
+	/** return testCanPass in player's front position. */
 	testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
 	testBonusBoxCanPlaceAt(x: int, y: int): boolean
 
-	/**
-	 * return testCanPass as player in other position.
-	 */
+	/** return testCanPass as player in other position. */
 	testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
 	testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
@@ -237,7 +229,7 @@ export default interface IBatrGame {
 	toolCreateExplode(
 		x: number, y: number,
 		finalRadius: number,
-		damage: uint, projectile: ProjectileCommon,
+		damage: uint, projectile: Projectile,
 		color: uint, edgePercent: number/* = 1*/): void
 
 
@@ -249,9 +241,7 @@ export default interface IBatrGame {
 
 	moveInTestWithEntity(): void
 
-	/**
-	 * Execute when Player Move in block
-	 */
+	/** Execute when Player Move in block */
 	moveInTestPlayer(player: Player, isLocationChange: boolean/* = false*/): boolean
 
 	/**
@@ -272,9 +262,7 @@ export default interface IBatrGame {
 	 */
 	moveOutTestPlayer(player: Player, x: int, y: int, isLocationChange: boolean/* = false*/): void
 
-	/**
-	 * Function about Player pickup BonusBox
-	 */
+	/** Function about Player pickup BonusBox */
 	bonusBoxTest(player: Player, x: number/* = NaN*/, y: number/* = NaN*/): boolean
 
 	//====Functions About Map====//

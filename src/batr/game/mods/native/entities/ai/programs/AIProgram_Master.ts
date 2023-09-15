@@ -87,9 +87,7 @@ export default class AIProgram_Master implements IAIProgram {
 
 	//============Instance Variables============//
 
-	/**
-	 * This matrix contains point where it went.
-	 */
+	/** This matrix contains point where it went. */
 	protected _remember: Vector.<Boolean[]>;
 
 	protected _closeTarget: Dictionary;

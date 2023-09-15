@@ -34,8 +34,8 @@ export default class SubBomber extends BulletBasic {
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number, fuel: int = 100) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
-		this._currentTool = ToolType.SUB_BOMBER;
-		this.damage = this._currentTool.defaultDamage;
+		this._ownerTool = ToolType.SUB_BOMBER;
+		this.damage = this._ownerTool.defaultDamage;
 		this._maxBombTick = MAX_BOMB_TICK * (1.5 - scalePercent);
 		this.drawShape();
 	}

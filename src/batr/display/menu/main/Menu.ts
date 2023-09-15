@@ -55,9 +55,7 @@ export default class Menu extends Sprite {
 	protected static readonly _TITLE_SHOW_Y: int = PosTransform.localPosToRealPos(2);
 	protected static readonly _TITLE_ANIMATION_TIME: uint = GlobalGameVariables.FIXED_TPS;
 
-	/**
-	 * Menu Text Format
-	 */
+	/** Menu Text Format */
 	public static readonly TEXT_FORMAT: TextFormat = new TextFormat(
 		new MainFont().fontName,
 		DEFAULT_SIZE * 5 / 8,
@@ -184,9 +182,7 @@ export default class Menu extends Sprite {
 
 	protected _gameRuleConfig: BatrTextInput;
 
-	/**
-	 * A integer combine with limited indexes.
-	 */
+	/** A integer combine with limited indexes. */
 	protected _sheetHistory: uint;
 	/* 
 	 * s=<1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,0,1>:[l=17,m=2],
@@ -757,9 +753,7 @@ export default class Menu extends Sprite {
 		this._titleTimer.start();
 	}
 
-	/**
-	 * Loading game result when game end.
-	 */
+	/** Loading game result when game end. */
 	public loadResult(result: GameResult): void {
 		// set
 		this._gameResultText.translationalText = result.message;

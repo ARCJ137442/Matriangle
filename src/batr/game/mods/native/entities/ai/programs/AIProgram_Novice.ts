@@ -81,9 +81,7 @@ export default class AIProgram_Novice implements IAIProgram {
 		return AIProgram_Novice.LABEL_SHORT;
 	}
 
-	/**
-	 * Returns use for AIRunSpeed
-	 */
+	/** Returns use for AIRunSpeed */
 	public get referenceSpeed(): uint {
 		return 10 + exMath.random(3) * 5;
 	}

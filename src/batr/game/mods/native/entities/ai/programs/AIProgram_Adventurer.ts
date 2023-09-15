@@ -560,9 +560,7 @@ public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerA
 class PathNode extends iPoint {
 	public parent: PathNode;
 
-	/**
-	 * From GlobalRot(U,D,L,R)
-	 */
+	/** From GlobalRot(U,D,L,R) */
 	public fromRot: uint = GlobalRot.NULL;
 
 	public G: int = 0;
@@ -588,9 +586,7 @@ class PathNode extends iPoint {
 		return p;
 	}
 
-	/**
-	 * Didn't include the root
-	 */
+	/** Didn't include the root */
 	public get pathToRoot(): PathNode[] {
 		let result: PathNode[] = new Array<PathNode>(this);
 		let p: PathNode = this.parent;

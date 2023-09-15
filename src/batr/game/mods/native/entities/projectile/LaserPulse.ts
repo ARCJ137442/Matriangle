@@ -27,9 +27,9 @@ export default class LaserPulse extends LaserBasic {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH, chargePercent: number = 1) {
 		super(host, x, y, owner, length, chargePercent);
-		this._currentTool = ToolType.PULSE_LASER;
+		this._ownerTool = ToolType.PULSE_LASER;
 		this._life = LaserPulse.LIFE;
-		this.damage = this._currentTool.defaultDamage;
+		this.damage = this._ownerTool.defaultDamage;
 		this.dealCharge(chargePercent);
 	}
 

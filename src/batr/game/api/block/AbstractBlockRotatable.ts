@@ -23,9 +23,7 @@ export default abstract class AbstractBlockRotatable extends Block {
 	}
 
 	//============Game Mechanics============//
-	/**
-	 * Determinate the direction of block
-	 */
+	/** Determinate the direction of block */
 	public get rot(): uint {
 		return this._rot;
 	}

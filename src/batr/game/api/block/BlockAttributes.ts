@@ -19,9 +19,7 @@ export default class BlockAttributes {
 
 	public laserCanPass: boolean = false;
 
-	/**
-	 * Allows player
-	 */
+	/** Allows player */
 	public isTransparent: boolean = false;
 
 	/**
@@ -35,14 +33,10 @@ export default class BlockAttributes {
 	 */
 	public drawLayer: int = 1;
 
-	/**
-	 * Tool:BlockThrower can carry
-	 */
+	/** Tool:BlockThrower can carry */
 	public isCarriable: boolean = true;
 
-	/**
-	 * Tool:BlockThrower can carry
-	 */
+	/** Tool:BlockThrower can carry */
 	public isBreakable: boolean = true;
 
 	/**
@@ -53,9 +47,7 @@ export default class BlockAttributes {
 	 */
 	public playerDamage: int = int$MIN_VALUE;
 
-	/**
-	 * True means player/projectile will rotate when move in the block.
-	 */
+	/** True means player/projectile will rotate when move in the block. */
 	public rotateWhenMoveIn: boolean = false;
 
 	/**
@@ -65,22 +57,16 @@ export default class BlockAttributes {
 	 */
 	public electricResistance: uint = 100;
 
-	/**
-	 * Can't be control in Arena Map.
-	 */
+	/** Can't be control in Arena Map. */
 	public unbreakableInArenaMap: boolean = false;
 
-	/**
-	 * Spawn BonusBox ignore max count.
-	 */
+	/** Spawn BonusBox ignore max count. */
 	public supplyingBonus: boolean = false;
 
 	//==Information==//
 	public defaultPixelColor: uint;
 
-	/**
-	 * ! Using UINT PERCENT
-	 */
+	/** ! Using UINT PERCENT */
 	public defaultPixelAlpha: uint;
 
 	//============Constructor & Destructor============//
@@ -291,9 +277,7 @@ export default class BlockAttributes {
 		return this;
 	}
 
-	/**
-	 * Gate Open
-	 */
+	/** Gate Open */
 	public loadAsGate(): BlockAttributes {
 		this.loadAsGas();
 		this.isCarriable = true;
@@ -302,9 +286,7 @@ export default class BlockAttributes {
 		return this;
 	}
 
-	/**
-	 * Gate Close
-	 */
+	/** Gate Close */
 	public loadAsGateClose(): BlockAttributes {
 		this.loadAsSolid();
 		this.unbreakableInArenaMap = true;

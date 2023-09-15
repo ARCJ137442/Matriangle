@@ -7,14 +7,14 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 
 // import batr.game.entity.*;
 // import batr.game.entity.entity.player.*;
 // import batr.game.model.*;
 // import batr.game.main.*;
 
-export default class LaserBasic extends ProjectileCommon {
+export default class LaserBasic extends Projectile {
 	//============Static Variables============//
 	public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS;
 	public static readonly SIZE: number = DEFAULT_SIZE / 2;
@@ -27,8 +27,8 @@ export default class LaserBasic extends ProjectileCommon {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: number = LENGTH, chargePercent: number = 1) {
 		super(host, x, y, owner);
-		this._currentTool = ToolType.LASER;
-		this.damage = this._currentTool.defaultDamage;
+		this._ownerTool = ToolType.LASER;
+		this.damage = this._ownerTool.defaultDamage;
 		this.scaleX = length;
 		this.dealCharge(chargePercent);
 		this.drawShape();

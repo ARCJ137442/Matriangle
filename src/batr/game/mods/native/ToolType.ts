@@ -132,9 +132,7 @@ export default class ToolType extends TypeCommon {
 		return tempW;
 	}
 
-	/**
-	 * @return true if the tool uses player's droneTool
-	 */
+	/** @return true if the tool uses player's droneTool */
 	public static isDroneTool(tool: ToolType): boolean {
 		return tool == ToolType.SHOCKWAVE_ALPHA || tool == ToolType.SHOCKWAVE_BETA;
 	}
@@ -214,9 +212,7 @@ export default class ToolType extends TypeCommon {
 		return 'tool';
 	}
 
-	/**
-	 * Dynamic when Tool List Changing
-	 */
+	/** Dynamic when Tool List Changing */
 	public get toolID(): int {
 		return ToolType.toToolID(this);
 	}

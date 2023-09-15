@@ -51,9 +51,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 
 	protected _text: BatrTextField;
 
-	/**
-	 * The Linkage(String) to sheet
-	 */
+	/** The Linkage(String) to sheet */
 	public sheetLinkage: string;
 
 	//============Constructor & Destructor============//

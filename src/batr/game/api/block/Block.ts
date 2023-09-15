@@ -14,9 +14,7 @@ export type BlockType = Class;
 export default abstract class Block implements IBatrDisplayable {
 
 	//============Static============//
-	/**
-	 * ! the original implement of `XXType` now will be combined as static variables and functions, or be concentrated to module `XXRegistry`
-	 */
+	/** ! the original implement of `XXType` now will be combined as static variables and functions, or be concentrated to module `XXRegistry` */
 
 	// ? so it could be generalized to registry
 	// * and it may be uses the class directly
@@ -97,9 +95,7 @@ export default abstract class Block implements IBatrDisplayable {
 		// TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
 	}
 
-	/**
-	 * Determinate the single-pixel color
-	 */
+	/** Determinate the single-pixel color */
 	public get pixelColor(): uint {
 		return this.attributes.defaultPixelColor // default
 	}

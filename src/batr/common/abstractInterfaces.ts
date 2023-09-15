@@ -4,14 +4,10 @@
  */
 export interface IChildContainer<Child, Index> {
 
-	/**
-	 * 获取所有子元素
-	 */
+	/** 获取所有子元素 */
 	get children(): Child[];
 
-	/**
-	 * 获取子元素的数量
-	 */
+	/** 获取子元素的数量 */
 	get numChildren(): Index;
 
 	/**

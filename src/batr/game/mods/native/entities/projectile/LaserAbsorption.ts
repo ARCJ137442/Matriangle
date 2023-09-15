@@ -27,8 +27,8 @@ export default class LaserAbsorption extends LaserBasic {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH) {
 		super(host, x, y, owner, length);
-		this._currentTool = ToolType.ABSORPTION_LASER;
-		this.damage = this._currentTool.defaultDamage;
+		this._ownerTool = ToolType.ABSORPTION_LASER;
+		this.damage = this._ownerTool.defaultDamage;
 	}
 
 	//============Instance Getter And Setter============//

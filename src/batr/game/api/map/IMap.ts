@@ -7,19 +7,13 @@ import IMapStorage from "./IMapStorage";
  */
 export default interface IMap {
 
-	/**
-	 * 获取地图的「逻辑结构」
-	 */
+	/** 获取地图的「逻辑结构」 */
 	get logic(): IMapLogic;
 
-	/**
-	 * 获取地图的「存储结构」
-	 */
+	/** 获取地图的「存储结构」 */
 	get storage(): IMapStorage;
 
-	/**
-	 * 析构函数
-	 */
+	/** 析构函数 */
 	destructor(): void;
 
 }

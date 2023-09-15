@@ -36,14 +36,10 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 	protected _selectors: BatrSelector[] = new Array<BatrSelector>();
 	protected _selectTextFields: BatrTextField[] = new Array<BatrTextField>();
 
-	/**
-	 * Distance Between selector And selector.
-	 */
+	/** Distance Between selector And selector. */
 	protected _verticalDistance = BatrSelectorList.DEFAULT_DISTANCE_V;
 
-	/**
-	 * Distance Between Text And selector.
-	 */
+	/** Distance Between Text And selector. */
 	protected _horizontalDistance = BatrSelectorList.DEFAULT_DISTANCE_H;
 
 	//============Constructor & Destructor============//
@@ -167,40 +163,30 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 
 	//========By IBatrMenuElementContainer========//
 
-	/**
-	 * Unfinished.
-	 */
+	/** Unfinished. */
 	public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
 		this.functionNotFound();
 		return null;
 	}
 
-	/**
-	 * Unfinished.
-	 */
+	/** Unfinished. */
 	public appendDirectElements(...elements): IBatrMenuElement {
 		this.functionNotFound();
 		return null;
 	}
 
-	/**
-	 * Unfinished.
-	 */
+	/** Unfinished. */
 	public addChildPerDirectElements(): void {
 		this.initDisplay();
 	}
 
-	/**
-	 * Unfinished.
-	 */
+	/** Unfinished. */
 	public getElementAt(index: int): IBatrMenuElement {
 		this.functionNotFound();
 		return null;
 	}
 
-	/**
-	 * Unfinished.
-	 */
+	/** Unfinished. */
 	public getElementByName(name: string): BatrMenuGUI {
 		this.functionNotFound();
 		return null;

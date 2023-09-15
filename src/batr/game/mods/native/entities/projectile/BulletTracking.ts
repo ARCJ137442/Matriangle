@@ -36,7 +36,7 @@ export default class BulletTracking extends BulletBasic {
 		if (chargePercent >= 1)
 			this._trackingFunction = this.getTargetRotWidely;
 		super(host, x, y, owner, DEFAULT_SPEED, DEFAULT_EXPLODE_RADIUS);
-		this._currentTool = ToolType.TRACKING_BULLET;
+		this._ownerTool = ToolType.TRACKING_BULLET;
 		this.cacheTargets();
 		this.drawShape();
 	}
@@ -48,13 +48,11 @@ export default class BulletTracking extends BulletBasic {
 
 	//============Instance Functions============//
 
-	/**
-	 * Cached some static properties, during the short lifespan of the bullet
-	 */
+	/** Cached some static properties, during the short lifespan of the bullet */
 	protected cacheTargets(): void {
 		for (let player of _host.entitySystem.players) {
 			if (player != null && // not null
-				(this._owner == null || this._owner.canUseToolHurtPlayer(player, this._currentTool)) // should can use it to hurt
+				(this._owner == null || this._owner.canUseToolHurtPlayer(player, this._ownerTool)) // should can use it to hurt
 			)
 				this._cachedTargets.push(player);
 		}
@@ -94,7 +92,7 @@ export default class BulletTracking extends BulletBasic {
 		return (
 			player == null || // not null
 			player.isRespawning || // not respawning
-			(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this._currentTool)) // should can use it to hurt
+			(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this._ownerTool)) // should can use it to hurt
 		);
 	}
 

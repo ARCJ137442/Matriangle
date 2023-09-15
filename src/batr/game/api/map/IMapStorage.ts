@@ -13,14 +13,10 @@ import Block, { BlockType } from "../block/Block";
 export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage> {
 	//============Interface Functions============//
 
-	/**
-	 * 决定地图「一般意义上的宽度」，对应地图在x方向的尺寸
-	 */
+	/** 决定地图「一般意义上的宽度」，对应地图在x方向的尺寸 */
 	get mapWidth(): uint;
 
-	/**
-	 * 决定地图「一般意义上的高度」，对应地图在y方向的尺寸
-	 */
+	/** 决定地图「一般意义上的高度」，对应地图在y方向的尺寸 */
 	get mapHeight(): uint;
 
 	/**
@@ -62,9 +58,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 */
 	get allDirection(): intRot[];
 
-	/**
-	 * 获取地图在某位置「可前进的所有方向」
-	 */
+	/** 获取地图在某位置「可前进的所有方向」 */
 
 	/**
 	 * ! 高维版本
@@ -215,24 +209,16 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 */
 	clearBlocks(deleteBlock?: boolean/* = true*/): IMapStorage;
 
-	/**
-	 * 【机制需要】获取所有重生点的位置
-	 */
+	/** 【机制需要】获取所有重生点的位置 */
 	get spawnPoints(): iPoint[];
 
-	/**
-	 * 【机制需要】获取重生点的数量
-	 */
+	/** 【机制需要】获取重生点的数量 */
 	get numSpawnPoints(): uint;
 
-	/**
-	 * 【机制需要】获取「是否有重生点」
-	 */
+	/** 【机制需要】获取「是否有重生点」 */
 	get hasSpawnPoint(): boolean;
 
-	/**
-	 * 【机制需要】随机获取一个重生点
-	 */
+	/** 【机制需要】随机获取一个重生点 */
 	get randomSpawnPoint(): iPoint;
 
 	/**
@@ -242,9 +228,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 */
 	addSpawnPointAt(p: iPoint): IMapStorage;
 
-	/**
-	 * 【机制需要】获取某处「是否有重生点」
-	 */
+	/** 【机制需要】获取某处「是否有重生点」 */
 	hasSpawnPointAt(p: iPoint): boolean;
 
 	/**
@@ -254,9 +238,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	*/
 	removeSpawnPoint(p: iPoint): boolean;
 
-	/**
-	 * 移除地图上的所有重生点
-	 */
+	/** 移除地图上的所有重生点 */
 	clearSpawnPoints(): IMapStorage;
 
 	// AI About

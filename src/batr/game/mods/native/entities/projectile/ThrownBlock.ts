@@ -9,7 +9,7 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 
 // import batr.game.block.*;
 // import batr.game.entity.entity.player.*;
@@ -21,7 +21,7 @@ import ProjectileCommon from "./ProjectileCommon";
 // import flash.display.*;
 // import flash.geom.*;
 
-export default class ThrownBlock extends ProjectileCommon {
+export default class ThrownBlock extends Projectile {
 	//============Static Variables============//
 	public static readonly MAX_SPEED: number = 15 / GlobalGameVariables.FIXED_TPS;
 	public static readonly MIN_SPEED: number = 1 / 3 * MAX_SPEED;
@@ -38,10 +38,10 @@ export default class ThrownBlock extends ProjectileCommon {
 		super(host, x, y, owner);
 		this._carriedBlock = block;
 
-		this._currentTool = ToolType.BLOCK_THROWER;
+		this._ownerTool = ToolType.BLOCK_THROWER;
 		this.xSpeed = GlobalRot.towardIntX(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.ySpeed = GlobalRot.towardIntY(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
-		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this._currentTool.defaultDamage;
+		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this._ownerTool.defaultDamage;
 		this.drawShape();
 	}
 

@@ -61,14 +61,10 @@ export module GameEventTypes {
  * ? 是否要「内置事件」与「自定义事件」分离开来？是否要实现整个事件系统？
  */
 export default class GameEventPatcher {
-	/**
-	 * 通过「方块类型」进行事件分派的字典
-	 */
+	/** 通过「方块类型」进行事件分派的字典 */
 	public _blockPatchMap: GameEventPatchMap = {};
 
-	/**
-	 * 构造函数
-	 */
+	/** 构造函数 */
 	public constructor() { }
 
 	/**

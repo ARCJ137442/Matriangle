@@ -9,7 +9,7 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import ProjectileCommon from "./ProjectileCommon";
+import Projectile from "./Projectile";
 
 // import batr.game.block.*;
 // import batr.game.entity.*;
@@ -20,7 +20,7 @@ import ProjectileCommon from "./ProjectileCommon";
 // import flash.display.*;
 // import flash.geom.*;
 
-export default class ShockWaveDrone extends ProjectileCommon {
+export default class ShockWaveDrone extends Projectile {
 	//============Static Variables============//
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2;
@@ -40,7 +40,7 @@ export default class ShockWaveDrone extends ProjectileCommon {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
 		super(host, x, y, owner);
-		this._currentTool = ToolType.SHOCKWAVE_ALPHA;
+		this._ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this._toolChargePercent = toolChargePercent;
 		this._toolRot = toolRot;
