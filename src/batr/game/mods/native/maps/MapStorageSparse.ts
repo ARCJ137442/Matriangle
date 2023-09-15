@@ -1,4 +1,4 @@
-import { randInt, randIntBetween, randomBetween } from "../../../../common/exMath";
+import { randInt, randIntBetween, randModWithout, randomBetween } from "../../../../common/exMath";
 import { iPoint } from "../../../../common/geometricTools";
 import { generateArray, identity, randomIn } from "../../../../common/utils";
 import { mRot, rotate_M, toOpposite_M } from "../../../general/GlobalRot";
@@ -167,7 +167,7 @@ export default class MapStorageSparse implements IMapStorage {
         // 使用随机轴向，直接按步长旋转（算入「步长为2」的特殊情况）
         return rotate_M(
             rot,
-            ((rot >> 1) + randomBetween(1, this._nDim - 1)) % this._nDim, // 等概率获取一个不是自身轴向的随机轴向
+            randModWithout(rot >> 1, this._nDim), // 等概率取一个随机轴向
             step
         )
     }

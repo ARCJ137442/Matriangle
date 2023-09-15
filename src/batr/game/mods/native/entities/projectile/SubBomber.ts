@@ -6,7 +6,7 @@ import Game from "../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
-import BulletBasic from "./BulletBasic";
+import BulletBasic from "./bullet/BulletBasic";
 
 // import batr.game.entity.*;
 // import batr.game.entity.entity.player.*;

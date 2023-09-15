@@ -4,16 +4,17 @@ import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
-import ToolType from "../../ToolType";
+import Tool from "../../tool/Tool";
 import EntityType from "../../registry/EntityRegistry";
 import Player from "../player/Player";
 
 /**
  * 「抛射体」是
- * ①生命周期短的
- * ②活跃的
- * ③有方向的
- * ④可显示的
+ * * 生命周期短的
+ * * 活跃的
+ * * 有方向的
+ * * 可显示的
+ * * 与某个「所有者」（可空）以及「抛射之工具」（可为默认值）绑定的
  * 实体
  */
 export default abstract class Projectile extends Entity implements IEntityActive, IEntityWithDirection, IEntityDisplayable, IEntityShortLived {
@@ -39,12 +40,12 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * 
 	 * ! 【20230915 15:29:03】目前不会留空：始终为「调用它的武器」
 	 */
-	protected _ownerTool: ToolType = ToolType.ABSTRACT;
+	protected _ownerTool: Tool = new Tool();
 	/** 只读的「来源工具」 */
-	public get ownerTool(): ToolType { return this._ownerTool; }
+	public get ownerTool(): Tool { return this._ownerTool; }
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player) {
+	public constructor(owner: Player | null) {
 		super();
 		this._owner = owner;
 	}

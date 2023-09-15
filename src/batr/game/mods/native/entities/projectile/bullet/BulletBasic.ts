@@ -1,24 +1,25 @@
-import { random1 } from "../../../../../common/exMath";
-import { fPoint, floatPoint, iPoint } from "../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
-import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import { localPosToRealPos } from "../../../../../display/api/PosTransform";
-import { uint } from "../../../../../legacy/AS3Legacy";
-import Block, { BlockType } from "../../../../api/block/Block";
-import { IEntityOutGrid } from "../../../../api/entity/EntityInterfaces";
-import { alignToGrid_P } from "../../../../general/PosTransform";
-import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import IBatrGame from "../../../../main/IBatrGame";
-import ToolType from "../../ToolType";
-import BlockVoid from "../../blocks/Void";
-import EntityType from "../../registry/EntityRegistry";
-import Player from "../player/Player";
-import Projectile from "./Projectile";
+import { random1 } from "../../../../../../common/exMath";
+import { fPoint, floatPoint, iPoint } from "../../../../../../common/geometricTools";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
+import { localPosToRealPos } from "../../../../../../display/api/PosTransform";
+import { uint } from "../../../../../../legacy/AS3Legacy";
+import Block, { BlockType } from "../../../../../api/block/Block";
+import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
+import { alignToGrid_P } from "../../../../../general/PosTransform";
+import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
+import IBatrGame from "../../../../../main/IBatrGame";
+import Tool from "../../../tool/Tool";
+import BlockVoid from "../../../blocks/Void";
+import EntityType from "../../../registry/EntityRegistry";
+import Player from "../../player/Player";
+import Projectile from "../Projectile";
+import { WEAPON_BULLET } from './../../../registry/ToolRegistry';
 
 /**
  * 「子弹」是
- * ①直线飞行的
- * ②在撞上方块后产生效果（一般是爆炸）的
+ * * 直线飞行的
+ * * 在撞上方块后产生效果（一般是爆炸）的
  * 抛射体
  */
 export default class BulletBasic extends Projectile implements IEntityOutGrid {
@@ -46,19 +47,20 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	public damage: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, position: fPoint,
-		owner: Player,
+	public constructor(
+		position: fPoint,
+		owner: Player | null,
 		speed: number = BulletBasic.DEFAULT_SPEED,
-		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS) {
+		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS
+	) {
 		super(owner);
 		this.speed = speed;
 		this._position.copyFrom(position)
 
-
 		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = defaultExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
-		this._ownerTool = ToolType.BULLET;
+		this._ownerTool = WEAPON_BULLET;
 
 		this.damage = this._ownerTool.defaultDamage;
 	}
@@ -159,12 +161,12 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	}
 
 	public shapeDestruct(shape: IBatrShape): void {
-
+		shape.graphics.clear();
 	}
 
 	//============Game Mechanics============//
 	protected explode(host: IBatrGame): void {
-		// TODO: 待完善游戏接口再使用——①创建爆炸（+效果但不仅仅效果）②移除自身
+		// TODO: 待完善游戏接口再使用——* 创建爆炸（+效果但不仅仅效果）* 移除自身
 		// host.toolCreateExplode(this.entityX, this.entityY, this.finalExplodeRadius, this.damage, this, 0xffff00, 1);
 		// host.entitySystem.removeProjectile(this);
 	}

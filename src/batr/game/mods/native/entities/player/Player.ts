@@ -14,6 +14,7 @@ import PlayerController from "./controller/PlayerController";
 import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGUI";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
+import { iPoint } from "../../../../../common/geometricTools";
 
 
 // import batr.common.*;
@@ -33,6 +34,9 @@ import PlayerTeam from "./team/PlayerTeam";
 // import flash.geom.*;
 
 export default class Player extends Entity implements IPlayerProfile {
+
+	// TODO: 顶个档，凑个数（日后要作为格点实体做接口的）
+	public position: iPoint = new iPoint()
 	//============Static Variables============//
 	public static readonly SIZE: number = 1 * DEFAULT_SIZE;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 96;

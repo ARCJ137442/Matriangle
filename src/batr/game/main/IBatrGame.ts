@@ -24,7 +24,7 @@ import GameRuleEvent from "../api/rule/GameRuleEvent";
 import GameResult from "../mods/native/stat/GameResult";
 import Wave from "../mods/native/entities/projectile/Wave";
 import { IBatrShapeContainer } from "../../display/api/BatrDisplayInterfaces";
-import ToolType from "../mods/native/ToolType";
+import Tool from "../mods/native/tool/Tool";
 import BonusType from "../mods/native/registry/BonusRegistry";
 
 /**
@@ -378,7 +378,7 @@ export default interface IBatrGame {
 
 	setATeamToAIPlayer(team: PlayerTeam/* = null*/): void
 
-	changeAllPlayerTool(tool: ToolType/* = null*/): void
+	changeAllPlayerTool(tool: Tool/* = null*/): void
 
 	changeAllPlayerToolRandomly(): void
 
@@ -386,7 +386,7 @@ export default interface IBatrGame {
 
 	playerUseTool(player: Player, rot: uint, chargePercent: number): void
 
-	playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void
+	playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void
 
 	getLaserLength(player: Player, rot: uint): uint
 

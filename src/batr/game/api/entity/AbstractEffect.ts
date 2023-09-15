@@ -8,8 +8,8 @@ import { IBatrDisplayable } from './../../../display/api/BatrDisplayInterfaces';
  * 
  * ```
  * 特效是
- * ①有相对固定的生命周期lifespan的
- * ②只用于显示而不会对游戏逻辑产生影响的(不会接收游戏回调的钩子)
+ * * 有相对固定的生命周期lifespan的
+ * * 只用于显示而不会对游戏逻辑产生影响的(不会接收游戏回调的钩子)
  * (轻量级)实体
  * ```
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量

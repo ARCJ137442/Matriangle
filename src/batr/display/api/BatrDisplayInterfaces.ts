@@ -63,6 +63,19 @@ export interface IBatrDisplayable {
  *   * 如：逻辑端只需要调用这个文件里接口有的方法，不需要管这个IBaTrShape到底是用H5还是QT实现的
  */
 export interface IBatrShape extends IBatrDisplayable {
+
+    /**
+     * 决定图形x轴上的「缩放尺寸」
+     */
+    get scaleX(): number;
+    set scaleX(value: number);
+
+    /**
+     * 决定图形y轴上的「缩放尺寸」
+     */
+    get scaleY(): number;
+    set scaleY(value: number);
+
     /**
      * migrate from Flash's Graphics object, then implements with another interface
      * 从Flash的Graphics对象迁移过来，并使用另一个接口实现

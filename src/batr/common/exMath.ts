@@ -189,6 +189,19 @@ export function random1(): int {
 	return Math.random() < 0.5 ? -1 : 1;
 }
 
+/**
+ * 在一定的「自然数取模」中规避某个随机值
+ * * 例如：在0~9的取值中规避3，则x=3, n=9
+ * * 这里的`1 + randInt(n - 1)`相当于在整个循环群里循环(1~n)次
+ *   * 0和(n+1)都会循环到自身，所以规避了
+ * 
+ * @param x 要规避的值
+ * @param n 取值范围的上界
+ */
+export function randModWithout(x: uint, n: uint): uint {
+	return (x + 1 + randInt(n - 1)) % n;
+}
+
 export function randomBetween(min: number, max: number): number {
 	return min + Math.random() * (max - min);
 }
