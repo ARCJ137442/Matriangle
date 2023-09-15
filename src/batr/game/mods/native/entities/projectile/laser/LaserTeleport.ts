@@ -23,8 +23,8 @@ export default class LaserTeleport extends LaserBasic {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH) {
 		super(host, x, y, owner, length);
-		this._ownerTool = ToolType.TELEPORT_LASER;
-		this.damage = this._ownerTool.defaultDamage;
+		this.ownerTool = ToolType.TELEPORT_LASER;
+		this.damage = this.ownerTool.defaultDamage;
 	}
 
 	//============Instance Getter And Setter============//

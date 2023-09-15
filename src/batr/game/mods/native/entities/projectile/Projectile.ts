@@ -14,7 +14,7 @@ import Player from "../player/Player";
  * * 活跃的
  * * 有方向的
  * * 可显示的
- * * 与某个「所有者」（可空）以及「抛射之工具」（可为默认值）绑定的
+ * * 与某个「所有者」（可空）以及「抛射武器」（可为默认值）绑定的
  * 实体
  */
 export default abstract class Projectile extends Entity implements IEntityActive, IEntityWithDirection, IEntityDisplayable, IEntityShortLived {
@@ -37,12 +37,11 @@ export default abstract class Projectile extends Entity implements IEntityActive
 
 	/**
 	 * 记录「抛射时使用的工具」
+	 * * 现在使用readonly+抽象方法，锁定其为只读对象（一个类的实例只能由一个对应的Weapon引用）
 	 * 
 	 * ! 【20230915 15:29:03】目前不会留空：始终为「调用它的武器」
 	 */
-	protected _ownerTool: Tool = new Tool();
-	/** 只读的「来源工具」 */
-	public get ownerTool(): Tool { return this._ownerTool; }
+	public readonly abstract ownerTool: Tool;
 
 	//============Constructor & Destructor============//
 	public constructor(owner: Player | null) {

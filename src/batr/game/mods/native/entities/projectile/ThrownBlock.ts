@@ -38,10 +38,10 @@ export default class ThrownBlock extends Projectile {
 		super(host, x, y, owner);
 		this._carriedBlock = block;
 
-		this._ownerTool = ToolType.BLOCK_THROWER;
+		this.ownerTool = ToolType.BLOCK_THROWER;
 		this.xSpeed = GlobalRot.towardIntX(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.ySpeed = GlobalRot.towardIntY(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
-		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this._ownerTool.defaultDamage;
+		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this.ownerTool.defaultDamage;
 		this.drawShape();
 	}
 

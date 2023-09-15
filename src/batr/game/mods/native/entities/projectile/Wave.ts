@@ -39,7 +39,7 @@ export default class Wave extends Projectile {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
 		super(host, x, y, owner);
-		this._ownerTool = ToolType.WAVE;
+		this.ownerTool = ToolType.WAVE;
 		dealCharge(chargePercent);
 		this.drawShape();
 	}
@@ -65,7 +65,7 @@ export default class Wave extends Projectile {
 	public dealCharge(percent: number): void {
 		this.tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * percent;
 		this.finalScale = this._owner == null ? tempScale : (1 + this._owner.computeFinalRadius(this.tempScale) / 2);
-		this.damage = this._ownerTool.defaultDamage * tempScale / Wave.MAX_SCALE;
+		this.damage = this.ownerTool.defaultDamage * tempScale / Wave.MAX_SCALE;
 	}
 
 	//====Graphics Functions====//

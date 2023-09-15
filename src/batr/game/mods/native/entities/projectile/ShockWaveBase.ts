@@ -47,7 +47,7 @@ export default class ShockWaveBase extends Projectile {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
 		super(host, x, y, owner);
-		this._ownerTool = ToolType.SHOCKWAVE_ALPHA;
+		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this.mode = mode;
 		this._toolChargePercent = toolCharge;

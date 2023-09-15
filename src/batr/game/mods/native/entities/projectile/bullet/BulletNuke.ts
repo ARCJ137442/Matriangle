@@ -4,10 +4,11 @@ import { localPosToRealPos } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import Tool from "../../../tool/Tool";
 import EntityType from "../../../registry/EntityRegistry";
 import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
+import Weapon from "../../../tool/Weapon";
+import { NativeTools } from './../../../registry/ToolRegistry';
 
 export default class BulletNuke extends BulletBasic {
 	//============Static Variables============//
@@ -16,12 +17,14 @@ export default class BulletNuke extends BulletBasic {
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 6.4;
 
+	/** ！TS中实现抽象属性，可以把类型限定为其子类 */
+	public readonly ownerTool: Weapon = NativeTools.WEAPON_NUKE;
+
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(position, owner, BulletNuke.DEFAULT_SPEED * (2 - scalePercent), BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent));
-		this._ownerTool = Tool.NUKE;
-		this.damage = this._ownerTool.defaultDamage * scalePercent;
+		this.damage = this.ownerTool.defaultDamage * scalePercent;
 	}
 
 	//============Instance Getter And Setter============//

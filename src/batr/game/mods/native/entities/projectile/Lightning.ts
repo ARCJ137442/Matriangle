@@ -44,7 +44,7 @@ export default class Lightning extends Projectile {
 		super(host, x, y, owner);
 		this.rot = rot;
 		this._initialEnergy = this._energy = energy;
-		this._ownerTool = ToolType.LIGHTNING;
+		this.ownerTool = ToolType.LIGHTNING;
 	}
 
 	//============Destructor Function============//

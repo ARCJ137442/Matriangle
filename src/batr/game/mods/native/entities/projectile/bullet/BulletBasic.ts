@@ -1,4 +1,3 @@
-import { random1 } from "../../../../../../common/exMath";
 import { fPoint, floatPoint, iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
@@ -9,12 +8,11 @@ import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import Tool from "../../../tool/Tool";
-import BlockVoid from "../../../blocks/Void";
 import EntityType from "../../../registry/EntityRegistry";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
-import { WEAPON_BULLET } from './../../../registry/ToolRegistry';
+import { NativeTools } from './../../../registry/ToolRegistry';
+import Weapon from "../../../tool/Weapon";
 
 /**
  * 「子弹」是
@@ -29,6 +27,9 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 1;
 
 	override get type(): EntityType { return EntityType.BULLET_BASIC; }
+
+	/** ！TS中实现抽象属性，可以把类型限定为其所规定的子类（比如这里的「工具⇒武器」） */
+	public readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET;
 
 	/** 子弹飞行的速度（每个游戏刻） */
 	public speed: number;
@@ -60,9 +61,8 @@ export default class BulletBasic extends Projectile implements IEntityOutGrid {
 		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = defaultExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
-		this._ownerTool = WEAPON_BULLET;
 
-		this.damage = this._ownerTool.defaultDamage;
+		this.damage = this.ownerTool.defaultDamage;
 	}
 
 	//============Interface Methods============//

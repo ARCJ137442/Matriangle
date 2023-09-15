@@ -40,7 +40,7 @@ export default class ShockWaveDrone extends Projectile {
 	//============Constructor & Destructor============//
 	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
 		super(host, x, y, owner);
-		this._ownerTool = ToolType.SHOCKWAVE_ALPHA;
+		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this._toolChargePercent = toolChargePercent;
 		this._toolRot = toolRot;

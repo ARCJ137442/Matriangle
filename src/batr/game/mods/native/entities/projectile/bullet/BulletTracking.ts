@@ -5,10 +5,11 @@ import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import Tool from "../../../tool/Tool";
 import EntityType from "../../../registry/EntityRegistry";
 import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
+import { NativeTools } from "../../../registry/ToolRegistry";
+import Weapon from "../../../tool/Weapon";
 
 export default class BulletTracking extends BulletBasic {
 	//============Static Variables============//
@@ -23,6 +24,9 @@ export default class BulletTracking extends BulletBasic {
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: Player[] = new Array<Player>();
 
+	/** ！TS中实现抽象属性，可以把类型限定为其子类 */
+	public readonly ownerTool: Weapon = NativeTools.WEAPON_NUKE;
+
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, playersInGame: Player[], chargePercent: number) {
 		super(position, owner, BulletTracking.DEFAULT_SPEED, BulletTracking.DEFAULT_EXPLODE_RADIUS);
@@ -31,8 +35,6 @@ export default class BulletTracking extends BulletBasic {
 		// 目标追踪函数
 		if (chargePercent >= 1)
 			this._trackingFunction = this.getTargetRot;
-		// 所来源的工具
-		this._ownerTool = Tool.TRACKING_BULLET;
 		// 缓存「潜在目标」
 		this.cacheTargetsIn(playersInGame);
 	}
@@ -53,7 +55,7 @@ export default class BulletTracking extends BulletBasic {
 			if (player != null && // not null
 				(
 					this._owner == null ||
-					this._owner.canUseToolHurtPlayer(player, this._ownerTool) // TODO: 以后需要改成「实例无关」方法
+					this._owner.canUseToolHurtPlayer(player, this.ownerTool) // TODO: 以后需要改成「实例无关」方法
 				) // 需可使用工具伤害
 			)
 				this._cachedTargets.push(player);
@@ -105,7 +107,7 @@ export default class BulletTracking extends BulletBasic {
 		return (
 			// player == null || // ! 非空，但在上下文中不会发生（减少重复判断）
 			player.isRespawning || // not respawning
-			(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this._ownerTool)) // should can use it to hurt
+			(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this.ownerTool)) // should can use it to hurt
 		);
 	}
 
