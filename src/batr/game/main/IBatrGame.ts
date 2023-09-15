@@ -10,8 +10,6 @@ import BlockAttributes from "../api/block/BlockAttributes";
 import Block, { BlockType } from "../api/block/Block";
 import IMap from "../api/map/IMap";
 import IMapDisplayer from "../../display/api/map/IMapDisplayer";
-import EntityEffect from "../api/entity/EntityEffect";
-import EffectSystem from "../api/entity/EffectSystem";
 import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import BonusBox from "../mods/native/entities/item/BonusBox";
@@ -29,14 +27,6 @@ import { IBatrShapeContainer } from "../../display/api/BatrDisplayInterfaces";
 import ToolType from "../mods/native/ToolType";
 import BonusType from "../mods/native/registry/BonusRegistry";
 
-// import flash.display.*;
-// import flash.text.*;
-// import flash.utils.*;
-// import flash.events.*;
-// import flash.geom.*;
-// import flash.system.fscommand;
-
-
 /**
  * TODO: 有待施工
  * 1. 抽象出一个带说明、包含「事件处理」的「游戏接口」
@@ -53,6 +43,12 @@ import BonusType from "../mods/native/registry/BonusRegistry";
  * 机制（内容）与运作（形式）分离
  * 这样就可以最大化其中的通用性……
  * ```
+ * 
+ * 正式文档：「游戏本体」负责
+ * * 提供Mod-API，加载外置模组（包括「原生」这个最初始的模组）的数据
+ * * 控制游戏进程
+ *   * 地图/实体管理
+ *   * 游戏统计（交给「游戏统计」实现）
  */
 
 export default interface IBatrGame {
@@ -113,8 +109,6 @@ export default interface IBatrGame {
 	get effectContainerTop(): IBatrShapeContainer
 
 	get entitySystem(): EntitySystem
-
-	get effectSystem(): EffectSystem
 
 	get numPlayers(): uint
 
@@ -430,7 +424,6 @@ export default interface IBatrGame {
 	randomAddRandomBonusBox(): void
 
 	fillBonusBox(): void
-	addEffectChild(effect: EntityEffect): void
 
 	addSpawnEffect(x: number, y: number): void
 
