@@ -26,6 +26,7 @@ import Wave from "../mods/native/entities/projectile/Wave";
 import { IBatrShapeContainer } from "../../display/api/BatrDisplayInterfaces";
 import Tool from "../mods/native/tool/Tool";
 import BonusType from "../mods/native/registry/BonusRegistry";
+import Laser from "../mods/native/entities/projectile/laser/Laser";
 
 /**
  * TODO: 有待施工
@@ -114,6 +115,19 @@ export default interface IBatrGame {
 
 	get nextAIID(): uint
 
+	/**
+	 * （新）管理实体
+	 * * 但一般上是「转交给相应的『实体系统』处理」
+	 * 
+	 * @returns 是否添加成功
+	 */
+	addEntity(entity: Entity): boolean
+
+	/**
+	 * @returns 是否删除成功
+	 */
+	removeEntity(entity: Entity): boolean
+
 	//======Map Getters======//
 	get map(): IMap
 
@@ -197,6 +211,11 @@ export default interface IBatrGame {
 	//====Functions About Gameplay====//
 
 	/**
+	 * ! 这些函数计划被实现为Mod的「工具函数」
+	 * * 实现方法：在最前面附带「游戏主体」以让函数完全独立于任何一个类
+	 */
+
+	/**
 	 * @param	x	The position x.
 	 * @param	y	The position y.
 	 * @param	asPlayer	Judge as player
@@ -234,6 +253,8 @@ export default interface IBatrGame {
 
 
 	waveHurtPlayers(wave: Wave): void
+
+	laserHurtPlayers(laser: Laser): void
 
 	thrownBlockHurtPlayer(block: ThrownBlock): void
 

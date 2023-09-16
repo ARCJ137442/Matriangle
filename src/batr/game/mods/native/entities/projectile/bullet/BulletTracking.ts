@@ -10,8 +10,15 @@ import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
+import Bullet from "./Bullet";
 
-export default class BulletTracking extends BulletBasic {
+/**
+ * 跟踪子弹
+ * * - 爆炸半径
+ * * + 智能追踪
+ * * ± 可变速度
+ */
+export default class BulletTracking extends Bullet {
 	//============Static Variables============//
 	public static readonly SIZE: number = localPosToRealPos(3 / 8);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
@@ -29,8 +36,12 @@ export default class BulletTracking extends BulletBasic {
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, playersInGame: Player[], chargePercent: number) {
-		super(position, owner, BulletTracking.DEFAULT_SPEED, BulletTracking.DEFAULT_EXPLODE_RADIUS);
-		// 尺寸规模函数
+		super(
+			position, owner,
+			BulletTracking.DEFAULT_SPEED,
+			BulletTracking.DEFAULT_EXPLODE_RADIUS
+		);
+		// 尺寸规模（需要多次切换，因此缓存为实例变量）
 		this._scalePercent = (1 + chargePercent * 0.5);
 		// 目标追踪函数
 		if (chargePercent >= 1)
@@ -142,6 +153,14 @@ export default class BulletTracking extends BulletBasic {
 				1 : // 自己在更正方向，就往负方向走
 				0 // 自己在更负方向，就往正方向走
 		);
+	}
+
+	/** 覆盖：通知「游戏主体」创建爆炸 */
+	override explode(host: IBatrGame): void {
+		// TODO: 等待「游戏逻辑」完善
+		// host.toolCreateExplode(this.position, this.finalExplodeRadius, this.damage, this, BulletNuke.DEFAULT_EXPLODE_COLOR, 0.5);
+		// 超类逻辑：移除自身
+		super.explode(host);
 	}
 
 	//====Graphics Functions====//

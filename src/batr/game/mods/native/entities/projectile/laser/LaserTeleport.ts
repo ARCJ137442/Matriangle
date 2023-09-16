@@ -1,53 +1,76 @@
-
-// import batr.general.*;
-
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import Game from "../../../../../main/Game";
 import EntityType from "../../../registry/EntityRegistry";
-import ToolType from "../../../registry/ToolType";
 import Player from "../../player/Player";
-import LaserBasic from "./LaserBasic";
+import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
+import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
+import { iPoint } from "../../../../../../common/geometricTools";
+import LaserBasic from "./LaserBasic";
+import { NativeTools } from "../../../registry/ToolRegistry";
+import Weapon from "../../../tool/Weapon";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
+/**
+ * 「传送激光」
+ * * + 无需充能
+ * * + 高频伤害处于其上的可伤害实体
+ * * + 传送处于其上的「非所有者实体」到地图随机地点
+ */
+export default class LaserTeleport extends Laser {
 
-export default class LaserTeleport extends LaserBasic {
 	//============Static Variables============//
-	public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS * 0.5;
+	public static readonly LIFE: number = FIXED_TPS * 0.5;
 	public static readonly SIZE: number = DEFAULT_SIZE / 4;
 
+	// 类型注册 //
+	override get type(): EntityType { return EntityType.LASER_TELEPORT; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_TELEPORT_LASER;
+
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: uint = LENGTH) {
-		super(host, x, y, owner, length);
-		this.ownerTool = ToolType.TELEPORT_LASER;
-		this.damage = this.ownerTool.defaultDamage;
+	public constructor(position: iPoint, owner: Player | null, length: uint = LaserBasic.LENGTH) {
+		super(
+			position, owner,
+			length, LaserTeleport.LIFE,
+			NativeTools.WEAPON_TELEPORT_LASER.defaultDamage
+		);
 	}
 
 	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.LASER_TELEPORT;
-	}
 
 	//============Instance Functions============//
-	override onLaserTick(): void {
-		this.alpha = (this._life & 3) < 2 ? 0.75 : 1;
-		if (_life < 1 / 4 * LIFE)
-			this.scaleY = (1 / 4 * LIFE - _life) / (1 / 4 * LIFE);
-		else if ((this._life & 3) == 0)
-			this._host.laserHurtPlayers(this);
+	override onTick(host: IBatrGame): void {
+		if ((this._life & 3) == 0)
+			host.laserHurtPlayers(this);
+		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}
 
-	override drawShape(): void {
-		graphics.clear();
-
+	//============Display Implements============//
+	override shapeInit(shape: IBatrShape): void {
 		// Middle
-		drawOwnerLine(-SIZE / 2, SIZE / 2, 0.25);
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserTeleport.SIZE / 2,
+			LaserTeleport.SIZE / 2, 0.25
+		);
 		// Side
-		drawOwnerLine(-SIZE / 2, -SIZE / 4, 0.6);
-		drawOwnerLine(SIZE / 4, SIZE / 2, 0.6);
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserTeleport.SIZE / 2,
+			-LaserTeleport.SIZE / 4, 0.6
+		);
+		this.drawOwnerLine(
+			shape.graphics,
+			LaserTeleport.SIZE / 4,
+			LaserTeleport.SIZE / 2, 0.6
+		);
+		super.shapeInit(shape);
+	}
+
+	public shapeRefresh(shape: IBatrShape): void {
+		shape.alpha = (this._life & 3) < 2 ? 0.75 : 1;
+		if (this._life < 1 / 4 * LaserTeleport.LIFE)
+			shape.scaleY = (1 / 4 * LaserTeleport.LIFE - this._life) / (1 / 4 * LaserTeleport.LIFE);
+		super.shapeRefresh(shape);
 	}
 }

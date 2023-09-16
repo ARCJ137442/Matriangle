@@ -1,109 +1,80 @@
 
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../registry/EntityRegistry";
 import Player from "../../player/Player";
-import Projectile from "../Projectile";
+import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
+import { iPoint } from "../../../../../../common/geometricTools";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { NativeTools } from "../../../registry/ToolRegistry";
+import Laser from "./Laser";
+import IBatrGame from "../../../../../main/IBatrGame";
+import Weapon from "../../../tool/Weapon";
+import EntityType from "../../../registry/EntityRegistry";
 
 /**
- * TODO: 【2023-09-16 3:49:55】重构从这里开始
- * 一切激光抛射体的基类
- * 
+ * 「基础激光」
+ * * - 需要充能
+ * * + 充能后瞬间造成伤害
+ * * + 完全充能的「基础激光」伤害在所有同类激光中最高
  */
-export default class LaserBasic extends Projectile {
-	//============Static Variables============//
-	public static readonly LIFE: number = GlobalGameVariables.FIXED_TPS;
-	public static readonly SIZE: number = DEFAULT_SIZE / 2;
-	public static readonly LENGTH: uint = 32; // EntityPos
+export default class LaserBasic extends Laser {
 
-	//============Instance Variables============//
-	protected _life: uint = LIFE;
-	public isDamaged: boolean = false;
+	//============Static Variables============//
+	public static readonly LIFE: number = FIXED_TPS; // ! 默认存活时间：1s
+	public static readonly WIDTH: number = DEFAULT_SIZE / 2; // ! 默认宽度：半格
+	public static readonly LENGTH: uint = 32; // ! 默认长度：32格
+
+	// 类型注册 //
+	override get type(): EntityType { return EntityType.LASER_BASIC; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, length: number = LENGTH, chargePercent: number = 1) {
-		super(host, x, y, owner);
-		this.ownerTool = ToolType.LASER;
-		this.damage = this.ownerTool.defaultDamage;
-		this.scaleX = length;
-		this.dealCharge(chargePercent);
-		this.drawShape();
-	}
-
-	//============Destructor Function============//
-	override destructor(): void {
-		shape.graphics.clear();
-		super.destructor();
-	}
-
-	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.LASER_BASIC;
-	}
-
-	public get length(): number {
-		return this.scaleX;
-	}
-
-	public get life(): uint {
-		return this._life;
+	public constructor(
+		position: iPoint, owner: Player | null,
+		length: number = LaserBasic.LENGTH,
+		chargePercent: number = 1
+	) {
+		super(
+			position, owner,
+			length, LaserBasic.LIFE,
+			NativeTools.WEAPON_LASER.defaultDamage, // !因为「只读实例变量」只能在构造后访问，所以这里只能复用常量
+			chargePercent
+		);
 	}
 
 	//============Instance Functions============//
-	override drawShape(): void {
-		shape.graphics.clear();
+
+	/** 覆盖：没有伤害过玩家，就触发「游戏主体」计算伤害 */
+	override onTick(host: IBatrGame): void {
+		if (!this.hasDamaged)
+			host.laserHurtPlayers(this);
+		super.onTick(host); // ! 超类逻辑：处理生命周期
+	}
+
+	//============Display Implements============//
+	/** 覆盖：先绘制，再拉伸 */
+	override shapeInit(shape: IBatrShape): void {
+		// 先绘制
 		for (let i: uint = 0; i < 3; i++) { // 0,1,2
-			this.drawOwnerLine(-SIZE / Math.pow(2, i + 1), SIZE / Math.pow(2, i + 1), i * 0.1 + 0.5);
+			this.drawOwnerLine(
+				shape.graphics,
+				-LaserBasic.WIDTH / Math.pow(2, i + 1),
+				LaserBasic.WIDTH / Math.pow(2, i + 1), i * 0.1 + 0.5
+			);
 		}
+		// 再拉伸
+		super.shapeInit(shape);
 	}
 
-	protected dealCharge(percent: number): void {
-		if (percent == 1)
-			return;
-		this.damage *= percent;
-		this._life = LIFE * percent;
+	/** 
+	 * 覆盖：按照自身「生命周期百分比」压缩短轴长
+	 * * 模拟「光束变窄然后消失」的效果
+	 * 
+	 * ? 无需重绘图形：无需考虑玩家颜色
+	 */
+	override shapeRefresh(shape: IBatrShape): void {
+		super.shapeRefresh(shape);
+		shape.scaleY = this.lifePercent;
 	}
 
-	public dealLife(): void {
-		if (this._life > 0)
-			this._life--;
-		else
-			this._host.entitySystem.removeProjectile(this);
-	}
-
-	public onLaserCommonTick(): void {
-		dealLife();
-	}
-
-	public onLaserTick(): void {
-		if (!this.isDamaged)
-			this._host.laserHurtPlayers(this);
-		this.scaleY = _life / LIFE;
-	}
-
-	override onProjectileTick(): void {
-		onLaserTick(); // Unrotatable
-		onLaserCommonTick(); // Unrotatable
-	}
-
-	protected drawLine(y1: number, y2: number,
-		color: uint = 0xffffff,
-		alpha: number = 1): void {
-		let yStart: number = Math.min(y1, y2);
-		shape.graphics.beginFill(color, alpha);
-		shape.graphics.drawRect(0, yStart,
-			DEFAULT_SIZE,
-			Math.max(y1, y2) - yStart);
-		shape.graphics.endFill();
-	}
-
-	protected drawOwnerLine(y1: number, y2: number,
-		alpha: number = 1): void {
-		let yStart: number = Math.min(y1, y2);
-		shape.graphics.beginFill(this.ownerColor, alpha);
-		shape.graphics.drawRect(0, yStart,
-			DEFAULT_SIZE,
-			Math.max(y1, y2) - yStart);
-		shape.graphics.endFill();
-	}
 }

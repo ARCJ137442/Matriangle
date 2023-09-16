@@ -208,17 +208,17 @@ export interface IEntityFixedLived extends Entity {
      * 「存活总时长」
      * * 一般是个固定值（或会被实现为只读属性）
      */
-    get LIVE(): uint
+    get LIFE(): uint
 
     /**
      * 「剩余存活时长」
      */
-    get live(): uint
+    get life(): uint
 
     /**
      * [0,1]的存活百分比
      */
-    get livePercent(): number;
+    get lifePercent(): number;
 
 }
 

@@ -66,12 +66,14 @@ export interface IBatrShape extends IBatrDisplayable {
 
     /**
      * 决定图形x轴上的「缩放尺寸」
+     * * 取值范围：[0.0, 1.0]，即「百分比的0~1表示法」
      */
     get scaleX(): number;
     set scaleX(value: number);
 
     /**
      * 决定图形y轴上的「缩放尺寸」
+     * * 取值范围：[0.0, 1.0]，即「百分比的0~1表示法」
      */
     get scaleY(): number;
     set scaleY(value: number);
@@ -83,7 +85,8 @@ export interface IBatrShape extends IBatrDisplayable {
     get graphics(): IBatrGraphicContext;
 
     /**
-     * 图形「是否显示」
+     * 图形「是否可见」
+     * ! 覆盖alpha属性：不可见时alpha属性无意义
      */
     get isVisible(): boolean;
     set isVisible(value: boolean);
@@ -105,6 +108,13 @@ export interface IBatrShape extends IBatrDisplayable {
      */
     get rot(): number;
     set rot(rot: number);
+
+    /**
+     * 图形的**不透明度**
+     * 范围：[0, 1]（完全不可见/完全可见）
+     */
+    get alpha(): number
+    set alpha(alpha: number);
 }
 
 /**
