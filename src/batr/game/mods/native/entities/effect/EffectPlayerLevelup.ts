@@ -1,9 +1,11 @@
-
-
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import EffectType from "../../registry/EffectRegistry";
 import Effect from "../../../../api/entity/Effect";
+import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import EntityType from "../../../../api/entity/EntityType";
+import { NativeEntityTypes } from "../../registry/EntityRegistry";
+import { fPoint } from "../../../../../common/geometricTools";
+import { TPS } from "../../../../main/GlobalGameVariables";
 
 /**
  * 玩家升级
@@ -11,55 +13,53 @@ import Effect from "../../../../api/entity/Effect";
  * * 用于提示玩家属性（Buff）的提升
  */
 export default class EffectPlayerLevelup extends Effect {
+
+	override get type(): EntityType { return NativeEntityTypes.EFFECT_PLAYER_LEVELUP }
+
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x000000;
 	public static readonly LINE_ALPHA: number = 0.8;
 	public static readonly FILL_ALPHA: number = 0.75;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
-
-	//============Instance Variables============//
+	public static readonly LIFE: number = TPS;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number,
-		color: uint = DEFAULT_COLOR,
-		scale: number = 1): void {
-		super(host, x, y, GlobalGameVariables.TPS / 2);
-		this.scaleX = this.scaleY = scale;
-		this.drawArrow(color);
+	public constructor(
+		position: fPoint,
+		color: uint = EffectPlayerLevelup.DEFAULT_COLOR,
+		LIFE: uint = EffectPlayerLevelup.LIFE
+	) {
+		super(position, LIFE);
+		this._color = color
 	}
 
-	//============Destructor Function============//
-
-	//============Instance Getter And Setter============//
-	override get type(): EffectType {
-		return EffectType.PLAYER_LEVELUP;
+	//============Display Implements============//
+	protected _color: uint = EffectPlayerLevelup.DEFAULT_COLOR;
+	/**
+	 * 实现：淡出+移动坐标
+	 * 
+	 * ! 【2023-09-17 0:25:38】现在「向上移动」仅作用于显示端，逻辑端不会移动
+	 */
+	public shapeRefresh(shape: IBatrShape): void {
+		shape.alpha = this.lifePercent;
+		shape.y -= EffectPlayerLevelup.GRID_SIZE / 4 * (1 - this.lifePercent);
 	}
 
-	//============Instance Functions============//
-	override onEffectTick(): void {
-		this.alpha = this.life / LIFE;
-		dealLife();
-		this.y -= GRID_SIZE / 4 * (1 - this.life / LIFE);
-	}
-
-	override drawShape(): void {
-		shape.graphics.clear();
-		this.drawArrow(DEFAULT_COLOR);
-	}
-
-	protected drawArrow(color: uint): void {
-		// Colored Arrow
-		shape.graphics.lineStyle(LINE_SIZE, color, LINE_ALPHA);
-		shape.graphics.beginFill(color, FILL_ALPHA);
-		shape.graphics.moveTo(0, -GRID_SIZE * 1.5); // T1
-		shape.graphics.lineTo(GRID_SIZE * 1.5, 0); // T2
-		shape.graphics.lineTo(GRID_SIZE / 2, 0); // B1
-		shape.graphics.lineTo(GRID_SIZE / 2, GRID_SIZE * 1.5); // B2
-		shape.graphics.lineTo(-GRID_SIZE / 2, GRID_SIZE * 1.5); // B3
-		shape.graphics.lineTo(-GRID_SIZE / 2, 0); // B4
-		shape.graphics.lineTo(-GRID_SIZE * 1.5, 0); // T3
-		shape.graphics.lineTo(0, -GRID_SIZE * 1.5); // T1
+	public shapeInit(shape: IBatrShape): void {
+		// 设置颜色
+		shape.graphics.lineStyle(EffectPlayerLevelup.LINE_SIZE, this._color, EffectPlayerLevelup.LINE_ALPHA);
+		shape.graphics.beginFill(this._color, EffectPlayerLevelup.FILL_ALPHA);
+		// 移动绘制
+		shape.graphics.moveTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5); // T1
+		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE * 1.5, 0); // T2
+		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, 0); // B1
+		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, EffectPlayerLevelup.GRID_SIZE * 1.5); // B2
+		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, EffectPlayerLevelup.GRID_SIZE * 1.5); // B3
+		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, 0); // B4
+		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE * 1.5, 0); // T3
+		shape.graphics.lineTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5); // T1
+		// 结束绘制
 		shape.graphics.endFill();
 	}
 }

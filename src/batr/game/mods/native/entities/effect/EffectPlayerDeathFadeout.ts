@@ -1,57 +1,55 @@
-
-
+import { fPoint } from "../../../../../common/geometricTools";
+import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import EntityType from "../../../../api/entity/EntityType";
+import { TPS } from "../../../../main/GlobalGameVariables";
 import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
-import EffectPlayerDeathLight from "./EffectPlayerDeathLight";
+import EffectPlayerLike from "./EffectPlayerLike";
 
 /**
  * 玩家死亡淡出
  * * 呈现一个线性淡出的纯色三角形
  * * 用于提示「先前有玩家死亡过」
  */
-export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
+export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 
 	override get type(): EntityType { return NativeEntityTypes.EFFECT_PLAYER_DEATH_FADEOUT }
 
 	//============Static Variables============//
 	public static readonly ALPHA: number = 0.8;
-	public static readonly MAX_LIFE: uint = GlobalGameVariables.TPS;
+	public static readonly MAX_LIFE: uint = TPS;
 
 	//============Static Functions============//
-	public static fromPlayer(host: IBatrGame, x: number, y: number, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
-		return new EffectPlayerDeathFadeout(host, x, y, player.rot, player.fillColor, player is AIPlayer ? (player as AIPlayer).AILabel : null, reverse);
+	public static fromPlayer(position: fPoint, player: Player, reverse: boolean = false): EffectPlayerDeathFadeout {
+		return new EffectPlayerDeathFadeout(
+			position, 0, //player.direction, // TODO: 等待玩家方迁移
+			player.fillColor,
+			"TODO: 等待玩家方迁移", // player instanceof AIPlayer ? (player as AIPlayer).AILabel : null,
+			reverse
+		);
 	}
-
-	//============Instance Variables============//
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, rot: uint = 0, color: uint = 0xffffff, AILabel: string = null, reverse: boolean = false, life: uint = EffectPlayerDeathFadeout.MAX_LIFE) {
-		super(host, x, y, rot, color, AILabel, reverse, life);
+	public constructor(
+		position: fPoint, rot: uint = 0,
+		color: uint = 0xffffff, AILabel: string = "TODO: 等待玩家方迁移",
+		reverse: boolean = false, life: uint = EffectPlayerLike.MAX_LIFE
+	) {
+		super(position, rot, color, AILabel, reverse, life);
 	}
 
-	//============Destructor Function============//
-
-	//============Instance Getter And Setter============//
-	//============Instance Functions============//
-	override onEffectTick(): void {
-		this.alpha = this.reverse ? 1 - life / LIFE : life / LIFE;
-		this.dealLife();
-	}
-
-	override drawShape(): void {
-		let realRadiusX: number = SIZE / 2;
-		let realRadiusY: number = SIZE / 2;
-		graphics.clear();
-		graphics.beginFill(this._color, ALPHA);
-		graphics.moveTo(-realRadiusX, -realRadiusY);
-		graphics.lineTo(realRadiusX, 0);
-		graphics.lineTo(-realRadiusX, realRadiusY);
-		graphics.lineTo(-realRadiusX, -realRadiusY);
+	//============Display Implements============//
+	public shapeInit(shape: IBatrShape): void {
+		// 先绘制形状
+		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA);
+		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值
+		// 然后绘制玩家标记
 		if (this._AILabel != null)
-			AIPlayer.drawAIDecoration(graphics, this._AILabel);
-		graphics.endFill();
+			AIPlayer.drawAIDecoration(shape.graphics, this._AILabel);
+		// 这时才停止
+		shape.graphics.endFill();
 	}
+
 }

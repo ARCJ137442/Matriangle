@@ -1,4 +1,5 @@
 ﻿import { isExtend } from "../../../../common/utils";
+import { DisplayLayers } from "../../../../display/api/BatrDisplayInterfaces";
 import Effect from "../../../api/entity/Effect";
 import EntityType from "../../../api/entity/EntityType";
 import EffectBlockLight from "../entities/effect/EffectBlockLight";
@@ -8,7 +9,7 @@ import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
 import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
 import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
 import EffectSpawn from "../entities/effect/EffectSpawn";
-import EffectTeleport from "../entities/effect/EffectTeleport";
+import EffectTeleport from "../entities/effect/EffectTeleport.1";
 import BonusBox from "../entities/item/BonusBox";
 import Player from "../entities/player/Player";
 import Lightning from "../entities/projectile/Lightning";
@@ -38,43 +39,47 @@ export module NativeEntityTypes {
 
 	// TODO: 增加「显示层级」
 	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
-	export const BULLET_BASIC: EntityType = new EntityType(BulletBasic);
-	export const BULLET_NUKE: EntityType = new EntityType(BulletNuke);
-	export const BULLET_BOMBER: EntityType = new EntityType(BulletBomber);
-	export const BULLET_TRACKING: EntityType = new EntityType(BulletTracking);
+	export const BULLET_BASIC: EntityType = new EntityType(BulletBasic, DisplayLayers.PROJECTILE);
+	export const BULLET_NUKE: EntityType = new EntityType(BulletNuke, DisplayLayers.PROJECTILE);
+	export const BULLET_BOMBER: EntityType = new EntityType(BulletBomber, DisplayLayers.PROJECTILE);
+	export const BULLET_TRACKING: EntityType = new EntityType(BulletTracking, DisplayLayers.PROJECTILE);
 
 	// 激光
-	export const LASER_BASIC: EntityType = new EntityType(LaserBasic);
-	export const LASER_PULSE: EntityType = new EntityType(LaserPulse);
-	export const LASER_TELEPORT: EntityType = new EntityType(LaserTeleport);
-	export const LASER_ABSORPTION: EntityType = new EntityType(LaserAbsorption);
+	export const LASER_BASIC: EntityType = new EntityType(LaserBasic, DisplayLayers.PROJECTILE);
+	export const LASER_PULSE: EntityType = new EntityType(LaserPulse, DisplayLayers.PROJECTILE);
+	export const LASER_TELEPORT: EntityType = new EntityType(LaserTeleport, DisplayLayers.PROJECTILE);
+	export const LASER_ABSORPTION: EntityType = new EntityType(LaserAbsorption, DisplayLayers.PROJECTILE);
 
 	// 其它抛射物
-	export const WAVE: EntityType = new EntityType(Wave);
-	export const THROWN_BLOCK: EntityType = new EntityType(ThrownBlock);
-	export const LIGHTNING: EntityType = new EntityType(Lightning);
+	export const WAVE: EntityType = new EntityType(Wave, DisplayLayers.PROJECTILE);
+	export const THROWN_BLOCK: EntityType = new EntityType(ThrownBlock, DisplayLayers.PROJECTILE);
+	export const LIGHTNING: EntityType = new EntityType(Lightning, DisplayLayers.PROJECTILE);
 
 	// 冲击波（子机）相关
-	export const SHOCKWAVE_BASE: EntityType = new EntityType(ShockWaveBase);
-	export const SHOCKWAVE_DRONE: EntityType = new EntityType(ShockWaveDrone);
+	export const SHOCKWAVE_BASE: EntityType = new EntityType(ShockWaveBase, DisplayLayers.PROJECTILE);
+	export const SHOCKWAVE_DRONE: EntityType = new EntityType(ShockWaveDrone, DisplayLayers.PROJECTILE);
 
 	// 奖励箱
-	export const BONUS_BOX: EntityType = new EntityType(BonusBox);
+	export const BONUS_BOX: EntityType = new EntityType(BonusBox, DisplayLayers.BONUS_BOX);
 
 	// 玩家
-	export const PLAYER: EntityType = new EntityType(Player);
-	// export const AI_PLAYER: EntityType = new EntityType(AIPlayer); // TODO: 计划不再区分，把「AI玩家」认为是「玩家」的一种多态
+	export const PLAYER: EntityType = new EntityType(Player, DisplayLayers.PLAYER);
+	// export const AI_PLAYER: EntityType = new EntityType(AIPlayer, DisplayLayers.PLAYER); // TODO: 计划不再区分，把「AI玩家」认为是「玩家」的一种多态
 
 	// 特效
-	export const EFFECT_EXPLODE: EntityType = new EntityType(EffectExplode);
-	export const EFFECT_SPAWN: EntityType = new EntityType(EffectSpawn);
-	export const EFFECT_TELEPORT: EntityType = new EntityType(EffectTeleport);
-	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(EffectPlayerDeathLight);
-	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(EffectPlayerDeathFadeout);
-	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(EffectPlayerHurt);
-	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(EffectPlayerLevelup);
-	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(EffectBlockLight);
+	export const EFFECT_EXPLODE: EntityType = new EntityType(EffectExplode, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_SPAWN: EntityType = new EntityType(EffectSpawn, DisplayLayers.EFFECT_BOTTOM);
+	export const EFFECT_TELEPORT: EntityType = new EntityType(EffectTeleport, DisplayLayers.EFFECT_BOTTOM);
+	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(EffectPlayerDeathLight, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(EffectPlayerDeathFadeout, DisplayLayers.EFFECT_MIDDLE);
+	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(EffectPlayerHurt, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(EffectPlayerLevelup, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(EffectBlockLight, DisplayLayers.EFFECT_TOP);
 
+	/**
+	 * 注册表：声明所有原生实体
+	 * * 在后面直接使用「filter」方法筛选，避免「各类型数组」的难以管理问题
+	 */
 	export const _ALL_ENTITY: EntityType[] = [
 		// 子弹
 		BULLET_BASIC,

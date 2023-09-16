@@ -30,7 +30,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public get owner(): Player | null { return this._owner; }
 	public set owner(value: Player | null) {
 		this._owner = value;
-		// this.drawShape(); // TODO: 回调「重绘函数」
+		// this.shapeInit(shape: IBatrShape); // TODO: 回调「重绘函数」
 	}
 
 	/**

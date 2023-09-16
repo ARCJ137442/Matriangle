@@ -58,7 +58,7 @@ export default class BatrMenuGUI extends Sprite implements IBatrMenuElement {
 		this.removeEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 	}
 
-	protected drawShape(): void {
+	protected shapeInit(shape: IBatrShape): void {
 	}
 
 	protected onClick(event: MouseEvent): void {

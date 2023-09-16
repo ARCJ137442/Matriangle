@@ -75,7 +75,7 @@ export default class PlayerGUI extends Sprite {
 		this._owner = owner;
 		// Set Graphics
 		this.setFormats();
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 		this.setFormatsToFields();
 		this.update();
 		this.addChildren();
@@ -221,7 +221,7 @@ export default class PlayerGUI extends Sprite {
 		// this._healthBarText.border=this._nameTagText.border=true;
 	}
 
-	protected drawShape(): void {
+	protected shapeInit(shape: IBatrShape): void {
 		// Pointer Triangle
 		this._pointerTriangle.x = 0;
 		this._pointerTriangle.y = -1.2 * DEFAULT_SIZE;

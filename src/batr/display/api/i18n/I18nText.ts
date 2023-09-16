@@ -1,7 +1,6 @@
 
 
 import BonusType from "../game/registry/BonusRegistry";
-import EffectType from "../game/registry/EffectRegistry";
 import EntityType from "../game/registry/EntityRegistry";
 import ToolType from "../game/registry/ToolType";
 import GameModeType from "../../../game/api/rule/GameModeType";

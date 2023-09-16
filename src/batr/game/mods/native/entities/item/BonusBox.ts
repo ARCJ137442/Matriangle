@@ -28,13 +28,13 @@ export default class BonusBox extends Entity {
 	protected _symbol: BonusBoxSymbol;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: int, y: int, type: BonusType = BonusType.NULL) {
-		super(host, x, y);
+	public constructor(position: iPoint, type: BonusType = BonusType.NULL) {
+		super(position);
 		this._bonusType = type;
 		this._symbol = new BonusBoxSymbol(this._bonusType);
 		this._symbol.x = this._symbol.y = DEFAULT_SIZE / 2;
 		this.addChild(this._symbol);
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Destructor Function============//
@@ -56,7 +56,7 @@ export default class BonusBox extends Entity {
 
 	public set bonusType(value: BonusType) {
 		this._bonusType = value;
-		this._symbol.drawShape();
+		this._symbol.shapeInit(shape: IBatrShape);
 	}
 
 	protected get borderSpace(): number {

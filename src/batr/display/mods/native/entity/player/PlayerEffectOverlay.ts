@@ -47,7 +47,7 @@ export default class PlayerEffectOverlay extends Shape {
 		color = color == uint$MAX_VALUE ? this._color : color;
 		if (this._color != color) {
 			this._color = color;
-			this.drawShape();
+			this.shapeInit(shape: IBatrShape);
 		}
 		if (life > _lifeMax) {
 			this._lifeMax = life;

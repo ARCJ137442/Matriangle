@@ -27,13 +27,13 @@ export default class ShockWaveDrone extends Projectile {
 	protected _moveDuration: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
-		super(host, x, y, owner);
+	public constructor(position: fPoint, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
+		super(position, owner);
 		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this._toolChargePercent = toolChargePercent;
 		this._toolRot = toolRot;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Destructor Function============//
@@ -77,7 +77,7 @@ export default class ShockWaveDrone extends Projectile {
 	}
 
 	//====Graphics Functions====//
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 		shape.graphics.beginFill(this.ownerColor, 0.5);
 		shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
 		shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);

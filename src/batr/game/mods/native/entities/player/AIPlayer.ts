@@ -66,7 +66,7 @@ export default class AIPlayer extends Player {
 		lineColor: number = NaN): void {
 		this._AIProgram = program == null ? AIPlayer.randomAIProgram() : program;
 		this.AIRunSpeed = Math.random() < 0.01 ? 100 : this._AIProgram.referenceSpeed;
-		super(host, x, y, team, 0, isActive, fillColor, lineColor);
+		super(position, team, 0, isActive, fillColor, lineColor);
 	}
 
 	//============Destructor Function============//

@@ -58,11 +58,11 @@ class BatrSelectorArrow extends BatrMenuGUI implements IBatrMenuElement {
 
 	//============Instance Functions============//
 	protected initDisplay(): void {
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
-	override drawShape(): void {
-		super.drawShape();
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape: IBatrShape);
 		// Draw
 		shape.graphics.lineStyle(this._lineSize, this._lineColor);
 		shape.graphics.beginFill(this._fillColor, FILL_ALPHA);

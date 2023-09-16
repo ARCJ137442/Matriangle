@@ -20,17 +20,17 @@ export default class ThrownBlock extends Projectile {
 	protected _carriedBlock: Block;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number,
+	public constructor(position: fPoint,
 		owner: Player | null, block: Block,
 		rot: uint, chargePercent: number = 1) {
-		super(host, x, y, owner);
+		super(position, owner);
 		this._carriedBlock = block;
 
 		this.ownerTool = ToolType.BLOCK_THROWER;
 		this.xSpeed = GlobalRot.towardIntX(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.ySpeed = GlobalRot.towardIntY(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this.ownerTool.defaultDamage;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Destructor Function============//
@@ -99,7 +99,7 @@ export default class ThrownBlock extends Projectile {
 	}
 
 	//====Graphics Functions====//
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 		if (this._carriedBlock != null) {
 			this._carriedBlock.x = -this._carriedBlock.width / 2;
 

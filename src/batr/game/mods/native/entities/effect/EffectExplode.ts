@@ -24,10 +24,6 @@ export default class EffectExplode extends Effect {
 	public static readonly FILL_ALPHA: uint = (uint$MAX_VALUE / 5) << 1; // 2/5
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
 
-	//============Instance Variables============//
-
-	protected _color: uint;
-
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint,
@@ -47,6 +43,8 @@ export default class EffectExplode extends Effect {
 	}
 
 	//============Display Implements============//
+
+	protected _color: uint;
 
 	protected _radius: number = 1; // 逻辑端尺寸
 	/** 只读的特效半径 */

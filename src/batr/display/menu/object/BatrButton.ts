@@ -56,7 +56,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		this._translations = translations;
 		this._text = BatrTextField.fromKey(this._translations, translationKey, TextFieldAutoSize.CENTER);
 		this.initDisplay();
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 		this.onMouseRollOut(null);
 	}
 
@@ -78,7 +78,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this._displayWidth == value)
 			return;
 		this._displayWidth = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	public get displayHeight(): number {
@@ -89,7 +89,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this._displayHeight == value)
 			return;
 		this._displayHeight = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	public get lineColor(): uint {
@@ -100,7 +100,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this._lineColor == value)
 			return;
 		this._lineColor = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	public get fillColor(): uint {
@@ -111,7 +111,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this._fillColor == value)
 			return;
 		this._fillColor = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	public get lineSize(): number {
@@ -122,7 +122,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this.lineSize == value)
 			return;
 		this._lineSize = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	public get smoothLine(): boolean {
@@ -133,7 +133,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		if (this._smoothLine == value)
 			return;
 		this._smoothLine = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Instance Functions============//
@@ -164,8 +164,8 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		this.addChild(this._text);
 	}
 
-	override drawShape(): void {
-		super.drawShape();
+	override shapeInit(shape: IBatrShape): void {
+		super.shapeInit(shape: IBatrShape);
 		// Draw
 		if (this._smoothLine) {
 			shape.graphics.lineStyle(this._lineSize, this._lineColor);

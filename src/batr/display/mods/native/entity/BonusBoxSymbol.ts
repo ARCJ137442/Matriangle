@@ -3,7 +3,7 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
-import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport";
+import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport.1";
 import BonusType from "../../../../registry/BonusRegistry";
 import PlayerGUI from "./player/PlayerGUI";
 
@@ -51,7 +51,7 @@ export default class BonusBoxSymbol extends Shape {
 	//============Constructor & Destructor============//
 	public constructor(type: BonusType = BonusType.NULL) {
 		super();
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Destructor Function============//
@@ -69,7 +69,7 @@ export default class BonusBoxSymbol extends Shape {
 		if (this._type == value)
 			return;
 		this._type = value;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Instance Functions============//

@@ -1826,7 +1826,7 @@
 		// null means update all projectiles
 		for (let projectile of this._entitySystem.projectile) {
 			if (player == null || projectile.owner == player) {
-				projectile.drawShape();
+				projectile.shapeInit(shape: IBatrShape);
 			}
 		}
 	}

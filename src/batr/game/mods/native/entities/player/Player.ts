@@ -238,14 +238,14 @@ export default class Player extends Entity implements IPlayerProfile {
 		isActive: boolean = true,
 		fillColor: number = NaN,
 		lineColor: number = NaN): void {
-		super(host, x, y, isActive);
+		super(position, isActive);
 		// Set Team
 		this._team = team;
 		// Set Stats
 		this._stats = new PlayerStats(this);
 		// Set Shape
 		this.initColors(fillColor, lineColor);
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 		// Set GUI And Effects
 		this._GUI = new PlayerGUI(this);
 
@@ -309,7 +309,7 @@ export default class Player extends Entity implements IPlayerProfile {
 			return;
 		this._team = value;
 		this.initColors();
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 		this._GUI.updateTeam();
 		this._host.updateProjectilesColor();
 	}

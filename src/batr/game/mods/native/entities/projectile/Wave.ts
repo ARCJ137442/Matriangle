@@ -26,11 +26,11 @@ export default class Wave extends Projectile {
 	protected _finalScale: number;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, chargePercent: number) {
-		super(host, x, y, owner);
+	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
+		super(position, owner);
 		this.ownerTool = ToolType.WAVE;
 		dealCharge(chargePercent);
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Instance Getter And Setter============//
@@ -58,7 +58,7 @@ export default class Wave extends Projectile {
 	}
 
 	//====Graphics Functions====//
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 		let realRadius: number = SIZE / 2;
 
 		graphics.clear();

@@ -35,13 +35,13 @@ export default class ShockWaveBase extends Projectile {
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
-		super(host, x, y, owner);
+	public constructor(position: fPoint, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
+		super(position, owner);
 		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this.mode = mode;
 		this._toolChargePercent = toolCharge;
-		this.drawShape();
+		this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Instance Getter And Setter============//
@@ -64,7 +64,7 @@ export default class ShockWaveBase extends Projectile {
 		}
 	}
 
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 		shape.graphics.beginFill(this.ownerColor);
 		shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
 		shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);

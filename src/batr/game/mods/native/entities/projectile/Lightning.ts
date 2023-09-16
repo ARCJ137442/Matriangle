@@ -33,8 +33,8 @@ export default class Lightning extends Projectile {
 	protected _hurtDefaultDamage: uint[] = new array<uint>();
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, rot: uint, owner: Player | null, energy: int) {
-		super(host, x, y, owner);
+	public constructor(position: fPoint, rot: uint, owner: Player | null, energy: int) {
+		super(position, owner);
 		this.rot = rot;
 		this._initialEnergy = this._energy = energy;
 		this.ownerTool = ToolType.LIGHTNING;
@@ -142,7 +142,7 @@ export default class Lightning extends Projectile {
 		this.dealTick();
 	}
 
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 	}
 
 	protected drawLightning(): void {

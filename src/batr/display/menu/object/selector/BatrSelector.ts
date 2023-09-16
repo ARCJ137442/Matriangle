@@ -166,7 +166,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 		return this;
 	}
 
-	override drawShape(): void {
+	override shapeInit(shape: IBatrShape): void {
 	}
 
 	public setLinkTo(target: BatrSelector): BatrSelector {
