@@ -15,6 +15,6 @@
         "src/batr.ts",
         "test/geometricTools.test.ts",
         "test/lang.test.ts",
-        "test/map.test.ts"
+        "test/map_test.ts"
     ],
 }

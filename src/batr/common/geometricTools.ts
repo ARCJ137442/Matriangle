@@ -115,11 +115,26 @@ export abstract class xPoint<T> extends Array<T> {
 	 * 
 	 * ! 会修改自身
 	 * 
-	 * @returns 返回自身，与另一点相等
+	 * @returns 返回自身
 	 */
 	public addFrom(point: xPoint<T>): xPoint<T> {
 		for (let i = 0; i < point.length; i++) {
 			this[i] += point[i] as any;
+		}
+		return this;
+	}
+
+	/**
+	 * 从一个量广播附加坐标到此处
+	 * * 原理：逐一广播增量赋值
+	 * 
+	 * ! 会修改自身
+	 * 
+	 * @returns 返回自身
+	 */
+	public addFromSingle(x: T): xPoint<T> {
+		for (let i = 0; i < this.length; i++) {
+			this[i] += x as any;
 		}
 		return this;
 	}

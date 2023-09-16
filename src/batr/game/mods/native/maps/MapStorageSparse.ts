@@ -64,14 +64,14 @@ export default class MapStorageSparse implements IMapStorage {
     /**
      * * 一系列为了明确概念的存取器方法
      */
-    protected get borderRight(): int { return this._border_max[0] };
-    protected set borderRight(v: int) { this._border_max[0] = v };
-    protected get borderLeft(): int { return this._border_min[0] };
-    protected set borderLeft(v: int) { this._border_min[0] = v };
-    protected get borderDown(): int { return this._border_max[1] };
-    protected set borderDown(v: int) { this._border_max[1] = v };
-    protected get borderUp(): int { return this._border_min[1] };
-    protected set borderUp(v: int) { this._border_min[1] = v };
+    protected get borderRight(): int { return this._borderMax[0] };
+    protected set borderRight(v: int) { this._borderMax[0] = v };
+    protected get borderLeft(): int { return this._borderMin[0] };
+    protected set borderLeft(v: int) { this._borderMin[0] = v };
+    protected get borderDown(): int { return this._borderMax[1] };
+    protected set borderDown(v: int) { this._borderMax[1] = v };
+    protected get borderUp(): int { return this._borderMin[1] };
+    protected set borderUp(v: int) { this._borderMin[1] = v };
     /**
      * 用于构建「随机结构生成」的「生成器函数」
      * 
@@ -84,8 +84,10 @@ export default class MapStorageSparse implements IMapStorage {
      * * 一个存放最小值，一个存放最大值
      * * 轴向顺序：x,y,z,w…
      */
-    protected readonly _border_max: iPoint;
-    protected readonly _border_min: iPoint;
+    protected readonly _borderMax: iPoint;
+    public get borderMax(): iPoint { return this._borderMax }
+    protected readonly _borderMin: iPoint;
+    public get borderMin(): iPoint { return this._borderMin }
 
     //============Constructor & Destructor============//
 
@@ -99,16 +101,17 @@ export default class MapStorageSparse implements IMapStorage {
         // 初始化「所有朝向」
         this._allDirection = generateArray(this.numDimension << 1, identity)
         // ! 特别初始化「边界长度」（因为它不是个临时变量）
-        this._border_max = new iPoint(this._nDim);
-        this._border_min = new iPoint(this._nDim);
+        this._borderMax = new iPoint(this._nDim);
+        this._borderMin = new iPoint(this._nDim);
     }
 
     protected _temp_size: iPoint = new iPoint() // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
     /**
      * 实现：max-min，矢量相减
+     * * 【2023-09-17 1:11:38】注意：减去之后还得批量+1
      */
     public get size(): number[] {
-        return this._temp_size.copyFrom(this._border_max).minusFrom(this._border_min);
+        return this._temp_size.copyFrom(this._borderMax).minusFrom(this._borderMin).addFromSingle(1);
     }
 
     // ! 现在使用getter方法动态获取，而非直接对变量进行静态闭包
@@ -185,7 +188,7 @@ export default class MapStorageSparse implements IMapStorage {
 
     public isInMap(p: iPoint): boolean {
         for (let i: uint = 0; i < this._nDim; ++i)
-            if (this._border_min[i] > p[i] || this._border_max[i] < p[i])
+            if (this._borderMin[i] > p[i] || this._borderMax[i] < p[i])
                 return false
         return true
     }
@@ -261,7 +264,7 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     public getMapSizeAt(dim: uint): uint {
-        return this._border_max[dim] - this._border_min[dim];
+        return this._borderMax[dim] - this._borderMin[dim];
     }
 
     /**
@@ -272,7 +275,7 @@ export default class MapStorageSparse implements IMapStorage {
     public get randomPoint(): iPoint {
         // return this._temp_randomPoint.generate(this._randomPGenerateF, this._nDim);
         for (let i: uint = 0; i < this._nDim; ++i) {
-            this._temp_randomPoint[i] = randIntBetween(this._border_min[i], this._border_max[i] + 1)
+            this._temp_randomPoint[i] = randIntBetween(this._borderMin[i], this._borderMax[i] + 1)
         }
         return this._temp_randomPoint
     }
@@ -295,21 +298,21 @@ export default class MapStorageSparse implements IMapStorage {
         // 检查：如果是空地图，就直接退出
         for (i = 0; i < this._nDim; i++)
             if (
-                this._border_max[i] == undefined || this._border_min[i] == undefined ||
-                isNaN(this._border_max[i]) || isNaN(this._border_min[i])
+                this._borderMax[i] == undefined || this._borderMin[i] == undefined ||
+                isNaN(this._borderMax[i]) || isNaN(this._borderMin[i])
             )
                 return this;
         // 当前点坐标的表示：复制this._border_min数组
-        this._temp_forEachPoint.copyFrom(this._border_min);
+        this._temp_forEachPoint.copyFrom(this._borderMin);
         // 不断遍历，直到「最高位进位」后返回
         for (i = 0; i < this._nDim;) {
             // 执行当前点：调用回调函数
             f(this._temp_forEachPoint, ...args)
             // 迭代到下一个点：不断循环尝试进位
             // 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
-            for (i = 0; i < this._nDim && ++this._temp_forEachPoint[i] > this._border_max[i]; ++i) {
+            for (i = 0; i < this._nDim && ++this._temp_forEachPoint[i] > this._borderMax[i]; ++i) {
                 // 旧位清零
-                this._temp_forEachPoint[i] = this._border_min[i];
+                this._temp_forEachPoint[i] = this._borderMin[i];
                 // 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
             }
         }
@@ -329,16 +332,30 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     // ! 非接口方法
+    /**
+     * 手动设置地图边界
+     * * 可用于遍历
+     * 
+     * @param border_min 各维度最小值之引用
+     * @param border_max 各维度最大值之引用
+     * @returns 自身
+     */
     public setBorder(border_min: iPoint, border_max: iPoint): IMapStorage {
-        this._border_max.copyFrom(border_max);
-        this._border_min.copyFrom(border_min);
+        this._borderMax.copyFrom(border_max);
+        this._borderMin.copyFrom(border_min);
         return this;
     }
 
     // ! 非接口方法
+    /**
+     * 从另一个「稀疏地图」中拷贝边界
+     * * 用于快速构造地图
+     * @param source 源「稀疏地图」
+     * @returns 自身
+     */
     public copyBorderFrom(source: MapStorageSparse): IMapStorage {
-        this._border_max.copyFrom(source._border_max);
-        this._border_min.copyFrom(source._border_min);
+        this._borderMax.copyFrom(source._borderMax);
+        this._borderMin.copyFrom(source._borderMin);
         return this;
     }
 
@@ -439,10 +456,10 @@ export default class MapStorageSparse implements IMapStorage {
         let pi: int;
         for (let i: int = 0; i < this._nDim; i++) {
             pi = p[i]
-            if (pi > this._border_max[i] || this._border_max[i] == undefined) // 现在需要检查是否为空
-                this._border_max[i] = pi
-            if (pi < this._border_min[i] || this._border_min[i] == undefined) // 现在需要检查是否为空
-                this._border_min[i] = pi
+            if (pi > this._borderMax[i] || this._borderMax[i] == undefined) // 现在需要检查是否为空
+                this._borderMax[i] = pi
+            if (pi < this._borderMin[i] || this._borderMin[i] == undefined) // 现在需要检查是否为空
+                this._borderMin[i] = pi
         }
     }
 
