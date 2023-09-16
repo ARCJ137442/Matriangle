@@ -1,20 +1,7 @@
 ﻿
-// import batr.common.*;
-// import batr.general.*;
 
 import Menu from "../main/Menu";
 import IBatrMenuElement from "./IBatrMenuElement";
-
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.text.*;
 
 export default class BatrTextInput extends TextField implements IBatrMenuElement {
 	//============Static Constructor============//

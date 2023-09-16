@@ -1,5 +1,4 @@
 
-// import flash.display.*;
 
 import { X, Y } from "../../common/keyCodes";
 import TitleImg from "./TitleImg";

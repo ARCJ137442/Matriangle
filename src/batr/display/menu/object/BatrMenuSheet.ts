@@ -1,22 +1,10 @@
 
-// import batr.common.*;
-// import batr.game.main.*;
-// import batr.general.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.main.*;
-// import batr.i18n.*;
 
 import { int, uint } from "../../legacy/AS3Legacy";
 import { DisplayObject } from "../../legacy/flash/display";
 import BatrMenuGUI from "./BatrMenuGUI";
 import IBatrMenuElement from "./IBatrMenuElement";
 import IBatrMenuElementContainer from "./IBatrMenuElementContainer";
-
-// import flash.display.DisplayObject;
-// import flash.display.Sprite;
-// import flash.events.*;
-// import flash.utils.Timer;
 
 export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuElementContainer {
 	//============Static Variables============//

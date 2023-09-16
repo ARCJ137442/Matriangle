@@ -1,7 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.map.*;
 
 /**
  * ...

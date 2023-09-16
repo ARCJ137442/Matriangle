@@ -1,7 +1,7 @@
 import { fPoint, iPoint, floatPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import { localPosToRealPos } from "../../../../../../display/api/PosTransform";
+import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
@@ -111,7 +111,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	// 显示 //
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
-	public static readonly SIZE: number = localPosToRealPos(3 / 8);
+	public static readonly SIZE: number = logical2Real(3 / 8);
 
 	readonly i_displayable: true = true;
 	/** （二维）显示覆盖优先级 */

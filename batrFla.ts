@@ -1,15 +1,3 @@
-// import {
-// 	common,
-// 	general,
-// 	main,
-// 	game
-// } from './batr/batr';
-
-// import { Game } from './batr/game/main';
-
-// import { event, display } from 'flash';
-// import { MovieClip } from 'flash/display';
-
 export default class batrFla extends MovieClip {
 	public sub: BatrSubject = new BatrSubject();
 	public fixed_mapID: uint = 0;

@@ -143,6 +143,34 @@ export interface IEntityActive extends Entity {
 }
 
 /**
+ * 「轻量级活跃实体」是指
+ * * 每游戏刻都会被触发钩子的
+ * * **不**影响游戏逻辑的
+ * * 有必要进行一定性能考量的
+ * 实体
+ * 
+ * 典例：
+ * * 所有特效
+ */
+export interface IEntityActiveLite extends Entity {
+
+    // * 留存「接口约定的变量」，判断「实例是否实现接口」
+    readonly i_activeLite: true;
+
+    /**
+     * 响应游戏刻
+     * 
+     * 在游戏调用事件循环时，随之调用以处理其自身逻辑
+     * * 与先前「活跃实体」不同：不涉及「游戏主体」，因此无需操作游戏逻辑
+     * * 只需要一个「自删除回调函数」，而无需传入整个游戏对象
+     * 
+     * @param remove 调用`remove(this)`即可通知「游戏主体」删除自身
+     */
+    onTick(remove: (entity: Entity) => void): void;
+
+}
+
+/**
  * 「需IO实体」是
  * * 接受并响应游戏IO操作（键盘等）的
  * 实体
@@ -183,7 +211,7 @@ export interface IEntityNeedsIO extends Entity {
 export interface IEntityShortLived extends Entity {
 
     // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_shortLived: true;
+    readonly i_shortLive: true;
 
     // ? 暂时没想好有什么要「特别支持」的方法，因为这本身与「特效」不完全相同
 }
@@ -202,7 +230,7 @@ export interface IEntityShortLived extends Entity {
 export interface IEntityFixedLived extends Entity {
 
     // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_fixedLived: true;
+    readonly i_fixedLive: true;
 
     /**
      * 「存活总时长」

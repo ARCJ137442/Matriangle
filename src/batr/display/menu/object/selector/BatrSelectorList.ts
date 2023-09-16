@@ -1,13 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.menu.events.*;
-// import batr.menu.main.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-// import batr.i18n.*;
 
 import { int } from "../../../legacy/AS3Legacy";
 import BatrSubject from "../../../main/BatrSubject";
@@ -21,11 +12,6 @@ import IBatrMenuElement from "../IBatrMenuElement";
 import IBatrMenuElementContainer from "../IBatrMenuElementContainer";
 import BatrSelector from "./BatrSelector";
 import BatrSelectorContent from "./BatrSelectorContent";
-
-// import flash.text.*;
-// import flash.display.*;
-// import flash.events.MouseEvent;
-// import flash.display.Sprite;
 
 export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuElementContainer {
 	//============Static Variables============//

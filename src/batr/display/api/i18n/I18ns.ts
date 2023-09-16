@@ -1,5 +1,4 @@
 
-// import flash.system.Capabilities;
 
 import { int, uint } from "../../../legacy/AS3Legacy";
 import * as DefaultNativeI18ns from './DefaultNativeI18ns';

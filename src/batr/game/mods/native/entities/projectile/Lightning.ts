@@ -1,7 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.model.ToolType;
 
 import { iPoint } from "../../../../../common/geometricTools";
 import { uint, int } from "../../../../../legacy/AS3Legacy";
@@ -11,10 +8,6 @@ import Game from "../../../../main/Game";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
-
-// import batr.game.block.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.main.*;
 
 /**
  * ...

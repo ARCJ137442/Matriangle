@@ -6,17 +6,6 @@ import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 
-// import batr.general.*;
-
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.entity.projectile.*;
-// import batr.game.entity.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-// import flash.display.*;
-// import flash.geom.*;
-
 export default class Wave extends Projectile {
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;

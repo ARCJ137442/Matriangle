@@ -1,5 +1,4 @@
 
-// import batr.common.*;
 
 import Entity from "./Entity";
 import CommonSystem from "../template/CommonSystem";

@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { iPoint } from "../../../../../../common/geometricTools";
 import { int, uint } from "../../../../../../legacy/AS3Legacy";
@@ -11,17 +9,6 @@ import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
 import AIProgram_Adventurer from "./AIProgram_Adventurer";
-
-// import batr.game.block.*;
-// import batr.game.entity.ai.*;
-// import batr.game.model.*;
-// import batr.game.entity.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.main.*;
-// import batr.game.map.*;
-
-// import flash.utils.Dictionary;
 
 /**
  * Advanced Advancer.

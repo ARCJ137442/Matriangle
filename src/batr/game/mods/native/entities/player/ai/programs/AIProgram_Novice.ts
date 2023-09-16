@@ -1,16 +1,10 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
-
-// import batr.game.entity.ai.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
 
 /**
  * Running as a State Machine.

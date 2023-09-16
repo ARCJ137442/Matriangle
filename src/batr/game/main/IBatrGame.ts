@@ -1,6 +1,4 @@
-﻿// import batr.common.*;
-// import batr.general.*;
-// import batr.game.stat.*;
+﻿
 
 import { fPoint, iPoint } from "../../common/geometricTools";
 import I18nText from "../../display/api/i18n/I18nText";

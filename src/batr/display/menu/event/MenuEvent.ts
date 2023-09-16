@@ -1,11 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-
-// import flash.events.Event;
 
 export default class MenuEvent extends Event {
 	//============Static Variables============//

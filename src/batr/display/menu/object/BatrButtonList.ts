@@ -1,5 +1,4 @@
 
-// import batr.general.*;
 
 import { int } from "../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../display/api/GlobalDisplayVariables";
@@ -7,11 +6,6 @@ import BatrButton from "./BatrButton";
 import BatrMenuGUI from "./BatrMenuGUI";
 import IBatrMenuElement from "./IBatrMenuElement";
 import IBatrMenuElementContainer from "./IBatrMenuElementContainer";
-
-// import flash.text.*;
-// import flash.display.*;
-// import flash.events.MouseEvent;
-// import flash.display.Sprite;
 
 export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElementContainer {
 	//============Static Variables============//

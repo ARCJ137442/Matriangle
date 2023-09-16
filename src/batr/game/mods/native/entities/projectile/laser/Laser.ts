@@ -48,7 +48,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	}
 
 	// 固定生命周期 //
-	public readonly i_fixedLived: true = true;
+	public readonly i_fixedLive: true = true;
 
 	/** 总存在时间 */
 	protected _life: uint;

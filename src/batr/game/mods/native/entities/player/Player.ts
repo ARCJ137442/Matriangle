@@ -16,23 +16,6 @@ import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint } from "../../../../../common/geometricTools";
 
-
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.stat.*;
-// import batr.game.entity.player.profile.IPlayerProfile;
-
-// import batr.game.block.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.*;
-// import batr.game.entity.object.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-// import flash.display.*;
-// import flash.geom.*;
-
 export default class Player extends Entity implements IPlayerProfile {
 
 	// TODO: 顶个档，凑个数（日后要作为格点实体做接口的）

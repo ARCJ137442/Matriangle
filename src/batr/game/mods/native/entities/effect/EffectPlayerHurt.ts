@@ -1,18 +1,16 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
-import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
 import EffectPlayerDeathLight from "./EffectPlayerDeathLight";
 
-// import batr.game.entity.entity.player.*;
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
+/**
+ * 玩家受伤害
+ * * 呈现一个覆盖在玩家之上、方向一致但位置滞留的、快速淡出的红色三角形
+ * * 用于提示玩家受到伤害
+ */
 export default class EffectPlayerHurt extends EffectPlayerDeathLight {
 	//============Static Variables============//
 	public static readonly FILL_COLOR: number = 0xff0000;

@@ -1,13 +1,8 @@
 ﻿
-// import batr.game.entity.entity.player.*;
-// import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../api/GlobalDisplayVariables";
 import Player from "../../../../../game/mods/native/entities/player/Player";
-
-// import flash.display.*;
-// import flash.text.*;
 /*
  * It's A GUI Attach to Player(x=0,y=0)
  * */

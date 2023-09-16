@@ -1,4 +1,14 @@
-﻿import EntityType from "../../../api/entity/EntityType";
+﻿import { isExtend } from "../../../../common/utils";
+import Effect from "../../../api/entity/Effect";
+import EntityType from "../../../api/entity/EntityType";
+import EffectBlockLight from "../entities/effect/EffectBlockLight";
+import EffectExplode from "../entities/effect/EffectExplode";
+import EffectPlayerDeathFadeout from "../entities/effect/EffectPlayerDeathFadeout";
+import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
+import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
+import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
+import EffectSpawn from "../entities/effect/EffectSpawn";
+import EffectTeleport from "../entities/effect/EffectTeleport";
 import BonusBox from "../entities/item/BonusBox";
 import Player from "../entities/player/Player";
 import Lightning from "../entities/projectile/Lightning";
@@ -6,10 +16,12 @@ import ShockWaveBase from "../entities/projectile/ShockWaveBase";
 import ShockWaveDrone from "../entities/projectile/ShockWaveDrone";
 import ThrownBlock from "../entities/projectile/ThrownBlock";
 import Wave from "../entities/projectile/Wave";
+import Bullet from "../entities/projectile/bullet/Bullet";
 import BulletBasic from "../entities/projectile/bullet/BulletBasic";
 import BulletBomber from "../entities/projectile/bullet/BulletBomber";
 import BulletNuke from "../entities/projectile/bullet/BulletNuke";
 import BulletTracking from "../entities/projectile/bullet/BulletTracking";
+import Laser from "../entities/projectile/laser/Laser";
 import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
 import LaserBasic from "../entities/projectile/laser/LaserBasic";
 import LaserPulse from "../entities/projectile/laser/LaserPulse";
@@ -24,6 +36,7 @@ import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
 export module NativeEntityTypes {
 	//============Registry============//
 
+	// TODO: 增加「显示层级」
 	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
 	export const BULLET_BASIC: EntityType = new EntityType(BulletBasic);
 	export const BULLET_NUKE: EntityType = new EntityType(BulletNuke);
@@ -36,7 +49,7 @@ export module NativeEntityTypes {
 	export const LASER_TELEPORT: EntityType = new EntityType(LaserTeleport);
 	export const LASER_ABSORPTION: EntityType = new EntityType(LaserAbsorption);
 
-	// 其它
+	// 其它抛射物
 	export const WAVE: EntityType = new EntityType(Wave);
 	export const THROWN_BLOCK: EntityType = new EntityType(ThrownBlock);
 	export const LIGHTNING: EntityType = new EntityType(Lightning);
@@ -51,6 +64,16 @@ export module NativeEntityTypes {
 	// 玩家
 	export const PLAYER: EntityType = new EntityType(Player);
 	// export const AI_PLAYER: EntityType = new EntityType(AIPlayer); // TODO: 计划不再区分，把「AI玩家」认为是「玩家」的一种多态
+
+	// 特效
+	export const EFFECT_EXPLODE: EntityType = new EntityType(EffectExplode);
+	export const EFFECT_SPAWN: EntityType = new EntityType(EffectSpawn);
+	export const EFFECT_TELEPORT: EntityType = new EntityType(EffectTeleport);
+	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(EffectPlayerDeathLight);
+	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(EffectPlayerDeathFadeout);
+	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(EffectPlayerHurt);
+	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(EffectPlayerLevelup);
+	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(EffectBlockLight);
 
 	export const _ALL_ENTITY: EntityType[] = [
 		// 子弹
@@ -67,26 +90,38 @@ export module NativeEntityTypes {
 		WAVE,
 		THROWN_BLOCK,
 		SHOCKWAVE_BASE,
-		SHOCKWAVE_DRONE, WAVE,
+		SHOCKWAVE_DRONE,
 		LIGHTNING,
-
-		// 其它
+		// 玩家
+		PLAYER,
+		// 奖励箱
+		BONUS_BOX,
+		// 特效
+		EFFECT_EXPLODE,
+		EFFECT_SPAWN,
+		EFFECT_TELEPORT,
+		EFFECT_PLAYER_DEATH_LIGHT,
+		EFFECT_PLAYER_DEATH_FADEOUT,
+		EFFECT_PLAYER_HURT,
+		EFFECT_PLAYER_LEVELUP,
+		EFFECT_BLOCK_LIGHT,
 	];
 
-	export const _BULLETS: EntityType[] = [
-		BULLET_BASIC,
-		BULLET_NUKE,
-		BULLET_BOMBER,
-		BULLET_TRACKING
-	];
-	export const _LASERS: EntityType[] = [
-		LASER_BASIC,
-		LASER_PULSE,
-		LASER_TELEPORT,
-		LASER_ABSORPTION
-	];
-	export const _WAVES: EntityType[] = [
-		WAVE
-	];
+	/** 自动过滤：BULLETS */
+	export const _BULLETS: EntityType[] = _ALL_ENTITY.filter(
+		(type: EntityType): boolean => isExtend(type.entityClass, Bullet)
+	);
+	/** 自动过滤：LASERS */
+	export const _LASERS: EntityType[] = _ALL_ENTITY.filter(
+		(type: EntityType): boolean => isExtend(type.entityClass, Laser)
+	);
+	/** 自动过滤：WAVES */
+	export const _WAVES: EntityType[] = _ALL_ENTITY.filter(
+		(type: EntityType): boolean => isExtend(type.entityClass, Wave)
+	);
+	/** 自动过滤：EFFECTS */
+	export const _EFFECTS: EntityType[] = _ALL_ENTITY.filter(
+		(type: EntityType): boolean => isExtend(type.entityClass, Effect)
+	);
 
 }

@@ -1,15 +1,10 @@
 
-// import batr.general.*;
-// import batr.game.block.*;
-// import batr.game.block.blocks.*;
 
 import Block from "../../game/api/block/Block";
 import { Bedrock } from "../game/registry/BlockTypeRegistry";
 import { uint, int } from "../../legacy/AS3Legacy";
 import { DisplayObject } from "../../legacy/flash/display";
 import { DEFAULT_SIZE } from "../api/GlobalDisplayVariables";
-
-// import flash.display.*;
 
 export default class Background extends Sprite {
 	//============Static Variables============//

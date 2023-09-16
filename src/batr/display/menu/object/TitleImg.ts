@@ -1,5 +1,4 @@
 
-// import flash.display.BitmapData;
 
 export default class TitleImg extends BitmapData {
 	//============Static Variables============//

@@ -1,12 +1,11 @@
 
-// import batr.general.*;
+/**
+ * 传送
+ * * 呈现一个快速旋转并缩小到最小尺寸的绿色八角形
+ * * 用于提示玩家被传送
+ */
 
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
-// import flash.display.*;
-
-export default class EffectTeleport extends EntityEffect {
+export default class EffectTeleport extends Effect {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x44ff44;
 	public static readonly LINE_ALPHA: number = 0.6;

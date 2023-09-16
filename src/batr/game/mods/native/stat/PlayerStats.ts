@@ -1,14 +1,9 @@
 
-// import batr.common.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.model.*;
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import Player from "../entities/player/Player";
 import IPlayerProfile from "../entities/player/profile/IPlayerProfile";
 import PlayerProfile from "../entities/player/profile/PlayerProfile";
-
-// import flash.utils.Dictionary;
 
 /* This's a stats(or scoreboard) use for a player
  * */
@@ -268,10 +263,6 @@ export default class PlayerStats {
 	}
 }
 }
-
-// import batr.game.entity.entity.player.*;
-
-// import flash.utils.Dictionary;
 
 class Stat_PlayerCount {
 	//============Instance Variables============//

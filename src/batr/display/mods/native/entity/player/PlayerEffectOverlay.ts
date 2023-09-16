@@ -1,13 +1,8 @@
 
-// import batr.general.*;
 
 import { uint, int, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import AIPlayer from "../../../../../game/mods/native/entities/player/AIPlayer";
 import Player from "../../../../../game/mods/native/entities/player/Player";
-
-// import batr.game.entity.entity.player.*;
-
-// import flash.display.Shape;
 
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//

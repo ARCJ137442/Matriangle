@@ -1,20 +1,19 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
-import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EntityEffect from "../../../../api/entity/EntityEffect";
+import Effect from "../../../../api/entity/Effect";
+import { IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 
-// import batr.game.entity.entity.player.*;
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
-export default class EffectPlayerDeathLight extends EntityEffect {
+/**
+ * 玩家死亡光效
+ * * 呈现一个与玩家方向相同的、迅速变大并淡出的空心三角型框架
+ * * 用于提示玩家的死亡
+ */
+export default class EffectPlayerDeathLight extends Effect implements IEntityWithDirection {
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 16;

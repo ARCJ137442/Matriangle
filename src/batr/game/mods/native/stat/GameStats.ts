@@ -1,7 +1,4 @@
 ﻿
-// import batr.game.main.*;
-// import batr.game.model.*;
-// import batr.game.entity.entity.player.*;
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Player from "../entities/player/Player";

@@ -1,23 +1,10 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
 import I18nsChangeEvent from "../event/I18nsChangeEvent";
 import Menu from "../main/Menu";
 import IBatrMenuElement from "./IBatrMenuElement";
-
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.text.*;
 
 export default class BatrTextField extends TextField implements IBatrMenuElement {
 	//============Static Constructor============//

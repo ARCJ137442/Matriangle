@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { iPoint } from "../../../../../../common/geometricTools";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
@@ -12,15 +10,6 @@ import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
-
-// import batr.game.block.*;
-// import batr.game.entity.ai.*;
-// import batr.game.model.*;
-// import batr.game.entity.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.main.*;
-// import batr.game.map.*;
 
 /**
  * Moving uses A*(A Star) algorithm.
@@ -553,10 +542,6 @@ public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerA
 	}
 }
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.map.*;
-
 class PathNode extends iPoint {
 	public parent: PathNode;
 
@@ -638,9 +623,6 @@ class PathNode extends iPoint {
 		return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']';
 	}
 }
-
-// import batr.general.GlobalRot;
-// import batr.game.map.IMap;
 
 class NodeHeap {
 	/**

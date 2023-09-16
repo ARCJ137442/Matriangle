@@ -1,14 +1,5 @@
 
-// import batr.game.block.BlockType;
-// import batr.game.effect.EffectType;
-// import batr.game.entity.EntityType;
-// import batr.game.model.BonusType;
-// import batr.game.model.ToolType;
-// import batr.game.model.GameModeType;
-// import batr.game.main.Game;
-// import batr.game.main.GameRule;
 
-import Game from "../game/main/Game.1";
 import BonusType from "../game/registry/BonusRegistry";
 import EffectType from "../game/registry/EffectRegistry";
 import EntityType from "../game/registry/EntityRegistry";

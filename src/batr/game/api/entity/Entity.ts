@@ -16,7 +16,7 @@ export default abstract class Entity {
 	private _isActive: boolean = false;
 
 	/** 只读：「实体类型」 */
-	abstract get type(): EntityType
+	public abstract get type(): EntityType
 
 	/** 读写「实体是否激活」 */
 	public get isActive(): boolean { return this._isActive }

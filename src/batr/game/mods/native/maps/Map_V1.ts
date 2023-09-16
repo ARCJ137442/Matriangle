@@ -1,7 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.block.blocks.XTrap;
 
 import { iPoint } from "../../../../common/geometricTools";
 import { DISPLAY_GRIDS } from "../../../../display/api/GlobalDisplayVariables";
@@ -10,13 +7,6 @@ import IMap from "../../../api/map/IMap";
 import MapLogic_V1 from "./MapLogic_V1";
 import IMapStorage from "../../../api/map/IMapStorage";
 import IMapLogic from "../../../api/map/IMapLogic";
-
-// import batr.game.map.*;
-// import batr.game.block.*;
-// import batr.game.map.*;
-// import batr.game.map.main.*;
-
-// import flash.utils.getQualifiedClassName;
 
 /**
  * 第一版地图

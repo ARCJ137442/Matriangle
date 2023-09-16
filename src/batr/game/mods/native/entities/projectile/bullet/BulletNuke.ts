@@ -1,6 +1,6 @@
 import { fPoint } from "../../../../../../common/geometricTools";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import { localPosToRealPos } from "../../../../../../display/api/PosTransform";
+import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
@@ -21,7 +21,7 @@ import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 export default class BulletNuke extends Bullet {
 
 	//============Static Variables============//
-	public static readonly SIZE: number = localPosToRealPos(1 / 2);
+	public static readonly SIZE: number = logical2Real(1 / 2);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 6.4;

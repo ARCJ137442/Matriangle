@@ -1,25 +1,6 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import TypeCommon from "../../../game/api/template/TypeCommon";
-
-// import batr.game.block.*;
-// import batr.game.entity.*;
-// import batr.game.entity.ai.*;
-// import batr.game.effect.*;
-// import batr.game.model.*;
-// import batr.game.map.*;
-// import batr.game.main.*;
-// import batr.game.events.*;
-
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
 
 export default class I18nKey {
 	//============Static Variables============//

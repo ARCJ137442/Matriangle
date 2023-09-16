@@ -1,6 +1,4 @@
 ﻿
-// import batr.common.*;
-// import batr.general.*;
 
 import Map_V1 from "../../game/mods/native/maps/Map_V1";
 import Game from "../../game/main/Game";
@@ -11,16 +9,6 @@ import { uint } from "../../legacy/AS3Legacy";
 import I18nsChangeEvent from "../menu/event/I18nsChangeEvent";
 import Menu from "../menu/main/Menu";
 import { DEFAULT_SIZE } from "../api/GlobalDisplayVariables";
-
-// import batr.game.main.*;
-// import batr.game.model.*;
-// import batr.game.map.main.*;
-// import batr.menu.events.*;
-// import batr.menu.main.*;
-// import batr.i18n.*;
-
-// import flash.display.*;
-// import flash.events.*;
 
 export default class BatrSubject extends Sprite {
 	//============Static Variables============//

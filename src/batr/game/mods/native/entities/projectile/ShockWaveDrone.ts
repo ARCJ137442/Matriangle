@@ -1,6 +1,4 @@
 
-// import batr.general.*;
-// import batr.common.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
@@ -10,15 +8,6 @@ import EntityType from "../../../../../api/entity/EntityType";
 import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
-
-// import batr.game.block.*;
-// import batr.game.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-// import flash.display.*;
-// import flash.geom.*;
 
 export default class ShockWaveDrone extends Projectile {
 	//============Static Variables============//

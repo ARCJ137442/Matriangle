@@ -1,14 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import flash.text.*;
-// import flash.display.*;
-// import flash.events.MouseEvent;
 
 class BatrSelectorArrow extends BatrMenuGUI implements IBatrMenuElement {
 	//============Static Variables============//

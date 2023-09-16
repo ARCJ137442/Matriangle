@@ -1,12 +1,9 @@
 
-// import batr.common.*;
-// import batr.general.*;
-
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
-// import flash.display.*;
-
+/**
+ * 重生
+ * * 呈现一个从无放大到有，交替旋转，并线性缩小消失的蓝色八角形
+ * * 用于提示玩家的重生
+ */
 export default class EffectSpawn extends EffectTeleport {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x6666ff;

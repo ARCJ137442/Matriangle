@@ -1,4 +1,5 @@
-﻿import { Class } from "../../../legacy/AS3Legacy";
+﻿import { DisplayLayers } from "../../../display/api/BatrDisplayInterfaces";
+import { Class, int } from "../../../legacy/AS3Legacy";
 import TypeCommon from "../template/TypeCommon";
 
 /**
@@ -17,6 +18,12 @@ export default class EntityType extends TypeCommon {
 		 * ! 📌现在使用其类名作为名称
 		 */
 		public readonly entityClass: Class,
+		/**
+		 * （面向显示端）控制实体在显示端的显示堆叠层级
+		 * * 参考：DisplayLayers
+		 * * 默认：与玩家同层次
+		 */
+		public readonly displayLayer: int = DisplayLayers.PLAYER,
 	) {
 		super(entityClass.name, 'entity');
 	}

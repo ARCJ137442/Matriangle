@@ -1,6 +1,4 @@
 ﻿
-// import batr.common.*;
-// import batr.general.*;
 
 import { NULL } from "../../general/GlobalRot";
 import TypeCommon from "../template/TypeCommon";

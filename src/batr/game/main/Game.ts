@@ -1877,7 +1877,7 @@
 	}
 
 	//======Effect Functions======//
-	public addEffectChild(effect: EntityEffect): void {
+	public addEffectChild(effect: Effect): void {
 		if (effect.layer > 0)
 			this._effectContainerTop.addChild(effect);
 

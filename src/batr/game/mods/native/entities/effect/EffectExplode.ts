@@ -1,17 +1,23 @@
-
-// import batr.common.*;
-// import batr.general.*;
-
-import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
+import { fPoint } from "../../../../../common/geometricTools";
+import { uintToPercent } from "../../../../../common/utils";
+import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import Game from "../../main/Game.1";
-import EffectType from "../../registry/EffectRegistry";
-import EntityEffect from "../../../../api/entity/EntityEffect";
+import { logical2Real } from "../../../../../display/api/PosTransform";
+import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
+import Effect from "../../../../api/entity/Effect";
+import EntityType from "../../../../api/entity/EntityType";
+import { TPS } from "../../../../main/GlobalGameVariables";
+import { NativeEntityTypes } from "../../registry/EntityRegistry";
 
-// import batr.game.effect.*;
-// import batr.game.main.*;
+/**
+ * 爆炸效果
+ * * 呈现一个简单的线性淡出圆形
+ * * 用于表现（子弹）的爆炸
+ */
+export default class EffectExplode extends Effect {
 
-export default class EffectExplode extends EntityEffect {
+	override get type(): EntityType { return NativeEntityTypes.EFFECT_EXPLODE; }
+
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0xffdd00;
 	public static readonly LINE_ALPHA: uint = 5 * (uint$MAX_VALUE >> 3); // 5/8
@@ -19,16 +25,18 @@ export default class EffectExplode extends EntityEffect {
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
 
 	//============Instance Variables============//
-	protected _radius: number = 1; // Entity Pos
+
 	protected _color: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(host: IBatrGame, x: number, y: number, radius: number = 1,
-		color: uint = DEFAULT_COLOR): void {
-		super(host, x, y, GlobalGameVariables.TPS * 0.25);
+	public constructor(
+		position: fPoint,
+		radius: number = 1,
+		color: uint = EffectExplode.DEFAULT_COLOR
+	) {
+		super(position, TPS * 0.25);
 		this._color = color;
 		this._radius = radius;
-		this.drawShape();
 	}
 
 	//============Destructor Function============//
@@ -38,31 +46,28 @@ export default class EffectExplode extends EntityEffect {
 		super.destructor();
 	}
 
-	//============Instance Getter And Setter============//
-	override get type(): EffectType {
-		return EffectType.EXPLODE;
-	}
+	//============Display Implements============//
 
-	public get radius(): number {
-		return this._radius;
-	}
+	protected _radius: number = 1; // 逻辑端尺寸
+	/** 只读的特效半径 */
+	public get radius(): number { return this._radius; }
 
 	public set radius(value: number) {
 		this._radius = value;
-		this.drawShape();
+		// TODO: 或许需要回调更新
 	}
 
-	//============Instance Functions============//
-	override onEffectTick(): void {
-		this.alpha = life / LIFE;
-		dealLife();
-	}
-
-	override drawShape(): void {
+	public shapeInit(shape: IBatrShape): void {
 		shape.graphics.clear();
-		shape.graphics.lineStyle(LINE_SIZE, this._color, Utils.uintToPercent(LINE_ALPHA));
-		shape.graphics.beginFill(this._color, Utils.uintToPercent(FILL_ALPHA));
-		shape.graphics.drawCircle(0, 0, PosTransform.localPosToRealPos(this._radius));
+		shape.graphics.lineStyle(EffectExplode.LINE_SIZE, this._color, uintToPercent(EffectExplode.LINE_ALPHA));
+		shape.graphics.beginFill(this._color, uintToPercent(EffectExplode.FILL_ALPHA));
+		shape.graphics.drawCircle(0, 0, logical2Real(this._radius));
 		shape.graphics.endFill();
 	}
+
+	/** 实现：透明度跟随生命周期百分比 */
+	public shapeRefresh(shape: IBatrShape): void {
+		shape.alpha = this.lifePercent
+	}
+
 }

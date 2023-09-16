@@ -1,5 +1,4 @@
 
-// import batr.game.entity.entity.player.Player;
 
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import IPlayerProfile from "./IPlayerProfile";

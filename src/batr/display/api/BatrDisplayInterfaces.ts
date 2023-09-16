@@ -1,4 +1,4 @@
-import { uint } from "../../legacy/AS3Legacy";
+import { int, uint } from "../../legacy/AS3Legacy";
 import { Matrix } from "../../legacy/flash/geom";
 import { IChildContainer } from '../../common/abstractInterfaces';
 
@@ -161,5 +161,124 @@ export interface IBatrGraphicContext {
 
     lineTo(x: number, y: number): void
     moveTo(x: number, y: number): void
+
+}
+
+/**
+ * 控制全局的「对象显示层级」
+ * * 用于「统一管理各方块/实体的前后显示层级」
+ * * 用于对「可显示实体/方块」的「zIndex」进行规范
+ * 
+ * ! 统一使用整数，以便更方便地向下扩展
+ * 
+ * 原描述：
+ * * GUI,HUD
+ * * <Top>: POSITIVE
+ * * MapTop,Projectile,MapMiddle,Player
+ * * <Middle>: ZERO
+ * * BonusBox,MapBottom
+ * * <Bottom>: NEGATIVE
+ * * Background
+ */
+export module DisplayLayers {
+
+    /** 
+     * 游戏背景所在层
+     *
+     * 典例：
+     * * 方块边界网格
+     */
+    export const BACKGROUND: int = 0;
+
+    /** 
+     * 底层特效
+     * 
+     * 典例：
+     * * 重生
+     * * 传送
+     */
+    export const EFFECT_BOTTOM: int = 2;
+
+    /** 
+     * 地图中占下层的方块
+     * 
+     * 典例：
+     * * 水
+     * * 玩家出生点标记
+     * * X-陷阱
+     * * 随机开启门
+     */
+    export const MAP_BOTTOM: int = 1;
+
+    /** 
+     * 奖励箱
+     * 
+     * 典例：
+     * * 奖励箱
+     */
+    export const BONUS_BOX: int = 3;
+
+    /** 
+     * 中层特效
+     * 
+     * 典例：
+     * * ？
+     */
+    export const EFFECT_MIDDLE: int = 4;
+
+    /**
+     * 玩家
+     * 
+     * 典例：
+     * * 玩家
+     */
+    export const PLAYER: int = 5;
+
+    /**
+     * 中层地图
+     * 
+     * 典例：
+     * * 墙
+     * * 基岩
+     */
+    export const MAP_MIDDLE: int = 5;
+
+    /**
+     * 抛射物
+     * 
+     * 典例：
+     * * 各类抛射物
+     */
+    export const PROJECTILE: int = 6;
+
+    /**
+     * 顶层地图
+     * 
+     * 典例：
+     * * ？
+     */
+    export const MAP_TOP: int = 7;
+
+    /**
+     * 顶层特效
+     * 
+     * 典例：
+     * * 爆炸
+     */
+    export const EFFECT_TOP: int = 8;
+
+    /**
+     * 玩家GUI
+     * 
+     * ? 这一层原本不用来显示方块/实体
+     */
+    export const PLAYER_GUI: int = 9;
+
+    /**
+     * 全局GUI
+     * 
+     * ? 这一层原本不用于显示实体/方块
+     */
+    export const GLOBAL_GUI: int = 10;
 
 }

@@ -1,8 +1,4 @@
 ﻿
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.stat.PlayerStats;
-// import batr.menu.event.BatrGUIEvent;
 
 import MainFont from "../../display/api/fonts/MainFont";
 import Game from "../../game/main/Game";
@@ -30,24 +26,6 @@ import Title from "../object/Title";
 import BatrSelector from "../object/selector/BatrSelector";
 import BatrSelectorContent from "../object/selector/BatrSelectorContent";
 import BatrSelectorList from "../object/selector/BatrSelectorList";
-
-// import batr.game.block.*;
-// import batr.game.map.*;
-// import batr.game.main.*;
-// import batr.game.model.*;
-
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.text.*;
-// import flash.display.Sprite;
-// import flash.events.*;
-// import flash.utils.Timer;
 
 export default class Menu extends Sprite {
 	//============Static Variables============//

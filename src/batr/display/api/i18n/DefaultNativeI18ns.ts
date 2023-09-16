@@ -1,8 +1,4 @@
-// import batr.general.*;
-// import batr.game.block.*;
-// import batr.game.effect.*;
-// import batr.game.entity.*;
-// import batr.game.model.*;
+
 
 import DefaultNativeI18ns from "../../../../config/lang";
 import TypeCommon from "../../../game/api/template/TypeCommon";

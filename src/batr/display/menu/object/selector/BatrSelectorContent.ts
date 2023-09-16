@@ -1,6 +1,4 @@
 
-// import batr.i18n.*;
-// import batr.game.stat.PlayerStats;
 
 import PlayerStats from "../../../game/mods/native/stat/PlayerStats";
 import ForcedI18nText from "../../../display/api/i18n/ForcedI18nText";

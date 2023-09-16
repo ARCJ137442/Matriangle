@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 	public final class AIPlayerAction {
 	//============Static Variables============//

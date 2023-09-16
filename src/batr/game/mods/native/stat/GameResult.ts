@@ -1,8 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.i18n.ForcedI18nText;
-// import batr.i18n.I18nText;
 
 import ForcedI18nText from "../../../../display/api/i18n/ForcedI18nText";
 import I18nText from "../../../../display/api/i18n/I18nText";
@@ -10,12 +6,6 @@ import { int } from "../../../../legacy/AS3Legacy";
 import Game from "../../../main/Game";
 import GameStats from "./GameStats";
 import PlayerStats from "./PlayerStats";
-
-// import batr.game.block.*;
-// import batr.game.map.*;
-// import batr.game.main.*;
-// import batr.game.model.*;
-// import batr.game.stat.*;
 
 /**
  * The result stores information by game,at game end.

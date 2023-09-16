@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint, int } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
@@ -10,14 +8,6 @@ import ToolType from "../../../registry/ToolType";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
-
-// import batr.game.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.entity.entity.projectile.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-// import flash.display.Sprite;
 
 /**
  * ...

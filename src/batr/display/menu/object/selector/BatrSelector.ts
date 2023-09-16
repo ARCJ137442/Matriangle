@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { int } from "../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../display/api/GlobalDisplayVariables";
@@ -11,23 +9,6 @@ import BatrMenuGUI from "../BatrMenuGUI";
 import BatrTextField from "../BatrTextField";
 import IBatrMenuElement from "../IBatrMenuElement";
 import BatrSelectorContent from "./BatrSelectorContent";
-
-// import batr.game.block.*;
-// import batr.game.map.*;
-// import batr.game.main.*;
-// import batr.game.model.*;
-
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.text.*;
-// import flash.display.*;
-// import flash.events.MouseEvent;
 
 export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElement {
 	//============Static Variables============//

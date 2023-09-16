@@ -102,6 +102,6 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	}
 
 	// 短周期 //
-	readonly i_shortLived: true = true;
+	readonly i_shortLive: true = true;
 
 }

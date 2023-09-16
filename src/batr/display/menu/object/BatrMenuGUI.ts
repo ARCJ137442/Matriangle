@@ -1,16 +1,7 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.events.*;
 
 import BatrGUIEvent from "../event/BatrGUIEvent";
 import IBatrMenuElement from "./IBatrMenuElement";
-
-// import flash.display.*;
-// import flash.events.*;
 
 export default class BatrMenuGUI extends Sprite implements IBatrMenuElement {
 	//============Static Variables============//

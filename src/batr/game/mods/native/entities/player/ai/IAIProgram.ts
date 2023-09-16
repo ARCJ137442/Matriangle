@@ -1,7 +1,4 @@
 
-// import batr.game.entity.ai.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import BonusBox from "../item/BonusBox";

@@ -1,9 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.entity.ai.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
 
 import { randInt } from "../../../../../../common/exMath";
 import { randomRot as randomRot } from "../../../../../general/GlobalRot";

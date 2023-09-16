@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint, int } from "../../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
@@ -12,12 +10,6 @@ import ToolType from "../../../registry/ToolType";
 import Entity from "../../../../api/entity/Entity";
 import Player from "../player/Player";
 import BonusBoxSymbol from "./display/BonusBoxSymbol.1";
-
-// import batr.game.entity.*;
-// import batr.game.entity.object.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
 
 export default class BonusBox extends Entity {
 	//============Static Variables============//

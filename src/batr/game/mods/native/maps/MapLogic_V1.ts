@@ -1,7 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.block.blocks.XTrap;
 
 import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
 import { mRot } from "../../../general/GlobalRot";
@@ -12,13 +9,6 @@ import BlockAttributes from "../../../api/block/BlockAttributes";
 import IMapLogic from "../../../api/map/IMapLogic";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { alignToGrid_P } from "../../../general/PosTransform";
-
-// import batr.game.map.*;
-// import batr.game.block.*;
-// import batr.game.map.*;
-// import batr.game.map.main.*;
-
-// import flash.utils.getQualifiedClassName;
 
 /* This's a Game Map<Version 1>
  * This Map only save BlockType,not Block

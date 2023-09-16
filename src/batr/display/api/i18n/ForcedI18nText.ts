@@ -1,6 +1,4 @@
 
-// import batr.game.entity.entity.player.Player;
-// import batr.game.stat.PlayerStats;
 
 import PlayerStats from "../../../game/mods/native/stat/PlayerStats";
 import { uint } from "../../../legacy/AS3Legacy";

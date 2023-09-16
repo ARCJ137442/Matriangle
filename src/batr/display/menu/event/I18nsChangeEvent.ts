@@ -1,14 +1,6 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.i18n.*;
 
 import I18ns from "../../display/api/i18n/I18ns";
-
-// import flash.events.Event;
 
 export default class I18nsChangeEvent extends Event {
 	//============Static Variables============//

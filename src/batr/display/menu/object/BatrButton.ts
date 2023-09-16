@@ -1,6 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import I18ns from "../../display/api/i18n/I18ns";
 import { uint } from "../../legacy/AS3Legacy";
@@ -10,19 +8,6 @@ import Menu from "../main/Menu";
 import BatrMenuGUI from "./BatrMenuGUI";
 import BatrTextField from "./BatrTextField";
 import IBatrMenuElement from "./IBatrMenuElement";
-
-// import batr.menu.main.*;
-// import batr.menu.events.*;
-// import batr.menu.object.*;
-// import batr.menu.object.selector.*;
-
-// import batr.main.*;
-// import batr.fonts.*;
-// import batr.i18n.*;
-
-// import flash.text.*;
-// import flash.display.*;
-// import flash.events.MouseEvent;
 
 export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
 	//============Static Variables============//

@@ -1,6 +1,4 @@
 ﻿
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint, int } from "../../../legacy/AS3Legacy";
 import { EventDispatcher } from "../../../legacy/flash/events";
@@ -10,13 +8,6 @@ import Game from "../../main/Game";
 import BonusType from "../registry/BonusRegistry";
 import ToolType from "../registry/ToolType";
 import GameRuleEvent from "./GameRuleEvent";
-
-// import batr.game.map.*;
-// import batr.game.main.*;
-// import batr.game.model.*;
-// import batr.game.events.*;
-
-// import flash.events.EventDispatcher;
 
 /**
  * This class contains the rules that can affects gameplay.

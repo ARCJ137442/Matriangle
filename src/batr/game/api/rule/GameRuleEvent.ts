@@ -1,5 +1,4 @@
 
-// import flash.events.Event;
 
 export default class GameRuleEvent extends Event {
 	//============Static Variables============//

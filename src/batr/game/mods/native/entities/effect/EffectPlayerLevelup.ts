@@ -1,17 +1,16 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import Game from "../../main/Game.1";
 import EffectType from "../../registry/EffectRegistry";
-import EntityEffect from "../../../../api/entity/EntityEffect";
+import Effect from "../../../../api/entity/Effect";
 
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
-export default class EffectPlayerLevelup extends EntityEffect {
+/**
+ * 玩家升级
+ * * 呈现一个特定颜色的、加速上升并迅速淡出的（向上）箭头
+ * * 用于提示玩家属性（Buff）的提升
+ */
+export default class EffectPlayerLevelup extends Effect {
 	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x000000;
 	public static readonly LINE_ALPHA: number = 0.8;

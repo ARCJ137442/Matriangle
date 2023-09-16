@@ -1,15 +1,4 @@
 
-// import batr.common.*;
-// import batr.general.*;
-// import batr.game.entity.*;
-// import batr.game.entity.ai.*;
-// import batr.game.entity.ai.programs.*;
-// import batr.game.entity.entity.*;
-// import batr.game.entity.entity.player.*;
-// import batr.game.model.*;
-// import batr.game.main.*;
-
-// import flash.display.Graphics;
 
 export default class AIPlayer extends Player {
 	//============Static Variables============//

@@ -1,5 +1,4 @@
 
-// import batr.general.*;
 
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../api/BatrDisplayInterfaces";
@@ -7,12 +6,6 @@ import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
 import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport";
 import BonusType from "../../../../registry/BonusRegistry";
 import PlayerGUI from "./player/PlayerGUI";
-
-// import batr.game.main.*;
-// import batr.game.effect.effects.*;
-// import batr.game.model.*;
-
-// import flash.display.Shape;
 
 export default class BonusBoxSymbol extends Shape {
 	//============Static Variables============//

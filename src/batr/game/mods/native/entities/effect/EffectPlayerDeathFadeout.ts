@@ -1,19 +1,21 @@
 
-// import batr.common.*;
-// import batr.general.*;
 
 import { uint } from "../../../../../legacy/AS3Legacy";
+import EntityType from "../../../../api/entity/EntityType";
+import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
-import Game from "../../main/Game.1";
-import EffectType from "../../registry/EffectRegistry";
 import EffectPlayerDeathLight from "./EffectPlayerDeathLight";
 
-// import batr.game.entity.entity.player.*;
-// import batr.game.effect.*;
-// import batr.game.main.*;
-
+/**
+ * 玩家死亡淡出
+ * * 呈现一个线性淡出的纯色三角形
+ * * 用于提示「先前有玩家死亡过」
+ */
 export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
+
+	override get type(): EntityType { return NativeEntityTypes.EFFECT_PLAYER_DEATH_FADEOUT }
+
 	//============Static Variables============//
 	public static readonly ALPHA: number = 0.8;
 	public static readonly MAX_LIFE: uint = GlobalGameVariables.TPS;
@@ -33,10 +35,6 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerDeathLight {
 	//============Destructor Function============//
 
 	//============Instance Getter And Setter============//
-	override get type(): EffectType {
-		return EffectType.PLAYER_DEATH_FADEOUT;
-	}
-
 	//============Instance Functions============//
 	override onEffectTick(): void {
 		this.alpha = this.reverse ? 1 - life / LIFE : life / LIFE;
