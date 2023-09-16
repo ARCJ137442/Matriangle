@@ -5,7 +5,6 @@ import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirect
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
 import Tool from "../../tool/Tool";
-import EntityType from "../../registry/EntityRegistry";
 import Player from "../player/Player";
 
 /**
@@ -21,7 +20,6 @@ export default abstract class Projectile extends Entity implements IEntityActive
 
 	//============Basic Properties============//
 	/** 实体的「实体类型」标签 */
-	public abstract get type(): EntityType
 	/**
 	 * 记录「抛射它的玩家」
 	 * * 可为空，表示「无主玩家」 // ? 这个或许有待商量：其实游戏可以创建一个「伪玩家」（或者「大自然」「母体」等「虚拟玩家」）来实现这种事情

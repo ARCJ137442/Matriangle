@@ -2,7 +2,7 @@
 // import batr.general.*;
 // import batr.game.stat.*;
 
-import { iPoint } from "../../common/geometricTools";
+import { fPoint, iPoint } from "../../common/geometricTools";
 import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";
@@ -146,9 +146,9 @@ export default interface IBatrGame {
 	//========Game AI Interface========//
 	get allAvailableBonusBox(): BonusBox[]
 
-	getBlockPlayerDamage(x: int, y: int): int
+	getBlockPlayerDamage(position: iPoint): int
 
-	isKillZone(x: int, y: int): boolean
+	isKillZone(position: iPoint): boolean
 
 	//============Instance Functions============//
 	//========About Game End========//
@@ -225,19 +225,19 @@ export default interface IBatrGame {
 	 * @param	avoidHurting	Avoid harmful block(returns false)
 	 * @return	true if can pass.
 	 */
-	testCanPass(x: number, y: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testCanPass(position: fPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testIntCanPass(position: iPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
 	/** return testCanPass in player's front position. */
 	testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
-	testBonusBoxCanPlaceAt(x: int, y: int): boolean
+	testBonusBoxCanPlaceAt(position: iPoint): boolean
 
 	/** return testCanPass as player in other position. */
-	testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testPlayerCanPass(player: Player, position: iPoint, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testFullPlayerCanPass(player: Player, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
 	testPlayerCanPassToFront(player: Player, rotatedAsRot: uint/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
@@ -246,7 +246,7 @@ export default interface IBatrGame {
 	testBreakableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
 
 	toolCreateExplode(
-		x: number, y: number,
+		position: fPoint,
 		finalRadius: number,
 		damage: uint, projectile: Projectile,
 		color: uint, edgePercent: number/* = 1*/): void
@@ -274,26 +274,26 @@ export default interface IBatrGame {
 	 * (100...] -> playerDamage-100
 	 * @return	The damage.
 	 */
-	computeFinalPlayerHurtDamage(player: Player, x: int, y: int, playerDamage: int): uint
+	computeFinalPlayerHurtDamage(player: Player, position: iPoint, playerDamage: int): uint
 
 	/**
 	 * Execute when Player Move out block
 	 * @param	x	the old X
 	 * @param	y	the old Y
 	 */
-	moveOutTestPlayer(player: Player, x: int, y: int, isLocationChange: boolean/* = false*/): void
+	moveOutTestPlayer(player: Player, position: iPoint, isLocationChange: boolean/* = false*/): void
 
 	/** Function about Player pickup BonusBox */
 	bonusBoxTest(player: Player, x: number/* = NaN*/, y: number/* = NaN*/): boolean
 
 	//====Functions About Map====//
-	hasBlock(x: int, y: int): boolean
+	hasBlock(position: iPoint): boolean
 
-	getBlock(x: int, y: int): Block
+	getBlock(position: iPoint): Block
 
-	getBlockAttributes(x: int, y: int): BlockAttributes
+	getBlockAttributes(position: iPoint): BlockAttributes
 
-	getBlockType(x: int, y: int): BlockType
+	getBlockType(position: iPoint): BlockType
 
 	/**
 	 * Set Block in map,and update Block in map displayer.
@@ -301,20 +301,20 @@ export default interface IBatrGame {
 	 * @param	y	the Block position y.
 	 * @param	block	the current Block.
 	 */
-	setBlock(x: int, y: int, block: Block): void
+	setBlock(position: iPoint, block: Block): void
 
-	isVoid(x: int, y: int): boolean
+	isVoid(position: iPoint): boolean
 
 	/**
 	 * Set void in map,and clear Block in map displayer.
 	 * @param	x	the void position x.
 	 * @param	y	the void position y.
 	 */
-	setVoid(x: int, y: int): void
+	setVoid(position: iPoint): void
 
 	forceMapDisplay(): void
 
-	updateMapDisplay(x: int, y: int, block: Block): void
+	updateMapDisplay(position: iPoint, block: Block): void
 
 	getDisplayerThenLayer(layer: int): IMapDisplayer
 
@@ -335,9 +335,9 @@ export default interface IBatrGame {
 	transformMap(destination: IMap/* = null*/): void
 
 	//====Functions About Player====//
-	createPlayer(x: int, y: int, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): Player
+	createPlayer(position: iPoint, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): Player
 
-	addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
+	addPlayer(id: uint, team: PlayerTeam, position: iPoint, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
 
 	// Set player datas for gaming
 	setupPlayer(player: Player): Player
@@ -345,9 +345,9 @@ export default interface IBatrGame {
 	// Add a player uses random position and tool
 	appendPlayer(controlKeyID: uint/* = 0*/): Player
 
-	createAI(x: int, y: int, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
+	createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
 
-	addAI(team: PlayerTeam, x: int, y: int, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
+	addAI(team: PlayerTeam, position: iPoint, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
 
 	appendAI(): Player
 
@@ -355,7 +355,7 @@ export default interface IBatrGame {
 
 	spawnPlayersByRule(): void
 
-	teleportPlayerTo(player: Player, x: int, y: int, rotateTo: uint/* = GlobalRot.NULL*/, effect: boolean/* = false*/): Player
+	teleportPlayerTo(player: Player, position: iPoint, rotateTo: uint/* = GlobalRot.NULL*/, effect: boolean/* = false*/): Player
 
 	spreadPlayer(player: Player, rotatePlayer: boolean/* = true*/, createEffect: boolean/* = true*/): Player
 
@@ -371,25 +371,25 @@ export default interface IBatrGame {
 	 * @param	y	SpawnPoint.y
 	 * @return	The nearest point from SpawnPoint.
 	 */
-	findFitSpawnPoint(player: Player, x: int, y: int): iPoint
+	findFitSpawnPoint(player: Player, position: iPoint): iPoint
 
-	subFindSpawnPoint(player: Player, x: int, y: int, r: int): iPoint
+	subFindSpawnPoint(player: Player, position: iPoint, r: int): iPoint
 
 	spreadAllPlayer(): void
 
 	hitTestOfPlayer(p1: Player, p2: Player): boolean
 
-	hitTestPlayer(player: Player, x: int, y: int): boolean
+	hitTestPlayer(player: Player, position: iPoint): boolean
 
-	isHitAnyPlayer(x: int, y: int): boolean
+	isHitAnyPlayer(position: iPoint): boolean
 
 	isHitAnotherPlayer(player: Player): boolean
 
 	hitTestOfPlayers(...players: Player[]): boolean
 
-	getHitPlayers(x: number, y: number): Player[]
+	getHitPlayers(position: fPoint): Player[]
 
-	getHitPlayerAt(x: int, y: int): Player
+	getHitPlayerAt(position: iPoint): Player
 
 	randomizeAllPlayerTeam(): void
 
@@ -407,7 +407,7 @@ export default interface IBatrGame {
 
 	playerUseTool(player: Player, rot: uint, chargePercent: number): void
 
-	playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void
+	playerUseToolAt(player: Player, tool: Tool, position: fPoint, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void
 
 	getLaserLength(player: Player, rot: uint): uint
 
@@ -426,7 +426,7 @@ export default interface IBatrGame {
 	//======Entity Functions======//
 	updateProjectilesColor(player: Player/* = null*/): void
 
-	addBonusBox(x: int, y: int, type: BonusType): void
+	addBonusBox(position: iPoint, type: BonusType): void
 
 	randomAddBonusBox(type: BonusType): void
 
@@ -434,23 +434,23 @@ export default interface IBatrGame {
 
 	fillBonusBox(): void
 
-	addSpawnEffect(x: number, y: number): void
+	addSpawnEffect(position: fPoint): void
 
-	addTeleportEffect(x: number, y: number): void
+	addTeleportEffect(position: fPoint): void
 
-	addPlayerDeathLightEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathLightEffect(position: fPoint, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
 
-	addPlayerDeathFadeoutEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathFadeoutEffect(position: fPoint, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
 
-	addPlayerDeathLightEffect2(x: number, y: number, player: Player, reverse: boolean/* = false*/): void
+	addPlayerDeathLightEffect2(position: fPoint, player: Player, reverse: boolean/* = false*/): void
 
-	addPlayerDeathFadeoutEffect2(x: number, y: number, player: Player, reverse: boolean/* = false*/): void
+	addPlayerDeathFadeoutEffect2(position: fPoint, player: Player, reverse: boolean/* = false*/): void
 
-	addPlayerLevelupEffect(x: number, y: number, color: uint, scale: number): void
+	addPlayerLevelupEffect(position: fPoint, color: uint, scale: number): void
 
-	addBlockLightEffect(x: number, y: number, color: uint, alpha: uint, reverse: boolean/* = false*/): void
+	addBlockLightEffect(position: fPoint, color: uint, alpha: uint, reverse: boolean/* = false*/): void
 
-	addBlockLightEffect2(x: number, y: number, block: Block, reverse: boolean/* = false*/): void
+	addBlockLightEffect2(position: fPoint, block: Block, reverse: boolean/* = false*/): void
 
 	addPlayerHurtEffect(player: Player, reverse: boolean/* = false*/): void
 
@@ -479,8 +479,8 @@ export default interface IBatrGame {
 
 	onPlayerLevelup(player: Player): void
 
-	onRandomTick(x: int, y: int): void
+	onRandomTick(position: iPoint): void
 
-	onBlockUpdate(x: int, y: int, block: Block): void
+	onBlockUpdate(position: iPoint, block: Block): void
 
 }

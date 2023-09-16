@@ -7,7 +7,7 @@ import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Game from "../../../../main/Game";
 import BonusType from "../../../registry/BonusRegistry";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import ToolType from "../../../registry/ToolType";
 import Entity from "../../../../api/entity/Entity";
 import Player from "../player/Player";

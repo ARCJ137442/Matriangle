@@ -1,6 +1,6 @@
 ﻿import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import Laser from "./Laser";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
@@ -10,6 +10,7 @@ import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 「脉冲激光」
@@ -27,8 +28,8 @@ export default class LaserPulse extends Laser {
 	//============Instance Variables============//
 
 	// 类型注册 //
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_PULSE_LASER;
-	override get type(): EntityType { return EntityType.LASER_PULSE; }
+	public readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_PULSE;
+	override get type(): EntityType { return NativeEntityTypes.LASER_PULSE; }
 
 	/** 决定这个激光是「回拽激光」还是「前推激光」 */
 	public isPull: boolean = false;
@@ -42,7 +43,7 @@ export default class LaserPulse extends Laser {
 		super(
 			position, owner,
 			length, LaserPulse.LIFE,
-			NativeTools.WEAPON_PULSE_LASER.defaultDamage,
+			NativeTools.WEAPON_LASER_PULSE.defaultDamage,
 			1 // ! 「充能百分比」仅用于「决定子类型」而不用于决定伤害/生命周期
 		);
 		this.isPull = chargePercent != 1;

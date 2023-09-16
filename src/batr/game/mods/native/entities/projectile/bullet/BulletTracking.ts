@@ -5,12 +5,13 @@ import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import Bullet from "./Bullet";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 跟踪子弹
@@ -19,6 +20,7 @@ import Bullet from "./Bullet";
  * * ± 可变速度
  */
 export default class BulletTracking extends Bullet {
+
 	//============Static Variables============//
 	public static readonly SIZE: number = localPosToRealPos(3 / 8);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
@@ -31,8 +33,9 @@ export default class BulletTracking extends Bullet {
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: Player[] = new Array<Player>();
 
-	/** ！TS中实现抽象属性，可以把类型限定为其子类 */
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_NUKE;
+	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
+	override get type(): EntityType { return NativeEntityTypes.BULLET_TRACKING; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, playersInGame: Player[], chargePercent: number) {
@@ -48,11 +51,6 @@ export default class BulletTracking extends Bullet {
 			this._trackingFunction = this.getTargetRot;
 		// 缓存「潜在目标」
 		this.cacheTargetsIn(playersInGame);
-	}
-
-	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.BULLET_TRACKING;
 	}
 
 	//============Instance Functions============//

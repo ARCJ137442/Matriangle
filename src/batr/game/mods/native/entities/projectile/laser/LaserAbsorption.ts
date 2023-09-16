@@ -1,6 +1,6 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
@@ -10,6 +10,7 @@ import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces"
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import LaserBasic from "./LaserBasic";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 「吸收激光」
@@ -26,8 +27,8 @@ export default class LaserAbsorption extends Laser {
 	public static readonly SCALE_V: number = 1 / 4;
 
 	// 类型注册 //
-	override get type(): EntityType { return EntityType.LASER_ABSORPTION; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_ABSORPTION_LASER;
+	override get type(): EntityType { return NativeEntityTypes.LASER_ABSORPTION; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_ABSORPTION;
 
 	//============Instance Variables============//
 	/** 纵轴的「尺寸」（用于控制动画与同步伤害） */
@@ -44,9 +45,9 @@ export default class LaserAbsorption extends Laser {
 		super(
 			position, owner,
 			length, LaserAbsorption.LIFE,
-			NativeTools.WEAPON_ABSORPTION_LASER.defaultDamage,
+			NativeTools.WEAPON_LASER_ABSORPTION.defaultDamage,
 		);
-		this.ownerTool = NativeTools.WEAPON_ABSORPTION_LASER;
+		this.ownerTool = NativeTools.WEAPON_LASER_ABSORPTION;
 	}
 
 	//============Instance Functions============//

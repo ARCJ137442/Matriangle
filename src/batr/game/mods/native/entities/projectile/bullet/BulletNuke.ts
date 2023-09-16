@@ -4,12 +4,13 @@ import { localPosToRealPos } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
 import Weapon from "../../../tool/Weapon";
 import { NativeTools } from './../../../registry/ToolRegistry';
 import Bullet from "./Bullet";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 「核弹」
@@ -18,14 +19,16 @@ import Bullet from "./Bullet";
  * * + 爆炸伤害
  */
 export default class BulletNuke extends Bullet {
+
 	//============Static Variables============//
 	public static readonly SIZE: number = localPosToRealPos(1 / 2);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 6.4;
 
-	/** ！TS中实现抽象属性，可以把类型限定为其子类 */
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_NUKE;
+	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
+	override get type(): EntityType { return NativeEntityTypes.BULLET_NUKE; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
@@ -36,11 +39,6 @@ export default class BulletNuke extends Bullet {
 			BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent)
 		);
 		this.damage = this.ownerTool.defaultDamage * scalePercent;
-	}
-
-	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.BULLET_NUKE;
 	}
 
 	//============Instance Functions============//

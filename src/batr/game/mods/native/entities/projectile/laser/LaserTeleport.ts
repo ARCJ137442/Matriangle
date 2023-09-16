@@ -1,6 +1,6 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
@@ -10,6 +10,7 @@ import LaserBasic from "./LaserBasic";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 「传送激光」
@@ -24,15 +25,15 @@ export default class LaserTeleport extends Laser {
 	public static readonly SIZE: number = DEFAULT_SIZE / 4;
 
 	// 类型注册 //
-	override get type(): EntityType { return EntityType.LASER_TELEPORT; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_TELEPORT_LASER;
+	override get type(): EntityType { return NativeEntityTypes.LASER_TELEPORT; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_TELEPORT;
 
 	//============Constructor & Destructor============//
 	public constructor(position: iPoint, owner: Player | null, length: uint = LaserBasic.LENGTH) {
 		super(
 			position, owner,
 			length, LaserTeleport.LIFE,
-			NativeTools.WEAPON_TELEPORT_LASER.defaultDamage
+			NativeTools.WEAPON_LASER_TELEPORT.defaultDamage
 		);
 	}
 

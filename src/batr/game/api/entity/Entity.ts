@@ -1,3 +1,5 @@
+import EntityType from "./EntityType";
+
 /**
  * @author ARCJ137442
  * @class 一切「游戏内实体」的抽象基类
@@ -12,6 +14,9 @@ export default abstract class Entity {
 	 * ! 注意：与「活跃实体」的概念不同
 	 */
 	private _isActive: boolean = false;
+
+	/** 只读：「实体类型」 */
+	abstract get type(): EntityType
 
 	/** 读写「实体是否激活」 */
 	public get isActive(): boolean { return this._isActive }

@@ -4,12 +4,9 @@
  * * Child Classes: BlockType, EntityType, EffectType, ToolType, BonusType
  */
 export default class TypeCommon {
-	//============Static Variables============//
 
-	//============Static Getter And Setter============//
-
-	//============Static Functions============//
-	public static isIncludeIn(type: TypeCommon, types: TypeCommon[]): boolean {
+	// 工具函数：列表相关 //
+	public static isIncludeIn<T extends TypeCommon>(type: T, types: T[]): boolean {
 		for (let type2 of types) {
 			if (type === type2)
 				return true;
@@ -17,20 +14,25 @@ export default class TypeCommon {
 		return false;
 	}
 
+	public static fromName<T extends TypeCommon>(str: string, types: T[]): T | null {
+		for (let type of types) {
+			if (type.name == str) return type;
+		}
+		return null;
+	}
+
 	//============Instance Variables============//
-	protected _name: string;
 
 	//============Constructor & Destructor============//
-	public constructor(name: string) {
-		this._name = name;
-	}
+	public constructor(
+		/**
+		 * 只读名称：只需设置一次
+		 */
+		public readonly name: string,
+		/**
+		 * 只读的「所属标签」：用于在「国际化接口」中的「唯一所指ID」
+		 */
+		public readonly label: string,
+	) { }
 
-	//============Instance Getter And Setter============//
-	public get name(): string {
-		return this._name;
-	}
-
-	public get label(): string {
-		return 'common';
-	}
 }

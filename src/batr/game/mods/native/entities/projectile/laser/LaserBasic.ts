@@ -9,7 +9,8 @@ import { NativeTools } from "../../../registry/ToolRegistry";
 import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
 import Weapon from "../../../tool/Weapon";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 
 /**
  * 「基础激光」
@@ -25,8 +26,8 @@ export default class LaserBasic extends Laser {
 	public static readonly LENGTH: uint = 32; // ! 默认长度：32格
 
 	// 类型注册 //
-	override get type(): EntityType { return EntityType.LASER_BASIC; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER;
+	override get type(): EntityType { return NativeEntityTypes.LASER_BASIC; }
+	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_BASIC;
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -37,7 +38,7 @@ export default class LaserBasic extends Laser {
 		super(
 			position, owner,
 			length, LaserBasic.LIFE,
-			NativeTools.WEAPON_LASER.defaultDamage, // !因为「只读实例变量」只能在构造后访问，所以这里只能复用常量
+			NativeTools.WEAPON_LASER_BASIC.defaultDamage, // !因为「只读实例变量」只能在构造后访问，所以这里只能复用常量
 			chargePercent
 		);
 	}

@@ -3,7 +3,7 @@ import { Matrix } from "../../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import ToolType from "../../../registry/ToolType";
 import GameRule from "../../../../api/rule/GameRule";
 import PlayerStats from "../../stat/PlayerStats";

@@ -1,7 +1,7 @@
 import { IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import Entity from "./Entity";
-import { IBatrDisplayable } from './../../../display/api/BatrDisplayInterfaces';
+import { IBatrDisplayable } from '../../../display/api/BatrDisplayInterfaces';
 
 /**
  * * 【20230913 23:18:15】现在将原本独立的「特效」也归入「实体」范畴了
@@ -14,7 +14,7 @@ import { IBatrDisplayable } from './../../../display/api/BatrDisplayInterfaces';
  * ```
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量
  */
-export default abstract class AbstractEffect extends Entity implements IBatrDisplayable {
+export default abstract class Effect extends Entity implements IBatrDisplayable {
 
     /**
      * 当前的剩余生命时长

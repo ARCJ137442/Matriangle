@@ -8,7 +8,7 @@ import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import EntityType from "../../../registry/EntityRegistry";
+import EntityType from "../../../../../api/entity/EntityType";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import Player from "../../player/Player";
@@ -22,11 +22,8 @@ import Projectile from "../Projectile";
  */
 export default abstract class Bullet extends Projectile implements IEntityOutGrid {
 
-	/** 类型：基础子弹 */
-	override get type(): EntityType { return EntityType.BULLET_BASIC; }
-
 	/** ！TS中实现抽象属性，可以把类型限定为其所规定的子类（比如这里的「工具⇒武器」） */
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET;
+	public readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_BASIC;
 
 	/** 子弹飞行的速度（每个游戏刻） */
 	public speed: number;

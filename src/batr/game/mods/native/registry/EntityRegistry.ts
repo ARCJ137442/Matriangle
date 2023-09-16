@@ -1,85 +1,92 @@
-﻿
-// import batr.common.*;
-// import batr.general.*;
+﻿import EntityType from "../../../api/entity/EntityType";
+import BonusBox from "../entities/item/BonusBox";
+import Player from "../entities/player/Player";
+import Lightning from "../entities/projectile/Lightning";
+import ShockWaveBase from "../entities/projectile/ShockWaveBase";
+import ShockWaveDrone from "../entities/projectile/ShockWaveDrone";
+import ThrownBlock from "../entities/projectile/ThrownBlock";
+import Wave from "../entities/projectile/Wave";
+import BulletBasic from "../entities/projectile/bullet/BulletBasic";
+import BulletBomber from "../entities/projectile/bullet/BulletBomber";
+import BulletNuke from "../entities/projectile/bullet/BulletNuke";
+import BulletTracking from "../entities/projectile/bullet/BulletTracking";
+import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
+import LaserBasic from "../entities/projectile/laser/LaserBasic";
+import LaserPulse from "../entities/projectile/laser/LaserPulse";
+import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
 
-import { NULL } from "../../general/GlobalRot";
-import TypeCommon from "../template/TypeCommon";
+/**
+ * 用于识别的「实体类型」
+ * * 存储与「实体类」有关的元信息
+ * 
+ * ! 这应该是静态的：即「一个『类型实例』对应多个『实体实例』的引用」
+ */
+export module NativeEntityTypes {
+	//============Registry============//
 
-export default class EntityType extends TypeCommon {
-	//============Static Variables============//
-	public static readonly NULL: EntityType = null;
-	public static readonly ABSTRACT: EntityType = new EntityType('Abstract');
+	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
+	export const BULLET_BASIC: EntityType = new EntityType(BulletBasic);
+	export const BULLET_NUKE: EntityType = new EntityType(BulletNuke);
+	export const BULLET_BOMBER: EntityType = new EntityType(BulletBomber);
+	export const BULLET_TRACKING: EntityType = new EntityType(BulletTracking);
 
-	public static readonly BULLET_BASIC: EntityType = new EntityType('BulletBasic');
-	public static readonly BULLET_NUKE: EntityType = new EntityType('BulletNuke');
-	public static readonly SUB_BOMBER: EntityType = new EntityType('SubBomber');
-	public static readonly BULLET_TRACKING: EntityType = new EntityType('TrackingBullet');
+	// 激光
+	export const LASER_BASIC: EntityType = new EntityType(LaserBasic);
+	export const LASER_PULSE: EntityType = new EntityType(LaserPulse);
+	export const LASER_TELEPORT: EntityType = new EntityType(LaserTeleport);
+	export const LASER_ABSORPTION: EntityType = new EntityType(LaserAbsorption);
 
-	public static readonly LASER_BASIC: EntityType = new EntityType('LaserBasic');
-	public static readonly LASER_PULSE: EntityType = new EntityType('LaserPulse');
-	public static readonly LASER_TELEPORT: EntityType = new EntityType('LaserTeleport');
-	public static readonly LASER_ABSORPTION: EntityType = new EntityType('LaserAbsorption');
-	public static readonly WAVE: EntityType = new EntityType('Wave');
-	public static readonly THROWN_BLOCK: EntityType = new EntityType('ThrownBlock');
-	public static readonly LIGHTNING: EntityType = new EntityType('Lightning').asUnrotatable;
-	public static readonly SHOCKWAVE_LASER_BASE: EntityType = new EntityType('ShockLaserBase');
+	// 其它
+	export const WAVE: EntityType = new EntityType(Wave);
+	export const THROWN_BLOCK: EntityType = new EntityType(ThrownBlock);
+	export const LIGHTNING: EntityType = new EntityType(Lightning);
 
-	public static readonly SHOCKWAVE_LASER_DRONE: EntityType = new EntityType('ShockLaserDrone');
+	// 冲击波（子机）相关
+	export const SHOCKWAVE_BASE: EntityType = new EntityType(ShockWaveBase);
+	export const SHOCKWAVE_DRONE: EntityType = new EntityType(ShockWaveDrone);
 
-	public static readonly BONUS_BOX: EntityType = new EntityType('BonusBox');
+	// 奖励箱
+	export const BONUS_BOX: EntityType = new EntityType(BonusBox);
 
-	public static readonly PLAYER: EntityType = new EntityType('Player');
+	// 玩家
+	export const PLAYER: EntityType = new EntityType(Player);
+	// export const AI_PLAYER: EntityType = new EntityType(AIPlayer); // TODO: 计划不再区分，把「AI玩家」认为是「玩家」的一种多态
 
-	public static readonly AI_PLAYER: EntityType = new EntityType('AIPlayer');
+	export const _ALL_ENTITY: EntityType[] = [
+		// 子弹
+		BULLET_BASIC,
+		BULLET_NUKE,
+		BULLET_BOMBER,
+		BULLET_TRACKING,
+		// 激光
+		LASER_BASIC,
+		LASER_PULSE,
+		LASER_TELEPORT,
+		LASER_ABSORPTION,
+		// 其它抛射体
+		WAVE,
+		THROWN_BLOCK,
+		SHOCKWAVE_BASE,
+		SHOCKWAVE_DRONE, WAVE,
+		LIGHTNING,
 
-	public static readonly _BULLETS: EntityType[] = new Array<EntityType>(EntityType.BULLET_BASIC, EntityType.BULLET_NUKE, EntityType.SUB_BOMBER, EntityType.BULLET_TRACKING);
-	public static readonly _LASERS: EntityType[] = new Array<EntityType>(EntityType.LASER_BASIC, EntityType.LASER_PULSE, EntityType.LASER_TELEPORT, EntityType.LASER_ABSORPTION);
-	public static readonly _WAVES: EntityType[] = new Array<EntityType>(EntityType.WAVE);
+		// 其它
+	];
 
-	public static readonly _PROJECTILES: EntityType[] = new Array<EntityType>(EntityType.SHOCKWAVE_LASER_BASE, EntityType.SHOCKWAVE_LASER_DRONE, EntityType.WAVE, EntityType.THROWN_BLOCK).concat(EntityType._BULLETS, EntityType._LASERS);
-	public static readonly _ALL_ENTITY: EntityType[] = new Array<EntityType>(EntityType.PLAYER, EntityType.BONUS_BOX).concat(EntityType._PROJECTILES);
+	export const _BULLETS: EntityType[] = [
+		BULLET_BASIC,
+		BULLET_NUKE,
+		BULLET_BOMBER,
+		BULLET_TRACKING
+	];
+	export const _LASERS: EntityType[] = [
+		LASER_BASIC,
+		LASER_PULSE,
+		LASER_TELEPORT,
+		LASER_ABSORPTION
+	];
+	export const _WAVES: EntityType[] = [
+		WAVE
+	];
 
-	//============Static Getter And Setter============//
-	public static get RANDOM(): EntityType {
-		return _ALL_ENTITY[exMath.random(_ALL_ENTITY.length)];
-	}
-
-	//============Static Functions============//
-	public static fromString(str: string): EntityType {
-		for (let type of EntityType._ALL_ENTITY) {
-			if (type.name == str)
-				return type;
-		}
-		return NULL;
-	}
-
-	public static isIncludeIn(type: EntityType, types: EntityType[]): boolean {
-		for (let type2 of types) {
-			if (type === type2)
-				return true;
-		}
-		return false;
-	}
-
-	//============Constructor & Destructor============//
-	public constructor(name: string) {
-		super(name);
-	}
-
-	//============Instance Variables============//
-	protected _rotatable: boolean = true;
-
-	//============Instance Getter And Setter============//
-	override get label(): string {
-		return 'entity';
-	}
-
-	public get rotatable(): boolean {
-		return this._rotatable;
-	}
-
-	public get asUnrotatable(): EntityType {
-		this._rotatable = false;
-		return this;
-	}
 }
