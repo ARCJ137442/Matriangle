@@ -9,7 +9,7 @@ import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
 import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
 import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
 import EffectSpawn from "../entities/effect/EffectSpawn";
-import EffectTeleport from "../entities/effect/EffectTeleport.1";
+import EffectTeleport from "../entities/effect/EffectTeleport";
 import BonusBox from "../entities/item/BonusBox";
 import Player from "../entities/player/Player";
 import Lightning from "../entities/projectile/Lightning";

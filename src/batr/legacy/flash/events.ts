@@ -103,7 +103,7 @@ export abstract class KeyboardEvent extends Event {
     public abstract updateAfterEvent(): void
 }
 
-export declare interface IEventDispatcher {
+export interface IEventDispatcher {
     addEventListener(type: string, listener: Function, useCapture?: boolean, priority?: number, useWeakReference?: boolean): void;
     dispatchEvent(event: Event): boolean;
     hasEventListener(type: string): boolean;
@@ -111,10 +111,10 @@ export declare interface IEventDispatcher {
     willTrigger(type: string): boolean;
 }
 
-export declare class EventDispatcher implements IEventDispatcher { // not extends Object
-    addEventListener(type: string, listener: Function, useCapture?: boolean, priority?: number, useWeakReference?: boolean): void;
-    dispatchEvent(event: Event): boolean;
-    hasEventListener(type: string): boolean;
-    removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
-    willTrigger(type: string): boolean;
+export abstract class EventDispatcher implements IEventDispatcher { // not extends Object
+    abstract addEventListener(type: string, listener: Function, useCapture?: boolean, priority?: number, useWeakReference?: boolean): void;
+    abstract dispatchEvent(event: Event): boolean;
+    abstract hasEventListener(type: string): boolean;
+    abstract removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+    abstract willTrigger(type: string): boolean;
 }

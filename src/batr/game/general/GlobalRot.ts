@@ -137,11 +137,6 @@ export function nameOfRot_M(rot: mRot): string {
 	return nameOfAxis_M(rot >> 1) + '+-'[rot & 1]
 }
 
-// ! 弃用：现在依赖于地图设置
-// export function randomWithout(rot: intRot): intRot {
-// 	return lockIntToStandard(rot + 1 + exMath.randInt(3));
-// }
-
 export function lockRot_F(rot: fRot): fRot {
 	if (isNaN(rot) || !isFinite(rot))
 		return DEFAULT;

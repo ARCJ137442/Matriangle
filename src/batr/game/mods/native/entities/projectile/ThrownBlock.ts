@@ -5,7 +5,7 @@ import BlockAttributes from "../../../../api/block/BlockAttributes";
 import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 
@@ -26,7 +26,7 @@ export default class ThrownBlock extends Projectile {
 		super(position, owner);
 		this._carriedBlock = block;
 
-		this.ownerTool = ToolType.BLOCK_THROWER;
+		this.ownerTool = Tool.BLOCK_THROWER;
 		this.xSpeed = GlobalRot.towardIntX(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.ySpeed = GlobalRot.towardIntY(rot) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * chargePercent);
 		this.damage = exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * this.ownerTool.defaultDamage;

@@ -4,7 +4,7 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import GameRule_V1 from "../../rule/GameRule_V1";
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
@@ -42,9 +42,9 @@ export default class Player extends Entity implements IPlayerProfile {
 
 	protected _customName: string;
 
-	protected _tool: ToolType;
+	protected _tool: Tool;
 
-	protected _droneTool: ToolType = GameRule_V1.DEFAULT_DRONE_TOOL;
+	protected _droneTool: Tool = GameRule_V1.DEFAULT_DRONE_TOOL;
 
 	//====Graphics Variables====//
 	protected _lineColor: uint = 0x888888;
@@ -322,21 +322,21 @@ export default class Player extends Entity implements IPlayerProfile {
 		return this._stats;
 	}
 
-	public get tool(): ToolType {
+	public get tool(): Tool {
 		return this._tool;
 	}
 
 	/** This tool is used by drones created from another tool */
-	public get droneTool(): ToolType {
+	public get droneTool(): Tool {
 		return this._droneTool;
 	}
 
-	public set droneTool(value: ToolType) {
+	public set droneTool(value: Tool) {
 		this._droneTool = value;
 	}
 
 	/** Also Reset CD&Charge */
-	public set tool(value: ToolType) {
+	public set tool(value: Tool) {
 		if (value == this._tool)
 			return;
 		this.resetCD();
@@ -625,7 +625,7 @@ export default class Player extends Entity implements IPlayerProfile {
 	 * @param	toolID	invalid number means random.
 	 * @param	uniformTool	The uniform tool
 	 */
-	public initVariablesByRule(toolID: int, uniformTool: ToolType = null): void {
+	public initVariablesByRule(toolID: int, uniformTool: Tool = null): void {
 		// Health&Life
 		this._maxHealth = this._host.rule.defaultMaxHealth;
 
@@ -636,10 +636,10 @@ export default class Player extends Entity implements IPlayerProfile {
 		// Tool
 		if (toolID < -1)
 			this._tool = this.host.rule.randomToolEnable;
-		else if (!ToolType.isValidAvailableToolID(toolID) && uniformTool != null)
+		else if (!Tool.isValidAvailableToolID(toolID) && uniformTool != null)
 			this._tool = uniformTool;
 		else
-			this._tool = ToolType.fromToolID(toolID);
+			this._tool = Tool.fromToolID(toolID);
 	}
 
 	//====Functions About Health====//
@@ -726,13 +726,13 @@ export default class Player extends Entity implements IPlayerProfile {
 	 * @param	tool	The tool.
 	 * @return	If player can hurt target with this tool.
 	 */
-	public canUseToolHurtPlayer(player: Player, tool: ToolType): boolean {
+	public canUseToolHurtPlayer(player: Player, tool: Tool): boolean {
 		return (isEnemy(player) && tool.toolCanHurtEnemy ||
 			isSelf(player) && tool.toolCanHurtSelf ||
 			isAlly(player) && tool.toolCanHurtAlly);
 	}
 
-	public filterPlayersThisCanHurt(players: Player[], tool: ToolType): Player[] {
+	public filterPlayersThisCanHurt(players: Player[], tool: Tool): Player[] {
 		return players.filter(
 			function (player: Player, index: int, vector: Player[]) {
 				return this.canUseToolHurtPlayer(player, tool);
@@ -811,14 +811,14 @@ export default class Player extends Entity implements IPlayerProfile {
 	}
 
 	//====Functions About Tool====//
-	protected onToolChange(oldType: ToolType, newType: ToolType): void {
+	protected onToolChange(oldType: Tool, newType: Tool): void {
 		this.initToolCharge();
 		this.resetCharge(false);
 		// Change Drone Tool
-		if (ToolType.isDroneTool(newType)) {
-			if (ToolType.isBulletTool(oldType))
-				this._droneTool = ToolType.BULLET;
-			else if (!ToolType.isAvailableDroneNotUse(oldType))
+		if (Tool.isDroneTool(newType)) {
+			if (Tool.isBulletTool(oldType))
+				this._droneTool = Tool.BULLET;
+			else if (!Tool.isAvailableDroneNotUse(oldType))
 				this._droneTool = oldType;
 			else
 				this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
@@ -909,7 +909,7 @@ export default class Player extends Entity implements IPlayerProfile {
 	 * @param	defaultDamage	The original damage by attacker.
 	 * @return	The Final Damage.
 	 */
-	public final function computeFinalDamage(attacker: Player, attackerTool: ToolType, defaultDamage: uint): uint {
+	public final function computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
 		if (attacker == null)
 			return attackerTool == null ? 0 : attackerTool.defaultDamage;
 		if (attackerTool == null)
@@ -919,11 +919,11 @@ export default class Player extends Entity implements IPlayerProfile {
 		return 0;
 	}
 
-		public final function finalRemoveHealth(attacker: Player, attackerTool: ToolType, defaultDamage: uint): void {
+		public final function finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
 	this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
 }
 
-		public final function computeFinalCD(tool: ToolType): uint {
+		public final function computeFinalCD(tool: Tool): uint {
 	return tool.getBuffedCD(this.buffCD);
 }
 

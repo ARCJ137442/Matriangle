@@ -102,6 +102,148 @@ export function randomInParas<T>(...paras: Array<T>): T {
 	return randomIn(paras);
 }
 
+/**
+ * 随机挑选，但排除某个元素
+ * 
+ * ! 确保要排除的元素在数组内
+ * 
+ * @param array 随机范围
+ * @param excepts （数组中唯一的）要排除的对象
+ */
+export function randomWithout<T>(array: T[], excepts: T): T {
+	let result: T = array[exMath.randModWithout(
+		array.indexOf(excepts),
+		array.length
+	)]
+	// 还是等于，就启用filter（性能&正确性考量）
+	return (
+		result === excepts ?
+			randomIn(array.filter(item => item !== excepts)) :
+			result
+	);
+}
+
+/**
+ * Choose an index in an array that regard the content as weights
+ * @param weights the weight of random
+ * @returns the selected index of the weight
+ */
+export function randomByWeight(weights: number[]): uint {
+	if (weights.length == 1) return 0;
+
+	let all: number = exMath.sum(weights);
+	let r: number = exMath.randomFloat(all);
+	for (let i = 0; i < weights.length; i++) {
+		let N = weights[i];
+		let rs = 0;
+		for (let l = 0; l < i; l++)
+			rs += weights[l];
+		// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
+		if (r <= rs + N)
+			return i;
+	}
+	throw new Error("加权随机：未正常随机到结果！")
+}
+
+/**
+ * 对参数加权随机
+ * @param weights 权重集（以任意长参数形式出现）
+ * @returns 其中一个元素的索引
+ */
+export function randomByWeight_params(...weights: number[]): number {
+	return randomByWeight(weights);
+}
+
+/**
+ * 加权随机：按「值表、权重表」从中按权选出索引
+ */
+export function randomByWeight_KW<T>(values: T[], weights: number[]): T {
+	return values[randomByWeight(weights)];
+}
+
+/**
+ * 
+ * @param weightMap 权重映射：元素→权重
+ * @returns 
+ */
+export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
+	// 尺寸=1 ⇒ 唯一键
+	if (weightMap.size == 1) return weightMap.keys().next().value;
+
+	// 拆解成顺序数组
+	let elements: T[] = [];
+	let weights: number[] = [];
+	weightMap.forEach((value, key) => {
+		elements.push(key);
+		weights.push(value);
+	})
+
+	// 索引对照
+	return elements[randomByWeight(weights)];
+}
+
+/**
+ * 把映射解包成JSON可用的数组，并提供可被识别的「标志」
+ * * 可以指定一个「宿主」，键值对会被添加到其中某个属性上（没有则创建一个空对象）
+ * 
+ * 原理：
+ * * 使用`Array.from`方法把映射变成`[...[键, 值]]`的数组
+ * * 再使用Array的`map`方法映射键值对
+ * 
+ * 例子：
+ * * `Map { 1 => 2, 3 => 4 }` => `{ "Map": [[1, 2], [3, 4]] }`
+ * 
+ * @param map 要打包的映射
+ * @param callbackKV 对其中每个键和值的递归回调函数
+ * @param flag 从键值对映射到二维数组的标签
+ * @returns 解包好的JSON对象/添加了新属性的对象
+ */
+export function map2JSON<K, V>(
+	map: Map<K, V>,
+	callbackKV: (key: K, value: V) => [any, any],
+	flag: string = 'Map',
+	parent: any = {}
+): { [flag: string]: Array<[any, any]> } {
+	parent[flag] = Array.from(map).map((kv: [K, V]): [any, any] => {
+		return callbackKV(kv[0], kv[1]);
+	})
+	return parent;
+}
+
+/**
+ * 把「有特定标识的JSON对象」打包成映射
+ * 
+ * 例子：
+ * * `{ Map: [ [ 1, 2 ], [ 3, 4 ] ] }` => `Map(2) { 1 => 2, 3 => 4 }`
+ * 
+ * @param obj 待解析的JSON对象
+ * @param callbackKV 对其中二维数组中`[键, 值]`元组的递归回调函数
+ * @param flag 从键值对映射到二维数组的标签
+ * @param parent 用于设置键值对的宿主对象（默认新建）
+ * @returns 一个打包好的映射
+ */
+export function JSON2map<K, V>(
+	// obj: { [flag: string]: Array<[any, any]> },
+	obj: any,
+	callbackKV: (key: any, value: any) => [K, V],
+	flag: string = 'Map',
+	parent: Map<K, V> = new Map<K, V>()
+): Map<K, V> {
+	if (obj[flag] == undefined) throw new Error('JSON2map: 没有找到标志为「' + flag + '」的键');
+	obj[flag].forEach((kv: [any, any]): void => {
+		parent.set(...callbackKV(kv[0], kv[1]))
+	})
+	return parent
+}
+
+/**
+ * 向一个数组`push`一个对象后，返回该对象
+ */
+export function pushNReturn<T>(arr: T[], item: T): T {
+	arr.push(item);
+	return item;
+}
+
 export function getPropertyInObjects(objects: object[], key: string): any[] {
 	let ra: any[] = new Array<any>();
 
@@ -156,6 +298,11 @@ export function isEmptyArray<T>(A: Array<T> | null): boolean {
 
 export function isEmptyString(S: string): boolean {
 	return (S == null || S.length < 1);
+}
+
+export function clearArray<T>(arr: Array<T>): void {
+	// * 直接设定长度，JS会自动清除
+	arr.length = 0;
 }
 
 export function isEqualArray<T>(A: T[], B: T[]): boolean {

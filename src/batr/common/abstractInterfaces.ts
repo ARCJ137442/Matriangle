@@ -102,13 +102,13 @@ export interface IBatrJSobject {
 	 * 
 	 * ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
 	 */
-	toObject(): object;
+	toObject(): any;
 
 	/**
 	 * 用object中的属性覆盖对象
 	 * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
 	 * @param obj 源头对象
 	 */
-	copyFromObject(obj: object): void;
+	copyFromObject(obj: any): void;
 
 }

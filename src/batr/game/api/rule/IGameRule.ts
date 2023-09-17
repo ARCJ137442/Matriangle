@@ -1,10 +1,14 @@
 ﻿import { IBatrJSobject } from "../../../common/abstractInterfaces";
 import { key } from "../../../common/utils";
+import NativeBonusTypes from "../../mods/native/registry/BonusRegistry";
+import IMap from "../map/IMap";
 
 /**
  * 定义统一、可扩展的「游戏规则」接口
  */
 export default interface IGameRule extends IBatrJSobject {
+
+	//================Variable Management================//
 
 	/**
 	 * 判断「是否有指定名称的规则」
@@ -32,10 +36,23 @@ export default interface IGameRule extends IBatrJSobject {
 	setRule<T>(key: key, value: T): boolean;
 
 	/**
+	 * 获取规则对象中存储的所有规则名
+	 */
+	get allKeys(): key[];
+
+	/**
 	 * 触发变量更新
 	 * @param oldValue 旧值
 	 * @param newValue 新值
 	 */
 	onVariableUpdate<T>(key: key, oldValue: T, newValue: T): void;
+
+	//============Game Mechanics============//
+	/**
+	 * 获取一个随机地图
+	 * 
+	 * ! 仅获取引用，并且不会「生成下一个」
+	 */
+	getRandomMap(): IMap;
 
 }

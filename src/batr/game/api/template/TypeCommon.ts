@@ -1,7 +1,7 @@
 /**
  * It's used for commonly define rich-enum types.
  * 
- * * Child Classes: BlockType, EntityType, EffectType, ToolType, BonusType
+ * * Child Classes: BlockType, EntityType, EffectType, Tool, BonusType
  */
 export default class TypeCommon {
 

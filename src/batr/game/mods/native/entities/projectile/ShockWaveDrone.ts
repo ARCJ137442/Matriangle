@@ -5,7 +5,7 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import { BlockType } from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 
@@ -20,16 +20,16 @@ export default class ShockWaveDrone extends Projectile {
 	public lastBlockType: BlockType = BlockType.NULL;
 	public nowBlockType: BlockType = BlockType.NULL;
 
-	protected _tool: ToolType;
+	protected _tool: Tool;
 	protected _toolChargePercent: number;
 
 	protected _toolRot: uint;
 	protected _moveDuration: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, tool: ToolType, toolRot: uint, toolChargePercent: number) {
+	public constructor(position: fPoint, owner: Player | null, tool: Tool, toolRot: uint, toolChargePercent: number) {
 		super(position, owner);
-		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
+		this.ownerTool = Tool.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this._toolChargePercent = toolChargePercent;
 		this._toolRot = toolRot;

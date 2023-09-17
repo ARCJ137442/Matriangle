@@ -1,17 +1,15 @@
 
 
-import { uint, int } from "../../../../../legacy/AS3Legacy";
-import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
+import { uint } from "../../../../../legacy/AS3Legacy";
+import { DisplayLayers, IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Entity from "../../../../api/entity/Entity";
-import Player from "../player/Player";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import BonusBoxSymbol from "../../../../../display/mods/native/entity/BonusBoxSymbol";
 import EntityType from "../../../../api/entity/EntityType";
-import BonusType from "../../registry/BonusRegistry";
-import { randInt } from "../../../../../common/exMath";
-import IBatrGame from './../../../../main/IBatrGame';
+import { BonusType } from "../../registry/BonusRegistry";
+import { NativeEntityTypes } from "../../registry/EntityRegistry";
 
 /**
  * 「奖励箱」是
@@ -22,6 +20,9 @@ import IBatrGame from './../../../../main/IBatrGame';
  * 实体
  */
 export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {
+
+	override get type(): EntityType { return NativeEntityTypes.BONUS_BOX }
+
 	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x777777;
 	public static readonly FILL_COLOR: uint = 0xdddddd;
@@ -33,69 +34,46 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _bonusType: BonusType;
+	protected _bonusType: string;
+	public get bonusType(): BonusType { return this._bonusType; }
+	public set bonusType(value: BonusType) {
+		this._bonusType = value;
+		// this._symbol.shapeInit(shape: IBatrShape); // TODO: 请求更新
+	}
 
 	protected _symbol: BonusBoxSymbol;
 
 	//============Constructor & Destructor============//
-	public constructor(position: iPoint, type: BonusType = BonusType.NULL) {
+	public constructor(position: iPoint, type: BonusType) {
 		super();
 		this._bonusType = type;
 		this._symbol = new BonusBoxSymbol(this._bonusType);
 	}
-	i_InGrid: true;
-	get position(): intPoint {
-		throw new Error("Method not implemented.");
-	}
-	set position(value: intPoint) {
-		throw new Error("Method not implemented.");
-	}
-	i_displayableContainer: true;
-	shapeRefresh(shape: IBatrShapeContainer): void {
-		throw new Error("Method not implemented.");
-	}
-	shapeDestruct(shape: IBatrShapeContainer): void {
-		throw new Error("Method not implemented.");
-	}
-	i_displayable: true;
-	get zIndex(): number {
-		throw new Error("Method not implemented.");
-	}
-	set zIndex(value: number) {
-		throw new Error("Method not implemented.");
-	}
 
-	//============Destructor Function============//
 	override destructor(): void {
-		this._bonusType = null;
+		// this._bonusType = null; // ! 静态引用不需要
 		this._symbol.destructor();
-		this.removeChild(this._symbol);
 		super.destructor();
 	}
 
-	//============Instance Getters And Setters============//
-	override get type(): EntityType {
-		return EntityType.BONUS_BOX;
-	}
+	// 格点实体 //
+	public readonly i_InGrid: true = true;
 
-	public get bonusType(): BonusType {
-		return this._bonusType;
-	}
+	public readonly _position: iPoint = new iPoint();
+	public get position(): intPoint { return this._position }
+	public set position(value: intPoint) { this._position.copyFrom(value) }
 
-	public set bonusType(value: BonusType) {
-		this._bonusType = value;
-		this._symbol.shapeInit(shape: IBatrShape);
-	}
+	//============Game Mechanics============//
 
-	protected get borderSpace(): number {
-		return (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2;
-	}
 
-	protected get boxRadius(): number {
-		return BonusBox.BOX_SIZE / 2;
-	}
 
-	//============Instance Functions============//
+	//============Display Implements============//
+	public readonly i_displayable: true = true;
+	public readonly i_displayableContainer: true = true;
+
+	/** 边缘的空白 */
+	public static readonly BORDER_SPACE: number = (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
+
 	public shapeInit(shape: IBatrShapeContainer, symbol: IBatrShape): void {
 		// 绘制盒子
 		this.drawBox(shape);
@@ -105,102 +83,35 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 		symbol.x = symbol.y = DEFAULT_SIZE / 2; // 将「符号」置于中心
 		shape.addChild(symbol); // 添加子元素
 	}
+
+	public shapeRefresh(shape: IBatrShapeContainer): void {
+		// ? 待定
+	}
+
+	public shapeDestruct(shape: IBatrShapeContainer): void {
+		// 遍历（唯一的一个）子元素
+		for (let symbol of shape.children) {
+			symbol.graphics.clear()
+		}
+	}
+
+	protected _zIndex: uint = DisplayLayers.BONUS_BOX;
+	get zIndex(): uint { return this._zIndex }
+	set zIndex(value: uint) {
+		this._zIndex = value;
+		// this.shapeRefresh(this.shape); // TODO: 请求更新
+	}
+
 	protected drawBox(shape: IBatrShape): void {
 		// Define
 		// let radius:Number=DEFAULT_SIZE/2;
 		// Line
 		shape.graphics.beginFill(BonusBox.LINE_COLOR);
-		shape.graphics.drawRoundRect(this.borderSpace, this.borderSpace, BonusBox.BOX_SIZE, BonusBox.BOX_SIZE, BonusBox.BOX_ELLIPSE_SIZE, BonusBox.BOX_ELLIPSE_SIZE);
+		shape.graphics.drawRoundRect(BonusBox.BORDER_SPACE, BonusBox.BORDER_SPACE, BonusBox.BOX_SIZE, BonusBox.BOX_SIZE, BonusBox.BOX_ELLIPSE_SIZE, BonusBox.BOX_ELLIPSE_SIZE);
 		shape.graphics.endFill();
 		// Fill
 		shape.graphics.beginFill(BonusBox.FILL_COLOR);
-		shape.graphics.drawRoundRect(this.borderSpace + BonusBox.LINE_SIZE, this.borderSpace + BonusBox.LINE_SIZE, BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE, BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE, BonusBox.BOX_ELLIPSE_SIZE, BonusBox.BOX_ELLIPSE_SIZE);
+		shape.graphics.drawRoundRect(BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE, BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE, BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE, BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE, BonusBox.BOX_ELLIPSE_SIZE, BonusBox.BOX_ELLIPSE_SIZE);
 		shape.graphics.endFill();
-	}
-
-	/**
-	 * 当玩家「得到奖励」所用的逻辑
-	 * 
-	 * TODO: 似乎应该提取到「游戏逻辑」中，而非放到实体这里
-	 * 
-	 * @param host 调用的游戏主体
-	 * @param player 奖励箱将作用到的玩家
-	 * @param forcedBonusType 要强制应用的类型（若非空则强制应用此类型的奖励）
-	 */
-	public onPlayerPickup(host: IBatrGame, player: Player, forcedBonusType: BonusType = this._bonusType): void {
-		if (player == null)
-			return;
-		// Deactivate
-		this.isActive = false;
-		// Effect
-		let buffColor: int = -1;
-		switch (forcedBonusType) {
-			// Health,Heal&Life
-			case BonusType.ADD_HEALTH:
-				player.addHealth(5 * (1 + randInt(10)));
-				break;
-			case BonusType.ADD_HEAL:
-				player.heal += 5 * (1 + randInt(25));
-				break;
-			case BonusType.ADD_LIFE:
-				if (player.infinityLife || player.isFullHealth)
-					player.maxHealth += host.rule.bonusMaxHealthAdditionAmount;
-				else
-					player.lives++;
-				break;
-			// Tool
-			case BonusType.RANDOM_TOOL:
-				player.tool = ToolType.getRandomAvailableWithout(player.tool);
-				break;
-			// Attributes
-			case BonusType.BUFF_RANDOM:
-				this.onPlayerPickup(player, BonusType.RANDOM_BUFF);
-				return;
-			case BonusType.BUFF_DAMAGE:
-				player.buffDamage += host.rule.bonusBuffAdditionAmount;
-				buffColor = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-
-				break;
-			case BonusType.BUFF_CD:
-				player.buffCD += host.rule.bonusBuffAdditionAmount;
-				buffColor = BonusBoxSymbol.BUFF_CD_COLOR;
-
-				break;
-			case BonusType.BUFF_RESISTANCE:
-				player.buffResistance += host.rule.bonusBuffAdditionAmount;
-				buffColor = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-
-				break;
-			case BonusType.BUFF_RADIUS:
-				player.buffRadius += host.rule.bonusBuffAdditionAmount;
-				buffColor = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-
-				break;
-			case BonusType.ADD_EXPERIENCE:
-				player.experience += ((player.level >> 2) + 1) << 2;
-				buffColor = BonusBoxSymbol.EXPERIENCE_COLOR;
-
-				break;
-			// Team
-			case BonusType.RANDOM_CHANGE_TEAM:
-				this._host.randomizePlayerTeam(player);
-				break;
-			case BonusType.UNITE_AI:
-				this._host.setATeamToAIPlayer();
-				break;
-			case BonusType.UNITE_PLAYER:
-				this._host.setATeamToNotAIPlayer();
-				break;
-			// Other
-			case BonusType.RANDOM_TELEPORT:
-				this._host.spreadPlayer(player, false, true);
-				break;
-		}
-		if (buffColor >= 0)
-			host.addPlayerLevelupEffect(player.entityX + 0.5, player.entityY + 0.5, buffColor, 0.75);
-		// Stats Operations
-		player.stats.pickupBonusBoxCount++;
-		// Remove
-		this._host.entitySystem.removeBonusBox(this);
 	}
 }

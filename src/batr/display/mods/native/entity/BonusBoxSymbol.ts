@@ -1,5 +1,5 @@
 import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport";
-import BonusType from "../../../../game/mods/native/registry/BonusRegistry";
+import { BonusType, NativeBonusTypes } from "../../../../game/mods/native/registry/BonusRegistry";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrGraphicContext, IBatrShape } from "../../../api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
@@ -51,7 +51,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	protected _type: BonusType;
 
 	//============Constructor & Destructor============//
-	public constructor(type: BonusType = BonusType.NULL) {
+	public constructor(type: BonusType) {
 		this._type = type;
 		// this.shapeInit(shape: IBatrShape);
 	}
@@ -99,53 +99,51 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	/** 工具函数：绘制图形 */
 	public drawSymbol(graphics: IBatrGraphicContext): void {
 		switch (this._type) {
-			case BonusType.NULL:
-				return;
 			// HHL(Health,Heal&Life)
-			case BonusType.ADD_HEALTH:
+			case NativeBonusTypes.ADD_HEALTH:
 				this.drawHealthSymbol(graphics);
 				break;
-			case BonusType.ADD_HEAL:
+			case NativeBonusTypes.ADD_HEAL:
 				this.drawHealSymbol(graphics);
 				break;
-			case BonusType.ADD_LIFE:
+			case NativeBonusTypes.ADD_LIFE:
 				this.drawLifeSymbol(graphics);
 				break;
 			// Tool
-			case BonusType.RANDOM_TOOL:
+			case NativeBonusTypes.RANDOM_TOOL:
 				this.drawToolSymbol(graphics);
 				break;
 			// Attributes
-			case BonusType.BUFF_RANDOM:
+			case NativeBonusTypes.BUFF_RANDOM:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RANDOM_COLOR);
 				break;
-			case BonusType.BUFF_DAMAGE:
+			case NativeBonusTypes.BUFF_DAMAGE:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_DAMAGE_COLOR);
 				break;
-			case BonusType.BUFF_CD:
+			case NativeBonusTypes.BUFF_CD:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_CD_COLOR);
 				break;
-			case BonusType.BUFF_RESISTANCE:
+			case NativeBonusTypes.BUFF_RESISTANCE:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RESISTANCE_COLOR);
 				break;
-			case BonusType.BUFF_RADIUS:
+			case NativeBonusTypes.BUFF_RADIUS:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RADIUS_COLOR);
 				break;
-			case BonusType.ADD_EXPERIENCE:
+			case NativeBonusTypes.ADD_EXPERIENCE:
 				this.drawAttributesSymbol(graphics, BonusBoxSymbol.EXPERIENCE_COLOR);
 				break;
 			// Team
-			case BonusType.RANDOM_CHANGE_TEAM:
+			case NativeBonusTypes.RANDOM_CHANGE_TEAM:
 				this.drawTeamSymbol(graphics, BonusBoxSymbol.RANDOM_CHANGE_TEAM_LINE_COLOR);
 				break;
-			case BonusType.UNITE_PLAYER:
+			case NativeBonusTypes.UNITE_PLAYER:
 				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_PLAYER_LINE_COLOR);
 				break;
-			case BonusType.UNITE_AI:
+			case NativeBonusTypes.UNITE_AI:
 				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_AI_LINE_COLOR);
 				break;
 			// Other
-			case BonusType.RANDOM_TELEPORT:
+			case NativeBonusTypes.RANDOM_TELEPORT:
 				this.drawRandomTeleportSymbol(graphics);
 				break;
 		}

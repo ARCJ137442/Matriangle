@@ -1,4 +1,4 @@
-
+import { Event } from "../../../legacy/flash/events";
 
 export default class GameRuleEvent extends Event {
 	//============Static Variables============//
@@ -16,7 +16,7 @@ export default class GameRuleEvent extends Event {
 
 	//============Copy Constructor Function============//
 	override clone(): Event {
-		return new GameRuleEvent(type, bubbles, cancelable);
+		return new GameRuleEvent(this.type, this.bubbles, this.cancelable);
 	}
 
 	//============Instance Getter And Setter============//
@@ -30,6 +30,6 @@ export default class GameRuleEvent extends Event {
 
 	//============Instance Functions============//
 	override toString(): string {
-		return formatToString('GameRuleEvent', 'type', 'bubbles', 'cancelable', 'eventPhase');
+		return this.formatToString('GameRuleEvent', 'type', 'bubbles', 'cancelable', 'eventPhase');
 	}
 }

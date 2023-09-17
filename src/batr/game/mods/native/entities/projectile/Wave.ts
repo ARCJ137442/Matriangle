@@ -2,7 +2,7 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 
@@ -28,7 +28,7 @@ export default class Wave extends Projectile {
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
 		super(position, owner);
-		this.ownerTool = ToolType.WAVE;
+		this.ownerTool = Tool.WAVE;
 		dealCharge(chargePercent);
 		this.shapeInit(shape: IBatrShape);
 	}

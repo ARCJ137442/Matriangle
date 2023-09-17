@@ -30,7 +30,7 @@ export function getDefaultI18n(key: string): string {
 			return type.name;
 	}
 	// Tool Type
-	for (let type of ToolType._ALL_TOOL) {
+	for (let type of Tool._ALL_TOOL) {
 		if (type == null)
 			continue;
 		if (key == I18nKey.getTypeNameKey(type))

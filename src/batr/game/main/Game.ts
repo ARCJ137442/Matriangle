@@ -147,7 +147,7 @@
 	protected _enableFrameComplement: boolean;
 
 	// Temp
-	protected _tempUniformTool: ToolType;
+	protected _tempUniformTool: Tool;
 
 	protected _tempMapTransformSecond: uint;
 
@@ -1297,7 +1297,7 @@
 		// Position
 		this.respawnPlayer(player);
 		// Variables
-		player.initVariablesByRule(this.rule.defaultToolID, this._tempUniformTool);
+		player.initVariablesByRule(this.rule.defaultTool, this._tempUniformTool);
 		// GUI
 		player.gui.updateHealth();
 		// Stats
@@ -1590,9 +1590,9 @@
 		}
 	}
 
-	public changeAllPlayerTool(tool: ToolType = null): void {
+	public changeAllPlayerTool(tool: Tool = null): void {
 		if (tool == null)
-			tool = ToolType.RANDOM_AVAILABLE;
+			tool = Tool.RANDOM_AVAILABLE;
 
 		for (let player of this._entitySystem.players) {
 			player.tool = tool;
@@ -1601,7 +1601,7 @@
 
 	public changeAllPlayerToolRandomly(): void {
 		for (let player of this._entitySystem.players) {
-			player.tool = ToolType.RANDOM_AVAILABLE;
+			player.tool = Tool.RANDOM_AVAILABLE;
 
 			player.toolUsingCD = 0;
 		}
@@ -1637,7 +1637,7 @@
 		player.toolUsingCD = this._rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : player.computeFinalCD(player.tool);
 	}
 
-	public playerUseToolAt(player: Player, tool: ToolType, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
+	public playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
 		// Set Variables
 		let p: Projectile = null;
 
@@ -1649,7 +1649,7 @@
 
 		let laserLength: number = this.rule.defaultLaserLength;
 
-		if (ToolType.isIncludeIn(tool, ToolType._LASERS) &&
+		if (Tool.isIncludeIn(tool, Tool._LASERS) &&
 			!this._rule.allowLaserThroughAllBlock) {
 			laserLength = this.getLaserLength2(x, y, toolRot);
 
@@ -1658,43 +1658,43 @@
 		// Debug: trace('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
 		// Summon Projectile
 		switch (tool) {
-			case ToolType.BULLET:
+			case Tool.BULLET:
 				p = new BulletBasic(this, x, y, player);
 
 				break;
-			case ToolType.NUKE:
+			case Tool.NUKE:
 				p = new BulletNuke(this, x, y, player, chargePercent);
 
 				break;
-			case ToolType.SUB_BOMBER:
+			case Tool.SUB_BOMBER:
 				p = new SubBomber(this, x, y, player, chargePercent);
 
 				break;
-			case ToolType.TRACKING_BULLET:
+			case Tool.TRACKING_BULLET:
 				p = new BulletTracking(this, x, y, player, chargePercent);
 
 				break;
-			case ToolType.LASER:
+			case Tool.LASER:
 				p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
 
 				break;
-			case ToolType.PULSE_LASER:
+			case Tool.PULSE_LASER:
 				p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
 
 				break;
-			case ToolType.TELEPORT_LASER:
+			case Tool.TELEPORT_LASER:
 				p = new LaserTeleport(this, x, y, player, laserLength);
 
 				break;
-			case ToolType.ABSORPTION_LASER:
+			case Tool.ABSORPTION_LASER:
 				p = new LaserAbsorption(this, x, y, player, laserLength);
 
 				break;
-			case ToolType.WAVE:
+			case Tool.WAVE:
 				p = new Wave(this, x, y, player, chargePercent);
 
 				break;
-			case ToolType.BLOCK_THROWER:
+			case Tool.BLOCK_THROWER:
 				let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
 				let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
 				frontBlock = this.getBlock(carryX, carryY);
@@ -1717,16 +1717,16 @@
 					}
 				}
 				break;
-			case ToolType.MELEE:
+			case Tool.MELEE:
 
 				break;
-			case ToolType.LIGHTNING:
+			case Tool.LIGHTNING:
 				p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
 				break;
-			case ToolType.SHOCKWAVE_ALPHA:
+			case Tool.SHOCKWAVE_ALPHA:
 				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone);
 				break;
-			case ToolType.SHOCKWAVE_BETA:
+			case Tool.SHOCKWAVE_BETA:
 				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
 				break;
 		}

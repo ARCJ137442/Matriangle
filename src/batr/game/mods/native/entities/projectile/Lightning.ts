@@ -5,7 +5,7 @@ import { uint, int } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import BlockAttributes from "../../../../api/block/BlockAttributes";
 import Game from "../../../../main/Game";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 
@@ -37,7 +37,7 @@ export default class Lightning extends Projectile {
 		super(position, owner);
 		this.rot = rot;
 		this._initialEnergy = this._energy = energy;
-		this.ownerTool = ToolType.LIGHTNING;
+		this.ownerTool = Tool.LIGHTNING;
 	}
 
 	//============Destructor Function============//
@@ -67,7 +67,7 @@ export default class Lightning extends Projectile {
 	protected lightningWays(): void {
 		// Draw in location in this
 		let head: iPoint = new iPoint(this.gridX, this.gridY);
-		let ownerTool: ToolType = this.currentTool;
+		let ownerTool: Tool = this.currentTool;
 		let vx: int, vy: int;
 		let cost: int = 0;
 		let player: Player = null;

@@ -38,7 +38,9 @@ export interface IEntityInGrid extends Entity {
     readonly i_InGrid: true;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
+    /** 获取实体的整数坐标（引用） */
     get position(): iPoint;
+    /** 设置实体的整数坐标（引用） */
     set position(value: iPoint);
 }
 
@@ -60,7 +62,9 @@ export interface IEntityOutGrid extends Entity {
     readonly i_InGrid: false;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
+    /** 获取实体的浮点坐标（引用） */
     get position(): fPoint;
+    /** 设置实体的浮点坐标（引用） */
     set position(value: fPoint);
 
 }

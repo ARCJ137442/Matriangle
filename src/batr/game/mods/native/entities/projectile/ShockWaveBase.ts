@@ -4,7 +4,7 @@ import { uint, int } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Player from "../player/Player";
 import Projectile from "./Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
@@ -28,16 +28,16 @@ export default class ShockWaveBase extends Projectile {
 
 	protected _life: uint = 0;
 
-	protected _tool: ToolType;
+	protected _tool: Tool;
 	protected _toolChargePercent: number;
 
 	/** Default is 0,Vortex is 1 */
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, tool: ToolType, toolCharge: number, mode: uint = 0) {
+	public constructor(position: fPoint, owner: Player | null, tool: Tool, toolCharge: number, mode: uint = 0) {
 		super(position, owner);
-		this.ownerTool = ToolType.SHOCKWAVE_ALPHA;
+		this.ownerTool = Tool.SHOCKWAVE_ALPHA;
 		this._tool = tool;
 		this.mode = mode;
 		this._toolChargePercent = toolCharge;

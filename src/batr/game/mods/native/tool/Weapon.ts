@@ -4,7 +4,7 @@ import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";
 
 /**
- * 原`ToolType`，现拆分为（暂时轻量级的）「武器」类
+ * 原`Tool`，现拆分为（暂时轻量级的）「武器」类
  *
  *  「武器」是
  * * 普遍能发射「抛射体」的

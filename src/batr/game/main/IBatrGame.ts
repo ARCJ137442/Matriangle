@@ -17,14 +17,15 @@ import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Lightning from "../mods/native/entities/projectile/Lightning";
 import Projectile from "../mods/native/entities/projectile/Projectile";
 import ThrownBlock from "../mods/native/entities/projectile/ThrownBlock";
-import GameRule_V1 from "../mods/native/rule/GameRule_V1";
 import GameRuleEvent from "../api/rule/GameRuleEvent";
 import GameResult from "../mods/native/stat/GameResult";
 import Wave from "../mods/native/entities/projectile/Wave";
 import { IBatrShapeContainer } from "../../display/api/BatrDisplayInterfaces";
 import Tool from "../mods/native/tool/Tool";
-import BonusType from "../mods/native/registry/BonusRegistry";
+import { BonusType, NativeBonusTypes } from "../mods/native/registry/BonusRegistry";
 import Laser from "../mods/native/entities/projectile/laser/Laser";
+import IGameRule from "../api/rule/IGameRule";
+import { mRot } from "../general/GlobalRot";
 
 /**
  * TODO: 有待施工
@@ -68,7 +69,7 @@ export default interface IBatrGame {
 	//============Instance Getter And Setter============//
 	//======Main Getters======//
 
-	get rule(): GameRule_V1;
+	get rule(): IGameRule;
 
 	//============Display Implements============//
 	get translations(): I18ns
@@ -176,13 +177,13 @@ export default interface IBatrGame {
 	addChildren(): void
 
 	//====Functions About Game Global Running====//
-	load(rule: GameRule_V1, becomeActive?: boolean/* = false*/): boolean
+	load(rule: IGameRule, becomeActive?: boolean/* = false*/): boolean
 
 	clearGame(): boolean
 
-	restartGame(rule: GameRule_V1, becomeActive?: boolean/* = false*/): void
+	restartGame(rule: IGameRule, becomeActive?: boolean/* = false*/): void
 
-	forceStartGame(rule: GameRule_V1, becomeActive?: boolean/* = false*/): boolean
+	forceStartGame(rule: IGameRule, becomeActive?: boolean/* = false*/): boolean
 
 	dealGameTick(): void
 
@@ -237,7 +238,7 @@ export default interface IBatrGame {
 
 	testFullPlayerCanPass(player: Player, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testPlayerCanPassToFront(player: Player, rotatedAsRot: uint/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
+	testPlayerCanPassToFront(player: Player, rotatedAsRot: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
 	testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
 
@@ -335,7 +336,7 @@ export default interface IBatrGame {
 	//====Functions About Player====//
 	createPlayer(position: iPoint, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): Player
 
-	addPlayer(id: uint, team: PlayerTeam, position: iPoint, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
+	addPlayer(id: uint, team: PlayerTeam, position: iPoint, rot: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
 
 	// Set player datas for gaming
 	setupPlayer(player: Player): Player
@@ -345,7 +346,7 @@ export default interface IBatrGame {
 
 	createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
 
-	addAI(team: PlayerTeam, position: iPoint, rot: uint/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
+	addAI(team: PlayerTeam, position: iPoint, rot: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
 
 	appendAI(): Player
 
@@ -401,15 +402,15 @@ export default interface IBatrGame {
 
 	changeAllPlayerToolRandomly(): void
 
-	movePlayer(player: Player, rot: uint, distance: number): void
+	movePlayer(player: Player, rot: mRot, distance: number): void
 
-	playerUseTool(player: Player, rot: uint, chargePercent: number): void
+	playerUseTool(player: Player, rot: mRot, chargePercent: number): void
 
-	playerUseToolAt(player: Player, tool: Tool, position: fPoint, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void
+	playerUseToolAt(player: Player, tool: Tool, position: fPoint, toolRot: mRot, chargePercent: number, projectilesSpawnDistance: number): void
 
-	getLaserLength(player: Player, rot: uint): uint
+	getLaserLength(player: Player, rot: mRot): uint
 
-	getLaserLength2(eX: number, eY: number, rot: uint): uint
+	getLaserLength2(position: iPoint, rot: mRot): uint
 
 	lockEntityInMap(entity: Entity): void
 
@@ -436,9 +437,9 @@ export default interface IBatrGame {
 
 	addTeleportEffect(position: fPoint): void
 
-	addPlayerDeathLightEffect(position: fPoint, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathLightEffect(position: fPoint, color: uint, rot: mRot, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
 
-	addPlayerDeathFadeoutEffect(position: fPoint, color: uint, rot: uint, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathFadeoutEffect(position: fPoint, color: uint, rot: mRot, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
 
 	addPlayerDeathLightEffect2(position: fPoint, player: Player, reverse: boolean/* = false*/): void
 
@@ -455,7 +456,7 @@ export default interface IBatrGame {
 	//======Hook Functions======//
 	onPlayerMove(player: Player): void
 
-	onPlayerUse(player: Player, rot: uint, distance: number): void
+	onPlayerUse(player: Player, rot: mRot, distance: number): void
 
 	onPlayerHurt(attacker: Player, victim: Player, damage: uint): void
 

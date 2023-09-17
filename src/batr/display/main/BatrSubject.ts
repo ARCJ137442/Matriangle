@@ -2,7 +2,7 @@
 
 import Map_V1 from "../../game/mods/native/maps/Map_V1";
 import Game from "../../game/main/Game";
-import ToolType from "../game/registry/ToolType";
+import Tool from "../game/registry/Tool";
 import GameRule_V1 from "../../game/mods/native/rule/GameRule_V1";
 import I18ns from "../api/i18n/I18ns";
 import { uint } from "../../legacy/AS3Legacy";
@@ -141,7 +141,7 @@ export default class BatrSubject extends Sprite {
 		this._gameRule.initialMap = Map_V1.MAP_5;
 		this._gameRule.toolsNoCD = true;
 		this._gameRule.mapTransformTime = 0;
-		this._gameRule.defaultToolID = ToolType.LIGHTNING.toolID;
+		this._gameRule.defaultTool = Tool.LIGHTNING.toolID;
 		this._game.forceStartGame(this.gameRule);
 		this.turnToGame();
 	}

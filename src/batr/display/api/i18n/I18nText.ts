@@ -2,7 +2,7 @@
 
 import BonusType from "../game/registry/BonusRegistry";
 import EntityType from "../game/registry/EntityRegistry";
-import ToolType from "../game/registry/ToolType";
+import Tool from "../game/registry/Tool";
 import GameModeType from "../../../game/api/rule/GameModeType";
 import GameRule_V1 from "../../../game/mods/native/rule/GameRule_V1";
 import { uint } from "../../../legacy/AS3Legacy";
@@ -40,7 +40,7 @@ export default class I18nText {
 
 	public static getTextsByAllAvailableTools(translations: I18ns, isDescription: boolean): I18nText[] {
 		let result: I18nText[] = new Array<I18nText>();
-		for (let type of ToolType._ALL_AVAILABLE_TOOL) {
+		for (let type of Tool._ALL_AVAILABLE_TOOL) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)));
 		}
 		return result;
@@ -72,8 +72,8 @@ export default class I18nText {
 
 	public static getTextsByRuleTools(rule: GameRule_V1, translations: I18ns, isDescription: boolean): I18nText[] {
 		let result: I18nText[] = new Array<I18nText>();
-		for (let i: uint = 0; i < rule.enableToolCount; i++) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enableTools[i], isDescription)));
+		for (let i: uint = 0; i < rule.enabledToolCount; i++) {
+			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enabledTools[i], isDescription)));
 		}
 		return result;
 	}

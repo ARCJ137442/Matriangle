@@ -4,7 +4,7 @@ import { iPoint } from "../../../../../../common/geometricTools";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../../../api/block/BlockAttributes";
 import Game from "../../../../../main/Game";
-import ToolType from "../../../registry/ToolType";
+import Tool from "../../../registry/Tool";
 import Entity from "../../../../../api/entity/Entity";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
@@ -27,16 +27,16 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		let vx: int = GlobalRot.towardXInt(rot, 1);
 		let vy: int = GlobalRot.towardYInt(rot, 1);
 		let cx: int, cy: int;
-		let tool: ToolType = owner.tool;
+		let tool: Tool = owner.tool;
 		for (let i: uint = 1; i < distance; i++) {
 			cx = owner.gridX + vx * i;
 			cy = owner.gridY + vy * i;
 			if (host.isIntOutOfMap(cx, cy))
 				continue;
 			if (!host.testIntCanPass(
-				cx, cy, tool == ToolType.MELEE,
-				ToolType.isBulletTool(tool) || tool == ToolType.BLOCK_THROWER,
-				ToolType.isLaserTool(tool),
+				cx, cy, tool == Tool.MELEE,
+				Tool.isBulletTool(tool) || tool == Tool.BLOCK_THROWER,
+				Tool.isLaserTool(tool),
 				toolNotThroughPlayer(tool), false
 			)
 			)
@@ -45,22 +45,22 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return true;
 	}
 
-	static toolNotThroughPlayer(tool: ToolType): boolean {
+	static toolNotThroughPlayer(tool: Tool): boolean {
 		switch (tool) {
-			case ToolType.BULLET:
-			case ToolType.NUKE:
-			case ToolType.SUB_BOMBER:
-			case ToolType.TRACKING_BULLET:
-			case ToolType.BLOCK_THROWER:
-			case ToolType.MELEE:
-			case ToolType.LIGHTNING:
+			case Tool.BULLET:
+			case Tool.NUKE:
+			case Tool.SUB_BOMBER:
+			case Tool.TRACKING_BULLET:
+			case Tool.BLOCK_THROWER:
+			case Tool.MELEE:
+			case Tool.LIGHTNING:
 				return true;
 		}
 		return false;
 	}
 
-	static toolNeedCarryBlock(tool: ToolType): boolean {
-		return tool == ToolType.BLOCK_THROWER;
+	static toolNeedCarryBlock(tool: Tool): boolean {
+		return tool == Tool.BLOCK_THROWER;
 	}
 
 	static detectCarryBlock(player: Player): boolean {

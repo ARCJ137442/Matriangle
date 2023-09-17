@@ -9,7 +9,7 @@ export default class batrFla extends MovieClip {
 		sub.turnToMenu();
 		sub.gameRule.playerCount = 4;
 		sub.gameRule.AICount = 6;
-		//sub.gameRule.defaultToolID=ToolType.RANDOM_AVAILABLE_ID;
+		//sub.gameRule.defaultTool=Tool.RANDOM_AVAILABLE_ID;
 		//sub.gameRule.toolsNoCD=false
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, onKD);
 	}

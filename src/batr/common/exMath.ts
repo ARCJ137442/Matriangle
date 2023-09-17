@@ -190,13 +190,13 @@ export function random1(): int {
 }
 
 /**
- * 在一定的「自然数取模」中规避某个随机值
+ * 在一定的「自然数取模随机」中规避某个值
  * * 例如：在0~9的取值中规避3，则x=3, n=9
  * * 这里的`1 + randInt(n - 1)`相当于在整个循环群里循环(1~n)次
  *   * 0和(n+1)都会循环到自身，所以规避了
  * 
  * @param x 要规避的值
- * @param n 取值范围的上界
+ * @param n 取值范围的上界（不含）
  */
 export function randModWithout(x: uint, n: uint): uint {
 	return (x + 1 + randInt(n - 1)) % n;
@@ -233,61 +233,6 @@ export function isBetween(
 		return x > l && x <= m;
 	return x > l && x < m;
 }
-
-/**
- * Choose an index in an array that regard the content as weights
- * @param weights the weight of random
- * @returns the selected index of the weight
- */
-export function randomByWeight(weights: number[]): uint {
-	if (weights.length == 1) return 0;
-
-	let all: number = sum(weights);
-	if (weights.length == 1)
-		return 0;
-	let r: number = randomFloat(all);
-	for (let i = 0; i < weights.length; i++) {
-		let N = weights[i];
-		let rs = 0;
-		for (let l = 0; l < i; l++)
-			rs += weights[l];
-		// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
-		if (r <= rs + N)
-			return i;
-	}
-	throw new Error("加权随机：未正常随机到结果！")
-}
-
-/**
- * 
- * @param weightMap 权重映射：元素→权重
- * @returns 
- */
-export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
-	// 尺寸=1 ⇒ 唯一键
-	if (weightMap.size == 1) return weightMap.keys().next().value;
-
-	// 拆解成顺序数组
-	let elements: T[] = [];
-	let weights: number[] = [];
-	weightMap.forEach((value, key) => {
-		elements.push(key);
-		weights.push(value);
-	})
-
-	// 索引对照
-	return elements[randomByWeight(weights)];
-}
-
-/**
- * 对参数加权随机
- * @param weights 权重集（以任意长参数形式出现）
- * @returns 其中一个元素的索引
- */
-export function randomByWeight_params(...weights: number[]): number {
-	return randomByWeight(weights);
-}
-
 
 export function angleToArc(value: number): number {
 	return value * Math.PI / 180;

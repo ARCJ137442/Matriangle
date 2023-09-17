@@ -579,7 +579,7 @@ export default class Menu extends Sprite {
 						]).concat(I18nText.getTextsByAllAvailableTools(this.translations, false)),
 						0, 2
 					).initAsInt(
-						this.gameRule.enableToolCount - 1, -2, this.gameRule.defaultToolID
+						this.gameRule.enableToolCount - 1, -2, this.gameRule.defaultTool
 					).autoInitLoopSelect(),
 					I18nKey.DEFAULT_TOOL,
 					false
@@ -804,7 +804,7 @@ export default class Menu extends Sprite {
 			//====Right====//
 			// DefaultTool
 			let defaultToolSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
-			rule.defaultToolID = defaultToolSelector == null ? -2 : defaultToolSelector.currentValue;
+			rule.defaultTool = defaultToolSelector == null ? -2 : defaultToolSelector.currentValue;
 			// ToolsNoCD
 			let toolsNoCDSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
 			rule.toolsNoCD = toolsNoCDSelector.currentValue > 0;
