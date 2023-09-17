@@ -1,12 +1,11 @@
-﻿
+﻿import TypeCommon from "../../../api/template/TypeCommon";
+import { NULL } from "../../../general/GlobalRot";
 
-import { NULL } from "../../general/GlobalRot";
-import TypeCommon from "../template/TypeCommon";
-
+/**
+ * 登记所有的「奖励类型」
+ */
 export default class BonusType extends TypeCommon {
 	//============Static Variables============//
-	public static readonly NULL: BonusType = null;
-
 	// Health,Life
 	public static readonly ADD_HEALTH: BonusType = new BonusType('addHealth');
 	public static readonly ADD_HEAL: BonusType = new BonusType('addHeal');

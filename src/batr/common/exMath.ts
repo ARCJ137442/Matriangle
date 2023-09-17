@@ -240,55 +240,54 @@ export function isBetween(
  * @returns the selected index of the weight
  */
 export function randomByWeight(weights: number[]): uint {
-	// Return Number Include 0
-	if (weights.length >= 1) {
-		let all = 0;
-		let i;
-		for (i in weights) {
-			if (!isNaN(weights[i]))
-				all += weights[i];
-		}
-		if (weights.length == 1)
-			return 0;
-		else {
-			let R = Math.random() * all;
-			for (i = 0; i < weights.length; i++) {
-				let N = weights[i];
-				let rs = 0;
-				for (let l = 0; l < i; l++)
-					rs += weights[l];
-				// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
-				if (R >= rs && R < rs + N)
-					return i;
-			}
-		}
+	if (weights.length == 1) return 0;
+
+	let all: number = sum(weights);
+	if (weights.length == 1)
+		return 0;
+	let r: number = randomFloat(all);
+	for (let i = 0; i < weights.length; i++) {
+		let N = weights[i];
+		let rs = 0;
+		for (let l = 0; l < i; l++)
+			rs += weights[l];
+		// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
+		if (r <= rs + N)
+			return i;
 	}
-	return randInt(weights.length);
+	throw new Error("加权随机：未正常随机到结果！")
 }
 
-export function randomByWeight2(...weights: number[]): number {
+/**
+ * 
+ * @param weightMap 权重映射：元素→权重
+ * @returns 
+ */
+export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
+	// 尺寸=1 ⇒ 唯一键
+	if (weightMap.size == 1) return weightMap.keys().next().value;
+
+	// 拆解成顺序数组
+	let elements: T[] = [];
+	let weights: number[] = [];
+	weightMap.forEach((value, key) => {
+		elements.push(key);
+		weights.push(value);
+	})
+
+	// 索引对照
+	return elements[randomByWeight(weights)];
+}
+
+/**
+ * 对参数加权随机
+ * @param weights 权重集（以任意长参数形式出现）
+ * @returns 其中一个元素的索引
+ */
+export function randomByWeight_params(...weights: number[]): number {
 	return randomByWeight(weights);
 }
 
-export function randomByWeightV(weights: number[]): number {
-	if (weights.length >= 1) {
-		let all: number = sum(weights);
-		if (weights.length == 1)
-			return 0;
-		let r: number = randomFloat(all);
-		for (let i = 0; i < weights.length; i++) {
-			let N = weights[i];
-			let rs = 0;
-			for (let l = 0; l < i; l++)
-				rs += weights[l];
-			// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
-			if (r <= rs + N)
-				return i;
-		}
-	}
-	console.error('Nothing is out by weighted random!', weights)
-	return randInt(weights.length) + 1;
-}
 
 export function angleToArc(value: number): number {
 	return value * Math.PI / 180;

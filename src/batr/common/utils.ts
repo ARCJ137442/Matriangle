@@ -317,3 +317,6 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> 
 		arr[i] = f(i);
 	return arr;
 }
+
+/** 可以用来索引对象值的索引类型 */
+export type key = string | number;

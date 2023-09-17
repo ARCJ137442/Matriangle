@@ -17,7 +17,7 @@ import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Lightning from "../mods/native/entities/projectile/Lightning";
 import Projectile from "../mods/native/entities/projectile/Projectile";
 import ThrownBlock from "../mods/native/entities/projectile/ThrownBlock";
-import GameRule from "../api/rule/GameRule";
+import GameRule_V1 from "../mods/native/rule/GameRule_V1";
 import GameRuleEvent from "../api/rule/GameRuleEvent";
 import GameResult from "../mods/native/stat/GameResult";
 import Wave from "../mods/native/entities/projectile/Wave";
@@ -68,7 +68,7 @@ export default interface IBatrGame {
 	//============Instance Getter And Setter============//
 	//======Main Getters======//
 
-	get rule(): GameRule;
+	get rule(): GameRule_V1;
 
 	//============Display Implements============//
 	get translations(): I18ns
@@ -176,13 +176,13 @@ export default interface IBatrGame {
 	addChildren(): void
 
 	//====Functions About Game Global Running====//
-	load(rule: GameRule, becomeActive?: boolean/* = false*/): boolean
+	load(rule: GameRule_V1, becomeActive?: boolean/* = false*/): boolean
 
 	clearGame(): boolean
 
-	restartGame(rule: GameRule, becomeActive?: boolean/* = false*/): void
+	restartGame(rule: GameRule_V1, becomeActive?: boolean/* = false*/): void
 
-	forceStartGame(rule: GameRule, becomeActive?: boolean/* = false*/): boolean
+	forceStartGame(rule: GameRule_V1, becomeActive?: boolean/* = false*/): boolean
 
 	dealGameTick(): void
 

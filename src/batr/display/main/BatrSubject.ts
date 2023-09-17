@@ -3,7 +3,7 @@
 import Map_V1 from "../../game/mods/native/maps/Map_V1";
 import Game from "../../game/main/Game";
 import ToolType from "../game/registry/ToolType";
-import GameRule from "../../game/api/rule/GameRule";
+import GameRule_V1 from "../../game/mods/native/rule/GameRule_V1";
 import I18ns from "../api/i18n/I18ns";
 import { uint } from "../../legacy/AS3Legacy";
 import I18nsChangeEvent from "../menu/event/I18nsChangeEvent";
@@ -18,14 +18,14 @@ export default class BatrSubject extends Sprite {
 	protected _game: Game;
 	protected _menu: Menu;
 
-	protected _gameRule: GameRule;
+	protected _gameRule: GameRule_V1;
 	protected _translations: I18ns;
 
 	//============Constructor & Destructor============//
 	public constructor() {
 		// Init Variables
 		this._translations = I18ns.getI18nByLanguage();
-		this._gameRule = new GameRule();
+		this._gameRule = new GameRule_V1();
 		this._game = new batr.game.main.Game(this, false);
 		this._menu = new batr.menu.main.Menu(this);
 		// Add Event Listener
@@ -33,7 +33,7 @@ export default class BatrSubject extends Sprite {
 	}
 
 	//============Instance Getter And Setter============//
-	public get gameRule(): GameRule {
+	public get gameRule(): GameRule_V1 {
 		return this._gameRule;
 	}
 
@@ -147,7 +147,7 @@ export default class BatrSubject extends Sprite {
 	}
 
 	protected initGamePreview(): void {
-		this._game.load(GameRule.MENU_BACKGROUND);
+		this._game.load(GameRule_V1.MENU_BACKGROUND);
 		this._game.visibleHUD = false;
 		this.gameVisible = true;
 		this._game.mapVisible = !(this._game.entityAndEffectVisible = false);
@@ -264,6 +264,6 @@ export default class BatrSubject extends Sprite {
 	}
 
 	public resetRule(): void {
-		this._gameRule = new GameRule();
+		this._gameRule = new GameRule_V1();
 	}
 }

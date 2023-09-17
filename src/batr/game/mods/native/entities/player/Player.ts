@@ -5,7 +5,7 @@ import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
 import ToolType from "../../../registry/ToolType";
-import GameRule from "../../../../api/rule/GameRule";
+import GameRule_V1 from "../../rule/GameRule_V1";
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
@@ -44,7 +44,7 @@ export default class Player extends Entity implements IPlayerProfile {
 
 	protected _tool: ToolType;
 
-	protected _droneTool: ToolType = GameRule.DEFAULT_DRONE_TOOL;
+	protected _droneTool: ToolType = GameRule_V1.DEFAULT_DRONE_TOOL;
 
 	//====Graphics Variables====//
 	protected _lineColor: uint = 0x888888;
@@ -821,7 +821,7 @@ export default class Player extends Entity implements IPlayerProfile {
 			else if (!ToolType.isAvailableDroneNotUse(oldType))
 				this._droneTool = oldType;
 			else
-				this._droneTool = GameRule.DEFAULT_DRONE_TOOL;
+				this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
 		}
 		// If The Block is still carrying,then throw without charge(WIP,maybe?)
 	}

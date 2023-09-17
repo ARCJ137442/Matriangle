@@ -1,13 +1,15 @@
-
-
+import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport";
+import BonusType from "../../../../game/mods/native/registry/BonusRegistry";
 import { uint } from "../../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../api/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrGraphicContext, IBatrShape } from "../../../api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
-import EffectTeleport from "../../../../game/mods/native/entities/effect/EffectTeleport.1";
-import BonusType from "../../../../registry/BonusRegistry";
 import PlayerGUI from "./player/PlayerGUI";
 
-export default class BonusBoxSymbol extends Shape {
+/**
+ * 奖励箱图形
+ * * 用于根据类型统一管理各类奖励箱上的标识
+ */
+export default class BonusBoxSymbol implements IBatrDisplayable {
 	//============Static Variables============//
 	// General
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
@@ -50,17 +52,14 @@ export default class BonusBoxSymbol extends Shape {
 
 	//============Constructor & Destructor============//
 	public constructor(type: BonusType = BonusType.NULL) {
-		super();
-		this.shapeInit(shape: IBatrShape);
+		this._type = type;
+		// this.shapeInit(shape: IBatrShape);
 	}
 
-	//============Destructor Function============//
 	public destructor(): void {
-		this._type = null;
-		shape.graphics.clear();
+		// this._type = null; // ! 因为这里是「对常量的引用」，所以无需清除
 	}
 
-	//============Instance Getters And Setters============//
 	public get type(): BonusType {
 		return this._type;
 	}
@@ -69,156 +68,179 @@ export default class BonusBoxSymbol extends Shape {
 		if (this._type == value)
 			return;
 		this._type = value;
-		this.shapeInit(shape: IBatrShape);
+		// this.shapeInit(shape: IBatrShape); // TODO: 请求图形更新
 	}
 
-	//============Instance Functions============//
-	//========Symbol Shape========//
+
+	//============Display Implements============//
+	public readonly i_displayable: true = true;
+
+	/** 实现：绘制图形 */
 	public shapeInit(shape: IBatrShape): void {
-		shape.graphics.clear();
+		this.drawSymbol(shape.graphics);
+	}
+
+	/** 实现：刷新=重绘 */
+	public shapeRefresh(shape: IBatrShape): void {
+		this.shapeDestruct(shape);
+		this.shapeInit(shape);
+	}
+
+	/** 实现：清空绘图内容 */
+	public shapeDestruct(shape: IBatrShape): void {
+		shape.graphics.clear()
+	}
+
+	/** 因为这个是嵌套在奖励箱中实现的，所以「显示堆叠层级」不是很重要 */
+	protected _zIndex: uint = 0;
+	public get zIndex(): number { return this._zIndex; }
+	public set zIndex(value: number) { this._zIndex = value; }
+
+	/** 工具函数：绘制图形 */
+	public drawSymbol(graphics: IBatrGraphicContext): void {
 		switch (this._type) {
 			case BonusType.NULL:
 				return;
 			// HHL(Health,Heal&Life)
 			case BonusType.ADD_HEALTH:
-				this.drawHealthSymbol();
+				this.drawHealthSymbol(graphics);
 				break;
 			case BonusType.ADD_HEAL:
-				this.drawHealSymbol();
+				this.drawHealSymbol(graphics);
 				break;
 			case BonusType.ADD_LIFE:
-				this.drawLifeSymbol();
+				this.drawLifeSymbol(graphics);
 				break;
 			// Tool
 			case BonusType.RANDOM_TOOL:
-				this.drawToolSymbol();
+				this.drawToolSymbol(graphics);
 				break;
 			// Attributes
 			case BonusType.BUFF_RANDOM:
-				this.drawAttributesSymbol(BUFF_RANDOM_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RANDOM_COLOR);
 				break;
 			case BonusType.BUFF_DAMAGE:
-				this.drawAttributesSymbol(BUFF_DAMAGE_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_DAMAGE_COLOR);
 				break;
 			case BonusType.BUFF_CD:
-				this.drawAttributesSymbol(BUFF_CD_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_CD_COLOR);
 				break;
 			case BonusType.BUFF_RESISTANCE:
-				this.drawAttributesSymbol(BUFF_RESISTANCE_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RESISTANCE_COLOR);
 				break;
 			case BonusType.BUFF_RADIUS:
-				this.drawAttributesSymbol(BUFF_RADIUS_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RADIUS_COLOR);
 				break;
 			case BonusType.ADD_EXPERIENCE:
-				this.drawAttributesSymbol(EXPERIENCE_COLOR);
+				this.drawAttributesSymbol(graphics, BonusBoxSymbol.EXPERIENCE_COLOR);
 				break;
 			// Team
 			case BonusType.RANDOM_CHANGE_TEAM:
-				this.drawTeamSymbol(RANDOM_CHANGE_TEAM_LINE_COLOR);
+				this.drawTeamSymbol(graphics, BonusBoxSymbol.RANDOM_CHANGE_TEAM_LINE_COLOR);
 				break;
 			case BonusType.UNITE_PLAYER:
-				this.drawTeamSymbol(UNITE_PLAYER_LINE_COLOR);
+				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_PLAYER_LINE_COLOR);
 				break;
 			case BonusType.UNITE_AI:
-				this.drawTeamSymbol(UNITE_AI_LINE_COLOR);
+				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_AI_LINE_COLOR);
 				break;
 			// Other
 			case BonusType.RANDOM_TELEPORT:
-				this.drawRandomTeleportSymbol();
+				this.drawRandomTeleportSymbol(graphics);
 				break;
 		}
 	}
 
 	//====HHL====//
-	protected drawHealthSymbol(): void {
+	protected drawHealthSymbol(graphics: IBatrGraphicContext): void {
 		// V
-		shape.graphics.beginFill(HEALTH_COLOR);
-		shape.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
-		shape.graphics.endFill();
+		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
+		graphics.endFill();
 		// H
-		shape.graphics.beginFill(HEALTH_COLOR);
-		shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-		shape.graphics.endFill();
+		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
+		graphics.endFill();
 	}
 
-	protected drawHealSymbol(): void {
+	protected drawHealSymbol(graphics: IBatrGraphicContext): void {
 		// V
-		shape.graphics.beginFill(HEALTH_COLOR);
-		shape.graphics.drawRect(-GRID_SIZE / 2, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 3);
+		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
 		// H
-		shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-		shape.graphics.endFill();
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
+		graphics.endFill();
 	}
 
-	protected drawLifeSymbol(): void {
+	protected drawLifeSymbol(graphics: IBatrGraphicContext): void {
 		// L
-		shape.graphics.beginFill(HEALTH_COLOR);
-		shape.graphics.drawRect(-GRID_SIZE * 1.5, -GRID_SIZE * 1.5, GRID_SIZE, GRID_SIZE * 2);
-		shape.graphics.endFill();
-		shape.graphics.beginFill(HEALTH_COLOR);
-		shape.graphics.drawRect(-GRID_SIZE * 1.5, GRID_SIZE / 2, GRID_SIZE * 3, GRID_SIZE);
-		shape.graphics.endFill();
+		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 2);
+		graphics.endFill();
+		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
+		graphics.endFill();
 	}
 
 	//====Tool====//
-	protected drawToolSymbol(): void {
+	protected drawToolSymbol(graphics: IBatrGraphicContext): void {
 		// Circle
-		shape.graphics.lineStyle(TOOL_LINE_SIZE, TOOL_COLOR);
-		shape.graphics.drawCircle(0, 0, GRID_SIZE);
+		graphics.lineStyle(BonusBoxSymbol.TOOL_LINE_SIZE, BonusBoxSymbol.TOOL_COLOR);
+		graphics.drawCircle(0, 0, BonusBoxSymbol.GRID_SIZE);
 	}
 
 	//====Attributes====//
-	protected drawAttributesSymbol(color: uint): void {
+	protected drawAttributesSymbol(graphics: IBatrGraphicContext, color: uint): void {
 		// Colored Rectangle
-		/*shape.graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
-		shape.graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
-		shape.graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
-		shape.graphics.endFill();*/
+		/*graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
+		graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
+		graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
+		graphics.endFill();*/
 		// Colored Arrow
 		// Top
-		shape.graphics.lineStyle(ATTRIBUTES_LINE_SIZE, color);
-		shape.graphics.beginFill(color, ATTRIBUTES_FILL_ALPHA);
-		shape.graphics.moveTo(0, -GRID_SIZE * 1.5); // T1
-		shape.graphics.lineTo(GRID_SIZE * 1.5, 0); // T2
-		shape.graphics.lineTo(GRID_SIZE / 2, 0);
+		graphics.lineStyle(BonusBoxSymbol.ATTRIBUTES_LINE_SIZE, color);
+		graphics.beginFill(color, BonusBoxSymbol.ATTRIBUTES_FILL_ALPHA);
+		graphics.moveTo(0, -BonusBoxSymbol.GRID_SIZE * 1.5); // T1
+		graphics.lineTo(BonusBoxSymbol.GRID_SIZE * 1.5, 0); // T2
+		graphics.lineTo(BonusBoxSymbol.GRID_SIZE / 2, 0);
 		// B1
-		shape.graphics.lineTo(GRID_SIZE / 2, GRID_SIZE * 1.5);
+		graphics.lineTo(BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 1.5);
 		// B2
-		shape.graphics.lineTo(-GRID_SIZE / 2, GRID_SIZE * 1.5);
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 1.5);
 		// B3
-		shape.graphics.lineTo(-GRID_SIZE / 2, 0);
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE / 2, 0);
 		// B4
-		shape.graphics.lineTo(-GRID_SIZE * 1.5, 0); // T3
-		shape.graphics.lineTo(0, -GRID_SIZE * 1.5); // T1
-		shape.graphics.endFill();
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE * 1.5, 0); // T3
+		graphics.lineTo(0, -BonusBoxSymbol.GRID_SIZE * 1.5); // T1
+		graphics.endFill();
 		// Bottom
 	}
 
 	//====Team====//
-	protected drawTeamSymbol(color: uint): void {
-		shape.graphics.lineStyle(TEAM_LINE_SIZE, color);
-		graphics.moveTo(-GRID_SIZE, -GRID_SIZE);
-		graphics.lineTo(GRID_SIZE, 0);
-		graphics.lineTo(-GRID_SIZE, GRID_SIZE);
-		graphics.lineTo(-GRID_SIZE, -GRID_SIZE);
+	protected drawTeamSymbol(graphics: IBatrGraphicContext, color: uint): void {
+		graphics.lineStyle(BonusBoxSymbol.TEAM_LINE_SIZE, color);
+		graphics.moveTo(-BonusBoxSymbol.GRID_SIZE, -BonusBoxSymbol.GRID_SIZE);
+		graphics.lineTo(BonusBoxSymbol.GRID_SIZE, 0);
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE);
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE, -BonusBoxSymbol.GRID_SIZE);
 	}
 
 	//====Other====//
-	protected drawRandomTeleportSymbol(): void {
+	protected drawRandomTeleportSymbol(graphics: IBatrGraphicContext): void {
 		// Teleport Effect
 		// 1
-		shape.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
-		shape.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
-		shape.graphics.drawRect(-GRID_SIZE, -GRID_SIZE, GRID_SIZE * 2, GRID_SIZE * 2);
-		shape.graphics.endFill();
+		graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
+		graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
+		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE, -BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 2, BonusBoxSymbol.GRID_SIZE * 2);
+		graphics.endFill();
 		// 2
-		shape.graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
-		shape.graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
-		graphics.moveTo(0, -GRID_SIZE * Math.SQRT2);
-		graphics.lineTo(GRID_SIZE * Math.SQRT2, 0);
-		graphics.lineTo(0, GRID_SIZE * Math.SQRT2);
-		graphics.lineTo(-GRID_SIZE * Math.SQRT2, 0);
-		graphics.lineTo(0, -GRID_SIZE * Math.SQRT2);
-		shape.graphics.endFill();
+		graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);
+		graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA);
+		graphics.moveTo(0, -BonusBoxSymbol.GRID_SIZE * Math.SQRT2);
+		graphics.lineTo(BonusBoxSymbol.GRID_SIZE * Math.SQRT2, 0);
+		graphics.lineTo(0, BonusBoxSymbol.GRID_SIZE * Math.SQRT2);
+		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE * Math.SQRT2, 0);
+		graphics.lineTo(0, -BonusBoxSymbol.GRID_SIZE * Math.SQRT2);
+		graphics.endFill();
 	}
 }
