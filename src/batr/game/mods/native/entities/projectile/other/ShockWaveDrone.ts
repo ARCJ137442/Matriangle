@@ -1,13 +1,13 @@
 
 
-import { uint } from "../../../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import { BlockType } from "../../../../api/block/Block";
-import Game from "../../../../main/Game";
+import { uint } from "../../../../../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
+import { BlockType } from "../../../../../api/block/Block";
+import Game from "../../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
 import Tool from "../../../registry/Tool";
-import Player from "../player/Player";
-import Projectile from "./Projectile";
+import Player from "../../player/Player";
+import Projectile from "../Projectile";
 
 export default class ShockWaveDrone extends Projectile {
 	//============Static Variables============//

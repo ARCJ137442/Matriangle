@@ -1,3 +1,5 @@
+import { IBatrJSobject, JSObject } from "../../../../common/abstractInterfaces";
+
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类
  *
@@ -7,7 +9,7 @@
  * * 可以很容易被复制、又可以作为一个「共同引用模板」的
  * 对象类型
  */
-export default class Tool {
+export default abstract class Tool implements IBatrJSobject<Tool> {
 
 	//============Static Getter And Setter============//
 	public static get label(): string {
@@ -32,4 +34,8 @@ export default class Tool {
 	public constructor(name: string) {
 		this._name = name;
 	}
+
+	// JS对象 //
+	public abstract toObject(): JSObject;
+	public abstract copyFromObject(obj: JSObject): Tool;
 }

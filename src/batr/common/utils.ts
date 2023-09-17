@@ -244,6 +244,16 @@ export function pushNReturn<T>(arr: T[], item: T): T {
 	return item;
 }
 
+/**
+ * 安全合并
+ * * 判断旧值与新值`typeof`的类型是否相同，同⇒返回新值|异⇒报错
+ * * 一般用于「安全从JS对象载入数据」如`copyFromObject`方法中
+ */
+export function safeMerge<T>(oldVal: T, newVal: any): T {
+	if (typeof oldVal === typeof newVal) return newVal;
+	throw new Error(`safeMerge: 旧值${oldVal}、新值${newVal}类型不同`);
+}
+
 export function getPropertyInObjects(objects: object[], key: string): any[] {
 	let ra: any[] = new Array<any>();
 

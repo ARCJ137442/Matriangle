@@ -315,7 +315,7 @@ export default class Player extends Entity implements IPlayerProfile {
 	}
 
 	public get teamColor(): uint {
-		return this.team.defaultColor;
+		return this.team.color;
 	}
 
 	public get stats(): PlayerStats {

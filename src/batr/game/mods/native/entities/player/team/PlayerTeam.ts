@@ -1,38 +1,48 @@
+import { IBatrJSobject, JSObject } from "../../../../../../common/abstractInterfaces";
+import { safeMerge } from "../../../../../../common/utils";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 
-export default class PlayerTeam {
-	//============Static Variables============//
-	public static readonly isInited: boolean = this.cInit();
+export default class PlayerTeam implements IBatrJSobject<PlayerTeam> {
 
-	//============Static Getter And Setter============//
+	/**
+	 * 队伍的内部/显示名称
+	 */
+	protected _name: string;
+	public get name(): string { return this._name; }
 
-	//============Static Functions============//
-	protected static cInit(): boolean {
-		return true;
-	}
-
-	//============Instance Variables============//
-	protected _defaultColor: uint;
+	/**
+	 * 队伍在显示时的颜色
+	 */
+	protected _color: uint;
+	public get color(): uint { return this._color; }
 
 	//============Constructor & Destructor============//
-	public constructor(color: uint = 0x000000) {
-		this._defaultColor = color;
+	public constructor(color: uint = 0x000000, name: string = `#${color}`) {
+		this._color = color;
+		this._name = name;
 	}
 
-	//============Destructor Function============//
 	public destructor(): void {
-		this._defaultColor = 0x000000;
+		this._color = 0x000000;
 	}
 
-	//============Copy Constructor Function============//
 	public clone(): PlayerTeam {
-		return new PlayerTeam(this._defaultColor);
+		return new PlayerTeam(this._color, this._name);
 	}
 
-	//============Instance Getter And Setter============//
-	public get defaultColor(): uint {
-		return this._defaultColor;
+	// JS对象 //
+	/** 直接输出所有属性 */
+	public toObject(): JSObject {
+		return {
+			name: this._name,
+			color: this._color
+		};
 	}
 
-	//============Instance Functions============//
+	/** 使用「安全合并」从JS对象中加载值 */
+	public copyFromObject(obj: JSObject): PlayerTeam {
+		this._name = safeMerge(this._name, obj?.name);
+		this._color = safeMerge(this._color, obj?.color);
+		return this;
+	}
 }

@@ -4,13 +4,14 @@ import PlayerTeam from "../entities/player/team/PlayerTeam";
 // import GameRuleEvent from "../../../api/rule/GameRuleEvent"; // TODO: 待事件系统移植后
 import { TPS } from "../../../main/GlobalGameVariables";
 import IGameRule from "../../../api/rule/IGameRule";
-import { clearArray, key, pushNReturn, randomIn } from "../../../../common/utils";
+import { clearArray, contains, key, pushNReturn, randomIn, safeMerge } from "../../../../common/utils";
 import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
 import Tool from "../tool/Tool";
 import { HSVtoHEX } from "../../../../common/color";
 import { randomInWeightMap } from "../../../../common/utils";
 import { iPoint } from "../../../../common/geometricTools";
 import { NativeTools } from './../registry/ToolRegistry';
+import { IBatrJSobject, JSObject } from "../../../../common/abstractInterfaces";
 
 /**
  * 存储一系列与游戏相关的规则
@@ -45,7 +46,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._playerCount = value;
 	}
 
-	public static readonly name_AICount: key = 'AICount';
+	public static readonly name_AICount: key = pushNReturn(this.ALL_RULE_KEYS, 'AICount');
 	protected static readonly d_AICount: uint = 3;
 	protected _AICount: uint = GameRule_V1.d_AICount;
 	public get AICount(): uint { return this._AICount; }
@@ -60,7 +61,7 @@ export default class GameRule_V1 implements IGameRule {
 
 	//====Team====//
 	// TODO: 【2023-09-17 15:17:19】或许日后要移除这个「更面向显示的功能」，直接使用颜色值区分玩家队伍
-	public static readonly name_coloredTeamCount: key = 'coloredTeamCount';
+	public static readonly name_coloredTeamCount: key = pushNReturn(this.ALL_RULE_KEYS, 'coloredTeamCount');
 	protected static readonly d_coloredTeamCount: uint = 8;
 	protected _coloredTeamCount: uint = GameRule_V1.d_coloredTeamCount;
 	public get coloredTeamCount(): uint { return this._coloredTeamCount; }
@@ -77,7 +78,7 @@ export default class GameRule_V1 implements IGameRule {
 	/** 衍生getter */
 	public get playerTeams(): PlayerTeam[] { return this._temp_playerTeams; }
 
-	public static readonly name_grayscaleTeamCount: key = 'grayscaleTeamCount';
+	public static readonly name_grayscaleTeamCount: key = pushNReturn(this.ALL_RULE_KEYS, 'grayscaleTeamCount');
 	protected static readonly d_grayscaleTeamCount: uint = 3;
 	protected _grayscaleTeamCount: uint = GameRule_V1.d_grayscaleTeamCount;
 	public get grayscaleTeamCount(): uint { return this._grayscaleTeamCount; }
@@ -92,12 +93,12 @@ export default class GameRule_V1 implements IGameRule {
 		// dispatchEvent(new GameRuleEvent(GameRuleEvent.TEAMS_CHANGE));
 	}
 
-	public static readonly name_playerTeams: key = 'playerTeams';
+	public static readonly name_playerTeams: key = 'playerTeams' // pushNReturn(this.ALL_RULE_KEYS, 'playerTeams');
 	protected static readonly d_playerTeams: PlayerTeam[] = GameRule_V1.initPlayerTeams([], GameRule_V1.d_coloredTeamCount, GameRule_V1.d_grayscaleTeamCount);
 	protected _temp_playerTeams: PlayerTeam[] = GameRule_V1.d_playerTeams.slice();
 
 	/** Allows players change their teams by general means */
-	public static readonly name_allowPlayerChangeTeam: key = 'allowPlayerChangeTeam';
+	public static readonly name_allowPlayerChangeTeam: key = pushNReturn(this.ALL_RULE_KEYS, 'allowPlayerChangeTeam');
 	protected static readonly d_allowPlayerChangeTeam: boolean = true;
 	protected _allowPlayerChangeTeam: boolean = GameRule_V1.d_allowPlayerChangeTeam;
 	public get allowPlayerChangeTeam(): boolean { return this._allowPlayerChangeTeam; }
@@ -111,7 +112,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	//====GamePlay====//
-	public static readonly name_defaultHealth: key = 'defaultHealth';
+	public static readonly name_defaultHealth: key = pushNReturn(this.ALL_RULE_KEYS, 'defaultHealth');
 	protected static readonly d_defaultHealth: uint = 100;
 	protected _defaultHealth: uint = GameRule_V1.d_defaultHealth;
 	public get defaultHealth(): uint { return this._defaultHealth; }
@@ -124,7 +125,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._defaultHealth = value;
 	}
 
-	public static readonly name_defaultMaxHealth: key = 'defaultMaxHealth';
+	public static readonly name_defaultMaxHealth: key = pushNReturn(this.ALL_RULE_KEYS, 'defaultMaxHealth');
 	protected static readonly d_defaultMaxHealth: uint = 100;
 	protected _defaultMaxHealth: uint = GameRule_V1.d_defaultMaxHealth;
 	public get defaultMaxHealth(): uint { return this._defaultMaxHealth; }
@@ -138,7 +139,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	/** Use as a int with negative numbers means infinity */
-	public static readonly name_remainLivesPlayer: key = 'remainLivesPlayer';
+	public static readonly name_remainLivesPlayer: key = pushNReturn(this.ALL_RULE_KEYS, 'remainLivesPlayer');
 	protected static readonly d_remainLivesPlayer: int = -1;
 	protected _remainLivesPlayer: int = GameRule_V1.d_remainLivesPlayer;
 	public get remainLivesPlayer(): int { return this._remainLivesPlayer; }
@@ -151,7 +152,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._remainLivesPlayer = value;
 	}
 
-	public static readonly name_remainLivesAI: key = 'remainLivesAI';
+	public static readonly name_remainLivesAI: key = pushNReturn(this.ALL_RULE_KEYS, 'remainLivesAI');
 	protected static readonly d_remainLivesAI: int = -1;
 	protected _remainLivesAI: int = GameRule_V1.d_remainLivesAI;
 	public get remainLivesAI(): int { return this._remainLivesAI; }
@@ -164,7 +165,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._remainLivesAI = value;
 	}
 
-	public static readonly name_defaultRespawnTime: key = 'defaultRespawnTime';
+	public static readonly name_defaultRespawnTime: key = pushNReturn(this.ALL_RULE_KEYS, 'defaultRespawnTime');
 	protected static readonly d_defaultRespawnTime: uint = 3 * TPS; // tick
 	protected _defaultRespawnTime: uint = GameRule_V1.d_defaultRespawnTime;
 	public get defaultRespawnTime(): uint { return this._defaultRespawnTime; }
@@ -177,7 +178,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._defaultRespawnTime = value;
 	}
 
-	public static readonly name_deadPlayerMoveTo: key = 'deadPlayerMoveTo';
+	public static readonly name_deadPlayerMoveTo: key = pushNReturn(this.ALL_RULE_KEYS, 'deadPlayerMoveTo');
 	protected static readonly d_deadPlayerMoveTo: iPoint = new iPoint(10, 10);
 	protected readonly _deadPlayerMoveTo: iPoint = GameRule_V1.d_deadPlayerMoveTo.copy();
 	public get deadPlayerMoveTo(): iPoint { return this._deadPlayerMoveTo; }
@@ -187,7 +188,7 @@ export default class GameRule_V1 implements IGameRule {
 		this._deadPlayerMoveTo.copyFrom(value);
 	}
 
-	public static readonly name_recordPlayerStats: key = 'recordPlayerStats';
+	public static readonly name_recordPlayerStats: key = pushNReturn(this.ALL_RULE_KEYS, 'recordPlayerStats');
 	protected static readonly d_recordPlayerStats: boolean = true;
 	protected _recordPlayerStats: boolean = GameRule_V1.d_recordPlayerStats;
 	public get recordPlayerStats(): boolean { return this._recordPlayerStats; }
@@ -201,7 +202,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	/** Negative Number means asphyxia can kill player */
-	public static readonly name_playerAsphyxiaDamage: key = 'playerAsphyxiaDamage';
+	public static readonly name_playerAsphyxiaDamage: key = pushNReturn(this.ALL_RULE_KEYS, 'playerAsphyxiaDamage');
 	protected static readonly d_playerAsphyxiaDamage: int = 15;
 	protected _playerAsphyxiaDamage: int = GameRule_V1.d_playerAsphyxiaDamage;
 	public get playerAsphyxiaDamage(): int { return this._playerAsphyxiaDamage; }
@@ -217,7 +218,7 @@ export default class GameRule_V1 implements IGameRule {
 	//====Bonus====//
 
 	/** negative number means infinity */
-	public static readonly name_bonusBoxMaxCount: key = 'bonusBoxMaxCount';
+	public static readonly name_bonusBoxMaxCount: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusBoxMaxCount');
 	protected static readonly d_bonusBoxMaxCount: int = 8;
 	protected _bonusBoxMaxCount: int = GameRule_V1.d_bonusBoxMaxCount;
 	public get bonusBoxMaxCount(): int { return this._bonusBoxMaxCount; }
@@ -230,7 +231,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._bonusBoxMaxCount = value;
 	}
 
-	public static readonly name_bonusBoxSpawnChance: key = 'bonusBoxSpawnChance';
+	public static readonly name_bonusBoxSpawnChance: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusBoxSpawnChance');
 	protected static readonly d_bonusBoxSpawnChance: number = 1 / TPS / 8;
 	protected _bonusBoxSpawnChance: number = GameRule_V1.d_bonusBoxSpawnChance;
 	public get bonusBoxSpawnChance(): number { return this._bonusBoxSpawnChance; }
@@ -246,7 +247,7 @@ export default class GameRule_V1 implements IGameRule {
 	/**
 	 * 奖励类型→权重
 	 */
-	public static readonly name_bonusTypePotentials: key = 'bonusTypePotentials';
+	public static readonly name_bonusTypePotentials: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusTypePotentials');
 	protected static readonly d_bonusTypePotentials: Map<BonusType, number> = new Map<BonusType, number>();
 	protected _bonusTypePotentials: Map<BonusType, number> = GameRule_V1.d_bonusTypePotentials
 	public get bonusTypePotentials(): Map<BonusType, number> { return this._bonusTypePotentials; }
@@ -255,7 +256,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	/** null means all type can be spawned and they have same weight */
-	public static readonly name_bonusBoxSpawnAfterPlayerDeath: key = 'bonusBoxSpawnAfterPlayerDeath';
+	public static readonly name_bonusBoxSpawnAfterPlayerDeath: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusBoxSpawnAfterPlayerDeath');
 	protected static readonly d_bonusBoxSpawnAfterPlayerDeath: boolean = true;
 	protected _bonusBoxSpawnAfterPlayerDeath: boolean = GameRule_V1.d_bonusBoxSpawnAfterPlayerDeath;
 	public get bonusBoxSpawnAfterPlayerDeath(): boolean { return this._bonusBoxSpawnAfterPlayerDeath; }
@@ -271,7 +272,7 @@ export default class GameRule_V1 implements IGameRule {
 	//====Bonus's Buff====//
 
 	/** Determines bonus(type=buffs)'s amount of addition */
-	public static readonly name_bonusBuffAdditionAmount: key = 'bonusBuffAdditionAmount';
+	public static readonly name_bonusBuffAdditionAmount: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusBuffAdditionAmount');
 	protected static readonly d_bonusBuffAdditionAmount: uint = 1;
 	protected _bonusBuffAdditionAmount: uint = GameRule_V1.d_bonusBuffAdditionAmount;
 	public get bonusBuffAdditionAmount(): uint { return this._bonusBuffAdditionAmount; }
@@ -285,7 +286,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	/** Determines bonus(type=ADD_LIFE)'s amount of addition */
-	public static readonly name_bonusMaxHealthAdditionAmount: key = 'bonusMaxHealthAdditionAmount';
+	public static readonly name_bonusMaxHealthAdditionAmount: key = pushNReturn(this.ALL_RULE_KEYS, 'bonusMaxHealthAdditionAmount');
 	protected static readonly d_bonusMaxHealthAdditionAmount: uint = 5;
 	protected _bonusMaxHealthAdditionAmount: uint = GameRule_V1.d_bonusMaxHealthAdditionAmount;
 	public get bonusMaxHealthAdditionAmount(): uint { return this._bonusMaxHealthAdditionAmount; }
@@ -306,7 +307,7 @@ export default class GameRule_V1 implements IGameRule {
 	 * 
 	 * ! 【2023-09-17 11:41:26】现在一定需要初始化，即便只是「平均分布」
 	 */
-	public static readonly name_mapRandomPotentials: key = 'mapRandomPotentials';
+	public static readonly name_mapRandomPotentials: key = pushNReturn(this.ALL_RULE_KEYS, 'mapRandomPotentials');
 	protected static readonly d_mapRandomPotentials: Map<IMap, number> = new Map<IMap, number>();
 	protected _mapRandomPotentials: Map<IMap, number> = GameRule_V1.d_mapRandomPotentials;
 	public get mapRandomPotentials(): Map<IMap, number> { return this._mapRandomPotentials; }
@@ -315,7 +316,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	// TODO: 这些直接存储「地图」的数据，不好量化（或许需要一种「内部引用」的类型，以便「动态选择&绑定」）
-	public static readonly name_initialMap: key = 'initialMap';
+	public static readonly name_initialMap: key = pushNReturn(this.ALL_RULE_KEYS, 'initialMap');
 	protected static readonly d_initialMap: IMap | null = null;
 	protected _initialMap: IMap | null = GameRule_V1.d_initialMap;
 	public get initialMap(): IMap | null { return this._initialMap; }
@@ -332,7 +333,7 @@ export default class GameRule_V1 implements IGameRule {
 	 * The time of the map transform loop.
 	 * stranded by second.
 	 */
-	public static readonly name_mapTransformTime: key = 'mapTransformTime';
+	public static readonly name_mapTransformTime: key = pushNReturn(this.ALL_RULE_KEYS, 'mapTransformTime');
 	protected static readonly d_mapTransformTime: uint = 60;
 	protected _mapTransformTime: uint = GameRule_V1.d_mapTransformTime;
 	public get mapTransformTime(): uint { return this._mapTransformTime; }
@@ -346,7 +347,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	//====Tools====//
-	public static readonly name_enabledTools: key = 'enabledTools';
+	public static readonly name_enabledTools: key = pushNReturn(this.ALL_RULE_KEYS, 'enabledTools');
 	protected static readonly d_enabledTools: Tool[] = [];
 	protected _enabledTools: Tool[] = GameRule_V1.d_enabledTools;
 	public get enabledTools(): Tool[] { return this._enabledTools; }
@@ -368,7 +369,7 @@ export default class GameRule_V1 implements IGameRule {
 	 * * `null`: 统一随机——随机一个工具，然后在加载时装备到所有玩家
 	 * * `undefined`: 完全随机——对每个玩家都装备一个随机工具
 	 */
-	public static readonly name_defaultTool: key = 'defaultTool';
+	public static readonly name_defaultTool: key = pushNReturn(this.ALL_RULE_KEYS, 'defaultTool');
 	protected static readonly d_defaultTool: Tool | null | undefined = NativeTools.WEAPON_BULLET_BASIC; // ? 是否要这样硬编码
 	protected _defaultTool: Tool | null | undefined = GameRule_V1.d_defaultTool;
 	public get defaultTool(): Tool | null | undefined { return this._defaultTool; }
@@ -381,7 +382,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._defaultTool = value;
 	}
 
-	public static readonly name_defaultLaserLength: key = 'defaultLaserLength';
+	public static readonly name_defaultLaserLength: key = pushNReturn(this.ALL_RULE_KEYS, 'defaultLaserLength');
 	protected static readonly d_defaultLaserLength: uint = 32;
 	protected _defaultLaserLength: uint = GameRule_V1.d_defaultLaserLength;
 	public get defaultLaserLength(): uint { return this._defaultLaserLength; }
@@ -394,7 +395,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._defaultLaserLength = value;
 	}
 
-	public static readonly name_allowLaserThroughAllBlock: key = 'allowLaserThroughAllBlock';
+	public static readonly name_allowLaserThroughAllBlock: key = pushNReturn(this.ALL_RULE_KEYS, 'allowLaserThroughAllBlock');
 	protected static readonly d_allowLaserThroughAllBlock: boolean = false;
 	protected _allowLaserThroughAllBlock: boolean = GameRule_V1.d_allowLaserThroughAllBlock;
 	public get allowLaserThroughAllBlock(): boolean { return this._allowLaserThroughAllBlock; }
@@ -407,7 +408,7 @@ export default class GameRule_V1 implements IGameRule {
 		) this._allowLaserThroughAllBlock = value;
 	}
 
-	public static readonly name_toolsNoCD: key = 'toolsNoCD';
+	public static readonly name_toolsNoCD: key = pushNReturn(this.ALL_RULE_KEYS, 'toolsNoCD');
 	protected static readonly d_toolsNoCD: boolean = false;
 	protected _toolsNoCD: boolean = GameRule_V1.d_toolsNoCD;
 	public get toolsNoCD(): boolean { return this._toolsNoCD; }
@@ -421,7 +422,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	//====End&Victory====//
-	public static readonly name_allowTeamVictory: key = 'allowTeamVictory';
+	public static readonly name_allowTeamVictory: key = pushNReturn(this.ALL_RULE_KEYS, 'allowTeamVictory');
 	protected static readonly d_allowTeamVictory: boolean = true;
 	protected _allowTeamVictory: boolean = GameRule_V1.d_allowTeamVictory;
 	public get allowTeamVictory(): boolean { return this._allowTeamVictory; }
@@ -498,14 +499,12 @@ export default class GameRule_V1 implements IGameRule {
 	 * 
 	 * TODO: 对Map的存取问题
 	 */
-	public toObject(): object {
-		// get all getter value
-		let o: any = {}; // if not: recursive reference problem
+	public toObject(): JSObject {
 		// filter
-		let k: string, v: any;
+		let k: key, v: any, v2: any;
 		let result: any = {};
-		for (k in this.allKeys) {
-			v = o[k];
+		for (k of this.allKeys) {
+			v = this.getRule(k);
 			// Make sure the property instanceof writable
 			switch (typeof v) {
 				// 原始类型
@@ -514,48 +513,52 @@ export default class GameRule_V1 implements IGameRule {
 				case "string":
 				case "boolean":
 				case "symbol":
-					result[k] = v;
+					// result[k] = v; // ! 保持原有值，后面会写入
 					break;
 				case "undefined":
+					console.error(this, k, v)
 					throw new Error('暂不支持将undefined打包成对象！')
 				// 特殊对象
 				case "object":
-					// TODO: 分类打包
-					break
+					// TODO: 分类打包，通用化
+					// 尝试优先调用toObject方法，若没有（undefined），则合并为本身
+					v = (v as IBatrJSobject<any>)?.toObject?.() ?? v
+					break;
 				case "function":
+					console.error(this, k, v)
 					throw new Error('暂不支持将函数打包成对象！')
 			}
 			result[k] = v;
 			console.log('Saving data', k, '=', result[k], '(' + v + ')');
 		}
-		return result as object;
+		return result;
 	}
 
-	public static fromJSON(obj: any): GameRule_V1 {
+	public static fromJSON(obj: JSObject): GameRule_V1 {
 		let r: GameRule_V1 = new GameRule_V1();
-		let v: any;
-		for (let k in obj) {
-			try {
-				// 取对象
-				v = obj[k];
-				// 处理正负无穷
-				if (v === ' Infinity')
-					r.setRule(k, Infinity);
-				else if (v === '-Infinity')
-					r.setRule(k, -Infinity);
-				else
-					r.setRule(k, v);
-				console.log('Loaded data', k, '=', obj[k], '=>', r.getRule(k));
-			}
-			catch (error: any) {
-				console.log('Error loading data', k, '=', obj[k], '| error =', error);
-			}
-		}
+		r.copyFromObject(obj);
 		return r;
 	}
 
-	public copyFromObject(obj: object): void {
-
+	public copyFromObject(obj: JSObject): IGameRule {
+		let v: any;
+		for (let k in obj) {
+			if (!contains(this.allKeys, k)) {
+				console.log('Unknown key:', k, '=', obj[k]);
+				continue;
+			}
+			// 取对象&检查类型
+			v = safeMerge(this.getRule(k), obj[k]);
+			// 处理正负无穷
+			if (v === 'Infinity')
+				this.setRule(k, Infinity);
+			else if (v === '-Infinity')
+				this.setRule(k, -Infinity);
+			else
+				this.setRule(k, v);
+			console.log('Loaded data', k, '=', obj[k], '=>', this.getRule(k));
+		}
+		return this;
 	}
 
 	//============Constructor & Destructor============//
@@ -571,7 +574,7 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	public get allKeys(): key[] {
-		throw new Error("Method not implemented.");
+		return GameRule_V1.ALL_RULE_KEYS;
 	}
 
 	/** 实现：直接访问内部变量 */
@@ -664,3 +667,10 @@ export default class GameRule_V1 implements IGameRule {
 		// );
 	}
 }
+
+console.log(
+	new GameRule_V1(),
+	GameRule_V1.TEMPLATE,
+	GameRule_V1.TEMPLATE.toObject(),
+	new GameRule_V1().copyFromObject(GameRule_V1.TEMPLATE.toObject()),
+)

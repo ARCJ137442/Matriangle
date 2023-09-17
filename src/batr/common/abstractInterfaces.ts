@@ -90,9 +90,28 @@ export interface ISelfModifyingGenerator<Type> {
 }
 
 /**
+ *  ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
+ */
+export type JSObjectValue = (
+	number | string |
+	boolean | null |
+	Array<any> | JSObject
+)
+
+/**
+ * 可转换为JSON的JS对象类型
+ * 
+ * ! 对object键的限制：只能为字符串
+ */
+export type JSObject = {
+	[key: string]: JSObjectValue;
+};
+
+
+/**
  * 定义一类「可序列化」成JS原生object的对象
  */
-export interface IBatrJSobject {
+export interface IBatrJSobject<T> {
 
 	/**
 	 * 将该对象转换为通用可交换的object格式
@@ -102,13 +121,13 @@ export interface IBatrJSobject {
 	 * 
 	 * ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
 	 */
-	toObject(): any;
+	toObject(): JSObject;
 
 	/**
 	 * 用object中的属性覆盖对象
 	 * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
 	 * @param obj 源头对象
 	 */
-	copyFromObject(obj: any): void;
+	copyFromObject(obj: JSObject): T;
 
 }

@@ -14,7 +14,7 @@ import BlockGate from "../blocks/Gate";
 import BonusBox from "../entities/item/BonusBox";
 import Player from "../entities/player/Player";
 import PlayerTeam from "../entities/player/team/PlayerTeam";
-import ThrownBlock from "../entities/projectile/ThrownBlock";
+import ThrownBlock from "../entities/projectile/other/ThrownBlock";
 import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
 import LaserBasic from "../entities/projectile/laser/LaserBasic";
 import LaserPulse from "../entities/projectile/laser/LaserPulse";

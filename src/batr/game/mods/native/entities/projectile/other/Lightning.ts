@@ -1,13 +1,13 @@
 
 
-import { iPoint } from "../../../../../common/geometricTools";
-import { uint, int } from "../../../../../legacy/AS3Legacy";
-import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import BlockAttributes from "../../../../api/block/BlockAttributes";
-import Game from "../../../../main/Game";
+import { iPoint } from "../../../../../../common/geometricTools";
+import { uint, int } from "../../../../../../legacy/AS3Legacy";
+import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
+import BlockAttributes from "../../../../../api/block/BlockAttributes";
+import Game from "../../../../../main/Game";
 import Tool from "../../../registry/Tool";
-import Player from "../player/Player";
-import Projectile from "./Projectile";
+import Player from "../../player/Player";
+import Projectile from "../Projectile";
 
 /**
  * ...

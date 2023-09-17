@@ -1,7 +1,10 @@
+import { JSObject } from "../../../../common/abstractInterfaces";
 import { intMax } from "../../../../common/exMath";
+import { key, pushNReturn, safeMerge } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";
+import { contains } from './../../../../common/utils';
 
 /**
  * 原`Tool`，现拆分为（暂时轻量级的）「武器」类
@@ -31,45 +34,77 @@ export default class Weapon extends Tool {
 		return false
 	}
 
-	//============Instance Variables============//
+	// 武器属性 //
+	public static readonly ALL_PROPERTY_NAMES: key[] = ['name'];
+
+	public static readonly key_defaultCD: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultCD')
 	protected _defaultCD: uint;
 	public get defaultCD(): uint { return this._defaultCD; }
 
 	// Tick
+	public static readonly key_defaultChargeTime: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultChargeTime')
 	protected _defaultChargeTime: uint;
 	public get defaultChargeTime(): uint { return this._defaultChargeTime; }
 
 	// Tick
+	public static readonly key_defaultDamage: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultDamage')
 	protected _defaultDamage: uint;
 	public get defaultDamage(): uint { return this._defaultDamage; }
 
+	public static readonly key_reverseCharge: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'reverseCharge')
 	protected _reverseCharge: boolean;
 	public get reverseCharge(): boolean { return this._reverseCharge; }
 
 	// Whether the weapon will auto charge and can use before full charge
 	// canHurt
+	public static readonly key_canHurtEnemy: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtEnemy')
 	protected _canHurtEnemy: boolean;
 	public get canHurtEnemy(): boolean { return this._canHurtEnemy; }
 
+	public static readonly key_canHurtSelf: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtSelf')
 	protected _canHurtSelf: boolean;
 	public get canHurtSelf(): boolean { return this._canHurtSelf; }
 
+	public static readonly key_canHurtAlly: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtAlly')
 	protected _canHurtAlly: boolean;
 	public get canHurtAlly(): boolean { return this._canHurtAlly; }
 
 	// Extra
+	public static readonly key_extraDamageCoefficient: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'extraDamageCoefficient')
 	protected _extraDamageCoefficient: uint = 5;
 	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
 
+	public static readonly key_extraResistanceCoefficient: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'extraResistanceCoefficient')
 	protected _extraResistanceCoefficient: uint = 1;
 	public get extraResistanceCoefficient(): uint { return this._extraResistanceCoefficient; }
 
+	public static readonly key_useOnCenter: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'useOnCenter')
 	protected _useOnCenter: boolean = false;
 	public get useOnCenter(): boolean { return this._useOnCenter; }
 
 	// 无人机
+	public static readonly key_chargePercentInDrone: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'chargePercentInDrone')
 	protected _chargePercentInDrone: number = 1;
 	public get chargePercentInDrone(): number { return this._chargePercentInDrone; }
+
+	// JS对象 //
+	public toObject(): JSObject {
+		let result: JSObject = {};
+		for (let key of Weapon.ALL_PROPERTY_NAMES) {
+			result[key] = (this as any)[`_${key}`] // ? 或许需要递归
+		}
+		return result;
+	}
+
+	public copyFromObject(obj: JSObject): Tool {
+		for (let key in obj) {
+			if (contains(Weapon.ALL_PROPERTY_NAMES, key))
+				(this as any)[`_${key}`] = safeMerge((this as any)[`_${key}`], obj[key]);
+			else
+				console.warn(`Unknown property: ${key}`);
+		}
+		return this;
+	}
 
 	//============Constructor & Destructor============//
 	public constructor(

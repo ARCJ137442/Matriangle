@@ -6,7 +6,7 @@ import IMap from "../map/IMap";
 /**
  * 定义统一、可扩展的「游戏规则」接口
  */
-export default interface IGameRule extends IBatrJSobject {
+export default interface IGameRule extends IBatrJSobject<IGameRule> {
 
 	//================Variable Management================//
 
