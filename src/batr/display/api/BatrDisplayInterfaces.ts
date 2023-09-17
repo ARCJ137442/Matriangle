@@ -9,13 +9,22 @@ import { IChildContainer } from '../../common/abstractInterfaces';
  * * 它将操作一个与自己对应的显示对象
  */
 export interface IBatrDisplayable {
+
+    /**
+     * 用于识别「是否实现接口」的标识符
+     * * 留存「接口约定的变量」，判断「实例是否实现接口」
+     */
+    readonly i_displayable: true;
+
     /**
      * call when initial create/display the shape, usually contains the graphics context.
      * * 当第一次加载时调用，用于显示对象的初始化
      * 
+     * ! 【2023-09-17 10:29:09】现在允许其后跟随任意数量的初始化参数，包括用于「容器类型」的子元素
+     * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
-    shapeInit(shape: IBatrShape): void;
+    shapeInit(shape: IBatrShape, ...params: any[]): void;
 
     /**
      * The same as `shapeInit`, but it will be called by object refreshing 
@@ -40,16 +49,42 @@ export interface IBatrDisplayable {
     shapeDestruct(shape: IBatrShape): void;
 
     /**
-     * 控制对象显示堆叠时的「相对层级」
+     * 控制对象显示时的「堆叠覆盖层级」
      * * 用于在原先以「对象容器の层级」表示的「显示层级系统」
      * 
      * * 例如：Wall应该在玩家之上，而「SpawnPointMark」应在玩家之下
      * 
      * ! 协议：「显示层级被更改」需要告知显示方「需要更新」
      * ? 或许会加入类似「事件侦听器」这样的东西
+     * 
+     * TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
      */
     get zIndex(): uint;
     set zIndex(value: uint);
+}
+
+/**
+ * 同IBatrDisplayable，但操作的是一个「图形容器」
+ * * 它将操作一个与自己对应的显示对象
+ */
+export interface IBatrDisplayableContainer extends IBatrDisplayable {
+
+    /**
+     * 用于识别「是否实现接口」的标识符
+     * * 留存「接口约定的变量」，判断「实例是否实现接口」
+     * 
+     * ! 特殊标记：需要使用一个「图形容器」而非普通图形
+     */
+    readonly i_displayableContainer: true;
+
+    /** 现在要求是「容器」了 */
+    shapeInit(shape: IBatrShapeContainer, ...children: IBatrDisplayable[]): void;
+
+    /** 现在要求是「容器」了 */
+    shapeRefresh(shape: IBatrShapeContainer): void;
+
+    /** 现在要求是「容器」了 */
+    shapeDestruct(shape: IBatrShapeContainer): void;
 }
 
 /**
@@ -118,7 +153,9 @@ export interface IBatrShape extends IBatrDisplayable {
 }
 
 /**
- * 此接口用于容纳Shape对象，并对实现着要求实现各类「增删改查」特性
+ * 此接口在继承一般「可显示对象」的基础上，
+ * * 能用于容纳Shape对象
+ *   * 并对实现着要求实现各类「增删改查」特性
  * * 目前使用数组作为容器存放子元素的「容器」，故其索引为自然数
  */
 

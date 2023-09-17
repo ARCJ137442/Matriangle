@@ -8,7 +8,7 @@
  */
 
 import { fPoint, iPoint } from "../../../common/geometricTools";
-import { IBatrDisplayable } from "../../../display/api/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import IBatrGame from "../../main/IBatrGame";
 import GameStats from "../../mods/native/stat/GameStats";
@@ -97,20 +97,18 @@ export interface IEntityWithDirection extends Entity {
  * 典例：
  * * 几乎一切原生实体
  */
-export interface IEntityDisplayable extends Entity, IBatrDisplayable {
+export interface IEntityDisplayable extends Entity, IBatrDisplayable { }
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_displayable: true;
-    // protected _zIndex: uint = 0;
-
-    /**
-     * 实体的显示层级
-     * 
-     * TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
-     */
-    get zIndex(): uint;
-    set zIndex(value: uint)
-}
+/**
+ * 「容器可显示实体」是
+ * * 需要使用「图形容器」而非一般「图形」的
+ * 可显示实体
+ * 
+ * 典例：
+ * * 特效/重生
+ * * 特效/传送
+ */
+export interface IEntityDisplayableContainer extends Entity, IBatrDisplayableContainer { }
 
 /**
  * 「活跃实体」是指

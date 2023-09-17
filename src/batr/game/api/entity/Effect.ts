@@ -98,9 +98,9 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     // 可显示 //
     public readonly i_displayable: true = true;
 
-    public abstract shapeInit(shape: IBatrShape): void;
+    public abstract shapeInit(shape: IBatrShape, ...params: any[]): void;
     public abstract shapeRefresh(shape: IBatrShape): void;
-    /** 非抽象：自动清除图形内容 */
+    /** */
     public shapeDestruct(shape: IBatrShape): void {
         shape.graphics.clear()
     }

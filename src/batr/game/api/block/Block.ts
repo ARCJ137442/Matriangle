@@ -104,15 +104,19 @@ export default abstract class Block implements IBatrDisplayable {
 		return this.attributes.defaultPixelAlpha // default
 	}
 
+	/** 可显示 */
+	public readonly i_displayable: true = true;
+
+	/** 初始化：无 */
+	public shapeInit(shape: IBatrShape): void { }
+
+	/** 默认实现：重绘图形 */
 	public shapeRefresh(shape: IBatrShape): void {
 		this.shapeDestruct(shape);
 		this.shapeInit(shape);
 	}
 
-	public shapeInit(shape: IBatrShape): void {
-
-	}
-
+	/** 默认实现：删除绘图数据 */
 	public shapeDestruct(shape: IBatrShape): void {
 		shape.graphics.clear();
 	}
