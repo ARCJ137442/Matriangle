@@ -138,7 +138,7 @@ export function playerPickupBonusBox(
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
     let randomRot: uint, tPoint: fPoint;
     // add laser by owner=null
     let p: ThrownBlock;
@@ -176,7 +176,7 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
     let randomPoint: iPoint = host.map.storage.randomPoint;
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
     if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
@@ -200,7 +200,7 @@ const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-const randomTick_LaserTrap: randomTickEventF = (
+export const randomTick_LaserTrap: randomTickEventF = (
     host: IBatrGame, block: Block, position: iPoint): void => {
     let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
     let randomR: iRot, entityX: number, entityY: number, laserLength: number = 0;
@@ -253,8 +253,48 @@ const randomTick_LaserTrap: randomTickEventF = (
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
     let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
     newBlock.open = true;
     host.setBlock(position, newBlock);
+}
+
+/**
+ * 根据「队伍id」判断「是否互为敌方」
+ * @param player 其中一个玩家
+ * @param other 另一个玩家
+ * @returns 是否「互为敌方」
+ */
+export function isEnemy(player: Player, other: Player): boolean {
+    return player.team.id != other.team.id;
+}
+
+/**
+ * 根据「队伍id」判断「是否互为友方」
+ * @param player 其中一个玩家
+ * @param other 另一个玩家
+ * @returns 是否「互为友方」
+ */
+export function isAlly(player: Player, other: Player): boolean {
+    return player.team.id == other.team.id;
+}
+
+/**
+ * 判断「玩家(发射的抛射物/使用的武器)是否能攻击另一位玩家」
+ * * 逻辑：要么为空「无主⇒可伤害任何玩家」，要么根据配置判断
+ * @param	other	The target player.
+ * @param	tool	The tool.
+ * @return	If player can hurt target with this tool.
+ */
+export function playerCanUseProjectileHurtOther(
+    player: Player | null, other: Player,
+    canHurtEnemy: boolean,
+    canHurtSelf: boolean,
+    canHurtAlly: boolean,
+): boolean {
+    return player == null || (
+        isEnemy(player, other) && canHurtEnemy ||
+        player && canHurtSelf ||
+        isAlly(player, other) && canHurtAlly
+    );
 }

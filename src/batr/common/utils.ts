@@ -477,3 +477,6 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> 
 
 /** 可以用来索引对象值的索引类型 */
 export type key = string | number;
+
+/** 可空对象 */ // ! 【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
+// export type nullable<T> = T | null;

@@ -858,9 +858,9 @@
 				if (edgePercent < 1)
 					damage *= edgePercent + (distanceP * (1 - edgePercent));
 				if (projectile == null ||
-					(creator == null || creator.canUseToolHurtPlayer(player, projectile.currentTool))) {
+					(creator == null || creator.canUseToolHurtPlayer(player, projectile.ownerTool))) {
 					// Hurt With FinalDamage
-					player.finalRemoveHealth(creator, projectile.currentTool, damage);
+					player.finalRemoveHealth(creator, projectile.ownerTool, damage);
 				}
 			}
 		}
@@ -907,9 +907,9 @@
 					continue;
 
 				// Operate
-				finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.currentTool, damage);
+				finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.ownerTool, damage);
 				// Effects
-				if (attacker == null || attacker.canUseToolHurtPlayer(victim, laser.currentTool)) {
+				if (attacker == null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
 					// Damage
 					victim.removeHealth(finalDamage, attacker);
 
@@ -957,9 +957,9 @@
 			if (victim == null)
 				continue;
 			// FinalDamage
-			if (attacker == null || attacker.canUseToolHurtPlayer(victim, wave.currentTool)) {
+			if (attacker == null || attacker.canUseToolHurtPlayer(victim, wave.ownerTool)) {
 				if (exMath.getDistance(baseX, baseY, victim.entityX, victim.entityY) <= radius) {
-					victim.finalRemoveHealth(attacker, wave.currentTool, damage);
+					victim.finalRemoveHealth(attacker, wave.ownerTool, damage);
 				}
 			}
 		}
@@ -972,9 +972,9 @@
 			if (victim == null)
 				continue;
 			// FinalDamage
-			if (attacker == null || attacker.canUseToolHurtPlayer(victim, block.currentTool)) {
+			if (attacker == null || attacker.canUseToolHurtPlayer(victim, block.ownerTool)) {
 				if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
-					victim.finalRemoveHealth(attacker, block.currentTool, damage);
+					victim.finalRemoveHealth(attacker, block.ownerTool, damage);
 				}
 			}
 		}
@@ -986,7 +986,7 @@
 			p = players[i];
 			d = damages[i];
 			if (p != null)
-				p.finalRemoveHealth(lightning.owner, lightning.currentTool, d);
+				p.finalRemoveHealth(lightning.owner, lightning.ownerTool, d);
 		}
 	}
 

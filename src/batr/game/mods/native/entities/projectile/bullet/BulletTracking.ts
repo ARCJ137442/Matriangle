@@ -38,9 +38,14 @@ export default class BulletTracking extends Bullet {
 	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, playersInGame: Player[], chargePercent: number) {
+	public constructor(
+		position: fPoint,
+		owner: Player | null, attackerDamage: uint,
+		playersInGame: Player[], chargePercent: number
+	) {
 		super(
-			position, owner,
+			position,
+			owner, attackerDamage,
 			BulletTracking.DEFAULT_SPEED,
 			BulletTracking.DEFAULT_EXPLODE_RADIUS
 		);

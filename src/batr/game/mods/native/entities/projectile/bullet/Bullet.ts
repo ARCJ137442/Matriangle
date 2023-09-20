@@ -35,25 +35,20 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	/** 现在所在的方块类型 */
 	public nowBlock: Block | null = null;
 
-	/** 子弹的「直接或间接」伤害 */
-	public damage: uint;
-
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint,
-		owner: Player | null,
+		owner: Player | null, attackerDamage: uint,
 		speed: number,
 		defaultExplodeRadius: number
 	) {
-		super(owner);
+		super(owner, attackerDamage);
 		this.speed = speed;
 		this._position.copyFrom(position)
 
 		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = defaultExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
-
-		this.damage = this.ownerTool.defaultDamage;
 	}
 
 	//============Interface Methods============//

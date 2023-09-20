@@ -31,14 +31,25 @@ export default class BulletNuke extends Bullet {
 	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
+	/**
+	 * 
+	 * @param position 位置
+	 * @param owner 所有者
+	 * @param attackerDamage 攻击者伤害（仅在构造时「受武器影响」）
+	 * @param chargePercent 充能百分比（仅影响运作逻辑，不影响伤害计算）
+	 */
+	public constructor(
+		position: fPoint,
+		owner: Player | null, attackerDamage: uint,
+		chargePercent: number
+	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
-			position, owner,
+			position,
+			owner, attackerDamage,
 			BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
 			BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent)
 		);
-		this.damage = this.ownerTool.defaultDamage * scalePercent;
 	}
 
 	//============Instance Functions============//

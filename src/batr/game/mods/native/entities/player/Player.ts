@@ -15,8 +15,13 @@ import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGU
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint } from "../../../../../common/geometricTools";
+import { IEntityActive, IEntityDisplayable, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
+import { CommonIO_IR } from "../../../../api/io/CommonIO";
+import IBatrGame from "../../../../main/IBatrGame";
+import IBatrGame from "../../../../main/IBatrGame";
+import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 
-export default class Player extends Entity implements IPlayerProfile {
+export default class Player extends Entity implements IPlayerProfile, IEntityInGrid, IEntityNeedsIO, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats {
 
 	// TODO: 顶个档，凑个数（日后要作为格点实体做接口的）
 	public position: iPoint = new iPoint()
@@ -255,6 +260,41 @@ export default class Player extends Entity implements IPlayerProfile {
 		this.initControlKey(controlKeyId);
 		this.updateKeyDelay();
 	}
+
+	// TODO: 继续实现 //
+	i_InGrid: true;
+	i_needsIO: true;
+	onIO(host: IBatrGame, inf: CommonIO_IR): void {
+		throw new Error("Method not implemented.");
+	}
+	i_active: true;
+	onTick(host: IBatrGame): void {
+		throw new Error("Method not implemented.");
+	}
+	i_displayable: true;
+	shapeInit(shape: IBatrShape, ...params: any[]): void {
+		throw new Error("Method not implemented.");
+	}
+	shapeRefresh(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
+	}
+	shapeDestruct(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
+	}
+	get zIndex(): number {
+		throw new Error("Method not implemented.");
+	}
+	set zIndex(value: number) {
+		throw new Error("Method not implemented.");
+	}
+	i_hasDirection: true;
+	get direction(): number {
+		throw new Error("Method not implemented.");
+	}
+	set direction(value: number) {
+		throw new Error("Method not implemented.");
+	}
+	i_hasStats: true;
 
 	//============Destructor Function============//
 	override destructor(): void {

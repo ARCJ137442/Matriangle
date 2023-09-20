@@ -36,14 +36,18 @@ export default class BulletBomber extends Bullet {
 	protected _maxBombTick: uint;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, chargePercent: number) {
+	public constructor(
+		position: fPoint,
+		owner: Player | null, attackerDamage: uint,
+		chargePercent: number
+	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
-			position, owner,
+			position,
+			owner, attackerDamage,
 			BulletBomber.DEFAULT_SPEED,
 			BulletBomber.DEFAULT_EXPLODE_RADIUS
 		);
-		this.damage = this.ownerTool.defaultDamage;
 		this._maxBombTick = BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent);
 		this._bombTick = this._maxBombTick;
 	}
@@ -64,7 +68,7 @@ export default class BulletBomber extends Bullet {
 
 	protected setBomb(host: IBatrGame): void {
 		host.toolCreateExplode(
-			this._position, this.finalExplodeRadius, this.damage, this,
+			this._position, this.finalExplodeRadius, this._attackerDamage, this,
 			BulletBomber.DEFAULT_EXPLODE_COLOR, 1 // ? 这里的「1」用途何在？
 		);
 		// TODO: ↑等待游戏主体完善

@@ -34,17 +34,40 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	}
 
 	/**
-	 * 记录「抛射时使用的工具」
-	 * * 现在使用readonly+抽象方法，锁定其为只读对象（一个类的实例只能由一个对应的Weapon引用）
+	 * ! 【2023-09-20 20:49:55】现在一些有关「武器」的属性，不再于抛射体中保留引用
 	 * 
-	 * ! 【20230915 15:29:03】目前不会留空：始终为「调用它的武器」
+	 * ? 为什么要在「抛射体伤害到玩家」的时候才计算伤害数据？理论上就不应该保留这个引用
+	 * 
+	 * ? 为什么「抛射体」一定要和「武器」绑定在一起
+	 * 
+	 * 📌玩家之间的「伤害」分为多个概念/计算过程：
+	 * * 玩家所持有武器的「基础伤害」
+	 * * 武器「基础伤害」与玩家「伤害加成」叠加形成的「攻击方伤害」
+	 * * 「攻击方伤害」在伤害玩家时，被受害者抗性减免后形成的「受害方伤害」（实际伤害/最终伤害）
+	 * 
+	 * TODO: 日后要计算「攻击方伤害」时，「攻击者一侧的『造成伤害』数据」应全部来自于抛射体
+	 * * 例如：伤害应该预先计算好，然后再用于构造抛射体
+	 * * 抛射体不负责计算玩家伤害——这应该是「玩家使用工具」时做的事情
 	 */
-	public readonly abstract ownerTool: Tool;
+	protected _attackerDamage: uint;
+	/** 只读：获取「在计算『玩家抗性』前的最终伤害」 */
+	public get ownerDamage(): uint { return this._attackerDamage; }
+
+	/**
+	 * 移植from玩家
+	 * * 🎯让伤害属性在生成时计算，而无需存储「使用的工具」
+	 * 
+	 * 默认值：仅伤害「敌方」
+	 */
+	public canHurtEnemy: boolean = true
+	public canHurtSelf: boolean = false
+	public canHurtAlly: boolean = false
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player | null) {
+	public constructor(owner: Player | null, attackerDamage: uint) {
 		super();
 		this._owner = owner;
+		this._attackerDamage = attackerDamage;
 	}
 
 	override destructor(): void {
@@ -93,12 +116,20 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public abstract shapeRefresh(shape: IBatrShape): void
 	public abstract shapeDestruct(shape: IBatrShape): void
 
+	/**
+	 * （显示端）获取所有者（玩家）的填充颜色
+	 * * 用于根据队伍颜色绘制图形
+	 */
 	public get ownerColor(): uint {
-		return this._owner == null ? 0 : this._owner.fillColor;
+		return this._owner?.fillColor ?? 0;
 	}
 
+	/**
+	 * （显示端）获取所有者（玩家）的线条颜色
+	 * * 用于根据队伍颜色绘制图形
+	 */
 	public get ownerLineColor(): uint {
-		return this._owner == null ? 0 : this._owner.lineColor;
+		return this._owner?.lineColor ?? 0;
 	}
 
 	// 短周期 //
