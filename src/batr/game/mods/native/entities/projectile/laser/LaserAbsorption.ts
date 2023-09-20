@@ -28,7 +28,6 @@ export default class LaserAbsorption extends Laser {
 
 	// 类型注册 //
 	override get type(): EntityType { return NativeEntityTypes.LASER_ABSORPTION; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_ABSORPTION;
 
 	//============Instance Variables============//
 	/** 纵轴的「尺寸」（用于控制动画与同步伤害） */
@@ -41,13 +40,18 @@ export default class LaserAbsorption extends Laser {
 	protected scaleReverse: boolean = true;
 
 	//============Constructor & Destructor============//
-	public constructor(position: iPoint, owner: Player | null, length: uint = LaserBasic.LENGTH) {
+	public constructor(
+		position: iPoint,
+		owner: Player | null,
+		attackerDamage: uint,
+		length: uint = LaserBasic.LENGTH
+	) {
 		super(
 			position, owner,
 			length, LaserAbsorption.LIFE,
-			NativeTools.WEAPON_LASER_ABSORPTION.defaultDamage,
+			attackerDamage,
+			1 /* 始终完全充能 */
 		);
-		this.ownerTool = NativeTools.WEAPON_LASER_ABSORPTION;
 	}
 
 	//============Instance Functions============//

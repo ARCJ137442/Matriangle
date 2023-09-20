@@ -38,7 +38,7 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	public constructor(position: fPoint, scale: number = EffectSpawn.SCALE) {
 		super(position, scale);
 		this._animationStage = 0;
-		this._tempLife = this.LIFE - this._life;
+		this._tempLife = this.LIFE - this.life;
 	}
 
 	// override destructor(): void {
@@ -60,10 +60,10 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	 * 覆盖：生命周期正常进行，但会根据其值大小进入不同阶段
 	 */
 	override onTick(remove: (entity: Entity) => void): void {
-		if (this._life <= EffectSpawn.STAGE_2_START_TIME) {
+		if (this.life <= EffectSpawn.STAGE_2_START_TIME) {
 			this._animationStage = 2;
 		}
-		else if (this._life <= EffectSpawn.STAGE_1_START_TIME) {
+		else if (this.life <= EffectSpawn.STAGE_1_START_TIME) {
 			this._animationStage = 1;
 		}
 		else {
@@ -72,10 +72,10 @@ export default class EffectSpawn extends Effect2BlockContainer {
 		// 根据阶段更新
 		switch (this._animationStage) {
 			case 0:
-				this._tempLife = this.LIFE - this._life;
+				this._tempLife = this.LIFE - this.life;
 				break;
 			case 1:
-				this._tempLife = this.LIFE - this._life - EffectSpawn.STAGE_2_START_TIME;
+				this._tempLife = this.LIFE - this.life - EffectSpawn.STAGE_2_START_TIME;
 				break;
 			case 2:
 				this._tempLife = this.life;

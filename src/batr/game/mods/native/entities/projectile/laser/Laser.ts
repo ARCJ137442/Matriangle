@@ -24,40 +24,36 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	public _length: uint;
 	/** 对外只读的「激光长度」 */
 	public get length(): number { return this._length }
-	/** 激光的伤害（主要取决于「类型」「工具」） */
-	public damage: uint;
 	/** 先前是否已对实体造成伤害 */
 	public hasDamaged: boolean = false;
 
 	// * 两个「类型映射」属性
 	abstract override get type(): EntityType; // ? 是否要像`ownerTool`那样优化成「只读常量」 TODO: 性能测试ing
-	abstract override readonly ownerTool: Weapon;
 
 	//============Constructor & Destructor============//
 	public constructor(
 		position: iPoint, owner: Player | null,
 		length: uint, LIFE: uint,
-		damage: uint,
+		attackerDamage: uint,
 		chargePercent: number = 1 // * 没有「充能机制」就是「完全充能」
 	) {
-		super(owner);
+		super(owner, attackerDamage * chargePercent);
 		this._position.copyFrom(position);
 		this._length = length;
 		this._LIFE = LIFE;
-		this._life = this.LIFE * chargePercent;
-		this.damage = damage * chargePercent;
+		this.life = this.LIFE * chargePercent;
 	}
 
 	// 固定生命周期 //
 	public readonly i_fixedLive: true = true;
 
 	/** 总存在时间 */
-	protected _life: uint;
+	protected life: uint;
 	protected _LIFE: uint;
-	public get life(): uint { return this._life }
+	public get life(): uint { return this.life }
 	public get LIFE(): uint { return this._LIFE }
 	public get lifePercent(): number {
-		return this._life / this._LIFE;
+		return this.life / this._LIFE;
 	}
 
 	// 格点 //
@@ -80,7 +76,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * @param host 游戏主体
 	 */
 	public dealLife(host: IBatrGame): void {
-		if (--this._life <= 0) // ! 一到0便移除，避免多余的一次游戏刻处理
+		if (--this.life <= 0) // ! 一到0便移除，避免多余的一次游戏刻处理
 			host.removeEntity(this); // TODO: 有待「实体系统」的修缮
 	}
 

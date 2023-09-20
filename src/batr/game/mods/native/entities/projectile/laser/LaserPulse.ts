@@ -28,7 +28,6 @@ export default class LaserPulse extends Laser {
 	//============Instance Variables============//
 
 	// 类型注册 //
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_PULSE;
 	override get type(): EntityType { return NativeEntityTypes.LASER_PULSE; }
 
 	/** 决定这个激光是「回拽激光」还是「前推激光」 */
@@ -36,14 +35,16 @@ export default class LaserPulse extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint, owner: Player | null,
+		position: iPoint,
+		owner: Player | null,
+		attackerDamage: uint,
+		chargePercent: number = 1,
 		length: uint = LaserBasic.LENGTH,
-		chargePercent: number = 1
 	) {
 		super(
 			position, owner,
 			length, LaserPulse.LIFE,
-			NativeTools.WEAPON_LASER_PULSE.defaultDamage,
+			attackerDamage,
 			1 // ! 「充能百分比」仅用于「决定子类型」而不用于决定伤害/生命周期
 		);
 		this.isPull = chargePercent != 1;
@@ -82,11 +83,11 @@ export default class LaserPulse extends Laser {
 	override shapeRefresh(shape: IBatrShape): void {
 		super.shapeRefresh(shape);
 		if (this.isPull) {
-			shape.scaleY = 1 + this._life / LaserPulse.LIFE;
+			shape.scaleY = 1 + this.life / LaserPulse.LIFE;
 			shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA;
 		}
 		else {
-			shape.scaleY = 2 - (this._life / LaserPulse.LIFE);
+			shape.scaleY = 2 - (this.life / LaserPulse.LIFE);
 			shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA;
 		}
 	}

@@ -1,24 +1,21 @@
-
-
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";
 import { uint, int, int$MAX_VALUE } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import BlockAttributes from "../../../../../api/block/BlockAttributes";
-import Game from "../../../../../main/Game";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from './../../../../../api/entity/EntityInterfaces';
 import { TPS } from "../../../../../main/GlobalGameVariables";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import IBatrGame from './../../../../../main/IBatrGame';
-import { mRot } from "../../../../../general/GlobalRot";
-import { intAbs, intMin, random1 } from "../../../../../../common/exMath";
+import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
+import { intAbs, intMin } from "../../../../../../common/exMath";
 import EntityType from "../../../../../api/entity/EntityType";
-import Tool from "../../../tool/Tool";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import { playerCanUseProjectileHurtOther } from "../../../registry/NativeGameMechanics";
+import { playerCanHurtOther } from "../../../registry/NativeGameMechanics";
+import { clearArray } from "../../../../../../common/utils";
 
 /**
  * 「闪电」
@@ -44,7 +41,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 
 	//============Instance Variables============//
 	protected _position: iPoint = new iPoint();
-	protected _life: uint = Lightning.LIFE;
+	protected life: uint = Lightning.LIFE;
 
 	/** 是否已计算好路径与伤害 */
 	public isCalculated: boolean = false;
@@ -79,7 +76,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	public readonly i_fixedLive: true = true;
 
 	get LIFE(): uint { return Lightning.LIFE }
-	get life(): uint { return this._life }
+	get life(): uint { return this.life }
 	get lifePercent(): number { return this.life / this.LIFE }
 
 	// 格点实体 //
@@ -90,7 +87,11 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	set position(value: intPoint) { this._position.copyFrom(value) }
 
 	//============Destructor Function============//
+	/** 析构：所有数组清空 */
 	override destructor(): void {
+		clearArray(this._wayPoints);
+		clearArray(this._hurtPlayers);
+		clearArray(this._hurtDefaultDamage);
 	}
 
 	//============Instance Getter And Setter============//
@@ -105,72 +106,101 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	protected lightningWays(host: IBatrGame): void {
 		// Draw in location in this
 		let head: iPoint = this._position.copy();
-		let ownerTool: Tool = this.ownerTool;
-		let vx: int, vy: int;
 		let cost: int = 0;
 		let player: Player | null = null;
 		let tRot: mRot = this.owner?.direction ?? 0;
-		let nRot: mRot = 0;
-		// Loop to run
-		this._wayPoints.push(new iPoint(0, 0));
+		let nRot: mRot | -1 = -1;
+		// 开始生成路径 //
+		// 先把自身位置加进路径
+		this.addWayPoint(this._position);
+		// 不断循环添加路径
 		while (true) {
 			// trace('initWay in '+head,nRot,tRot,cost);
 			// Cost and hit
 			cost = this.operateCost(host, head);
+			// 能量耗尽⇒结束
 			if ((this._energy -= cost) < 0)
 				break;
+			// 标记（并在后续伤害）当前位置的玩家
 			player = host.getHitPlayerAt(head);
 			if (player != null && (
 				this.owner == null ||
-				playerCanUseProjectileHurtOther(
+				playerCanHurtOther(
 					this.owner, player,
 					this.canHurtEnemy,
 					this.canHurtSelf,
 					this.canHurtAlly,
-				)) // TODO: 后续更新【2023-09-20 21:49:31】断点
+				))
 			) {
 				this._hurtPlayers.push(player);
 				this._hurtDefaultDamage.push(this._attackerDamage * this.energyPercent);
 			}
 			// Update Rot
-			nRot = this.getLeastWeightRot(head.x, head.y, tRot);
-			if (GlobalRot.isValidRot(nRot)) {
+			nRot = this.getLeastWeightRot(host, head, tRot);
+			if (nRot === -1) {
 				tRot = nRot;
-				this.addWayPoint(head.x, head.y);
+				this.addWayPoint(head);
 			}
-			vx = GlobalRot.towardXInt(tRot);
-			vy = GlobalRot.towardYInt(tRot);
 			// Move
-			head.x += vx;
-			head.y += vy;
+			host.map.logic.towardWithRot_II(head, nRot, 1)
 		}
 		// 先前只是根据后节点的方向设置节点，所以最后要把头节点加上
-		this.addWayPoint(head.x, head.y);
+		this.addWayPoint(head);
 	}
 
-	/** 增加路径点 */
-	protected addWayPoint(hostX: int, hostY: int): void {
+	/**
+	 * 增加路径点
+	 * * 会创建新对象，复制已有点
+	 * 
+	 * ! 使用「绝对坐标」（地图坐标）而非「相对坐标」
+	 * * 减少计算：仅在显示的时一次性换算（copyFrom+minusFrom）
+	 * 
+	 * @param p 要加入的坐标点（引用）
+	 */
+	protected addWayPoint(p: iPoint): void {
 		// TODO: 高维化
-		this._wayPoints.push(new iPoint(hostX - this._position, hostY - this.gridY));
+		this._wayPoints.push(
+			p.copy()
+		);
 	}
 
-	protected getLeastWeightRot(x: int, y: int, nowRot: mRot): uint {
-		let cx: int, cy: int;
-		let leastCost: int = this.operateCost(x + GlobalRot.towardXInt(nowRot), y + GlobalRot.towardYInt(nowRot));
+	/**
+	 * 给出「能量耗损最少」的前进方向
+	 * * 使用贪心算法遍历
+	 * @param host 所属游戏主体
+	 * @param p 当前点
+	 * @param nowRot 当前朝向（默认方向）
+	 * @returns 新的「目标朝向」（若已找到前进方向），或`-1`（未找到前进方向，一般不会发生）
+	 */
+	protected getLeastWeightRot(host: IBatrGame, p: iPoint, nowRot: mRot): mRot | -1 {
 		let cost: int;
-		let result: mRot = 0;
-		nowRot = lockIntToStandard(nowRot + random1());
-		for (let r: int = nowRot; r < nowRot + 4; r += 2) {
-			cx = x + GlobalRot.towardXInt(r);
-			cy = y + GlobalRot.towardYInt(r);
-			cost = this.operateCost(cx, cy);
+		let result: mRot | -1 = -1;
+		// 默认
+		// nowRot = host.map.storage.randomRotateDirectionAt(p, nowRot, 1); // ? 不知道这行「随机旋转」代码是干啥用的
+		// ! 现在不再是「从当前点开始旋转遍历」了，而是「在所有可前进方向中选择除了『来时路』外的所有方向」
+		let oppositeR: mRot = toOpposite_M(nowRot)
+		let leastCost: int = int$MAX_VALUE; // 默认是最大值，鼓励后续贪心替代
+		for (let towardR of host.map.storage.getForwardDirectionsAt(p)) {
+			// 不吃回头草
+			if (towardR === oppositeR) continue;
+			// 步进位移，缓存位置
+			host.map.logic.towardWithRot_II(
+				this._temp_getLeastWeightRot.copyFrom(p), // * 先复制自身，然后进行步进位移
+				towardR, 1
+			);
+			// 计算损耗
+			cost = this.operateCost(host, this._temp_getLeastWeightRot);
+			// 贪心比对损耗：第一印象式
 			if (cost < leastCost) {
 				leastCost = cost;
-				result = GlobalRot.lockIntToStandard(r);
+				result = towardR;
 			}
 		}
+		// 返回
 		return result;
 	}
+	/** 临时缓存 */
+	protected _temp_getLeastWeightRot: iPoint = new iPoint();
 
 	protected operateCost(host: IBatrGame, p: iPoint): int {
 		if (host.isHitAnyPlayer(p))
@@ -190,10 +220,12 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			this.lightningWays(host);
 			host.lightningHurtPlayers(this, this._hurtPlayers, this._hurtDefaultDamage);
 		}
-		if (this._life > 0)
-			this._life--;
+		// 处理生命周期
+		if (this.life > 0)
+			this.life--;
 		else
-			this._host.entitySystem.removeProjectile(this);
+			// 大限若至，移除自身
+			host.entitySystem.remove(this);
 	}
 
 
@@ -212,7 +244,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 */
 	public shapeRefresh(shape: IBatrShape): void {
 		// 更新不透明度
-		shape.alpha = this._life / Lightning.LIFE;
+		shape.alpha = this.life / Lightning.LIFE;
 		// 尝试绘制闪电
 		if (this._isDrawComplete) return;
 		this.drawLightning(shape);

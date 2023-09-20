@@ -4,6 +4,7 @@ import Entity from "./Entity";
 import CommonSystem from "../template/CommonSystem";
 import { IBatrDisplayable, IBatrDisplayableContainer, IBatrShapeContainer } from "../../../display/api/BatrDisplayInterfaces";
 import { int } from "../../../legacy/AS3Legacy";
+import Player from "../../mods/native/entities/player/Player";
 
 /**
  * Use for manage entities in game.
@@ -36,6 +37,11 @@ export default class EntitySystem extends CommonSystem<Entity> implements IBatrD
     public get zIndex(): int { return this._zIndex }
 
     public set zIndex(value: int) {
+        throw new Error("Method not implemented.");
+    }
+
+    // 快捷获取各类实体
+    public get players(): Player[] {
         throw new Error("Method not implemented.");
     }
 

@@ -26,14 +26,18 @@ export default class LaserTeleport extends Laser {
 
 	// 类型注册 //
 	override get type(): EntityType { return NativeEntityTypes.LASER_TELEPORT; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_TELEPORT;
 
 	//============Constructor & Destructor============//
-	public constructor(position: iPoint, owner: Player | null, length: uint = LaserBasic.LENGTH) {
+	public constructor(
+		position: iPoint,
+		owner: Player | null,
+		attackerDamage: uint,
+		length: uint = LaserBasic.LENGTH
+	) {
 		super(
 			position, owner,
 			length, LaserTeleport.LIFE,
-			NativeTools.WEAPON_LASER_TELEPORT.defaultDamage
+			attackerDamage
 		);
 	}
 
@@ -41,7 +45,7 @@ export default class LaserTeleport extends Laser {
 
 	//============Instance Functions============//
 	override onTick(host: IBatrGame): void {
-		if ((this._life & 3) == 0)
+		if ((this.life & 3) == 0)
 			host.laserHurtPlayers(this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}
@@ -69,9 +73,9 @@ export default class LaserTeleport extends Laser {
 	}
 
 	public shapeRefresh(shape: IBatrShape): void {
-		shape.alpha = (this._life & 3) < 2 ? 0.75 : 1;
-		if (this._life < 1 / 4 * LaserTeleport.LIFE)
-			shape.scaleY = (1 / 4 * LaserTeleport.LIFE - this._life) / (1 / 4 * LaserTeleport.LIFE);
+		shape.alpha = (this.life & 3) < 2 ? 0.75 : 1;
+		if (this.life < 1 / 4 * LaserTeleport.LIFE)
+			shape.scaleY = (1 / 4 * LaserTeleport.LIFE - this.life) / (1 / 4 * LaserTeleport.LIFE);
 		super.shapeRefresh(shape);
 	}
 }

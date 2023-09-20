@@ -949,7 +949,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	 * @param	defaultDamage	The original damage by attacker.
 	 * @return	The Final Damage.
 	 */
-	public final function computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
+	public computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
 		if (attacker == null)
 			return attackerTool == null ? 0 : attackerTool.defaultDamage;
 		if (attackerTool == null)
@@ -959,245 +959,245 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		return 0;
 	}
 
-		public final function finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
-	this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
-}
+	public finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
+		this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
+	}
 
-		public final function computeFinalCD(tool: Tool): uint {
-	return tool.getBuffedCD(this.buffCD);
-}
+	public computeFinalCD(tool: Tool): uint {
+		return tool.getBuffedCD(this.buffCD);
+	}
 
-		public final function computeFinalRadius(defaultRadius: number): number {
-	return defaultRadius * (1 + Math.min(this.buffRadius / 16, 3));
-}
+	public computeFinalRadius(defaultRadius: number): number {
+		return defaultRadius * (1 + Math.min(this.buffRadius / 16, 3));
+	}
 
-		public final function computeFinalLightningEnergy(defaultEnergy: uint): int {
-	return defaultEnergy * (1 + this._buffDamage / 20 + this._buffRadius / 10);
-}
+	public computeFinalLightningEnergy(defaultEnergy: uint): int {
+		return defaultEnergy * (1 + this._buffDamage / 20 + this._buffRadius / 10);
+	}
 
 	//====Functions About Graphics====//
 	protected drawShape(Alpha: number = 1): void {
-	let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
-	let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
-	graphics.clear();
-	graphics.lineStyle(LINE_SIZE, this._lineColor);
-	// graphics.beginFill(this._fillColor,Alpha);
-	let m: Matrix = new Matrix();
-	m.createGradientBox(DEFAULT_SIZE,
-		DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
-	graphics.beginGradientFill(GradientType.LINEAR,
-		[this._fillColor, this._fillColor2],
-		[Alpha, Alpha],
-		[63, 255],
-		m,
-		SpreadMethod.PAD,
-		InterpolationMethod.RGB,
-		1);
-	graphics.moveTo(-realRadiusX, -realRadiusY);
-	graphics.lineTo(realRadiusX, 0);
-	graphics.lineTo(-realRadiusX, realRadiusY);
-	graphics.lineTo(-realRadiusX, -realRadiusY);
-	// graphics.drawCircle(0,0,10);
-	graphics.endFill();
-}
+		let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
+		let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
+		graphics.clear();
+		graphics.lineStyle(LINE_SIZE, this._lineColor);
+		// graphics.beginFill(this._fillColor,Alpha);
+		let m: Matrix = new Matrix();
+		m.createGradientBox(DEFAULT_SIZE,
+			DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
+		graphics.beginGradientFill(GradientType.LINEAR,
+			[this._fillColor, this._fillColor2],
+			[Alpha, Alpha],
+			[63, 255],
+			m,
+			SpreadMethod.PAD,
+			InterpolationMethod.RGB,
+			1);
+		graphics.moveTo(-realRadiusX, -realRadiusY);
+		graphics.lineTo(realRadiusX, 0);
+		graphics.lineTo(-realRadiusX, realRadiusY);
+		graphics.lineTo(-realRadiusX, -realRadiusY);
+		// graphics.drawCircle(0,0,10);
+		graphics.endFill();
+	}
 
 	protected initColors(fillColor: number = NaN, lineColor: number = NaN): void {
-	// Deal fillColor
-	if(isNaN(fillColor))
-this._fillColor = this._team.defaultColor;
+		// Deal fillColor
+		if (isNaN(fillColor))
+			this._fillColor = this._team.defaultColor;
 		else
-this._fillColor = uint(fillColor);
-// Deal lineColor
-let HSV: number[] = Color.HEXtoHSV(this._fillColor);
-this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
-if (isNaN(lineColor)) {
-	this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);
-}
-else
-	this._lineColor = uint(lineColor);
-}
+			this._fillColor = uint(fillColor);
+		// Deal lineColor
+		let HSV: number[] = Color.HEXtoHSV(this._fillColor);
+		this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
+		if (isNaN(lineColor)) {
+			this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);
+		}
+		else
+			this._lineColor = uint(lineColor);
+	}
 
 	public setCarriedBlock(block: Block, copyBlock: boolean = true): void {
-	if(block == null) {
-	this._carriedBlock.visible = false;
-}
+		if (block == null) {
+			this._carriedBlock.visible = false;
+		}
 		else {
-	if (this._carriedBlock != null && this.contains(this._carriedBlock))
-		this.removeChild(this._carriedBlock);
-	this._carriedBlock = copyBlock ? block.clone() : block;
-	this._carriedBlock.x = DEFAULT_SIZE / 2;
-	this._carriedBlock.y = -DEFAULT_SIZE / 2;
-	this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
-	this.addChild(this._carriedBlock);
-}
+			if (this._carriedBlock != null && this.contains(this._carriedBlock))
+				this.removeChild(this._carriedBlock);
+			this._carriedBlock = copyBlock ? block.clone() : block;
+			this._carriedBlock.x = DEFAULT_SIZE / 2;
+			this._carriedBlock.y = -DEFAULT_SIZE / 2;
+			this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
+			this.addChild(this._carriedBlock);
+		}
 	}
 
 	protected addChildren(): void {
-	this._host.playerGUIContainer.addChild(this._GUI);
-}
+		this._host.playerGUIContainer.addChild(this._GUI);
+	}
 
-		//====Tick Run Function====//
-		override tickFunction(): void {
-	this.dealUsingCD();
-	this.updateKeyDelay();
-	this.dealKeyControl();
-	this.dealMoveInTest(this.entityX, this.entityY, false, false);
-	this.dealHeal();
-	super.tickFunction();
-}
+	//====Tick Run Function====//
+	override tickFunction(): void {
+		this.dealUsingCD();
+		this.updateKeyDelay();
+		this.dealKeyControl();
+		this.dealMoveInTest(this.entityX, this.entityY, false, false);
+		this.dealHeal();
+		super.tickFunction();
+	}
 
 	//====Control Functions====//
 	public initControlKey(id: uint): void {
-	switch(id) {
+		switch (id) {
 			// AI
 			case 0:
-	return;
-	break;
-	// P1
-	case 1:
-	controlKey_Up = KeyCode.W; // Up:W
-	controlKey_Down = KeyCode.S; // Down:S
-	controlKey_Left = KeyCode.A; // Left:A
-	controlKey_Right = KeyCode.D; // Right:D
-	controlKey_Use = KeyCode.SPACE; // Use:Space
-	break;
-	// P2
-	case 2:
-	controlKey_Up = KeyCode.UP; // Up:Key_UP
-	controlKey_Down = KeyCode.DOWN; // Down:Key_DOWN
-	controlKey_Left = KeyCode.LEFT; // Left:Key_Left
-	controlKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-	controlKey_Use = KeyCode.NUMPAD_0; // Use:'0'
-	break;
-	// P3
-	case 3:
-	controlKey_Up = KeyCode.U; // Up:U
-	controlKey_Down = KeyCode.J; // Down:J
-	controlKey_Left = KeyCode.H; // Left:H
-	controlKey_Right = KeyCode.K; // Right:K
-	controlKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
-	break;
-	// P4
-	case 4:
-	controlKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
-	controlKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
-	controlKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
-	controlKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
-	controlKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
-	break;
-}
+				return;
+				break;
+			// P1
+			case 1:
+				controlKey_Up = KeyCode.W; // Up:W
+				controlKey_Down = KeyCode.S; // Down:S
+				controlKey_Left = KeyCode.A; // Left:A
+				controlKey_Right = KeyCode.D; // Right:D
+				controlKey_Use = KeyCode.SPACE; // Use:Space
+				break;
+			// P2
+			case 2:
+				controlKey_Up = KeyCode.UP; // Up:Key_UP
+				controlKey_Down = KeyCode.DOWN; // Down:Key_DOWN
+				controlKey_Left = KeyCode.LEFT; // Left:Key_Left
+				controlKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
+				controlKey_Use = KeyCode.NUMPAD_0; // Use:'0'
+				break;
+			// P3
+			case 3:
+				controlKey_Up = KeyCode.U; // Up:U
+				controlKey_Down = KeyCode.J; // Down:J
+				controlKey_Left = KeyCode.H; // Left:H
+				controlKey_Right = KeyCode.K; // Right:K
+				controlKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
+				break;
+			// P4
+			case 4:
+				controlKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
+				controlKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
+				controlKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
+				controlKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
+				controlKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
+				break;
+		}
 	}
 
 	public isOwnControlKey(code: uint): boolean {
-	return (code == this.controlKey_Up ||
-		code == this.controlKey_Down ||
-		code == this.controlKey_Left ||
-		code == this.controlKey_Right ||
-		code == this.controlKey_Use /*||
+		return (code == this.controlKey_Up ||
+			code == this.controlKey_Down ||
+			code == this.controlKey_Left ||
+			code == this.controlKey_Right ||
+			code == this.controlKey_Use /*||
 					code==this.controlKey_Select_Left||
 					code==this.controlKey_Select_Right*/);
-}
+	}
 
 	public isOwnKeyDown(code: uint): boolean {
-	return (code == this.controlKey_Up && this.isPress_Up ||
-		code == this.controlKey_Down && this.isPress_Down ||
-		code == this.controlKey_Left && this.isPress_Left ||
-		code == this.controlKey_Right && this.isPress_Right ||
-		code == this.controlKey_Use && this.isPress_Use /*||
+		return (code == this.controlKey_Up && this.isPress_Up ||
+			code == this.controlKey_Down && this.isPress_Down ||
+			code == this.controlKey_Left && this.isPress_Left ||
+			code == this.controlKey_Right && this.isPress_Right ||
+			code == this.controlKey_Use && this.isPress_Use /*||
 					code==this.controlKey_Select_Left||
 					code==this.controlKey_Select_Right*/);
-}
+	}
 
 	public clearControlKeys(): void {
-	controlKey_Up = KeyCode.EMPTY;
-	controlKey_Down = KeyCode.EMPTY;
-	controlKey_Left = KeyCode.EMPTY;
-	controlKey_Right = KeyCode.EMPTY;
-	controlKey_Use = KeyCode.EMPTY;
-}
+		controlKey_Up = KeyCode.EMPTY;
+		controlKey_Down = KeyCode.EMPTY;
+		controlKey_Left = KeyCode.EMPTY;
+		controlKey_Right = KeyCode.EMPTY;
+		controlKey_Use = KeyCode.EMPTY;
+	}
 
 	public turnAllKeyUp(): void {
-	this.isPress_Up = false;
-	this.isPress_Down = false;
-	this.isPress_Left = false;
-	this.isPress_Right = false;
-	this.isPress_Use = false;
-	// this.isPress_Select_Left=false;
-	// this.isPress_Select_Right=false;
-	this.keyDelay_Move = 0;
-	this.controlDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
-	// this.controlDelay_Select=GlobalGameVariables.TPS/5;
-	this.controlLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
-	// this.controlLoop_Select=GlobalGameVariables.TPS/40;
-}
+		this.isPress_Up = false;
+		this.isPress_Down = false;
+		this.isPress_Left = false;
+		this.isPress_Right = false;
+		this.isPress_Use = false;
+		// this.isPress_Select_Left=false;
+		// this.isPress_Select_Right=false;
+		this.keyDelay_Move = 0;
+		this.controlDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
+		// this.controlDelay_Select=GlobalGameVariables.TPS/5;
+		this.controlLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
+		// this.controlLoop_Select=GlobalGameVariables.TPS/40;
+	}
 
 	public updateKeyDelay(): void {
-	// trace(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
-	//==Set==//
-	// Move
-	if(this.someMoveKeyDown) {
-	this.keyDelay_Move++;
-	if (this.keyDelay_Move >= this.controlLoop_Move) {
-		this.keyDelay_Move = 0;
-	}
-}
+		// trace(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
+		//==Set==//
+		// Move
+		if (this.someMoveKeyDown) {
+			this.keyDelay_Move++;
+			if (this.keyDelay_Move >= this.controlLoop_Move) {
+				this.keyDelay_Move = 0;
+			}
+		}
 		else {
-	this.keyDelay_Move = -controlDelay_Move;
-}
+			this.keyDelay_Move = -controlDelay_Move;
+		}
 	}
 
 	public runActionByKeyCode(code: uint): void {
-	if(!this.isActive || this.isRespawning)
-	return;
-	switch(code) {
+		if (!this.isActive || this.isRespawning)
+			return;
+		switch (code) {
 			case this.controlKey_Up:
-	this.moveUp();
-	break;
-	case this.controlKey_Down:
-	this.moveDown();
-	break;
-	case this.controlKey_Left:
-	this.moveLeft();
-	break;
-	case this.controlKey_Right:
-	this.moveRight();
-	break;
-	case this.controlKey_Use:
-	if(!this.toolReverseCharge)
-	this.useTool();
-	break;
-	/*case this.controlKey_Select_Left:
-	this.moveSelect_Left();
-break;
-case this.controlKey_Select_Right:
-	this.moveSelect_Right();
-break;*/
-}
+				this.moveUp();
+				break;
+			case this.controlKey_Down:
+				this.moveDown();
+				break;
+			case this.controlKey_Left:
+				this.moveLeft();
+				break;
+			case this.controlKey_Right:
+				this.moveRight();
+				break;
+			case this.controlKey_Use:
+				if (!this.toolReverseCharge)
+					this.useTool();
+				break;
+			/*case this.controlKey_Select_Left:
+			this.moveSelect_Left();
+		break;
+		case this.controlKey_Select_Right:
+			this.moveSelect_Right();
+		break;*/
+		}
 	}
 
 	public dealKeyControl(): void {
-	if(!this.isActive || this.isRespawning)
-	return;
-	if(this.someKeyDown) {
-	// Move
-	if (this.keyDelay_Move == 0) {
-		// Up
-		if (this.isPress_Up) {
-			this.moveUp();
-		}
-		// Down
-		else if (this.isPress_Down) {
-			this.moveDown();
-		}
-		// Left
-		else if (this.isPress_Left) {
-			this.moveLeft();
-		}
-		// Right
-		else if (this.isPress_Right) {
-			this.moveRight();
-		}
-	} /*
+		if (!this.isActive || this.isRespawning)
+			return;
+		if (this.someKeyDown) {
+			// Move
+			if (this.keyDelay_Move == 0) {
+				// Up
+				if (this.isPress_Up) {
+					this.moveUp();
+				}
+				// Down
+				else if (this.isPress_Down) {
+					this.moveDown();
+				}
+				// Left
+				else if (this.isPress_Left) {
+					this.moveLeft();
+				}
+				// Right
+				else if (this.isPress_Right) {
+					this.moveRight();
+				}
+			} /*
 				//Select_Left
 				if(this.keyDelay_Select==0) {
 					//Select_Right
@@ -1208,84 +1208,84 @@ break;*/
 						this.SelectLeft();
 					}
 				}*/
-}
+		}
 	}
 
-		override moveForward(distance: number = 1): void {
-	if(this.isRespawning)
-	return;
-	switch(this.rot) {
-		case GlobalRot.RIGHT:
-	moveRight();
-	break;
+	override moveForward(distance: number = 1): void {
+		if (this.isRespawning)
+			return;
+		switch (this.rot) {
+			case GlobalRot.RIGHT:
+				moveRight();
+				break;
 
-		case GlobalRot.LEFT:
-	moveLeft();
-	break;
+			case GlobalRot.LEFT:
+				moveLeft();
+				break;
 
-		case GlobalRot.UP:
-	moveUp();
-	break;
+			case GlobalRot.UP:
+				moveUp();
+				break;
 
-		case GlobalRot.DOWN:
-	moveDown();
-	break;
-}
-}
+			case GlobalRot.DOWN:
+				moveDown();
+				break;
+		}
+	}
 
-		override moveIntForward(distance: number = 1): void {
-	moveForward(distance);
-}
+	override moveIntForward(distance: number = 1): void {
+		moveForward(distance);
+	}
 
 	public moveLeft(): void {
-	this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
-}
+		this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
+	}
 
 	public moveRight(): void {
-	this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
-}
+		this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
+	}
 
 	public moveUp(): void {
-	this._host.movePlayer(this, GlobalRot.UP, this.moveDistance);
-}
+		this._host.movePlayer(this, GlobalRot.UP, this.moveDistance);
+	}
 
 	public moveDown(): void {
-	this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
-}
+		this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
+	}
 
 	public turnUp(): void {
-	this.rot = GlobalRot.UP;
-}
+		this.rot = GlobalRot.UP;
+	}
 
 	public turnDown(): void {
-	this.rot = GlobalRot.DOWN;
-}
+		this.rot = GlobalRot.DOWN;
+	}
 
 	public turnAbsoluteLeft(): void {
-	this.rot = GlobalRot.LEFT;
-}
+		this.rot = GlobalRot.LEFT;
+	}
 
 	public turnAbsoluteRight(): void {
-	this.rot = GlobalRot.RIGHT;
-}
+		this.rot = GlobalRot.RIGHT;
+	}
 
 	public turnBack(): void {
-	this.rot += 2;
-}
+		this.rot += 2;
+	}
 
 	public turnRelativeLeft(): void {
-	this.rot += 3;
-}
+		this.rot += 3;
+	}
 
 	public turnRelativeRight(): void {
-	this.rot += 1;
-}
+		this.rot += 1;
+	}
 
 	public useTool(): void {
-	if(!this.toolNeedsCharge || this.chargingPercent > 0) {
-	this._host.playerUseTool(this, this.rot, this.chargingPercent);
-}
-if (this.toolNeedsCharge)
-	this._GUI.updateCharge();
+		if (!this.toolNeedsCharge || this.chargingPercent > 0) {
+			this._host.playerUseTool(this, this.rot, this.chargingPercent);
+		}
+		if (this.toolNeedsCharge)
+			this._GUI.updateCharge();
 	}
 }

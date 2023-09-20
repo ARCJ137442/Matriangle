@@ -27,18 +27,18 @@ export default class LaserBasic extends Laser {
 
 	// 类型注册 //
 	override get type(): EntityType { return NativeEntityTypes.LASER_BASIC; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_LASER_BASIC;
 
 	//============Constructor & Destructor============//
 	public constructor(
 		position: iPoint, owner: Player | null,
+		attackerDamage: uint,
+		chargePercent: number = 1,
 		length: number = LaserBasic.LENGTH,
-		chargePercent: number = 1
 	) {
 		super(
 			position, owner,
 			length, LaserBasic.LIFE,
-			NativeTools.WEAPON_LASER_BASIC.defaultDamage, // !因为「只读实例变量」只能在构造后访问，所以这里只能复用常量
+			attackerDamage,
 			chargePercent
 		);
 	}

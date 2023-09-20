@@ -191,7 +191,9 @@ export interface IBatrGraphicContext {
 
 
     curveTo(controlX: number, controlY: number, anchorX: number, anchorY: number): void
-    cubicCurveTo?(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): void
+
+    /** 绘制三次贝塞尔曲线（Wave中使用） */
+    cubicCurveTo(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): void
 
     lineStyle(thickness: number/*\1*/, color: uint/*\1*/, alpha?: number/*\1*/, pixelHinting?: boolean/*\1*/, scaleMode?: string/*\1*/, caps?: string/*\1*/, joints?: string/*\1*/, miterLimit?: number/* = 3*/): void
     // lineGradientStyle

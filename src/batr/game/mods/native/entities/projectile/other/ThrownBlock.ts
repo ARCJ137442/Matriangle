@@ -53,7 +53,8 @@ export default class ThrownBlock extends Projectile {
 
 	//============Instance Functions============//
 	//====Tick Function====//
-	override onProjectileTick(): void {
+	override onTick(host: IBatrGame): void {
+		super.onTick(host);
 		if (!this._host.isOutOfMap(this.entityX, this.entityY) &&
 			this._host.testCanPass(
 				this.lockedEntityX, this.lockedEntityY,

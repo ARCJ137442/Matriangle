@@ -53,7 +53,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	//============Interface Methods============//
 	// 坐标 //
-	public readonly i_InGrid: false = false;
+	public readonly i_OutGrid: true = true;
 
 	/** 内部定义的坐标 */
 	protected readonly _position: fPoint = new fPoint();

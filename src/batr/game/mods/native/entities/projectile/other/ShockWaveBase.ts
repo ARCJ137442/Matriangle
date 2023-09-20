@@ -50,7 +50,7 @@ export default class ShockWaveBase extends Projectile {
 	}
 
 	//============Instance Functions============//
-	override onProjectileTick(): void {
+	override onTick(host: IBatrGame): void {
 		// Charging
 		if (this._life >= LIFE) {
 			this.summonDrones();

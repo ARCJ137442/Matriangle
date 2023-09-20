@@ -51,7 +51,8 @@ export default class ShockWaveDrone extends Projectile {
 	//============Instance Functions============//
 
 	//====Tick Function====//
-	override onProjectileTick(): void {
+	override onTick(host: IBatrGame): void {
+		super.onTick(host);
 		if (this._host == null)
 			return;
 		// Ticking

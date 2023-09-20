@@ -936,35 +936,6 @@
 		}
 	}
 
-	public waveHurtPlayers(wave: Wave): void {
-		// Set Variables
-		let attacker: Player = wave.owner;
-
-		let damage: uint = wave.damage;
-
-		let scale: number = wave.finalScale;
-
-		let rot: uint = wave.rot;
-
-		// Pos
-		let baseX: number = wave.entityX;
-
-		let baseY: number = wave.entityY;
-
-		let radius: number = scale;
-
-		for (let victim of this._entitySystem.players) {
-			if (victim == null)
-				continue;
-			// FinalDamage
-			if (attacker == null || attacker.canUseToolHurtPlayer(victim, wave.ownerTool)) {
-				if (exMath.getDistance(baseX, baseY, victim.entityX, victim.entityY) <= radius) {
-					victim.finalRemoveHealth(attacker, wave.ownerTool, damage);
-				}
-			}
-		}
-	}
-
 	public thrownBlockHurtPlayer(block: ThrownBlock): void {
 		let attacker: Player = block.owner;
 		let damage: uint = block.damage;

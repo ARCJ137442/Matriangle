@@ -51,7 +51,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 */
 	protected _attackerDamage: uint;
 	/** 只读：获取「在计算『玩家抗性』前的最终伤害」 */
-	public get ownerDamage(): uint { return this._attackerDamage; }
+	public get attackerDamage(): uint { return this._attackerDamage; }
 
 	/**
 	 * 移植from玩家

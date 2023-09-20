@@ -59,7 +59,7 @@ export interface IEntityOutGrid extends Entity {
      * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
      * * 参见`IEntityInGrid`
      */
-    readonly i_InGrid: false;
+    readonly i_OutGrid: true;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的浮点坐标（引用） */

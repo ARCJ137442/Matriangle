@@ -23,6 +23,8 @@ import GameRule_V1 from "../rule/GameRule_V1";
 import Tool from "../tool/Tool";
 import { MoveableWall, NativeBlockTypes } from "./BlockTypeRegistry";
 import { BonusType, NativeBonusTypes } from "./BonusRegistry";
+import Projectile from "../entities/projectile/Projectile";
+import Wave from "../entities/projectile/other/Wave";
 
 
 /**
@@ -280,21 +282,66 @@ export function isAlly(player: Player, other: Player): boolean {
 }
 
 /**
- * 判断「玩家(发射的抛射物/使用的武器)是否能攻击另一位玩家」
- * * 逻辑：要么为空「无主⇒可伤害任何玩家」，要么根据配置判断
- * @param	other	The target player.
- * @param	tool	The tool.
- * @return	If player can hurt target with this tool.
+ * 判断「玩家发射的抛射体是否能伤害另一位玩家」
+ * * 重定向至「玩家是否能伤害玩家」，并使用抛射体自身属性
+ * @param projectile 抛射体
+ * @param other 可能被伤害的玩家
+ * @returns 「是否能伤害」
  */
-export function playerCanUseProjectileHurtOther(
+export function projectileCanHurtOther(
+    projectile: Projectile, other: Player,
+): boolean {
+    return playerCanHurtOther(
+        projectile.owner, other,
+        projectile.canHurtEnemy,
+        projectile.canHurtSelf,
+        projectile.canHurtAlly
+    );
+}
+
+/**
+ * 判断「玩家(发射的抛射物/使用的武器)是否能伤害另一位玩家」
+ * * 逻辑：要么为空「无主⇒可伤害任何玩家」，要么根据配置判断
+ * @param player 可能造成伤害的玩家
+ * @param other 可能被伤害的玩家
+ * @param canHurtEnemy 是否允许伤害敌方
+ * @param canHurtSelf 是否允许伤害自身 
+ * @param canHurtAlly 是否允许伤害友方
+ * @returns 「是否能伤害」
+ */
+export function playerCanHurtOther(
     player: Player | null, other: Player,
     canHurtEnemy: boolean,
     canHurtSelf: boolean,
     canHurtAlly: boolean,
 ): boolean {
     return player == null || (
-        isEnemy(player, other) && canHurtEnemy ||
-        player && canHurtSelf ||
-        isAlly(player, other) && canHurtAlly
+        isEnemy(player, other) && canHurtEnemy || // 敌方
+        player === other && canHurtSelf || // 自己（使用全等运算符）
+        isAlly(player, other) && canHurtAlly // 友方
     );
+}
+
+// 抛射物逻辑 //
+
+/**
+ * 抛射体「波浪」伤害玩家的逻辑
+ * @param host 游戏主体
+ * @param wave 在其中运行的抛射体「波浪」
+ */
+export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
+    /** 引用 */
+    let base: fPoint = wave.position;
+    /** Wave的尺寸即为其伤害半径 */
+    let radius: number = wave.nowScale;
+    // 开始遍历所有玩家
+    for (let victim of host.entitySystem.players) {
+        // FinalDamage
+        if (projectileCanHurtOther(wave, victim)) {
+            if (base.getDistance(victim.position) <= radius) {
+                // victim.finalRemoveHealth(attacker, wave.ownerTool, wave.attackerDamage); // TODO: 【2023-09-21 00:07:44】似乎还要由「攻击者伤害」计算「最终伤害」，后续再说
+                victim.removeHealth(wave.attackerDamage);
+            }
+        }
+    }
 }
