@@ -161,7 +161,7 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block
         );
         host.map.storage.setVoid(position);
         host.entitySystem.register(p); // TODO: 不区分类型——后期完善实体系统时统一分派
-        // trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
+        // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
         if ((block as MoveableWall).virus)
             break;
     }
@@ -241,7 +241,7 @@ export const randomTick_LaserTrap: randomTickEventF = (
             p.direction = randomR;
             host.entitySystem.register(p);
             // host.projectileContainer.addChild(p);
-            // trace('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
+            // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
         }
     }
     while (laserLength <= 0 && ++i < 0x10);

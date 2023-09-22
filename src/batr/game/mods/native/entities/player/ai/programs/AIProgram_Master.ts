@@ -107,7 +107,7 @@ export default class AIProgram_Master implements IAIProgram {
 				v[i] = false;
 			}
 		}
-		// trace('remember resetted!')
+		// console.log('remember resetted!')
 	}
 
 	protected changeTarget(owner: AIPlayer, target: Entity): void {

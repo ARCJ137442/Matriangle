@@ -115,7 +115,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		this.addWayPoint(this._position);
 		// 不断循环添加路径
 		while (true) {
-			// trace('initWay in '+head,nRot,tRot,cost);
+			// console.log('initWay in '+head,nRot,tRot,cost);
 			// Cost and hit
 			cost = this.operateCost(host, head);
 			// 能量耗尽⇒结束

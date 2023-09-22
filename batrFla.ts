@@ -46,7 +46,7 @@ export default class batrFla extends MovieClip {
 				if (ctrl) {
 					if (shift) sub.gameObj.transformMap(Game.ALL_MAPS[fixed_mapID = exMath.intMod(fixed_mapID - 1, Game.VALID_MAP_COUNT)]);
 					else sub.gameObj.transformMap(Game.ALL_MAPS[fixed_mapID = exMath.intMod(fixed_mapID + 1, Game.VALID_MAP_COUNT)]);
-					trace('Now transform map to:', sub.gameObj.map.name);
+					console.log('Now transform map to:', sub.gameObj.map.name);
 				}
 				else if (shift) sub.gameObj.transformMap();
 				else sub.gameObj.spreadAllPlayer();
@@ -81,8 +81,8 @@ export default class batrFla extends MovieClip {
 			//L: List UUIDs
 			case KeyCode.L:
 				if (shift)
-					trace('List of Effect UUIDs:', sub.gameObj.effectSystem.getAllUUID());
-				else trace('List of Entity UUIDs:', sub.gameObj.entitySystem.getAllUUID());
+					console.log('List of Effect UUIDs:', sub.gameObj.effectSystem.getAllUUID());
+				else console.log('List of Entity UUIDs:', sub.gameObj.entitySystem.getAllUUID());
 				break;
 			//E: Test game end
 			case KeyCode.E:

@@ -138,7 +138,7 @@ export function randomByWeight(weights: number[]): uint {
 		let rs = 0;
 		for (let l = 0; l < i; l++)
 			rs += weights[l];
-		// trace(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
+		// console.log(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
 		if (r <= rs + N)
 			return i;
 	}

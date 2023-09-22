@@ -83,7 +83,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	 * @return	The Path From Target To Start
 	 */
 	protected static findPath(owner: Player | null, host: IBatrGame, startX: int, startY: int, endX: int, endY: int): PathNode[] {
-		// trace('Name='+owner.customName)
+		// console.log('Name='+owner.customName)
 		// Operation
 		let openList: PathNode[] = new Array<PathNode>();
 		let closeList: PathNode[] = new Array<PathNode>();
@@ -100,7 +100,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		while (openList.length > 0) {
 			// Set
 			_leastNearbyNode = getLeastFNode(openList);
-			// trace('Set _leastNearbyNode='+_leastNearbyNode,'numO='+openList.length,'numC='+closeList.length)
+			// console.log('Set _leastNearbyNode='+_leastNearbyNode,'numO='+openList.length,'numC='+closeList.length)
 			// Move
 			removeNodeIn(_leastNearbyNode, openList);
 			if (closeList.indexOf(_leastNearbyNode) < 0)
@@ -135,11 +135,11 @@ protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
 protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
 	let i: int = nodes.indexOf(node);
 	if (i >= 0) {
-		// trace('remove node'+node,'succeed!')
+		// console.log('remove node'+node,'succeed!')
 		nodes.splice(i, 1);
 		return true;
 	}
-	// trace('remove node'+node,'failed!')
+	// console.log('remove node'+node,'failed!')
 	return false;
 }
 
@@ -248,7 +248,7 @@ static getEntityName(target: Entity): string {
  */
 static traceLog(owner: Player | null, message: string): void {
 	if(DEBUG)
-		trace(owner.customName + ':', message);
+		console.log(owner.customName + ':', message);
 }
 
 protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, target: iPoint): PathNode {
@@ -292,7 +292,7 @@ protected resetRemember(): void {
 		v[i] = false;
 	}
 }
-	// trace('remember resetted!')
+	// console.log('remember resetted!')
 }
 
 protected changeTarget(owner: AIPlayer, target: Entity): void {

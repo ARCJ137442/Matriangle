@@ -619,7 +619,7 @@
 			// Computing<Experimental>
 			this._expectedFrames = this._timeDistance / GlobalGameVariables.TICK_TIME_MS;
 			if (this._expectedFrames > 1)
-				trace('this._expectedFrames>1! value=', this._expectedFrames, 'distance=', this._timeDistance);
+				console.log('this._expectedFrames>1! value=', this._expectedFrames, 'distance=', this._timeDistance);
 
 			i = this._expectedFrames * this._speed;
 			// Synchronize
@@ -749,7 +749,7 @@
 	}
 
 	public testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: trace('testCanPass:'+arguments+';'+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
+		// Debug: console.log('testCanPass:'+arguments+';'+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
 		let mapX: int = this.lockPosInMap(x, true);
 
 		let mapY: int = this.lockPosInMap(y, false);
@@ -777,7 +777,7 @@
 
 	/** return testCanPass in player's front position. */
 	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
-		// Debug: trace('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
+		// Debug: console.log('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
 		return this.testCanPass(
 			entity.getFrontX(distance),
 			entity.getFrontY(distance),
@@ -792,7 +792,7 @@
 
 	/** return testCanPass as player in other position. */
 	public testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: trace('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
+		// Debug: console.log('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
 		// Define
 		let gridX: int = this.lockIntPosInMap(x, true);
 
@@ -815,7 +815,7 @@
 	}
 
 	public testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: trace('testFullPlayerCanPass:'+player.customName+','+x+','+y+','+oldX+','+oldY+','+includePlayer)
+		// Debug: console.log('testFullPlayerCanPass:'+player.customName+','+x+','+y+','+oldX+','+oldY+','+includePlayer)
 		// Target can pass
 		if (!this.testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
 			return false;
@@ -1280,7 +1280,7 @@
 	// Add a player uses random position and tool
 	public appendPlayer(controlKeyID: uint = 0): Player {
 		let id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
-		trace('Append Player in ID', id);
+		console.log('Append Player in ID', id);
 		return this.setupPlayer(
 			this.addPlayer(id, this.rule.randomTeam, -1, -1, 0, false, null)
 		);
@@ -1359,7 +1359,7 @@
 				break;
 			}
 		}
-		// Debug: trace('Spread '+player.customName+' '+(i+1)+' times.')
+		// Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
 		return player;
 	}
 
@@ -1389,7 +1389,7 @@
 		this.addSpawnEffect(player.entityX, player.entityY);
 		this.addPlayerDeathLightEffect2(player.entityX, player.entityY, player, true);
 		// Return
-		// Debug: trace('respawnPlayer:respawn '+player.customName+'.')
+		// Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
 		return player;
 	}
 
@@ -1583,7 +1583,7 @@
 		if (!player.isActive || !player.visible)
 			return;
 
-		/*For Debug:trace('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
+		/*For Debug:console.log('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
 					'pos 2:',player.getFrontX(distance),player.getFrontY(distance),
 					'pos 3:',player.getFrontIntX(distance),player.getFrontIntY(distance))
 		*/
@@ -1626,7 +1626,7 @@
 
 			// -projectilesSpawnDistance
 		}
-		// Debug: trace('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
+		// Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
 		// Summon Projectile
 		switch (tool) {
 			case Tool.BULLET:

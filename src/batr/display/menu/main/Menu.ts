@@ -271,17 +271,17 @@ export default class Menu extends Sprite {
 	protected addSheetHistory(history: uint): void {
 		// Add to the Head of UnsignedInteger
 		// history>0,r=this.numSheet+1
-		// trace('Before:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
+		// console.log('Before:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		this._sheetHistory += Math.pow(this.numSheet + 1, this.historyLength) * history;
-		// trace('After:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
+		// console.log('After:',history,this.historyLength,this._sheetHistory,this.lastSheetHistory);
 	}
 
 	protected popSheetHistory(): uint {
 		// Remove from the Head of UnsignedInteger
-		// trace('Before:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
+		// console.log('Before:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		let lSH: uint = this.lastSheetHistory;
 		this._sheetHistory -= this.lastSheetHistory * Math.pow(this.numSheet + 1, this.historyLength - 1);
-		// trace('After:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
+		// console.log('After:',this.historyLength,this._sheetHistory,this.lastSheetHistory);
 		return lSH;
 	}
 
@@ -822,7 +822,7 @@ export default class Menu extends Sprite {
 			rule.playerAsphyxiaDamage = asphyxiaDamageSelector.currentValue;
 		}
 		catch (err: Error) {
-			trace('Load GameRule Error:' + err.message);
+			console.log('Load GameRule Error:' + err.message);
 		}
 		return rule;
 	}
@@ -871,7 +871,7 @@ export default class Menu extends Sprite {
 		if (selector == null)
 			return;
 		let nowMapIndex: int = selector.currentValue;
-		// trace('Now Map ID: '+nowMapIndex);
+		// console.log('Now Map ID: '+nowMapIndex);
 		// work in process
 	}
 
@@ -896,7 +896,7 @@ export default class Menu extends Sprite {
 			let rule: GameRule = this.getRuleFromConfigField(this._gameRuleConfig);
 		}
 		catch (e: Error) {
-			trace('Load Rule Error:', e);
+			console.log('Load Rule Error:', e);
 			return;
 		}
 		this.game.forceStartGame(rule, false);
@@ -934,7 +934,7 @@ export default class Menu extends Sprite {
 			setFixedTextSuffix(this._playerStatTotalScore, currentPlayer.totalScore);
 		}
 		catch (err: Error) {
-			trace('ERROR:', err);
+			console.log('ERROR:', err);
 		}
 	}
 

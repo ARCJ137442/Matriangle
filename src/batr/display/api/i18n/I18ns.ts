@@ -92,7 +92,7 @@ export default class I18ns {
 		I18ns.isInited = true;
 		I18ns.EN_US = DefaultNativeI18ns.EN_US;
 		I18ns.ZH_CN = DefaultNativeI18ns.ZH_CN;
-		// trace(ZH_CN.translationKeys.toString()+'\n'+ZH_CN.translationValues.toString())
+		// console.log(ZH_CN.translationKeys.toString()+'\n'+ZH_CN.translationValues.toString())
 		I18ns._translationsList = new Array<I18ns>(I18ns.EN_US, I18ns.ZH_CN);
 		return true;
 	}

@@ -189,7 +189,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	}
 
 	public onI18nChange(E: I18nsChangeEvent): void {
-		/* trace(this.name,this._textField.text,this._Content);
+		/* console.log(this.name,this._textField.text,this._Content);
 		 * The Player selector in Game Result Menu doesn't has content when INITIAL LOAD! */
 		if (this._Content == null)
 			return;

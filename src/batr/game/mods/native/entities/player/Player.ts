@@ -867,7 +867,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	protected dealUsingCD(): void {
-		// trace(this.tool.name,this._toolChargeTime,this._toolChargeMaxTime)
+		// console.log(this.tool.name,this._toolChargeTime,this._toolChargeMaxTime)
 		if (this._toolUsingCD > 0) {
 			this._toolUsingCD--;
 			this._GUI.updateCD();
@@ -1132,7 +1132,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	public updateKeyDelay(): void {
-		// trace(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
+		// console.log(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
 		//==Set==//
 		// Move
 		if (this.someMoveKeyDown) {
