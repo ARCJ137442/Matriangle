@@ -6,7 +6,7 @@ import Projectile from "../Projectile";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import { fPoint, floatPoint } from "../../../../../../common/geometricTools";
+import { fPoint } from "../../../../../../common/geometricTools";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { waveHurtPlayers } from "../../../registry/NativeGameMechanics";

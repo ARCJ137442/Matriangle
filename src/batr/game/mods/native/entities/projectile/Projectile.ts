@@ -112,7 +112,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public get zIndex(): uint { return this._zIndex; }
 	public set zIndex(value: uint) { this._zIndex = value; }
 
-	public abstract shapeInit(shape: IBatrShape): void
+	public abstract shapeInit(shape: IBatrShape, ...params: any[]): void
 	public abstract shapeRefresh(shape: IBatrShape): void
 	public abstract shapeDestruct(shape: IBatrShape): void
 

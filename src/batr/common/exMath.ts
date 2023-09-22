@@ -291,6 +291,15 @@ export function getDistanceSquare2(x: number, y: number): number {
 	return x * x + y * y;
 }
 
-export function NumberBetween(x: number, num1: number = Number.NEGATIVE_INFINITY, num2: number = Number.POSITIVE_INFINITY): number {
+export function numberBetween(x: number, num1: number = Number.NEGATIVE_INFINITY, num2: number = Number.POSITIVE_INFINITY): number {
 	return Math.min(Math.max(num1, num2), Math.max(Math.min(num1, num2), x));
+}
+
+/**
+ * 整数→浮点数
+ * @param x 待转换的整数/浮点数
+ * @returns 转换成的「数值上相等」的浮点数
+ */
+export function float(x: int | number): number {
+	return x + 0.0;
 }

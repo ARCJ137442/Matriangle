@@ -183,19 +183,35 @@ export default interface IMapLogic {
 	testPlayerCanGoForward(player: Player, rotatedAsRot?: uint/* = 5*/, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
 
 	/**
-	 * 判断一个方块（属性）是否「可搬动」
-	 * * 会受到地图「竞技场属性」的影响
+	 * 判断一个位置的方块「是否能被拿起」
+	 * * 应用：在玩家尝试使用「方块投掷器」拾取方块时，判断「是否能拿起方块」
+	 *   * 同样用于AI判断中
 	 * 
-	 * @param blockAtt 方块属性
+	 * * 会受到地图本身的特性影响，所以移到「逻辑」部分
+	 * 
+	 * TODO: 或许以后会用「方块硬度」的机制「通用化」
+	 * 
+	 * @param position 判断的位置
+	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
+	 * @returns 这个位置的方块「是否能被拿起」
 	 */
-	isCarriable(blockAtt: BlockAttributes): boolean
+	isBlockCarriable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean
 
 	/**
-	 * 判断一个方块（属性）是否「可破坏」
+	 * 判断一个位置的方块「是否能破坏」
+	 * * 应用：在「掷出的方块」被方块化时，用于判断「当前位置的方块是否可被覆盖掉」
 	 * 
-	 * ? 后续是否要引入「方块硬度」的概念
-	 * @param blockAtt 方块属性
+	 * ! 【2023-09-22 21:22:00】现在使用位置而非方块属性
+	 * * 💭真不知道当时自己是怎么想的
+	 * 
+	 * * 会受到地图本身的特性影响，所以移到「逻辑」部分
+	 * 
+	 * TODO: 或许以后会用「方块硬度」的机制「通用化」
+	 * 
+	 * @param position 判断的位置
+	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
+	 * @returns 这个位置的方块「是否能破坏」
 	 */
-	isBreakable(blockAtt: BlockAttributes): boolean
+	isBlockBreakable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean
 
 }

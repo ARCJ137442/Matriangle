@@ -380,7 +380,9 @@ export default interface IBatrGame {
 
 	hitTestPlayer(player: Player, position: iPoint): boolean
 
-	isHitAnyPlayer(position: iPoint): boolean
+	isHitAnyPlayer_F(position: fPoint): boolean
+
+	isHitAnyPlayer_I(position: iPoint): boolean
 
 	isHitAnotherPlayer(player: Player): boolean
 

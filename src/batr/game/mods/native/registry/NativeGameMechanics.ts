@@ -5,7 +5,7 @@ import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbo
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
 import { iRot } from "../../../general/GlobalRot";
-import { alignToEntity, alignToEntity_P } from "../../../general/PosTransform";
+import { alignToGridCenter_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../main/GameEventPatcher";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
 import IBatrGame from "../../../main/IBatrGame";
@@ -25,6 +25,7 @@ import { MoveableWall, NativeBlockTypes } from "./BlockTypeRegistry";
 import { BonusType, NativeBonusTypes } from "./BonusRegistry";
 import Projectile from "../entities/projectile/Projectile";
 import Wave from "../entities/projectile/other/Wave";
+import { NativeTools } from './ToolRegistry';
 
 
 /**
@@ -153,11 +154,12 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block
             !host.map.logic.testCanPass_F(tPoint, false, true, false, false)
         ) continue;
         p = new ThrownBlock(
-            alignToEntity_P(position, _temp_randomTick_MoveableWall),
-            null,
-            block.clone(),
+            null, // 无主
+            alignToGridCenter_P(position, _temp_randomTick_MoveableWall),
+            Math.random(),
+            NativeTools.WEAPON_BLOCK_THROWER.defaultDamage,
+            block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
             randomRot,
-            Math.random()
         );
         host.map.storage.setVoid(position);
         host.entitySystem.register(p); // TODO: 不区分类型——后期完善实体系统时统一分派
@@ -184,7 +186,7 @@ export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block
     if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
         host.setBlock(randomPoint, newBlock); // * 后续游戏需要处理「方块更新事件」
         host.addBlockLightEffect2(
-            alignToEntity_P(randomPoint, _temp_randomTick_ColorSpawner),
+            alignToGridCenter_P(randomPoint, _temp_randomTick_ColorSpawner),
             newBlock, false
         );
     }
@@ -215,7 +217,7 @@ export const randomTick_LaserTrap: randomTickEventF = (
             position,
             randomR, PROJECTILES_SPAWN_DISTANCE
         );
-        entityP = alignToEntity_P(position, new fPoint()).addFrom(tp);
+        entityP = alignToGridCenter_P(position, new fPoint()).addFrom(tp);
         entityX = entityP.x;
         entityY = entityP.y;
         if (host.map.logic.isInMap_F(entityP))

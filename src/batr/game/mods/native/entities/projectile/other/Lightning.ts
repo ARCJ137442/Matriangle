@@ -41,7 +41,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 
 	//============Instance Variables============//
 	protected _position: iPoint = new iPoint();
-	protected life: uint = Lightning.LIFE;
+	protected _life: uint = Lightning.LIFE;
 
 	/** 是否已计算好路径与伤害 */
 	public isCalculated: boolean = false;
@@ -76,8 +76,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	public readonly i_fixedLive: true = true;
 
 	get LIFE(): uint { return Lightning.LIFE }
-	get life(): uint { return this.life }
-	get lifePercent(): number { return this.life / this.LIFE }
+	get life(): uint { return this._life }
+	get lifePercent(): number { return this._life / this.LIFE }
 
 	// 格点实体 //
 	public readonly i_InGrid: true = true;
@@ -203,7 +203,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	protected _temp_getLeastWeightRot: iPoint = new iPoint();
 
 	protected operateCost(host: IBatrGame, p: iPoint): int {
-		if (host.isHitAnyPlayer(p))
+		if (host.isHitAnyPlayer_I(p))
 			return 5; // The electricResistance of player
 		if (host.map.storage.isInMap(p))
 			return int$MAX_VALUE; // The electricResistance out of world
@@ -221,8 +221,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			host.lightningHurtPlayers(this, this._hurtPlayers, this._hurtDefaultDamage);
 		}
 		// 处理生命周期
-		if (this.life > 0)
-			this.life--;
+		if (this._life > 0)
+			this._life--;
 		else
 			// 大限若至，移除自身
 			host.entitySystem.remove(this);
@@ -244,7 +244,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 */
 	public shapeRefresh(shape: IBatrShape): void {
 		// 更新不透明度
-		shape.alpha = this.life / Lightning.LIFE;
+		shape.alpha = this._life / Lightning.LIFE;
 		// 尝试绘制闪电
 		if (this._isDrawComplete) return;
 		this.drawLightning(shape);

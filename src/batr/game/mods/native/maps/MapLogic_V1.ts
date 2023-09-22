@@ -129,11 +129,27 @@ export default class MapLogic_V1 implements IMapLogic {
 		throw new Error("Method not implemented.");
 	}
 
-	public isCarriable(blockAtt: BlockAttributes): boolean {
-		return blockAtt.isCarriable && !(this._isArena && blockAtt.unbreakableInArenaMap);
+	/** 实现：暂时使用「竞技场地图」判断 */
+	public isBlockCarriable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean {
+		let blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+		return (
+			blockAttributes.isCarriable &&
+			!( // 竞技场地图「特别判断」
+				this._isArena &&
+				blockAttributes.unbreakableInArenaMap
+			)
+		)
 	}
-	// ! 目前这俩函数还没啥不同
-	public isBreakable(blockAtt: BlockAttributes): boolean {
-		return blockAtt.isBreakable && !(this.isArenaMap && blockAtt.unbreakableInArenaMap);
+
+	/** 实现：暂时使用「竞技场地图」判断 */
+	public isBlockBreakable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean {
+		let blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+		return (
+			blockAttributes.isBreakable &&
+			!( // 竞技场地图「特别判断」
+				this.isArenaMap &&
+				blockAttributes.unbreakableInArenaMap
+			)
+		)
 	}
 }
