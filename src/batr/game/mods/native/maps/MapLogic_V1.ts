@@ -1,6 +1,6 @@
 
 
-import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
+import { floatPoint, iPoint, iPointRef, intPoint } from "../../../../common/geometricTools";
 import { mRot, mRot2axis } from "../../../general/GlobalRot";
 import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Entity from "../../../api/entity/Entity";
@@ -115,17 +115,17 @@ export default class MapLogic_V1 implements IMapLogic {
 	}
 
 	// TODO: 后续完善实体系统后，再进行处理
-	public testBonusBoxCanPlaceAt(p: intPoint): boolean {
+	public testBonusBoxCanPlaceAt(p: iPointRef): boolean {
 		throw new Error("Method not implemented.");
 	}
 
 	// TODO: 后续完善实体系统后，再进行处理
-	public testPlayerCanGo(player: Player, p: intPoint, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
+	public testPlayerCanGo(player: Player, p: iPointRef, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
 		throw new Error("Method not implemented.");
 	}
 
 	// TODO: 后续完善实体系统后，再进行处理
-	public testPlayerCanGoForward(player: Player, rotatedAsRot?: number | undefined, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
+	public testPlayerCanGoForward(player: Player, rotatedAsRot?: mRot, includePlayer: boolean = false, avoidHurt: boolean = false): boolean {
 		throw new Error("Method not implemented.");
 	}
 

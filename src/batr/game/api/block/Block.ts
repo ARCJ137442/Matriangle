@@ -60,9 +60,7 @@ export default abstract class Block implements IBatrDisplayable {
 
 	}
 
-	public clone(): Block {
-		throw new Error("Method not implemented.");
-	}
+	public clone(): Block { }
 
 	//============Game Mechanics============//
 	/**

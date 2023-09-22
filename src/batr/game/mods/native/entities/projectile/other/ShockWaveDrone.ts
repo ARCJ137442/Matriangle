@@ -6,7 +6,7 @@ import EntityType from "../../../../../api/entity/EntityType";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
-import { fPoint, iPoint, intPoint } from "../../../../../../common/geometricTools";
+import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
@@ -36,6 +36,8 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	// 格点实体 //
 	public readonly i_InGrid: true = true;
 	protected _position: iPoint = new iPoint();
+	public get position(): iPointRef { return this._position }
+	public set position(value: iPointRef) { this._position.copyFrom(value) }
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -53,12 +55,6 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 		this._weaponChargePercent = toolChargePercent;
 		this._toolDirection = toolDirection;
 		// this.shapeInit(shape: IBatrShape);
-	}
-	get position(): intPoint {
-		throw new Error("Method not implemented.");
-	}
-	set position(value: intPoint) {
-		throw new Error("Method not implemented.");
 	}
 
 	/* override destructor(): void {
@@ -120,11 +116,11 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 		shape.graphics.endFill();
 	}
 
-	public shapeRefresh(shape: IBatrShape): void {
-		throw new Error("Method not implemented.");
-	}
+	/** 刷新：无 */
+	public shapeRefresh(shape: IBatrShape): void { }
 
+	/** 实现：清除绘图 */
 	public shapeDestruct(shape: IBatrShape): void {
-		throw new Error("Method not implemented.");
+		shape.graphics.clear();
 	}
 }

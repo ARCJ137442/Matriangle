@@ -14,7 +14,7 @@ import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import Weapon from "../../../tool/Weapon";
 import { random1 } from "../../../../../../common/exMath";
-import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis } from "../../../../../general/GlobalRot";
+import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
 
 /**
  * ...
@@ -114,8 +114,6 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	/**
 	 * 根据自身的「模式」生成「冲击波子机」
 	 * 
-	 * TODO: 需要「高维化」——商讨「高维化方案」
-	 * 
 	 * @param host 基于的游戏主体
 	 */
 	public summonDrones(host: IBatrGame): void {
@@ -134,11 +132,28 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 				}
 			// * BETA模式（参见常量の注释）
 			case ShockWaveBase.MODE_BETA:
-				console.warn('仍在开发中！')
+				// 每隔两个轴向，在这两个轴向里生成涡旋
+				let axis_x: uint, axis_y: uint, rot_xP: mRot;
+				for (let i: uint = 0; i < host.map.storage.numDimension - 1; i += 2) { // * 此处「-1」的原因是「避免奇数维遍历到『维数溢出』的情况」
+					// 计算轴向、方向信息
+					axis_x = i, axis_y = i + 1, rot_xP = axis2mRot_p(axis_x);
+					let rotateOffset: int = random1();
+					// 绕这俩轴「四方旋转」
+					for (let u: int = 0; u < 4; u++) {
+						this.summonDrone(host, u, rotate_M(rot_xP, axis_y, u + rotateOffset));
+						console.debug(
+							'axis_x:', axis_x, 'axis_y:', axis_y,
+							`\nrotate_M(rot_xP, axis_y, u + rotateOffset) = ${rotate_M(rot_xP, axis_y, u + rotateOffset)}`
+						)
+					}
+				}
+				// 如果是「奇数维」，那剩下的「最后一个维度」还没被遍历到 // ! 默认逻辑：与「基座方向」（玩家方向）一致
+				axis_x = host.map.storage.numDimension - 1;
+				if ((axis_x & 1) === 0) {
+					this.summonDrone(host, axis2mRot_p(axis_x), this._direction);
+					this.summonDrone(host, axis2mRot_n(axis_x), this._direction);
+				}
 				break;
-				let i: int = random1(); // TODO: 需要重新「高维化」（破坏性高维化，不再是「二维限定」）
-				for (let u: int = 0; u < 4; u++)
-					this.summonDrone(host, u, u + i);
 		}
 	}
 
