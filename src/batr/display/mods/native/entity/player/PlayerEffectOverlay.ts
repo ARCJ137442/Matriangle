@@ -7,7 +7,7 @@ import Player from "../../../../../game/mods/native/entities/player/Player";
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//
 	public static readonly COLOR: uint = 0xff0000;
-	public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS * 0.25;
+	public static readonly LIFE: uint = FIXED_TPS * 0.25;
 
 	//============Instance Variables============//
 	protected _life: int = -1;

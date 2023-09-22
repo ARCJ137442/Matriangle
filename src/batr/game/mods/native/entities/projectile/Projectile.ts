@@ -4,7 +4,6 @@ import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
-import Tool from "../../tool/Tool";
 import Player from "../player/Player";
 
 /**
@@ -13,8 +12,10 @@ import Player from "../player/Player";
  * * 活跃的
  * * 有方向的
  * * 可显示的
- * * 与某个「所有者」（可空）以及「抛射武器」（可为默认值）绑定的
+ * * 与某个「所有者」（可空）绑定的
  * 实体
+ * 
+ * ! 【2023-09-22 22:46:10】现在不再「默认绑定某种工具（武器）」
  */
 export default abstract class Projectile extends Entity implements IEntityActive, IEntityWithDirection, IEntityDisplayable, IEntityShortLived {
 
@@ -64,10 +65,11 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public canHurtAlly: boolean = false
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player | null, attackerDamage: uint) {
+	public constructor(owner: Player | null, attackerDamage: uint, direction: mRot) {
 		super();
 		this._owner = owner;
 		this._attackerDamage = attackerDamage;
+		this._direction = direction;
 	}
 
 	override destructor(): void {
@@ -91,7 +93,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	// 朝向 //
 	readonly i_hasDirection: true = true;
 	/** 基本朝向实现 */
-	protected _direction: mRot = 0;
+	protected _direction: mRot;
 	/**
 	 * 对外暴露的方向属性
 	 * 

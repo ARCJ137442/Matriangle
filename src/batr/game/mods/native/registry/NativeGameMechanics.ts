@@ -227,20 +227,37 @@ export const randomTick_LaserTrap: randomTickEventF = (
             continue;
         switch (randInt(4)) {
             case 1:
-                p = new LaserTeleport(position, null, laserLength);
+                p = new LaserTeleport(
+                    null, position, randomR,
+                    NativeTools.WEAPON_LASER_TELEPORT.defaultDamage,
+                    laserLength
+                );
                 break;
             case 2:
-                p = new LaserAbsorption(position, null, laserLength);
+                p = new LaserAbsorption(
+                    null, position, randomR,
+                    NativeTools.WEAPON_LASER_ABSORPTION.defaultDamage,
+                    laserLength
+                );
                 break;
             case 3:
-                p = new LaserPulse(position, null, laserLength);
+                p = new LaserPulse(
+                    null, position, randomR,
+                    NativeTools.WEAPON_LASER_PULSE.defaultDamage,
+                    Math.random(),
+                    laserLength,
+                );
                 break;
             default:
-                p = new LaserBasic(position, null, laserLength, 1);
+                p = new LaserBasic(
+                    null, position, randomR,
+                    NativeTools.WEAPON_LASER_BASIC.defaultDamage,
+                    1.0,
+                    laserLength,
+                );
                 break;
         }
         if (p != null) {
-            p.direction = randomR;
             host.entitySystem.register(p);
             // host.projectileContainer.addChild(p);
             // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);

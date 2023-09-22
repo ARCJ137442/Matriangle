@@ -3,6 +3,7 @@ import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/B
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import EntityType from "../../../../../api/entity/EntityType";
+import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
@@ -37,14 +38,16 @@ export default class BulletBomber extends Bullet {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: fPoint,
-		owner: Player | null, attackerDamage: uint,
+		owner: Player | null,
+		position: fPoint, direction: mRot,
+		attackerDamage: uint,
 		chargePercent: number
 	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
-			position,
-			owner, attackerDamage,
+			owner,
+			position, direction,
+			attackerDamage,
 			BulletBomber.DEFAULT_SPEED,
 			BulletBomber.DEFAULT_EXPLODE_RADIUS
 		);

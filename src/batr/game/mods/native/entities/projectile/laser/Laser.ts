@@ -9,6 +9,7 @@ import { iPoint, intPoint } from "../../../../../../common/geometricTools";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import IBatrGame from "../../../../../main/IBatrGame";
 import Weapon from "../../../tool/Weapon";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「激光」是
@@ -32,28 +33,29 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint, owner: Player | null,
+		owner: Player | null,
+		position: iPoint, direction: mRot,
 		length: uint, LIFE: uint,
 		attackerDamage: uint,
 		chargePercent: number = 1 // * 没有「充能机制」就是「完全充能」
 	) {
-		super(owner, attackerDamage * chargePercent);
+		super(owner, direction, attackerDamage * chargePercent);
 		this._position.copyFrom(position);
 		this._length = length;
 		this._LIFE = LIFE;
-		this.life = this.LIFE * chargePercent;
+		this._life = this.LIFE * chargePercent;
 	}
 
 	// 固定生命周期 //
 	public readonly i_fixedLive: true = true;
 
 	/** 总存在时间 */
-	protected life: uint;
+	protected _life: uint;
 	protected _LIFE: uint;
-	public get life(): uint { return this.life }
+	public get life(): uint { return this._life }
 	public get LIFE(): uint { return this._LIFE }
 	public get lifePercent(): number {
-		return this.life / this._LIFE;
+		return this._life / this._LIFE;
 	}
 
 	// 格点 //
@@ -76,7 +78,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * @param host 游戏主体
 	 */
 	public dealLife(host: IBatrGame): void {
-		if (--this.life <= 0) // ! 一到0便移除，避免多余的一次游戏刻处理
+		if (--this._life <= 0) // ! 一到0便移除，避免多余的一次游戏刻处理
 			host.removeEntity(this); // TODO: 有待「实体系统」的修缮
 	}
 

@@ -11,6 +11,7 @@ import Weapon from "../../../tool/Weapon";
 import { NativeTools } from './../../../registry/ToolRegistry';
 import Bullet from "./Bullet";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「核弹」
@@ -39,14 +40,16 @@ export default class BulletNuke extends Bullet {
 	 * @param chargePercent 充能百分比（仅影响运作逻辑，不影响伤害计算）
 	 */
 	public constructor(
-		position: fPoint,
-		owner: Player | null, attackerDamage: uint,
+		owner: Player | null,
+		position: fPoint, direction: mRot,
+		attackerDamage: uint,
 		chargePercent: number
 	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
-			position,
-			owner, attackerDamage,
+			owner,
+			position, direction,
+			attackerDamage,
 			BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
 			BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent)
 		);
@@ -61,7 +64,7 @@ export default class BulletNuke extends Bullet {
 		super.explode(host);
 	}
 
-	//====Graphics Functions====//
+	//============Display Implements============//
 	/** 先绘制基本轮廓，再绘制特殊标记 */
 	override shapeInit(shape: IBatrShape): void {
 		super.shapeInit(shape);

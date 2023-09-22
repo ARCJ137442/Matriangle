@@ -36,7 +36,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     ) {
         super();
         this._position.copyFrom(position);
-        this.life = this.LIFE;
+        this._life = this.LIFE;
     }
 
     // 轻量级活跃 //
@@ -49,7 +49,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
      * @param remove 调用`remove(this)`即可通知「游戏主体」删除自身
      */
     public onTick(remove: (entity: Entity) => void): void {
-        if (--this.life <= 0) {
+        if (--this._life <= 0) {
             remove(this);
         }
         // this._life--; // * 与内置「--」的差别在于：它一定会让实体的「生命周期」停留于`0`
@@ -66,11 +66,11 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
      * 
      * ! 以「游戏刻」为单位
      */
-    protected life: uint;
+    protected _life: uint;
     /** 外部只读的剩余生命时长 */
-    public get life(): uint { return this.life; }
+    public get life(): uint { return this._life; }
 
-    public get lifePercent(): number { return this.life / this.LIFE }
+    public get lifePercent(): number { return this._life / this.LIFE }
 
     // 非格点 //
     public readonly i_OutGrid: true = true;

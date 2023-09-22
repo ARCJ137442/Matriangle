@@ -39,13 +39,15 @@ export default class BulletTracking extends Bullet {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: fPoint,
-		owner: Player | null, attackerDamage: uint,
+		owner: Player | null,
+		position: fPoint, direction: mRot,
+		attackerDamage: uint,
 		playersInGame: Player[], chargePercent: number
 	) {
 		super(
-			position,
-			owner, attackerDamage,
+			owner,
+			position, direction,
+			attackerDamage,
 			BulletTracking.DEFAULT_SPEED,
 			BulletTracking.DEFAULT_EXPLODE_RADIUS
 		);
@@ -166,7 +168,7 @@ export default class BulletTracking extends Bullet {
 		super.explode(host);
 	}
 
-	//====Graphics Functions====//
+	//============Display Implements============//
 	override shapeInit(shape: IBatrShape): void {
 		super.shapeInit(shape);
 		this.drawTrackingSign(shape.graphics);

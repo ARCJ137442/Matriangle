@@ -136,7 +136,7 @@
 	// Global
 	protected _isActive: boolean;
 	protected _isLoaded: boolean;
-	protected _tickTimer: Timer = new Timer(GlobalGameVariables.TICK_TIME_MS);
+	protected _tickTimer: Timer = new Timer(TICK_TIME_MS);
 	// protected _secondTimer:Timer=new Timer(1000);//When a timer stop and start the timer will lost its phase.
 	protected _speed: number;
 
@@ -617,13 +617,13 @@
 			// Ranging
 			this._timeDistance = getTimer() - this._lastTime;
 			// Computing<Experimental>
-			this._expectedFrames = this._timeDistance / GlobalGameVariables.TICK_TIME_MS;
+			this._expectedFrames = this._timeDistance / TICK_TIME_MS;
 			if (this._expectedFrames > 1)
 				console.log('this._expectedFrames>1! value=', this._expectedFrames, 'distance=', this._timeDistance);
 
 			i = this._expectedFrames * this._speed;
 			// Synchronize
-			this._lastTime += this._expectedFrames * GlobalGameVariables.TICK_TIME_MS; // this._timeDistance;
+			this._lastTime += this._expectedFrames * TICK_TIME_MS; // this._timeDistance;
 		}
 		// i end at 0
 		this._temp_game_rate += i;
@@ -1124,18 +1124,18 @@
 
 	public updateMapSize(updateBackground: boolean = true): void {
 		// Information
-		let originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
+		let originalStageWidth: number = DISPLAY_SIZE;
 
 		let originalStageHeight: number = originalStageWidth;
 
 		// Square
-		let mapGridWidth: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapWidth;
+		let mapGridWidth: uint = this._map == null ? DISPLAY_GRIDS : this._map.mapWidth;
 
-		let mapGridHeight: uint = this._map == null ? GlobalGameVariables.DISPLAY_GRIDS : this._map.mapHeight;
+		let mapGridHeight: uint = this._map == null ? DISPLAY_GRIDS : this._map.mapHeight;
 
-		let mapShouldDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
+		let mapShouldDisplayWidth: number = DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
 
-		let mapShouldDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
+		let mapShouldDisplayHeight: number = DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
 
 		// Operation
 		let isMapDisplayWidthMax: boolean = mapShouldDisplayWidth >= mapShouldDisplayHeight;
@@ -1600,12 +1600,12 @@
 		if (player.toolUsingCD > 0)
 			return;
 		// Set Variables
-		let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
-		let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+		let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
+		let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
 		// Use
-		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
 		// Set CD
-		player.toolUsingCD = this._rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : player.computeFinalCD(player.tool);
+		player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : player.computeFinalCD(player.tool);
 	}
 
 	public playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {

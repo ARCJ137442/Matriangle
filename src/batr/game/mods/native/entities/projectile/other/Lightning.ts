@@ -57,18 +57,18 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	/**
 	 * 构造函数
 	 * @param position 整数位置（根部）
-	 * @param rot 初始朝向
+	 * @param direction 初始朝向
 	 * @param owner 所有者
 	 * @param energy 拥有的「能量」
 	 */
 	public constructor(
-		position: iPoint, rot: mRot,
-		owner: Player | null, attackerDamage: uint,
+		owner: Player | null,
+		position: iPoint, direction: mRot,
+		attackerDamage: uint,
 		energy: int
 	) {
-		super(owner, attackerDamage);
+		super(owner, attackerDamage, direction);
 		this._position.copyFrom(position)
-		this._direction = rot;
 		this._initialEnergy = this._energy = energy;
 	}
 

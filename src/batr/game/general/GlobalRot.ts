@@ -19,24 +19,14 @@ export type fRot = floatRot;
 export type multiDimRot = uint;
 export type mRot = multiDimRot;
 
-//============Static Variables============//
 export const NULL: intRot = uint$MAX_VALUE;
 
-export const UP: intRot = 3;
-export const DOWN: intRot = 1;
-export const LEFT: intRot = 2;
-export const RIGHT: intRot = 0;
-export const DEFAULT: intRot = RIGHT;
-
-//============Static Getter ANd Setter============//
-export function randomRot(): intRot {
-	return exMath.randInt(4);
-}
-
-//============Static Functions============//
-export function isValidRot(rot: intRot): boolean {
-	return rot != NULL;
-}
+// ↓ 二维特色，不再使用
+// export const UP: intRot = 3;
+// export const DOWN: intRot = 1;
+// export const LEFT: intRot = 2;
+// export const RIGHT: intRot = 0;
+// export const DEFAULT: intRot = RIGHT;
 
 /**
  * 反转方向，上→下，左→右
@@ -85,6 +75,42 @@ export function rotate_F(rot: fRot, angle: fRot): fRot {
  */
 export function rotate_I(rot: iRot, angle: int): iRot {
 	return lockRot_I(rot + angle);
+}
+
+/**
+ * 从「任意维整数角」到「整数角所在轴向」
+ * 
+ * ! 处于性能考量，不强制要求本文件内使用，但建议在其它地方统一使用以便日后统一修改
+ * 
+ * @param rot 任意维整数角
+ * @returns 这个「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
+ */
+export function mRot2axis(rot: mRot): uint {
+	return rot >> 1;
+}
+
+/**
+ * 从「整数角所在轴向」到「任意维整数角」（正方向）
+ * 
+ * ! 处于性能考量，不强制要求本文件内使用，但建议在其它地方统一使用以便日后统一修改
+ * 
+ * @param rot 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
+ * @returns 这个轴向上的「任意维整数角」（正方向）
+ */
+export function axis2mRot_p(rot: mRot): uint {
+	return rot << 1;
+}
+
+/**
+ * 从「整数角所在轴向」到「任意维整数角」（负方向）
+ * 
+ * ! 处于性能考量，不强制要求本文件内使用，但建议在其它地方统一使用以便日后统一修改
+ * 
+ * @param rot 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
+ * @returns 这个轴向上的「任意维整数角」（负方向）
+ */
+export function axis2mRot_n(rot: mRot): uint {
+	return (rot << 1) + 1;
 }
 
 /**
@@ -138,8 +164,8 @@ export function nameOfRot_M(rot: mRot): string {
 }
 
 export function lockRot_F(rot: fRot): fRot {
-	if (isNaN(rot) || !isFinite(rot))
-		return DEFAULT;
+	// if (isNaN(rot) || !isFinite(rot))
+	// 	return DEFAULT;
 	if (rot < 0)
 		return lockRot_F(rot + 4);
 	if (rot >= 4)
@@ -151,30 +177,6 @@ export function lockRot_I(rot: int): intRot {
 	if (rot < 0)
 		return lockRot_I(rot + 4);
 	return rot & 3;
-}
-
-/**
- * The Rot from target-this
- * @param	xD	Distance X.
- * @param	yD	Distance Y.
- * @return
- */
-export function fromLinearDistance(xD: int, yD: int): intRot {
-	if ((xD * yD) == 0) {
-		if (xD == 0) {
-			if (yD < 0)
-				return UP;
-			else
-				return DOWN;
-		}
-		if (yD == 0) {
-			if (xD > 0)
-				return RIGHT;
-			else
-				return LEFT;
-		}
-	}
-	return NULL;
 }
 
 export function fromRealRot(rot: fRot): fRot {

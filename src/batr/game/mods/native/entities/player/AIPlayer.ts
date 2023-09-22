@@ -87,7 +87,7 @@ export default class AIPlayer extends Player {
 	}
 
 	public get AIRunSpeed(): number {
-		return GlobalGameVariables.TPS / this._AIRunDelay;
+		return TPS / this._AIRunDelay;
 	}
 
 	public set AIRunSpeed(speed: number) {
@@ -96,7 +96,7 @@ export default class AIPlayer extends Player {
 
 		if (isNaN(speed))
 			speed = DEFAULT_AI_RUN_SPEED; // NaN means randomly speed
-		this._AIRunMaxDelay = isFinite(speed) ? GlobalGameVariables.TPS / speed : 0; // Infinite means max speed
+		this._AIRunMaxDelay = isFinite(speed) ? TPS / speed : 0; // Infinite means max speed
 		this.initAITick();
 	}
 

@@ -2,86 +2,129 @@
 
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import { BlockType } from "../../../../../api/block/Block";
-import Game from "../../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import Tool from "../../../registry/Tool";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
+import { mRot } from "../../../../../general/GlobalRot";
+import { fPoint, iPoint, intPoint } from "../../../../../../common/geometricTools";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import IBatrGame from "../../../../../main/IBatrGame";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
+import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalGameVariables";
+import Weapon from "../../../tool/Weapon";
+import { alignToGridCenter_P } from "../../../../../general/PosTransform";
 
-export default class ShockWaveDrone extends Projectile {
+export default class ShockWaveDrone extends Projectile implements IEntityInGrid {
+
+	override get type(): EntityType { return NativeEntityTypes.SHOCKWAVE_DRONE }
+
 	//============Static Variables============//
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2;
 
-	public static readonly MOVING_INTERVAL: uint = GlobalGameVariables.FIXED_TPS * 0.0625;
+	public static readonly MOVING_INTERVAL: uint = FIXED_TPS * 0.0625;
 
 	//============Instance Variables============//
-	public lastBlockType: BlockType = BlockType.NULL;
-	public nowBlockType: BlockType = BlockType.NULL;
 
-	protected _tool: Tool;
-	protected _toolChargePercent: number;
+	protected _tool: Weapon;
+	protected _weaponChargePercent: number;
 
-	protected _toolRot: uint;
+	protected _toolDirection: uint;
 	protected _moveDuration: uint = 0;
 
+	// 格点实体 //
+	public readonly i_InGrid: true = true;
+	protected _position: iPoint = new iPoint();
+
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, tool: Tool, toolRot: uint, toolChargePercent: number) {
-		super(position, owner);
-		this.ownerTool = Tool.SHOCKWAVE_ALPHA;
-		this._tool = tool;
-		this._toolChargePercent = toolChargePercent;
-		this._toolRot = toolRot;
-		this.shapeInit(shape: IBatrShape);
+	public constructor(
+		owner: Player | null,
+		position: fPoint,
+		moveDirection: mRot,
+		toolDirection: mRot,
+		weapon: Weapon,
+		toolDamage: uint,
+		toolChargePercent: number
+	) {
+		super(owner, toolDamage, moveDirection);
+		this._position.copyFrom(position);
+		this._tool = weapon;
+		this._weaponChargePercent = toolChargePercent;
+		this._toolDirection = toolDirection;
+		// this.shapeInit(shape: IBatrShape);
+	}
+	get position(): intPoint {
+		throw new Error("Method not implemented.");
+	}
+	set position(value: intPoint) {
+		throw new Error("Method not implemented.");
 	}
 
-	//============Destructor Function============//
-	override destructor(): void {
-		shape.graphics.clear();
-		this._tool = null;
+	/* override destructor(): void {
+		// shape.graphics.clear();
 		super.destructor();
-	}
-
-	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.SHOCKWAVE_LASER_DRONE;
-	}
-
-	//============Instance Functions============//
+	} */
 
 	//====Tick Function====//
+	protected _temp_entityP: fPoint = new fPoint();
 	override onTick(host: IBatrGame): void {
 		super.onTick(host);
-		if (this._host == null)
-			return;
 		// Ticking
 		if (this._moveDuration > 0)
 			this._moveDuration--;
 		else {
+			// 重置移动间隔时间
 			this._moveDuration = ShockWaveDrone.MOVING_INTERVAL;
-			// Moving
-			this.moveForwardInt(1);
-			let ex: number = this.entityX;
-			let ey: number = this.entityY;
-			if (_host.isOutOfMap(ex, ey) || !this._host.testCanPass(ex, ey, false, true, false)) {
+			// 前进一格
+			host.map.logic.towardWithRot_II(this._position, this._direction, 1);
+			// （前进后）坐标在地图外/不可跨越⇒消失
+			if (
+				!host.map.logic.isInMap_I(this._position) ||
+				!host.map.logic.testCanPass_I(this._position, false, true, false)
+			) {
 				// Gone
-				this._host.entitySystem.removeProjectile(this);
+				host.entitySystem.remove(this);
 			}
-			// Use Tool
-			else
-				this.host.playerUseToolAt(this.owner, this._tool,
-					ex + GlobalRot.towardIntX(this._toolRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
-					ey + GlobalRot.towardIntY(this._toolRot, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE),
-					this._toolRot, this._toolChargePercent, GlobalGameVariables.PROJECTILES_SPAWN_DISTANCE);
+			// 根据工具模拟玩家使用工具（武器） // ! 💭实际上的考量：似乎可以放开「工具/武器」的区别
+			else {
+				// 「网格坐标」⇒「网格中心坐标」⇒工具使用坐标（武器发射）
+				host.map.logic.towardWithRot_FF(
+					alignToGridCenter_P(this._position, this._temp_entityP),
+					this._direction,
+					PROJECTILES_SPAWN_DISTANCE,
+				)
+				// 模拟使用
+				host.playerUseToolAt(
+					this.owner,
+					this._tool,
+					this._temp_entityP,
+					this._toolDirection,
+					this._weaponChargePercent, PROJECTILES_SPAWN_DISTANCE
+				);
+			}
 		}
 	}
 
-	//====Graphics Functions====//
-	override shapeInit(shape: IBatrShape): void {
+	//============Display Implements============//
+	public shapeInit(shape: IBatrShape): void {
 		shape.graphics.beginFill(this.ownerColor, 0.5);
-		shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
-		shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
+		shape.graphics.drawRect(
+			-ShockWaveDrone.BLOCK_RADIUS, -ShockWaveDrone.BLOCK_RADIUS,
+			ShockWaveDrone.BLOCK_RADIUS * 2, ShockWaveDrone.BLOCK_RADIUS * 2
+		);
+		shape.graphics.drawRect(
+			-ShockWaveDrone.BLOCK_RADIUS / 2, -ShockWaveDrone.BLOCK_RADIUS / 2,
+			ShockWaveDrone.BLOCK_RADIUS, ShockWaveDrone.BLOCK_RADIUS
+		);
 		shape.graphics.endFill();
+	}
+
+	public shapeRefresh(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
+	}
+
+	public shapeDestruct(shape: IBatrShape): void {
+		throw new Error("Method not implemented.");
 	}
 }

@@ -15,6 +15,12 @@ import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTransform";
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 
+/**
+ * 「掷出的方块」是
+ * * 基于游戏方块机制的
+ * * 承载一种「移动的方块」以便「把方块作为可移动对象/武器」的
+ * 抛射体
+ */
 export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 
 	override get type(): EntityType { return NativeEntityTypes.THROWN_BLOCK }
@@ -29,7 +35,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 
 	/**
 	 * 存储浮点位置（在方块之间移动）
-	 * ! 注意：这里的「浮点位置」是与「方块座标系」对齐的——统一以左上角为坐标
+	 * ! 注意：这里的「浮点位置」是与「方块坐标系」对齐的——统一以左上角为坐标
 	 * * 纯逻辑的一致性追求：原先AS3版本更多是在显示上「要在中心方便旋转」的妥协
 	 */
 	protected _position: fPoint = new fPoint();
@@ -90,6 +96,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 			owner,
 			// exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * attackerDamage
 			uint(2 * chargePercent ** 2) * attackerDamage, // ? ↑不知道上面那个在做什么😂
+			direction
 		);
 		// * 复制方块实例 //
 		this._carriedBlock = block.clone(); // ! 会复制出一个新实例，而非沿用原先的实例

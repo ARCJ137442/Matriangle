@@ -69,6 +69,12 @@ export default interface IBatrGame {
 	//============Instance Getter And Setter============//
 	//======Main Getters======//
 
+	/**
+	 * 游戏所对应的「游戏规则」
+	 * * 用于在不修改源码的情况下，更简单地定制游戏玩法
+	 * 
+	 * TODO: 添加下列所有函数的注释，并在添加的同时分离功能（解耦）
+	 */
 	get rule(): IGameRule;
 
 	//============Display Implements============//
@@ -238,7 +244,7 @@ export default interface IBatrGame {
 
 	testFullPlayerCanPass(player: Player, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testPlayerCanPassToFront(player: Player, rotatedAsRot: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
+	testPlayerCanPassToFront(player: Player, rotatedAsDirection: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
 	testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
 
@@ -336,7 +342,7 @@ export default interface IBatrGame {
 	//====Functions About Player====//
 	createPlayer(position: iPoint, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): Player
 
-	addPlayer(id: uint, team: PlayerTeam, position: iPoint, rot: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
+	addPlayer(id: uint, team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
 
 	// Set player datas for gaming
 	setupPlayer(player: Player): Player
@@ -346,7 +352,7 @@ export default interface IBatrGame {
 
 	createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
 
-	addAI(team: PlayerTeam, position: iPoint, rot: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
+	addAI(team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
 
 	appendAI(): Player
 
@@ -354,7 +360,7 @@ export default interface IBatrGame {
 
 	spawnPlayersByRule(): void
 
-	teleportPlayerTo(player: Player, position: iPoint, rotateTo: uint/* = GlobalRot.NULL*/, effect: boolean/* = false*/): Player
+	teleportPlayerTo(player: Player, position: iPoint, rotateTo: uint/* = GlobalDirection.NULL*/, effect: boolean/* = false*/): Player
 
 	spreadPlayer(player: Player, rotatePlayer: boolean/* = true*/, createEffect: boolean/* = true*/): Player
 
@@ -404,15 +410,20 @@ export default interface IBatrGame {
 
 	changeAllPlayerToolRandomly(): void
 
-	movePlayer(player: Player, rot: mRot, distance: number): void
+	movePlayer(player: Player, direction: mRot, distance: number): void
 
-	playerUseTool(player: Player, rot: mRot, chargePercent: number): void
+	playerUseTool(player: Player, direction: mRot, chargePercent: number): void
 
-	playerUseToolAt(player: Player, tool: Tool, position: fPoint, toolRot: mRot, chargePercent: number, projectilesSpawnDistance: number): void
+	playerUseToolAt(
+		player: Player | null,
+		tool: Tool,
+		position: fPoint, toolDirection: mRot,
+		chargePercent: number, projectilesSpawnDistance: number
+	): void
 
-	getLaserLength(player: Player, rot: mRot): uint
+	getLaserLength(player: Player, direction: mRot): uint
 
-	getLaserLength2(position: iPoint, rot: mRot): uint
+	getLaserLength2(position: iPoint, direction: mRot): uint
 
 	lockEntityInMap(entity: Entity): void
 
@@ -439,13 +450,31 @@ export default interface IBatrGame {
 
 	addTeleportEffect(position: fPoint): void
 
-	addPlayerDeathLightEffect(position: fPoint, color: uint, rot: mRot, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathLightEffect(
+		position: fPoint, direction: mRot,
+		color: uint,
+		aiPlayer: AIPlayer/* = null*/,
+		reverse: boolean/* = false*/
+	): void
 
-	addPlayerDeathFadeoutEffect(position: fPoint, color: uint, rot: mRot, aiPlayer: AIPlayer/* = null*/, reverse: boolean/* = false*/): void
+	addPlayerDeathFadeoutEffect(
+		position: fPoint, direction: mRot,
+		color: uint,
+		aiPlayer: AIPlayer/* = null*/,
+		reverse: boolean/* = false*/
+	): void
 
-	addPlayerDeathLightEffect2(position: fPoint, player: Player, reverse: boolean/* = false*/): void
+	addPlayerDeathLightEffect2(
+		position: fPoint,
+		player: Player,
+		reverse: boolean/* = false*/
+	): void
 
-	addPlayerDeathFadeoutEffect2(position: fPoint, player: Player, reverse: boolean/* = false*/): void
+	addPlayerDeathFadeoutEffect2(
+		position: fPoint,
+		player: Player,
+		reverse: boolean/* = false*/
+	): void
 
 	addPlayerLevelupEffect(position: fPoint, color: uint, scale: number): void
 
@@ -458,7 +487,7 @@ export default interface IBatrGame {
 	//======Hook Functions======//
 	onPlayerMove(player: Player): void
 
-	onPlayerUse(player: Player, rot: mRot, distance: number): void
+	onPlayerUse(player: Player, direction: mRot, distance: number): void
 
 	onPlayerHurt(attacker: Player, victim: Player, damage: uint): void
 

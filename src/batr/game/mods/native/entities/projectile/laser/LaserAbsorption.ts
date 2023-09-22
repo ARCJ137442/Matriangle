@@ -11,6 +11,7 @@ import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import LaserBasic from "./LaserBasic";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「吸收激光」
@@ -41,13 +42,14 @@ export default class LaserAbsorption extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint,
 		owner: Player | null,
+		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		length: uint = LaserBasic.LENGTH
 	) {
 		super(
-			position, owner,
+			owner,
+			position, direction,
 			length, LaserAbsorption.LIFE,
 			attackerDamage,
 			1 /* 始终完全充能 */

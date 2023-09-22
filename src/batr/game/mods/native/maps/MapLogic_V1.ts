@@ -1,7 +1,7 @@
 
 
 import { floatPoint, iPoint, intPoint } from "../../../../common/geometricTools";
-import { mRot } from "../../../general/GlobalRot";
+import { mRot, mRot2axis } from "../../../general/GlobalRot";
 import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Entity from "../../../api/entity/Entity";
 import Player from "../entities/player/Player";
@@ -71,13 +71,13 @@ export default class MapLogic_V1 implements IMapLogic {
 
 	// 实现：直接用
 	public towardWithRot_FF(p: floatPoint, rot: mRot, step: number = 1.0): floatPoint {
-		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
+		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
 		return p
 	}
 
 	// 实现：直接用
 	public towardWithRot_II(p: intPoint, rot: mRot, step: int = 1): intPoint {
-		p[rot >> 1] += (rot & 1) === 0 ? step : -step;
+		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
 		return p
 	}
 

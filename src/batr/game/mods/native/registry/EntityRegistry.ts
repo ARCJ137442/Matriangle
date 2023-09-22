@@ -11,12 +11,7 @@ import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
 import EffectSpawn from "../entities/effect/EffectSpawn";
 import EffectTeleport from "../entities/effect/EffectTeleport";
 import BonusBox from "../entities/item/BonusBox";
-import Player from "../entities/player/Player";
-import Lightning from "../entities/projectile/other/Lightning";
-import ShockWaveBase from "../entities/projectile/other/ShockWaveBase";
-import ShockWaveDrone from "../entities/projectile/other/ShockWaveDrone";
-import ThrownBlock from "../entities/projectile/other/ThrownBlock";
-import Wave from "../entities/projectile/other/Wave";
+// import Player from "../entities/player/Player";
 import Bullet from "../entities/projectile/bullet/Bullet";
 import BulletBasic from "../entities/projectile/bullet/BulletBasic";
 import BulletBomber from "../entities/projectile/bullet/BulletBomber";
@@ -27,6 +22,11 @@ import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
 import LaserBasic from "../entities/projectile/laser/LaserBasic";
 import LaserPulse from "../entities/projectile/laser/LaserPulse";
 import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
+import Lightning from "../entities/projectile/other/Lightning";
+import ShockWaveBase from "../entities/projectile/other/ShockWaveBase";
+import ShockWaveDrone from "../entities/projectile/other/ShockWaveDrone";
+import ThrownBlock from "../entities/projectile/other/ThrownBlock";
+import Wave from "../entities/projectile/other/Wave";
 
 /**
  * 用于识别的「实体类型」
@@ -62,8 +62,8 @@ export module NativeEntityTypes {
 	// 奖励箱
 	export const BONUS_BOX: EntityType = new EntityType(BonusBox, DisplayLayers.BONUS_BOX);
 
-	// 玩家
-	export const PLAYER: EntityType = new EntityType(Player, DisplayLayers.PLAYER);
+	// 玩家 // TODO: 尚未完成
+	// export const PLAYER: EntityType = new EntityType(Player, DisplayLayers.PLAYER);
 	// export const AI_PLAYER: EntityType = new EntityType(AIPlayer, DisplayLayers.PLAYER); // TODO: 计划不再区分，把「AI玩家」认为是「玩家」的一种多态
 
 	// 特效
@@ -97,8 +97,8 @@ export module NativeEntityTypes {
 		SHOCKWAVE_BASE,
 		SHOCKWAVE_DRONE,
 		LIGHTNING,
-		// 玩家
-		PLAYER,
+		// 玩家 // TODO: 尚未完成
+		// PLAYER,
 		// 奖励箱
 		BONUS_BOX,
 		// 特效

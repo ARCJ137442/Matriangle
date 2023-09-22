@@ -31,7 +31,7 @@ export default class Menu extends Sprite {
 	//============Static Variables============//
 	protected static readonly _TITLE_HIDE_Y: int = -Title.HEIGHT - DEFAULT_SIZE * 1;
 	protected static readonly _TITLE_SHOW_Y: int = PosTransform.localPosToRealPos(2);
-	protected static readonly _TITLE_ANIMATION_TIME: uint = GlobalGameVariables.FIXED_TPS;
+	protected static readonly _TITLE_ANIMATION_TIME: uint = FIXED_TPS;
 
 	/** Menu Text Format */
 	public static readonly TEXT_FORMAT: TextFormat = new TextFormat(
@@ -113,9 +113,9 @@ export default class Menu extends Sprite {
 	protected _isActive: boolean;
 
 	protected _subject: BatrSubject;
-	protected _backGround: Background = new Background(GlobalGameVariables.DISPLAY_GRIDS, GlobalGameVariables.DISPLAY_GRIDS, true, true, false);
+	protected _backGround: Background = new Background(DISPLAY_GRIDS, DISPLAY_GRIDS, true, true, false);
 
-	protected _titleTimer: Timer = new Timer(1000 / GlobalGameVariables.TPS, _TITLE_ANIMATION_TIME);
+	protected _titleTimer: Timer = new Timer(1000 / TPS, _TITLE_ANIMATION_TIME);
 	protected _isShowingMenu: boolean = false;
 
 	protected _languageSelector: BatrSelector;
@@ -563,7 +563,7 @@ export default class Menu extends Sprite {
 					false
 				).quickAppendSelector(
 					this,
-					BatrSelectorContent.createPositiveIntegerContent(int(this.gameRule.defaultRespawnTime / GlobalGameVariables.TPS)),
+					BatrSelectorContent.createPositiveIntegerContent(int(this.gameRule.defaultRespawnTime / TPS)),
 					I18nKey.RESPAWN_TIME,
 					false
 				),
@@ -797,7 +797,7 @@ export default class Menu extends Sprite {
 			rule.remainLivesAI = defaultLivesSelectorA == null ? -1 : defaultLivesSelectorA.currentValue;
 			// DefaultRespawnTime
 			let defaultRespawnTimeSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
-			rule.defaultRespawnTime = defaultRespawnTimeSelector.currentValue * GlobalGameVariables.TPS;
+			rule.defaultRespawnTime = defaultRespawnTimeSelector.currentValue * TPS;
 			// LockTeam
 			let lockTeam: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.LOCK_TEAMS);
 			rule.allowPlayerChangeTeam = defaultRespawnTimeSelector.currentValue == 0; // inverted boolean

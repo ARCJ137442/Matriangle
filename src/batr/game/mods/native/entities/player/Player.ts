@@ -32,7 +32,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	public static readonly DEFAULT_MAX_HEALTH: int = 100;
 	public static readonly DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
-	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * GlobalGameVariables.FIXED_TPS;
+	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 	public static isAI(player: Player): boolean {
 		return player is AIPlayer;
 	}
@@ -66,16 +66,16 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	//====Control Variables====//
 	// ControlDelay
-	public controlDelay_Move: uint = GlobalGameVariables.FIXED_TPS * 0.5;
+	public controlDelay_Move: uint = FIXED_TPS * 0.5;
 
-	// public controlDelay_Use:uint=GlobalGameVariables.TPS/4
-	// public controlDelay_Select:uint=GlobalGameVariables.TPS/5
+	// public controlDelay_Use:uint=TPS/4
+	// public controlDelay_Select:uint=TPS/5
 
 	// ControlLoop
-	public controlLoop_Move: uint = GlobalGameVariables.FIXED_TPS * 0.05;
+	public controlLoop_Move: uint = FIXED_TPS * 0.05;
 
-	// public controlLoop_Use:uint=GlobalGameVariables.TPS/25
-	// public controlLoop_Select:uint=GlobalGameVariables.TPS/40
+	// public controlLoop_Use:uint=TPS/25
+	// public controlLoop_Select:uint=TPS/40
 
 	// ControlKey
 	public controlKey_Up: uint;
@@ -302,7 +302,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		this.turnAllKeyUp();
 		this.clearControlKeys();
 		// Remove Display Object
-		Utils.removeChildIfContains(this._host.playerGUIContainer, this._GUI);
+		Utils.removeChildIfContains(host.playerGUIContainer, this._GUI);
 		// Remove Variables
 		// Primitive
 		this._customName = null;
@@ -351,7 +351,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		this.initColors();
 		this.shapeInit(shape: IBatrShape);
 		this._GUI.updateTeam();
-		this._host.updateProjectilesColor();
+		host.updateProjectilesColor();
 	}
 
 	public get teamColor(): uint {
@@ -432,7 +432,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	public get toolMaxCD(): number {
-		return this._host.rule.toolsNoCD ? GlobalGameVariables.TOOL_MIN_CD : this._tool.getBuffedCD(this.buffCD);
+		return host.rule.toolsNoCD ? TOOL_MIN_CD : this._tool.getBuffedCD(this.buffCD);
 	}
 
 	public get toolReverseCharge(): boolean {
@@ -667,15 +667,15 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	 */
 	public initVariablesByRule(toolID: int, uniformTool: Tool = null): void {
 		// Health&Life
-		this._maxHealth = this._host.rule.defaultMaxHealth;
+		this._maxHealth = host.rule.defaultMaxHealth;
 
-		this._health = this._host.rule.defaultHealth;
+		this._health = host.rule.defaultHealth;
 
-		this.setLifeByInt(this is AIPlayer ? this._host.rule.remainLivesAI : this._host.rule.remainLivesPlayer);
+		this.setLifeByInt(this is AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
 
 		// Tool
 		if (toolID < -1)
-			this._tool = this.host.rule.randomToolEnable;
+			this._tool = host.rule.randomToolEnable;
 		else if (!Tool.isValidAvailableToolID(toolID) && uniformTool != null)
 			this._tool = uniformTool;
 		else
@@ -715,12 +715,12 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	protected onHurt(damage: uint, attacker: Player = null): void {
 		// this._hurtOverlay.playAnimation();
-		this._host.addPlayerHurtEffect(this);
-		this._host.onPlayerHurt(attacker, this, damage);
+		host.addPlayerHurtEffect(this);
+		host.onPlayerHurt(attacker, this, damage);
 	}
 
 	protected onDeath(damage: uint, attacker: Player = null): void {
-		this._host.onPlayerDeath(attacker, this, damage);
+		host.onPlayerDeath(attacker, this, damage);
 		if (attacker != null)
 			attacker.onKillPlayer(this, damage);
 	}
@@ -742,7 +742,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	override preLocationUpdate(oldX: number, oldY: number): void {
-		this._host.prePlayerLocationChange(this, oldX, oldY);
+		host.prePlayerLocationChange(this, oldX, oldY);
 		super.preLocationUpdate(oldX, oldY);
 	}
 
@@ -751,12 +751,12 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			this._GUI.entityX = this.entityX;
 			this._GUI.entityY = this.entityY;
 		}
-		this._host.onPlayerLocationChange(this, newX, newY);
+		host.onPlayerLocationChange(this, newX, newY);
 		super.onLocationUpdate(newX, newY);
 	}
 
 	public onLevelup(): void {
-		this._host.onPlayerLevelup(this);
+		host.onPlayerLevelup(this);
 	}
 
 	//====Functions About Gameplay====//
@@ -807,13 +807,13 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		if (ignoreDelay) {
-			this._host.moveInTestPlayer(this, isLocationChange);
+			host.moveInTestPlayer(this, isLocationChange);
 			this._damageDelay = MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > 0) {
 			this._damageDelay--;
 		}
-		else if (this._damageDelay == 0 && this._host.moveInTestPlayer(this, isLocationChange)) {
+		else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) {
 			this._damageDelay = MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > -1) {
@@ -824,7 +824,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	public dealHeal(): void {
 		if (this._heal < 1)
 			return;
-		if (this._healDelay > GlobalGameVariables.TPS * (0.1 + this.healthPercent * 0.15)) {
+		if (this._healDelay > TPS * (0.1 + this.healthPercent * 0.15)) {
 			if (this.isFullHealth)
 				return;
 			this._healDelay = 0;
@@ -845,7 +845,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			this.respawnTick = -1;
 			if (!this._infinityLife && this._lives > 0)
 				this._lives--;
-			this._host.onPlayerRespawn(this);
+			host.onPlayerRespawn(this);
 			this.onRespawn();
 		}
 	}
@@ -1033,7 +1033,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	protected addChildren(): void {
-		this._host.playerGUIContainer.addChild(this._GUI);
+		host.playerGUIContainer.addChild(this._GUI);
 	}
 
 	//====Tick Run Function====//
@@ -1125,10 +1125,10 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		// this.isPress_Select_Left=false;
 		// this.isPress_Select_Right=false;
 		this.keyDelay_Move = 0;
-		this.controlDelay_Move = GlobalGameVariables.FIXED_TPS * 0.5;
-		// this.controlDelay_Select=GlobalGameVariables.TPS/5;
-		this.controlLoop_Move = GlobalGameVariables.FIXED_TPS * 0.05;
-		// this.controlLoop_Select=GlobalGameVariables.TPS/40;
+		this.controlDelay_Move = FIXED_TPS * 0.5;
+		// this.controlDelay_Select=TPS/5;
+		this.controlLoop_Move = FIXED_TPS * 0.05;
+		// this.controlLoop_Select=TPS/40;
 	}
 
 	public updateKeyDelay(): void {
@@ -1238,19 +1238,19 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	public moveLeft(): void {
-		this._host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
+		host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
 	}
 
 	public moveRight(): void {
-		this._host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
+		host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
 	}
 
 	public moveUp(): void {
-		this._host.movePlayer(this, GlobalRot.UP, this.moveDistance);
+		host.movePlayer(this, GlobalRot.UP, this.moveDistance);
 	}
 
 	public moveDown(): void {
-		this._host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
+		host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
 	}
 
 	public turnUp(): void {
@@ -1283,7 +1283,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	public useTool(): void {
 		if (!this.toolNeedsCharge || this.chargingPercent > 0) {
-			this._host.playerUseTool(this, this.rot, this.chargingPercent);
+			host.playerUseTool(this, this.rot, this.chargingPercent);
 		}
 		if (this.toolNeedsCharge)
 			this._GUI.updateCharge();

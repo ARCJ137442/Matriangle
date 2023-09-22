@@ -2,93 +2,183 @@
 
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import Game from "../../../../../main/Game";
 import EntityType from "../../../../../api/entity/EntityType";
-import Tool from "../../../registry/Tool";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
+import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
+import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
+import { fPoint, iPoint, iPointRef, iPointVal } from "../../../../../../common/geometricTools";
+import IBatrGame from "../../../../../main/IBatrGame";
+import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import Weapon from "../../../tool/Weapon";
+import { random1 } from "../../../../../../common/exMath";
+import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis } from "../../../../../general/GlobalRot";
 
 /**
  * ...
  * @author ARCJ137442
  */
-export default class ShockWaveBase extends Projectile {
+export default class ShockWaveBase extends Projectile implements IEntityInGrid, IEntityFixedLived {
+
+	override get type(): EntityType { return NativeEntityTypes.SHOCKWAVE_BASE }
+
 	//============Static Variables============//
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2;
 
-	/** Life For Charge */
-	public static readonly LIFE: uint = GlobalGameVariables.FIXED_TPS;
+	/**
+	 * 释放子机的「ALPHA模式」
+	 * * 会从「玩家发射处」（一般为前方一格）横向（高维情况下为所有其它轴向）产生「发射方向与玩家一致」的子机
+	 */
+	public static readonly MODE_ALPHA: uint = 0;
+	/**
+	 * 释放子机的「BETA模式」
+	 * * 会以玩家为中心，从x轴向开始，每两个轴形成一个「涡旋」
+	 *   * 左右旋沿用AS3版本随机
+	 * 
+	 * TODO: 【2023-09-22 23:28:11】等待开发
+	 */
+	public static readonly MODE_BETA: uint = 1;
 
-	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _leftBlock: Sprite;
-	protected _rightBlock: Sprite;
+	// ? ↓AS3版本遗留物，不知道有什么个作用
+	// protected _leftBlock: Sprite;
+	// protected _rightBlock: Sprite;
 
-	protected _life: uint = 0;
-
-	protected _tool: Tool;
-	protected _toolChargePercent: number;
+	/** 在「生成抛射体」时所根据的武器 */
+	protected _weapon: Weapon;
+	protected _weaponChargePercent: number;
 
 	/** Default is 0,Vortex is 1 */
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, owner: Player | null, tool: Tool, toolCharge: number, mode: uint = 0) {
-		super(position, owner);
-		this.ownerTool = Tool.SHOCKWAVE_ALPHA;
-		this._tool = tool;
+	public constructor(
+		position: fPoint,
+		owner: Player | null,
+		direction: mRot,
+		weapon: Weapon,
+		weaponAttackerDamage: number,
+		weaponCharge: number,
+		mode: uint
+	) {
+		super(
+			owner,
+			weaponAttackerDamage, // ! 自身无伤害，但一般用「其所含武器的伤害」（就如玩家扩展了一种「使用武器的方式」）
+			direction, // * 这个方向是为「ALPHA模式」特制的
+		);
+		this._position.copyFrom(position)
+		this._weapon = weapon;
 		this.mode = mode;
-		this._toolChargePercent = toolCharge;
-		this.shapeInit(shape: IBatrShape);
-	}
-
-	//============Instance Getter And Setter============//
-	override get type(): EntityType {
-		return EntityType.SHOCKWAVE_LASER_BASE;
+		this._weaponChargePercent = weaponCharge;
+		// this.shapeInit(shape: IBatrShape);
 	}
 
 	//============Instance Functions============//
+
+	// 固定寿命 //
+	public readonly i_fixedLive: true = true;
+
+	public static readonly LIFE: uint = FIXED_TPS;
+	public get LIFE(): uint { return ShockWaveBase.LIFE; }
+
+	/**
+	 * 生命周期
+	 */
+	protected _life: uint = ShockWaveBase.LIFE;
+	public get life(): uint { return this._life; }
+	public get lifePercent(): number { return this._life / this.LIFE }
+
+	// 格点实体 //
+	public readonly i_InGrid: true = true;
+
+	protected _position: iPointVal = new iPoint();
+	public get position(): iPointRef { return this._position; }
+	public set position(value: iPointRef) { this._position.copyFrom(value) }
+
 	override onTick(host: IBatrGame): void {
 		// Charging
-		if (this._life >= LIFE) {
-			this.summonDrones();
+		if (this._life <= 0) {
+			this.summonDrones(host);
 			// Remove
-			this._host.entitySystem.removeProjectile(this);
+			host.entitySystem.remove(this);
 		}
 		else {
-			this._life++;
-			this.scaleX = this.scaleY = 1 - this._life / LIFE;
-			this.alpha = 0.5 + (this._life / LIFE) / 2;
+			this._life--;
+			// TODO: 请求显示更新
 		}
 	}
 
-	override shapeInit(shape: IBatrShape): void {
+	/**
+	 * 根据自身的「模式」生成「冲击波子机」
+	 * 
+	 * TODO: 需要「高维化」——商讨「高维化方案」
+	 * 
+	 * @param host 基于的游戏主体
+	 */
+	public summonDrones(host: IBatrGame): void {
+		// Summon Drone
+		switch (this.mode) {
+			// * ALPHA模式（参见常量の注释）
+			case ShockWaveBase.MODE_ALPHA:
+				// 遍历所有非自身朝向的轴向
+				let newAxis: uint
+				for (let i: uint = 1; i < host.map.storage.numDimension; i++) {
+					// 找到一个不与自身同一个轴向的坐标轴
+					newAxis = (mRot2axis(this._direction) + i) % host.map.storage.numDimension;
+					// 正负方向各一个，且方向与自身（玩家发射时）方向一致
+					this.summonDrone(host, axis2mRot_p(newAxis), this._direction);
+					this.summonDrone(host, axis2mRot_n(newAxis), this._direction);
+				}
+			// * BETA模式（参见常量の注释）
+			case ShockWaveBase.MODE_BETA:
+				console.warn('仍在开发中！')
+				break;
+				let i: int = random1(); // TODO: 需要重新「高维化」（破坏性高维化，不再是「二维限定」）
+				for (let u: int = 0; u < 4; u++)
+					this.summonDrone(host, u, u + i);
+		}
+	}
+
+	public summonDrone(
+		host: IBatrGame,
+		droneMoveDirection: mRot,
+		toolDirection: mRot = this._direction
+	): void {
+		let drone: ShockWaveDrone = new ShockWaveDrone(
+			this.owner,
+			this._position,
+			droneMoveDirection,
+			toolDirection,
+			this._weapon,
+			this._attackerDamage,
+			this._weaponChargePercent
+		);
+		host.entitySystem.register(drone);
+		// host.projectileContainer.addChild(drone); // ! 解耦
+	}
+
+	//============Display Implements============//
+
+	/** 实现：大方形盖掉小方形 */
+	public shapeInit(shape: IBatrShape): void {
 		shape.graphics.beginFill(this.ownerColor);
-		shape.graphics.drawRect(-BLOCK_RADIUS, -BLOCK_RADIUS, BLOCK_RADIUS * 2, BLOCK_RADIUS * 2);
-		shape.graphics.drawRect(-BLOCK_RADIUS / 2, -BLOCK_RADIUS / 2, BLOCK_RADIUS, BLOCK_RADIUS);
+		shape.graphics.drawRect(-ShockWaveBase.BLOCK_RADIUS, -ShockWaveBase.BLOCK_RADIUS, ShockWaveBase.BLOCK_RADIUS * 2, ShockWaveBase.BLOCK_RADIUS * 2);
+		shape.graphics.drawRect(-ShockWaveBase.BLOCK_RADIUS / 2, -ShockWaveBase.BLOCK_RADIUS / 2, ShockWaveBase.BLOCK_RADIUS, ShockWaveBase.BLOCK_RADIUS);
 		shape.graphics.endFill();
 	}
 
-	public summonDrones(): void {
-		// Summon Drone
-		switch (this.mode) {
-			case 1:
-				let i: int = exMath.random1();
-				for (let u: int = 0; u < 4; u++)
-					this.summonDrone(u, u + i);
-				break;
-			default:
-				this.summonDrone(GlobalRot.rotateInt(this.rot, 1));
-				this.summonDrone(GlobalRot.rotateInt(this.rot, -1));
-		}
+	/** 实现：更新尺寸和不透明度 */
+	public shapeRefresh(shape: IBatrShape): void {
+		shape.scaleX = shape.scaleY = 1 - this.lifePercent;
+		shape.alpha = 0.5 + this.lifePercent / 2;
 	}
 
-	public summonDrone(rot: int, toolRot: int = int.MIN_VALUE): void {
-		let drone: ShockWaveDrone = new ShockWaveDrone(this.host, this.entityX, this.entityY, this.owner, this._tool, toolRot == int.MIN_VALUE ? this.rot : GlobalRot.lockIntToStandard(toolRot), this._toolChargePercent);
-		drone.rot = GlobalRot.lockIntToStandard(rot);
-		this.host.entitySystem.registerProjectile(drone);
-		this.host.projectileContainer.addChild(drone);
+	/** 实现：清除绘图 */
+	public shapeDestruct(shape: IBatrShape): void {
+		shape.graphics.clear();
 	}
+
 }

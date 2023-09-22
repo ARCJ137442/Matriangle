@@ -10,7 +10,14 @@ import { fPoint } from "../../../../../../common/geometricTools";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { waveHurtPlayers } from "../../../registry/NativeGameMechanics";
+import { mRot } from "../../../../../general/GlobalRot";
 
+/**
+ * 「波浪」
+ * * 能穿过所有方块（无视地图阻挡）
+ * * 伤害一切沿途接触到的玩家
+ * * 在生成后随时间自身逐渐放大，伤害范围也逐渐扩大
+ */
 export default class Wave extends Projectile implements IEntityOutGrid, IEntityFixedLived {
 
 	override get type(): EntityType { return NativeEntityTypes.WAVE; }
@@ -59,19 +66,21 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	 * ! 「攻击者伤害」计算出来之后，就没有「攻击者」啥事了
 	 * 
 	 * @param position 位置
+	 * @param direction 移动的方向（任意维整数角）
 	 * @param owner 所有者
 	 * @param attackerDamage 所有者根据「武器默认伤害」与自身「伤害加成」计算出来的「攻击者伤害」
 	 * @param chargePercent 充能百分比
 	 */
 	public constructor(
-		position: fPoint,
 		owner: Player | null,
+		position: fPoint,
+		direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number
 	) {
 		/** 从最小到最大 */
 		let tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent;
-		super(owner, attackerDamage * (tempScale / Wave.MAX_SCALE));
+		super(owner, attackerDamage * (tempScale / Wave.MAX_SCALE), direction);
 		this._nowScale = (
 			owner == null ?
 				tempScale :

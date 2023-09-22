@@ -68,14 +68,14 @@ export default class BatrSubject extends Sprite {
 	//============Instance Functions============//
 	protected onStageResize(E: Event = null): void {
 		// Information
-		let originalStageWidth: number = GlobalGameVariables.DISPLAY_SIZE;
+		let originalStageWidth: number = DISPLAY_SIZE;
 		let originalStageHeight: number = originalStageWidth; // Square
 		let nowStageWidth: number = this.stage.stageWidth;
 		let nowStageHeight: number = this.stage.stageHeight;
-		let mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : GlobalGameVariables.DISPLAY_GRIDS;
-		let mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : GlobalGameVariables.DISPLAY_GRIDS;
-		let mapDisplayWidth: number = GlobalGameVariables.DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
-		let mapDisplayHeight: number = GlobalGameVariables.DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
+		let mapGridWidth: uint = this._game.isLoaded ? this._game.mapWidth : DISPLAY_GRIDS;
+		let mapGridHeight: uint = this._game.isLoaded ? this._game.mapHeight : DISPLAY_GRIDS;
+		let mapDisplayWidth: number = DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
+		let mapDisplayHeight: number = DEFAULT_SCALE * mapGridHeight * DEFAULT_SIZE;
 		// let distanceBetweenBorderX:Number=0(nowStageWidth-originalStageWidth)/2
 		// let distanceBetweenBorderY:Number=0(nowStageHeight-originalStageHeight)/2
 		// Operation
@@ -96,7 +96,7 @@ export default class BatrSubject extends Sprite {
 
 		let shouldX: number = /*-distanceBetweenBorderX+*/(isStageWidthMax ? (nowStageWidth - mapDisplayWidth * displayScale) / 2 : 0);
 		let shouldY: number = /*-distanceBetweenBorderY+*/(isStageWidthMax ? 0 : (nowStageHeight - mapDisplayHeight * displayScale) / 2);
-		let shouldScale: number = displayScale * GlobalGameVariables.DEFAULT_SCALE;
+		let shouldScale: number = displayScale * DEFAULT_SCALE;
 
 		// Deal
 		this.x = shouldX;
@@ -181,7 +181,7 @@ export default class BatrSubject extends Sprite {
 	}
 
 	public resize(): void {
-		this.scaleX = this.scaleY = GlobalGameVariables.DEFAULT_SCALE;
+		this.scaleX = this.scaleY = DEFAULT_SCALE;
 	}
 
 	public set enableAutoResize(value: boolean) {

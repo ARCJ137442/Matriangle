@@ -13,6 +13,7 @@ import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import Player from "../../player/Player";
 import Projectile from "../Projectile";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「子弹」是
@@ -37,12 +38,14 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	//============Constructor & Destructor============//
 	public constructor(
+		owner: Player | null,
 		position: fPoint,
-		owner: Player | null, attackerDamage: uint,
+		direction: mRot,
+		attackerDamage: uint,
 		speed: number,
 		defaultExplodeRadius: number
 	) {
-		super(owner, attackerDamage);
+		super(owner, attackerDamage, direction);
 		this.speed = speed;
 		this._position.copyFrom(position)
 

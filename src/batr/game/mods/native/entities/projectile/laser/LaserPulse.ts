@@ -11,6 +11,7 @@ import Weapon from "../../../tool/Weapon";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「脉冲激光」
@@ -35,14 +36,15 @@ export default class LaserPulse extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint,
 		owner: Player | null,
+		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number = 1,
 		length: uint = LaserBasic.LENGTH,
 	) {
 		super(
-			position, owner,
+			owner,
+			position, direction,
 			length, LaserPulse.LIFE,
 			attackerDamage,
 			1 // ! 「充能百分比」仅用于「决定子类型」而不用于决定伤害/生命周期

@@ -11,7 +11,7 @@ export default class Background extends Sprite {
 	public static readonly BACKGROUND_COLOR: uint = 0xdddddd;
 	public static readonly GRID_COLOR: uint = 0xd6d6d6;
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 32;
-	public static readonly DEFAULT_DISPLAY_GRIDS: uint = GlobalGameVariables.DISPLAY_GRIDS;
+	public static readonly DEFAULT_DISPLAY_GRIDS: uint = DISPLAY_GRIDS;
 	public static readonly GRID_SPREAD: uint = 0;
 	public static readonly FRAME_LINE_COLOR: uint = 0x88ffff;
 	public static readonly FRAME_LINE_SIZE: number = DEFAULT_SIZE / 8;

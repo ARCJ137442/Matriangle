@@ -11,6 +11,7 @@ import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「传送激光」
@@ -29,13 +30,14 @@ export default class LaserTeleport extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint,
 		owner: Player | null,
+		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		length: uint = LaserBasic.LENGTH
 	) {
 		super(
-			position, owner,
+			owner,
+			position, direction,
 			length, LaserTeleport.LIFE,
 			attackerDamage
 		);

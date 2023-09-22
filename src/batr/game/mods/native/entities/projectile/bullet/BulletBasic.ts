@@ -1,6 +1,7 @@
 import { fPoint } from "../../../../../../common/geometricTools";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import EntityType from "../../../../../api/entity/EntityType";
+import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
@@ -23,12 +24,13 @@ export default class BulletBasic extends Bullet {
 	override get type(): EntityType { return NativeEntityTypes.BULLET_BASIC; }
 
 	public constructor(
-		position: fPoint,
-		owner: Player | null, ownerDamage: uint,
+		owner: Player | null,
+		position: fPoint, direction: mRot,
+		attackerDamage: uint,
 		speed: number = BulletBasic.DEFAULT_SPEED,
 		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS,
 	) {
-		super(position, owner, ownerDamage, speed, defaultExplodeRadius)
+		super(owner, position, direction, attackerDamage, speed, defaultExplodeRadius)
 	}
 
 	/** 覆盖：通知「游戏主体」创建爆炸 */

@@ -29,7 +29,7 @@ export default class PlayerGUI extends Sprite {
 
 	// Display Texts
 	public static readonly EXPERIENCE_FORMAT: TextFormat = new TextFormat(
-		GlobalGameVariables.MAIN_FONT.fontName,
+		MAIN_FONT.fontName,
 		0.4 * DEFAULT_SIZE,
 		LEVEL_COLOR, true,
 		null, null, null, null,
@@ -197,13 +197,13 @@ export default class PlayerGUI extends Sprite {
 
 	protected setFormats(): void {
 		// Health Bar
-		this._healthBarFormat.font = GlobalGameVariables.MAIN_FONT.fontName;
+		this._healthBarFormat.font = MAIN_FONT.fontName;
 		this._healthBarFormat.align = TextFormatAlign.CENTER;
 		this._healthBarFormat.bold = true;
 		this._healthBarFormat.color = HEALTH_COLOR;
 		this._healthBarFormat.size = 0.3 * DEFAULT_SIZE;
 		// NameTag
-		this._nameTagFormat.font = GlobalGameVariables.MAIN_FONT.fontName;
+		this._nameTagFormat.font = MAIN_FONT.fontName;
 		this._nameTagFormat.align = TextFormatAlign.CENTER;
 		this._nameTagFormat.bold = true;
 		// this._nameTagFormat.color=this._owner.fillColor;

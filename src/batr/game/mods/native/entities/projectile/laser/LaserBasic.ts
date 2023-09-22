@@ -11,6 +11,7 @@ import IBatrGame from "../../../../../main/IBatrGame";
 import Weapon from "../../../tool/Weapon";
 import EntityType from "../../../../../api/entity/EntityType";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 「基础激光」
@@ -30,13 +31,15 @@ export default class LaserBasic extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: iPoint, owner: Player | null,
+		owner: Player | null,
+		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number = 1,
 		length: number = LaserBasic.LENGTH,
 	) {
 		super(
-			position, owner,
+			owner,
+			position, direction,
 			length, LaserBasic.LIFE,
 			attackerDamage,
 			chargePercent

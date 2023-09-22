@@ -61,7 +61,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 		with (shape.graphics) {
 			clear();
 			beginFill(color, alpha);
-			drawRect(0, 0, DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS, DEFAULT_SIZE * GlobalGameVariables.DISPLAY_GRIDS);
+			drawRect(0, 0, DEFAULT_SIZE * DISPLAY_GRIDS, DEFAULT_SIZE * DISPLAY_GRIDS);
 			endFill();
 		}
 		return this;

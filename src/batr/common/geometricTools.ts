@@ -368,14 +368,33 @@ export class intPoint extends xPoint<int> {
  */
 export class floatPoint extends xPoint<number> { }
 
-// 别名
-export const iPoint = intPoint; // as class
-export type iPoint = intPoint; // as type
-export const fPoint = floatPoint; // as class
-export type fPoint = floatPoint; // as type
+
+// 别名 //
+export const iPoint = intPoint; // 作为值
+export type iPoint = intPoint; // 作为类型
+export const fPoint = floatPoint; // 作为值
+export type fPoint = floatPoint; // 作为类型
+
+/**
+ * 📌类似一种「指针参数」的类型（别名）
+ * * 🎯目标：（在类型上）区分「要自身存储的值」还是「无需存储的引用」
+ * * ✨应用：在函数调用时区分「是复制新的值进函数，还是只需把引用传递过去」以及「就地更改是否影响函数之外的对象」
+ */
+export type iPointRef = iPoint
+/** 同上，作为一种「引用/指针」类型 */
+export type fPointRef = fPoint
+/**
+ * 📌相对于「引用类型」
+ * * 🎯目标：标注这里需要一个新的「值」
+ * * ✨应用：实体的坐标必须「掌握在自己手中」，所以必须要「自身存储值」
+ */
+export type iPointVal = iPoint
+/** 同上，作为一种「引用/指针」类型 */
+export type fPointVal = fPoint
+
 
 // ! 缓存的变量
-const _temp_forEachPoint: iPoint = new iPoint();
+const _temp_forEachPoint: iPointVal = new iPoint();
 /**
  * 循环遍历任意维超方形
  * * 由先前「地图遍历」算法迁移而来
@@ -392,8 +411,8 @@ const _temp_forEachPoint: iPoint = new iPoint();
  * @param args 附加在「点坐标」后的参数
  */
 export function traverseNDSquare(
-	pMin: iPoint, pMax: iPoint,
-	f: (p: iPoint, ...args: any[]) => void,
+	pMin: iPointRef, pMax: iPointRef,
+	f: (p: iPointRef, ...args: any[]) => void,
 	...args: any[]
 ): void {
 	// 通过数组长度获取维数
