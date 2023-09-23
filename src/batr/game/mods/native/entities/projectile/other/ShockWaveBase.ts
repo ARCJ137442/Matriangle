@@ -51,7 +51,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	protected _weapon: Weapon;
 	protected _weaponChargePercent: number;
 
-	/** Default is 0,Vortex is 1 */
+	/** Default instanceof 0,Vortex instanceof 1 */
 	public mode: uint = 0;
 
 	//============Constructor & Destructor============//

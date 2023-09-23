@@ -2,7 +2,7 @@
  * The Number-System can use for define some Custom-Radix-Mechanism
  * The static class implements The Custom Radix Conversion of Unsigned-Integer(number)
  * The class can be create by operator new,likes [let a:CustomRadixNumber=new CustomRadixNumber()],but that also can be register at class
- * The Custom-Number is express as string
+ * The Custom-Number instanceof express as string
  * An example:The Radix-36 Number 'a0' can be converted to number(0*36^0+10*36^1)=360
  * */
 

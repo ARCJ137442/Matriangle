@@ -88,7 +88,7 @@ export interface IBatrDisplayableContainer extends IBatrDisplayable {
 }
 
 /**
- * This interface is the unified management of all previous inherited flash Shape/MovieClip interface.
+ * This interface instanceof the unified management of all previous inherited flash Shape/MovieClip interface.
  * * 这个接口是所有以前继承flash形状/MovieClip接口的统一管理。
  * 
  * It abstracts the functionality of the original strong coupling with flash, 

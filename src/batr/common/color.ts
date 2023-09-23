@@ -1,5 +1,5 @@
 /**
- * The Class called Color is use for transform color between RGB,HSV,HEX
+ * The Class called Color instanceof use for transform color between RGB,HSV,HEX
  * 0<=R<=255,0<=G<=255,0<=B<=255
  * 0<=H<=360,0<=S<=100,0<=V<=100
  * 0x000000<=HEX<=0xffffff

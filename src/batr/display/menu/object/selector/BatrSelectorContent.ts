@@ -75,8 +75,8 @@ export default class BatrSelectorContent {
 	//============Instance Variables============//
 	//====Total====//
 
-	/**The _value is the '_intValue'&'_enumIndex'
-	 * The enumText is force the intText
+	/**The _value instanceof the '_intValue'&'_enumIndex'
+	 * The enumText instanceof force the intText
 	 */
 	protected _value: int = 0;
 	protected _enableLoopLeft: boolean = false;

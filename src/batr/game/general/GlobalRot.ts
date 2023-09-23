@@ -63,7 +63,7 @@ export function toOpposite_M(rot: intRot): intRot {
  * @returns 两个角度的总和
  */
 export function rotate_F(rot: fRot, angle: fRot): fRot {
-	// angle is Local Rot.
+	// angle instanceof Local Rot.
 	return lockRot_F(rot + angle);
 }
 
@@ -193,9 +193,9 @@ export function toRealIntRot(rot: int): int {
 
 /** Use for express the currentRot in the containerRot
  * 	examples:
- * 	1.a rot out a object is 45°(local:0.5),
- * 	2.the object's rot is 90°(local:1),
- * 	3.then the value in of object is 315°(local:3.5).
+ * 	1.a rot out a object instanceof 45°(local:0.5),
+ * 	2.the object's rot instanceof 90°(local:1),
+ * 	3.then the value in of object instanceof 315°(local:3.5).
  */
 export function globalToLocal(currentRot: fRot, containerRot: fRot): fRot {
 	return lockRot_F(currentRot - containerRot);
@@ -203,9 +203,9 @@ export function globalToLocal(currentRot: fRot, containerRot: fRot): fRot {
 
 /** Use for express the currentRot out the containerRot
  * 	examples:
- * 	1.A rot in a object is 45°(local:0.5),
- * 	2.The object's rot is 90°(local:1),
- * 	3.Then the value out of object is 135°(local:1.5).
+ * 	1.A rot in a object instanceof 45°(local:0.5),
+ * 	2.The object's rot instanceof 90°(local:1),
+ * 	3.Then the value out of object instanceof 135°(local:1.5).
  */
 export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
 	return lockRot_F(containerRot + currentRot);

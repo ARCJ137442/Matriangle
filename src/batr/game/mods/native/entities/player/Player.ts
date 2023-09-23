@@ -34,7 +34,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	public static readonly DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
 	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 	public static isAI(player: Player): boolean {
-		return player is AIPlayer;
+		return player instanceof AIPlayer;
 	}
 
 	public static getLevelUpExperience(level: uint): uint {
@@ -366,7 +366,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		return this._tool;
 	}
 
-	/** This tool is used by drones created from another tool */
+	/** This tool instanceof used by drones created from another tool */
 	public get droneTool(): Tool {
 		return this._droneTool;
 	}
@@ -671,7 +671,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 		this._health = host.rule.defaultHealth;
 
-		this.setLifeByInt(this is AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
+		this.setLifeByInt(this instanceof AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
 
 		// Tool
 		if (toolID < -1)
@@ -863,7 +863,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			else
 				this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
 		}
-		// If The Block is still carrying,then throw without charge(WIP,maybe?)
+		// If The Block instanceof still carrying,then throw without charge(WIP,maybe?)
 	}
 
 	protected dealUsingCD(): void {

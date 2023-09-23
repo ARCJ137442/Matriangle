@@ -89,10 +89,10 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 		for (let element of this._directElements) {
 			if (element == null)
 				continue;
-			if (element is IBatrMenuElementContainer)
-			(element as IBatrMenuElementContainer).addChildPerDirectElements();
-			if (element is DisplayObject)
-			this.addChild(element as DisplayObject);
+			if (element instanceof IBatrMenuElementContainer)
+				(element as IBatrMenuElementContainer).addChildPerDirectElements();
+			if (element instanceof DisplayObject)
+				this.addChild(element as DisplayObject);
 		}
 	}
 
@@ -103,9 +103,9 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 	public getElementByName(name: string): BatrMenuGUI {
 		for (let element of this._directElements) {
 			if (element != null &&
-				element is BatrMenuGUI &&
-					(element as DisplayObject).name == name)
-			return (element as BatrMenuGUI);
+				element instanceof BatrMenuGUI &&
+				(element as DisplayObject).name == name)
+				return (element as BatrMenuGUI);
 		}
 		return null;
 	}

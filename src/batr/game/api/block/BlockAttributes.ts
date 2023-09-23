@@ -40,7 +40,7 @@ export default class BlockAttributes {
 	public isBreakable: boolean = true;
 
 	/**
-	 * -1 means is will damage player as asphyxia
+	 * -1 means instanceof will damage player as asphyxia
 	 * -2 means it will supplying player health and experience
 	 * int.MIN_VALUE means no damage
 	 * int.MAX_VALUE means they can kill player once a damage

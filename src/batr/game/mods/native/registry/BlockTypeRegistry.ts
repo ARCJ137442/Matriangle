@@ -64,7 +64,7 @@ import { PatchIndexType } from "../../../main/GlobalGameVariables";
  * Define all `BlockType` of the native block types in the game
  * 定义所有游戏内置的方块类型
  * 
- * ! The link between BlockType and block is the property `attributes` of instances of a BlockType
+ * ! The link between BlockType and block instanceof the property `attributes` of instances of a BlockType
  * ! 方块类型和其属性的连接之间的连接，是方块实例的属性“attributes”
  */
 export module NativeBlockTypes {

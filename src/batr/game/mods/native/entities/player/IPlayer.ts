@@ -29,7 +29,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * 在「架空玩家实际类实现」后，测试抛射体
 	 * 重构「玩家」「AI玩家」，将这两者的区别细化为「控制器」「显示模板」不同
 	   * 控制：一个是键盘控制（人类），一个是基于时钟的自动程序控制（AI）……
-		 * 这样较容易支持其它方式（如使用HTTP请求控制）
+		 * 这样较容易支持其它方式（如使用HTTP/WebSocket请求控制）
 		 * 📌在重写「AI控制器」时，用上先前学的「行为树」模型（虽然原型还没调试通）
 		 * 如果有机会的话，尝试使用「装饰器」
 	   * 显示：一个用「渐变无缝填充」的算法（人类），一个用「纯色镂空填充」的方法（AI）
@@ -42,15 +42,8 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	   * 适度独立出去
 	 */
 	//============Static Variables============//
-	public static readonly SIZE: number = 1 * DEFAULT_SIZE;
-	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 96;
-	public static readonly CARRIED_BLOCK_ALPHA: number = 1 / 4;
-
-	public static readonly DEFAULT_MAX_HEALTH: int = 100;
-	public static readonly DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
-	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 	public static isAI(player: Player): boolean {
-	return player is AIPlayer;
+	return player instanceof AIPlayer;
 }
 
 	public static getLevelUpExperience(level: uint): uint {
@@ -382,7 +375,7 @@ i_hasStats: true;
 	return this._tool;
 }
 
-	/** This tool is used by drones created from another tool */
+	/** This tool instanceof used by drones created from another tool */
 	public get droneTool(): Tool {
 	return this._droneTool;
 }
@@ -687,7 +680,7 @@ i_hasStats: true;
 
 	this._health = host.rule.defaultHealth;
 
-	this.setLifeByInt(this is AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
+	this.setLifeByInt(this instanceof AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
 
 	// Tool
 	if(toolID < - 1)
@@ -879,7 +872,7 @@ else if (this._damageDelay > -1) {
 	else
 		this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
 }
-		// If The Block is still carrying,then throw without charge(WIP,maybe?)
+		// If The Block instanceof still carrying,then throw without charge(WIP,maybe?)
 	}
 
 	protected dealUsingCD(): void {

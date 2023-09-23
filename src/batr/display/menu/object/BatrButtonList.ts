@@ -79,8 +79,8 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 
 	//========By IBatrMenuElementContainer========//
 	public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
-		if (element is BatrButton)
-		this._buttons.push(element as BatrButton);
+		if (element instanceof BatrButton)
+			this._buttons.push(element as BatrButton);
 		return this;
 	}
 

@@ -199,12 +199,12 @@ export default class PlayerStats {
 	// About Profile
 
 	/**
-	 * If profile is player, then convert it to PlayerProfile.
+	 * If profile instanceof player, then convert it to PlayerProfile.
 	 * @return	this
 	 */
 	public flushProfile(): PlayerStats {
-		if (this._profile is Player)
-		this._profile = new PlayerProfile(this._profile);
+		if (this._profile instanceof Player)
+			this._profile = new PlayerProfile(this._profile);
 		return this;
 	}
 

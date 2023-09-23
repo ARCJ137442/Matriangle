@@ -117,7 +117,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 				openList.push(_tempNode);
 		}
 	}
-			// Now the _tempNode is the succeed Node.
+			// Now the _tempNode instanceof the succeed Node.
 			// Return
 			return _tempNode == null ? null : _tempNode.pathToRoot;
 }
@@ -236,8 +236,8 @@ static writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolea
 static getEntityName(target: Entity): string {
 	if (target == null)
 		return 'null';
-	if (target is Player)
-	return (target as Player).customName;
+	if (target instanceof Player)
+		return (target as Player).customName;
 	return target.toString();
 }
 

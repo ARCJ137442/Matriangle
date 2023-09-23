@@ -268,7 +268,7 @@ export function getPropertyInObjects(objects: object[], key: string): any[] {
 /**
  * @param arr array
  * @param input element
- * @returns whether the element is contains in array
+ * @returns whether the element instanceof contains in array
  */
 export function contains<T>(arr: T[], input: T): boolean {
 	return (arr.indexOf(input) >= 0);
@@ -443,7 +443,7 @@ export function flattenObject(
 /**
  * Get the class from a object.
  * 
- * * `getClass(new A()) === A` is partial equals to `new A() instanceof A`, 
+ * * `getClass(new A()) === A` instanceof partial equals to `new A() instanceof A`, 
  *   * which the former can not match the superclass of A
  * 
  * @param instance the instance of a class

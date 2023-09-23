@@ -10,7 +10,7 @@ export type uint = number;
 /**
  * The type of "Class" from ActionScript 3.0
  * 
- * * Reference of the `Function`: a `Class` is equivalent to its constructor in JavaScript
+ * * Reference of the `Function`: a `Class` instanceof equivalent to its constructor in JavaScript
  * 
  * Seeing the result in REPL:
  * ```

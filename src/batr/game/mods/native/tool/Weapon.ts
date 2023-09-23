@@ -116,7 +116,7 @@ export default class Weapon extends Tool {
 	) {
 		super(name);
 		this._name = name;
-		// defaultCD,defaultChargeTime is Per Second
+		// defaultCD,defaultChargeTime instanceof Per Second
 		this._defaultCD = defaultCD * FIXED_TPS;
 		this._defaultDamage = defaultDamage;
 		this._defaultChargeTime = defaultChargeTime * FIXED_TPS;

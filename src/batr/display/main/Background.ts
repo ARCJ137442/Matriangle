@@ -161,7 +161,7 @@ export default class Background extends Sprite {
 		while (this._frame.numChildren > 0) {
 			child = this._frame.getChildAt(0);
 
-			if (child is Block) {
+			if (child instanceof Block) {
 				(child as Block).destructor();
 			}
 			this._frame.removeChild(child);

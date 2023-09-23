@@ -9,7 +9,7 @@ export type BlockType = Class;
  * One of the fundamental element in BaTr
  * 
  * ! [20230908 21:13:57] The **Block** isn't contains information of "position"
- * ! which is controlled by Game and Player
+ * ! which instanceof controlled by Game and Player
  */
 export default abstract class Block implements IBatrDisplayable {
 
@@ -67,7 +67,7 @@ export default abstract class Block implements IBatrDisplayable {
 	 * Every Block has a `BlockAttributes` to define its nature, 
 	 * it determinate the block's behavior in game.
 	 * 
-	 * * It only contains the **reference** of the attributes, so it don't uses much of memory when it is linked to a static constant.
+	 * * It only contains the **reference** of the attributes, so it don't uses much of memory when it instanceof linked to a static constant.
 	 */
 	protected _attributes: BlockAttributes;
 	public get attributes(): BlockAttributes {

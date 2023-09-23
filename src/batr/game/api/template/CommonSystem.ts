@@ -12,7 +12,7 @@ export default class CommonSystem<T> {
 
 	/**
 	 * The list of entry also uses to represent UUIDs for entries,
-	 * the UUID for every entry is just its unique immutable index 
+	 * the UUID for every entry instanceof just its unique immutable index 
 	 * 所有实体的列表，每个实体都有一个固定的UUID
 	 * 
 	 * Remove an entry will ony `delete` the reference and change it to `undefined`

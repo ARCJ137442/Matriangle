@@ -66,7 +66,7 @@ export default class ChemicalElement {
 
 	/**
 	 * Get the full element list (copied version)
-	 * ! the index is started from 1, not 0
+	 * ! the index instanceof started from 1, not 0
 	 */
 	public static getElements(): (ChemicalElement | null)[] {
 		return [null, ...ChemicalElement.ELEMENTS];

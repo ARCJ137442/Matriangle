@@ -342,7 +342,7 @@ export default class AIPlayer extends Player {
 		let runV: AIPlayerAction[] = new AIPlayerAction[];
 
 		for (let i: uint = 0; i < actions.length; i++) {
-			if (actions[i] is AIPlayerAction) {
+			if (actions[i] instanceof AIPlayerAction) {
 				runAction(actions[i] as AIPlayerAction);
 			}
 		}

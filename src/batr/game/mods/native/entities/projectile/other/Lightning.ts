@@ -261,7 +261,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 
 	protected drawLightning(shape: IBatrShape): void {
 		if (this._wayPoints.length < 1) return;
-		// These points uses local grid,for example the initial point is (0,0)
+		// These points uses local grid,for example the initial point instanceof (0,0)
 		let point: iPoint = this._wayPoints[0], pointH: iPoint = this._wayPoints[0];
 		// drawLines
 		for (let i: uint = 1; i < this._wayPoints.length; i++) {
