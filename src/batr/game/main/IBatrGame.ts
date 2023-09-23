@@ -1,6 +1,4 @@
-﻿
-
-import { fPoint, iPoint } from "../../common/geometricTools";
+﻿import { fPoint, iPoint } from "../../common/geometricTools";
 import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
 import { int, uint } from "../../legacy/AS3Legacy";
@@ -12,7 +10,7 @@ import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import BonusBox from "../mods/native/entities/item/BonusBox";
 import AIPlayer from "../mods/native/entities/player/AIPlayer";
-import Player from "../mods/native/entities/player/Player";
+import IPlayer from "../mods/native/entities/player/IPlayer";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Lightning from "../mods/native/entities/projectile/other/Lightning";
 import Projectile from "../mods/native/entities/projectile/Projectile";
@@ -159,21 +157,21 @@ export default interface IBatrGame {
 	//========About Game End========//
 
 	/** Condition: Only one team's player alive. */
-	isPlayersEnd(players: Player[]): boolean
+	isPlayersEnd(players: IPlayer[]): boolean
 
-	getAlivePlayers(): Player[]
+	getAlivePlayers(): IPlayer[]
 
-	getInMapPlayers(): Player[]
+	getInMapPlayers(): IPlayer[]
 
 	testGameEnd(force?: boolean/* = false*/): void
 
-	resetPlayersTeamInDifferent(players: Player[]): void
+	resetPlayersTeamInDifferent(players: IPlayer[]): void
 
-	onGameEnd(winners: Player[]): void
+	onGameEnd(winners: IPlayer[]): void
 
-	getGameResult(winners: Player[]): GameResult
+	getGameResult(winners: IPlayer[]): GameResult
 
-	getResultMessage(winners: Player[]): I18nText
+	getResultMessage(winners: IPlayer[]): I18nText
 
 	//====Functions About Init====//
 	onAddedToStage(E: Event): void
@@ -240,11 +238,11 @@ export default interface IBatrGame {
 	testBonusBoxCanPlaceAt(position: iPoint): boolean
 
 	/** return testCanPass as player in other position. */
-	testPlayerCanPass(player: Player, position: iPoint, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testPlayerCanPass(player: IPlayer, position: iPoint, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testFullPlayerCanPass(player: Player, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	testFullPlayerCanPass(player: IPlayer, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
-	testPlayerCanPassToFront(player: Player, rotatedAsDirection: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
+	testPlayerCanPassToFront(player: IPlayer, rotatedAsDirection: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
 	testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean
 
@@ -263,7 +261,7 @@ export default interface IBatrGame {
 
 	thrownBlockHurtPlayer(block: ThrownBlock): void
 
-	lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void
+	lightningHurtPlayers(lightning: Lightning, players: IPlayer[], damages: uint[]): void
 
 	/**
 	 * * 应用：当方块更新时，对所有处于其上的「格点实体」回调事件
@@ -276,7 +274,7 @@ export default interface IBatrGame {
 	 * @param isLocationChange 是否为「位置改变」引起的
 	 * @returns 是否有对玩家的作用（用于向玩家反馈，重置「伤害冷却」）
 	 */
-	onPlayerWalkIn(player: Player, isLocationChange: boolean/* = false*/): boolean
+	onPlayerWalkIn(player: IPlayer, isLocationChange: boolean/* = false*/): boolean
 
 	/**
 	 * Operate damage to player by blockAtt.playerDamage,
@@ -287,17 +285,17 @@ export default interface IBatrGame {
 	 * (100...] -> playerDamage-100
 	 * @return	The damage.
 	 */
-	computeFinalPlayerHurtDamage(player: Player, position: iPoint, playerDamage: int): uint
+	computeFinalPlayerHurtDamage(player: IPlayer, position: iPoint, playerDamage: int): uint
 
 	/**
 	 * Execute when Player Move out block
 	 * @param	x	the old X
 	 * @param	y	the old Y
 	 */
-	moveOutTestPlayer(player: Player, position: iPoint, isLocationChange: boolean/* = false*/): void
+	moveOutTestPlayer(player: IPlayer, position: iPoint, isLocationChange: boolean/* = false*/): void
 
 	/** Function about Player pickup BonusBox */
-	bonusBoxTest(player: Player, x: number/* = NaN*/, y: number/* = NaN*/): boolean
+	bonusBoxTest(player: IPlayer, x: number/* = NaN*/, y: number/* = NaN*/): boolean
 
 	//====Functions About Map====//
 	hasBlock(position: iPoint): boolean
@@ -348,67 +346,67 @@ export default interface IBatrGame {
 	transformMap(destination: IMap/* = null*/): void
 
 	//====Functions About Player====//
-	createPlayer(position: iPoint, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): Player
+	createPlayer(position: iPoint, id: uint, team: PlayerTeam, isActive: boolean/* = true*/): IPlayer
 
-	addPlayer(id: uint, team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): Player
+	addPlayer(id: uint, team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): IPlayer
 
 	// Set player datas for gaming
-	setupPlayer(player: Player): Player
+	setupPlayer(player: IPlayer): IPlayer
 
 	// Add a player uses random position and tool
-	appendPlayer(controlKeyID: uint/* = 0*/): Player
+	appendPlayer(controlKeyID: uint/* = 0*/): IPlayer
 
 	createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
 
 	addAI(team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
 
-	appendAI(): Player
+	appendAI(): IPlayer
 
 	autoGetAIName(player: AIPlayer): string
 
 	spawnPlayersByRule(): void
 
-	teleportPlayerTo(player: Player, position: iPoint, rotateTo: uint/* = GlobalDirection.NULL*/, effect: boolean/* = false*/): Player
+	teleportPlayerTo(player: IPlayer, position: iPoint, rotateTo: uint/* = GlobalDirection.NULL*/, effect: boolean/* = false*/): IPlayer
 
-	spreadPlayer(player: Player, rotatePlayer: boolean/* = true*/, createEffect: boolean/* = true*/): Player
+	spreadPlayer(player: IPlayer, rotatePlayer: boolean/* = true*/, createEffect: boolean/* = true*/): IPlayer
 
 	/**
 	 * Respawn player to spawn point(if map contained)
 	 * @param	player	The player will respawn.
 	 * @return	The same as param:player.
 	 */
-	respawnPlayer(player: Player): Player
+	respawnPlayer(player: IPlayer): IPlayer
 
 	/**
 	 * @param	x	SpawnPoint.x
 	 * @param	y	SpawnPoint.y
 	 * @return	The nearest point from SpawnPoint.
 	 */
-	findFitSpawnPoint(player: Player, position: iPoint): iPoint
+	findFitSpawnPoint(player: IPlayer, position: iPoint): iPoint
 
-	subFindSpawnPoint(player: Player, position: iPoint, r: int): iPoint
+	subFindSpawnPoint(player: IPlayer, position: iPoint, r: int): iPoint
 
 	spreadAllPlayer(): void
 
-	hitTestOfPlayer(p1: Player, p2: Player): boolean
+	hitTestOfPlayer(p1: IPlayer, p2: IPlayer): boolean
 
-	hitTestPlayer(player: Player, position: iPoint): boolean
+	hitTestPlayer(player: IPlayer, position: iPoint): boolean
 
 	isHitAnyPlayer_F(position: fPoint): boolean
 
 	isHitAnyPlayer_I(position: iPoint): boolean
 
-	isHitAnotherPlayer(player: Player): boolean
+	isHitAnotherPlayer(player: IPlayer): boolean
 
-	hitTestOfPlayers(...players: Player[]): boolean
+	hitTestOfPlayers(...players: IPlayer[]): boolean
 
-	getHitPlayers(position: fPoint): Player[]
+	getHitPlayers(position: fPoint): IPlayer[]
 
-	getHitPlayerAt(position: iPoint): Player
+	getHitPlayerAt(position: iPoint): IPlayer
 
 	randomizeAllPlayerTeam(): void
 
-	randomizePlayerTeam(player: Player): void
+	randomizePlayerTeam(player: IPlayer): void
 
 	setATeamToNotAIPlayer(team: PlayerTeam/* = null*/): void
 
@@ -418,18 +416,18 @@ export default interface IBatrGame {
 
 	changeAllPlayerToolRandomly(): void
 
-	movePlayer(player: Player, direction: mRot, distance: number): void
+	movePlayer(player: IPlayer, direction: mRot, distance: number): void
 
-	playerUseTool(player: Player, direction: mRot, chargePercent: number): void
+	playerUseTool(player: IPlayer, direction: mRot, chargePercent: number): void
 
 	playerUseToolAt(
-		player: Player | null,
+		player: IPlayer | null,
 		tool: Tool,
 		position: fPoint, toolDirection: mRot,
 		chargePercent: number, projectilesSpawnDistance: number
 	): void
 
-	getLaserLength(player: Player, direction: mRot): uint
+	getLaserLength(player: IPlayer, direction: mRot): uint
 
 	getLaserLength2(position: iPoint, direction: mRot): uint
 
@@ -444,7 +442,7 @@ export default interface IBatrGame {
 	clearPlayer(onlyDisplay: boolean/* = false*/): void
 
 	//======Entity Functions======//
-	updateProjectilesColor(player: Player/* = null*/): void
+	updateProjectilesColor(player: IPlayer/* = null*/): void
 
 	addBonusBox(position: iPoint, type: BonusType): void
 
@@ -474,13 +472,13 @@ export default interface IBatrGame {
 
 	addPlayerDeathLightEffect2(
 		position: fPoint,
-		player: Player,
+		player: IPlayer,
 		reverse: boolean/* = false*/
 	): void
 
 	addPlayerDeathFadeoutEffect2(
 		position: fPoint,
-		player: Player,
+		player: IPlayer,
 		reverse: boolean/* = false*/
 	): void
 
@@ -490,14 +488,14 @@ export default interface IBatrGame {
 
 	addBlockLightEffect2(position: fPoint, block: Block, reverse: boolean/* = false*/): void
 
-	addPlayerHurtEffect(player: Player, reverse: boolean/* = false*/): void
+	addPlayerHurtEffect(player: IPlayer, reverse: boolean/* = false*/): void
 
 	//======Hook Functions======//
-	onPlayerMove(player: Player): void
+	onPlayerMove(player: IPlayer): void
 
-	onPlayerUse(player: Player, direction: mRot, distance: number): void
+	onPlayerUse(player: IPlayer, direction: mRot, distance: number): void
 
-	onPlayerHurt(attacker: Player, victim: Player, damage: uint): void
+	onPlayerHurt(attacker: IPlayer, victim: IPlayer, damage: uint): void
 
 	/**
 	 * Deal the (victim&attacker)'s (stat&heal),add effect and reset (CD&charge)
@@ -505,17 +503,17 @@ export default interface IBatrGame {
 	 * @param	victim
 	 * @param	damage
 	 */
-	onPlayerDeath(attacker: Player, victim: Player, damage: uint): void
+	onPlayerDeath(attacker: IPlayer, victim: IPlayer, damage: uint): void
 
-	onPlayerRespawn(player: Player): void
+	onPlayerRespawn(player: IPlayer): void
 
-	prePlayerLocationChange(player: Player, oldX: number, oldY: number): void
+	prePlayerLocationChange(player: IPlayer, oldX: number, oldY: number): void
 
-	onPlayerLocationChange(player: Player, newX: number, newY: number): void
+	onPlayerLocationChange(player: IPlayer, newX: number, newY: number): void
 
 	onPlayerTeamsChange(event: GameRuleEvent): void
 
-	onPlayerLevelup(player: Player): void
+	onPlayerLevelup(player: IPlayer): void
 
 	onRandomTick(position: iPoint): void
 

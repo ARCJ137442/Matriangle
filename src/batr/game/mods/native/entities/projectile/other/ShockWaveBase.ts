@@ -16,6 +16,7 @@ import Weapon from "../../../tool/Weapon";
 import { random1 } from "../../../../../../common/exMath";
 import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
 import Tool from "../../../tool/Tool";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * ...
@@ -58,7 +59,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint,
-		owner: Player | null,
+		owner: IPlayer | null,
 		direction: mRot,
 		tool: Tool,
 		weaponAttackerDamage: number,
@@ -111,6 +112,9 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			// TODO: 请求显示更新
 		}
 	}
+
+	/** 实现：不响应「所处方块更新」事件 */
+	public onPositedBlockUpdate(host: IBatrGame): void { }
 
 	/**
 	 * 根据自身的「模式」生成「冲击波子机」

@@ -1,4 +1,4 @@
-﻿import { IBatrJSobject } from "../../../common/abstractInterfaces";
+﻿import { IBatrJSobject } from "../../../common/BatrJSObjects";
 import { key } from "../../../common/utils";
 import NativeBonusTypes from "../../mods/native/registry/BonusRegistry";
 import IMap from "../map/IMap";

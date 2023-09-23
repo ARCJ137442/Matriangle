@@ -16,7 +16,7 @@ export default class PlayerEffectOverlay extends Shape {
 	protected _color: uint = COLOR;
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player | null, color: uint = PlayerEffectOverlay.COLOR) {
+	public constructor(owner: IPlayer | null, color: uint = PlayerEffectOverlay.COLOR) {
 		super();
 		this.drawShape(owner instanceof AIPlayer ? (owner as AIPlayer).AILabel : null);
 		this.dealLife();

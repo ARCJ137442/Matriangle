@@ -4,7 +4,8 @@ import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
-import Player from "../player/Player";
+import IPlayer from "../player/IPlayer";
+import IPlayer from "../player/IPlayer";
 
 /**
  * 「抛射体」是
@@ -25,11 +26,11 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * 记录「抛射它的玩家」
 	 * * 可为空，表示「无主玩家」 // ? 这个或许有待商量：其实游戏可以创建一个「伪玩家」（或者「大自然」「母体」等「虚拟玩家」）来实现这种事情
 	 */
-	protected _owner: Player | null;
+	protected _owner: IPlayer | null;
 
 	/** 公开的「所有者」属性 */
-	public get owner(): Player | null { return this._owner; }
-	public set owner(value: Player | null) {
+	public get owner(): IPlayer | null { return this._owner; }
+	public set owner(value: IPlayer | null) {
 		this._owner = value;
 		// this.shapeInit(shape: IBatrShape); // TODO: 回调「重绘函数」
 	}
@@ -65,7 +66,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public canHurtAlly: boolean = false
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player | null, attackerDamage: uint, direction: mRot) {
+	public constructor(owner: IPlayer | null, attackerDamage: uint, direction: mRot) {
 		super();
 		this._owner = owner;
 		this._attackerDamage = attackerDamage;

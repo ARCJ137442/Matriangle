@@ -1018,7 +1018,7 @@ export default class Game implements IBatrGame {
 		}
 	}
 
-	public moveInTestWithEntity(): void {
+	public blockTestWithEntitiesInGrid(): void {
 		// TODO: 泛化为「遍历所有格点实体」
 		// All Player
 		for (let player of this._entitySystem.players) {
@@ -1026,10 +1026,7 @@ export default class Game implements IBatrGame {
 		}
 		// BonusBox Displace by Asphyxia/Trap
 		for (let i: int = this._entitySystem.bonusBoxCount - 1; i >= 0; i--) {
-			let box: BonusBox = this._entitySystem.bonusBoxes[i];
-			if (box != null && !this.testCanPass(box.entityX, box.entityY, true, false, false, false, true)) {
-				this._entitySystem.removeBonusBox(box);
-			}
+			this._entitySystem.bonusBoxes[i].onPositedBlockUpdate(this);
 		}
 	}
 
@@ -2152,7 +2149,7 @@ export default class Game implements IBatrGame {
 	protected onBlockUpdate(x: int, y: int, block: Block): void {
 		this.updateMapDisplay(x, y, block);
 		this.updateMapSize();
-		this.moveInTestWithEntity();
+		this.blockTestWithEntitiesInGrid();
 	}
 
 	/** 基于「方块类型」实现多分派：使用「哈希值+字典」的形式 */

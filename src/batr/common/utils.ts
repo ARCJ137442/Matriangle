@@ -1,6 +1,5 @@
 ﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE, Class } from '../legacy/AS3Legacy'
 import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
-import { JSObject } from './abstractInterfaces';
 import * as exMath from './exMath';
 
 //============Math Methods============//
@@ -481,50 +480,3 @@ export type key = string | number;
 
 /** 可空对象 */ // ! 【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
 // export type nullable<T> = T | null;
-
-
-
-/**
- * 使用「前缀下划线」快速从JS对象中载入类属性
- * 
- * ! 目前只能载入基础类型，内置的「其它类类型」还需要进一步研究（可能根据附加标识进行转换）
- * 
- * @param this 取代先前各自类实现里的`this`对象
- * @param source 要从中载入属性的JS对象
- * @param allOwnPropertyKey 源类中要载入的所有属性之列表
- * @returns 载入好的「类对象」
- */
-export function fastLoadJSObject_dash<T>(this_: T, source: JSObject, allOwnPropertyKey: key[]): T {
-	for (let key in allOwnPropertyKey) {
-		// 同有属性⇒加载
-		if (source.hasOwnProperty(key)) {
-			(this_ as any)[`_${key}`] = safeMerge((this_ as any)[`_${key}`], source[key]);
-			console.log("已载入属性", key, "=", (this_ as any)[`_${key}`])
-		}
-		// 缺少属性⇒警告
-		else
-			console.warn("源对象", source, "缺乏属性", key);
-	}
-	return this_;
-}
-
-/**
- * 使用「前缀下划线」快速向JS对象存入类属性
- * 
- * ! 目前只能存入基础类型，内置的「其它类类型」还需要进一步研究（可能根据附加标识进行转换）
- * 
- * @param this 取代先前各自类实现里的`this`对象
- * @param source 要存入属性的JS对象
- * @param allOwnPropertyKey 源类中要存入的所有属性之列表
- * @returns 存入好的JS对象
- */
-export function fastSaveJSObject_dash<T>(this_: T, target: JSObject, allOwnPropertyKey: key[]): JSObject {
-	let value: any; // ! 可能是基础类型，也可能是复合对象
-	for (let key of allOwnPropertyKey) {
-		// 先获取键对应的内部变量值
-		value = (this_ as any)[`_${key}`] // 先获取键对应的内部变量值
-		// 然后：有「序列化方法」&已成功序列化（非空）⇒使用这个目标——否则使用本身（处理数值等情况）
-		target[key] = value?.dumpToObject({}) ?? (this_ as any)[`_${key}`];
-	}
-	return target;
-}

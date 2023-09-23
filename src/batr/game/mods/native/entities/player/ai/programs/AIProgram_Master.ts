@@ -21,7 +21,7 @@ export default class AIProgram_Master implements IAIProgram {
 	public static readonly DEBUG: boolean = false;
 
 	//============Static Functions============//
-	protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
+	protected static initFGH(n: PathNode, host: IBatrGame, owner: IPlayer | null, target: iPoint): PathNode {
 		// Set Rot in mapDealNode
 		n.G = getPathWeight(n, host, owner);
 		n.H = target == null ? 0 : n.getManhattanDistance(target) * 10 // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
@@ -156,7 +156,7 @@ export default class AIProgram_Master implements IAIProgram {
 		return _nearestBox;
 	}
 
-	public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
+	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): Player {
 		// getManhattanDistance
 		let _nearestEnemy: Player = null;
 		let _nearestDistance: int = int.MAX_VALUE;

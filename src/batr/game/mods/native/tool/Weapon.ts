@@ -1,6 +1,7 @@
-import { JSObject, JSObjectValue } from "../../../../common/abstractInterfaces";
+import { JSObject, JSObjectValue } from "../../../../common/BatrJSObjects";
 import { intMax } from "../../../../common/exMath";
-import { fastLoadJSObject_dash, fastSaveJSObject_dash, key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/BatrJSObjects';
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";

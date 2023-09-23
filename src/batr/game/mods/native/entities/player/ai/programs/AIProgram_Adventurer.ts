@@ -23,7 +23,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 
 	//============Static Functions============//
 	/*========AI Criteria========*/
-	static toolUseTestWall(owner: Player | null, host: IBatrGame, rot: uint, distance: uint): boolean {
+	static toolUseTestWall(owner: IPlayer | null, host: IBatrGame, rot: uint, distance: uint): boolean {
 		let vx: int = GlobalRot.towardXInt(rot, 1);
 		let vy: int = GlobalRot.towardYInt(rot, 1);
 		let cx: int, cy: int;
@@ -82,7 +82,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	 * 2. [F=G+H]
 	 * @return	The Path From Target To Start
 	 */
-	protected static findPath(owner: Player | null, host: IBatrGame, startX: int, startY: int, endX: int, endY: int): PathNode[] {
+	protected static findPath(owner: IPlayer | null, host: IBatrGame, startX: int, startY: int, endX: int, endY: int): PathNode[] {
 		// console.log('Name='+owner.customName)
 		// Operation
 		let openList: PathNode[] = new Array<PathNode>();
@@ -143,7 +143,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return false;
 	}
 
-	protected static getNearbyNodesAndInitFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: PathNode): PathNode[] {
+	protected static getNearbyNodesAndInitFGH(n: PathNode, host: IBatrGame, owner: IPlayer | null, target: PathNode): PathNode[] {
 		// Set Rot in mapDealNode
 		return [
 			initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
@@ -169,7 +169,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return _leastNode;
 	}
 
-	protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
+	protected static initFGH(n: PathNode, host: IBatrGame, owner: IPlayer | null, target: iPoint): PathNode {
 		// Set Rot in mapDealNode
 		n.G = getPathWeight(n, host, owner);
 		n.H = n.getManhattanDistance(target) * 10; // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
@@ -246,7 +246,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	 * @param	owner	the owner.
 	 * @param	message	the text without AIPlayer name.
 	 */
-	static traceLog(owner: Player | null, message: string): void {
+	static traceLog(owner: IPlayer | null, message: string): void {
 		if (DEBUG)
 			console.log(owner.customName + ':', message);
 	}
@@ -340,7 +340,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return _nearestBox;
 	}
 
-	public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
+	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): Player {
 		// getManhattanDistance
 		let _nearestEnemy: Player = null;
 		let _nearestDistance: int = int.MAX_VALUE;

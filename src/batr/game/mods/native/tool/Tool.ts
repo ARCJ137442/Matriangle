@@ -1,5 +1,6 @@
-import { IBatrJSobject, JSObject } from "../../../../common/abstractInterfaces";
-import { contains, fastLoadJSObject_dash, fastSaveJSObject_dash, key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { IBatrJSobject, JSObject } from "../../../../common/BatrJSObjects";
+import { contains, key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/BatrJSObjects';
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Weapon from "./Weapon";
 

@@ -40,7 +40,7 @@ export default class BulletNuke extends Bullet {
 	 * @param chargePercent 充能百分比（仅影响运作逻辑，不影响伤害计算）
 	 */
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number

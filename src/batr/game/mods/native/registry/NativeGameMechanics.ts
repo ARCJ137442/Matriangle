@@ -63,14 +63,14 @@ export function playerPickupBonusBox(
     switch (forcedBonusType) {
         // Health,Heal&Life
         case NativeBonusTypes.ADD_HEALTH:
-            player.addHealth(5 * (1 + randInt(10)));
+            player.addHealth(5 * (1 + randInt(10)), null);
             break;
         case NativeBonusTypes.ADD_HEAL:
             player.heal += 5 * (1 + randInt(25));
             break;
         case NativeBonusTypes.ADD_LIFE:
-            if (player.infinityLife || player.isFullHealth)
-                player.maxHealth += host.rule.getRule(GameRule_V1.name_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
+            if (player.infinityLife || player.isFullHP)
+                player.maxHP += host.rule.getRule(GameRule_V1.name_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
             else
                 player.lives++;
             break;

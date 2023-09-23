@@ -24,7 +24,7 @@ export default class BulletBasic extends Bullet {
 	override get type(): EntityType { return NativeEntityTypes.BULLET_BASIC; }
 
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint,
 		speed: number = BulletBasic.DEFAULT_SPEED,

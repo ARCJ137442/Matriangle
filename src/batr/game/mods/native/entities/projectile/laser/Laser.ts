@@ -33,7 +33,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
 		length: uint, LIFE: uint,
 		attackerDamage: uint,
@@ -89,6 +89,9 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	override onTick(host: IBatrGame): void {
 		this.dealLife(host);
 	}
+
+	/** 实现：不响应「所处方块更新」事件 */
+	public onPositedBlockUpdate(host: IBatrGame): void { }
 
 	//============Display Implements============//
 

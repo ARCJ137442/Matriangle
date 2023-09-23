@@ -49,9 +49,8 @@ export interface IEntityInGrid extends Entity {
      * * 应用：玩家的「窒息伤害/陷阱伤害/随机旋转」，奖励箱的「窒息消失」
      * 
      * @param host 调用它的「游戏主体」
-     * @param block 更新后的方块
      */
-    onPositedBlockUpdate(host: IBatrGame, block: Block): void;
+    onPositedBlockUpdate(host: IBatrGame): void;
 }
 
 /**
@@ -325,6 +324,7 @@ export interface IEntityHasHP extends Entity {
      * ! 协议：在该值被修改时，若低于当前生命值，需要进行一定的限制
      */
     get maxHP(): uint;
+    set maxHP(value: uint);
 
     /**
      * （衍生）判断「生命值是否为满」
@@ -411,6 +411,9 @@ export interface IEntityHasHPAndLives extends IEntityHasHP {
      */
     get lifeNotDecay(): boolean;
     set lifeNotDecay(value: boolean);
+
+    /** 仍然保留先前「是否无限生命」的概念 */
+    get infinityLife(): boolean;
 
     /**
      * （如果有重生间隔的话）实体是否「正在重生」

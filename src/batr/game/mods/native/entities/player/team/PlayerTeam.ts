@@ -1,4 +1,4 @@
-import { IBatrJSobject, JSObject } from "../../../../../../common/abstractInterfaces";
+import { IBatrJSobject, JSObject } from "../../../../../../common/BatrJSObjects";
 import { safeMerge } from "../../../../../../common/utils";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 

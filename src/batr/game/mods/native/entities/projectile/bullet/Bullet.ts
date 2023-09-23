@@ -38,7 +38,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint,
 		direction: mRot,
 		attackerDamage: uint,

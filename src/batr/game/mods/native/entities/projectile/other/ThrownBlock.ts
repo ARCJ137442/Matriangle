@@ -84,7 +84,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	 * @param chargePercent 充能大小（用于修订伤害）
 	 */
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint,
 		speed: number,
 		attackerDamage: uint,

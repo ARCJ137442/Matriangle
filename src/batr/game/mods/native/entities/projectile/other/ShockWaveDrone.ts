@@ -15,6 +15,7 @@ import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/Globa
 import Weapon from "../../../tool/Weapon";
 import { alignToGridCenter_P } from "../../../../../general/PosTransform";
 import Tool from "../../../tool/Tool";
+import IPlayer from "../../player/IPlayer";
 
 export default class ShockWaveDrone extends Projectile implements IEntityInGrid {
 
@@ -42,7 +43,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint,
 		moveDirection: mRot,
 		toolDirection: mRot,
@@ -102,6 +103,9 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 			}
 		}
 	}
+
+	/** 实现：不响应「所处方块更新」事件 */
+	public onPositedBlockUpdate(host: IBatrGame): void { }
 
 	//============Display Implements============//
 	public shapeInit(shape: IBatrShape): void {

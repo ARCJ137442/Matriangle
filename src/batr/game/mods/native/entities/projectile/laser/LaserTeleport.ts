@@ -30,7 +30,7 @@ export default class LaserTeleport extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		length: uint = LaserBasic.LENGTH

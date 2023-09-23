@@ -38,7 +38,7 @@ export default class BulletBomber extends Bullet {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number

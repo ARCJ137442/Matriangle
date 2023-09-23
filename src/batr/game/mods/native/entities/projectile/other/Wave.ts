@@ -72,7 +72,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	 * @param chargePercent 充能百分比
 	 */
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint,
 		direction: mRot,
 		attackerDamage: uint,

@@ -28,7 +28,7 @@ export default class BulletTracking extends Bullet {
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.625;
 
 	//============Instance Variables============//
-	protected _target: Player | null = null;
+	protected _target: IPlayer | null = null;
 	protected _trackingFunction: Function = this.canBeTarget; // not the criterion
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: Player[] = new Array<Player>();
@@ -39,7 +39,7 @@ export default class BulletTracking extends Bullet {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint,
 		playersInGame: Player[], chargePercent: number

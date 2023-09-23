@@ -31,7 +31,7 @@ export default class LaserBasic extends Laser {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		chargePercent: number = 1,

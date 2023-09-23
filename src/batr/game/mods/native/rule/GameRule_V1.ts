@@ -11,7 +11,7 @@ import { HSVtoHEX } from "../../../../common/color";
 import { randomInWeightMap } from "../../../../common/utils";
 import { iPoint } from "../../../../common/geometricTools";
 import { NativeTools } from './../registry/ToolRegistry';
-import { IBatrJSobject, JSObject } from "../../../../common/abstractInterfaces";
+import { IBatrJSobject, JSObject } from "../../../../common/BatrJSObjects";
 
 /**
  * 存储一系列与游戏相关的规则

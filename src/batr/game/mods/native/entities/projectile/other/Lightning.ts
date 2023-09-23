@@ -16,6 +16,7 @@ import Weapon from "../../../tool/Weapon";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { playerCanHurtOther } from "../../../registry/NativeGameMechanics";
 import { clearArray } from "../../../../../../common/utils";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「闪电」
@@ -48,9 +49,10 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 
 	protected _energy: int;
 	protected _initialEnergy: int;
+	public get energyPercent(): number { return this._energy / this._initialEnergy; }
 
 	protected _wayPoints: iPoint[] = [];
-	protected _hurtPlayers: Player[] = [];
+	protected _hurtPlayers: IPlayer[] = [];
 	protected _hurtDefaultDamage: uint[] = [];
 
 	//============Constructor & Destructor============//
@@ -62,7 +64,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 * @param energy 拥有的「能量」
 	 */
 	public constructor(
-		owner: Player | null,
+		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
 		attackerDamage: uint,
 		energy: int
@@ -94,11 +96,6 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		clearArray(this._hurtDefaultDamage);
 	}
 
-	//============Instance Getter And Setter============//
-	public get energyPercent(): number {
-		return this._energy / this._initialEnergy;
-	}
-
 	//============Game Mechanics============//
 	/**
 	 * 计算电弧路径
@@ -107,7 +104,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		// Draw in location in this
 		let head: iPoint = this._position.copy();
 		let cost: int = 0;
-		let player: Player | null = null;
+		let player: IPlayer | null = null;
 		let tRot: mRot = this.owner?.direction ?? 0;
 		let nRot: mRot | -1 = -1;
 		// 开始生成路径 //
@@ -228,6 +225,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			host.entitySystem.remove(this);
 	}
 
+	/** 实现：不响应「所处方块更新」事件 */
+	public onPositedBlockUpdate(host: IBatrGame): void { }
 
 	//============Display Implements============//
 	public static readonly LIGHT_ALPHA: number = 0.5;
