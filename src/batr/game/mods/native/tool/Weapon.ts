@@ -1,6 +1,6 @@
-import { JSObject } from "../../../../common/abstractInterfaces";
+import { JSObject, JSObjectValue } from "../../../../common/abstractInterfaces";
 import { intMax } from "../../../../common/exMath";
-import { key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { fastLoadJSObject_dash, fastSaveJSObject_dash, key, pushNReturn, safeMerge } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";
@@ -35,91 +35,76 @@ export default class Weapon extends Tool {
 	}
 
 	// 武器属性 //
-	public static readonly ALL_PROPERTY_NAMES: key[] = ['name'];
-
-	public static readonly key_defaultCD: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultCD')
-	protected _defaultCD: uint;
-	public get defaultCD(): uint { return this._defaultCD; }
+	public static readonly ALL_OWN_PROPERTY_NAMES: key[] = [];
 
 	// Tick
-	public static readonly key_defaultChargeTime: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultChargeTime')
-	protected _defaultChargeTime: uint;
-	public get defaultChargeTime(): uint { return this._defaultChargeTime; }
-
-	// Tick
-	public static readonly key_defaultDamage: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'defaultDamage')
+	public static readonly key_defaultDamage: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'defaultDamage')
 	protected _defaultDamage: uint;
 	public get defaultDamage(): uint { return this._defaultDamage; }
 
-	public static readonly key_reverseCharge: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'reverseCharge')
+	public static readonly key_reverseCharge: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'reverseCharge')
 	protected _reverseCharge: boolean;
 	public get reverseCharge(): boolean { return this._reverseCharge; }
 
 	// Whether the weapon will auto charge and can use before full charge
 	// canHurt
-	public static readonly key_canHurtEnemy: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtEnemy')
+	public static readonly key_canHurtEnemy: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtEnemy')
 	protected _canHurtEnemy: boolean;
 	public get canHurtEnemy(): boolean { return this._canHurtEnemy; }
 
-	public static readonly key_canHurtSelf: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtSelf')
+	public static readonly key_canHurtSelf: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtSelf')
 	protected _canHurtSelf: boolean;
 	public get canHurtSelf(): boolean { return this._canHurtSelf; }
 
-	public static readonly key_canHurtAlly: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'canHurtAlly')
+	public static readonly key_canHurtAlly: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtAlly')
 	protected _canHurtAlly: boolean;
 	public get canHurtAlly(): boolean { return this._canHurtAlly; }
 
 	// Extra
-	public static readonly key_extraDamageCoefficient: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'extraDamageCoefficient')
+	public static readonly key_extraDamageCoefficient: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'extraDamageCoefficient')
 	protected _extraDamageCoefficient: uint = 5;
 	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
 
-	public static readonly key_extraResistanceCoefficient: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'extraResistanceCoefficient')
+	public static readonly key_extraResistanceCoefficient: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'extraResistanceCoefficient')
 	protected _extraResistanceCoefficient: uint = 1;
 	public get extraResistanceCoefficient(): uint { return this._extraResistanceCoefficient; }
 
-	public static readonly key_useOnCenter: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'useOnCenter')
+	public static readonly key_useOnCenter: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'useOnCenter')
 	protected _useOnCenter: boolean = false;
 	public get useOnCenter(): boolean { return this._useOnCenter; }
 
 	// 无人机
-	public static readonly key_chargePercentInDrone: key = pushNReturn(Weapon.ALL_PROPERTY_NAMES, 'chargePercentInDrone')
+	public static readonly key_chargePercentInDrone: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'chargePercentInDrone')
 	protected _chargePercentInDrone: number = 1;
 	public get chargePercentInDrone(): number { return this._chargePercentInDrone; }
 
 	// JS对象 //
-	public toObject(): JSObject {
-		let result: JSObject = {};
-		for (let key of Weapon.ALL_PROPERTY_NAMES) {
-			result[key] = (this as any)[`_${key}`] // ? 或许需要递归
-		}
-		return result;
+	public dumpToObject(target: JSObject = {}): JSObject {
+		// 先存入超类的属性
+		super.dumpToObject(target);
+		// 再存入自身的独有属性
+		return fastSaveJSObject_dash(this, target, Weapon.ALL_OWN_PROPERTY_NAMES)
 	}
 
-	public copyFromObject(obj: JSObject): Tool {
-		for (let key in obj) {
-			if (contains(Weapon.ALL_PROPERTY_NAMES, key))
-				(this as any)[`_${key}`] = safeMerge((this as any)[`_${key}`], obj[key]);
-			else
-				console.warn(`Unknown property: ${key}`);
-		}
-		return this;
+	public copyFromObject(source: JSObject): Tool {
+		// 先载入超类的属性
+		super.copyFromObject(source);
+		// 再载入自身的独有属性
+		return fastLoadJSObject_dash(this, source, Weapon.ALL_OWN_PROPERTY_NAMES);
 	}
 
 	//============Constructor & Destructor============//
 	public constructor(
-		name: string,
-		defaultCD: number = 0,
+		id: string,
+		maxCD_S: number = 0,
+		chargeMaxTime_S: number = 0,
 		defaultDamage: uint = 1,
-		defaultChargeTime: number = 0,
 		reverseCharge: boolean = false
 	) {
-		super(name);
-		this._name = name;
+		super(id, maxCD_S * FIXED_TPS, chargeMaxTime_S * FIXED_TPS);
+		this._name = id;
 		// defaultCD,defaultChargeTime instanceof Per Second
-		this._defaultCD = defaultCD * FIXED_TPS;
 		this._defaultDamage = defaultDamage;
-		this._defaultChargeTime = defaultChargeTime * FIXED_TPS;
 		this._reverseCharge = reverseCharge;
 		// default
 		this._canHurtEnemy = true;
@@ -180,7 +165,7 @@ export default class Weapon extends Tool {
 	 * * 由默认伤害、CD、充能时间等计算而出
 	 */
 	public get defaultDamageOutput(): uint {
-		return this._defaultDamage / (this._defaultCD + this._defaultChargeTime);
+		return this._defaultDamage / (this._maxCD + this._chargeMaxTime);
 	}
 
 	/**
@@ -203,6 +188,7 @@ export default class Weapon extends Tool {
 	 * @returns 最小为1的冷却时间
 	 */
 	public getBuffedCD(buffCD: uint): uint {
-		return Math.ceil(this.defaultCD / (1 + buffCD / 10));
+		return Math.ceil(this._maxCD / (1 + buffCD / 10));
 	}
+
 }

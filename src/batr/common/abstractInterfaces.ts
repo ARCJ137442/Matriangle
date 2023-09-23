@@ -114,20 +114,24 @@ export type JSObject = {
 export interface IBatrJSobject<T> {
 
 	/**
-	 * 将该对象转换为通用可交换的object格式
+	 * 将该对象的信息加载到为通用可交换的object格式
 	 * * 该格式最大地保留了可操作性，并可直接通过`JSON.stringify`方法转化为JSON文本
+	 * * 【2023-09-23 18:03:55】现在只需要「把数据加载到某个object中」，这样就很容易支持「动态继承性添加属性」了
+	 *   * 其中的「目标」参数可以留空（默认为空对象），这时相当于原来的`toObject`方法
 	 * 
 	 * ! 对object键的限制：只能为字符串
 	 * 
 	 * ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
+	 * 
+	 * @param target 目标对象
 	 */
-	toObject(): JSObject;
+	dumpToObject(target?: JSObject): JSObject;
 
 	/**
 	 * 用object中的属性覆盖对象
 	 * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
-	 * @param obj 源头对象
+	 * @param source 源头对象
 	 */
-	copyFromObject(obj: JSObject): T;
+	copyFromObject(source: JSObject): T;
 
 }

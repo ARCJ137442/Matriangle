@@ -4,6 +4,8 @@ import EntityType from "./EntityType";
  * @author ARCJ137442
  * @class 一切「游戏内实体」的抽象基类
  * @abstract 【20230913 23:21:10】使用抽象类，但因其特殊性不使用Abstract前缀
+ * 
+ * TODO: 增加序列化方案
  */
 export default abstract class Entity {
 

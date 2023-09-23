@@ -15,6 +15,7 @@ import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import Weapon from "../../../tool/Weapon";
 import { random1 } from "../../../../../../common/exMath";
 import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
+import Tool from "../../../tool/Tool";
 
 /**
  * ...
@@ -47,8 +48,8 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	// protected _leftBlock: Sprite;
 	// protected _rightBlock: Sprite;
 
-	/** 在「生成抛射体」时所根据的武器 */
-	protected _weapon: Weapon;
+	/** 在「生成子机」时传递给子机的「使用对象」 */
+	protected _tool: Tool;
 	protected _weaponChargePercent: number;
 
 	/** Default instanceof 0,Vortex instanceof 1 */
@@ -59,7 +60,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 		position: fPoint,
 		owner: Player | null,
 		direction: mRot,
-		weapon: Weapon,
+		tool: Tool,
 		weaponAttackerDamage: number,
 		weaponCharge: number,
 		mode: uint
@@ -70,7 +71,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			direction, // * 这个方向是为「ALPHA模式」特制的
 		);
 		this._position.copyFrom(position)
-		this._weapon = weapon;
+		this._tool = tool;
 		this.mode = mode;
 		this._weaponChargePercent = weaponCharge;
 		// this.shapeInit(shape: IBatrShape);
@@ -167,7 +168,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			this._position,
 			droneMoveDirection,
 			toolDirection,
-			this._weapon,
+			this._tool,
 			this._attackerDamage,
 			this._weaponChargePercent
 		);

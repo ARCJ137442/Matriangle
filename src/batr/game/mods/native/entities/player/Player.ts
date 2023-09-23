@@ -2,9 +2,6 @@ import { int, uint } from "../../../../../legacy/AS3Legacy";
 import { Matrix } from "../../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Block from "../../../../api/block/Block";
-import Game from "../../../../main/Game";
-import EntityType from "../../../../../api/entity/EntityType";
-import Tool from "../../../registry/Tool";
 import GameRule_V1 from "../../rule/GameRule_V1";
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
@@ -18,7 +15,6 @@ import { iPoint } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { CommonIO_IR } from "../../../../api/io/CommonIO";
 import IBatrGame from "../../../../main/IBatrGame";
-import IBatrGame from "../../../../main/IBatrGame";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 
 export default class Player extends Entity implements IPlayerProfile, IEntityInGrid, IEntityNeedsIO, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats {
@@ -31,7 +27,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	public static readonly CARRIED_BLOCK_ALPHA: number = 1 / 4;
 
 	public static readonly DEFAULT_MAX_HEALTH: int = 100;
-	public static readonly DEFAULT_HEALTH: int = DEFAULT_MAX_HEALTH;
+	public static readonly DEFAULT_HEALTH: int = Player.DEFAULT_MAX_HEALTH;
 	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 	public static isAI(player: Player): boolean {
 		return player instanceof AIPlayer;
@@ -102,9 +98,9 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	//========Custom Variables========//
 	// Health
-	protected _health: uint = DEFAULT_HEALTH;
+	protected _health: uint = Player.DEFAULT_HEALTH;
 
-	protected _maxHealth: uint = DEFAULT_MAX_HEALTH;
+	protected _maxHealth: uint = Player.DEFAULT_MAX_HEALTH;
 
 	protected _heal: uint = 0;
 
@@ -243,7 +239,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		isActive: boolean = true,
 		fillColor: number = NaN,
 		lineColor: number = NaN): void {
-		super(position, isActive);
+		super(this.position, isActive);
 		// Set Team
 		this._team = team;
 		// Set Stats
@@ -379,10 +375,8 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	public set tool(value: Tool) {
 		if (value == this._tool)
 			return;
-		this.resetCD();
-		this.resetCharge(true, false);
-		this.onToolChange(this._tool, value);
 		this._tool = value;
+		// ? 可能的「显示更新」如「方块投掷器⇒持有的方块」
 	}
 
 	public get toolUsingCD(): uint {
@@ -636,7 +630,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		if (this.isPress_Use && !turn) {
 			this.isPress_Use = turn;
 
-			if (isCharging)
+			if (this.isCharging)
 				this.onDisableCharge();
 
 			return;
@@ -690,16 +684,16 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	public removeHealth(value: uint, attacker: Player = null): void {
-		if (invulnerable)
+		if (this.invulnerable)
 			return;
 		this._lastHurtByPlayer = attacker;
-		if (health > value) {
+		if (this.health > value) {
 			this.health -= value;
 			this.onHurt(value, attacker);
 		}
 		else {
 			this.health = 0;
-			this.onDeath(health, attacker);
+			this.onDeath(this.health, attacker);
 		}
 	}
 
@@ -710,6 +704,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	//====Functions About Hook====//
+	// TODO: 所有「钩子函数」直接向控制器发送信息，作为「外界环境」的一部分（这些不是接口的部分）
 	protected onHeal(amount: uint, healer: Player = null): void {
 	}
 
@@ -760,28 +755,8 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	//====Functions About Gameplay====//
-
-	/**
-	 * @param	player	The target player.
-	 * @param	tool	The tool.
-	 * @return	If player can hurt target with this tool.
-	 */
-	public canUseToolHurtPlayer(player: Player, tool: Tool): boolean {
-		return (isEnemy(player) && tool.toolCanHurtEnemy ||
-			isSelf(player) && tool.toolCanHurtSelf ||
-			isAlly(player) && tool.toolCanHurtAlly);
-	}
-
-	public filterPlayersThisCanHurt(players: Player[], tool: Tool): Player[] {
-		return players.filter(
-			function (player: Player, index: int, vector: Player[]) {
-				return this.canUseToolHurtPlayer(player, tool);
-			}, this
-		);
-	}
-
 	public isEnemy(player: Player): boolean {
-		return (!isAlly(player, true));
+		return (!this.isAlly(player, true));
 	}
 
 	public isSelf(player: Player): boolean {
@@ -789,7 +764,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	public isAlly(player: Player, includeSelf: boolean = false): boolean {
-		return player != null && ((includeSelf || !isSelf(player)) &&
+		return player != null && ((includeSelf || !this.isSelf(player)) &&
 			this.team === player.team);
 	}
 
@@ -801,20 +776,20 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 		return this._carriedBlock != null && this._carriedBlock.visible;
 	}
 
-	public dealMoveInTestOnLocationChange(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public onPositedBlockUpdate(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		this.dealMoveInTest(x, y, ignoreDelay, isLocationChange);
 	}
 
 	public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		if (ignoreDelay) {
 			host.moveInTestPlayer(this, isLocationChange);
-			this._damageDelay = MAX_DAMAGE_DELAY;
+			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > 0) {
 			this._damageDelay--;
 		}
 		else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) {
-			this._damageDelay = MAX_DAMAGE_DELAY;
+			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > -1) {
 			this._damageDelay = -1;
@@ -837,7 +812,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	//====Functions About Respawn====//
-	public dealRespawn(): void {
+	public dealRespawn(host: IBatrGame): void {
 		if (this.respawnTick > 0)
 			this.respawnTick--;
 
@@ -851,19 +826,8 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	//====Functions About Tool====//
-	protected onToolChange(oldType: Tool, newType: Tool): void {
-		this.initToolCharge();
-		this.resetCharge(false);
-		// Change Drone Tool
-		if (Tool.isDroneTool(newType)) {
-			if (Tool.isBulletTool(oldType))
-				this._droneTool = Tool.BULLET;
-			else if (!Tool.isAvailableDroneNotUse(oldType))
-				this._droneTool = oldType;
-			else
-				this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
-		}
-		// If The Block instanceof still carrying,then throw without charge(WIP,maybe?)
+	protected onToolChange(oldT: Tool, newT: Tool): void {
+		// TODO: 不再使用（待迁移）
 	}
 
 	protected dealUsingCD(): void {
@@ -977,10 +941,10 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 
 	//====Functions About Graphics====//
 	protected drawShape(Alpha: number = 1): void {
-		let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
-		let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
+		let realRadiusX: number = (Player.SIZE - Player.LINE_SIZE) / 2;
+		let realRadiusY: number = (Player.SIZE - Player.LINE_SIZE) / 2;
 		graphics.clear();
-		graphics.lineStyle(LINE_SIZE, this._lineColor);
+		graphics.lineStyle(Player.LINE_SIZE, this._lineColor);
 		// graphics.beginFill(this._fillColor,Alpha);
 		let m: Matrix = new Matrix();
 		m.createGradientBox(DEFAULT_SIZE,
@@ -1027,7 +991,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			this._carriedBlock = copyBlock ? block.clone() : block;
 			this._carriedBlock.x = DEFAULT_SIZE / 2;
 			this._carriedBlock.y = -DEFAULT_SIZE / 2;
-			this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
+			this._carriedBlock.alpha = Player.CARRIED_BLOCK_ALPHA;
 			this.addChild(this._carriedBlock);
 		}
 	}
@@ -1037,85 +1001,17 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 	}
 
 	//====Tick Run Function====//
-	override tickFunction(): void {
+	public onTick(host: IBatrGame): void {
 		this.dealUsingCD();
 		this.updateKeyDelay();
 		this.dealKeyControl();
 		this.dealMoveInTest(this.entityX, this.entityY, false, false);
 		this.dealHeal();
-		super.tickFunction();
 	}
 
 	//====Control Functions====//
-	public initControlKey(id: uint): void {
-		switch (id) {
-			// AI
-			case 0:
-				return;
-				break;
-			// P1
-			case 1:
-				controlKey_Up = KeyCode.W; // Up:W
-				controlKey_Down = KeyCode.S; // Down:S
-				controlKey_Left = KeyCode.A; // Left:A
-				controlKey_Right = KeyCode.D; // Right:D
-				controlKey_Use = KeyCode.SPACE; // Use:Space
-				break;
-			// P2
-			case 2:
-				controlKey_Up = KeyCode.UP; // Up:Key_UP
-				controlKey_Down = KeyCode.DOWN; // Down:Key_DOWN
-				controlKey_Left = KeyCode.LEFT; // Left:Key_Left
-				controlKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-				controlKey_Use = KeyCode.NUMPAD_0; // Use:'0'
-				break;
-			// P3
-			case 3:
-				controlKey_Up = KeyCode.U; // Up:U
-				controlKey_Down = KeyCode.J; // Down:J
-				controlKey_Left = KeyCode.H; // Left:H
-				controlKey_Right = KeyCode.K; // Right:K
-				controlKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
-				break;
-			// P4
-			case 4:
-				controlKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
-				controlKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
-				controlKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
-				controlKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
-				controlKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
-				break;
-		}
-	}
 
-	public isOwnControlKey(code: uint): boolean {
-		return (code == this.controlKey_Up ||
-			code == this.controlKey_Down ||
-			code == this.controlKey_Left ||
-			code == this.controlKey_Right ||
-			code == this.controlKey_Use /*||
-					code==this.controlKey_Select_Left||
-					code==this.controlKey_Select_Right*/);
-	}
-
-	public isOwnKeyDown(code: uint): boolean {
-		return (code == this.controlKey_Up && this.isPress_Up ||
-			code == this.controlKey_Down && this.isPress_Down ||
-			code == this.controlKey_Left && this.isPress_Left ||
-			code == this.controlKey_Right && this.isPress_Right ||
-			code == this.controlKey_Use && this.isPress_Use /*||
-					code==this.controlKey_Select_Left||
-					code==this.controlKey_Select_Right*/);
-	}
-
-	public clearControlKeys(): void {
-		controlKey_Up = KeyCode.EMPTY;
-		controlKey_Down = KeyCode.EMPTY;
-		controlKey_Left = KeyCode.EMPTY;
-		controlKey_Right = KeyCode.EMPTY;
-		controlKey_Use = KeyCode.EMPTY;
-	}
-
+	// !【2023-09-23 16:53:17】把涉及「玩家基本操作」的部分留下（作为接口），把涉及「具体按键」的部分外迁
 	public turnAllKeyUp(): void {
 		this.isPress_Up = false;
 		this.isPress_Down = false;
@@ -1142,7 +1038,7 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			}
 		}
 		else {
-			this.keyDelay_Move = -controlDelay_Move;
+			this.keyDelay_Move = -this.controlDelay_Move;
 		}
 	}
 
@@ -1216,25 +1112,25 @@ export default class Player extends Entity implements IPlayerProfile, IEntityInG
 			return;
 		switch (this.rot) {
 			case GlobalRot.RIGHT:
-				moveRight();
+				this.moveRight();
 				break;
 
 			case GlobalRot.LEFT:
-				moveLeft();
+				this.moveLeft();
 				break;
 
 			case GlobalRot.UP:
-				moveUp();
+				this.moveUp();
 				break;
 
 			case GlobalRot.DOWN:
-				moveDown();
+				this.moveDown();
 				break;
 		}
 	}
 
 	override moveIntForward(distance: number = 1): void {
-		moveForward(distance);
+		this.moveForward(distance);
 	}
 
 	public moveLeft(): void {

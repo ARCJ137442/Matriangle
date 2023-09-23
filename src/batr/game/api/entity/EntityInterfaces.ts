@@ -11,10 +11,11 @@ import { fPoint, iPoint } from "../../../common/geometricTools";
 import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import IBatrGame from "../../main/IBatrGame";
-import GameStats from "../../mods/native/stat/GameStats";
 import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
+import PlayerStats from "../../mods/native/stat/PlayerStats";
+import Block from "../block/Block";
 
 /**
  * 「格点实体」是
@@ -42,6 +43,15 @@ export interface IEntityInGrid extends Entity {
     get position(): iPoint;
     /** 设置实体的整数坐标（引用） */
     set position(value: iPoint);
+
+    /**
+     * 当「所处位置方块更新」时调用
+     * * 应用：玩家的「窒息伤害/陷阱伤害/随机旋转」，奖励箱的「窒息消失」
+     * 
+     * @param host 调用它的「游戏主体」
+     * @param block 更新后的方块
+     */
+    onPositedBlockUpdate(host: IBatrGame, block: Block): void;
 }
 
 /**
@@ -179,6 +189,8 @@ export interface IEntityActiveLite extends Entity {
  * 
  * ! 【20230915 0:02:18】「AI玩家」的「AI逻辑」将由AI作为「活跃实体」的`onTick`游戏刻调用
  * 
+ * ? 【2023-09-23 10:49:35】目前认为，不再需要这类标识：外界IO将自行缓冲在实体内部，等待实体自行处理
+ * 
  * 典例：
  * * 玩家
  */
@@ -197,6 +209,19 @@ export interface IEntityNeedsIO extends Entity {
      * @param host 调用它的「游戏主体」
      */
     onIO(host: IBatrGame, inf: CommonIO_IR): void;
+
+    /**
+     * 获取实体的IO缓冲区
+     * * 逻辑：当游戏调用实体时，可以从中得到目前缓存的IO信息
+     * * 应用：在游戏逻辑中获取并在「主体侧」执行玩家动作（如移动、使用等）
+     */
+    get IOBuffer(): CommonIO_IR[];
+
+    /**
+     * 清除实体的IO缓冲区
+     * * 如名
+     */
+    clearIOBuffer(): void;
 
 }
 
@@ -266,6 +291,136 @@ export interface IEntityHasStats extends Entity {
     // * 留存「接口约定的变量」，判断「实例是否实现接口」
     readonly i_hasStats: true;
 
-    get stats(): GameStats; // TODO: 这里只是个占位符，后续会专门规定一个基类去实现这些东西
+    get stats(): PlayerStats; // TODO: 这里只是个占位符，后续会专门规定一个基类去实现这些东西
+
+}
+
+/**
+ * 「有生命实体」是
+ * * 拥有「生命值」「最大生命值」等（正整数）值的
+ * * 对外封装方法的
+ * 实体
+ * 
+ * ! 目前不对外要求「直接设置生命值」的选项，亦即`HP`的setter
+ * * 留给相应的「回血」「伤害」等方法自行设置
+ */
+export interface IEntityHasHP extends Entity {
+
+    // * 留存「接口约定的变量」，判断「实例是否实现接口」
+    readonly i_hasHP: true;
+
+    /**
+     * 当前生命值
+     * * 英文来源："Health Point"
+     * * 取值范围：0 < health < maxHealth
+     * 
+     * ! 其不能超过「最大生命值」
+     * 
+     */
+    get HP(): uint;
+
+    /**
+     * 当前最大生命值
+     * 
+     * ! 协议：在该值被修改时，若低于当前生命值，需要进行一定的限制
+     */
+    get maxHP(): uint;
+
+    /**
+     * （衍生）判断「生命值是否为满」
+     * * 应用：判断「是否要从『储备生命值』里回血」
+     */
+    get isFullHP(): uint
+
+    /**
+     * （衍生）判断「生命值是否为空」
+     * * 应用：判断玩家「是否已死亡」
+     */
+    get isEmptyHP(): uint
+
+    /**
+     * （衍生）生命值百分比
+     * * 算法：生命值 / 最大生命值
+     */
+    get HPPercent(): number;
+
+    /**
+     * 增加生命值
+     * * 可能会因此调用一些钩子函数
+     * 
+     * @param value 增加的生命值
+     * @param healer 增加生命值者（治疗者）
+     */
+    addHP(value: uint, healer: Entity | null): void
+
+    /**
+     * 减少生命值
+     * * 可能会因此调用一些钩子函数
+     * 
+     * @param value 减少的生命值
+     * @param attacker 减少生命值者（攻击者）
+     */
+    removeHP(value: uint, attacker: Entity | null): void
+
+}
+
+/**
+ * 「有储备生命值实体」是
+ * * 有一个「储备生命值」的
+ *   * 可以在「生命值未满」时（以一定速度）补充到生命值中
+ * 有生命实体
+ */
+export interface IEntityHasHPAndHeal extends IEntityHasHP {
+
+    // * 留存「接口约定的变量」，判断「实例是否实现接口」
+    readonly i_hasHPAndHeal: true;
+
+    /** 
+     * 「额外备用生命」
+     * * 会在生命值不足时，按一定周期自动补充进生命值中
+     */
+    get heal(): uint;
+    set heal(value: uint);
+
+}
+
+/**
+ * 「可重生实体」是
+ * * 有自然数个数的「剩余生命数」的
+ * * 在死亡后可以通过「重生」恢复生命值并「重新进入游戏主场」的
+ * 有生命实体
+ */
+export interface IEntityHasHPAndLives extends IEntityHasHP {
+
+    // * 留存「接口约定的变量」，判断「实例是否实现接口」
+    readonly i_hasHPAndLives: true;
+
+    /**
+     * 剩余生命数
+     * * 范围：自然数
+     * 
+     * * 机制：在>0时实体有「重生」的机会，而在<=0时实体可能被（彻底）删除
+     */
+    get lives(): uint;
+    set lives(value: uint);
+
+    /**
+     * 实体的「剩余生命数」是否会随「死亡」而减少
+     * * 等价于「是否生命数无限」
+     * * 推荐用一个单独的布尔值实现
+     */
+    get lifeNotDecay(): boolean;
+    set lifeNotDecay(value: boolean);
+
+    /**
+     * （如果有重生间隔的话）实体是否「正在重生」
+     */
+    get isRespawning(): boolean;
+
+    /**
+     * 判断实体是否「生命彻底终止」
+     * * 标准：生命值为空 && 剩余生命数===0
+     */
+    get isNoLives(): boolean;
 
 }

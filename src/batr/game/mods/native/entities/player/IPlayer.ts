@@ -3,8 +3,6 @@ import { Matrix } from "../../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Block from "../../../../api/block/Block";
 import Game from "../../../../main/Game";
-import EntityType from "../../../../../api/entity/EntityType";
-import Tool from "../../../registry/Tool";
 import GameRule_V1 from "../../rule/GameRule_V1";
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
@@ -15,892 +13,334 @@ import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGU
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint } from "../../../../../common/geometricTools";
-import { IEntityActive, IEntityDisplayable, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
+import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { CommonIO_IR } from "../../../../api/io/CommonIO";
 import IBatrGame from "../../../../main/IBatrGame";
-import IBatrGame from "../../../../main/IBatrGame";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
+import { mRot } from "../../../../general/GlobalRot";
+import EntityType from "../../../../api/entity/EntityType";
+import { TOOL_MIN_CD, TPS, FIXED_TPS } from "../../../../main/GlobalGameVariables";
+import { isEnemy, isAlly } from "../../registry/NativeGameMechanics";
+import Tool from "../../tool/Tool";
+import Player from "./Player";
+import IGameRule from './../../../../api/rule/IGameRule';
+import IBatrGame from './../../../../main/IBatrGame';
 
-export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityNeedsIO, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats {
+/* 
+TODO: 【2023-09-23 00:20:12】现在工作焦点：
+ * 抽象出一个「玩家接口」
+ * 在「架空玩家实际类实现」后，测试抛射体
+ * 重构「玩家」「AI玩家」，将这两者的区别细化为「控制器」「显示模板」不同
+   * 控制：一个是键盘控制（人类），一个是基于时钟的自动程序控制（AI）……
+	 * 这样较容易支持其它方式（如使用HTTP/WebSocket请求控制）
+	 * 📌在重写「AI控制器」时，用上先前学的「行为树」模型（虽然原型还没调试通）
+	 * 如果有机会的话，尝试使用「装饰器」
+   * 显示：一个用「渐变无缝填充」的算法（人类），一个用「纯色镂空填充」的方法（AI）
+ * 由此开始写「外部IO模块」（可能只会先留一个抽象接口）
+   * 🎯给所有类型的「玩家」一个通用的「行为控制系统」（而非所谓「AI专属」）
+   * 💭这个所谓「外部IO」或许仍然需要从游戏中分派，或者受游戏的控制
+   * 参考案例：有如电脑「管理外设，但不限制外设的输入输出」一样
+ * 并且，再对接「玩家统计」模块……
+ * 📌原则：尽可能向Julia这样的「数据集中，方法分派」范式靠拢——不要在其中塞太多「游戏机制」方法
+   * 适度独立出去
+ */
 
-	/* 
-	TODO: 【2023-09-23 00:20:12】现在工作焦点：
-	 * 抽象出一个「玩家接口」
-	 * 在「架空玩家实际类实现」后，测试抛射体
-	 * 重构「玩家」「AI玩家」，将这两者的区别细化为「控制器」「显示模板」不同
-	   * 控制：一个是键盘控制（人类），一个是基于时钟的自动程序控制（AI）……
-		 * 这样较容易支持其它方式（如使用HTTP/WebSocket请求控制）
-		 * 📌在重写「AI控制器」时，用上先前学的「行为树」模型（虽然原型还没调试通）
-		 * 如果有机会的话，尝试使用「装饰器」
-	   * 显示：一个用「渐变无缝填充」的算法（人类），一个用「纯色镂空填充」的方法（AI）
-	 * 由此开始写「外部IO模块」（可能只会先留一个抽象接口）
-	   * 🎯给所有类型的「玩家」一个通用的「行为控制系统」（而非所谓「AI专属」）
-	   * 💭这个所谓「外部IO」或许仍然需要从游戏中分派，或者受游戏的控制
-	   * 参考案例：有如电脑「管理外设，但不限制外设的输入输出」一样
-	 * 并且，再对接「玩家统计」模块……
-	 * 📌原则：尽可能向Julia这样的「数据集中，方法分派」范式靠拢——不要在其中塞太多「游戏机制」方法
-	   * 适度独立出去
+/**
+ * 抽象的「玩家」是
+ * * 作为「格点实体」的
+ * * 有朝向的
+ * * 可被显示的
+ * * 能被某个「控制器」控制，并缓存外部IO接口的
+ * * 拥有统计信息的
+ * * 拥有「经验」「加成」机制的
+ * * 可以使用「工具」的
+ * 实体
+ */
+export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityNeedsIO, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives {
+
+	/**
+	 * 玩家的「经验值」
+	 * * 目前在游戏机制上的应用仅在于「升级时的加成」以及「玩家表现的平均化、单一化测量」
+	 * * 📌机制：在设置的经验超过「目前等级最大经验」时，玩家会直接升级
 	 */
-	//============Static Variables============//
-	public static isAI(player: Player): boolean {
-	return player instanceof AIPlayer;
-}
+	get experience(): uint;
+	set experience(value: uint);
 
-	public static getLevelUpExperience(level: uint): uint {
-	return (level + 1) * 5 + (level >> 1);
-}
+	/** 经验等级 */
+	get level(): uint;
+	set level(value: uint);
 
+	/** 玩家升级所需经验（目前等级最大经验） */
+	get levelupExperience(): uint;
 
-	//============Instance Variables============//
-	protected _team: PlayerTeam;
-
-	protected _customName: string;
-
-	protected _tool: Tool;
-
-	protected _droneTool: Tool = GameRule_V1.DEFAULT_DRONE_TOOL;
-
-	//====Graphics Variables====//
-	protected _lineColor: uint = 0x888888;
-	protected _fillColor: uint = 0xffffff;
-	protected _fillColor2: uint = 0xcccccc;
-
-	// TODO: remove the _GUI to remove the reliances
-	protected _GUI: PlayerGUI;
-
-	protected _carriedBlock: Block;
-
-	// TODO: uses the controller, not set the control keys!
-	protected _controller: PlayerController
-
-	//====Control Variables====//
-	// ControlDelay
-	public controlDelay_Move: uint = FIXED_TPS * 0.5;
-
-	// public controlDelay_Use:uint=TPS/4
-	// public controlDelay_Select:uint=TPS/5
-
-	// ControlLoop
-	public controlLoop_Move: uint = FIXED_TPS * 0.05;
-
-	// public controlLoop_Use:uint=TPS/25
-	// public controlLoop_Select:uint=TPS/40
-
-	// ControlKey
-	public controlKey_Up: uint;
-	public controlKey_Down: uint;
-	public controlKey_Left: uint;
-	public controlKey_Right: uint;
-	public controlKey_Use: uint;
-	// public ControlKey_Select_Left:uint;
-	// public ControlKey_Select_Right:uint;
-
-	// isPress
-	public isPress_Up: boolean;
-	public isPress_Down: boolean;
-	public isPress_Left: boolean;
-	public isPress_Right: boolean;
-	public isPress_Use: boolean;
-	// public isPress_Select_Left:Boolean;
-	// public isPress_Select_Right:Boolean;
-
-	// KeyDelay
-	public keyDelay_Move: int;
-	// public keyDelay_Use:int;
-	// public keyDelay_Select:int;
-
-	//========Custom Variables========//
-	// Health
-	protected _health: uint = DEFAULT_HEALTH;
-
-	protected _maxHealth: uint = DEFAULT_MAX_HEALTH;
-
-	protected _heal: uint = 0;
-
-	protected _lives: uint = 10;
-
-	protected _infinityLife: boolean = true;
-
-	// Tool
-	protected _toolUsingCD: uint = 0;
-
-	protected _toolChargeTime: int = -1;
-
-	protected _toolChargeMaxTime: uint = 0;
-
-	// Respawn
-	public respawnTick: int = -1;
-
-	// negative number means isn't respawning
-
-	// Gameplay
-	protected _lastHurtByPlayer: Player = null;
-
-	protected _stats: PlayerStats;
-
-	protected _damageDelay: int = 0;
-
-	protected _healDelay: uint = 0;
-
-	//========Attributes========//
-	public moveDistance: uint = 1;
-
-	public invulnerable: boolean = false;
-
-	//====Experience====//
-	protected _experience: uint = 0;
-
-	public get experience(): uint {
-	return this._experience;
-}
-
-	public set experience(value: uint) {
-	while (value > this.levelupExperience) {
-		value -= this.levelupExperience;
-		this.level++;
-		this.onLevelup();
-	}
-	this._experience = value;
-	if (this._GUI != null)
-		this._GUI.updateExperience();
-}
-
-	/** If the experience up to levelupExperience,level++ */
-	protected _level: uint = 0;
-
-	public get level(): uint {
-	return this._level;
-}
-
-	public set level(value: uint) {
-	this._level = value;
-}
-
-	public get levelupExperience(): uint {
-	return Player.getLevelUpExperience(this._level);
-}
-
-	public get experiencePercent(): number {
-	return this._experience / this.levelupExperience;
-}
+	/**
+	 * 玩家「当前所持有经验」与「目前等级最大经验」的百分比
+	 * * 范围：[0, 1]（1也会达到，因为只有在「超过」时才升级）
+	 * * 应用：目前只有「经验条显示」
+	 */
+	get experiencePercent(): number
 
 	//====Buff====//
 
 	/**
-	 * The EXTRA power of Damage
-	 * #TotalDamage=ToolDamage+buff*ToolCoefficient
-	 */
-	protected _buffDamage: uint = 0;
-
-	public get buffDamage(): uint {
-	return this._buffDamage;
-}
-
-	public set buffDamage(value: uint) {
-	this._buffDamage = value;
-}
+	 * 玩家的伤害加成
+	 * * 机制：用于在使用工具时增加额外的伤害
+	 * * 算法：攻击者伤害=工具伤害+加成值*武器「伤害系数」 ?? 1
+	*/
+	get buffDamage(): uint;
+	set buffDamage(value: uint);
 
 	/**
-	 * The EXTRA power of Tool Usage CD
-	 * #TotalCD=ToolCD/(1+buff/10)
-	 */
-	protected _buffCD: uint = 0;
-
-	public get buffCD(): uint {
-	return this._buffCD;
-}
-
-	public set buffCD(value: uint) {
-	this._buffCD = value;
-}
+	 * 玩家的冷却减免
+	 * * 机制：用于在使用工具时减免冷却时间
+	 * * 算法：使用者冷却=max(floor(工具冷却/(1+加成值/10)), 1)
+	*/
+	get buffCD(): uint;
+	set buffCD(value: uint);
 
 	/**
-	 * The EXTRA power of Resistance
-	 * #FinalDamage=TotalDamage-buff*ToolCoefficient>0
-	 */
-	protected _buffResistance: uint = 0;
-
-	public get buffResistance(): uint {
-	return this._buffResistance;
-}
-
-	public set buffResistance(value: uint) {
-	this._buffResistance = value;
-}
+	 * 玩家的抗性加成
+	 * * 机制：用于在受到「攻击者伤害」时减免伤害
+	 * * 算法：最终伤害=max(攻击者伤害-加成值*攻击者武器减免系数 ?? 1, 1)
+	*/
+	get buffResistance(): uint;
+	set buffResistance(value: uint);
 
 	/**
-	 * The EXTRA power of Radius
-	 * #FinalRadius=DefaultRadius*(1+buff/10)
+	 * 玩家的影响加成
+	 * * 机制：用于在使用工具时增加额外的「影响范围」，如「更大的子弹爆炸范围」
+	 * * 算法：最终伤害=max(攻击者伤害-加成值*攻击者武器减免系数 ?? 1, 1)
 	 */
-	protected _buffRadius: uint = 0;
-
-	public get buffRadius(): uint {
-	return this._buffRadius;
-}
-
-	public set buffRadius(value: uint) {
-	this._buffRadius = value;
-}
+	get buffRadius(): uint;
+	set buffRadius(value: uint);
 
 	//============Constructor & Destructor============//
-	public constructor(
-	host: IBatrGame,
-	x: number,
-	y: number,
-	team: PlayerTeam,
-	controlKeyId: uint,
-	isActive: boolean = true,
-	fillColor: number = NaN,
-	lineColor: number = NaN): void {
-		super(position, isActive);
-		// Set Team
-		this._team = team;
-		// Set Stats
-		this._stats = new PlayerStats(this);
-		// Set Shape
-		this.initColors(fillColor, lineColor);
-		this.shapeInit(shape: IBatrShape);
-		// Set GUI And Effects
-		this._GUI = new PlayerGUI(this);
-
-		this.addChildren();
-
-		// Set Control Key
-		this.initControlKey(controlKeyId);
-		this.updateKeyDelay();
-	}
-
-// TODO: 继续实现 //
-i_InGrid: true;
-i_needsIO: true;
-onIO(host: IBatrGame, inf: CommonIO_IR): void {
-	throw new Error("Method not implemented.");
-}
-i_active: true;
-onTick(host: IBatrGame): void {
-	throw new Error("Method not implemented.");
-}
-i_displayable: true;
-shapeInit(shape: IBatrShape, ...params: any[]): void {
-	throw new Error("Method not implemented.");
-}
-shapeRefresh(shape: IBatrShape): void {
-	throw new Error("Method not implemented.");
-}
-shapeDestruct(shape: IBatrShape): void {
-	throw new Error("Method not implemented.");
-}
-	get zIndex(): number {
-	throw new Error("Method not implemented.");
-}
-	set zIndex(value: number) {
-	throw new Error("Method not implemented.");
-}
-i_hasDirection: true;
-	get direction(): number {
-	throw new Error("Method not implemented.");
-}
-	set direction(value: number) {
-	throw new Error("Method not implemented.");
-}
-i_hasStats: true;
-
-	//============Destructor Function============//
-	override destructor(): void {
-	// Reset Key
-	this.turnAllKeyUp();
-	this.clearControlKeys();
-	// Remove Display Object
-	Utils.removeChildIfContains(host.playerGUIContainer, this._GUI);
-	// Remove Variables
-	// Primitive
-	this._customName = null;
-	this._toolUsingCD = 0;
-	this._team = null;
-	// Complex
-	this._stats.destructor();
-	this._stats = null;
-	this._lastHurtByPlayer = null;
-	this._tool = null;
-	this._GUI.destructor();
-	this._GUI = null;
-	// Call Super Class
-	super.destructor();
-}
-
-	//============Instance Getter And Setter============//
-	public get gui(): PlayerGUI {
-	return this._GUI;
-}
+	/**
+	 * 构造函数
+	 * @param position 位置信息
+	 * @param direction 朝向信息（任意维整数角）
+	 * @param team 玩家队伍（存储颜色等信息）
+	 * @param controller 玩家控制器
+	 * @param args 其它附加参数
+	 */
+	new(
+		position: iPoint,
+		direction: mRot,
+		team: PlayerTeam,
+		controller: PlayerController | null,
+		...args: any[] // ! 其它附加参数
+	): void
 
 	/**
-	 * Cannot using INT to return!
-	 * Because it's on the center of block!
+	 * 获取玩家的「控制器」
 	 */
-	public get frontX(): number {
-	return this.getFrontIntX(this.moveDistance);
-}
+	get controller(): PlayerController | null;
 
 	/**
-	 * Cannot using INT to return!
-	 * Because it's on the center of block!
+	 * 存取玩家队伍
+	 * * 在「设置队伍」时（请求）更新显示（UI、图形）
+	 * 
+	 * ! 【2023-09-23 11:25:58】不再请求更新所有抛射体的颜色
+	 * * 💭或许可以通过「发射时玩家队伍ID缓存至抛射体以便后续伤害判断」解决由此导致的「显示与预期不一致」问题
 	 */
-	public get frontY(): number {
-	return this.getFrontIntY(this.moveDistance);
-}
-
-	public get team(): PlayerTeam {
-	return this._team;
-}
-
-	public set team(value: PlayerTeam) {
-	if (value == this._team)
-		return;
-	this._team = value;
-	this.initColors();
-	this.shapeInit(shape: IBatrShape);
-	this._GUI.updateTeam();
-	host.updateProjectilesColor();
-}
-
-	public get teamColor(): uint {
-	return this.team.color;
-}
-
-	public get stats(): PlayerStats {
-	return this._stats;
-}
-
-	public get tool(): Tool {
-	return this._tool;
-}
-
-	/** This tool instanceof used by drones created from another tool */
-	public get droneTool(): Tool {
-	return this._droneTool;
-}
-
-	public set droneTool(value: Tool) {
-	this._droneTool = value;
-}
-
-	/** Also Reset CD&Charge */
-	public set tool(value: Tool) {
-	if (value == this._tool)
-		return;
-	this.resetCD();
-	this.resetCharge(true, false);
-	this.onToolChange(this._tool, value);
-	this._tool = value;
-}
-
-	public get toolUsingCD(): uint {
-	return this._toolUsingCD;
-}
-
-	public set toolUsingCD(value: uint) {
-	if (value == this._toolUsingCD)
-		return;
-
-	this._toolUsingCD = value;
-
-	this._GUI.updateCD();
-}
-
-	public get toolChargeTime(): int {
-	return this._toolChargeTime;
-}
-
-	public set toolChargeTime(value: int) {
-	if (value == this._toolChargeTime)
-		return;
-
-	this._toolChargeTime = value;
-
-	this._GUI.updateCharge();
-}
-
-	public get toolChargeMaxTime(): uint {
-	return this._toolChargeMaxTime;
-}
-
-	public set toolChargeMaxTime(value: uint) {
-	if (value == this._toolChargeMaxTime)
-		return;
-
-	this._toolChargeMaxTime = value;
-
-	this._GUI.updateCharge();
-}
-
-	public get toolNeedsCD(): boolean {
-	if (this._tool == null)
-		return false;
-
-	return this.toolMaxCD > 0;
-}
-
-	public get toolMaxCD(): number {
-	return host.rule.toolsNoCD ? TOOL_MIN_CD : this._tool.getBuffedCD(this.buffCD);
-}
-
-	public get toolReverseCharge(): boolean {
-	return this._tool.reverseCharge;
-}
-
-	public get toolCDPercent(): number {
-	if (!this.toolNeedsCD)
-		return 1;
-
-	return this._toolUsingCD / this.toolMaxCD;
-}
-
-	public get toolNeedsCharge(): boolean {
-	if (this._tool == null)
-		return false;
-
-	return this._tool.defaultChargeTime > 0;
-}
-
-	public get isCharging(): boolean {
-	if (!this.toolNeedsCharge)
-		return false;
-
-	return this._toolChargeTime >= 0;
-}
-
-	public get chargingPercent(): number { // 0~1
-	if (!this.toolNeedsCharge)
-		return 1;
-
-	if (!this.isCharging)
-		return 0;
-
-	return this._toolChargeTime / this._toolChargeMaxTime;
-}
-
-	// Color
-	public get lineColor(): uint {
-	return this._lineColor;
-}
-
-	public get fillColor(): uint {
-	return this._fillColor;
-}
-
-	// Health,MaxHealth,Life&Respawn
-	public get health(): uint {
-	return this._health;
-}
-
-	public set health(value: uint) {
-	if (value == this._health)
-		return;
-
-	this._health = Math.min(value, this._maxHealth);
-
-	if (this._GUI != null)
-		this._GUI.updateHealth();
-}
-
-	public get maxHealth(): uint {
-	return this._maxHealth;
-}
-
-	public set maxHealth(value: uint) {
-	if (value == this._maxHealth)
-		return;
-
-	this._maxHealth = value;
-
-	if (value < this._health)
-		this._health = value;
-
-	this._GUI.updateHealth();
-}
-
-	public get isFullHealth(): boolean {
-	return this._health >= this._maxHealth;
-}
-
-	public get heal(): uint {
-	return this._heal;
-}
-
-	public set heal(value: uint) {
-	if (value == this._heal)
-		return;
-
-	this._heal = value;
-
-	this._GUI.updateHealth();
-}
-
-	public get lives(): uint {
-	return this._lives;
-}
-
-	public set lives(value: uint) {
-	if (value == this._lives)
-		return;
-
-	this._lives = value;
-
-	this._GUI.updateHealth();
-}
-
-	public get infinityLife(): boolean {
-	return this._infinityLife;
-}
-
-	public set infinityLife(value: boolean) {
-	if (value == this._infinityLife)
-		return;
-
-	this._infinityLife = value;
-
-	this._GUI.updateHealth();
-}
-
-	public get isRespawning(): boolean {
-	return this.respawnTick >= 0;
-}
-
-	public get healthPercent(): number {
-	return this.health / this.maxHealth;
-}
-
-	public get isCertainlyOut(): boolean {
-	return this.lives == 0 && this.health == 0 && !this.isActive;
-}
-
-	// Display for GUI
-	public get healthText(): string {
-	let healthText: string = this._health + '/' + this._maxHealth;
-
-	let healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
-
-	let lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
-
-	return healthText + healText + lifeText;
-}
-
-	public get customName(): string {
-	return this._customName;
-}
-
-	public set customName(value: string) {
-	if (value == this._customName)
-		return;
-
-	this._customName = value;
-
-	this._GUI.updateName();
-}
-
-	// Other
-	public get lastHurtByPlayer(): Player {
-	return this._lastHurtByPlayer;
-}
+	get team(): PlayerTeam;
+	set team(value: PlayerTeam);
+
+	/**
+	 * 获取玩家的统计信息
+	 * 
+	 * TODO: 后续支持「自定义统计字段」
+	 */
+	get stats(): PlayerStats;
+
+	/**
+	 * 存取玩家「当前所持有工具」
+	 * * 📌只留存引用
+	 * 
+	 * ! 在设置时会重置：
+	 * * 现在参数附着在工具上，所以不需要再考量了
+	 * // * 使用冷却
+	 * // * 充能状态&百分比
+	 * 
+	 * ! 现在有关「使用冷却」「充能状态」的代码已独立到「工具」对象中
+	 * 
+	 * ? 工具彻底「独立化」：每个玩家使用的「工具」都将是一个「独立的对象」而非「全局引用形式」？
+	 * * 这样可用于彻底将「使用冷却」「充能状态」独立出来
+	 * * 基于工具的类-对象系统
+	 * * 在游戏分派工具（武器）时，使用「复制原型」而非「引用持有」的方机制
+	 */
+	get tool(): Tool;
+	set tool(value: Tool);
+
+	/** 玩家的「自定义名称」（不受「国际化文本」影响） */
+	get customName(): string;
+	set customName(value: string);
+
+	/** 获取「上一个伤害它的玩家」 */
+	get lastHurtByPlayer(): IPlayer | null;
 
 	// Key&Control
-	public get someKeyDown(): boolean {
-	return (this.isPress_Up ||
-		this.isPress_Down ||
-		this.isPress_Left ||
-		this.isPress_Right ||
-		this.isPress_Use /*||
-					this.isPress_Select_Left||
-					this.isPress_Select_Right*/);
-}
-
-	public get someMoveKeyDown(): boolean {
-	return (this.isPress_Up ||
-		this.isPress_Down ||
-		this.isPress_Left ||
-		this.isPress_Right);
-}
-	/*
-	public get someSelectKeyDown():Boolean {
-		return (this.isPress_Select_Left||this.isPress_Select_Right)
-	}*/
-
-	public set pressLeft(turn: boolean) {
-	this.isPress_Left = turn;
-}
-
-	public set pressRight(turn: boolean) {
-	this.isPress_Right = turn;
-}
-
-	public set pressUp(turn: boolean) {
-	this.isPress_Up = turn;
-}
-
-	public set pressDown(turn: boolean) {
-	this.isPress_Down = turn;
-}
-
-	public set pressUse(turn: boolean) {
-	if (this.isPress_Use && !turn) {
-		this.isPress_Use = turn;
-
-		if (isCharging)
-			this.onDisableCharge();
-
-		return;
-	}
-	this.isPress_Use = turn;
-}
-
-	/*public set pressLeftSelect(turn:Boolean) {
-		this.isPress_Select_Left=turn
-	}
-	
-	public set pressRightSelect(turn:Boolean) {
-		this.isPress_Select_Right=turn
-	}*/
-
-	// Entity Type
-	override get type(): EntityType {
-	return EntityType.PLAYER;
-}
-
-	//============Instance Functions============//
-	//====Functions About Rule====//
+	/**
+	 * 获取「是否有任一『按键』按下」
+	 * * 包括「移动键」与「使用键」
+	 * 
+	 * ! 实际应该是存在于「控制器」中的概念，但这里还是沿用来做了
+	 */
+	get someKeyDown(): boolean;
 
 	/**
-	 * This function init the variables without update when this Player has been created.
-	 * @param	toolID	invalid number means random.
-	 * @param	uniformTool	The uniform tool
+	 * 获取「是否有任一『移动键』按下」
+	 * 
+	 * 💡使用「按键数组」来兼容任意维：0123右左下上
+	 * * 实现方法：利用JS特性直接使用「自动转换成布尔值后的值」判断，true/undefined
+	 * * 一般来说，只有「按键被按下时」与「按键保持一定时间后」才会触发移动
 	 */
-	public initVariablesByRule(toolID: int, uniformTool: Tool = null): void {
-	// Health&Life
-	this._maxHealth = host.rule.defaultMaxHealth;
+	get someMoveKeyDown(): boolean;
 
-	this._health = host.rule.defaultHealth;
+	/** 获取「朝某个方向移动」的按键是否按下 */
+	isPressMoveAt(direction: mRot): boolean;
+	/** 设置「朝某个方向移动」的按键是否按下 */
+	pressMoveAt(direction: mRot): void;
+	releaseMoveAt(direction: mRot): void;
 
-	this.setLifeByInt(this instanceof AIPlayer ? host.rule.remainLivesAI : host.rule.remainLivesPlayer);
+	/**
+	 * 设置「是否按下『使用键』」
+	 * * 机制：松开使用键⇒充能中断（附带显示更新）
+	 */
+	set pressUse(turn: boolean): void;
 
-	// Tool
-	if(toolID < - 1)
-this._tool = host.rule.randomToolEnable;
-		else if (!Tool.isValidAvailableToolID(toolID) && uniformTool != null)
-	this._tool = uniformTool;
-else
-	this._tool = Tool.fromToolID(toolID);
-	}
+	/*
+	set pressLeftSelect(turn:Boolean)
+	set pressRightSelect(turn:Boolean)
+	*/
+
+	//============Instance Functions============//
+
+	// ! 「根据规则」
+	/**
+	 * 按照「游戏规则」初始化变量
+	 * * 如：生命值，最大生命值等
+	 * 
+	 * ! 因涉及到内部变量的设置，不能提取到外面去
+	 * 
+	 * @param tool 分配给玩家的工具
+	 */
+	initVariablesByRule(rule: IGameRule, tool: Tool): void
 
 	//====Functions About Health====//
-	public addHealth(value: uint, healer: Player = null): void {
-	this.health += value;
+	/** 实现：这个「治疗者」必须是玩家 */
+	addHealth(value: uint, healer: IPlayer | null): void;
 
-	this.onHeal(value, healer);
-}
-
-	public removeHealth(value: uint, attacker: Player = null): void {
-	if(invulnerable)
-			return;
-	this._lastHurtByPlayer = attacker;
-	if(health > value) {
-	this.health -= value;
-	this.onHurt(value, attacker);
-}
-		else {
-	this.health = 0;
-	this.onDeath(health, attacker);
-}
-	}
-
-	public setLifeByInt(lives: number): void {
-	this._infinityLife = (lives < 0);
-	if(this._lives >= 0)
-	this._lives = lives;
-}
-
-	//====Functions About Hook====//
-	protected onHeal(amount: uint, healer: Player = null): void {
-}
-
-	protected onHurt(damage: uint, attacker: Player = null): void {
-	// this._hurtOverlay.playAnimation();
-	host.addPlayerHurtEffect(this);
-	host.onPlayerHurt(attacker, this, damage);
-}
-
-	protected onDeath(damage: uint, attacker: Player = null): void {
-	host.onPlayerDeath(attacker, this, damage);
-	if(attacker != null)
-attacker.onKillPlayer(this, damage);
-	}
-
-	protected onKillPlayer(victim: Player, damage: uint): void {
-	if(victim != this && !this.isRespawning)
-this.experience++;
-	}
-
-	protected onRespawn(): void {
-}
-
-	public onMapTransform(): void {
-	this.resetCD();
-	this.resetCharge(false);
-}
-
-	public onPickupBonusBox(box: BonusBox): void {
-}
-
-	override preLocationUpdate(oldX: number, oldY: number): void {
-	host.prePlayerLocationChange(this, oldX, oldY);
-	super.preLocationUpdate(oldX, oldY);
-}
-
-	override onLocationUpdate(newX: number, newY: number): void {
-	if(this._GUI != null) {
-	this._GUI.entityX = this.entityX;
-	this._GUI.entityY = this.entityY;
-}
-host.onPlayerLocationChange(this, newX, newY);
-super.onLocationUpdate(newX, newY);
-	}
-
-	public onLevelup(): void {
-	host.onPlayerLevelup(this);
-}
+	/** 实现：这个「攻击者」必须是玩家 */
+	removeHealth(value: uint, attacker: IPlayer | null): void
 
 	//====Functions About Gameplay====//
 
+	/*
+	! ↓【2023-09-23 16:52:31】这两段代码现将拿到「工具」中，不再在这里使用
+	* 会在「方块投掷器」中使用，然后在显示的时候调用
+	*/
+	// get carriedBlock(): Block {
+	// 	return this._carriedBlock;
+	// }
+
+	// get isCarriedBlock(): boolean {
+	// 	return this._carriedBlock != null && this._carriedBlock.visible;
+	// }
+
+	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
+	onPositedBlockUpdate(host: IBatrGame, block: Block,): void
+
 	/**
-	 * @param	player	The target player.
-	 * @param	tool	The tool.
-	 * @return	If player can hurt target with this tool.
+	 * 在玩家位置改变时「测试移动」
+	 * * 【2023-09-23 16:56:03】目前的功能就是「测试移动」 
+	 * * 现在使用自身位置作「更新后位置」
+	 * 
+	 * 迁移前逻辑：
+	 * * 调用游戏处理「『在方块内时』动作」
+	 *   * 如果调用者「忽略冷却」则不论如何立即开始
+	 *   * 如果进行了动作，则重置冷却时间（固定值）
+	 * * 若非「忽略冷却」，开始降低冷却（计数递减）
+	 *   * 递减到0时停止递减，等待下一个处理
+	 *   * 且一般只在位置更新/方块更新后才开始——一旦「当前位置无需额外处理动作」就停下来
+	 * 
+	 * @param ignoreDelay 是否忽略「方块伤害」等冷却直接开始
+	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
-	public canUseToolHurtPlayer(player: Player, tool: Tool): boolean {
-	return (isEnemy(player) && tool.toolCanHurtEnemy ||
-		isSelf(player) && tool.toolCanHurtSelf ||
-		isAlly(player) && tool.toolCanHurtAlly);
-}
+	dealMoveInTest(host: IBatrGame, ignoreDelay?: boolean, isLocationChange?: boolean): void
 
-	public filterPlayersThisCanHurt(players: Player[], tool: Tool): Player[] {
-	return players.filter(
-		function (player: Player, index: int, vector: Player[]) {
-			return this.canUseToolHurtPlayer(player, tool);
-		}, this
-	);
-}
-
-	public isEnemy(player: Player): boolean {
-	return (!isAlly(player, true));
-}
-
-	public isSelf(player: Player): boolean {
-	return player === this;
-}
-
-	public isAlly(player: Player, includeSelf: boolean = false): boolean {
-	return player != null && ((includeSelf || !isSelf(player)) &&
-		this.team === player.team);
-}
-
-	public get carriedBlock(): Block {
-	return this._carriedBlock;
-}
-
-	public get isCarriedBlock(): boolean {
-	return this._carriedBlock != null && this._carriedBlock.visible;
-}
-
-	public dealMoveInTestOnLocationChange(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
-	this.dealMoveInTest(x, y, ignoreDelay, isLocationChange);
-}
-
-	public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
-	if(ignoreDelay) {
-		host.moveInTestPlayer(this, isLocationChange);
-		this._damageDelay = MAX_DAMAGE_DELAY;
-	}
-		else if(this._damageDelay > 0) {
-	this._damageDelay--;
-}
-		else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) {
-	this._damageDelay = MAX_DAMAGE_DELAY;
-}
-else if (this._damageDelay > -1) {
-	this._damageDelay = -1;
-}
-	}
-
-	public dealHeal(): void {
-	if(this._heal < 1)
-	return;
-	if(this._healDelay > TPS * (0.1 + this.healthPercent * 0.15)) {
-	if (this.isFullHealth)
-		return;
-	this._healDelay = 0;
-	this._heal--;
-	this.health++;
-}
-		else {
-	this._healDelay++;
-}
-	}
+	/**
+	 * 处理「储备生命值」
+	 * * 功能：实现玩家「储备生命值」的「储备」效果
+	 * 
+	 * 逻辑：
+	 * * 无「储备生命值」⇒不进行处理
+	 * * 「治疗延时」达到一定值后：
+	 *   * 生命值满⇒不处理
+	 *   * 未满⇒将一点「储备生命值」移入「生命值」
+	 *   * 重置「治疗延时」
+	 * * 否则：
+	 *   * 持续计时
+	 */
+	dealHeal(): void
 
 	//====Functions About Respawn====//
-	public dealRespawn(): void {
-	if(this.respawnTick > 0)
-	this.respawnTick--;
-
-	else {
-		this.respawnTick = -1;
-		if(!this._infinityLife && this._lives > 0)
-		this._lives--;
-		host.onPlayerRespawn(this);
-		this.onRespawn();
-	}
-}
+	/**
+	 * 处理「重生」
+	 * * 功能：实现玩家在「死后重生」的等待时间
+	 * 
+	 * 逻辑：
+	 * * 「重生延时」递减
+	 * * 到一定程度后⇒处理「重生」
+	 *   * 重置到「未开始计时」状态
+	 *   * 自身「剩余生命数」递减
+	 *   * 调用游戏机制代码，设置玩家在游戏内的状态
+	 *     * 寻找并设置坐标在「合适的重生点」
+	 *     * 生成一个「重生」特效
+	 *   * 发送事件「重生时」
+	 */
+	dealRespawn(host: IBatrGame): void;
 
 	//====Functions About Tool====//
-	protected onToolChange(oldType: Tool, newType: Tool): void {
-	this.initToolCharge();
-	this.resetCharge(false);
-	// Change Drone Tool
-	if(Tool.isDroneTool(newType)) {
-	if (Tool.isBulletTool(oldType))
-		this._droneTool = Tool.BULLET;
-	else if (!Tool.isAvailableDroneNotUse(oldType))
-		this._droneTool = oldType;
-	else
-		this._droneTool = GameRule_V1.DEFAULT_DRONE_TOOL;
-}
-		// If The Block instanceof still carrying,then throw without charge(WIP,maybe?)
-	}
+	/**
+	 * 当持有的工具改变时
+	 * 
+	 * !【2023-09-23 17:45:32】弃用：现在几乎无需处理逻辑
+	 * * 一切基本已由「赋给新工具时」处理完毕（新工具的CD和充能状态都已「重置」）
+	 * * 对于「二阶武器」（如「冲击波」），也已在「奖励箱设置工具」时处理好
+	 *   * 直接装填玩家当前武器，并赋值给玩家
+	 * 
+	 * @param oldT 旧工具
+	 * @param newT 新工具
+	 */
+	onToolChange?(oldT: Tool, newT: Tool): void;
 
-	protected dealUsingCD(): void {
+	dealUsingCD(): void {
 	// console.log(this.tool.name,this._toolChargeTime,this._toolChargeMaxTime)
-	if(this._toolUsingCD > 0) {
-	this._toolUsingCD--;
-	this._GUI.updateCD();
-}
-		else {
-	if (!this.toolNeedsCharge) {
-		if (this.isPress_Use)
-			this.useTool();
-	}
-	else if (this._toolChargeTime < 0) {
-		this.initToolCharge();
+	if (this._toolUsingCD > 0) {
+		this._toolUsingCD--;
+		this._GUI.updateCD();
 	}
 	else {
-		if (this.toolReverseCharge) {
-			this.dealToolReverseCharge();
+		if (!this.toolNeedsCharge) {
+			if (this.isPress_Use)
+				this.useTool();
 		}
-		else if (this.isPress_Use) {
-			this.dealToolCharge();
+		else if (this._toolChargeTime < 0) {
+			this.initToolCharge();
+		}
+		else {
+			if (this.toolReverseCharge) {
+				this.dealToolReverseCharge();
+			}
+			else if (this.isPress_Use) {
+				this.dealToolCharge();
+			}
 		}
 	}
 }
-	}
 
-	protected dealToolCharge(): void {
+dealToolCharge(): void {
 	if(this._toolChargeTime >= this._toolChargeMaxTime) {
 	this.useTool();
 	this.resetCharge(false, false);
@@ -910,7 +350,7 @@ this._toolChargeTime++;
 this._GUI.updateCharge();
 	}
 
-	protected dealToolReverseCharge(): void {
+dealToolReverseCharge(): void {
 	if(this.toolChargeTime < this.toolChargeMaxTime) {
 	this._toolChargeTime++;
 }
@@ -921,19 +361,19 @@ if (this.isPress_Use) {
 this._GUI.updateCharge();
 	}
 
-	protected onDisableCharge(): void {
+onDisableCharge(): void {
 	if(!this.toolNeedsCharge || this._toolUsingCD > 0 || !this.isActive || this.isRespawning)
 	return;
 	this.useTool();
 	this.resetCharge();
 }
 
-	public initToolCharge(): void {
+initToolCharge(): void {
 	this._toolChargeTime = 0;
 	this._toolChargeMaxTime = this._tool.defaultChargeTime;
 }
 
-	public resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
+resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
 	this._toolChargeTime = -1;
 	if(includeMaxTime)
 			this._toolChargeMaxTime = 0;
@@ -941,24 +381,24 @@ this._GUI.updateCharge();
 			this._GUI.updateCharge();
 }
 
-	public resetCD(): void {
+resetCD(): void {
 	this._toolUsingCD = 0;
 	this._GUI.updateCD();
 }
 
-	//====Functions About Attributes====//
+//====Functions About Attributes====//
 
-	/**
-	 * The Function returns the final damage with THIS PLAYER.
-	 * FinalDamage=DefaultDamage+
-	 * attacker.buffDamage*ToolCoefficient-
-	 * this.buffResistance*ToolCoefficient>=0.
-	 * @param	attacker	The attacker.
-	 * @param	attackerTool	The attacker's tool(null=attacker.tool).
-	 * @param	defaultDamage	The original damage by attacker.
-	 * @return	The Final Damage.
-	 */
-	public computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
+/**
+ * The Function returns the final damage with THIS PLAYER.
+ * FinalDamage=DefaultDamage+
+ * attacker.buffDamage*ToolCoefficient-
+ * this.buffResistance*ToolCoefficient>=0.
+ * @param	attacker	The attacker.
+ * @param	attackerTool	The attacker's tool(null=attacker.tool).
+ * @param	defaultDamage	The original damage by attacker.
+ * @return	The Final Damage.
+ */
+computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
 	if (attacker == null)
 		return attackerTool == null ? 0 : attackerTool.defaultDamage;
 	if (attackerTool == null)
@@ -968,156 +408,25 @@ this._GUI.updateCharge();
 	return 0;
 }
 
-	public finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
+finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
 	this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
 }
 
-	public computeFinalCD(tool: Tool): uint {
+computeFinalCD(tool: Tool): uint {
 	return tool.getBuffedCD(this.buffCD);
 }
 
-	public computeFinalRadius(defaultRadius: number): number {
+computeFinalRadius(defaultRadius: number): number {
 	return defaultRadius * (1 + Math.min(this.buffRadius / 16, 3));
 }
 
-	public computeFinalLightningEnergy(defaultEnergy: uint): int {
+computeFinalLightningEnergy(defaultEnergy: uint): int {
 	return defaultEnergy * (1 + this._buffDamage / 20 + this._buffRadius / 10);
 }
 
-	//====Functions About Graphics====//
-	protected drawShape(Alpha: number = 1): void {
-	let realRadiusX: number = (SIZE - LINE_SIZE) / 2;
-	let realRadiusY: number = (SIZE - LINE_SIZE) / 2;
-	graphics.clear();
-	graphics.lineStyle(LINE_SIZE, this._lineColor);
-	// graphics.beginFill(this._fillColor,Alpha);
-	let m: Matrix = new Matrix();
-	m.createGradientBox(DEFAULT_SIZE,
-		DEFAULT_SIZE, 0, -realRadiusX, -realRadiusX);
-	graphics.beginGradientFill(GradientType.LINEAR,
-		[this._fillColor, this._fillColor2],
-		[Alpha, Alpha],
-		[63, 255],
-		m,
-		SpreadMethod.PAD,
-		InterpolationMethod.RGB,
-		1);
-	graphics.moveTo(-realRadiusX, -realRadiusY);
-	graphics.lineTo(realRadiusX, 0);
-	graphics.lineTo(-realRadiusX, realRadiusY);
-	graphics.lineTo(-realRadiusX, -realRadiusY);
-	// graphics.drawCircle(0,0,10);
-	graphics.endFill();
-}
+//====Control Functions====//
 
-	protected initColors(fillColor: number = NaN, lineColor: number = NaN): void {
-	// Deal fillColor
-	if(isNaN(fillColor))
-this._fillColor = this._team.defaultColor;
-		else
-this._fillColor = uint(fillColor);
-// Deal lineColor
-let HSV: number[] = Color.HEXtoHSV(this._fillColor);
-this._fillColor2 = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 1.5);
-if (isNaN(lineColor)) {
-	this._lineColor = Color.HSVtoHEX(HSV[0], HSV[1], HSV[2] / 2);
-}
-else
-	this._lineColor = uint(lineColor);
-	}
-
-	public setCarriedBlock(block: Block, copyBlock: boolean = true): void {
-	if(block == null) {
-	this._carriedBlock.visible = false;
-}
-		else {
-	if (this._carriedBlock != null && this.contains(this._carriedBlock))
-		this.removeChild(this._carriedBlock);
-	this._carriedBlock = copyBlock ? block.clone() : block;
-	this._carriedBlock.x = DEFAULT_SIZE / 2;
-	this._carriedBlock.y = -DEFAULT_SIZE / 2;
-	this._carriedBlock.alpha = CARRIED_BLOCK_ALPHA;
-	this.addChild(this._carriedBlock);
-}
-	}
-
-	protected addChildren(): void {
-	host.playerGUIContainer.addChild(this._GUI);
-}
-
-	//====Tick Run Function====//
-	override tickFunction(): void {
-	this.dealUsingCD();
-	this.updateKeyDelay();
-	this.dealKeyControl();
-	this.dealMoveInTest(this.entityX, this.entityY, false, false);
-	this.dealHeal();
-	super.tickFunction();
-}
-
-	//====Control Functions====//
-	public initControlKey(id: uint): void {
-	switch(id) {
-			// AI
-			case 0:
-	return;
-	break;
-	// P1
-	case 1:
-	controlKey_Up = KeyCode.W; // Up:W
-	controlKey_Down = KeyCode.S; // Down:S
-	controlKey_Left = KeyCode.A; // Left:A
-	controlKey_Right = KeyCode.D; // Right:D
-	controlKey_Use = KeyCode.SPACE; // Use:Space
-	break;
-	// P2
-	case 2:
-	controlKey_Up = KeyCode.UP; // Up:Key_UP
-	controlKey_Down = KeyCode.DOWN; // Down:Key_DOWN
-	controlKey_Left = KeyCode.LEFT; // Left:Key_Left
-	controlKey_Right = KeyCode.RIGHT; // Right:Key_RIGHT
-	controlKey_Use = KeyCode.NUMPAD_0; // Use:'0'
-	break;
-	// P3
-	case 3:
-	controlKey_Up = KeyCode.U; // Up:U
-	controlKey_Down = KeyCode.J; // Down:J
-	controlKey_Left = KeyCode.H; // Left:H
-	controlKey_Right = KeyCode.K; // Right:K
-	controlKey_Use = KeyCode.RIGHT_BRACKET; // Use:']'
-	break;
-	// P4
-	case 4:
-	controlKey_Up = KeyCode.NUMPAD_8; // Up:Num 5
-	controlKey_Down = KeyCode.NUMPAD_5; // Down:Num 2
-	controlKey_Left = KeyCode.NUMPAD_4; // Left:Num 1
-	controlKey_Right = KeyCode.NUMPAD_6; // Right:Num 3
-	controlKey_Use = KeyCode.NUMPAD_ADD; // Use:Num +
-	break;
-}
-	}
-
-	public isOwnControlKey(code: uint): boolean {
-	return (code == this.controlKey_Up ||
-		code == this.controlKey_Down ||
-		code == this.controlKey_Left ||
-		code == this.controlKey_Right ||
-		code == this.controlKey_Use /*||
-					code==this.controlKey_Select_Left||
-					code==this.controlKey_Select_Right*/);
-}
-
-	public isOwnKeyDown(code: uint): boolean {
-	return (code == this.controlKey_Up && this.isPress_Up ||
-		code == this.controlKey_Down && this.isPress_Down ||
-		code == this.controlKey_Left && this.isPress_Left ||
-		code == this.controlKey_Right && this.isPress_Right ||
-		code == this.controlKey_Use && this.isPress_Use /*||
-					code==this.controlKey_Select_Left||
-					code==this.controlKey_Select_Right*/);
-}
-
-	public clearControlKeys(): void {
+clearControlKeys(): void {
 	controlKey_Up = KeyCode.EMPTY;
 	controlKey_Down = KeyCode.EMPTY;
 	controlKey_Left = KeyCode.EMPTY;
@@ -1125,7 +434,7 @@ else
 	controlKey_Use = KeyCode.EMPTY;
 }
 
-	public turnAllKeyUp(): void {
+turnAllKeyUp(): void {
 	this.isPress_Up = false;
 	this.isPress_Down = false;
 	this.isPress_Left = false;
@@ -1140,7 +449,7 @@ else
 	// this.controlLoop_Select=TPS/40;
 }
 
-	public updateKeyDelay(): void {
+updateKeyDelay(): void {
 	// console.log(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
 	//==Set==//
 	// Move
@@ -1155,7 +464,7 @@ else
 }
 	}
 
-	public runActionByKeyCode(code: uint): void {
+runActionByKeyCode(code: uint): void {
 	if(!this.isActive || this.isRespawning)
 	return;
 	switch(code) {
@@ -1184,7 +493,7 @@ break;*/
 }
 	}
 
-	public dealKeyControl(): void {
+dealKeyControl(): void {
 	if(!this.isActive || this.isRespawning)
 	return;
 	if(this.someKeyDown) {
@@ -1220,7 +529,7 @@ break;*/
 }
 	}
 
-	override moveForward(distance: number = 1): void {
+moveForward(distance: number = 1): void {
 	if(this.isRespawning)
 	return;
 	switch(this.rot) {
@@ -1242,59 +551,81 @@ break;*/
 }
 	}
 
-	override moveIntForward(distance: number = 1): void {
+moveIntForward(distance: number = 1): void {
 	moveForward(distance);
 }
 
-	public moveLeft(): void {
+moveLeft(): void {
 	host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
 }
 
-	public moveRight(): void {
+moveRight(): void {
 	host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
 }
 
-	public moveUp(): void {
+moveUp(): void {
 	host.movePlayer(this, GlobalRot.UP, this.moveDistance);
 }
 
-	public moveDown(): void {
+moveDown(): void {
 	host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
 }
 
-	public turnUp(): void {
+turnUp(): void {
 	this.rot = GlobalRot.UP;
 }
 
-	public turnDown(): void {
+turnDown(): void {
 	this.rot = GlobalRot.DOWN;
 }
 
-	public turnAbsoluteLeft(): void {
+turnAbsoluteLeft(): void {
 	this.rot = GlobalRot.LEFT;
 }
 
-	public turnAbsoluteRight(): void {
+turnAbsoluteRight(): void {
 	this.rot = GlobalRot.RIGHT;
 }
 
-	public turnBack(): void {
+turnBack(): void {
 	this.rot += 2;
 }
 
-	public turnRelativeLeft(): void {
+turnRelativeLeft(): void {
 	this.rot += 3;
 }
 
-	public turnRelativeRight(): void {
+turnRelativeRight(): void {
 	this.rot += 1;
 }
 
-	public useTool(): void {
+useTool(): void {
 	if(!this.toolNeedsCharge || this.chargingPercent > 0) {
 	host.playerUseTool(this, this.rot, this.chargingPercent);
 }
 if (this.toolNeedsCharge)
 	this._GUI.updateCharge();
 	}
+
+
+
+	//============Display Implements============//
+	// Color
+	/** 获取（缓存的）十六进制线条颜色 */
+	get lineColor(): uint;
+
+	/** 获取（缓存的）十六进制填充颜色 */
+	get fillColor(): uint;
+
+	/** 用于在GUI上显示的文本：生命值+最大生命值+储备生命值+剩余生命数（若生命数有限） */
+	get healthText(): string {
+	let healthText: string = this._health + '/' + this._maxHealth;
+
+	let healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
+
+	let lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
+
+	return healthText + healText + lifeText;
+}
+
 }

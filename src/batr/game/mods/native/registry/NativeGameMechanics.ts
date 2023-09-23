@@ -26,6 +26,9 @@ import { BonusType, NativeBonusTypes } from "./BonusRegistry";
 import Projectile from "../entities/projectile/Projectile";
 import Wave from "../entities/projectile/other/Wave";
 import { NativeTools } from './ToolRegistry';
+import IPlayer from "../entities/player/IPlayer";
+import AIController from "../entities/player/controller/AIController";
+import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 
 
 /**
@@ -48,7 +51,7 @@ import { NativeTools } from './ToolRegistry';
  * @param forcedBonusType 要强制应用的类型（若非空则强制应用此类型的奖励）
  */
 export function playerPickupBonusBox(
-    host: IBatrGame, player: Player, bonusBox: BonusBox,
+    host: IBatrGame, player: IPlayer, bonusBox: BonusBox,
     forcedBonusType: BonusType = bonusBox.bonusType
 ): void {
     if (player == null)
@@ -286,7 +289,7 @@ export const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: Block,
  * @param other 另一个玩家
  * @returns 是否「互为敌方」
  */
-export function isEnemy(player: Player, other: Player): boolean {
+export function isEnemy(player: IPlayer, other: IPlayer): boolean {
     return player.team.id != other.team.id;
 }
 
@@ -296,7 +299,7 @@ export function isEnemy(player: Player, other: Player): boolean {
  * @param other 另一个玩家
  * @returns 是否「互为友方」
  */
-export function isAlly(player: Player, other: Player): boolean {
+export function isAlly(player: IPlayer, other: IPlayer): boolean {
     return player.team.id == other.team.id;
 }
 
@@ -308,7 +311,7 @@ export function isAlly(player: Player, other: Player): boolean {
  * @returns 「是否能伤害」
  */
 export function projectileCanHurtOther(
-    projectile: Projectile, other: Player,
+    projectile: Projectile, other: IPlayer,
 ): boolean {
     return playerCanHurtOther(
         projectile.owner, other,
@@ -329,7 +332,7 @@ export function projectileCanHurtOther(
  * @returns 「是否能伤害」
  */
 export function playerCanHurtOther(
-    player: Player | null, other: Player,
+    player: IPlayer | null, other: IPlayer,
     canHurtEnemy: boolean,
     canHurtSelf: boolean,
     canHurtAlly: boolean,
@@ -359,8 +362,98 @@ export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {
                 // victim.finalRemoveHealth(attacker, wave.ownerTool, wave.attackerDamage); // TODO: 【2023-09-21 00:07:44】似乎还要由「攻击者伤害」计算「最终伤害」，后续再说
-                victim.removeHealth(wave.attackerDamage);
+                victim.removeHealth(wave.attackerDamage, wave.owner);
             }
         }
     }
+}
+
+/**
+ * （原「是否为AI玩家」）判断一个玩家是否「受AI操控」
+ * * 原理：使用「控制器是否为『AI控制器』」判断
+ */
+export function isAIControl(player: IPlayer): boolean {
+    return player.controller instanceof AIController;
+}
+
+/**
+ * 【玩家】获取一个玩家升级所需的经验
+ * * 算法：(等级+1)*5 + floor(等级/2)
+ * 
+ * 【2023-09-23 11:18:56】经验表：
+ * ```
+ * 0 => 5
+ * 1 => 10
+ * 2 => 16
+ * 3 => 21
+ * 4 => 27
+ * ```
+ * 
+ * @param level 所基于的等级
+ * @returns 该等级的最大经验（升级所需经验-1）
+ */
+export function getLevelUpExperience(level: uint): uint {
+    return (level + 1) * 5 + (level >> 1);
+}
+
+// 键盘控制相关 //
+
+export type nativeControlKeyConfig = {
+    // 移动键（多个） // ! 注意：是根据「任意维整数角」排列的，方向为「右左下上」
+    move: KeyCode[],
+    // 使用键
+    use: KeyCode,
+    // 选择键（WIP）
+    // select_left:KeyCode,
+    // select_right:KeyCode,
+}
+
+export type nativeControlKeyConfigs = {
+    [n: uint]: nativeControlKeyConfig
+}
+
+/**
+ * 存储（靠键盘操作的）玩家默认的「控制按键组」
+ */
+export const DEFAULT_PLAYER_CONTROL_KEYS: nativeControlKeyConfigs = {
+    // P1: WASD, Space 
+    1: {
+        move: [
+            keyCodes.D, // 右
+            keyCodes.A, // 左
+            keyCodes.S, // 下
+            keyCodes.W, // 上
+        ],
+        use: keyCodes.SPACE, // 用
+    },
+    // P2: ↑←↓→, numpad_0
+    2: {
+        move: [
+            keyCodes.RIGHT, // 右
+            keyCodes.LEFT,  // 左
+            keyCodes.DOWN,  // 下
+            keyCodes.UP,    // 上
+        ],
+        use: keyCodes.NUMPAD_0, // 用
+    },
+    // P3: UHJK, ]
+    3: {
+        move: [
+            keyCodes.K, // 右
+            keyCodes.H, // 左
+            keyCodes.J, // 下
+            keyCodes.U, // 上
+        ],
+        use: keyCodes.RIGHT_BRACKET, // 用
+    },
+    // P4: 8456, +
+    4: {
+        move: [
+            keyCodes.NUMPAD_6, // 右
+            keyCodes.NUMPAD_4, // 左
+            keyCodes.NUMPAD_5, // 下
+            keyCodes.NUMPAD_8, // 上
+        ],
+        use: keyCodes.NUMPAD_ADD, // 用
+    },
 }

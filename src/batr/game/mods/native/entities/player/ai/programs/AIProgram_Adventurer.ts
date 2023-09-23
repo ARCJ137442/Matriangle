@@ -108,438 +108,438 @@ export default class AIProgram_Adventurer implements IAIProgram {
 			// Find
 			_nearbyNodes = getNearbyNodesAndInitFGH(_leastNearbyNode, host, owner, targetNode);
 			// Test And Add
-			for each(_tempNode in _nearbyNodes) {
+			for (_tempNode of _nearbyNodes) {
 				// Touch End
-				if(_tempNode.equals(targetNode))
-				break;
+				if (_tempNode.equals(targetNode))
+					break;
 				// Add
-				if(!containNode(_tempNode, closeList) && !containNode(_tempNode, openList))
-				openList.push(_tempNode);
+				if (!containNode(_tempNode, closeList) && !containNode(_tempNode, openList))
+					openList.push(_tempNode);
+			}
 		}
+		// Now the _tempNode instanceof the succeed Node.
+		// Return
+		return _tempNode == null ? null : _tempNode.pathToRoot;
 	}
-			// Now the _tempNode instanceof the succeed Node.
-			// Return
-			return _tempNode == null ? null : _tempNode.pathToRoot;
-}
 
-protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
-	if (nodes.indexOf(node) >= 0)
-		return true;
-	for (let i in nodes) {
-		if (node.equals(nodes[i]))
+	protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
+		if (nodes.indexOf(node) >= 0)
 			return true;
-	}
-	return false;
-}
-
-protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
-	let i: int = nodes.indexOf(node);
-	if (i >= 0) {
-		// console.log('remove node'+node,'succeed!')
-		nodes.splice(i, 1);
-		return true;
-	}
-	// console.log('remove node'+node,'failed!')
-	return false;
-}
-
-protected static getNearbyNodesAndInitFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: PathNode): PathNode[] {
-	// Set Rot in mapDealNode
-	return [
-		initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
-		initFGH(mapDealNode(new PathNode(n.x - 1, n.y, n), host, GlobalRot.LEFT), host, owner, target),
-		initFGH(mapDealNode(new PathNode(n.x, n.y + 1, n), host, GlobalRot.DOWN), host, owner, target),
-		initFGH(mapDealNode(new PathNode(n.x, n.y - 1, n), host, GlobalRot.UP), host, owner, target)
-	];
-}
-
-protected static getLeastFNode(nodes: PathNode[]): PathNode {
-	if (nodes == null)
-		return null;
-	let _leastNode: PathNode = null;
-	let _leastF: int = int.MAX_VALUE;
-	for (let node of nodes) {
-		if (node == null)
-			continue;
-		if (node.F < _leastF) {
-			_leastNode = node;
-			_leastF = node.F;
+		for (let i in nodes) {
+			if (node.equals(nodes[i]))
+				return true;
 		}
-	}
-	return _leastNode;
-}
-
-protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
-	// Set Rot in mapDealNode
-	n.G = getPathWeight(n, host, owner);
-	n.H = n.getManhattanDistance(target) * 10; // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
-	return n;
-}
-
-protected static mapDealNode(n: PathNode, host: IBatrGame, fromRot: uint): PathNode {
-	n.fromRot = fromRot;
-	return host.lockIPointInMap(n) as PathNode;
-}
-
-/**
- * Equals The Variable G's coefficient
- * @param	node	The node.
- * @param	host	The host as Game.
- * @param	player	The player.
- * @return	A int will be multi with G.
- */
-protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
-	let damage: int = host.getBlockPlayerDamage(node.x, node.y);
-	if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
-		return 1000;
-	if (damage > 0)
-		return damage * 100;
-	return 0;
-}
-
-//========Dynamic A* PathFind========//
-static getDynamicNode(start: iPoint, target: iPoint, host: IBatrGame, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
-	let nearbyNodes: PathNode[] = [
-		initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
-		initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
-		initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
-		initDynamicNode(new PathNode(start.x, start.y - 1).setFromRot(GlobalRot.UP), host, owner, target)
-	];
-	let _leastNode: PathNode = null;
-	let _leastF: int = int.MAX_VALUE;
-	for (let node of nearbyNodes) {
-		if (node == null || pointInRemember(node, remember) ||
-			host.isKillZone(node.x, node.y))
-			continue;
-		if (node.F < _leastF) {
-			_leastNode = node;
-			_leastF = node.F;
-		}
-	}
-	return _leastNode;
-}
-
-static pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
-	if (p == null || r == null || r.length < 1)
 		return false;
-	return r[p.x][p.y];
-}
-
-static writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: boolean): void {
-	remember[x][y] = value;
-}
-
-static writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolean): void {
-	remember[p.x][p.y] = value;
-}
-
-static getEntityName(target: Entity): string {
-	if (target == null)
-		return 'null';
-	if (target instanceof Player)
-		return (target as Player).customName;
-	return target.toString();
-}
-
-/**
- * Trace if DEBUG=true.
- * @param	owner	the owner.
- * @param	message	the text without AIPlayer name.
- */
-static traceLog(owner: Player | null, message: string): void {
-	if(DEBUG)
-		console.log(owner.customName + ':', message);
-}
-
-protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, target: iPoint): PathNode {
-	return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
-}
-
-//============Instance Variables============//
-
-/**
- * This matrix contains point where it went.
- */
-protected _remember: Vector.<Boolean[]>;
-
-protected _closeTarget: Entity[];
-
-protected _lastTarget: Entity;
-
-// AI Judging about
-protected _pickupFirst: boolean = true;
-
-//============Constructor & Destructor============//
-public constructor() {
-	this._lastTarget = null;
-	this._closeTarget = new Array<Entity>();
-}
-
-//============Destructor Function============//
-public destructor(): void {
-	this._lastTarget = null;
-	this._closeTarget = null;
-}
-
-//============Instance Functions============//
-protected initRemember(host: IBatrGame): void {
-	this._remember = host.map.getMatrixBoolean();
-}
-
-protected resetRemember(): void {
-	for(let v of this._remember) {
-	for (let i in v) {
-		v[i] = false;
 	}
-}
-	// console.log('remember resetted!')
-}
 
-protected changeTarget(owner: AIPlayer, target: Entity): void {
-	if(this._lastTarget == target)
-	return;
-	this._lastTarget = target;
-	this.resetRemember();
-	if(owner.isPress_Use)
-	owner.addActionToThread(AIPlayerAction.RELEASE_KEY_USE);
-}
-
-protected resetTarget(): void {
-	this._lastTarget = null;
-	this.resetRemember();
-}
-
-protected inCloseTarget(target: Entity): boolean {
-	return this._closeTarget.indexOf(target) >= 0;
-}
-
-protected addCloseTarget(target: Entity): void {
-	if(!this.inCloseTarget(target))
-	this._closeTarget.push(target);
-}
-
-protected resetCloseTarget(): void {
-	this._closeTarget.splice(0, this._closeTarget.length);
-}
-
-/*========AI Tools========*/
-public getNearestBonusBox(ownerPoint: iPoint, host: IBatrGame): BonusBox {
-	// getManhattanDistance
-	let _nearestBox: BonusBox = null;
-	let _nearestDistance: int = int.MAX_VALUE;
-	let _tempDistance: int;
-	for (let box of host.entitySystem.bonusBoxes) {
-		if (box == null || this.inCloseTarget(box))
-			continue;
-		_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
-		if (_tempDistance < _nearestDistance) {
-			_nearestBox = box;
-			_nearestDistance = _tempDistance;
+	protected static removeNodeIn(node: PathNode, nodes: PathNode[]): boolean {
+		let i: int = nodes.indexOf(node);
+		if (i >= 0) {
+			// console.log('remove node'+node,'succeed!')
+			nodes.splice(i, 1);
+			return true;
 		}
+		// console.log('remove node'+node,'failed!')
+		return false;
 	}
-	return _nearestBox;
-}
 
-public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
-	// getManhattanDistance
-	let _nearestEnemy: Player = null;
-	let _nearestDistance: int = int.MAX_VALUE;
-	let _tempDistance: int;
-	let players: Player[] = host.getAlivePlayers();
-	for (let player of players) {
-		if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
-			player == null || this.inCloseTarget(player))
-			continue;
-		_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
-		if (_tempDistance < _nearestDistance) {
-			_nearestEnemy = player;
-			_nearestDistance = _tempDistance;
-		}
+	protected static getNearbyNodesAndInitFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: PathNode): PathNode[] {
+		// Set Rot in mapDealNode
+		return [
+			initFGH(mapDealNode(new PathNode(n.x + 1, n.y, n), host, GlobalRot.RIGHT), host, owner, target),
+			initFGH(mapDealNode(new PathNode(n.x - 1, n.y, n), host, GlobalRot.LEFT), host, owner, target),
+			initFGH(mapDealNode(new PathNode(n.x, n.y + 1, n), host, GlobalRot.DOWN), host, owner, target),
+			initFGH(mapDealNode(new PathNode(n.x, n.y - 1, n), host, GlobalRot.UP), host, owner, target)
+		];
 	}
-	return _nearestEnemy;
-}
 
-/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
-/*========AI Getter And Setter========*/
-public get label():String {
-	return AIProgram_Adventurer.LABEL;
-}
-
-public get labelShort():String {
-	return AIProgram_Adventurer.LABEL_SHORT;
-}
-
-public get referenceSpeed():uint {
-	return 5 * (1 + exMath.random(6));
-}
-
-/*========AI Program Main========*/
-public requestActionOnTick(player: AIPlayer): AIPlayerAction {
-	if (player == null)
-		return AIPlayerAction.NULL;
-	// Set Variables
-	let host: IBatrGame = player.host;
-	let ownerPoint: iPoint = player.gridPoint;
-	let lastTargetPlayer: Player = this._lastTarget as Player;
-	let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
-	// Init remember
-	if (this._remember == null) {
-		this.initRemember(host);
-	}
-	// Act
-	if (!player.hasAction) {
-		// Clear Invalid Target
-		if (this._lastTarget != null && !this._lastTarget.isActive ||
-			lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
-				lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
-			this.resetTarget();
-		}
-		//====Dynamic A*====//
-		// If Invalid Target,Get New Target
-		if (this._lastTarget == null || this._lastTarget == player) {
-			//========Find BonusBox========//
-			let target: Entity = null;
-			// set Player as Target
-			target = this._pickupFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
-			// if cannot find player
-			if (target == null) {
-				if (!this._pickupFirst && host.entitySystem.bonusBoxCount > 0)
-					target = getNearestBonusBox(ownerPoint, host);
-				else
-					target = getNearestEnemy(player, host);
-			}
-			if (target != null) {
-				this.changeTarget(player, target);
-				traceLog(player, 'turn target to ' + getEntityName(this._lastTarget));
-			}
-			// If all available target closed
-			else {
-				this.resetCloseTarget();
+	protected static getLeastFNode(nodes: PathNode[]): PathNode {
+		if (nodes == null)
+			return null;
+		let _leastNode: PathNode = null;
+		let _leastF: int = int.MAX_VALUE;
+		for (let node of nodes) {
+			if (node == null)
+				continue;
+			if (node.F < _leastF) {
+				_leastNode = node;
+				_leastF = node.F;
 			}
 		}
-		else {
-			let tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
-			// Attack Enemy
-			if (GlobalRot.isValidRot(tempRot) &&
-				detectCarryBlock(player) &&
-				lastTargetPlayer != null &&
-				toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
-				player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
-				// Reset
-				this.resetRemember();
-				// Turn
-				if (player.rot != tempRot)
-					player.addActionToThread(AIPlayerAction.getTurnActionFromEntityRot(tempRot));
-				// Press Use
-				if (player.toolReverseCharge) {
-					if (player.chargingPercent >= 1)
-						return AIPlayerAction.PRESS_KEY_USE;
-					else if (player.isPress_Use)
-						return AIPlayerAction.RELEASE_KEY_USE;
-				}
-				else if (!player.isPress_Use)
-					return AIPlayerAction.PRESS_KEY_USE;
-				traceLog(player, 'attack target ' + getEntityName(this._lastTarget));
+		return _leastNode;
+	}
+
+	protected static initFGH(n: PathNode, host: IBatrGame, owner: Player | null, target: iPoint): PathNode {
+		// Set Rot in mapDealNode
+		n.G = getPathWeight(n, host, owner);
+		n.H = n.getManhattanDistance(target) * 10; // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
+		return n;
+	}
+
+	protected static mapDealNode(n: PathNode, host: IBatrGame, fromRot: uint): PathNode {
+		n.fromRot = fromRot;
+		return host.lockIPointInMap(n) as PathNode;
+	}
+
+	/**
+	 * Equals The Variable G's coefficient
+	 * @param	node	The node.
+	 * @param	host	The host as Game.
+	 * @param	player	The player.
+	 * @return	A int will be multi with G.
+	 */
+	protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
+		let damage: int = host.getBlockPlayerDamage(node.x, node.y);
+		if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
+			return 1000;
+		if (damage > 0)
+			return damage * 100;
+		return 0;
+	}
+
+	//========Dynamic A* PathFind========//
+	static getDynamicNode(start: iPoint, target: iPoint, host: IBatrGame, owner: AIPlayer, remember: Vector.<Boolean[]>): PathNode {
+		let nearbyNodes: PathNode[] = [
+			initDynamicNode(new PathNode(start.x + 1, start.y).setFromRot(GlobalRot.RIGHT), host, owner, target),
+			initDynamicNode(new PathNode(start.x - 1, start.y).setFromRot(GlobalRot.LEFT), host, owner, target),
+			initDynamicNode(new PathNode(start.x, start.y + 1).setFromRot(GlobalRot.DOWN), host, owner, target),
+			initDynamicNode(new PathNode(start.x, start.y - 1).setFromRot(GlobalRot.UP), host, owner, target)
+		];
+		let _leastNode: PathNode = null;
+		let _leastF: int = int.MAX_VALUE;
+		for (let node of nearbyNodes) {
+			if (node == null || pointInRemember(node, remember) ||
+				host.isKillZone(node.x, node.y))
+				continue;
+			if (node.F < _leastF) {
+				_leastNode = node;
+				_leastF = node.F;
 			}
-			// Carry Block
-			else if (!detectCarryBlock(player) &&
-				detectBlockCanCarry(player, host.getBlockAttributes(player.getFrontIntX(), player.getFrontIntY()))) {
-				// Press Use
-				player.clearActionThread();
-				if (!player.isPress_Use)
-					return AIPlayerAction.PRESS_KEY_USE;
+		}
+		return _leastNode;
+	}
+
+	static pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
+		if (p == null || r == null || r.length < 1)
+			return false;
+		return r[p.x][p.y];
+	}
+
+	static writeRemember(remember: Vector.<Boolean[]>, x: uint, y: uint, value: boolean): void {
+		remember[x][y] = value;
+	}
+
+	static writeRememberPoint(remember: Vector.<Boolean[]>, p: iPoint, value: boolean): void {
+		remember[p.x][p.y] = value;
+	}
+
+	static getEntityName(target: Entity): string {
+		if (target == null)
+			return 'null';
+		if (target instanceof Player)
+			return (target as Player).customName;
+		return target.toString();
+	}
+
+	/**
+	 * Trace if DEBUG=true.
+	 * @param	owner	the owner.
+	 * @param	message	the text without AIPlayer name.
+	 */
+	static traceLog(owner: Player | null, message: string): void {
+		if (DEBUG)
+			console.log(owner.customName + ':', message);
+	}
+
+	protected static initDynamicNode(n: PathNode, host: IBatrGame, owner: AIPlayer, target: iPoint): PathNode {
+		return initFGH(host.lockIPointInMap(n) as PathNode, host, owner, target);
+	}
+
+	//============Instance Variables============//
+
+	/**
+	 * This matrix contains point where it went.
+	 */
+	protected _remember: Vector.<Boolean[]>;
+
+	protected _closeTarget: Entity[];
+
+	protected _lastTarget: Entity;
+
+	// AI Judging about
+	protected _pickupFirst: boolean = true;
+
+	//============Constructor & Destructor============//
+	public constructor() {
+		this._lastTarget = null;
+		this._closeTarget = new Array<Entity>();
+	}
+
+	//============Destructor Function============//
+	public destructor(): void {
+		this._lastTarget = null;
+		this._closeTarget = null;
+	}
+
+	//============Instance Functions============//
+	protected initRemember(host: IBatrGame): void {
+		this._remember = host.map.getMatrixBoolean();
+	}
+
+	protected resetRemember(): void {
+		for (let v of this._remember) {
+			for (let i in v) {
+				v[i] = false;
 			}
-			// Find Path
-			else {
-				//==Release Use==//
-				if (player.isPress_Use)
-					return AIPlayerAction.RELEASE_KEY_USE;
-				;
-				//==Decision==//
-				// Find Path
-				let finalNode: PathNode;
-				// Attack player
-				if (lastTargetPlayer != null) {
-					finalNode = getDynamicNode(
-						ownerPoint,
-						iPoint.getLineTargetPoint2(
-							player.gridX, player.gridY, this._lastTarget.gridX, this._lastTarget.gridY, true
-						),
-						host,
-						player,
-						this._remember
-					);
+		}
+		// console.log('remember resetted!')
+	}
+
+	protected changeTarget(owner: AIPlayer, target: Entity): void {
+		if (this._lastTarget == target)
+			return;
+		this._lastTarget = target;
+		this.resetRemember();
+		if (owner.isPress_Use)
+			owner.addActionToThread(AIPlayerAction.RELEASE_KEY_USE);
+	}
+
+	protected resetTarget(): void {
+		this._lastTarget = null;
+		this.resetRemember();
+	}
+
+	protected inCloseTarget(target: Entity): boolean {
+		return this._closeTarget.indexOf(target) >= 0;
+	}
+
+	protected addCloseTarget(target: Entity): void {
+		if (!this.inCloseTarget(target))
+			this._closeTarget.push(target);
+	}
+
+	protected resetCloseTarget(): void {
+		this._closeTarget.splice(0, this._closeTarget.length);
+	}
+
+	/*========AI Tools========*/
+	public getNearestBonusBox(ownerPoint: iPoint, host: IBatrGame): BonusBox {
+		// getManhattanDistance
+		let _nearestBox: BonusBox = null;
+		let _nearestDistance: int = int.MAX_VALUE;
+		let _tempDistance: int;
+		for (let box of host.entitySystem.bonusBoxes) {
+			if (box == null || this.inCloseTarget(box))
+				continue;
+			_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
+			if (_tempDistance < _nearestDistance) {
+				_nearestBox = box;
+				_nearestDistance = _tempDistance;
+			}
+		}
+		return _nearestBox;
+	}
+
+	public getNearestEnemy(owner: Player | null, host: IBatrGame): Player {
+		// getManhattanDistance
+		let _nearestEnemy: Player = null;
+		let _nearestDistance: int = int.MAX_VALUE;
+		let _tempDistance: int;
+		let players: Player[] = host.getAlivePlayers();
+		for (let player of players) {
+			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
+				player == null || this.inCloseTarget(player))
+				continue;
+			_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
+			if (_tempDistance < _nearestDistance) {
+				_nearestEnemy = player;
+				_nearestDistance = _tempDistance;
+			}
+		}
+		return _nearestEnemy;
+	}
+
+	/*====INTERFACE batr.Game.AI.IAIPlayerAI====*/
+	/*========AI Getter And Setter========*/
+	public get label(): String {
+		return AIProgram_Adventurer.LABEL;
+	}
+
+	public get labelShort(): String {
+		return AIProgram_Adventurer.LABEL_SHORT;
+	}
+
+	public get referenceSpeed(): uint {
+		return 5 * (1 + exMath.random(6));
+	}
+
+	/*========AI Program Main========*/
+	public requestActionOnTick(player: AIPlayer): AIPlayerAction {
+		if (player == null)
+			return AIPlayerAction.NULL;
+		// Set Variables
+		let host: IBatrGame = player.host;
+		let ownerPoint: iPoint = player.gridPoint;
+		let lastTargetPlayer: Player = this._lastTarget as Player;
+		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
+		// Init remember
+		if (this._remember == null) {
+			this.initRemember(host);
+		}
+		// Act
+		if (!player.hasAction) {
+			// Clear Invalid Target
+			if (this._lastTarget != null && !this._lastTarget.isActive ||
+				lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
+					lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
+				this.resetTarget();
+			}
+			//====Dynamic A*====//
+			// If Invalid Target,Get New Target
+			if (this._lastTarget == null || this._lastTarget == player) {
+				//========Find BonusBox========//
+				let target: Entity = null;
+				// set Player as Target
+				target = this._pickupFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
+				// if cannot find player
+				if (target == null) {
+					if (!this._pickupFirst && host.entitySystem.bonusBoxCount > 0)
+						target = getNearestBonusBox(ownerPoint, host);
+					else
+						target = getNearestEnemy(player, host);
 				}
-				else { // Default as Bonus
-					finalNode = host.lockIPointInMap(
-						getDynamicNode(
-							ownerPoint,
-							this._lastTarget.gridPoint,
-							host, player, this._remember
-						)
-					) as PathNode;
+				if (target != null) {
+					this.changeTarget(player, target);
+					traceLog(player, 'turn target to ' + getEntityName(this._lastTarget));
 				}
-				//==Execute==//
-				// Find Failed
-				if (finalNode == null) {
-					this.addCloseTarget(this._lastTarget);
-					this.resetTarget();
-					traceLog(player, 'finalNode==null,forget target');
-				}
-				// Find Success
+				// If all available target closed
 				else {
-					writeRememberPoint(this._remember, finalNode, true);
-					writeRememberPoint(this._remember, ownerPoint, true);
-					player.addActionToThread(
-						AIPlayerAction.getMoveActionFromEntityRot(
-							finalNode.fromRot
-						)
-					);
-					traceLog(player, 'findPath(' + getEntityName(this._lastTarget) + ') success!writeRememberAt:' + finalNode + ',' + ownerPoint);
+					this.resetCloseTarget();
+				}
+			}
+			else {
+				let tempRot: uint = GlobalRot.fromLinearDistance(this._lastTarget.entityX - player.entityX, this._lastTarget.entityY - player.entityY);
+				// Attack Enemy
+				if (GlobalRot.isValidRot(tempRot) &&
+					detectCarryBlock(player) &&
+					lastTargetPlayer != null &&
+					toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
+					player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
+					// Reset
+					this.resetRemember();
+					// Turn
+					if (player.rot != tempRot)
+						player.addActionToThread(AIPlayerAction.getTurnActionFromEntityRot(tempRot));
+					// Press Use
+					if (player.toolReverseCharge) {
+						if (player.chargingPercent >= 1)
+							return AIPlayerAction.PRESS_KEY_USE;
+						else if (player.isPress_Use)
+							return AIPlayerAction.RELEASE_KEY_USE;
+					}
+					else if (!player.isPress_Use)
+						return AIPlayerAction.PRESS_KEY_USE;
+					traceLog(player, 'attack target ' + getEntityName(this._lastTarget));
+				}
+				// Carry Block
+				else if (!detectCarryBlock(player) &&
+					detectBlockCanCarry(player, host.getBlockAttributes(player.getFrontIntX(), player.getFrontIntY()))) {
+					// Press Use
+					player.clearActionThread();
+					if (!player.isPress_Use)
+						return AIPlayerAction.PRESS_KEY_USE;
+				}
+				// Find Path
+				else {
+					//==Release Use==//
+					if (player.isPress_Use)
+						return AIPlayerAction.RELEASE_KEY_USE;
+					;
+					//==Decision==//
+					// Find Path
+					let finalNode: PathNode;
+					// Attack player
+					if (lastTargetPlayer != null) {
+						finalNode = getDynamicNode(
+							ownerPoint,
+							iPoint.getLineTargetPoint2(
+								player.gridX, player.gridY, this._lastTarget.gridX, this._lastTarget.gridY, true
+							),
+							host,
+							player,
+							this._remember
+						);
+					}
+					else { // Default as Bonus
+						finalNode = host.lockIPointInMap(
+							getDynamicNode(
+								ownerPoint,
+								this._lastTarget.gridPoint,
+								host, player, this._remember
+							)
+						) as PathNode;
+					}
+					//==Execute==//
+					// Find Failed
+					if (finalNode == null) {
+						this.addCloseTarget(this._lastTarget);
+						this.resetTarget();
+						traceLog(player, 'finalNode==null,forget target');
+					}
+					// Find Success
+					else {
+						writeRememberPoint(this._remember, finalNode, true);
+						writeRememberPoint(this._remember, ownerPoint, true);
+						player.addActionToThread(
+							AIPlayerAction.getMoveActionFromEntityRot(
+								finalNode.fromRot
+							)
+						);
+						traceLog(player, 'findPath(' + getEntityName(this._lastTarget) + ') success!writeRememberAt:' + finalNode + ',' + ownerPoint);
+					}
 				}
 			}
 		}
+		return AIPlayerAction.NULL;
 	}
-	return AIPlayerAction.NULL;
-}
 
-public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
-	return AIPlayerAction.NULL;
-}
-
-public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
-	// Hurt By Target
-	if (attacker != null && attacker != this._lastTarget && attacker != player &&
-		player.canUseToolHurtPlayer(attacker, player.tool)) {
-		this.changeTarget(player, attacker);
+	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		return AIPlayerAction.NULL;
 	}
-	return AIPlayerAction.NULL;
-}
 
-public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
-	this.resetTarget();
-	this.resetCloseTarget();
-	return AIPlayerAction.NULL;
-}
-
-public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
-	return AIPlayerAction.NULL;
-}
-
-public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
-	this.resetTarget();
-	return AIPlayerAction.NULL;
-}
-
-public requestActionOnMapTransform(player: AIPlayer): AIPlayerAction {
-	this.resetTarget();
-	return AIPlayerAction.NULL;
-}
-
-public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
-	return AIPlayerAction.NULL;
-}
+	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		// Hurt By Target
+		if (attacker != null && attacker != this._lastTarget && attacker != player &&
+			player.canUseToolHurtPlayer(attacker, player.tool)) {
+			this.changeTarget(player, attacker);
+		}
+		return AIPlayerAction.NULL;
 	}
+
+	public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+		this.resetTarget();
+		this.resetCloseTarget();
+		return AIPlayerAction.NULL;
+	}
+
+	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+		return AIPlayerAction.NULL;
+	}
+
+	public requestActionOnRespawn(player: AIPlayer): AIPlayerAction {
+		this.resetTarget();
+		return AIPlayerAction.NULL;
+	}
+
+	public requestActionOnMapTransform(player: AIPlayer): AIPlayerAction {
+		this.resetTarget();
+		return AIPlayerAction.NULL;
+	}
+
+	public requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction {
+		return AIPlayerAction.NULL;
+	}
+}
 }
 
 class PathNode extends iPoint {

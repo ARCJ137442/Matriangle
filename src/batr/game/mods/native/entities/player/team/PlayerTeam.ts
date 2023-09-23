@@ -43,12 +43,11 @@ export default class PlayerTeam implements IBatrJSobject<PlayerTeam> {
 
 	// JS对象 //
 	/** 直接输出所有属性 */
-	public toObject(): JSObject {
-		return {
-			id: this._id,
-			name: this._name,
-			color: this._color
-		};
+	public dumpToObject(target: JSObject = {}): JSObject {
+		target.id = this._id;
+		target.name = this._name;
+		target.color = this._color;
+		return target;
 	}
 
 	/** 使用「安全合并」从JS对象中加载值 */

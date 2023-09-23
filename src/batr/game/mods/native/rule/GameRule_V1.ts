@@ -498,11 +498,12 @@ export default class GameRule_V1 implements IGameRule {
 	 * 实现：遍历所有键值对，逐个存入
 	 * 
 	 * TODO: 对Map的存取问题
+	 * 
+	 * TODO: 通用的方法提取
 	 */
-	public toObject(): JSObject {
+	public dumpToObject(target: JSObject = {}): JSObject {
 		// filter
 		let k: key, v: any, v2: any;
-		let result: any = {};
 		for (k of this.allKeys) {
 			v = this.getRule(k);
 			// Make sure the property instanceof writable
@@ -513,7 +514,7 @@ export default class GameRule_V1 implements IGameRule {
 				case "string":
 				case "boolean":
 				case "symbol":
-					// result[k] = v; // ! 保持原有值，后面会写入
+					// target[k] = v; // ! 保持原有值，后面会写入
 					break;
 				case "undefined":
 					console.error(this, k, v)
@@ -522,16 +523,16 @@ export default class GameRule_V1 implements IGameRule {
 				case "object":
 					// TODO: 分类打包，通用化
 					// 尝试优先调用toObject方法，若没有（undefined），则合并为本身
-					v = (v as IBatrJSobject<any>)?.toObject?.() ?? v
+					v = (v as IBatrJSobject<any>)?.dumpToObject?.() ?? v
 					break;
 				case "function":
 					console.error(this, k, v)
 					throw new Error('暂不支持将函数打包成对象！')
 			}
-			result[k] = v;
-			console.log('Saving data', k, '=', result[k], '(' + v + ')');
+			target[k] = v;
+			console.log('Saving data', k, '=', target[k], '(' + v + ')');
 		}
-		return result;
+		return target;
 	}
 
 	public static fromJSON(obj: JSObject): GameRule_V1 {
@@ -656,7 +657,7 @@ export default class GameRule_V1 implements IGameRule {
 	//============Instance Functions============//
 	public reloadDefault(): void {
 		// ? 考虑完善copyFrom方法
-		this.copyFromObject(GameRule_V1.TEMPLATE.toObject());
+		this.copyFromObject(GameRule_V1.TEMPLATE.dumpToObject());
 		// this.copyFrom(GameRule_V1.TEMPLATE)
 	}
 
@@ -671,6 +672,6 @@ export default class GameRule_V1 implements IGameRule {
 console.log(
 	new GameRule_V1(),
 	GameRule_V1.TEMPLATE,
-	GameRule_V1.TEMPLATE.toObject(),
-	new GameRule_V1().copyFromObject(GameRule_V1.TEMPLATE.toObject()),
+	GameRule_V1.TEMPLATE.dumpToObject(),
+	new GameRule_V1().copyFromObject(GameRule_V1.TEMPLATE.dumpToObject()),
 )

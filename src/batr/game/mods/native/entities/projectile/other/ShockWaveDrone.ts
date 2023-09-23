@@ -14,6 +14,7 @@ import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalGameVariables";
 import Weapon from "../../../tool/Weapon";
 import { alignToGridCenter_P } from "../../../../../general/PosTransform";
+import Tool from "../../../tool/Tool";
 
 export default class ShockWaveDrone extends Projectile implements IEntityInGrid {
 
@@ -27,7 +28,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 
 	//============Instance Variables============//
 
-	protected _tool: Weapon;
+	protected _tool: Tool;
 	protected _weaponChargePercent: number;
 
 	protected _toolDirection: uint;
@@ -45,13 +46,13 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 		position: fPoint,
 		moveDirection: mRot,
 		toolDirection: mRot,
-		weapon: Weapon,
+		tool: Tool,
 		toolDamage: uint,
 		toolChargePercent: number
 	) {
 		super(owner, toolDamage, moveDirection);
 		this._position.copyFrom(position);
-		this._tool = weapon;
+		this._tool = tool;
 		this._weaponChargePercent = toolChargePercent;
 		this._toolDirection = toolDirection;
 		// this.shapeInit(shape: IBatrShape);
@@ -90,7 +91,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 					this._direction,
 					PROJECTILES_SPAWN_DISTANCE,
 				)
-				// 模拟使用
+				// 模拟使用 // ! 【2023-09-23 11:16:04】不限于「武器」！
 				host.playerUseToolAt(
 					this.owner,
 					this._tool,

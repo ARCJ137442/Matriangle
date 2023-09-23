@@ -1,4 +1,61 @@
-﻿export default class Game implements IBatrGame {
+﻿import { iPoint } from "../../common/geometricTools";
+import { IBatrShape } from "../../display/api/BatrDisplayInterfaces";
+import { DEFAULT_SIZE, DISPLAY_SIZE, DISPLAY_GRIDS, DEFAULT_SCALE } from "../../display/api/GlobalDisplayVariables";
+import MainFont from "../../display/api/fonts/MainFont";
+import FixedI18nText from "../../display/api/i18n/FixedI18nText";
+import I18nKey from "../../display/api/i18n/I18nKey";
+import I18nText from "../../display/api/i18n/I18nText";
+import I18ns from "../../display/api/i18n/I18ns";
+import IMapDisplayer from "../../display/api/map/IMapDisplayer";
+import Background from "../../display/main/Background";
+import BatrSubject from "../../display/main/BatrSubject";
+import I18nsChangeEvent from "../../display/menu/event/I18nsChangeEvent";
+import Menu from "../../display/menu/main/Menu";
+import BatrTextField from "../../display/menu/object/BatrTextField";
+import BonusBoxSymbol from "../../display/mods/native/entity/BonusBoxSymbol";
+import { int, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
+import { Sprite, DisplayObject } from "../../legacy/flash/display";
+import { getTimer } from "../../legacy/flash/utils";
+import Block, { BlockType } from "../api/block/Block";
+import BlockAttributes from "../api/block/BlockAttributes";
+import Effect from "../api/entity/Effect";
+import Entity from "../api/entity/Entity";
+import EntitySystem from "../api/entity/EntitySystem";
+import IMap from "../api/map/IMap";
+import GameRuleEvent from "../api/rule/GameRuleEvent";
+import { alignToGrid } from "../general/PosTransform";
+import EffectBlockLight from "../mods/native/entities/effect/EffectBlockLight";
+import EffectExplode from "../mods/native/entities/effect/EffectExplode";
+import EffectPlayerDeathFadeout from "../mods/native/entities/effect/EffectPlayerDeathFadeout";
+import EffectPlayerDeathLight from "../mods/native/entities/effect/EffectPlayerDeathLight";
+import EffectPlayerHurt from "../mods/native/entities/effect/EffectPlayerHurt";
+import EffectPlayerLevelup from "../mods/native/entities/effect/EffectPlayerLevelup";
+import EffectSpawn from "../mods/native/entities/effect/EffectSpawn";
+import EffectTeleport from "../mods/native/entities/effect/EffectTeleport";
+import BonusBox from "../mods/native/entities/item/BonusBox";
+import AIPlayer from "../mods/native/entities/player/AIPlayer";
+import Player from "../mods/native/entities/player/Player";
+import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
+import Projectile from "../mods/native/entities/projectile/Projectile";
+import BulletBasic from "../mods/native/entities/projectile/bullet/BulletBasic";
+import BulletNuke from "../mods/native/entities/projectile/bullet/BulletNuke";
+import BulletTracking from "../mods/native/entities/projectile/bullet/BulletTracking";
+import LaserAbsorption from "../mods/native/entities/projectile/laser/LaserAbsorption";
+import LaserBasic from "../mods/native/entities/projectile/laser/LaserBasic";
+import LaserPulse from "../mods/native/entities/projectile/laser/LaserPulse";
+import LaserTeleport from "../mods/native/entities/projectile/laser/LaserTeleport";
+import Lightning from "../mods/native/entities/projectile/other/Lightning";
+import ShockWaveBase from "../mods/native/entities/projectile/other/ShockWaveBase";
+import ThrownBlock from "../mods/native/entities/projectile/other/ThrownBlock";
+import Wave from "../mods/native/entities/projectile/other/Wave";
+import { BonusType } from "../mods/native/registry/BonusRegistry";
+import GameResult from "../mods/native/stat/GameResult";
+import GameStats from "../mods/native/stat/GameStats";
+import Tool from "../mods/native/tool/Tool";
+import { TICK_TIME_MS, PROJECTILES_SPAWN_DISTANCE, TOOL_MIN_CD } from "./GlobalGameVariables";
+import IBatrGame from "./IBatrGame";
+
+export default class Game implements IBatrGame {
 
 	// TODO: 🏗事件订阅、分派机制完善
 	protected _eventBus: Function[] = [];//EventBus;
@@ -962,6 +1019,7 @@
 	}
 
 	public moveInTestWithEntity(): void {
+		// TODO: 泛化为「遍历所有格点实体」
 		// All Player
 		for (let player of this._entitySystem.players) {
 			player.dealMoveInTest(player.entityX, player.entityY, true, false);
@@ -976,7 +1034,7 @@
 	}
 
 	/** Execute when Player Move in block */
-	public moveInTestPlayer(player: Player, isLocationChange: boolean = false): boolean {
+	public onPlayerWalkIn(player: Player, isLocationChange: boolean = false): boolean {
 		if (!player.isActive)
 			return false;
 		let x: int = player.gridX;
@@ -1003,8 +1061,8 @@
 				}
 			}
 			if (attributes.rotateWhenMoveIn) {
-				player.rot = ?//GlobalRot.randomWithout(player.rot); // TODO: 随机向某方向旋转
-					returnBoo = true;
+				player.rot = 1//GlobalRot.randomWithout(player.rot); // TODO: 随机向某方向旋转
+				returnBoo = true;
 			}
 		}
 		return returnBoo;
@@ -1325,10 +1383,10 @@
 			this.appendAI();
 		}
 		// Active Player
-		for each(player in this._entitySystem.players) {
+		for (player of this._entitySystem.players) {
 			player.isActive = true;
 		}
-		}
+	}
 
 	public teleportPlayerTo(player: Player, x: int, y: int, rotateTo: uint = GlobalRot.NULL, effect: boolean = false): Player {
 		player.isActive = false;
@@ -1486,452 +1544,452 @@
 
 		let p: any;
 
-		for each(p in players) {
-			if(p instanceof Player) {
+		for (p of players) {
+			if (p instanceof Player) {
 				_pv.push(p as Player);
 			}
 		}
-	// Test
-	for(let p1 of _pv) {
-		for (let p2 of _pv) {
-			if (p1 == p2)
-				continue;
+		// Test
+		for (let p1 of _pv) {
+			for (let p2 of _pv) {
+				if (p1 == p2)
+					continue;
 
-			if (this.hitTestOfPlayer(p1, p2))
-				return true;
+				if (this.hitTestOfPlayer(p1, p2))
+					return true;
+			}
 		}
-	}
 		// Return
 		return false;
 	}
 
 	public getHitPlayers(x: number, y: number): Player[] {
-	// Set
-	let returnV: Player[] = new Player[];
+		// Set
+		let returnV: Player[] = new Player[];
 
-	// Test
-	for (let player of this._entitySystem.players) {
-		if (this.hitTestPlayer(player, x, y)) {
-			returnV.push(player);
+		// Test
+		for (let player of this._entitySystem.players) {
+			if (this.hitTestPlayer(player, x, y)) {
+				returnV.push(player);
+			}
 		}
+		// Return
+		return returnV;
 	}
-	// Return
-	return returnV;
-}
 
 	public getHitPlayerAt(x: int, y: int): Player {
-	for (let player of this._entitySystem.players) {
-		if (this.hitTestPlayer(player, x, y)) {
-			return player;
+		for (let player of this._entitySystem.players) {
+			if (this.hitTestPlayer(player, x, y)) {
+				return player;
+			}
 		}
+		return null;
 	}
-	return null;
-}
 
 	public randomizeAllPlayerTeam(): void {
-	for(let player of this._entitySystem.players) {
-	this.randomizePlayerTeam(player);
-}
+		for (let player of this._entitySystem.players) {
+			this.randomizePlayerTeam(player);
+		}
 	}
 
 	public randomizePlayerTeam(player: Player): void {
-	let tempT: PlayerTeam, i: uint = 0;
-	do {
-		tempT = this.rule.randomTeam;
-	}
-		while(tempT == player.team && ++i < 0xf);
-player.team = tempT;
+		let tempT: PlayerTeam, i: uint = 0;
+		do {
+			tempT = this.rule.randomTeam;
+		}
+		while (tempT == player.team && ++i < 0xf);
+		player.team = tempT;
 	}
 
 	public setATeamToNotAIPlayer(team: PlayerTeam = null): void {
-	let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-	for(let player of this._entitySystem.players) {
-	if (!Player.isAI(player))
-		player.team = tempTeam;
-}
+		for (let player of this._entitySystem.players) {
+			if (!Player.isAI(player))
+				player.team = tempTeam;
+		}
 	}
 
 	public setATeamToAIPlayer(team: PlayerTeam = null): void {
-	let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
 
-	for(let player of this._entitySystem.players) {
-	if (Player.isAI(player))
-		player.team = tempTeam;
-}
+		for (let player of this._entitySystem.players) {
+			if (Player.isAI(player))
+				player.team = tempTeam;
+		}
 	}
 
 	public changeAllPlayerTool(tool: Tool = null): void {
-	if(tool == null)
-tool = Tool.RANDOM_AVAILABLE;
+		if (tool == null)
+			tool = Tool.RANDOM_AVAILABLE;
 
-for (let player of this._entitySystem.players) {
-	player.tool = tool;
-}
+		for (let player of this._entitySystem.players) {
+			player.tool = tool;
+		}
 	}
 
 	public changeAllPlayerToolRandomly(): void {
-	for(let player of this._entitySystem.players) {
-	player.tool = Tool.RANDOM_AVAILABLE;
+		for (let player of this._entitySystem.players) {
+			player.tool = Tool.RANDOM_AVAILABLE;
 
-	player.toolUsingCD = 0;
-}
+			player.toolUsingCD = 0;
+		}
 	}
 
 	public movePlayer(player: Player, rot: uint, distance: number): void {
-	// Detect
-	if(!player.isActive || !player.visible)
-	return;
+		// Detect
+		if (!player.isActive || !player.visible)
+			return;
 
-	/*For Debug:console.log('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
-				'pos 2:',player.getFrontX(distance),player.getFrontY(distance),
-				'pos 3:',player.getFrontIntX(distance),player.getFrontIntY(distance))
-	*/
-	player.rot = rot;
+		/*For Debug:console.log('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
+					'pos 2:',player.getFrontX(distance),player.getFrontY(distance),
+					'pos 3:',player.getFrontIntX(distance),player.getFrontIntY(distance))
+		*/
+		player.rot = rot;
 
-	if(this.testPlayerCanPassToFront(player))
-	player.setXY(player.frontX, player.frontY);
+		if (this.testPlayerCanPassToFront(player))
+			player.setXY(player.frontX, player.frontY);
 
-	this.onPlayerMove(player);
-}
+		this.onPlayerMove(player);
+	}
 
 	public playerUseTool(player: Player, rot: uint, chargePercent: number): void {
-	// Test CD
-	if(player.toolUsingCD > 0)
-	return;
-	// Set Variables
-	let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
-	let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
-	// Use
-	this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
-	// Set CD
-	player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : player.computeFinalCD(player.tool);
-}
+		// Test CD
+		if (player.toolUsingCD > 0)
+			return;
+		// Set Variables
+		let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
+		let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
+		// Use
+		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
+		// Set CD
+		player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : player.computeFinalCD(player.tool);
+	}
 
 	public playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
-	// Set Variables
-	let p: Projectile = null;
+		// Set Variables
+		let p: Projectile = null;
 
-	let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
+		let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
 
-	let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
+		let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
 
-	let frontBlock: Block;
+		let frontBlock: Block;
 
-	let laserLength: number = this.rule.defaultLaserLength;
+		let laserLength: number = this.rule.defaultLaserLength;
 
-	if(Tool.isIncludeIn(tool, Tool._LASERS) &&
-		!this._rule.allowLaserThroughAllBlock) {
-	laserLength = this.getLaserLength2(x, y, toolRot);
+		if (Tool.isIncludeIn(tool, Tool._LASERS) &&
+			!this._rule.allowLaserThroughAllBlock) {
+			laserLength = this.getLaserLength2(x, y, toolRot);
 
-	// -projectilesSpawnDistance
-}
-// Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
-// Summon Projectile
-switch (tool) {
-	case Tool.BULLET:
-		p = new BulletBasic(this, x, y, player);
-
-		break;
-	case Tool.NUKE:
-		p = new BulletNuke(this, x, y, player, chargePercent);
-
-		break;
-	case Tool.SUB_BOMBER:
-		p = new SubBomber(this, x, y, player, chargePercent);
-
-		break;
-	case Tool.TRACKING_BULLET:
-		p = new BulletTracking(this, x, y, player, chargePercent);
-
-		break;
-	case Tool.LASER:
-		p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
-
-		break;
-	case Tool.PULSE_LASER:
-		p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
-
-		break;
-	case Tool.TELEPORT_LASER:
-		p = new LaserTeleport(this, x, y, player, laserLength);
-
-		break;
-	case Tool.ABSORPTION_LASER:
-		p = new LaserAbsorption(this, x, y, player, laserLength);
-
-		break;
-	case Tool.WAVE:
-		p = new Wave(this, x, y, player, chargePercent);
-
-		break;
-	case Tool.BLOCK_THROWER:
-		let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
-		let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
-		frontBlock = this.getBlock(carryX, carryY);
-		if (player.isCarriedBlock) {
-			// Throw
-			if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
-				// Add Block
-				p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
-				// Clear
-				player.setCarriedBlock(null);
-			}
+			// -projectilesSpawnDistance
 		}
-		else if (chargePercent >= 1) {
-			// Carry
-			if (frontBlock != null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
-				player.setCarriedBlock(frontBlock, false);
-				this.setBlock(carryX, carryY, null);
-				// Effect
-				this.addBlockLightEffect2(centerX, centerY, frontBlock, true);
-			}
-		}
-		break;
-	case Tool.MELEE:
+		// Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
+		// Summon Projectile
+		switch (tool) {
+			case Tool.BULLET:
+				p = new BulletBasic(this, x, y, player);
 
-		break;
-	case Tool.LIGHTNING:
-		p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
-		break;
-	case Tool.SHOCKWAVE_ALPHA:
-		p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone);
-		break;
-	case Tool.SHOCKWAVE_BETA:
-		p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
-		break;
-}
-if (p != null) {
-	p.rot = toolRot;
-	this._entitySystem.registerProjectile(p);
-	this._projectileContainer.addChild(p);
-}
+				break;
+			case Tool.NUKE:
+				p = new BulletNuke(this, x, y, player, chargePercent);
+
+				break;
+			case Tool.SUB_BOMBER:
+				p = new SubBomber(this, x, y, player, chargePercent);
+
+				break;
+			case Tool.TRACKING_BULLET:
+				p = new BulletTracking(this, x, y, player, chargePercent);
+
+				break;
+			case Tool.LASER:
+				p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
+
+				break;
+			case Tool.PULSE_LASER:
+				p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
+
+				break;
+			case Tool.TELEPORT_LASER:
+				p = new LaserTeleport(this, x, y, player, laserLength);
+
+				break;
+			case Tool.ABSORPTION_LASER:
+				p = new LaserAbsorption(this, x, y, player, laserLength);
+
+				break;
+			case Tool.WAVE:
+				p = new Wave(this, x, y, player, chargePercent);
+
+				break;
+			case Tool.BLOCK_THROWER:
+				let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
+				let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
+				frontBlock = this.getBlock(carryX, carryY);
+				if (player.isCarriedBlock) {
+					// Throw
+					if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
+						// Add Block
+						p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
+						// Clear
+						player.setCarriedBlock(null);
+					}
+				}
+				else if (chargePercent >= 1) {
+					// Carry
+					if (frontBlock != null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
+						player.setCarriedBlock(frontBlock, false);
+						this.setBlock(carryX, carryY, null);
+						// Effect
+						this.addBlockLightEffect2(centerX, centerY, frontBlock, true);
+					}
+				}
+				break;
+			case Tool.MELEE:
+
+				break;
+			case Tool.LIGHTNING:
+				p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
+				break;
+			case Tool.SHOCKWAVE_ALPHA:
+				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone);
+				break;
+			case Tool.SHOCKWAVE_BETA:
+				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
+				break;
+		}
+		if (p != null) {
+			p.rot = toolRot;
+			this._entitySystem.registerProjectile(p);
+			this._projectileContainer.addChild(p);
+		}
 	}
 
 	protected getLaserLength(player: Player, rot: uint): uint {
-	return this.getLaserLength2(player.entityX, player.entityY, rot);
-}
+		return this.getLaserLength2(player.entityX, player.entityY, rot);
+	}
 
 	protected getLaserLength2(eX: number, eY: number, rot: uint): uint {
-	let vx: int = towardX(rot);
+		let vx: int = towardX(rot);
 
-	let vy: int = towardY(rot);
+		let vy: int = towardY(rot);
 
-	let cx: int, cy: int;
+		let cx: int, cy: int;
 
-	for (let i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
-		cx = PosTransform.alignToGrid(eX + vx * i);
+		for (let i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
+			cx = PosTransform.alignToGrid(eX + vx * i);
 
-		cy = PosTransform.alignToGrid(eY + vy * i);
+			cy = PosTransform.alignToGrid(eY + vy * i);
 
-		if (!this._map.getBlockAttributes(cx, cy).laserCanPass)
-			break;
+			if (!this._map.getBlockAttributes(cx, cy).laserCanPass)
+				break;
+		}
+		return i;
 	}
-	return i;
-}
 
 	public lockEntityInMap(entity: Entity): void {
-	let posNum: number, posMaxNum: uint, posFunc: Function;
+		let posNum: number, posMaxNum: uint, posFunc: Function;
 
-	for(let i: uint = 0; i < 2; i++) {
-	posNum = i == 0 ? entity.entityX : entity.entityY;
+		for (let i: uint = 0; i < 2; i++) {
+			posNum = i == 0 ? entity.entityX : entity.entityY;
 
-	posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
+			posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
 
-	posFunc = i == 0 ? entity.setX : entity.setY;
+			posFunc = i == 0 ? entity.setX : entity.setY;
 
-	if (posNum < 0) {
-		posFunc(posMaxNum + posNum);
-	}
-	if (posNum >= posMaxNum) {
-		posFunc(posNum - posMaxNum);
-	}
-}
+			if (posNum < 0) {
+				posFunc(posMaxNum + posNum);
+			}
+			if (posNum >= posMaxNum) {
+				posFunc(posNum - posMaxNum);
+			}
+		}
 	}
 
 	public lockPosInMap(posNum: number, returnAsX: boolean): number {
-	let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
+		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
-	if (posNum < 0)
-		return this.lockPosInMap(posMaxNum + posNum, returnAsX);
+		if (posNum < 0)
+			return this.lockPosInMap(posMaxNum + posNum, returnAsX);
 
-	else if (posNum >= posMaxNum)
-		return this.lockPosInMap(posNum - posMaxNum, returnAsX);
+		else if (posNum >= posMaxNum)
+			return this.lockPosInMap(posNum - posMaxNum, returnAsX);
 
-	else
-		return posNum;
-}
+		else
+			return posNum;
+	}
 
 	public lockIntPosInMap(posNum: int, returnAsX: boolean): int {
-	let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
+		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
 
-	if (posNum < 0)
-		return this.lockIntPosInMap(posMaxNum + posNum, returnAsX);
+		if (posNum < 0)
+			return this.lockIntPosInMap(posMaxNum + posNum, returnAsX);
 
-	else if (posNum >= posMaxNum)
-		return this.lockIntPosInMap(posNum - posMaxNum, returnAsX);
+		else if (posNum >= posMaxNum)
+			return this.lockIntPosInMap(posNum - posMaxNum, returnAsX);
 
-	else
-		return posNum;
-}
+		else
+			return posNum;
+	}
 
 	public lockIPointInMap(point: iPoint): iPoint {
-	if (point == null)
-		return null;
-	point.x = exMath.lockInt(point.x, this.mapWidth);
-	point.y = exMath.lockInt(point.y, this.mapHeight);
-	return point;
-}
+		if (point == null)
+			return null;
+		point.x = exMath.lockInt(point.x, this.mapWidth);
+		point.y = exMath.lockInt(point.y, this.mapHeight);
+		return point;
+	}
 
 	public clearPlayer(onlyDisplay: boolean = false): void {
-	// Display
-	while(this._playerContainer.numChildren > 0)
-	this._playerContainer.removeChildAt(0);
-	// Entity
-	if(!onlyDisplay)
+		// Display
+		while (this._playerContainer.numChildren > 0)
+			this._playerContainer.removeChildAt(0);
+		// Entity
+		if (!onlyDisplay)
 			this._entitySystem.clearPlayer();
-}
+	}
 
 	//======Entity Functions======//
 	public updateProjectilesColor(player: Player = null): void {
-	// null means update all projectiles
-	for(let projectile of this._entitySystem.projectile) {
-	if (player == null || projectile.owner == player) {
-		projectile.shapeInit(shape: IBatrShape);
-	}
-}
+		// null means update all projectiles
+		for (let projectile of this._entitySystem.projectile) {
+			if (player == null || projectile.owner == player) {
+				projectile.shapeInit(shape: IBatrShape);
+			}
+		}
 	}
 
 	public addBonusBox(x: int, y: int, type: BonusType): void {
-	// Cannot override
-	if(this.hasBonusBoxAt(x, y))
-	return;
-	// Execute
-	let bonusBox: BonusBox = new BonusBox(this, x, y, type);
-	this._entitySystem.registerBonusBox(bonusBox);
-	this._bonusBoxContainer.addChild(bonusBox);
-	// Stat
-	this._stat.bonusGenerateCount++;
-}
+		// Cannot override
+		if (this.hasBonusBoxAt(x, y))
+			return;
+		// Execute
+		let bonusBox: BonusBox = new BonusBox(this, x, y, type);
+		this._entitySystem.registerBonusBox(bonusBox);
+		this._bonusBoxContainer.addChild(bonusBox);
+		// Stat
+		this._stat.bonusGenerateCount++;
+	}
 
 	protected hasBonusBoxAt(x: int, y: int): boolean {
-	for (let box of this.entitySystem.bonusBoxes) {
-		if (box.gridX == x && box.gridY == y)
-			return true;
+		for (let box of this.entitySystem.bonusBoxes) {
+			if (box.gridX == x && box.gridY == y)
+				return true;
+		}
+		return false;
 	}
-	return false;
-}
 
 	public randomAddBonusBox(type: BonusType): void {
-	let bonusBox: BonusBox = new BonusBox(this, x, y, type);
-	let i: uint = 0, rX: int, rY: int;
-	do {
-		rX = this._map.randomX;
-		rY = this._map.randomY;
-	}
-		while(!this.testBonusBoxCanPlaceAt(rX, rY) && i < 0xff);
+		let bonusBox: BonusBox = new BonusBox(this, x, y, type);
+		let i: uint = 0, rX: int, rY: int;
+		do {
+			rX = this._map.randomX;
+			rY = this._map.randomY;
+		}
+		while (!this.testBonusBoxCanPlaceAt(rX, rY) && i < 0xff);
 
-	this.addBonusBox(rX, rY, type);
-}
+		this.addBonusBox(rX, rY, type);
+	}
 
 	public randomAddRandomBonusBox(): void {
-	this.randomAddBonusBox(this.rule.randomBonusEnable);
-}
+		this.randomAddBonusBox(this.rule.randomBonusEnable);
+	}
 
 	public fillBonusBox(): void {
-	for(let x: uint = 0; x <this.map.mapWidth; x++) {
-	for (let y: uint = 0; y < this.map.mapHeight; y++) {
-		if (this.testBonusBoxCanPlaceAt(x, y))
-			this.addBonusBox(x, y, this.rule.randomBonusEnable);
-	}
-}
+		for (let x: uint = 0; x < this.map.mapWidth; x++) {
+			for (let y: uint = 0; y < this.map.mapHeight; y++) {
+				if (this.testBonusBoxCanPlaceAt(x, y))
+					this.addBonusBox(x, y, this.rule.randomBonusEnable);
+			}
+		}
 	}
 
 	//======Effect Functions======//
 	public addEffectChild(effect: Effect): void {
-	if(effect.layer > 0)
-	this._effectContainerTop.addChild(effect);
+		if (effect.layer > 0)
+			this._effectContainerTop.addChild(effect);
 
-	else if(effect.layer == 0)
-	this._effectContainerMiddle.addChild(effect);
+		else if (effect.layer == 0)
+			this._effectContainerMiddle.addChild(effect);
 
-	else
+		else
 			this._effectContainerBottom.addChild(effect);
-}
+	}
 
 	public addSpawnEffect(x: number, y: number): void {
-	this._effectSystem.addEffect(new EffectSpawn(this, x, y));
-}
+		this._effectSystem.addEffect(new EffectSpawn(this, x, y));
+	}
 
 	public addTeleportEffect(x: number, y: number): void {
-	this._effectSystem.addEffect(new EffectTeleport(this, x, y));
-}
+		this._effectSystem.addEffect(new EffectTeleport(this, x, y));
+	}
 
 	public addPlayerDeathLightEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-	this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
-}
+		this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
+	}
 
 	public addPlayerDeathFadeoutEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-	this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
-}
+		this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
+	}
 
 	public addPlayerDeathLightEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
-	this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
-}
+		this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
+	}
 
 	public addPlayerDeathFadeoutEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
-	this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
-}
+		this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
+	}
 
 	public addPlayerLevelupEffect(x: number, y: number, color: uint, scale: number): void {
-	this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
-}
+		this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
+	}
 
 	public addBlockLightEffect(x: number, y: number, color: uint, alpha: uint, reverse: boolean = false): void {
-	this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
-}
+		this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
+	}
 
 	public addBlockLightEffect2(x: number, y: number, block: Block, reverse: boolean = false): void {
-	this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
-}
+		this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
+	}
 
 	public addPlayerHurtEffect(player: Player, reverse: boolean = false): void {
-	this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
-}
+		this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
+	}
 
 	//======Hook Functions======//
 	public onPlayerMove(player: Player): void {
-}
+	}
 
 	public onPlayerUse(player: Player, rot: uint, distance: number): void {
-}
+	}
 
 	public onPlayerHurt(attacker: Player, victim: Player, damage: uint): void {
-	// It's no meaningless of hurt NULL
-	if(victim == null)
-return;
+		// It's no meaningless of hurt NULL
+		if (victim == null)
+			return;
 
-// Set Stats
-if (this.rule.recordPlayerStats) {
-	victim.stats.damageBy += damage;
+		// Set Stats
+		if (this.rule.recordPlayerStats) {
+			victim.stats.damageBy += damage;
 
-	victim.stats.addDamageByPlayerCount(attacker, damage);
+			victim.stats.addDamageByPlayerCount(attacker, damage);
 
-	if (attacker != null) {
-		attacker.stats.causeDamage += damage;
+			if (attacker != null) {
+				attacker.stats.causeDamage += damage;
 
-		attacker.stats.addCauseDamagePlayerCount(victim, damage);
+				attacker.stats.addCauseDamagePlayerCount(victim, damage);
 
-		if (victim.isSelf(attacker))
-			victim.stats.causeDamageOnSelf += damage;
+				if (victim.isSelf(attacker))
+					victim.stats.causeDamageOnSelf += damage;
 
-		if (victim.isAlly(attacker))
-			victim.stats.damageByAlly += damage;
+				if (victim.isAlly(attacker))
+					victim.stats.damageByAlly += damage;
 
-		if (attacker.isAlly(victim))
-			attacker.stats.causeDamageOnAlly += damage;
-	}
-}
+				if (attacker.isAlly(victim))
+					attacker.stats.causeDamageOnAlly += damage;
+			}
+		}
 	}
 
 	/**
@@ -1941,161 +1999,161 @@ if (this.rule.recordPlayerStats) {
 	 * @param	damage
 	 */
 	public onPlayerDeath(attacker: Player, victim: Player, damage: uint): void {
-	// It's no meaningless of kill NULL
-	if(victim == null)
-return;
+		// It's no meaningless of kill NULL
+		if (victim == null)
+			return;
 
-// Clear Heal
-victim.heal = 0;
-// Add Effect
-this.addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
+		// Clear Heal
+		victim.heal = 0;
+		// Add Effect
+		this.addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
 
-this.addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
+		this.addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
 
-// Set Victim
-victim.visible = false;
+		// Set Victim
+		victim.visible = false;
 
-victim.isActive = false;
+		victim.isActive = false;
 
-// victim.turnAllKeyUp()
-victim.resetCD();
+		// victim.turnAllKeyUp()
+		victim.resetCD();
 
-victim.resetCharge();
-
-if (Player.isAI(victim))
-	(victim as AIPlayer).resetAITick();
-
-// Set Respawn
-let deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
-
-victim.setXY(this.rule.deadPlayerMoveToX, this.rule.deadPlayerMoveToY);
-
-victim.respawnTick = this.rule.defaultRespawnTime;
-
-victim.gui.visible = false;
-
-// Store Stats
-if (this.rule.recordPlayerStats) {
-	victim.stats.deathCount++;
-
-	if (attacker != null) {
-		// Attacker
-		attacker.stats.killCount++;
+		victim.resetCharge();
 
 		if (Player.isAI(victim))
-			attacker.stats.killAICount++;
+			(victim as AIPlayer).resetAITick();
 
-		attacker.stats.addKillPlayerCount(victim);
+		// Set Respawn
+		let deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
 
-		if (attacker.isAlly(victim))
-			attacker.stats.killAllyCount++;
+		victim.setXY(this.rule.deadPlayerMoveToX, this.rule.deadPlayerMoveToY);
 
-		// Victim
-		victim.stats.deathByPlayer++;
+		victim.respawnTick = this.rule.defaultRespawnTime;
 
-		if (Player.isAI(attacker))
-			victim.stats.deathByAI++;
+		victim.gui.visible = false;
 
-		if (victim.isSelf(attacker))
-			victim.stats.suicideCount++;
+		// Store Stats
+		if (this.rule.recordPlayerStats) {
+			victim.stats.deathCount++;
 
-		if (victim.isAlly(attacker))
-			victim.stats.deathByAllyCount++;
+			if (attacker != null) {
+				// Attacker
+				attacker.stats.killCount++;
 
-		victim.stats.addDeathByPlayerCount(attacker);
-	}
-}
-// Add Bonus By Rule
-if (this.rule.bonusBoxSpawnAfterPlayerDeath &&
-	(this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-	this.testCanPass(deadX, deadY, true, false, true, true, true)) {
-	this.addBonusBox(deadX, deadY, this.rule.randomBonusEnable);
-}
-// If Game End
-this.testGameEnd();
+				if (Player.isAI(victim))
+					attacker.stats.killAICount++;
+
+				attacker.stats.addKillPlayerCount(victim);
+
+				if (attacker.isAlly(victim))
+					attacker.stats.killAllyCount++;
+
+				// Victim
+				victim.stats.deathByPlayer++;
+
+				if (Player.isAI(attacker))
+					victim.stats.deathByAI++;
+
+				if (victim.isSelf(attacker))
+					victim.stats.suicideCount++;
+
+				if (victim.isAlly(attacker))
+					victim.stats.deathByAllyCount++;
+
+				victim.stats.addDeathByPlayerCount(attacker);
+			}
+		}
+		// Add Bonus By Rule
+		if (this.rule.bonusBoxSpawnAfterPlayerDeath &&
+			(this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
+			this.testCanPass(deadX, deadY, true, false, true, true, true)) {
+			this.addBonusBox(deadX, deadY, this.rule.randomBonusEnable);
+		}
+		// If Game End
+		this.testGameEnd();
 	}
 
 	public onPlayerRespawn(player: Player): void {
-	// Active
-	player.health = player.maxHealth;
-	player.isActive = true;
-	// Visible
-	player.visible = true;
-	player.gui.visible = true;
-	// Spread&Effect
-	this.respawnPlayer(player);
-}
+		// Active
+		player.health = player.maxHealth;
+		player.isActive = true;
+		// Visible
+		player.visible = true;
+		player.gui.visible = true;
+		// Spread&Effect
+		this.respawnPlayer(player);
+	}
 
 	public prePlayerLocationChange(player: Player, oldX: number, oldY: number): void {
-	this.moveOutTestPlayer(player, oldX, oldY);
-}
+		this.moveOutTestPlayer(player, oldX, oldY);
+	}
 
 	public onPlayerLocationChange(player: Player, newX: number, newY: number): void {
-	// Detect
-	if(!player.isActive || !player.visible)
-	return;
-	// TransForm Pos:Lock Player In Map
-	if(this.isOutOfMap(player.entityX, player.entityY))
-	this.lockEntityInMap(player);
-	player.dealMoveInTestOnLocationChange(newX, newY, true, true);
-	this.bonusBoxTest(player, newX, newY);
-}
+		// Detect
+		if (!player.isActive || !player.visible)
+			return;
+		// TransForm Pos:Lock Player In Map
+		if (this.isOutOfMap(player.entityX, player.entityY))
+			this.lockEntityInMap(player);
+		player.dealMoveInTestOnLocationChange(newX, newY, true, true);
+		this.bonusBoxTest(player, newX, newY);
+	}
 
 	public onPlayerTeamsChange(event: GameRuleEvent): void {
-	this.randomizeAllPlayerTeam();
-}
+		this.randomizeAllPlayerTeam();
+	}
 
 	public onPlayerLevelup(player: Player): void {
-	let color: uint;
-	let i: uint = 0;
-	let nowE: uint = exMath.random(4);
-	// Add buff of cd,resistance,radius,damage
-	while(i < 3) {
-		switch (nowE) {
-			case 1:
-				color = BonusBoxSymbol.BUFF_CD_COLOR;
-				player.buffCD += this.rule.bonusBuffAdditionAmount;
-				break;
-			case 2:
-				color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-				player.buffResistance += this.rule.bonusBuffAdditionAmount;
-				break;
-			case 3:
-				color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-				player.buffRadius += this.rule.bonusBuffAdditionAmount;
-				break;
-			default:
-				color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-				player.buffDamage += this.rule.bonusBuffAdditionAmount;
+		let color: uint;
+		let i: uint = 0;
+		let nowE: uint = exMath.random(4);
+		// Add buff of cd,resistance,radius,damage
+		while (i < 3) {
+			switch (nowE) {
+				case 1:
+					color = BonusBoxSymbol.BUFF_CD_COLOR;
+					player.buffCD += this.rule.bonusBuffAdditionAmount;
+					break;
+				case 2:
+					color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
+					player.buffResistance += this.rule.bonusBuffAdditionAmount;
+					break;
+				case 3:
+					color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
+					player.buffRadius += this.rule.bonusBuffAdditionAmount;
+					break;
+				default:
+					color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
+					player.buffDamage += this.rule.bonusBuffAdditionAmount;
+			}
+			nowE = (nowE + 1) & 3;
+			i++;
+			// Add Effect
+			this.addPlayerLevelupEffect(player.entityX + (i & 1) - 0.5, player.entityY + (i >> 1) - 0.5, color, 0.75);
 		}
-		nowE = (nowE + 1) & 3;
-		i++;
-		// Add Effect
-		this.addPlayerLevelupEffect(player.entityX + (i & 1) - 0.5, player.entityY + (i >> 1) - 0.5, color, 0.75);
 	}
-}
 
 	public onRandomTick(x: int, y: int): void {
-	// BonusBox(Supply)
-	if(this.testCanPass(x, y, true, false, false, true, true)) {
-	if (this.getBlockAttributes(x, y).supplyingBonus ||
-		((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-			Utils.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
-		this.addBonusBox(x, y, this.rule.randomBonusEnable);
-	}
-}
-// Other
-switch (this.getBlockType(x, y)) {
-	// TODO: 日后在这里建立分派机制
+		// BonusBox(Supply)
+		if (this.testCanPass(x, y, true, false, false, true, true)) {
+			if (this.getBlockAttributes(x, y).supplyingBonus ||
+				((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
+					Utils.randomBoolean2(this.rule.bonusBoxSpawnChance))) {
+				this.addBonusBox(x, y, this.rule.randomBonusEnable);
+			}
+		}
+		// Other
+		switch (this.getBlockType(x, y)) {
+			// TODO: 日后在这里建立分派机制
 
-}
+		}
 	}
 
 	protected onBlockUpdate(x: int, y: int, block: Block): void {
-	this.updateMapDisplay(x, y, block);
-	this.updateMapSize();
-	this.moveInTestWithEntity();
-}
+		this.updateMapDisplay(x, y, block);
+		this.updateMapSize();
+		this.moveInTestWithEntity();
+	}
 
 	/** 基于「方块类型」实现多分派：使用「哈希值+字典」的形式 */
 	protected _GameEventPatcher

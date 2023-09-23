@@ -18,7 +18,7 @@ import { mRot } from "../../../../../general/GlobalRot";
  * * + 无需充能
  * * + 存活时间长（2s）
  * * + 每1/4秒对其上可伤害实体造成伤害
- *   * 伤害可以被转化为其所有者的「附加血量」
+ *   * 伤害可以被转化为其所有者的「附加生命值」
  */
 export default class LaserAbsorption extends Laser {
 

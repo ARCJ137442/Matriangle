@@ -265,10 +265,18 @@ export default interface IBatrGame {
 
 	lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void
 
-	moveInTestWithEntity(): void
+	/**
+	 * * 应用：当方块更新时，对所有处于其上的「格点实体」回调事件
+	 */
+	blockTestWithEntitiesInGrid(): void
 
-	/** Execute when Player Move in block */
-	moveInTestPlayer(player: Player, isLocationChange: boolean/* = false*/): boolean
+	/**
+	 * 当玩家「进入某个位置」（玩家当前位置）时触发的事件
+	 * @param player 「进入某个方块位置」的玩家
+	 * @param isLocationChange 是否为「位置改变」引起的
+	 * @returns 是否有对玩家的作用（用于向玩家反馈，重置「伤害冷却」）
+	 */
+	onPlayerWalkIn(player: Player, isLocationChange: boolean/* = false*/): boolean
 
 	/**
 	 * Operate damage to player by blockAtt.playerDamage,

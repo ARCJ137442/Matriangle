@@ -5,6 +5,7 @@ import CommonSystem from "../template/CommonSystem";
 import { IBatrDisplayable, IBatrDisplayableContainer, IBatrShapeContainer } from "../../../display/api/BatrDisplayInterfaces";
 import { int } from "../../../legacy/AS3Legacy";
 import Player from "../../mods/native/entities/player/Player";
+import IPlayer from "../../mods/native/entities/player/IPlayer";
 
 /**
  * Use for manage entities in game.
@@ -41,7 +42,7 @@ export default class EntitySystem extends CommonSystem<Entity> implements IBatrD
     }
 
     // 快捷获取各类实体
-    public get players(): Player[] {
+    public get players(): IPlayer[] {
         throw new Error("Method not implemented.");
     }
 
