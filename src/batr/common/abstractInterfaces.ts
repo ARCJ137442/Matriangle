@@ -87,4 +87,5 @@ export interface ISelfModifyingGenerator<Type> {
 	 * @param args 外部参数（可在具体实现中限定更多）
 	 */
 	generateNext(...args: any[]): Type;
+
 }

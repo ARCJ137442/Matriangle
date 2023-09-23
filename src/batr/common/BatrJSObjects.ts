@@ -121,12 +121,15 @@ export function fastSaveJSObject_dash<T>(this_: T, target: JSObject, allOwnPrope
  * * ②可以在键值对映射里添加方法
  */
 export type JSObjectifyMap<T> = {
-    [propertyKey: key]: { // 源对象中要对象化的属性
-        JSObject_key: key, // 映射到JS对象上的键
-        propertyType: string | Class, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
-        blankConstructor?: () => IBatrJSobject<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
-        propertyConverter: (v: JSObjectValue) => JSObjectValue, // 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
-    }
+    [propertyKey: key]: JSObjectifyMapProperty<T>
+}
+
+export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
+    JSObject_key: key, // 映射到JS对象上的键
+    propertyType: string | Class, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
+    propertyConverter: (v: JSObjectValue) => JSObjectValue, // 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
+    loadRecursiveCriterion: (v: JSObjectValue) => boolean, // 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
+    blankConstructor?: () => IBatrJSobject<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
 }
 
 /**
@@ -157,7 +160,10 @@ export function uniJSObjectify<T extends IBatrJSobject<T>>(
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 转换值
-        if (objectifyMap[propertyKey]?.blankConstructor !== undefined) {
+        if (
+            objectifyMap[propertyKey]?.blankConstructor !== undefined && // 第一个看「空白构造函数」是否定义
+            property?.objectifyMap !== undefined // 第二个看「对象化映射表」是否定义
+        ) {
             // 可递归
             target[JSObjectKey] = uniJSObjectify(
                 property, // 从当前属性值开始
@@ -200,14 +206,17 @@ export function uniLoadJSObject<T extends IBatrJSobject<T>>(
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 没属性⇒警告，跳过循环
-        if (!source.hasOwnProperty(JSObjectKey)) {
+        if (!source?.hasOwnProperty(JSObjectKey)) {
             console.warn('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
             continue;
         }
         // 获取（原始）值
         const rawProperty: any = source[JSObjectKey];
         // 转换值
-        if (objectifyMap[propertyKey]?.blankConstructor !== undefined) {
+        if (
+            objectifyMap[propertyKey]?.blankConstructor !== undefined && // 第一个条件：看「有无实现『白板构造函数』」
+            objectifyMap[propertyKey].loadRecursiveCriterion(rawProperty) // 再细致视察「这原始值有无『触发递归加载』的必要」
+        ) {
             // 创造一个该属性「原本类型」的空对象
             const blank: IBatrJSobject<any> = (objectifyMap[propertyKey].blankConstructor as () => IBatrJSobject<any>)();
             // 递归操作
@@ -226,4 +235,25 @@ export function uniLoadJSObject<T extends IBatrJSobject<T>>(
         }
     }
     return this_;
+}
+
+// 一些增进易用性的工具函数 //
+
+/** 判断「是否继续递归加载」恒真 */
+export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true
+
+export function fastGenerateJSObjectifyMapProperty<T>(
+    JSObject_key: key,
+    propertyType: string | Class,
+    propertyConverter: (v: JSObjectValue) => JSObjectValue,
+    loadRecursiveCriterion: (v: JSObjectValue) => boolean,
+    blankConstructor?: () => IBatrJSobject<any>,
+): JSObjectifyMapProperty<T> {
+    return {
+        JSObject_key: JSObject_key,
+        propertyType: propertyType,
+        propertyConverter: propertyConverter,
+        loadRecursiveCriterion: loadRecursiveCriterion,
+        blankConstructor: blankConstructor,
+    }
 }
