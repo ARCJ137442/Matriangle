@@ -1,7 +1,7 @@
-import { JSObject, JSObjectValue } from "../../../../common/BatrJSObjects";
+import { JSObject, JSObjectValue } from "../../../../common/JSObjectify";
 import { intMax } from "../../../../common/exMath";
 import { key, pushNReturn, safeMerge } from "../../../../common/utils";
-import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/BatrJSObjects';
+import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/JSObjectify';
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";
@@ -80,16 +80,16 @@ export default class Weapon extends Tool {
 	public get chargePercentInDrone(): number { return this._chargePercentInDrone; }
 
 	// JS对象 //
-	public dumpToObject(target: JSObject = {}): JSObject {
+	public saveToJSObject(target: JSObject = {}): JSObject {
 		// 先存入超类的属性
-		super.dumpToObject(target);
+		super.saveToJSObject(target);
 		// 再存入自身的独有属性
 		return fastSaveJSObject_dash(this, target, Weapon.ALL_OWN_PROPERTY_NAMES)
 	}
 
-	public copyFromObject(source: JSObject): Tool {
+	public loadFromJSObject(source: JSObject): Tool {
 		// 先载入超类的属性
-		super.copyFromObject(source);
+		super.loadFromJSObject(source);
 		// 再载入自身的独有属性
 		return fastLoadJSObject_dash(this, source, Weapon.ALL_OWN_PROPERTY_NAMES);
 	}

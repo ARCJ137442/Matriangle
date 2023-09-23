@@ -1,4 +1,4 @@
-﻿import { IBatrJSobject } from "../../../common/BatrJSObjects";
+﻿import { IJSObjectifiable } from "../../../common/JSObjectify";
 import { key } from "../../../common/utils";
 import NativeBonusTypes from "../../mods/native/registry/BonusRegistry";
 import IMap from "../map/IMap";
@@ -6,7 +6,7 @@ import IMap from "../map/IMap";
 /**
  * 定义统一、可扩展的「游戏规则」接口
  */
-export default interface IGameRule extends IBatrJSobject<IGameRule> {
+export default interface IGameRule extends IJSObjectifiable<IGameRule> {
 
 	//================Variable Management================//
 

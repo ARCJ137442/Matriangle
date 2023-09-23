@@ -1,8 +1,8 @@
-import { IBatrJSobject, JSObject } from "../../../../../../common/BatrJSObjects";
+import { IJSObjectifiable, JSObject } from "../../../../../../common/JSObjectify";
 import { safeMerge } from "../../../../../../common/utils";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 
-export default class PlayerTeam implements IBatrJSobject<PlayerTeam> {
+export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 
 	/**
 	 * 用于「区分敌我」的唯一识别标识
@@ -43,7 +43,7 @@ export default class PlayerTeam implements IBatrJSobject<PlayerTeam> {
 
 	// JS对象 //
 	/** 直接输出所有属性 */
-	public dumpToObject(target: JSObject = {}): JSObject {
+	public saveToJSObject(target: JSObject = {}): JSObject {
 		target.id = this._id;
 		target.name = this._name;
 		target.color = this._color;
@@ -51,7 +51,7 @@ export default class PlayerTeam implements IBatrJSobject<PlayerTeam> {
 	}
 
 	/** 使用「安全合并」从JS对象中加载值 */
-	public copyFromObject(obj: JSObject): PlayerTeam {
+	public loadFromJSObject(obj: JSObject): PlayerTeam {
 		this._id = safeMerge(this._name, obj?.id);
 		this._name = safeMerge(this._name, obj?.name);
 		this._color = safeMerge(this._color, obj?.color);

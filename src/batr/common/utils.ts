@@ -245,6 +245,22 @@ export function pushNReturn<T>(arr: T[], item: T): T {
 }
 
 /**
+ * 向一个对象添加一个属性，然后返回该属性
+ */
+export function addNReturn<T, K extends keyof T>(obj: T, key: K, value: T[K]): T[K] {
+	obj[key] = value;
+	return value;
+}
+
+/**
+ * 向一个对象添加一个属性，然后返回该属性的键
+ */
+export function addNReturnKey<T, K extends keyof T>(obj: T, key: K, value: T[K]): K {
+	obj[key] = value;
+	return key;
+}
+
+/**
  * 安全合并
  * * 判断旧值与新值`typeof`的类型是否相同，同⇒返回新值|异⇒报错
  * * 一般用于「安全从JS对象载入数据」如`copyFromObject`方法中

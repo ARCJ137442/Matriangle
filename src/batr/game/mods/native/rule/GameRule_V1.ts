@@ -11,7 +11,7 @@ import { HSVtoHEX } from "../../../../common/color";
 import { randomInWeightMap } from "../../../../common/utils";
 import { iPoint } from "../../../../common/geometricTools";
 import { NativeTools } from './../registry/ToolRegistry';
-import { IBatrJSobject, JSObject } from "../../../../common/BatrJSObjects";
+import { IJSObjectifiable, JSObject } from "../../../../common/JSObjectify";
 
 /**
  * 存储一系列与游戏相关的规则
@@ -501,7 +501,7 @@ export default class GameRule_V1 implements IGameRule {
 	 * 
 	 * TODO: 通用的方法提取
 	 */
-	public dumpToObject(target: JSObject = {}): JSObject {
+	public saveToJSObject(target: JSObject = {}): JSObject {
 		// filter
 		let k: key, v: any, v2: any;
 		for (k of this.allKeys) {
@@ -523,7 +523,7 @@ export default class GameRule_V1 implements IGameRule {
 				case "object":
 					// TODO: 分类打包，通用化
 					// 尝试优先调用toObject方法，若没有（undefined），则合并为本身
-					v = (v as IBatrJSobject<any>)?.dumpToObject?.() ?? v
+					v = (v as IJSObjectifiable<any>)?.saveToJSObject?.() ?? v
 					break;
 				case "function":
 					console.error(this, k, v)
@@ -537,11 +537,11 @@ export default class GameRule_V1 implements IGameRule {
 
 	public static fromJSON(obj: JSObject): GameRule_V1 {
 		let r: GameRule_V1 = new GameRule_V1();
-		r.copyFromObject(obj);
+		r.loadFromJSObject(obj);
 		return r;
 	}
 
-	public copyFromObject(obj: JSObject): IGameRule {
+	public loadFromJSObject(obj: JSObject): IGameRule {
 		let v: any;
 		for (let k in obj) {
 			if (!contains(this.allKeys, k)) {
@@ -657,7 +657,7 @@ export default class GameRule_V1 implements IGameRule {
 	//============Instance Functions============//
 	public reloadDefault(): void {
 		// ? 考虑完善copyFrom方法
-		this.copyFromObject(GameRule_V1.TEMPLATE.dumpToObject());
+		this.loadFromJSObject(GameRule_V1.TEMPLATE.saveToJSObject());
 		// this.copyFrom(GameRule_V1.TEMPLATE)
 	}
 
@@ -672,6 +672,6 @@ export default class GameRule_V1 implements IGameRule {
 console.log(
 	new GameRule_V1(),
 	GameRule_V1.TEMPLATE,
-	GameRule_V1.TEMPLATE.dumpToObject(),
-	new GameRule_V1().copyFromObject(GameRule_V1.TEMPLATE.dumpToObject()),
+	GameRule_V1.TEMPLATE.saveToJSObject(),
+	new GameRule_V1().loadFromJSObject(GameRule_V1.TEMPLATE.saveToJSObject()),
 )

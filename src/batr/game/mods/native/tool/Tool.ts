@@ -1,6 +1,6 @@
-import { IBatrJSobject, JSObject } from "../../../../common/BatrJSObjects";
+import { IJSObjectifiable, JSObject } from "../../../../common/JSObjectify";
 import { contains, key, pushNReturn, safeMerge } from "../../../../common/utils";
-import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/BatrJSObjects';
+import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/JSObjectify';
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Weapon from "./Weapon";
 
@@ -26,7 +26,7 @@ import Weapon from "./Weapon";
  * ! 【2023-09-23 11:45:07】现在不再使用「共用引用」的形式，改为「一个玩家，一个工具」
  * * 日后游戏机制的「随机武器」（初始分派、奖励箱……）也将使用「原型复制」的方式，而非「共用引用」的方法
  */
-export default abstract class Tool implements IBatrJSobject<Tool> {
+export default abstract class Tool implements IJSObjectifiable<Tool> {
 
 	//============Static Getter And Setter============//
 	/** （国际化文本）翻译时的共同父键 */
@@ -65,14 +65,14 @@ export default abstract class Tool implements IBatrJSobject<Tool> {
 	/**
 	 * 现在承载默认方法，子类必须super以承接父类信息
 	 */
-	public dumpToObject(target: JSObject = {}): JSObject {
+	public saveToJSObject(target: JSObject = {}): JSObject {
 		return fastSaveJSObject_dash(this, target, Tool.ALL_OWN_PROPERTY_NAMES);
 	}
 
 	/**
 	 * 现在承载默认方法，子类必须super以承接父类信息
 	 */
-	public copyFromObject(source: JSObject): Tool {
+	public loadFromJSObject(source: JSObject): Tool {
 		return fastLoadJSObject_dash(this, source, Tool.ALL_OWN_PROPERTY_NAMES);
 	}
 

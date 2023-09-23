@@ -1,5 +1,5 @@
 /**
- * 用于BaTr中各类对象到JS对象（再到JSON）的序列化
+ * 一个轻量级「JS对象化」库，用于各类对象到JS对象（再到JSON）的序列化
  */
 import { Class } from '../legacy/AS3Legacy';
 import { key, safeMerge } from './utils';
@@ -26,9 +26,9 @@ export type JSObject = {
 };
 
 /**
- * 定义一类「可序列化」成JS原生object的对象
+ * 定义一类「可对象化」成JS原生object的对象
  */
-export interface IBatrJSobject<T> {
+export interface IJSObjectifiable<T> {
 
     /**
      * 将该对象的信息加载到为通用可交换的object格式
@@ -42,14 +42,14 @@ export interface IBatrJSobject<T> {
      *
      * @param target 目标对象
      */
-    dumpToObject(target?: JSObject): JSObject;
+    saveToJSObject(target?: JSObject): JSObject;
 
     /**
      * 用object中的属性覆盖对象
      * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
      * @param source 源头对象
      */
-    copyFromObject(source: JSObject): T;
+    loadFromJSObject(source: JSObject): T;
 
     /**
      * 获取「通用对象化映射表」
@@ -129,7 +129,7 @@ export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
     propertyType: string | Class, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
     propertyConverter: (v: JSObjectValue) => JSObjectValue, // 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
     loadRecursiveCriterion: (v: JSObjectValue) => boolean, // 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
-    blankConstructor?: () => IBatrJSobject<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
+    blankConstructor?: () => IJSObjectifiable<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
 }
 
 /**
@@ -148,7 +148,7 @@ export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
  * @param target 
  * @returns 一个转换好的JS对象
  */
-export function uniJSObjectify<T extends IBatrJSobject<T>>(
+export function uniJSObjectify<T extends IJSObjectifiable<T>>(
     this_: T,
     objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
     target: JSObject = {}
@@ -196,7 +196,7 @@ export function uniJSObjectify<T extends IBatrJSobject<T>>(
  * @param objectifyMap 对象化映射表（同构逆用）
  * @param source 数据来源JS对象
  */
-export function uniLoadJSObject<T extends IBatrJSobject<T>>(
+export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
     this_: T,
     source: JSObject,
     objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
@@ -218,7 +218,7 @@ export function uniLoadJSObject<T extends IBatrJSobject<T>>(
             objectifyMap[propertyKey].loadRecursiveCriterion(rawProperty) // 再细致视察「这原始值有无『触发递归加载』的必要」
         ) {
             // 创造一个该属性「原本类型」的空对象
-            const blank: IBatrJSobject<any> = (objectifyMap[propertyKey].blankConstructor as () => IBatrJSobject<any>)();
+            const blank: IJSObjectifiable<any> = (objectifyMap[propertyKey].blankConstructor as () => IJSObjectifiable<any>)();
             // 递归操作
             (this_ as any)[propertyKey] = uniLoadJSObject(
                 blank,
@@ -242,12 +242,23 @@ export function uniLoadJSObject<T extends IBatrJSobject<T>>(
 /** 判断「是否继续递归加载」恒真 */
 export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true
 
+/**
+ * 根据位置参数快速构造一个「JS对象化映射属性表」
+ * * 无需再手动输入键名
+ * * 参数含义参考`JSObjectifyMapProperty`
+ * 
+ * @param JSObject_key 映射到JS对象上的键
+ * @param propertyType 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
+ * @param propertyConverter 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
+ * @param loadRecursiveCriterion 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
+ * @param blankConstructor 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
+ */
 export function fastGenerateJSObjectifyMapProperty<T>(
     JSObject_key: key,
     propertyType: string | Class,
     propertyConverter: (v: JSObjectValue) => JSObjectValue,
     loadRecursiveCriterion: (v: JSObjectValue) => boolean,
-    blankConstructor?: () => IBatrJSobject<any>,
+    blankConstructor?: () => IJSObjectifiable<any>,
 ): JSObjectifyMapProperty<T> {
     return {
         JSObject_key: JSObject_key,
