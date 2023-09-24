@@ -1,5 +1,5 @@
-import { IJSObjectifiable, JSObject, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, fastGenerateJSObjectifyMapProperty, loadRecursiveCriterion_true, uniLoadJSON, uniLoadJSObject, uniSaveJSON, uniSaveJSObject } from "../../../../../../common/JSObjectify";
-import { addNReturnKey, identity, key, safeMerge } from "../../../../../../common/utils";
+import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from "../../../../../../common/JSObjectify";
+import { key } from "../../../../../../common/utils";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 
 export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
@@ -8,8 +8,8 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	// JS对象 //
 
 	/** JS对象化映射表 */
-	public static readonly JS_OBJECTIFY_MAP: JSObjectifyMap<PlayerTeam> = {}
-	public get objectifyMap(): JSObjectifyMap<PlayerTeam> { return PlayerTeam.JS_OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
+	public get objectifyMap(): JSObjectifyMap { return PlayerTeam.OBJECTIFY_MAP }
 
 	/**
 	 * 用于「区分敌我」的唯一识别标识
@@ -17,10 +17,9 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	protected _id: string;
 	public get id(): string { return this._id; }
 	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
-		this.JS_OBJECTIFY_MAP,
+		this.OBJECTIFY_MAP,
 		'id', 'string',
 	)
-
 
 	/**
 	 * 队伍的内部/显示名称
@@ -28,7 +27,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	protected _name: string;
 	public get name(): string { return this._name; }
 	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
-		this.JS_OBJECTIFY_MAP,
+		this.OBJECTIFY_MAP,
 		'name', 'string',
 	)
 
@@ -38,7 +37,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	protected _color: uint;
 	public get color(): uint { return this._color; }
 	public static readonly key_color: key = fastAddJSObjectifyMapProperty_dashP(
-		this.JS_OBJECTIFY_MAP,
+		this.OBJECTIFY_MAP,
 		'color', 'number',
 	)
 
@@ -64,7 +63,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	 */
 	public static isTeamEqual(t1: PlayerTeam, t2: PlayerTeam): boolean {
 		// let k: keyof PlayerTeam
-		for (let k in this.JS_OBJECTIFY_MAP) {
+		for (let k in this.OBJECTIFY_MAP) {
 			// 只要有一个不全等，就判断不相等
 			if (t1[k as keyof PlayerTeam] !== t2[k as keyof PlayerTeam])
 				return false;
@@ -75,8 +74,8 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	//============Constructor & Destructor============//
 	public constructor(
 		color: uint = 0x000000,
-		id: string = String(color),
-		name: string = `#${color}`,
+		id: string = color.toString(16),
+		name: string = `#${id}`,
 	) {
 		this._id = id;
 		this._color = color;

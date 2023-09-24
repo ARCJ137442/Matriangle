@@ -61,56 +61,14 @@ export interface IJSObjectifiable<T> {
      * 
      * 参见`JSObjectifyInf`
      */
-    get objectifyMap(): JSObjectifyMap<T>;
+    get objectifyMap(): JSObjectifyMap;
+
+    /**
+     * 复制出一个新的「白板对象」
+     */
+    cloneBlank?(): T;
 
 }
-
-
-/**
- * 使用「前缀下划线」快速从JS对象中载入类属性
- *
- * ! 目前只能载入基础类型，内置的「其它类类型」还需要进一步研究（可能根据附加标识进行转换）
- *
- * @param this 取代先前各自类实现里的`this`对象
- * @param source 要从中载入属性的JS对象
- * @param allOwnPropertyKey 源类中要载入的所有属性之列表
- * @returns 载入好的「类对象」
- */
-export function fastLoadJSObject_dash<T>(this_: T, source: JSObject, allOwnPropertyKey: key[]): T {
-    for (let key in allOwnPropertyKey) {
-        // 同有属性⇒加载
-        if (source.hasOwnProperty(key)) {
-            (this_ as any)[`_${key}`] = safeMerge((this_ as any)[`_${key}`], source[key]);
-            console.log("已载入属性", key, "=", (this_ as any)[`_${key}`]);
-        }
-        // 缺少属性⇒警告
-        else
-            console.error("源对象", source, "缺乏属性", key);
-    }
-    return this_;
-}
-
-/**
- * 使用「前缀下划线」快速向JS对象存入类属性
- *
- * ! 目前只能存入基础类型，内置的「其它类类型」还需要进一步研究（可能根据附加标识进行转换）
- *
- * @param this 取代先前各自类实现里的`this`对象
- * @param source 要存入属性的JS对象
- * @param allOwnPropertyKey 源类中要存入的所有属性之列表
- * @returns 存入好的JS对象
- */
-export function fastSaveJSObject_dash<T>(this_: T, target: JSObject, allOwnPropertyKey: key[]): JSObject {
-    let value: any; // ! 可能是基础类型，也可能是复合对象
-    for (let key of allOwnPropertyKey) {
-        // 先获取键对应的内部变量值
-        value = (this_ as any)[`_${key}`]; // 先获取键对应的内部变量值
-        // 然后：有「序列化方法」&已成功序列化（非空）⇒使用这个目标——否则使用本身（处理数值等情况）
-        target[key] = value?.dumpToObject({}) ?? (this_ as any)[`_${key}`];
-    }
-    return target;
-}
-
 
 /**
  * 下面是「通用序列化机制」
@@ -124,18 +82,25 @@ export function fastSaveJSObject_dash<T>(this_: T, target: JSObject, allOwnPrope
  * * 更推广地，可以提供一个「propertyConverter函数」来实现相应的附加操作
  * ②无参数返回一个「模板对象」的「模板构造函数」，用于「新建一个对象，然后往里面塞值」
  * * ②可以在键值对映射里添加方法
+ * 
+ * !【2023-09-24 18:23:56】现在不需要加泛型了。。。
  */
-export type JSObjectifyMap<T> = {
-    [propertyKey: key]: JSObjectifyMapProperty<T>
+export type JSObjectifyMap = {
+    [propertyKey: key]: JSObjectifyMapProperty<any> // ! 这里要any，因为每个属性的类型可能是不同的
 }
 
-export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
+/**
+ * 源对象中要对象化的属性
+ * 
+ * ? 这个泛型<T>似乎没法在实质性上加上去
+ */
+export type JSObjectifyMapProperty<T> = {
     JSObject_key: key, // 映射到JS对象上的键
-    propertyType: string | Class, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
+    propertyType: string | Class | undefined, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
     propertyConverterS: (v: any) => any, // 预存储：在向JS对象存储原始值前，预处理其值。如：对数组内所有元素再次应用（可自定义的）转换
     propertyConverterL: (v: JSObjectValue) => any, // 预加载：在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数（有需求直接转换并赋值，如Map类型）
     loadRecursiveCriterion: (v: JSObjectValue) => boolean, // 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
-    blankConstructor?: () => IJSObjectifiable<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
+    blankConstructor?: (this_?: T) => IJSObjectifiable<any>, // 模板构造函数：（可能根据「父对象」）生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
 }
 
 /**
@@ -158,7 +123,7 @@ export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
 export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
     this_: T,
     target: JSObject = {},
-    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+    objectifyMap: JSObjectifyMap = this_.objectifyMap,
 ): JSObject {
     // 有专门的「对象化」方法⇒优先使用
     if (this_?.saveToJSObject !== undefined)
@@ -191,7 +156,7 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
     // 返回前检查：如果检查失败，则报错
     if (!verifyJSObject(target)) {
         console.error(this_, target)
-        throw new Error(target + "不是JS对象")
+        throw new Error(target.toString() + "不是JS对象")
     }
     // 返回以作管道操作
     return target;
@@ -217,7 +182,7 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
 export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
     this_: T,
     source: JSObject,
-    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+    objectifyMap: JSObjectifyMap = this_.objectifyMap,
 ): T {
     // 有专门的「对象化」方法⇒优先使用
     if (this_?.loadFromJSObject !== undefined)
@@ -239,7 +204,11 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
             objectifyMap[propertyKey].loadRecursiveCriterion(rawProperty) // 再细致视察「这原始值有无『触发递归加载』的必要」
         ) {
             // 创造一个该属性「原本类型」的空对象
-            const blank: IJSObjectifiable<any> = (objectifyMap[propertyKey].blankConstructor as () => IJSObjectifiable<any>)();
+            const blank: IJSObjectifiable<any> = (
+                objectifyMap[propertyKey].blankConstructor as
+                (this_?: any) => IJSObjectifiable<any>
+                // 先前已经判断好了
+            )(this_);
             // 递归操作
             (this_ as any)[propertyKey] = uniLoadJSObject(
                 blank,
@@ -249,9 +218,13 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
         }
         else {
             // 基础类型：过滤→设置
-            (this_ as any)[propertyKey] = safeMerge(
-                (this_ as any)[propertyKey], // 原先值的类型以作参考
-                objectifyMap[propertyKey].propertyConverterL(rawProperty) // 转换后的原始值 // !【2023-09-24 15:22:40】现在有可能是「任意类型」了
+            (this_ as any)[propertyKey] = (
+                objectifyMap[propertyKey].propertyType === undefined ? // 以`undefined`作通配符（不进行类型检查）
+                    objectifyMap[propertyKey].propertyConverterL(rawProperty) :
+                    safeMerge(
+                        (this_ as any)[propertyKey], // 原先值的类型以作参考
+                        objectifyMap[propertyKey].propertyConverterL(rawProperty) // 转换后的原始值 // !【2023-09-24 15:22:40】现在有可能是「任意类型」了
+                    )
             );
         }
     }
@@ -316,7 +289,7 @@ export function mapLoadJSObject<K, V>(
 // 与JSON联动 //
 export function uniSaveJSON<T extends IJSObjectifiable<T>>(
     this_: T,
-    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+    objectifyMap: JSObjectifyMap = this_.objectifyMap,
 ): string {
     return JSON.stringify(
         uniSaveJSObject(this_, {}, objectifyMap)
@@ -334,7 +307,7 @@ export function uniSaveJSON<T extends IJSObjectifiable<T>>(
 export function uniLoadJSON<T extends IJSObjectifiable<T>>(
     this_: T,
     JSONString: string,
-    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+    objectifyMap: JSObjectifyMap = this_.objectifyMap,
 ): T {
     return uniLoadJSObject(
         this_,
@@ -397,11 +370,11 @@ export function verifyJSObjectValue(value: any): boolean {
         case 'object':
             // 有构造器就非法
             if (
-                verifyJSObject(value) &&
                 (
                     Object.getPrototypeOf(value) === Object.prototype ||
                     Object.getPrototypeOf(value) === Array.prototype
-                )
+                ) &&
+                verifyJSObject(value)
             ) return true;
             console.error(value, '不是JS对象')
             console.log(
@@ -439,11 +412,11 @@ export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: J
  */
 export function fastGenerateJSObjectifyMapProperty<T>(
     JSObject_key: key,
-    propertyType: string | Class,
+    propertyType: string | Class | undefined,
     propertyConverterS: (v: any) => any,
     propertyConverterL: (v: JSObjectValue) => any,
     loadRecursiveCriterion: (v: JSObjectValue) => boolean,
-    blankConstructor?: () => IJSObjectifiable<any>,
+    blankConstructor?: (this_?: T) => IJSObjectifiable<any>,
 ): JSObjectifyMapProperty<T> {
     return {
         JSObject_key: JSObject_key,
@@ -464,13 +437,13 @@ export function fastGenerateJSObjectifyMapProperty<T>(
  * ! 注意：返回的是「不加下划线」的属性名
  */
 export function fastAddJSObjectifyMapProperty_dash<T>(
-    objectiveMap: JSObjectifyMap<T>,
+    objectiveMap: JSObjectifyMap,
     property_key: key,
-    propertyType: string | Class,
+    propertyType: string | Class | undefined,
     propertyConverterS: (v: any) => any,
     propertyConverterL: (v: JSObjectValue) => any,
     loadRecursiveCriterion: (v: JSObjectValue) => boolean,
-    blankConstructor?: () => IJSObjectifiable<any>,
+    blankConstructor?: (this_?: T) => IJSObjectifiable<any>,
 ): key {
     addNReturnKey(
         objectiveMap,
@@ -497,7 +470,7 @@ export function fastAddJSObjectifyMapProperty_dash<T>(
  * ! 注意：返回的是「不加下划线」的属性名
  */
 export function fastAddJSObjectifyMapProperty_dash2<T>(
-    objectiveMap: JSObjectifyMap<T>,
+    objectiveMap: JSObjectifyMap,
     property_key: key,
     propertyInstance: any,
     propertyConverterS: (v: any) => any,
@@ -527,7 +500,7 @@ export function fastAddJSObjectifyMapProperty_dash2<T>(
  * ! 注意：返回的是「不加下划线」的属性名
  */
 export function fastAddJSObjectifyMapProperty_dashP<T>(
-    objectiveMap: JSObjectifyMap<T>,
+    objectiveMap: JSObjectifyMap,
     property_key: key,
     propertyInstance: any,
 ): key {

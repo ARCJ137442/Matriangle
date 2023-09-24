@@ -1,11 +1,9 @@
-import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dashP } from "../../../../common/JSObjectify";
+import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from "../../../../common/JSObjectify";
 import { intMax } from "../../../../common/exMath";
-import { identity, key, pushNReturn, safeMerge } from "../../../../common/utils";
-import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/JSObjectify';
+import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
 import Tool from "./Tool";
-import { contains } from './../../../../common/utils';
 
 /**
  * 原`Tool`，现拆分为（暂时轻量级的）「武器」类
@@ -37,7 +35,7 @@ export default class Weapon extends Tool {
 
 	// JS对象 //
 	/** 复用「工具」的「对象化映射表」 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap<Weapon> = { ...Tool.OBJECTIFY_MAP };
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = { ...Tool.OBJECTIFY_MAP };
 
 	public static readonly key_defaultDamage: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,

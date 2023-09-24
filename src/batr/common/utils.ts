@@ -230,6 +230,17 @@ export function safeMerge<T>(oldVal: T, newVal: any): T {
 	throw new Error(`safeMerge: 旧值${oldVal}、新值${newVal}类型不同`);
 }
 
+/**
+ * 在赋值前检查类型是否一致，但是「软检查」
+ * * 何为「软」：可使用通配符`undefined`逃过类型检查
+ * * 应用：在要检查的类型是一个「不便检查的接口」时，使用通配符逃过检查
+ *   * 例如：在「要设置的JS对象」中，不会出现`undefined`
+ */
+export function softMerge<T>(oldVal: T, newVal: any | undefined): T {
+	if (newVal === undefined || typeof oldVal === typeof newVal) return newVal;
+	throw new Error(`safeMerge: 旧值${oldVal}、新值${newVal}类型不同`);
+}
+
 export function getPropertyInObjects(objects: object[], key: string): any[] {
 	let ra: any[] = new Array<any>();
 

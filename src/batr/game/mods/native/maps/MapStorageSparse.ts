@@ -1,6 +1,6 @@
 import { randInt, randIntBetween, randModWithout, randomBetween } from "../../../../common/exMath";
 import { iPoint } from "../../../../common/geometricTools";
-import { generateArray, identity, randomIn } from "../../../../common/utils";
+import { generateArray, identity, key, randomIn } from "../../../../common/utils";
 import { mRot, rotate_M, toOpposite_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
@@ -8,7 +8,7 @@ import Block, { BlockType } from "../../../api/block/Block";
 import { BLOCK_VOID } from "../blocks/Void";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { NativeBlockTypes } from "../registry/BlockTypeRegistry";
-import { JSObject, JSObjectifyMap } from "../../../../common/JSObjectify";
+import { JSObject, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true } from "../../../../common/JSObjectify";
 
 /**
  * 稀疏地图
@@ -21,10 +21,6 @@ import { JSObject, JSObjectifyMap } from "../../../../common/JSObjectify";
 export default class MapStorageSparse implements IMapStorage {
 
     //============Static Utils============//
-    /** 获取白板对象 */
-    public static getBlank(): MapStorageSparse {
-        return new MapStorageSparse(0);
-    }
 
     public static pointToIndex(p: iPoint): string {
         // ! （开发用）空值报错
@@ -44,6 +40,22 @@ export default class MapStorageSparse implements IMapStorage {
         return cachedTo.copyFromArgs(...s.map(int));
     }
 
+    // JS对象化 //
+
+    /**
+     * 获取白板对象（静态）
+     * * 产生一个零维地图
+     */
+    public static getBlank(): MapStorageSparse {
+        return new MapStorageSparse(0);
+    }
+    /** 复刻白板对象（实例） */
+    public cloneBlank(): IMapStorage { return MapStorageSparse.getBlank(); }
+
+    /** JS对象化映射表 */
+    public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+    public get objectifyMap(): JSObjectifyMap { return MapStorageSparse.OBJECTIFY_MAP; }
+
     /**
      * 用于存放「坐标字串: 方块对象」的字典
      * * 使用「稀疏映射」的方式实现「有必要才存储」的思想
@@ -51,13 +63,26 @@ export default class MapStorageSparse implements IMapStorage {
      * ! 在没有相应键时，会返回undefined
      */
     protected readonly _dict: { [key: string]: Block } = {};
+    public static readonly key_dict: key = fastAddJSObjectifyMapProperty_dash2(
+        this.OBJECTIFY_MAP,
+        'dict', undefined, // 复杂的「对象类型」同样没得精确审定
+        // TODO: ↓【2023-09-24 18:45:36】要从这两个函数里预加载出相应的「坐标-对象」键值对
+        identity,
+        identity,
+        loadRecursiveCriterion_false,
+        (): Block => NativeBlockTypes.VOID(),
+    );
 
     /**
      * 用于在「没有存储键」时返回的默认值
      * 
      * * 默认就是「空」
      * 
-     * ! 【20230910 11:16:05】现在强制这个值为「空」
+     * !【20230910 11:16:05】现在强制这个值为「空」
+     * 
+     * !【2023-09-24 18:38:02】现在这个值暂不参与对象化……
+     * TODO: ↑因为「方块对象化」就会涉及「到底是什么类」的问题，即涉及「内部引用」的问题
+     * * 💭牵一发而动全身
      */
     protected readonly _defaultBlock: Block = BLOCK_VOID;
 
@@ -66,6 +91,10 @@ export default class MapStorageSparse implements IMapStorage {
      */
     protected _nDim: uint;
     public get numDimension(): uint { return this._nDim }
+    public static readonly key_nDim: key = fastAddJSObjectifyMapProperty_dashP(
+        this.OBJECTIFY_MAP,
+        'nDim', 'number',
+    )
 
     /**
      * * 一系列为了明确概念的存取器方法
@@ -82,6 +111,8 @@ export default class MapStorageSparse implements IMapStorage {
      * 用于构建「随机结构生成」的「生成器函数」
      * 
      * ! `args`虽然在默认情况用不到，但可能会被后期修改
+     * 
+     * TODO: 对象化要把这个抛掉吗？函数对对象化而言简直是个灾难（暂不参与对象化）
      */
     public generatorF: (x: IMapStorage, ...args: any[]) => IMapStorage = identity<IMapStorage>;
 
@@ -92,23 +123,23 @@ export default class MapStorageSparse implements IMapStorage {
      */
     protected readonly _borderMax: iPoint;
     public get borderMax(): iPoint { return this._borderMax }
+    public static readonly key_borderMax: key = fastAddJSObjectifyMapProperty_dash(
+        this.OBJECTIFY_MAP,
+        'deadPlayerMoveTo', iPoint,
+        identity, identity,
+        loadRecursiveCriterion_true,
+        (): iPoint => new iPoint(),
+    );
+
     protected readonly _borderMin: iPoint;
     public get borderMin(): iPoint { return this._borderMin }
-
-    // JS对象化 //
-    public saveToJSObject(target: JSObject = {}): JSObject {
-        // TODO: 1 _dict
-        // TODO 2 border
-        // TODO 3 _defaultBlock
-        // TODO 3 _nDim
-        throw new Error("Method not implemented.");
-    }
-    public loadFromJSObject(source: JSObject): IMapStorage {
-        throw new Error("Method not implemented.");
-    }
-    public get objectifyMap(): JSObjectifyMap<IMapStorage> {
-        throw new Error("Method not implemented.");
-    }
+    public static readonly key_borderMin: key = fastAddJSObjectifyMapProperty_dash(
+        this.OBJECTIFY_MAP,
+        'deadPlayerMoveTo', iPoint,
+        identity, identity,
+        loadRecursiveCriterion_true,
+        (): iPoint => new iPoint(),
+    );
 
     //============Constructor & Destructor============//
 

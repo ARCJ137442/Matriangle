@@ -1,11 +1,10 @@
 import { fPoint, iPoint } from "../../../common/geometricTools";
-import { intRot, mRot } from "../../general/GlobalRot";
+import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import Entity from "../entity/Entity";
 import Player from "../../mods/native/entities/player/Player";
 import BlockAttributes from "../block/BlockAttributes";
 import IMapStorage from "./IMapStorage";
-import { IJSObjectifiable } from "../../../common/JSObjectify";
 
 
 /**

@@ -109,6 +109,11 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	clone(deep?: boolean/* = true*/): IMapStorage;
 
 	/**
+	 * 继承「JS对象化」接口，强制要求「复刻一个白板对象」
+	 */
+	cloneBlank(): IMapStorage;
+
+	/**
 	 * 从另一个地图中复制所有内容
 	 * * 方块
 	 * * 重生点

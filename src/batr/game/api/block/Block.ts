@@ -2,6 +2,7 @@ import { getClass } from "../../../common/utils";
 import { Class, uint } from "../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
+import { JSObjectifyMap } from "../../../common/JSObjectify";
 
 export type BlockType = Class;
 
@@ -10,8 +11,17 @@ export type BlockType = Class;
  * 
  * ! [20230908 21:13:57] The **Block** isn't contains information of "position"
  * ! which instanceof controlled by Game and Player
+ * 
+ * TODO: 【2023-09-24 18:42:16】这玩意儿也要参与序列化吗？
  */
 export default abstract class Block implements IBatrDisplayable {
+
+	// JS对象 //
+
+	/** JS对象化映射表 */
+	// TODO: 【2023-09-24 18:43:55】有待建设。一个方法是借助BlockType等对象存储「id」借以映射到类，再往各个类塞入「模板函数」（累）
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
+	public get objectifyMap(): JSObjectifyMap { return Block.OBJECTIFY_MAP }
 
 	//============Static============//
 	/** ! the original implement of `XXType` now will be combined as static variables and functions, or be concentrated to module `XXRegistry` */

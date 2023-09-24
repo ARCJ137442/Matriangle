@@ -37,8 +37,8 @@ export default class GameRule_V1 implements IGameRule {
 	/**
 	 * 格式：属性名/默认值/实例属性
 	 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap<GameRule_V1> = {}
-	public get objectifyMap(): JSObjectifyMap<GameRule_V1> { return GameRule_V1.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
+	public get objectifyMap(): JSObjectifyMap { return GameRule_V1.OBJECTIFY_MAP }
 
 	//====Player====//
 	protected static readonly d_playerCount: uint = 1;
@@ -429,7 +429,7 @@ export default class GameRule_V1 implements IGameRule {
 				]
 			)
 		},
-		loadRecursiveCriterion_true
+		loadRecursiveCriterion_false
 	);
 	protected _mapRandomPotentials: Map<IMap, number> = GameRule_V1.d_mapRandomPotentials;
 	public get mapRandomPotentials(): Map<IMap, number> { return this._mapRandomPotentials; }
@@ -437,12 +437,15 @@ export default class GameRule_V1 implements IGameRule {
 		this._mapRandomPotentials = value;
 	}
 
-	// TODO: 这些直接存储「地图」的数据，不好量化（或许需要一种「内部引用」的类型，以便「动态选择&绑定」）
+	// 这些直接存储「地图」的数据，不好量化（或许需要一种「内部引用」的类型，以便「动态选择&绑定」）
+	// !【2023-09-24 17:34:34】现在采用「值本位-原型复制」思路，每个地图都不强求使用「引用」，在加载时都「独一无二」
 	protected static readonly d_initialMap: IMap | null = null;
-	public static readonly key_initialMap: key = fastAddJSObjectifyMapProperty_dashP(
+	public static readonly key_initialMap: key = fastAddJSObjectifyMapProperty_dash(
 		this.OBJECTIFY_MAP,
-		'initialMap',
-		GameRule_V1.d_initialMap,
+		'initialMap', undefined /* 使用undefined通配，以避免「检查是否实现接口」 */,
+		identity, identity, // * 这里只需要设置「白板构造函数」
+		(v: JSObjectValue): boolean => v !== null, // 仅在非空时递归解析
+		(): IMap => Map_V1.getBlank(MapStorageSparse.getBlank()), // ! 还得靠这个「模板构造」
 	);
 	protected _initialMap: IMap | null = GameRule_V1.d_initialMap;
 	public get initialMap(): IMap | null { return this._initialMap; }

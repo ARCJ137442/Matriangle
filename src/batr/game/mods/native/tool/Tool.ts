@@ -34,8 +34,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	// JS对象 //
 
 	/** 存储「JS对象化映射表」 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap<Tool> = {};
-	public get objectifyMap(): JSObjectifyMap<Tool> { return Tool.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+	public get objectifyMap(): JSObjectifyMap { return Tool.OBJECTIFY_MAP }
 
 	/** 模板构造函数 */
 	public static newBlank(): Tool { return new Tool('undefined', 0, 0, false) };

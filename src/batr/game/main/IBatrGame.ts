@@ -1,7 +1,7 @@
 ﻿import { fPoint, iPoint } from "../../common/geometricTools";
 import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
-import { int, uint } from "../../legacy/AS3Legacy";
+import { Class, int, uint } from "../../legacy/AS3Legacy";
 import BlockAttributes from "../api/block/BlockAttributes";
 import Block, { BlockType } from "../api/block/Block";
 import IMap from "../api/map/IMap";
@@ -51,6 +51,15 @@ import { mRot } from "../general/GlobalRot";
 
 export default interface IBatrGame {
 
+	//============各种注册机制============//
+
+	// 技术性 //
+	/**
+	 * 作为一个「游戏服务端」，需要维护加载所有「字符串→类」的常量池
+	 */
+	get classNameConstantPool(): { [key: string]: Class }
+
+	// 地图 //
 	/**
 	 * 游戏中所有加载的地图
 	 * * 用于地图切换时在此中选择
@@ -61,8 +70,9 @@ export default interface IBatrGame {
 	get numLoadedMaps(): uint;
 
 
+
+
 	//============Instance Variables============//
-	// General
 
 	//============Instance Getter And Setter============//
 	//======Main Getters======//

@@ -153,10 +153,10 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block
     let i: uint = 0;
     do {
         randomRot = host.map.storage.randomForwardDirectionAt(position);
-        tPoint = host.map.logic.towardWithRot_FF(position, randomRot);
+        tPoint = host.map.towardWithRot_FF(position, randomRot);
         if (
-            host.map.logic.isInMap_I(position) ||
-            !host.map.logic.testCanPass_F(tPoint, false, true, false, false)
+            host.map.isInMap_I(position) ||
+            !host.map.testCanPass_F(tPoint, false, true, false, false)
         ) continue;
         p = new ThrownBlock(
             null, // 无主
@@ -188,7 +188,7 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
 export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
     let randomPoint: iPoint = host.map.storage.randomPoint;
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-    if (!host.map.logic.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
+    if (!host.map.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
         host.setBlock(randomPoint, newBlock); // * 后续游戏需要处理「方块更新事件」
         host.addBlockLightEffect2(
             alignToGridCenter_P(randomPoint, _temp_randomTick_ColorSpawner),
@@ -218,14 +218,14 @@ export const randomTick_LaserTrap: randomTickEventF = (
     let i: uint = 0;
     do {
         randomR = host.map.storage.randomForwardDirectionAt(position);
-        tp = host.map.logic.towardWithRot_FF(
+        tp = host.map.towardWithRot_FF(
             position,
             randomR, PROJECTILES_SPAWN_DISTANCE
         );
         entityP = alignToGridCenter_P(position, new fPoint()).addFrom(tp);
         entityX = entityP.x;
         entityY = entityP.y;
-        if (host.map.logic.isInMap_F(entityP))
+        if (host.map.isInMap_F(entityP))
             continue;
         laserLength = host.getLaserLength2(position, randomR);
         if (laserLength <= 0)
