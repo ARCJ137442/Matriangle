@@ -6,12 +6,11 @@ import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
-import { NativeTools } from "../../../registry/ToolRegistry";
-import Weapon from "../../../tool/Weapon";
 import Bullet from "./Bullet";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { projectileCanHurtOther } from "../../../registry/NativeGameMechanics";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 跟踪子弹
@@ -31,18 +30,17 @@ export default class BulletTracking extends Bullet {
 	protected _target: IPlayer | null = null;
 	protected _trackingFunction: Function = this.canBeTarget; // not the criterion
 	protected _scalePercent: number = 1;
-	protected _cachedTargets: Player[] = new Array<Player>();
+	protected _cachedTargets: IPlayer[] = [];
 
 	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
 	override get type(): EntityType { return NativeEntityTypes.BULLET_TRACKING; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint,
-		playersInGame: Player[], chargePercent: number
+		playersInGame: IPlayer[], chargePercent: number
 	) {
 		super(
 			owner,
@@ -66,12 +64,12 @@ export default class BulletTracking extends Bullet {
 	 * Cached some static properties, during the short lifespan of the bullet
 	 * * 因其短周期性&访问高频性，直接缓存一个数组，以缩小搜索范围
 	 */
-	protected cacheTargetsIn(players: Player[]): void {
+	protected cacheTargetsIn(players: IPlayer[]): void {
 		for (let player of players) {
 			if (player != null && // not null
 				(
 					this._owner == null ||
-					this._owner.canUseToolHurtPlayer(player, this.ownerTool) // TODO: 以后需要改成「实例无关」方法
+					projectileCanHurtOther(this, player) // TODO: 以后需要改成「实例无关」方法
 				) // 需可使用工具伤害
 			)
 				this._cachedTargets.push(player);
@@ -86,7 +84,7 @@ export default class BulletTracking extends Bullet {
 		let tempRot: mRot;
 		// 没目标⇒找目标
 		if (this._target == null) {
-			let player: Player;
+			let player: IPlayer;
 			// 根据缓存的目标开始检查，并择机开始跟踪
 			for (let i: int = this._cachedTargets.length - 1; i >= 0; i--) {
 				player = this._cachedTargets[i];
@@ -119,11 +117,11 @@ export default class BulletTracking extends Bullet {
 		super.onTick(host);
 	}
 
-	protected checkTargetInvalid(player: Player): boolean {
+	protected checkTargetInvalid(player: IPlayer): boolean {
 		return (
 			// player == null || // ! 非空，但在上下文中不会发生（减少重复判断）
 			player.isRespawning || // not respawning
-			(this._owner != null && !this._owner.canUseToolHurtPlayer(player, this.ownerTool)) // should can use it to hurt
+			(this._owner != null && !projectileCanHurtOther(this, player)) // should can use it to hurt
 		);
 	}
 
@@ -134,7 +132,7 @@ export default class BulletTracking extends Bullet {
 	 * @param player 所追踪的玩家
 	 * @returns 该玩家是否值得开启追踪
 	 */
-	protected canBeTarget(player: Player): boolean {
+	protected canBeTarget(player: IPlayer): boolean {
 		// * 遍历得到第一个坐标值相等的轴向（例：三维中x轴坐标相同，于是在yOz平面开始跟踪）
 		for (let i: uint = 0; i < player.position.nDim; i++) {
 			if (this._position_I[i] == player.position[i]) {
@@ -149,7 +147,7 @@ export default class BulletTracking extends Bullet {
 	 * @param player 被追踪的玩家
 	 * @returns 「绝对距离最小」维度的索引
 	 */
-	protected getTargetRot(player: Player): int {
+	protected getTargetRot(player: IPlayer): int {
 		// 先获取一个最小索引，代表「绝对距离最小」的轴向
 		let iMinAbsDistance: uint = this._position_I.indexOfAbsMinDistance(player.position)
 		// 然后根据轴向生成「任意维整数角」

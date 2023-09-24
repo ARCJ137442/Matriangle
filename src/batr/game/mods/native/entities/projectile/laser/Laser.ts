@@ -2,14 +2,13 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import IBatrGame from "../../../../../main/IBatrGame";
-import Weapon from "../../../tool/Weapon";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「激光」是
@@ -29,7 +28,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	public hasDamaged: boolean = false;
 
 	// * 两个「类型映射」属性
-	abstract override get type(): EntityType; // ? 是否要像`ownerTool`那样优化成「只读常量」 TODO: 性能测试ing
+	abstract override get type(): EntityType; // ? 是否要优化成「只读常量」 TODO: 性能测试ing
 
 	//============Constructor & Destructor============//
 	public constructor(

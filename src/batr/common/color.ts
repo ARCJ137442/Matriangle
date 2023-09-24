@@ -4,46 +4,49 @@
  * 0<=H<=360,0<=S<=100,0<=V<=100
  * 0x000000<=HEX<=0xffffff
  * */
+
+import { uint } from "../legacy/AS3Legacy";
+
 //========================Variables========================//
 
 /**
  * 0xRrGgBb
  */
-const defaultHEX: number = 0x000000;
+const defaultHEX: uint = 0x000000;
 
 /**
  * vec[R=0~255,G=0~255,B=0~255]
  */
-const defaultRGB: Array<number> = HEXtoRGB(defaultHEX);
+const defaultRGB: Array<uint> = HEXtoRGB(defaultHEX);
 
 /**
  * vec[H=0~360,S=0~100,V=0~100]
  */
-const defaultHSV: Array<number> = RGBtoHSV2(defaultRGB);
+const defaultHSV: Array<uint> = RGBtoHSV2(defaultRGB);
 
 //========================Functions========================//
 //====RGB >> HEX====//
-export function RGBtoHEX(R: number, G: number, B: number): number {
+export function RGBtoHEX(R: uint, G: uint, B: uint): uint {
 	if (isNaN(R + G + B))
 		return defaultHEX;
 	return snapRGBtoUint(R) << 16 | snapRGBtoUint(G) << 8 | snapRGBtoUint(B);
 }
 
-export function RGBtoHEX2(RGB: Array<number>): number {
+export function RGBtoHEX2(RGB: Array<uint>): uint {
 	if (RGB == null ||
 		RGB.length != 3)
 		return defaultHEX;
-	return RGBtoHEX(RGB[0] as number,
-		RGB[1] as number,
-		RGB[2] as number);
+	return RGBtoHEX(RGB[0] as uint,
+		RGB[1] as uint,
+		RGB[2] as uint);
 }
 
 //====HEX >> RGB====//
-export function HEXtoRGB(I: number): Array<number> {
-	let returnVec: Array<number> = new Array<number>(); // fixed length 3
-	let Re: number = snapRGB((I >> 16));
-	let Gr: number = snapRGB((I & 0x00ff00) >> 8);
-	let Bl: number = snapRGB(I & 0x0000ff);
+export function HEXtoRGB(I: uint): Array<uint> {
+	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
+	let Re: uint = snapRGB((I >> 16));
+	let Gr: uint = snapRGB((I & 0x00ff00) >> 8);
+	let Bl: uint = snapRGB(I & 0x0000ff);
 	returnVec[0] = Re;
 	returnVec[1] = Gr;
 	returnVec[2] = Bl;
@@ -51,18 +54,18 @@ export function HEXtoRGB(I: number): Array<number> {
 }
 
 //====RGB >> HSV====//
-export function RGBtoHSV(R: number, G: number, B: number): Array<number> {
+export function RGBtoHSV(R: uint, G: uint, B: uint): Array<uint> {
 	// Define Variables
 	// Lash Color To 0~100
-	let Re: number = snapRGB(R) / 2.55;
-	let Gr: number = snapRGB(G) / 2.55;
-	let Bl: number = snapRGB(B) / 2.55;
+	let Re: uint = snapRGB(R) / 2.55;
+	let Gr: uint = snapRGB(G) / 2.55;
+	let Bl: uint = snapRGB(B) / 2.55;
 	// Get Report
-	let max: number = Math.max(Re, Gr, Bl);
-	let min: number = Math.min(Re, Gr, Bl);
-	let maxin: number = max - min;
-	let H: number = 0, S: number = 0, V: number = 0;
-	let returnVec: Array<number> = new Array<number>(); // fixed length 3
+	let max: uint = Math.max(Re, Gr, Bl);
+	let min: uint = Math.min(Re, Gr, Bl);
+	let maxin: uint = max - min;
+	let H: uint = 0, S: uint = 0, V: uint = 0;
+	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
 	// Set Hue
 	if (maxin == 0)
 		H = NaN;
@@ -90,34 +93,34 @@ export function RGBtoHSV(R: number, G: number, B: number): Array<number> {
 	return returnVec;
 }
 
-export function RGBtoHSV2(RGB: Array<number>): Array<number> {
+export function RGBtoHSV2(RGB: Array<uint>): Array<uint> {
 	if (RGB == null ||
 		RGB.length != 3)
 		return defaultHSV;
-	let R: number = RGB[0];
-	let G: number = RGB[1];
-	let B: number = RGB[2];
+	let R: uint = RGB[0];
+	let G: uint = RGB[1];
+	let B: uint = RGB[2];
 	return RGBtoHSV(R, G, B);
 }
 
 //====HSV >> RGB====//
-export function HSVtoRGB(H: number, S: number, V: number): Array<number> {
+export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
 	// Define Variables
-	let r: number, g: number, b: number;
-	let returnVec: Array<number> = new Array<number>(); // fixed length 3
+	let r: uint, g: uint, b: uint;
+	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
 	// Get Report
-	let hu: number = snapH(H);
-	let sa: number = snapS(S);
-	let va: number = snapV(V);
+	let hu: uint = snapH(H);
+	let sa: uint = snapS(S);
+	let va: uint = snapV(V);
 	if (isNaN(hu))
 		r = g = b = va / 100;
 	else {
-		let i: number = Math.floor(hu / 60);
-		let f: number = hu / 60 - i;
-		let h: number = va / 100;
-		let p: number = h * (1 - sa / 100);
-		let q: number = h * (1 - f * sa / 100);
-		let t: number = h * (1 - (1 - f) * sa / 100);
+		let i: uint = Math.floor(hu / 60);
+		let f: uint = hu / 60 - i;
+		let h: uint = va / 100;
+		let p: uint = h * (1 - sa / 100);
+		let q: uint = h * (1 - f * sa / 100);
+		let t: uint = h * (1 - (1 - f) * sa / 100);
 		switch (i) {
 			case 0:
 				r = h;
@@ -163,64 +166,84 @@ export function HSVtoRGB(H: number, S: number, V: number): Array<number> {
 	return returnVec;
 }
 
-export function HSVtoRGB2(HSV: Array<number>): Array<number> {
+export function HSVtoRGB2(HSV: Array<uint>): Array<uint> {
 	if (HSV == null ||
 		HSV.length != 3)
 		return defaultRGB;
-	let H: number = HSV[0];
-	let S: number = HSV[1];
-	let V: number = HSV[2];
+	let H: uint = HSV[0];
+	let S: uint = HSV[1];
+	let V: uint = HSV[2];
 	return HSVtoRGB(H, S, V);
 }
 
 //====HEX >> HSV====//
-export function HEXtoHSV(I: number): Array<number> {
+export function HEXtoHSV(I: uint): Array<uint> {
 	return RGBtoHSV2(HEXtoRGB(I));
 }
 
 //====HSV >> HEX====//
-export function HSVtoHEX(H: number, S: number, V: number): number {
+export function HSVtoHEX(H: uint, S: uint, V: uint): uint {
 	return RGBtoHEX2(HSVtoRGB(H, S, V));
 }
 
-export function HSVtoHEX2(HSV: Array<number>): number {
+export function HSVtoHEX2(HSV: Array<uint>): uint {
 	return RGBtoHEX2(HSVtoRGB2(HSV));
 }
 
 //====Color Transform====//
-export function turnBrightnessTo(I: number, brightness: number): number {
-	return (Number(((I & 0xff0000) >> 16) * brightness) << 16 |
-		Number(((I & 0xff00) >> 8) * brightness) << 8 |
-		Number((I & 0x0000ff) * brightness));
+export function turnBrightnessTo(I: uint, brightness: number): uint {
+	return (
+		(((I & 0xff0000) >> 16) * brightness) << 16 |
+		(((I & 0x00ff00) >> 8) * brightness) << 8 |
+		(((I & 0x0000ff)) * brightness)
+	);
+}
+
+export function halfBrightnessTo(I: uint): uint {
+	/* return (
+		uint(((I & 0xff0000) >> 16) >> 1) << 16 |
+		uint(((I & 0x00ff00) >> 8) >> 1) << 8 |
+		uint(((I & 0x0000ff)) >> 1)
+	); */
+	/* return (
+		uint(((I & 0xff0000)) >> 17) << 16 |
+		uint(((I & 0x00ff00)) >> 9) << 8 |
+		uint(((I & 0x0000ff)) >> 1)
+	); */
+	return (
+		uint(((I & 0b111111100000000000000000)) >> 1) |
+		uint(((I & 0b000000001111111000000000)) >> 1) |
+		uint(((I & 0b000000000000000011111110)) >> 1)
+	);
 }
 
 //====Some Internal Other Function====//
 //======RGB======//
-function snapRGB(value: number): number {
+function snapRGB(value: uint): uint {
 	if (isNaN(value))
 		return 0;
 	return Math.min(Math.max(0, value), 255);
 }
 
-function snapRGBtoUint(value: number): number {
+function snapRGBtoUint(value: uint): uint {
 	if (isNaN(value))
 		return 0;
 	return Math.min(Math.max(0, Math.round(value)), 255);
 }
 
 //======HSV======//
-function snapH(value: number): number {
+function snapH(value: uint): uint {
 	if (isNaN(value))
 		return NaN;
 	return Math.min(Math.max(0, value % 360), 360);
 }
 
-function snapS(value: number): number {
+function snapS(value: uint): uint {
 	if (isNaN(value))
 		return 0;
 	return Math.min(Math.max(0, value), 100);
 }
 
-function snapV(value: number): number {
+function snapV(value: uint): uint {
 	return snapS(value);
 }

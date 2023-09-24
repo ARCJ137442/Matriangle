@@ -363,7 +363,6 @@ export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
         // FinalDamage
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {
-                // victim.finalRemoveHealth(attacker, wave.ownerTool, wave.attackerDamage); // TODO: 【2023-09-21 00:07:44】似乎还要由「攻击者伤害」计算「最终伤害」，后续再说
                 victim.removeHealth(wave.attackerDamage, wave.owner);
             }
         }

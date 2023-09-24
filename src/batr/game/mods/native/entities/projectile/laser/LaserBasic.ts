@@ -1,17 +1,14 @@
-
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import Player from "../../player/Player";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import { NativeTools } from "../../../registry/ToolRegistry";
 import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
-import Weapon from "../../../tool/Weapon";
 import EntityType from "../../../../../api/entity/EntityType";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「基础激光」

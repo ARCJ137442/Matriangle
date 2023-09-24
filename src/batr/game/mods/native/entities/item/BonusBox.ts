@@ -68,7 +68,7 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 
 	/** 实现：如果更新后自身位置被遮挡，则通知「游戏主体」移除自身 */
 	public onPositedBlockUpdate(host: IBatrGame): void {
-		if (!host.map.logic.testCanPass_I(this._position, true, false, false, false, true)) {
+		if (!host.map.testCanPass_I(this._position, true, false, false, false, true)) {
 			host.entitySystem.remove(this);
 		}
 	}

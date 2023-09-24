@@ -1,30 +1,16 @@
 import { int, uint } from "../../../../../legacy/AS3Legacy";
-import { Matrix } from "../../../../../legacy/flash/geom";
-import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import Block from "../../../../api/block/Block";
-import Game from "../../../../main/Game";
-import GameRule_V1 from "../../rule/GameRule_V1";
 import PlayerStats from "../../stat/PlayerStats";
-import Entity from "../../../../api/entity/Entity";
-import BonusBox from "../item/BonusBox";
-import AIPlayer from "./AIPlayer";
 import PlayerController from "./controller/PlayerController";
-import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGUI";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
-import { CommonIO_IR } from "../../../../api/io/CommonIO";
 import IBatrGame from "../../../../main/IBatrGame";
-import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
-import EntityType from "../../../../api/entity/EntityType";
-import { TOOL_MIN_CD, TPS, FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import { isEnemy, isAlly } from "../../registry/NativeGameMechanics";
+import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import Tool from "../../tool/Tool";
 import Player from "./Player";
 import IGameRule from './../../../../api/rule/IGameRule';
-import IBatrGame from './../../../../main/IBatrGame';
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -249,7 +235,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	// }
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IBatrGame, block: Block,): void
+	onPositedBlockUpdate(host: IBatrGame): void
 
 	/**
 	 * 在玩家位置改变时「测试移动」

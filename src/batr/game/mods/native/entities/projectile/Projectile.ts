@@ -1,10 +1,10 @@
+import { HSVtoHEX, halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrGame from "../../../../main/IBatrGame";
-import IPlayer from "../player/IPlayer";
 import IPlayer from "../player/IPlayer";
 
 /**
@@ -75,7 +75,6 @@ export default abstract class Projectile extends Entity implements IEntityActive
 
 	override destructor(): void {
 		this._owner = null;
-		// this._ownerTool = null;
 		super.destructor();
 	}
 
@@ -124,15 +123,17 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * * 用于根据队伍颜色绘制图形
 	 */
 	public get ownerColor(): uint {
-		return this._owner?.fillColor ?? 0;
+		// return this._owner?.fillColor ?? 0;
+		return this._owner?.team.color ?? 0 // ! 现在这里是获取玩家的队伍颜色
 	}
 
 	/**
 	 * （显示端）获取所有者（玩家）的线条颜色
 	 * * 用于根据队伍颜色绘制图形
-	 */
+	*/
 	public get ownerLineColor(): uint {
-		return this._owner?.lineColor ?? 0;
+		// return this._owner?.lineColor ?? 0;
+		return halfBrightnessTo(this.ownerColor) // ! 直接使用位运算，动态计算「线条颜色」（深色，亮度一半）
 	}
 
 	// 短周期 //

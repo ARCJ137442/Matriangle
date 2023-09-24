@@ -1,7 +1,6 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
@@ -11,6 +10,7 @@ import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { waveHurtPlayers } from "../../../registry/NativeGameMechanics";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「波浪」
@@ -76,7 +76,8 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		position: fPoint,
 		direction: mRot,
 		attackerDamage: uint,
-		chargePercent: number
+		chargePercent: number,
+		finalRadius: number,
 	) {
 		/** 从最小到最大 */
 		let tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent;
@@ -84,7 +85,9 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		this._nowScale = (
 			owner == null ?
 				tempScale :
-				(1 + owner.computeFinalRadius(tempScale) / 2)
+				// (1 + owner.computeFinalRadius(tempScale) / 2)
+				// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
+				(1 + finalRadius / 2)
 		);
 		this._position.copyFrom(position);
 		// this.shapeInit(shape: IBatrShape);
@@ -129,7 +132,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	//====Tick Function====//
 	override onTick(host: IBatrGame): void {
 		super.onTick(host);
-		host.map.logic.towardWithRot_FF(this._position, this._direction, this.speed); // ? 每次都要自己实现一遍？
+		host.map.towardWithRot_FF(this._position, this._direction, this.speed); // ? 每次都要自己实现一遍？
 		// 每过一固定周期伤害玩家
 		if (this._life % Wave.DAMAGE_DELAY == 0) {
 			waveHurtPlayers(host, this);

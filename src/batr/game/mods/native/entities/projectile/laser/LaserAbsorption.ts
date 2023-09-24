@@ -1,17 +1,15 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Laser from "./Laser";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { iPoint } from "../../../../../../common/geometricTools";
-import Weapon from "../../../tool/Weapon";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
-import { NativeTools } from "../../../registry/ToolRegistry";
 import LaserBasic from "./LaserBasic";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「吸收激光」

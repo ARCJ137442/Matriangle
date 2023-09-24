@@ -41,16 +41,18 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	public static newBlank(): Tool { return new Tool('undefined', 0, 0, false) };
 
 	/**
-	 * 存储「工具名称」
+	 * 存储「工具id」
+	 * * 作为「从JS对象重建」等地方的「唯一识别码」
 	 * 
-	 * TODO: 国际化文本支持
+	 * !【2023-09-24 21:18:28】日后的「国际化文本支持」将基于id，而非在这里整什么「国际化文本」
 	 */
-	protected _name: string;
-	public get name(): string { return this._name }
-	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
+	protected _id: string;
+	public get id(): string { return this._id }
+	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
-		'name', '武器名称',
+		'id', 'string',
 	)
+
 	//============Constructor & Destructor============//
 	/**
 	 * 构造方法
@@ -64,7 +66,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		chargeMaxTime: uint = 0,
 		reverseCharge: boolean = false,
 	) {
-		this._name = id;
+		this._id = id;
 		this._CD = this._maxCD = maxCD;
 		this._chargeTime = this._chargeMaxTime = chargeMaxTime;
 		this._reverseCharge = reverseCharge;

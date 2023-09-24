@@ -5,13 +5,11 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import BulletBasic from "./BulletBasic";
-import Weapon from "../../../tool/Weapon";
-import { NativeTools } from './../../../registry/ToolRegistry';
 import Bullet from "./Bullet";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「核弹」
@@ -29,7 +27,6 @@ export default class BulletNuke extends Bullet {
 
 	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
 	override get type(): EntityType { return NativeEntityTypes.BULLET_NUKE; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_NUKE;
 
 	//============Constructor & Destructor============//
 	/**

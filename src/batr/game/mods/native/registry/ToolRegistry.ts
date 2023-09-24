@@ -3,12 +3,12 @@ import Weapon from "../tool/Weapon";
 
 /**
  * 原生工具（武器）注册表
+ * 
+ * !【2023-09-24 21:21:24】现在这里提供的「武器」更多是一种「原型」
  */
 export module NativeTools {
 
-	//================武器注册区(旧BaTr)================//
-	export const WEAPON_ABSTRACT: Weapon = new Weapon('Abstract', 0, 0);
-
+	//================武器注册区================//
 	export const WEAPON_BULLET_BASIC: Weapon = new Weapon('Bullet', 0.25, 5)
 		.setExtraProperty(1, 1);
 

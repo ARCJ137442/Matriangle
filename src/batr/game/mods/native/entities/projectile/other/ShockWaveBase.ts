@@ -1,9 +1,6 @@
-
-
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
@@ -12,7 +9,6 @@ import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { fPoint, iPoint, iPointRef, iPointVal } from "../../../../../../common/geometricTools";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import Weapon from "../../../tool/Weapon";
 import { random1 } from "../../../../../../common/exMath";
 import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
 import Tool from "../../../tool/Tool";

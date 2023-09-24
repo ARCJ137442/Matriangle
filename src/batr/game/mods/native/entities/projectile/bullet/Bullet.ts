@@ -6,14 +6,10 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
-import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
-import EntityType from "../../../../../api/entity/EntityType";
-import { NativeTools } from "../../../registry/ToolRegistry";
-import Weapon from "../../../tool/Weapon";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「子弹」是
@@ -22,9 +18,6 @@ import { mRot } from "../../../../../general/GlobalRot";
  * 抛射体
  */
 export default abstract class Bullet extends Projectile implements IEntityOutGrid {
-
-	/** ！TS中实现抽象属性，可以把类型限定为其所规定的子类（比如这里的「工具⇒武器」） */
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_BASIC;
 
 	/** 子弹飞行的速度（每个游戏刻） */
 	public speed: number;
@@ -43,14 +36,14 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		direction: mRot,
 		attackerDamage: uint,
 		speed: number,
-		defaultExplodeRadius: number
+		finalExplodeRadius: number
 	) {
 		super(owner, attackerDamage, direction);
 		this.speed = speed;
 		this._position.copyFrom(position)
 
 		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
-		this.finalExplodeRadius = defaultExplodeRadius;
+		this.finalExplodeRadius = finalExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
 	}
 
@@ -94,12 +87,12 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 			}
 		}
 		// 移动
-		host.map.logic.towardWithRot_FF(this._position, this._direction, this.speed);
+		host.map.towardWithRot_FF(this._position, this._direction, this.speed);
 		// 更新整数坐标
 		alignToGrid_P(this._position, this._position_I);
 		// 移动进去之后
-		if (host.map.logic.isInMap_F(this.position) &&
-			host.map.logic.testCanPass_F(this._position, false, true, false)) {
+		if (host.map.isInMap_F(this.position) &&
+			host.map.testCanPass_F(this._position, false, true, false)) {
 			this.lastBlock = this.nowBlock;
 		}
 		else {

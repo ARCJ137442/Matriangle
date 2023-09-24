@@ -106,7 +106,6 @@ export default class Weapon extends Tool {
 		reverseCharge: boolean = false
 	) {
 		super(id, maxCD_S * FIXED_TPS, chargeMaxTime_S * FIXED_TPS);
-		this._name = id;
 		// defaultCD,defaultChargeTime instanceof Per Second
 		this._defaultDamage = defaultDamage;
 		this._reverseCharge = reverseCharge;

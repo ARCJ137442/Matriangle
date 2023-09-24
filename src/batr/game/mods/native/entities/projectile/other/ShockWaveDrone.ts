@@ -1,9 +1,6 @@
-
-
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
@@ -12,7 +9,6 @@ import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalGameVariables";
-import Weapon from "../../../tool/Weapon";
 import { alignToGridCenter_P } from "../../../../../general/PosTransform";
 import Tool from "../../../tool/Tool";
 import IPlayer from "../../player/IPlayer";
@@ -75,11 +71,11 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 			// 重置移动间隔时间
 			this._moveDuration = ShockWaveDrone.MOVING_INTERVAL;
 			// 前进一格
-			host.map.logic.towardWithRot_II(this._position, this._direction, 1);
+			host.map.towardWithRot_II(this._position, this._direction, 1);
 			// （前进后）坐标在地图外/不可跨越⇒消失
 			if (
-				!host.map.logic.isInMap_I(this._position) ||
-				!host.map.logic.testCanPass_I(this._position, false, true, false)
+				!host.map.isInMap_I(this._position) ||
+				!host.map.testCanPass_I(this._position, false, true, false)
 			) {
 				// Gone
 				host.entitySystem.remove(this);
@@ -87,7 +83,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 			// 根据工具模拟玩家使用工具（武器） // ! 💭实际上的考量：似乎可以放开「工具/武器」的区别
 			else {
 				// 「网格坐标」⇒「网格中心坐标」⇒工具使用坐标（武器发射）
-				host.map.logic.towardWithRot_FF(
+				host.map.towardWithRot_FF(
 					alignToGridCenter_P(this._position, this._temp_entityP),
 					this._direction,
 					PROJECTILES_SPAWN_DISTANCE,

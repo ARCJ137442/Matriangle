@@ -5,9 +5,7 @@ import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import { NativeTools } from "../../../registry/ToolRegistry";
-import Weapon from "../../../tool/Weapon";
-import Player from "../../player/Player";
+import IPlayer from "../../player/IPlayer";
 import Bullet from "./Bullet";
 
 /**

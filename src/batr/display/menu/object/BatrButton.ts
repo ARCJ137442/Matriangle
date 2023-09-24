@@ -8,6 +8,8 @@ import Menu from "../main/Menu";
 import BatrMenuGUI from "./BatrMenuGUI";
 import BatrTextField from "./BatrTextField";
 import IBatrMenuElement from "./IBatrMenuElement";
+import { halfBrightnessTo } from "../../../common/color";
+import { IBatrShape } from "../../api/BatrDisplayInterfaces";
 
 export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement {
 	//============Static Variables============//
@@ -49,7 +51,7 @@ export default class BatrButton extends BatrMenuGUI implements IBatrMenuElement 
 		super();
 		this._displayWidth = width;
 		this._displayHeight = height;
-		this._lineColor = Color.turnBrightnessTo(color, 0.5);
+		this._lineColor = halfBrightnessTo(color);
 		this._fillColor = color;
 		this._lineSize = lineSize;
 		this._smoothLine = smoothLine;

@@ -2,7 +2,6 @@ import { iPoint, intPoint } from "../../../../../../common/geometricTools";
 import { uint, int, int$MAX_VALUE } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import BlockAttributes from "../../../../../api/block/BlockAttributes";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from './../../../../../api/entity/EntityInterfaces';
 import { TPS } from "../../../../../main/GlobalGameVariables";
@@ -11,8 +10,6 @@ import IBatrGame from './../../../../../main/IBatrGame';
 import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
 import { intAbs, intMin } from "../../../../../../common/exMath";
 import EntityType from "../../../../../api/entity/EntityType";
-import { NativeTools } from "../../../registry/ToolRegistry";
-import Weapon from "../../../tool/Weapon";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { playerCanHurtOther } from "../../../registry/NativeGameMechanics";
 import { clearArray } from "../../../../../../common/utils";
@@ -33,9 +30,6 @@ import IPlayer from "../../player/IPlayer";
 export default class Lightning extends Projectile implements IEntityFixedLived, IEntityInGrid {
 	public get type(): EntityType { return NativeEntityTypes.LIGHTNING; }
 
-	// ? 对这里的「武器」仍然存疑：这样是否限制了「玩家自定义武器」的机制？
-	// TODO: 解决冲突
-	public readonly ownerTool: Weapon = NativeTools.WEAPON_LIGHTNING;
 	//============Static Variables============//
 
 	//============Static Functions============//
@@ -139,7 +133,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 				this.addWayPoint(head);
 			}
 			// Move
-			host.map.logic.towardWithRot_II(head, nRot, 1)
+			host.map.towardWithRot_II(head, nRot, 1)
 		}
 		// 先前只是根据后节点的方向设置节点，所以最后要把头节点加上
 		this.addWayPoint(head);
@@ -181,7 +175,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			// 不吃回头草
 			if (towardR === oppositeR) continue;
 			// 步进位移，缓存位置
-			host.map.logic.towardWithRot_II(
+			host.map.towardWithRot_II(
 				this._temp_getLeastWeightRot.copyFrom(p), // * 先复制自身，然后进行步进位移
 				towardR, 1
 			);

@@ -9,6 +9,7 @@ import IBatrGame from "../../../../../main/IBatrGame";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { NativeTools } from "../../../registry/ToolRegistry";
 import Weapon from "../../../tool/Weapon";
+import IPlayer from "../../player/IPlayer";
 import Player from "../../player/Player";
 import Bullet from "./Bullet";
 import BulletBasic from "./BulletBasic";
@@ -22,7 +23,6 @@ export default class BulletBomber extends Bullet {
 
 	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
 	override get type(): EntityType { return NativeEntityTypes.BULLET_BOMBER; }
-	override readonly ownerTool: Weapon = NativeTools.WEAPON_BULLET_BOMBER;
 
 	//============Static Variables============//
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;

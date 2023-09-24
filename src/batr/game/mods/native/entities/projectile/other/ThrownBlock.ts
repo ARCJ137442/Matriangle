@@ -1,9 +1,6 @@
-
-
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import EntityType from "../../../../../api/entity/EntityType";
-import Player from "../../player/Player";
 import Projectile from "../Projectile";
 import { fPoint, iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
@@ -14,6 +11,7 @@ import { mRot } from "../../../../../general/GlobalRot";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTransform";
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
+import IPlayer from "../../player/IPlayer";
 
 /**
  * 「掷出的方块」是
@@ -125,22 +123,22 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		// 在地图内&可通过&没碰到玩家：继续飞行
 		if (
 			// 在地图内
-			host.map.logic.isInMap_F(this._position) &&
+			host.map.isInMap_F(this._position) &&
 			// 可通过
-			host.map.logic.testCanPass_F(
+			host.map.testCanPass_F(
 				this.position, // ! 【2023-09-22 20:34:44】现在直接使用
 				false, true, false, false
 			) &&
 			// 没碰到玩家
 			!host.isHitAnyPlayer_F(this._position)
 		) {
-			host.map.logic.towardWithRot_FF(this._position, this._direction, this._speed);
+			host.map.towardWithRot_FF(this._position, this._direction, this._speed);
 		}
 		else {
 			console.log('Block hit at', this._position);
 			// * 如果不是伤害到玩家，就后退（被外部阻挡的情形）
 			if (!host.isHitAnyPlayer_F(this._position))
-				host.map.logic.towardWithRot_FF(this._position, this._direction, -this._speed);
+				host.map.towardWithRot_FF(this._position, this._direction, -this._speed);
 			this.onBlockHit(host);
 		}
 	}
@@ -152,7 +150,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		// 尝试伤害玩家 // TODO: 有待迁移
 		host.thrownBlockHurtPlayer(this);
 		// 放置判断
-		if (host.map.logic.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
+		if (host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
 			// 放置
 			host.setBlock(_temp_iPoint, this._carriedBlock);
 			// 特效
