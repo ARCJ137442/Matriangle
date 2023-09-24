@@ -4,13 +4,14 @@ import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
 import Block, { BlockType } from "../block/Block";
+import { IJSObjectifiable } from "../../../common/JSObjectify";
 
 
 /**
  * 定义地图的「存储层」，定义地图的「存储结构」
  * * 用于「增删改查」地图中的方块信息
  */
-export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage> {
+export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage>, IJSObjectifiable<IMapStorage> {
 	//============Interface Functions============//
 
 	/** 决定地图「一般意义上的宽度」，对应地图在x方向的尺寸 */

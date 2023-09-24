@@ -1,4 +1,5 @@
 import { int, uint } from '../legacy/AS3Legacy'
+import { IJSObjectifiable, JSObject, JSObjectifyMap } from './JSObjectify'
 import { intAbs } from './exMath'
 
 /**
@@ -7,7 +8,45 @@ import { intAbs } from './exMath'
  * * 在索引访问的基础上提供使用特定名称的几何方法
  * * 可选的「留给后续重载优化」的方法
  */
-export abstract class xPoint<T> extends Array<T> {
+export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPoint<T>> {
+
+	// JS对象化 //
+	/** 实现：{自身类名: 原始值（数组）} */
+	public saveToJSObject(target: JSObject): JSObject {
+		target[this.constructor.name] = [...this]; // ! `this.slice();`不能达到「抹除类型」的目的
+		return target;
+	}
+
+	/** 实现：读取与自身类名相同的值 */
+	public loadFromJSObject(source: JSObject): xPoint<T> {
+		let value: any = source[this.constructor.name];
+		if (Array.isArray(value))
+			value.forEach(
+				(item, index: number): void => {
+					if (this.checkType(item))
+						this[index] = item
+				}
+			);
+		return this;
+	}
+
+	/**
+	 * 根据指定的类型检验数组中的值
+	 */
+	public checkType(value: any): boolean { return false };
+
+	/**
+	 * 【2023-09-24 14:46:08】假实现：调用⇒返回空
+	 * * 【2023-09-24 16:32:38】不报错的缘由：判断「是否有定义属性」时要访问这个getter
+	 *   * 代码：`property?.objectifyMap !== undefined // 第二个看「对象化映射表」是否定义`
+	 * 
+	 * * 💭「动态添加属性」的弊端：可以是可以，但这样不如直接存储数组来得方便
+	 * 
+	 */
+	public get objectifyMap(): JSObjectifyMap<xPoint<T>> { return {} }
+
+	/** 这是个可扩展的映射表 */
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap<xPoint<any>> = {};
 
 	//================Position Getter/Setter================//
 	public get nDimensions(): int { return this.length }
@@ -360,13 +399,25 @@ export class intPoint extends xPoint<int> {
 	override getAbsDistanceAt(point: intPoint, i: uint): int {
 		return intAbs(this[i] - point[i])
 	}
+
+	/** 实现：检测是否为整数 */
+	public checkType(value: any): boolean {
+		return Number.isInteger(value)
+	}
 }
 
 /**
  * 经过特殊定制的浮点数点支持
  * * 基本全盘继承抽象类`xPoint`的方法
- */
-export class floatPoint extends xPoint<number> { }
+*/
+export class floatPoint extends xPoint<number> {
+
+	/** 实现：检测是否为数值 */
+	public checkType(value: any): boolean {
+		return typeof value === 'number'
+	}
+
+}
 
 
 // 别名 //

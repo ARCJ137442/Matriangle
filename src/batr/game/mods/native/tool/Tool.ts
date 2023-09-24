@@ -1,8 +1,8 @@
-import { IJSObjectifiable, JSObject } from "../../../../common/JSObjectify";
-import { contains, key, pushNReturn, safeMerge } from "../../../../common/utils";
-import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/JSObjectify';
-import { uint, int } from "../../../../legacy/AS3Legacy";
-import Weapon from "./Weapon";
+import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from "../../../../common/JSObjectify";
+import { key } from "../../../../common/utils";
+import { uint } from "../../../../legacy/AS3Legacy";
+import IPlayer from "../entities/player/IPlayer";
+import IBatrGame from './../../../main/IBatrGame';
 
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类
@@ -26,14 +26,19 @@ import Weapon from "./Weapon";
  * ! 【2023-09-23 11:45:07】现在不再使用「共用引用」的形式，改为「一个玩家，一个工具」
  * * 日后游戏机制的「随机武器」（初始分派、奖励箱……）也将使用「原型复制」的方式，而非「共用引用」的方法
  */
-export default abstract class Tool implements IJSObjectifiable<Tool> {
+export default class Tool implements IJSObjectifiable<Tool> {
 
-	//============Static Getter And Setter============//
 	/** （国际化文本）翻译时的共同父键 */
 	public static get label(): string { return 'tool' }
 
-	/** 存储所有要序列化的「独有属性」 */
-	public static readonly ALL_OWN_PROPERTY_NAMES: key[] = [];
+	// JS对象 //
+
+	/** 存储「JS对象化映射表」 */
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap<Tool> = {};
+	public get objectifyMap(): JSObjectifyMap<Tool> { return Tool.OBJECTIFY_MAP }
+
+	/** 模板构造函数 */
+	public static newBlank(): Tool { return new Tool('undefined', 0, 0, false) };
 
 	/**
 	 * 存储「工具名称」
@@ -42,8 +47,10 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 	 */
 	protected _name: string;
 	public get name(): string { return this._name }
-	public static readonly key_name: key = pushNReturn(Tool.ALL_OWN_PROPERTY_NAMES, 'name')
-
+	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'name', '武器名称',
+	)
 	//============Constructor & Destructor============//
 	/**
 	 * 构造方法
@@ -55,25 +62,12 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 		id: string,
 		maxCD: uint,
 		chargeMaxTime: uint = 0,
+		reverseCharge: boolean = false,
 	) {
 		this._name = id;
 		this._CD = this._maxCD = maxCD;
 		this._chargeTime = this._chargeMaxTime = chargeMaxTime;
-	}
-
-	// JS对象 //
-	/**
-	 * 现在承载默认方法，子类必须super以承接父类信息
-	 */
-	public saveToJSObject(target: JSObject = {}): JSObject {
-		return fastSaveJSObject_dash(this, target, Tool.ALL_OWN_PROPERTY_NAMES);
-	}
-
-	/**
-	 * 现在承载默认方法，子类必须super以承接父类信息
-	 */
-	public loadFromJSObject(source: JSObject): Tool {
-		return fastLoadJSObject_dash(this, source, Tool.ALL_OWN_PROPERTY_NAMES);
+		this._reverseCharge = reverseCharge;
 	}
 
 	//============Game Mechanics============//
@@ -89,7 +83,10 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 	get CD(): uint { return this._CD }
 	set CD(value: uint) { this._CD = value }
 	protected _CD: uint;
-	public static readonly key_CD: key = pushNReturn(Tool.ALL_OWN_PROPERTY_NAMES, 'CD')
+	public static readonly key_CD: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'CD', uint(1),
+	)
 
 	/**
 	 * 工具使用最大冷却
@@ -101,7 +98,10 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 	get maxCD(): uint { return this._maxCD }
 	set maxCD(value: uint) { this._maxCD = value }
 	protected _maxCD: uint;
-	public static readonly key_maxCD: key = pushNReturn(Tool.ALL_OWN_PROPERTY_NAMES, 'maxCD')
+	public static readonly key_maxCD: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'maxCD', uint(1),
+	)
 
 	/**
 	 * 工具充能状态（时间）
@@ -114,7 +114,10 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 	get chargeTime(): uint { return this._chargeTime }
 	set chargeTime(value: uint) { this._chargeTime = value }
 	protected _chargeTime: uint;
-	public static readonly key_chargeTime: key = pushNReturn(Tool.ALL_OWN_PROPERTY_NAMES, 'chargeTime')
+	public static readonly key_chargeTime: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'chargeTime', uint(1),
+	)
 
 	/**
 	 * 工具最大充能时间
@@ -126,7 +129,25 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 	get chargeMaxTime(): uint { return this._chargeMaxTime }
 	set chargeMaxTime(value: uint) { this._chargeMaxTime = value }
 	protected _chargeMaxTime: uint;
-	public static readonly key_chargeMaxTime: key = pushNReturn(Tool.ALL_OWN_PROPERTY_NAMES, 'chargeMaxTime')
+	public static readonly key_chargeMaxTime: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'chargeMaxTime', uint(1),
+	)
+
+	/**
+	 * 工具是否「反向充能」
+	 * * 机制：
+	 *   * 武器会在不使用时自动充能，类似一种「外加的冷却」
+	 *   * 无需完全充能即可使用，但充能百分比会非满
+	 * * 应用：未充能即可发射的激光；「脉冲激光」中「未完全充能」「完全充能」的两种不同状态
+	 */
+	get reverseCharge(): boolean { return this._reverseCharge }
+	set reverseCharge(value: boolean) { this._reverseCharge = value }
+	protected _reverseCharge: boolean;
+	public static readonly key_reverseCharge: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'reverseCharge', false,
+	)
 
 	/**
 	 * （衍生）工具是否需要「冷却时间」
@@ -191,4 +212,17 @@ export default abstract class Tool implements IJSObjectifiable<Tool> {
 		this.resetCharge();
 	}
 
+	//============Game Mechanics============//
+	/**
+	 * 钩子「工具被使用」
+	 * * 作用：自定义工具的行为
+	 * 
+	 * ? 使用「函数钩子」似乎不行……没法序列化
+	 * 
+	 * @param host 调用时处在的「游戏主体」
+	 * @param user 使用者（暂定为玩家）
+	 */
+	public onUseByPlayer(host: IBatrGame, user: IPlayer): void {
+		console.log('Tool', this, 'is used by', user, 'in', host)
+	}
 }

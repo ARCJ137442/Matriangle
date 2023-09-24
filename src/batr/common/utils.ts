@@ -183,57 +183,17 @@ export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
 }
 
 /**
- * 把映射解包成JSON可用的数组，并提供可被识别的「标志」
- * * 可以指定一个「宿主」，键值对会被添加到其中某个属性上（没有则创建一个空对象）
- * 
- * 原理：
- * * 使用`Array.from`方法把映射变成`[...[键, 值]]`的数组
- * * 再使用Array的`map`方法映射键值对
- * 
- * 例子：
- * * `Map { 1 => 2, 3 => 4 }` => `{ "Map": [[1, 2], [3, 4]] }`
- * 
- * @param map 要打包的映射
- * @param callbackKV 对其中每个键和值的递归回调函数
- * @param flag 从键值对映射到二维数组的标签
- * @returns 解包好的JSON对象/添加了新属性的对象
+ * 对（一般是JS对象的）对象的键值对作映射，并返回一个新的（JS）对象
  */
-export function map2JSON<K, V>(
-	map: Map<K, V>,
-	callbackKV: (key: K, value: V) => [any, any],
-	flag: string = 'Map',
-	parent: any = {}
-): { [flag: string]: Array<[any, any]> } {
-	parent[flag] = Array.from(map).map((kv: [K, V]): [any, any] => {
-		return callbackKV(kv[0], kv[1]);
-	})
-	return parent;
-}
-
-/**
- * 把「有特定标识的JSON对象」打包成映射
- * 
- * 例子：
- * * `{ Map: [ [ 1, 2 ], [ 3, 4 ] ] }` => `Map(2) { 1 => 2, 3 => 4 }`
- * 
- * @param obj 待解析的JSON对象
- * @param callbackKV 对其中二维数组中`[键, 值]`元组的递归回调函数
- * @param flag 从键值对映射到二维数组的标签
- * @param parent 用于设置键值对的宿主对象（默认新建）
- * @returns 一个打包好的映射
- */
-export function JSON2map<K, V>(
-	// obj: { [flag: string]: Array<[any, any]> },
+export function mapObject(
 	obj: any,
-	callbackKV: (key: any, value: any) => [K, V],
-	flag: string = 'Map',
-	parent: Map<K, V> = new Map<K, V>()
-): Map<K, V> {
-	if (obj[flag] == undefined) throw new Error('JSON2map: 没有找到标志为「' + flag + '」的键');
-	obj[flag].forEach((kv: [any, any]): void => {
-		parent.set(...callbackKV(kv[0], kv[1]))
-	})
-	return parent
+	kF: (arg: any) => any,
+	vF: (arg: any) => any,
+	target: any = {}
+): any {
+	for (let k in obj)
+		(target as any)[kF(k)] = vF(obj[k])
+	return target
 }
 
 /**
@@ -465,8 +425,8 @@ export function flattenObject(
  * @param instance the instance of a class
  * @returns the class(constructor) of the instance
  */
-export function getClass(instance: any): Class {
-	return instance.constructor
+export function getClass(instance: any): Class | undefined {
+	return instance?.constructor
 }
 
 /**

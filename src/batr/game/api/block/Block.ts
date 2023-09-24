@@ -60,7 +60,7 @@ export default abstract class Block implements IBatrDisplayable {
 
 	}
 
-	public clone(): Block { }
+	public abstract clone(): Block;
 
 	//============Game Mechanics============//
 	/**
@@ -80,7 +80,7 @@ export default abstract class Block implements IBatrDisplayable {
 	 * ! It will directly returns its constructor
 	 */
 	public get type(): BlockType {
-		return getClass(this);
+		return getClass(this) as Class;
 	}
 
 	// ! 此处的「响应随机刻」因「循环导入问题」被移除

@@ -2,7 +2,7 @@
  * 一个轻量级「JS对象化」库，用于各类对象到JS对象（再到JSON）的序列化
  */
 import { Class } from '../legacy/AS3Legacy';
-import { key, safeMerge } from './utils';
+import { addNReturnKey, getClass, identity, key, safeMerge } from './utils';
 
 /**
  *  ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
@@ -40,16 +40,21 @@ export interface IJSObjectifiable<T> {
      *
      * ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
      *
+     * ! 现在不强制要求有这两个方法，只需要有「对象化映射表」能`uniSave`就行
+     * 
      * @param target 目标对象
      */
-    saveToJSObject(target?: JSObject): JSObject;
+    saveToJSObject?(target?: JSObject): JSObject;
 
     /**
      * 用object中的属性覆盖对象
      * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
+     * 
+     * ! 现在不强制要求有这两个方法，只需要有「对象化映射表」能`uniLoad`就行
+     * 
      * @param source 源头对象
      */
-    loadFromJSObject(source: JSObject): T;
+    loadFromJSObject?(source: JSObject): T;
 
     /**
      * 获取「通用对象化映射表」
@@ -80,7 +85,7 @@ export function fastLoadJSObject_dash<T>(this_: T, source: JSObject, allOwnPrope
         }
         // 缺少属性⇒警告
         else
-            console.warn("源对象", source, "缺乏属性", key);
+            console.error("源对象", source, "缺乏属性", key);
     }
     return this_;
 }
@@ -127,7 +132,8 @@ export type JSObjectifyMap<T> = {
 export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
     JSObject_key: key, // 映射到JS对象上的键
     propertyType: string | Class, // 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
-    propertyConverter: (v: JSObjectValue) => JSObjectValue, // 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
+    propertyConverterS: (v: any) => any, // 预存储：在向JS对象存储原始值前，预处理其值。如：对数组内所有元素再次应用（可自定义的）转换
+    propertyConverterL: (v: JSObjectValue) => any, // 预加载：在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数（有需求直接转换并赋值，如Map类型）
     loadRecursiveCriterion: (v: JSObjectValue) => boolean, // 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
     blankConstructor?: () => IJSObjectifiable<any>, // 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
 }
@@ -136,27 +142,33 @@ export type JSObjectifyMapProperty<T> = { // 源对象中要对象化的属性
  * 根据指定的「对象化映射表」提取一个对象的信息（as any），并将其转换成JS对象
  * 
  * 流程：
- * * 遍历「对象化映射表」中所有的键（源对象中要对象化的属性）
+ * * 有专门的「对象化」方法⇒优先使用
+ * * 否则⇒遍历「对象化映射表」中所有的键（源对象中要对象化的属性）
  *   * 在「目标」对象上的「映射后的键」上注入「转换后的值」
  *     * 需要「递归对象化」（一般是其实现了对象化的方法）⇒递归调用转换过程
  *       * 代码上体现为「是否实现了接口声明的方法」
  *     * 否则：值是「基础类型」⇒不做转换
  * 
- * ? 是否要做「沉拷贝」支持
+ * ? 是否要做「深拷贝」支持
  * @param this_ 待「JS对象化」的对象
  * @param objectifyMap 对象化 映射表
  * @param target 
  * @returns 一个转换好的JS对象
  */
-export function uniJSObjectify<T extends IJSObjectifiable<T>>(
+export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
     this_: T,
+    target: JSObject = {},
     objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
-    target: JSObject = {}
 ): JSObject {
-    // 遍历「对象化映射表」中所有的键
-    for (const propertyKey in objectifyMap) {
-        // 获取值
-        const property: any = (this_ as any)[propertyKey];
+    // 有专门的「对象化」方法⇒优先使用
+    if (this_?.saveToJSObject !== undefined)
+        this_.saveToJSObject(target)
+    // 否则⇒遍历「对象化映射表」中所有的键
+    else for (const propertyKey in objectifyMap) {
+        // 获取值&预处理
+        const property: any = objectifyMap[propertyKey].propertyConverterS(
+            (this_ as any)[propertyKey]
+        );
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 转换值
@@ -165,16 +177,21 @@ export function uniJSObjectify<T extends IJSObjectifiable<T>>(
             property?.objectifyMap !== undefined // 第二个看「对象化映射表」是否定义
         ) {
             // 可递归
-            target[JSObjectKey] = uniJSObjectify(
+            target[JSObjectKey] = uniSaveJSObject(
                 property, // 从当前属性值开始
+                {}, // 必从一全新对象开始
                 property.objectifyMap, // 使用属性值自己的「JS对象化映射表」
-                {} // 必从一全新对象开始
             )
         }
         else {
             // 基础类型：直接设置
             target[JSObjectKey] = property;
         }
+    }
+    // 返回前检查：如果检查失败，则报错
+    if (!verifyJSObject(target)) {
+        console.error(this_, target)
+        throw new Error(target + "不是JS对象")
     }
     // 返回以作管道操作
     return target;
@@ -184,7 +201,8 @@ export function uniJSObjectify<T extends IJSObjectifiable<T>>(
  * 根据指定的「对象化映射表」从指定JS对象中加载自身数据
  * 
  * 流程：
- * * 遍历「对象化映射表」中所有的键（源对象中要对象化的属性）
+ * * 有专门的「对象加载方法」⇒调用
+ * * 否则⇒遍历「对象化映射表」中所有的键（源对象中要对象化的属性）
  *   * 在「目标」对象上查找「映射后的键」
  *     * 找到⇒类型还原
  *       * 需要「递归对象化」（一般是其实现了对象化的方法）⇒递归调用转换过程
@@ -201,13 +219,16 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
     source: JSObject,
     objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
 ): T {
-    // 遍历「对象化映射表」中所有的键
-    for (const propertyKey in objectifyMap) {
+    // 有专门的「对象化」方法⇒优先使用
+    if (this_?.loadFromJSObject !== undefined)
+        this_.loadFromJSObject(source)
+    // 否则⇒遍历「对象化映射表」中所有的键
+    else for (const propertyKey in objectifyMap) {
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 没属性⇒警告，跳过循环
         if (!source?.hasOwnProperty(JSObjectKey)) {
-            console.warn('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
+            console.error('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
             continue;
         }
         // 获取（原始）值
@@ -222,7 +243,7 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
             // 递归操作
             (this_ as any)[propertyKey] = uniLoadJSObject(
                 blank,
-                objectifyMap[propertyKey].propertyConverter(rawProperty) as JSObject, // 从当前属性值开始
+                objectifyMap[propertyKey].propertyConverterL(rawProperty) as JSObject, // 从当前属性值开始
                 blank.objectifyMap, // 使用属性值自己的「JS对象化映射表」
             );
         }
@@ -230,17 +251,179 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
             // 基础类型：过滤→设置
             (this_ as any)[propertyKey] = safeMerge(
                 (this_ as any)[propertyKey], // 原先值的类型以作参考
-                objectifyMap[propertyKey].propertyConverter(rawProperty) // 转换后的原始值
+                objectifyMap[propertyKey].propertyConverterL(rawProperty) // 转换后的原始值 // !【2023-09-24 15:22:40】现在有可能是「任意类型」了
             );
         }
     }
     return this_;
 }
 
+// 一些特殊对象的JS对象化 //
+/**
+ * 把映射解包成JSON可用的数组，并提供可被识别的「标志」
+ * * 可以指定一个「宿主」，键值对会被添加到其中某个属性上（没有则创建一个空对象）
+ * 
+ * 原理：
+ * * 使用`Array.from`方法把映射变成`[...[键, 值]]`的数组
+ * * 再使用Array的`map`方法映射键值对
+ * 
+ * 例子：
+ * * `Map { 1 => 2, 3 => 4 }` => `{ "Map": [[1, 2], [3, 4]] }`
+ * 
+ * @param map 要解包的映射
+ * @param callbackKV 对其中每个键和值的递归回调函数
+ * @param flag 从键值对映射到二维数组的标签
+ * @returns 解包好的JSON对象/添加了新属性的对象
+ */
+export function mapSaveJSObject<K, V>(
+    map: Map<K, V>,
+    callbackKV: (key: K, value: V) => [any, any],
+    flag: string = 'Map',
+    parent: any = {}
+): JSObject { // [flag: string]: Array<[any, any]>
+    parent[flag] = Array.from(map).map((kv: [K, V]): [any, any] => {
+        return callbackKV(kv[0], kv[1]);
+    })
+    return parent;
+}
+
+/**
+ * 把「JS对象」打包成映射
+ * 
+ * 例子：
+ * * `{ Map: [ [ 1, 2 ], [ 3, 4 ] ] }` => `Map(2) { 1 => 2, 3 => 4 }`
+ * 
+ * @param obj 待解析的JSON对象
+ * @param callbackKV 对其中二维数组中`[键, 值]`元组的递归回调函数
+ * @param flag 从键值对映射到二维数组的标签
+ * @param parent 用于设置键值对的宿主对象（默认新建）
+ * @returns 一个打包好的映射
+ */
+export function mapLoadJSObject<K, V>(
+    // obj: { [flag: string]: Array<[any, any]> },
+    obj: JSObject,
+    callbackKV: (key: any, value: any) => [K, V],
+    flag: string = 'Map',
+    parent: Map<K, V> = new Map<K, V>()
+): Map<K, V> {
+    if (obj[flag] == undefined) throw new Error('JSON2map: 没有找到标志为「' + flag + '」的键');
+    (obj[flag] as any).forEach((kv: [any, any]): void => {
+        parent.set(...callbackKV(kv[0], kv[1]))
+    })
+    return parent
+}
+
+// 与JSON联动 //
+export function uniSaveJSON<T extends IJSObjectifiable<T>>(
+    this_: T,
+    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+): string {
+    return JSON.stringify(
+        uniSaveJSObject(this_, {}, objectifyMap)
+    )
+}
+
+/**
+ * 从JSON字串中加载数据
+ * * 原理：JSON字串→JS对象
+ * @param this_ 要加载数据的（模板）对象
+ * @param JSONString JSON字串（将转换成JS对象，然后被送入分析）
+ * @param objectifyMap JS对象化映射表
+ * @returns 加载好数据的对象
+ */
+export function uniLoadJSON<T extends IJSObjectifiable<T>>(
+    this_: T,
+    JSONString: string,
+    objectifyMap: JSObjectifyMap<T> = this_.objectifyMap,
+): T {
+    return uniLoadJSObject(
+        this_,
+        JSON.parse(JSONString),
+        objectifyMap
+    )
+}
+
+/**
+ * 检查一个「对象化后的JS对象」是否满足对「键」「值」的要求
+ * @param jso 待检查的JS对象（值）
+ * @returns 是否合法
+ */
+export function verifyJSObject(jso: any): boolean {
+    for (const key in jso) {
+        if (
+            !verifyJSObjectKey(key) ||
+            !verifyJSObjectValue(jso[key])
+        ) return false;
+    }
+    return true
+}
+
+/**
+ * 检查一个「对象化后的JS对象」的键是否合法
+ * * 原理：检查其是否为数字/字符串
+ * 
+ * @param key 待检查的键
+ * @returns 是否合法
+ */
+export function verifyJSObjectKey(key: any): boolean {
+    switch (typeof key) {
+        case 'string':
+        case 'number':
+            return true;
+        default:
+            return false;
+    }
+}
+
+/**
+ * 检查一个「对象化后的JS对象」的键是否合法
+ * * 原理：检查其是否为数字/字符串
+ * 
+ * @param value 待检查的值
+ * @returns 是否合法
+ */
+export function verifyJSObjectValue(value: any): boolean {
+    if (value === null) return true;
+    switch (typeof value) {
+        // case 'symbol':
+        // case 'undefined':
+        // case 'function':
+        case 'string':
+        case 'number':
+        case 'bigint':
+        case 'boolean':
+            return true;
+        // ! 针对「对象」：继续以「JS对象」的形式判断
+        case 'object':
+            // 有构造器就非法
+            if (
+                verifyJSObject(value) &&
+                (
+                    Object.getPrototypeOf(value) === Object.prototype ||
+                    Object.getPrototypeOf(value) === Array.prototype
+                )
+            ) return true;
+            console.error(value, '不是JS对象')
+            console.log(
+                value,
+                verifyJSObject(value),
+                Object.getPrototypeOf(value),
+                Object.getPrototypeOf(value) === Object.prototype,
+                Object.getPrototypeOf(value) === Array.prototype
+            )
+            return false;
+        default:
+            return false;
+    }
+}
+
+
 // 一些增进易用性的工具函数 //
 
 /** 判断「是否继续递归加载」恒真 */
 export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true
+/** 判断「是否继续递归加载」恒假 */
+export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: JSObjectValue): false => false
 
 /**
  * 根据位置参数快速构造一个「JS对象化映射属性表」
@@ -249,22 +432,111 @@ export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JS
  * 
  * @param JSObject_key 映射到JS对象上的键
  * @param propertyType 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
- * @param propertyConverter 在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数
+ * @param propertyConverterS 预存储：在向JS对象存储原始值前，预处理其值。如：对数组内所有元素再次应用（可自定义的）转换
+ * @param propertyConverterL 预加载：在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数（有需求直接转换并赋值，如Map类型）
  * @param loadRecursiveCriterion 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
  * @param blankConstructor 模板构造函数：生成一个「空白的」「可用于后续加载属性的」「白板对象」，也同时用于判断「是否要递归对象化/解对象化」
  */
 export function fastGenerateJSObjectifyMapProperty<T>(
     JSObject_key: key,
     propertyType: string | Class,
-    propertyConverter: (v: JSObjectValue) => JSObjectValue,
+    propertyConverterS: (v: any) => any,
+    propertyConverterL: (v: JSObjectValue) => any,
     loadRecursiveCriterion: (v: JSObjectValue) => boolean,
     blankConstructor?: () => IJSObjectifiable<any>,
 ): JSObjectifyMapProperty<T> {
     return {
         JSObject_key: JSObject_key,
         propertyType: propertyType,
-        propertyConverter: propertyConverter,
+        propertyConverterS: propertyConverterS,
+        propertyConverterL: propertyConverterL,
         loadRecursiveCriterion: loadRecursiveCriterion,
         blankConstructor: blankConstructor,
     }
+}
+
+/**
+ * 上面方法的专用化版本
+ * * 默认是
+ *   * 用`_属性名`作数据存取
+ *   * 外部对象化时显示为`属性名`
+ * 
+ * ! 注意：返回的是「不加下划线」的属性名
+ */
+export function fastAddJSObjectifyMapProperty_dash<T>(
+    objectiveMap: JSObjectifyMap<T>,
+    property_key: key,
+    propertyType: string | Class,
+    propertyConverterS: (v: any) => any,
+    propertyConverterL: (v: JSObjectValue) => any,
+    loadRecursiveCriterion: (v: JSObjectValue) => boolean,
+    blankConstructor?: () => IJSObjectifiable<any>,
+): key {
+    addNReturnKey(
+        objectiveMap,
+        `_${property_key}`,
+        fastGenerateJSObjectifyMapProperty(
+            property_key,
+            propertyType,
+            propertyConverterS,
+            propertyConverterL,
+            loadRecursiveCriterion,
+            blankConstructor,
+        )
+    )
+    return property_key
+}
+
+/**
+ * 上面方法的专用化版本
+ * * 默认是
+ *   * 用`_属性名`作数据存取
+ *   * 外部对象化时显示为`属性名`
+ * * 不同之处：用「示例实例」存储「类型」信息
+ * 
+ * ! 注意：返回的是「不加下划线」的属性名
+ */
+export function fastAddJSObjectifyMapProperty_dash2<T>(
+    objectiveMap: JSObjectifyMap<T>,
+    property_key: key,
+    propertyInstance: any,
+    propertyConverterS: (v: any) => any,
+    propertyConverterL: (v: JSObjectValue) => any,
+    loadRecursiveCriterion: (v: JSObjectValue) => boolean,
+    blankConstructor?: () => IJSObjectifiable<any>,
+): key {
+    return fastAddJSObjectifyMapProperty_dash(
+        objectiveMap,
+        property_key,
+        getClass(propertyInstance) ?? typeof propertyInstance,
+        propertyConverterS,
+        propertyConverterL,
+        loadRecursiveCriterion,
+        blankConstructor,
+    );
+}
+
+
+/**
+ * 上面方法的更专用化版本
+ * * 默认是
+ *   * 其类型为基础类型
+ *   * 无需进行额外转换（不论是存储还是加载）
+ *   * 默认不进行递归解析
+ * 
+ * ! 注意：返回的是「不加下划线」的属性名
+ */
+export function fastAddJSObjectifyMapProperty_dashP<T>(
+    objectiveMap: JSObjectifyMap<T>,
+    property_key: key,
+    propertyInstance: any,
+): key {
+    return fastAddJSObjectifyMapProperty_dash(
+        objectiveMap,
+        property_key,
+        getClass(propertyInstance) ?? typeof propertyInstance,
+        identity,
+        identity,
+        loadRecursiveCriterion_false,
+    );
 }

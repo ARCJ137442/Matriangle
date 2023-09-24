@@ -8,6 +8,7 @@ import Block, { BlockType } from "../../../api/block/Block";
 import { BLOCK_VOID } from "../blocks/Void";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { NativeBlockTypes } from "../registry/BlockTypeRegistry";
+import { JSObject, JSObjectifyMap } from "../../../../common/JSObjectify";
 
 /**
  * 稀疏地图
@@ -20,6 +21,11 @@ import { NativeBlockTypes } from "../registry/BlockTypeRegistry";
 export default class MapStorageSparse implements IMapStorage {
 
     //============Static Utils============//
+    /** 获取白板对象 */
+    public static getBlank(): MapStorageSparse {
+        return new MapStorageSparse(0);
+    }
+
     public static pointToIndex(p: iPoint): string {
         // ! （开发用）空值报错
         if (p.some((v): boolean => v === undefined || isNaN(v))) throw new Error(`MapStorageSparse.pointToIndex: 参数错误 @ ${p.toString()} [${p.x}, ${p.y}, ...]`);
@@ -88,6 +94,21 @@ export default class MapStorageSparse implements IMapStorage {
     public get borderMax(): iPoint { return this._borderMax }
     protected readonly _borderMin: iPoint;
     public get borderMin(): iPoint { return this._borderMin }
+
+    // JS对象化 //
+    public saveToJSObject(target: JSObject = {}): JSObject {
+        // TODO: 1 _dict
+        // TODO 2 border
+        // TODO 3 _defaultBlock
+        // TODO 3 _nDim
+        throw new Error("Method not implemented.");
+    }
+    public loadFromJSObject(source: JSObject): IMapStorage {
+        throw new Error("Method not implemented.");
+    }
+    public get objectifyMap(): JSObjectifyMap<IMapStorage> {
+        throw new Error("Method not implemented.");
+    }
 
     //============Constructor & Destructor============//
 

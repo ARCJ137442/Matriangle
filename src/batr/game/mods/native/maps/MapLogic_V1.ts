@@ -9,6 +9,8 @@ import BlockAttributes from "../../../api/block/BlockAttributes";
 import IMapLogic from "../../../api/map/IMapLogic";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { alignToGrid_P } from "../../../general/PosTransform";
+import { IJSObjectifiable, JSObject, JSObjectifyMap, uniLoadJSObject, uniSaveJSObject } from "../../../../common/JSObjectify";
+import Map_V1 from "./Map_V1";
 
 /* This's a Game Map<Version 1>
  * This Map only save BlockType,not Block
@@ -37,7 +39,6 @@ export default class MapLogic_V1 implements IMapLogic {
 	}
 
 	//============Interface Functions============//
-
 	public getBlockPlayerDamage(p: iPoint, defaultValue: int = 0): int {
 		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
 		if (blockAtt != null)
@@ -50,6 +51,18 @@ export default class MapLogic_V1 implements IMapLogic {
 		if (blockAtt != null)
 			return blockAtt.playerDamage == int$MAX_VALUE;
 		return defaultValue;
+	}
+
+	// JS对象化 // TODO: 待实现
+	public saveToJSObjectLogic(target: JSObject = {}): JSObject {
+		target['storage'] = uniSaveJSObject(this.storage, {});
+		// TODO: 这里面的「逻辑」是没法改变的……这些应该交给「IGameRule」
+		return target
+	}
+
+	public loadFromJSObjectLogic(source: JSObject): MapLogic_V1 {
+		uniLoadJSObject(this.storage, source);
+		return this;
 	}
 
 	// TODO: 更多待迁移

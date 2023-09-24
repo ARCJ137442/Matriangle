@@ -5,6 +5,7 @@ import Entity from "../entity/Entity";
 import Player from "../../mods/native/entities/player/Player";
 import BlockAttributes from "../block/BlockAttributes";
 import IMapStorage from "./IMapStorage";
+import { IJSObjectifiable } from "../../../common/JSObjectify";
 
 
 /**
@@ -30,7 +31,7 @@ import IMapStorage from "./IMapStorage";
  * point_cached: 4.571s
  * ```
  */
-export default interface IMapLogic {
+export default interface IMapLogic { // !【逻辑结构无需单独可对象化】
 	//============Interface Functions============//
 	/** 【对接显示】获取（经国际化的）地图的显示名称 */
 	get name(): string;

@@ -1,6 +1,5 @@
 ﻿import { IJSObjectifiable } from "../../../common/JSObjectify";
 import { key } from "../../../common/utils";
-import NativeBonusTypes from "../../mods/native/registry/BonusRegistry";
 import IMap from "../map/IMap";
 
 /**
@@ -20,15 +19,18 @@ export default interface IGameRule extends IJSObjectifiable<IGameRule> {
 	/**
 	 * 从名称获取规则
 	 * 
-	 * ! 未找到则报错
+	 * ! 未找到则返回undefined
 	 * 
 	 * @param key 规则名
 	 */
-	getRule<T>(key: key): T;
+	getRule<T>(key: key): T | undefined;
 
 	/**
 	 * 从名称、值处设置规则
 	 * * 类似Julia的`getindex`
+	 * 
+	 * ! 未找到则不进行设置
+	 * 
 	 * @param key 规则名
 	 * @param value 新规则值
 	 * @returns 是否设置成功

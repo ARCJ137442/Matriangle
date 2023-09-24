@@ -1,6 +1,6 @@
 import { randInt } from "../../../../common/exMath";
 import { iPoint, fPoint } from "../../../../common/geometricTools";
-import { randomWithout, randomIn } from "../../../../common/utils";
+import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
@@ -29,6 +29,8 @@ import { NativeTools } from './ToolRegistry';
 import IPlayer from "../entities/player/IPlayer";
 import AIController from "../entities/player/controller/AIController";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
+import { HSVtoHEX } from "../../../../common/color";
+import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
 
 
 /**
@@ -70,32 +72,32 @@ export function playerPickupBonusBox(
             break;
         case NativeBonusTypes.ADD_LIFE:
             if (player.infinityLife || player.isFullHP)
-                player.maxHP += host.rule.getRule(GameRule_V1.name_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
+                player.maxHP += host.rule.getRule(GameRule_V1.key_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
             else
                 player.lives++;
             break;
         // Tool
         case NativeBonusTypes.RANDOM_TOOL:
-            player.tool = randomWithout(host.rule.getRule(GameRule_V1.name_enabledTools) as Tool[], player.tool);
+            player.tool = randomWithout(host.rule.getRule(GameRule_V1.key_enabledTools) as Tool[], player.tool);
             break;
         // Attributes
         case NativeBonusTypes.BUFF_RANDOM:
             playerPickupBonusBox(host, player, bonusBox, randomIn(NativeBonusTypes._ABOUT_BUFF));
             return;
         case NativeBonusTypes.BUFF_DAMAGE:
-            player.buffDamage += host.rule.getRule(GameRule_V1.name_bonusBuffAdditionAmount) as uint;
+            player.buffDamage += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
             break;
         case NativeBonusTypes.BUFF_CD:
-            player.buffCD += host.rule.getRule(GameRule_V1.name_bonusBuffAdditionAmount) as uint;
+            player.buffCD += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_CD_COLOR;
             break;
         case NativeBonusTypes.BUFF_RESISTANCE:
-            player.buffResistance += host.rule.getRule(GameRule_V1.name_bonusBuffAdditionAmount) as uint;
+            player.buffResistance += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
             break;
         case NativeBonusTypes.BUFF_RADIUS:
-            player.buffRadius += host.rule.getRule(GameRule_V1.name_bonusBuffAdditionAmount) as uint;
+            player.buffRadius += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RADIUS_COLOR;
             break;
         case NativeBonusTypes.ADD_EXPERIENCE:
@@ -108,12 +110,12 @@ export function playerPickupBonusBox(
             break;
         case NativeBonusTypes.UNITE_AI:
             host.setATeamToAIPlayer(
-                randomIn(host.rule.getRule(GameRule_V1.name_playerTeams) as PlayerTeam[])
+                randomIn(host.rule.getRule(GameRule_V1.key_playerTeams) as PlayerTeam[])
             );
             break;
         case NativeBonusTypes.UNITE_PLAYER:
             host.setATeamToNotAIPlayer(
-                randomIn(host.rule.getRule(GameRule_V1.name_playerTeams) as PlayerTeam[])
+                randomIn(host.rule.getRule(GameRule_V1.key_playerTeams) as PlayerTeam[])
             );
             break;
         // Other
@@ -457,3 +459,71 @@ export const DEFAULT_PLAYER_CONTROL_KEYS: nativeControlKeyConfigs = {
         use: keyCodes.NUMPAD_ADD, // 用
     },
 }
+
+// 游戏规则相关 //
+
+/**
+ * 加载基本的玩家队伍
+ * * 内容：多个「色调均匀分布」的彩色队伍，与多个「亮度均匀分布」的灰度队伍
+ * * 【2023-09-24 16:22:42】现在是「原生游戏机制」中的内容，而非内置在「游戏规则」之中
+ * * 📌先前代码：`GameRule_V1.initPlayerTeams([], 3, 8)`
+ */
+export function initBasicPlayerTeams(parent: PlayerTeam[], coloredTeamCount: uint, grayscaleTeamCount: uint): PlayerTeam[] {
+    // let parent: PlayerTeam[] = new Array<PlayerTeam>();
+    clearArray(parent);
+
+    let h: uint, s: number, v: number, color: uint;
+    let i: uint;
+    // 黑白色队伍
+    h = 0;
+    s = 0;
+    for (i = 0; i < grayscaleTeamCount; i++) {
+        v = i / (grayscaleTeamCount - 1) * 100;
+        color = HSVtoHEX(h, s, v);
+        parent.push(new PlayerTeam(color));
+    }
+    h = 0;
+    s = 100;
+    v = 100;
+    // Colored Team
+    for (i = 0; i < coloredTeamCount; i++) {
+        h = 360 * i / coloredTeamCount;
+        color = HSVtoHEX(h, s, v);
+        parent.push(new PlayerTeam(color));
+    }
+    return parent;
+}
+
+/**
+ * （用于菜单背景）「游戏初始化」时产生的固定规则
+ * * 八个AI
+ * * 随机武器
+ * * 不断切换的地图
+ * * 混战
+ */
+export const MENU_BACKGROUND: GameRule_V1 = loadAsBackgroundRule(new GameRule_V1());
+
+/**
+ * 获取作为「菜单背景」的游戏规则
+ */
+export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
+    rule.playerCount = 0;
+    rule.AICount = 8;
+    rule.defaultTool = 'c-random'; // 完全随机
+    rule.remainLivesPlayer = -1;
+    rule.remainLivesAI = -1;
+    // 加载玩家队伍
+    initBasicPlayerTeams(rule.playerTeams, 3, 8); // 扩展只读属性
+    return rule;
+}
+
+
+console.log(
+    new GameRule_V1(),
+    GameRule_V1.TEMPLATE,
+    GameRule_V1.TEMPLATE.allKeys,
+    uniSaveJSObject(GameRule_V1.TEMPLATE),
+    uniLoadJSObject(new GameRule_V1(), uniSaveJSObject(GameRule_V1.TEMPLATE)),
+)
+
+console.log("It's done.")

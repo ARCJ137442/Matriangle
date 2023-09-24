@@ -1,6 +1,6 @@
-import { JSObject, JSObjectValue } from "../../../../common/JSObjectify";
+import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dashP } from "../../../../common/JSObjectify";
 import { intMax } from "../../../../common/exMath";
-import { key, pushNReturn, safeMerge } from "../../../../common/utils";
+import { identity, key, pushNReturn, safeMerge } from "../../../../common/utils";
 import { fastLoadJSObject_dash, fastSaveJSObject_dash } from '../../../../common/JSObjectify';
 import { uint } from "../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../main/GlobalGameVariables";
@@ -35,64 +35,69 @@ export default class Weapon extends Tool {
 		return false
 	}
 
-	// 武器属性 //
-	public static readonly ALL_OWN_PROPERTY_NAMES: key[] = [];
+	// JS对象 //
+	/** 复用「工具」的「对象化映射表」 */
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap<Weapon> = { ...Tool.OBJECTIFY_MAP };
 
-	// Tick
-	public static readonly key_defaultDamage: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'defaultDamage')
+	public static readonly key_defaultDamage: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'defaultDamage', uint(1),
+	)
 	protected _defaultDamage: uint;
+	/** 武器的默认攻击伤害 */
 	public get defaultDamage(): uint { return this._defaultDamage; }
 
-	public static readonly key_reverseCharge: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'reverseCharge')
-	protected _reverseCharge: boolean;
-	public get reverseCharge(): boolean { return this._reverseCharge; }
-
-	// Whether the weapon will auto charge and can use before full charge
 	// canHurt
-	public static readonly key_canHurtEnemy: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtEnemy')
+	public static readonly key_canHurtEnemy: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'canHurtEnemy', true,
+	)
 	protected _canHurtEnemy: boolean;
 	public get canHurtEnemy(): boolean { return this._canHurtEnemy; }
 
-	public static readonly key_canHurtSelf: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtSelf')
+	public static readonly key_canHurtSelf: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'canHurtSelf', true,
+	)
 	protected _canHurtSelf: boolean;
 	public get canHurtSelf(): boolean { return this._canHurtSelf; }
 
-	public static readonly key_canHurtAlly: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'canHurtAlly')
+	public static readonly key_canHurtAlly: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'canHurtAlly', true,
+	)
 	protected _canHurtAlly: boolean;
 	public get canHurtAlly(): boolean { return this._canHurtAlly; }
 
 	// Extra
-	public static readonly key_extraDamageCoefficient: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'extraDamageCoefficient')
+	public static readonly key_extraDamageCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'extraDamageCoefficient', uint(1),
+	)
 	protected _extraDamageCoefficient: uint = 5;
 	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
 
-	public static readonly key_extraResistanceCoefficient: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'extraResistanceCoefficient')
+	public static readonly key_extraResistanceCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'extraResistanceCoefficient', uint(1),
+	)
 	protected _extraResistanceCoefficient: uint = 1;
 	public get extraResistanceCoefficient(): uint { return this._extraResistanceCoefficient; }
 
-	public static readonly key_useOnCenter: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'useOnCenter')
+	public static readonly key_useOnCenter: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'useOnCenter', uint(1),
+	)
 	protected _useOnCenter: boolean = false;
 	public get useOnCenter(): boolean { return this._useOnCenter; }
 
 	// 无人机
-	public static readonly key_chargePercentInDrone: key = pushNReturn(Weapon.ALL_OWN_PROPERTY_NAMES, 'chargePercentInDrone')
-	protected _chargePercentInDrone: number = 1;
+	public static readonly key_chargePercentInDrone: key = fastAddJSObjectifyMapProperty_dashP(
+		Weapon.OBJECTIFY_MAP,
+		'chargePercentInDrone', 1.0,
+	)
+	protected _chargePercentInDrone: number = 1.0;
 	public get chargePercentInDrone(): number { return this._chargePercentInDrone; }
-
-	// JS对象 //
-	public saveToJSObject(target: JSObject = {}): JSObject {
-		// 先存入超类的属性
-		super.saveToJSObject(target);
-		// 再存入自身的独有属性
-		return fastSaveJSObject_dash(this, target, Weapon.ALL_OWN_PROPERTY_NAMES)
-	}
-
-	public loadFromJSObject(source: JSObject): Tool {
-		// 先载入超类的属性
-		super.loadFromJSObject(source);
-		// 再载入自身的独有属性
-		return fastLoadJSObject_dash(this, source, Weapon.ALL_OWN_PROPERTY_NAMES);
-	}
 
 	//============Constructor & Destructor============//
 	public constructor(
