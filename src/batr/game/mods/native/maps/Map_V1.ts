@@ -33,7 +33,7 @@ export default class Map_V1 implements IMap {
 		'storage', undefined, /* 接口留通配符`undefined` */
 		identity, identity,
 		loadRecursiveCriterion_true, /* 复合对象总需要对象化 */
-		(this_: any) => (this_ as Map_V1)._storage.cop
+		(this_: any): IMapStorage => (this_ as Map_V1)._storage.cloneBlank()
 	)
 
 	/** 地图名称 */

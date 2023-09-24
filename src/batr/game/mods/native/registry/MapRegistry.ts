@@ -22,7 +22,7 @@ import BlockXTrapRotate from "../blocks/XTrapRotate";
 import { fillBlock, setBlock, drawLaserTrapDownPillar, drawLaserTrapUpPillar, addSpawnPointWithMark, fillReflectBlock, setReflectBlock, fillReflectMirrorBlock, setReflectMirrorBlock } from "../maps/MapConstructTools";
 import MapStorageSparse from "../maps/MapStorageSparse";
 import Map_V1 from "../maps/Map_V1";
-import { NativeBlockTypes } from "./BlockTypeRegistry";
+import { ALL_NATIVE_BLOCKS, NativeBlockTypes } from "./BlockTypeRegistry";
 
 /**
  * 定义所有游戏原生（自带）的地图
@@ -172,7 +172,7 @@ export module NativeMaps {
 						}
 					}*/
             else {
-                randType = randomIn(NativeBlockTypes.ALL_NATIVE_BLOCKS);
+                randType = randomIn(ALL_NATIVE_BLOCKS);
                 storage.setBlock(iP, (randType as any).randomInstance(randType)); // ! 一定是Block的子类型
             }
         }

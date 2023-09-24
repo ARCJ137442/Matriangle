@@ -1,8 +1,8 @@
-import { getClass } from "../../../common/utils";
+import { addNReturnKey, getClass, identity, key } from "../../../common/utils";
 import { Class, uint } from "../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
-import { JSObjectifyMap } from "../../../common/JSObjectify";
+import { IJSObjectifiable, JSObject, JSObjectifyMap, fastGenerateJSObjectifyMapProperty, loadRecursiveCriterion_false, uniLoadJSObject } from "../../../common/JSObjectify";
 
 export type BlockType = Class;
 
@@ -14,7 +14,7 @@ export type BlockType = Class;
  * 
  * TODO: 【2023-09-24 18:42:16】这玩意儿也要参与序列化吗？
  */
-export default abstract class Block implements IBatrDisplayable {
+export default abstract class Block implements IBatrDisplayable, IJSObjectifiable<Block> {
 
 	// JS对象 //
 
@@ -23,28 +23,46 @@ export default abstract class Block implements IBatrDisplayable {
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
 	public get objectifyMap(): JSObjectifyMap { return Block.OBJECTIFY_MAP }
 
-	//============Static============//
-	/** ! the original implement of `XXType` now will be combined as static variables and functions, or be concentrated to module `XXRegistry` */
+	/**
+	 * 🔬ID：用于在「对象化」前后识别出「是哪一个类」
+	 * * 默认返回的是「其类型之名」，技术上是「构造函数的名字」
+	 */
+	// public abstract readonly id: string;
+	public readonly id: string;
+	// public get id(): string { return this.type.name }
+	// public set id(never: string) { } // 空setter，代表「不从外界获得id」 // ! 但实际上会被「非法id」筛掉
+	public static readonly key_id: key = addNReturnKey(
+		this.OBJECTIFY_MAP, 'id', fastGenerateJSObjectifyMapProperty(
+			'id', 'string',
+			identity, identity,
+			loadRecursiveCriterion_false,
+		)
+	)
 
-	// ? so it could be generalized to registry
-	// * and it may be uses the class directly
-	// public static fromType(type: BlockType): Block {
-	// 	switch (type) {
-	// 		case BlockType.X_TRAP_HURT:
-	// 		case BlockType.X_TRAP_KILL:
-	// 		case BlockType.X_TRAP_ROTATE:
-	// 			return new XTrap(type);
-	// 		case BlockType.GATE_OPEN:
-	// 			return new Gate(true);
-	// 		case BlockType.GATE_CLOSE:
-	// 			return new Gate(false);
-	// 		default:
-	// 			if (type != null && type.currentBlock != null)
-	// 				return new type.currentBlock();
-	// 			else
-	// 				return null;
-	// 	}
-	// }
+	/**
+	 * 获取「方块类型」
+	 * !【2023-09-24 20:24:09】这个「类型」目前直接返回其类（构造器）
+	 */
+	public get type(): BlockType {
+		return getClass(this) as BlockType;
+	}
+
+	/** 实现「复制白板」：获取其类，然后零参数构造类 */
+	public cloneBlank(): Block {
+		return (getClass(this) as any)()
+	}
+	/** 静态的「创建白板」：直接从「随机实例」中拿 */ // ! 不稳定——可能「没有自己构造函数的类」只会构造出「父类的实例」
+	public static getBlank(): Block { return this.randomInstance(this as BlockType) }
+
+	public static fromJSObject(jso: JSObject, typeMap: Map<key, BlockType>): Block {
+		if (jso?.id === undefined) throw new Error('方块类型不存在！');
+		const bType: BlockType | undefined = typeMap.get((jso as any).id);
+		if (bType === undefined) throw new Error(`方块类型${jso.id}不存在！`);
+		return uniLoadJSObject(
+			this.randomInstance(bType), // 用「随机实例」来获取「白板对象」
+			jso
+		)
+	}
 
 	/**
 	 * 从「方块类型」获取一个随机参数的实例
@@ -56,19 +74,20 @@ export default abstract class Block implements IBatrDisplayable {
 		return new (type as any)(); // ! 此处必将是构造函数，因此必能构造
 	}
 
-	// public static fromMapColor(color: uint): Block {
-	// 	return Block.fromType(BlockType.fromMapColor(color));
-	// }
-
 	//============Constructor & Destructor============//
+	/**
+	 * 构造方法
+	 * 
+	 * !【2023-09-24 20:26:14】注意：
+	 * 
+	 * @param attributes 传入的「方块属性」
+	 */
 	public constructor(attributes: BlockAttributes) {
-		// super();
+		this.id = this.type.name; // !【2023-09-24 21:04:51】可能是不稳定的
 		this._attributes = attributes;
 	}
 
-	public destructor(): void {
-
-	}
+	public destructor(): void { }
 
 	public abstract clone(): Block;
 
@@ -82,15 +101,6 @@ export default abstract class Block implements IBatrDisplayable {
 	protected _attributes: BlockAttributes;
 	public get attributes(): BlockAttributes {
 		return this._attributes;
-	}
-
-	/**
-	 * It don't implements as another object
-	 * 
-	 * ! It will directly returns its constructor
-	 */
-	public get type(): BlockType {
-		return getClass(this) as Class;
 	}
 
 	// ! 此处的「响应随机刻」因「循环导入问题」被移除

@@ -1,14 +1,14 @@
 import { randInt, randIntBetween, randModWithout, randomBetween } from "../../../../common/exMath";
 import { iPoint } from "../../../../common/geometricTools";
-import { generateArray, identity, key, randomIn } from "../../../../common/utils";
+import { generateArray, identity, key, mapObject, randomIn } from "../../../../common/utils";
 import { mRot, rotate_M, toOpposite_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import Block, { BlockType } from "../../../api/block/Block";
 import { BLOCK_VOID } from "../blocks/Void";
 import IMapStorage from "../../../api/map/IMapStorage";
-import { NativeBlockTypes } from "../registry/BlockTypeRegistry";
-import { JSObject, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true } from "../../../../common/JSObjectify";
+import { NativeBlockTypeMap, NativeBlockTypes } from "../registry/BlockTypeRegistry";
+import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true, uniSaveJSObject } from "../../../../common/JSObjectify";
 
 /**
  * 稀疏地图
@@ -67,8 +67,20 @@ export default class MapStorageSparse implements IMapStorage {
         this.OBJECTIFY_MAP,
         'dict', undefined, // 复杂的「对象类型」同样没得精确审定
         // TODO: ↓【2023-09-24 18:45:36】要从这两个函数里预加载出相应的「坐标-对象」键值对
-        identity,
-        identity,
+        (v: { [key: string]: Block }): { [key: string]: JSObject } => {
+            return mapObject(
+                v,
+                identity,
+                (value: Block): JSObject => uniSaveJSObject(value)
+            )
+        },
+        (v: JSObjectValue): any => {
+            return mapObject(
+                v,
+                identity,
+                (value: JSObject): Block => Block.fromJSObject(value, NativeBlockTypeMap)
+            )
+        },
         loadRecursiveCriterion_false,
         (): Block => NativeBlockTypes.VOID(),
     );
@@ -125,7 +137,7 @@ export default class MapStorageSparse implements IMapStorage {
     public get borderMax(): iPoint { return this._borderMax }
     public static readonly key_borderMax: key = fastAddJSObjectifyMapProperty_dash(
         this.OBJECTIFY_MAP,
-        'deadPlayerMoveTo', iPoint,
+        'borderMax', iPoint,
         identity, identity,
         loadRecursiveCriterion_true,
         (): iPoint => new iPoint(),
@@ -135,11 +147,36 @@ export default class MapStorageSparse implements IMapStorage {
     public get borderMin(): iPoint { return this._borderMin }
     public static readonly key_borderMin: key = fastAddJSObjectifyMapProperty_dash(
         this.OBJECTIFY_MAP,
-        'deadPlayerMoveTo', iPoint,
+        'borderMin', iPoint,
         identity, identity,
         loadRecursiveCriterion_true,
         (): iPoint => new iPoint(),
     );
+
+    // ! 现在使用getter方法动态获取，而非直接对变量进行静态闭包
+    protected readonly _allDirection: mRot[];
+    public static readonly key_allDirection: key = fastAddJSObjectifyMapProperty_dash(
+        this.OBJECTIFY_MAP,
+        'allDirection', Array,
+        identity, (jso: JSObjectValue): mRot[] => {
+            if (!Array.isArray(jso)) throw new Error(`${jso}不是数组！`);
+            let result: mRot[] = [];
+            for (let i: uint = 0; i < jso.length; ++i) {
+                // !【2023-09-24 21:12:00】这个`number`日后很有可能导致迁移困难
+                if (typeof jso[i] !== 'number') throw new Error(`${jso}索引${i}处的${jso[i]}不是「任意维整数角」！`)
+                result[i] = jso[i]
+            }
+            return result
+        },
+        loadRecursiveCriterion_false,
+    );
+    /**
+     * * 默认0~3（x+、x-、y+、y-）
+     * * 使用「实例常量缓存」提高性能
+     * 
+     * ! 不要对返回的数组进行任何修改
+     */
+    public get allDirection(): mRot[] { return this._allDirection; }
 
     //============Constructor & Destructor============//
 
@@ -165,16 +202,6 @@ export default class MapStorageSparse implements IMapStorage {
     public get size(): number[] {
         return this._temp_size.copyFrom(this._borderMax).minusFrom(this._borderMin).addFromSingle(1);
     }
-
-    // ! 现在使用getter方法动态获取，而非直接对变量进行静态闭包
-    protected readonly _allDirection: mRot[];
-    /**
-     * * 默认0~3（x+、x-、y+、y-）
-     * * 使用「实例常量缓存」提高性能
-     * 
-     * ! 不要对返回的数组进行任何修改
-     */
-    public get allDirection(): mRot[] { return this._allDirection; }
 
     /**
      * * 默认0~3（x+、x-、y+、y-）

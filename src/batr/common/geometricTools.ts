@@ -43,10 +43,10 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * * 💭「动态添加属性」的弊端：可以是可以，但这样不如直接存储数组来得方便
 	 * 
 	 */
-	public get objectifyMap(): JSObjectifyMap<xPoint<T>> { return {} }
+	public get objectifyMap(): JSObjectifyMap { return {} }
 
 	/** 这是个可扩展的映射表 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap<xPoint<any>> = {};
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
 
 	//================Position Getter/Setter================//
 	public get nDimensions(): int { return this.length }

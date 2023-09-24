@@ -27,6 +27,8 @@ export type JSObject = {
 
 /**
  * 定义一类「可对象化」成JS原生object的对象
+ * 
+ * !【2023-09-24 20:29:40】现在需要有一个静态方法「getBlank」，不然难以实现「不靠实例得实例」
  */
 export interface IJSObjectifiable<T> {
 
@@ -42,6 +44,8 @@ export interface IJSObjectifiable<T> {
      *
      * ! 现在不强制要求有这两个方法，只需要有「对象化映射表」能`uniSave`就行
      * 
+     * ! 现在要求其不能调用`uniSave`/`uniLoad`，避免额外的递归现象
+     * 
      * @param target 目标对象
      */
     saveToJSObject?(target?: JSObject): JSObject;
@@ -51,6 +55,8 @@ export interface IJSObjectifiable<T> {
      * * 静态方法可因此使用「`new C()`+`C.copyFromObject(json)`」实现
      * 
      * ! 现在不强制要求有这两个方法，只需要有「对象化映射表」能`uniLoad`就行
+     * 
+     * ! 现在要求其不能调用`uniSave`/`uniLoad`，避免额外的递归现象
      * 
      * @param source 源头对象
      */
@@ -64,9 +70,14 @@ export interface IJSObjectifiable<T> {
     get objectifyMap(): JSObjectifyMap;
 
     /**
-     * 复制出一个新的「白板对象」
+     * 实例方法：复制出一个新的「白板对象」
      */
     cloneBlank?(): T;
+
+    /**
+     * ! 需要有一个静态方法「getBlank」，不然难以实现「不靠实例得实例」
+     */
+    // static getBlank(): T;
 
 }
 
@@ -149,6 +160,10 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
             )
         }
         else {
+            if (!verifyJSObjectValue(property)) {
+                console.error(target, property)
+                throw new Error(`尝试设置一个非法的JS对象值${property}`)
+            }
             // 基础类型：直接设置
             target[JSObjectKey] = property;
         }

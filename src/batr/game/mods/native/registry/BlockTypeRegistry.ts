@@ -59,6 +59,7 @@ import XTrapRotate from "../blocks/XTrapRotate";
 export { default as XTrapRotate } from "../blocks/XTrapRotate";
 
 import { PatchIndexType } from "../../../main/GlobalGameVariables";
+import { key } from "../../../../common/utils";
 
 /**
  * Define all `BlockType` of the native block types in the game
@@ -87,27 +88,27 @@ export module NativeBlockTypes {
 	export const GATE_CLOSE: BlockType = Gate
 	export const MOVEABLE_WALL: BlockType = MoveableWall
 
-	export const ALL_NATIVE_BLOCKS: BlockType[] = [
-		VOID,
-		WALL,
-		WATER,
-		GLASS,
-		BEDROCK,
-		X_TRAP_HURT,
-		X_TRAP_KILL,
-		X_TRAP_ROTATE,
-		COLORED,
-		COLOR_SPAWNER,
-		LASER_TRAP,
-		METAL,
-		SPAWN_POINT_MARK,
-		SUPPLY_POINT,
-		GATE_OPEN,
-		GATE_CLOSE,
-		MOVEABLE_WALL,
-	]
-
 }
+
+export const ALL_NATIVE_BLOCKS: BlockType[] = [
+	NativeBlockTypes.VOID,
+	NativeBlockTypes.WALL,
+	NativeBlockTypes.WATER,
+	NativeBlockTypes.GLASS,
+	NativeBlockTypes.BEDROCK,
+	NativeBlockTypes.X_TRAP_HURT,
+	NativeBlockTypes.X_TRAP_KILL,
+	NativeBlockTypes.X_TRAP_ROTATE,
+	NativeBlockTypes.COLORED,
+	NativeBlockTypes.COLOR_SPAWNER,
+	NativeBlockTypes.LASER_TRAP,
+	NativeBlockTypes.METAL,
+	NativeBlockTypes.SPAWN_POINT_MARK,
+	NativeBlockTypes.SUPPLY_POINT,
+	NativeBlockTypes.GATE_OPEN,
+	NativeBlockTypes.GATE_CLOSE,
+	NativeBlockTypes.MOVEABLE_WALL,
+]
 
 /**
  * 散列化一个「方块类型」，使之能用于「事件派发」机制中
@@ -117,3 +118,18 @@ export module NativeBlockTypes {
 export function hashBlockType(blockType: BlockType): PatchIndexType {
 	return blockType.name
 }
+
+/**
+ * 🔬一个简单的「ID（类名）——类」映射表
+ * 
+ * TODO: 未来是否要走Minecraft的机制，不好说
+ */
+export const NativeBlockTypeMap: Map<key, BlockType> = new Map()
+for (const bType of ALL_NATIVE_BLOCKS) {
+	NativeBlockTypeMap.set(bType.name, bType)
+}
+
+// console.log(
+// 	NativeBlockTypeMap,
+// 	(NativeBlockTypeMap.get('BlockWall') as any)?.getBlank()
+// )
