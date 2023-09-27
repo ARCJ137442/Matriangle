@@ -60,10 +60,10 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		energy: int
 	) {
-		super(owner, attackerDamage, direction);
+		super(owner, attackerDamage, extraDamageCoefficient, direction);
 		this._position.copyFrom(position)
 		this._initialEnergy = this._energy = energy;
 	}

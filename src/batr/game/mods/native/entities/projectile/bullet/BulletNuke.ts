@@ -39,14 +39,14 @@ export default class BulletNuke extends Bullet {
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		chargePercent: number
 	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
 			owner,
 			position, direction,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
 			BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent)
 		);

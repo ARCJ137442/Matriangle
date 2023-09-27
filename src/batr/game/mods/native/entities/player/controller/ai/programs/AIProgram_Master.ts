@@ -9,13 +9,14 @@ import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
 import AIProgram_Adventurer from "./AIProgram_Adventurer";
+import { NativeControllerLabels } from "../../ControllerLabels";
 
 /**
  * Advanced Advancer.
  */
 export default class AIProgram_Master implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = 'Master';
+	public static readonly LABEL: string = NativeControllerLabels.MASTER;
 	public static readonly LABEL_SHORT: string = 'M';
 
 	public static readonly DEBUG: boolean = false;

@@ -42,14 +42,14 @@ export default class LaserAbsorption extends Laser {
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		length: uint = LaserBasic.LENGTH
 	) {
 		super(
 			owner,
 			position, direction,
 			length, LaserAbsorption.LIFE,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			1 /* 始终完全充能 */
 		);
 	}

@@ -30,7 +30,7 @@ export default class LaserBasic extends Laser {
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		chargePercent: number = 1,
 		length: number = LaserBasic.LENGTH,
 	) {
@@ -38,7 +38,7 @@ export default class LaserBasic extends Laser {
 			owner,
 			position, direction,
 			length, LaserBasic.LIFE,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			chargePercent
 		);
 	}

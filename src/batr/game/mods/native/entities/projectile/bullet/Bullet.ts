@@ -34,11 +34,11 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		owner: IPlayer | null,
 		position: fPoint,
 		direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		speed: number,
 		finalExplodeRadius: number
 	) {
-		super(owner, attackerDamage, direction);
+		super(owner, attackerDamage, extraDamageCoefficient, direction);
 		this.speed = speed;
 		this._position.copyFrom(position)
 

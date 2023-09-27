@@ -35,10 +35,10 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
 		length: uint, LIFE: uint,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		chargePercent: number = 1 // * 没有「充能机制」就是「完全充能」
 	) {
-		super(owner, direction, attackerDamage * chargePercent);
+		super(owner, direction, attackerDamage * chargePercent, extraDamageCoefficient);
 		this._position.copyFrom(position);
 		this._length = length;
 		this._LIFE = LIFE;

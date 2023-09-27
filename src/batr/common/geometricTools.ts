@@ -485,3 +485,17 @@ export function traverseNDSquare(
 		}
 	}
 }
+
+/**
+ * 检验一个点是否为「整数点」
+ * * 【2023-09-27 20:21:48】设置缘由：int/uint只是AS3遗产&严格区分所用，JS在实际代码运行时并不区分整数与浮点数
+ * 
+ * @param p 待检验的点
+ * @returns 是否严格为「整数点」
+ */
+export const verifyIntPoint = (p: iPointRef): boolean => p.every(Number.isInteger)
+/** 上一个函数的有报错版本 */
+export function verifyIntPointStrict(p: iPointRef): iPointRef {
+	if (p.every(Number.isInteger)) return p
+	else throw new Error(`点${p}不是整数点`)
+}

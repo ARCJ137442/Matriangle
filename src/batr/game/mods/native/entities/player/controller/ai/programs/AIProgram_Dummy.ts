@@ -7,13 +7,14 @@ import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
+import { NativeControllerLabels } from "../../ControllerLabels";
 
 /**
  * Random move and Always Press Use.
  */
 export default class AIProgram_Dummy implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = 'Dummy';
+	public static readonly LABEL: string = NativeControllerLabels.DUMMY;
 	public static readonly LABEL_SHORT: string = 'D';
 
 	//============Instance Variables============//

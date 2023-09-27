@@ -83,17 +83,16 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	 */
 	public constructor(
 		owner: IPlayer | null,
-		position: fPoint,
-		speed: number,
-		attackerDamage: uint,
+		position: fPoint, direction: mRot, speed: number,
 		block: Block,
-		direction: mRot,
-		chargePercent: number = 1
+		attackerDamage: uint, toolExtraDamageCoefficient: uint,
+		chargePercent: number = 1,
 	) {
 		super(
 			owner,
 			// exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * attackerDamage
 			uint(2 * chargePercent ** 2) * attackerDamage, // ? ↑不知道上面那个在做什么😂
+			toolExtraDamageCoefficient,
 			direction
 		);
 		// * 复制方块实例 //

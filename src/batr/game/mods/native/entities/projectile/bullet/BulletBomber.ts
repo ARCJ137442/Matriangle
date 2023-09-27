@@ -40,14 +40,14 @@ export default class BulletBomber extends Bullet {
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		chargePercent: number
 	) {
 		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
 			owner,
 			position, direction,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			BulletBomber.DEFAULT_SPEED,
 			BulletBomber.DEFAULT_EXPLODE_RADIUS
 		);

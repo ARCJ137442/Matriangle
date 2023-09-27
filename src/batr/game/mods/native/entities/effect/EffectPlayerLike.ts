@@ -35,7 +35,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	public get color(): uint { return this._color; }
 
 	/** 用于仿制（AI）玩家的标识 */ // TODO: 等待玩家方迁移
-	protected _AILabel: string;
+	protected _decorationLabel: string;
 	protected _alphaFunction: (effect: EffectPlayerLike) => number;
 
 	//============Constructor & Destructor============//
@@ -47,7 +47,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 		super(position, life);
 		this._color = color;
 		this._direction = rot;
-		this._AILabel = AILabel;
+		this._decorationLabel = AILabel;
 		this._alphaFunction = (
 			reverse ?
 				EffectPlayerLike.reversedAlpha :

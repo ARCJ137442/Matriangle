@@ -46,8 +46,8 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	// protected _rightBlock: Sprite;
 
 	/** 在「生成子机」时传递给子机的「使用对象」 */
-	protected _tool: Tool;
-	protected _weaponChargePercent: number;
+	protected _tool: Tool; // ! 因为子机是要「使用工具」而非仅仅「发射武器」，所以要保留
+	protected _toolChargePercent: number;
 
 	/** Default instanceof 0,Vortex instanceof 1 */
 	public mode: uint = 0;
@@ -58,19 +58,19 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 		owner: IPlayer | null,
 		direction: mRot,
 		tool: Tool,
-		weaponAttackerDamage: number,
-		weaponCharge: number,
+		toolAttackerDamage: uint, toolExtraDamageCoefficient: uint,
+		toolCharge: number,
 		mode: uint
 	) {
 		super(
 			owner,
-			weaponAttackerDamage, // ! 自身无伤害，但一般用「其所含武器的伤害」（就如玩家扩展了一种「使用武器的方式」）
+			toolAttackerDamage, toolExtraDamageCoefficient, // ! 自身无伤害，但一般用「其所含武器的伤害」（就如玩家扩展了一种「使用武器的方式」）
 			direction, // * 这个方向是为「ALPHA模式」特制的
 		);
 		this._position.copyFrom(position)
 		this._tool = tool;
 		this.mode = mode;
-		this._weaponChargePercent = weaponCharge;
+		this._toolChargePercent = toolCharge;
 		// this.shapeInit(shape: IBatrShape);
 	}
 
@@ -169,8 +169,8 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			droneMoveDirection,
 			toolDirection,
 			this._tool,
-			this._attackerDamage,
-			this._weaponChargePercent
+			this._attackerDamage, this._extraDamageCoefficient,
+			this._toolChargePercent
 		);
 		host.entitySystem.register(drone);
 		// host.projectileContainer.addChild(drone); // ! 解耦

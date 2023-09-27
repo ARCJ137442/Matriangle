@@ -36,7 +36,7 @@ export default class LaserPulse extends Laser {
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		chargePercent: number = 1,
 		length: uint = LaserBasic.LENGTH,
 	) {
@@ -44,7 +44,7 @@ export default class LaserPulse extends Laser {
 			owner,
 			position, direction,
 			length, LaserPulse.LIFE,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			1 // ! 「充能百分比」仅用于「决定子类型」而不用于决定伤害/生命周期
 		);
 		this.isPull = chargePercent != 1;

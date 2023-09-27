@@ -59,8 +59,8 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值
 		// 然后绘制玩家标记
-		if (this._AILabel != null)
-			AIPlayer.drawAIDecoration(shape.graphics, this._AILabel);
+		if (this._decorationLabel != null)
+			Player.drawShapeDecoration(shape.graphics, this._decorationLabel);
 		// 这时才停止
 		shape.graphics.endFill();
 	}

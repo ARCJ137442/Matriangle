@@ -41,6 +41,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * ? 为什么要在「抛射体伤害到玩家」的时候才计算伤害数据？理论上就不应该保留这个引用
 	 * 
 	 * ? 为什么「抛射体」一定要和「武器」绑定在一起
+	 * * 【2023-09-27 19:50:16】或许日后会有一个「武器抛射体」的概念
 	 * 
 	 * 📌玩家之间的「伤害」分为多个概念/计算过程：
 	 * * 玩家所持有武器的「基础伤害」
@@ -56,6 +57,16 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public get attackerDamage(): uint { return this._attackerDamage; }
 
 	/**
+	 * 存储用于「被攻击者抗性减免」的系数
+	 * * 初衷：使「攻击者」与「被伤害者」在「伤害计算」上彻底解耦
+	 *   * 源自「不再持有『发射抛射体』所用工具的引用」
+	 */
+	protected _extraDamageCoefficient: uint;
+	/** 只读：获取「在计算『被攻击者伤害』时的『抗性减免系数』」 */
+	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
+
+
+	/**
 	 * 移植from玩家
 	 * * 🎯让伤害属性在生成时计算，而无需存储「使用的工具」
 	 * 
@@ -66,10 +77,15 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public canHurtAlly: boolean = false
 
 	//============Constructor & Destructor============//
-	public constructor(owner: IPlayer | null, attackerDamage: uint, direction: mRot) {
+	public constructor(
+		owner: IPlayer | null,
+		attackerDamage: uint, extraDamageCoefficient: uint,
+		direction: mRot
+	) {
 		super();
 		this._owner = owner;
 		this._attackerDamage = attackerDamage;
+		this._extraDamageCoefficient = extraDamageCoefficient;
 		this._direction = direction;
 	}
 

@@ -7,17 +7,17 @@ import { iPoint } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IBatrGame from "../../../../main/IBatrGame";
 import { mRot } from "../../../../general/GlobalRot";
-import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import Tool from "../../tool/Tool";
-import Player from "./Player";
 import IGameRule from './../../../../api/rule/IGameRule';
+import PlayerAttributes from "./attributes/PlayerAttributes";
+import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
  * 抽象出一个「玩家接口」
  * 在「架空玩家实际类实现」后，测试抛射体
  * 重构「玩家」「AI玩家」，将这两者的区别细化为「控制器」「显示模板」不同
-   * 控制：一个是键盘控制（人类），一个是基于时钟的自动程序控制（AI）……
+   * 控制：一个是键鼠控制（人类），一个是基于时钟的自动程序控制（AI）……
 	 * 这样较容易支持其它方式（如使用HTTP/WebSocket请求控制）
 	 * 📌在重写「AI控制器」时，用上先前学的「行为树」模型（虽然原型还没调试通）
 	 * 如果有机会的话，尝试使用「装饰器」
@@ -69,36 +69,10 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	//====Buff====//
 
 	/**
-	 * 玩家的伤害加成
-	 * * 机制：用于在使用工具时增加额外的伤害
-	 * * 算法：攻击者伤害=工具伤害+加成值*武器「伤害系数」 ?? 1
+	 * 玩家的所有属性（原「Buff系统」）
+	 * * 包括「伤害提升」「冷却减免」「抗性提升」「范围提升」
 	*/
-	get buffDamage(): uint;
-	set buffDamage(value: uint);
-
-	/**
-	 * 玩家的冷却减免
-	 * * 机制：用于在使用工具时减免冷却时间
-	 * * 算法：使用者冷却=max(floor(工具冷却/(1+加成值/10)), 1)
-	*/
-	get buffCD(): uint;
-	set buffCD(value: uint);
-
-	/**
-	 * 玩家的抗性加成
-	 * * 机制：用于在受到「攻击者伤害」时减免伤害
-	 * * 算法：最终伤害=max(攻击者伤害-加成值*攻击者武器减免系数 ?? 1, 1)
-	*/
-	get buffResistance(): uint;
-	set buffResistance(value: uint);
-
-	/**
-	 * 玩家的影响加成
-	 * * 机制：用于在使用工具时增加额外的「影响范围」，如「更大的子弹爆炸范围」
-	 * * 算法：最终伤害=max(攻击者伤害-加成值*攻击者武器减免系数 ?? 1, 1)
-	 */
-	get buffRadius(): uint;
-	set buffRadius(value: uint);
+	get attributes(): PlayerAttributes;
 
 	//============Constructor & Destructor============//
 	/**
@@ -115,12 +89,12 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 		team: PlayerTeam,
 		controller: PlayerController | null,
 		...args: any[] // ! 其它附加参数
-	): void
+	): void;
 
-	/**
-	 * 获取玩家的「控制器」
-	 */
-	get controller(): PlayerController | null;
+	// /**
+	//  * 获取玩家的「控制器」
+	//  */
+	// get controller(): PlayerController | null; // !【2023-09-27 23:45:42】现在弃用
 
 	/**
 	 * 存取玩家队伍
@@ -190,10 +164,10 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	releaseMoveAt(direction: mRot): void;
 
 	/**
-	 * 设置「是否按下『使用键』」
+	 * 设置「是否『正在使用（工具）』」
 	 * * 机制：松开使用键⇒充能中断（附带显示更新）
 	 */
-	set pressUse(turn: boolean): void;
+	set isUsing(turn: boolean);
 
 	/*
 	set pressLeftSelect(turn:Boolean)
@@ -211,14 +185,14 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * 
 	 * @param tool 分配给玩家的工具
 	 */
-	initVariablesByRule(rule: IGameRule, tool: Tool): void
+	initVariablesByRule(rule: IGameRule, tool: Tool): void;
 
 	//====Functions About Health====//
 	/** 实现：这个「治疗者」必须是玩家 */
 	addHealth(value: uint, healer: IPlayer | null): void;
 
 	/** 实现：这个「攻击者」必须是玩家 */
-	removeHealth(value: uint, attacker: IPlayer | null): void
+	removeHealth(value: uint, attacker: IPlayer | null): void;
 
 	//====Functions About Gameplay====//
 
@@ -235,7 +209,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	// }
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IBatrGame): void
+	onPositedBlockUpdate(host: IBatrGame): void;
 
 	/**
 	 * 在玩家位置改变时「测试移动」
@@ -253,7 +227,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * @param ignoreDelay 是否忽略「方块伤害」等冷却直接开始
 	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
-	dealMoveInTest(host: IBatrGame, ignoreDelay?: boolean, isLocationChange?: boolean): void
+	dealMoveInTest(host: IBatrGame, ignoreDelay?: boolean, isLocationChange?: boolean): void;
 
 	/**
 	 * 处理「储备生命值」
@@ -268,7 +242,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * * 否则：
 	 *   * 持续计时
 	 */
-	dealHeal(): void
+	dealHeal(): void;
 
 	//====Functions About Respawn====//
 	/**
@@ -301,299 +275,139 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 */
 	onToolChange?(oldT: Tool, newT: Tool): void;
 
-	dealUsingCD(): void {
-	// console.log(this.tool.name,this._toolChargeTime,this._toolChargeMaxTime)
-	if (this._toolUsingCD > 0) {
-		this._toolUsingCD--;
-		this._GUI.updateCD();
-	}
-	else {
-		if (!this.toolNeedsCharge) {
-			if (this.isPress_Use)
-				this.useTool();
-		}
-		else if (this._toolChargeTime < 0) {
-			this.initToolCharge();
-		}
-		else {
-			if (this.toolReverseCharge) {
-				this.dealToolReverseCharge();
-			}
-			else if (this.isPress_Use) {
-				this.dealToolCharge();
-			}
-		}
-	}
-}
+	/**
+	 * 处理玩家工具的使用时间（冷却+充能）
+	 * * 每个游戏刻调用一次
+	 * * 逻辑：
+	 *   * CD未归零⇒CD递减 + GUI更新CD
+	 *   * CD已归零⇒
+	 *     * 无需充能⇒在使用⇒使用工具
+	 *     * 需要充能⇒正向充能|反向充能（现在因废弃掉`-1`的状态，不再需要「初始化充能」了）
+	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
+	 *   * 一个是为了显示更新方便
+	 *   * 一个是为了对接逻辑方便
+	 * 
+	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
+	*/
+	dealUsingTime(host: IBatrGame): void;
 
-dealToolCharge(): void {
-	if(this._toolChargeTime >= this._toolChargeMaxTime) {
-	this.useTool();
-	this.resetCharge(false, false);
-}
-		else
-this._toolChargeTime++;
-this._GUI.updateCharge();
-	}
+	/**
+	 * 处理玩家工具的充能状态
+	 * * 逻辑：需要玩家**主动**使用工具充能，当满充能/停止使用时直接释放
+	 * * 每个游戏刻调用一次
+	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
+	 *   * 一个是为了显示更新方便
+	 *   * 一个是为了对接逻辑方便
+	 * 
+	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
+	 */
+	dealToolCharge(host: IBatrGame): void;
 
-dealToolReverseCharge(): void {
-	if(this.toolChargeTime < this.toolChargeMaxTime) {
-	this._toolChargeTime++;
-}
-if (this.isPress_Use) {
-	this.useTool();
-	this.resetCharge(false, false);
-}
-this._GUI.updateCharge();
-	}
+	/**
+	 * 处理玩家工具的充能状态（反向）
+	 * * 逻辑：相当于一次额外的冷却，但玩家无需**主动使用**工具
+	 * * 每个游戏刻调用一次
+	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
+	 *   * 一个是为了显示更新方便
+	 *   * 一个是为了对接逻辑方便
+	 * 
+	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
+	 */
+	dealToolReverseCharge(host: IBatrGame): void;
 
-onDisableCharge(): void {
-	if(!this.toolNeedsCharge || this._toolUsingCD > 0 || !this.isActive || this.isRespawning)
-	return;
-	this.useTool();
-	this.resetCharge();
-}
+	/**
+	 * 在玩家停止充能之时
+	 * * 逻辑：工具需充能 && 工具冷却结束 && 自身已激活 && 自身不在重生 ⇒ 使用工具+重置充能状态
+	 */
+	onDisableCharge(host: IBatrGame): void;
 
-initToolCharge(): void {
-	this._toolChargeTime = 0;
-	this._toolChargeMaxTime = this._tool.defaultChargeTime;
-}
+	/**
+	 * 初始化工具充能状态
+	 * * 逻辑：工具「已充能时长」归零
+	 * 
+	 * ! 即将废弃
+	 * 
+	 * ! 已移除：无需再根据「工具的默认充能（所需）时长」调整「最大充能时长」
+	 */
+	initToolCharge(): void;
 
-resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
-	this._toolChargeTime = -1;
-	if(includeMaxTime)
-			this._toolChargeMaxTime = 0;
-	if(updateGUI)
-			this._GUI.updateCharge();
-}
+	/**
+	 * 重置充能状态
+	 * * 逻辑：工具「已充能时长」归零
+	 * 
+	 * ! 现在对「已充能时长」不再使用`-1`作为「未充能」的标志——统一为无符号整数
+	 * 
+	 * ! 已移除 @param includeMaxTime 现在的「所需充能时长」由其自身工具决定
+	 * @param updateGUI 是否更新GUI信息 // TODO: 暂时无用
+	 */
+	resetCharge(updateGUI: boolean): void;
 
-resetCD(): void {
-	this._toolUsingCD = 0;
-	this._GUI.updateCD();
-}
+	/**
+	 * 重置冷却
+	 * * 逻辑：冷却时间归零 + GUI更新
+	 */
+	resetCD(): void;
 
-//====Functions About Attributes====//
+	//====Control Functions====//
+	/**
+	 * * 下面是一些用于「从IO中读取并执行」的「基本操作集合」
+	 * TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏主体』行动」
+	 */
 
-/**
- * The Function returns the final damage with THIS PLAYER.
- * FinalDamage=DefaultDamage+
- * attacker.buffDamage*ToolCoefficient-
- * this.buffResistance*ToolCoefficient>=0.
- * @param	attacker	The attacker.
- * @param	attackerTool	The attacker's tool(null=attacker.tool).
- * @param	defaultDamage	The original damage by attacker.
- * @return	The Final Damage.
- */
-computeFinalDamage(attacker: Player, attackerTool: Tool, defaultDamage: uint): uint {
-	if (attacker == null)
-		return attackerTool == null ? 0 : attackerTool.defaultDamage;
-	if (attackerTool == null)
-		attackerTool = attacker.tool;
-	if (attackerTool != null)
-		return attackerTool.getBuffedDamage(defaultDamage, attacker.buffDamage, this.buffResistance);
-	return 0;
-}
+	/**
+	 * （控制）玩家向前移动（一格）
+	 * 
+	 * !【2023-09-27 20:19:33】现在废除了「非整数前进」，因为已经锁定玩家为「格点实体」
+	 * * 同时也废除了「不定长度前进」，限定为「只前进一格」
+	 */
+	moveForward(host: IBatrGame,): void;
 
-finalRemoveHealth(attacker: Player, attackerTool: Tool, defaultDamage: uint): void {
-	this.removeHealth(this.computeFinalDamage(attacker, attackerTool, defaultDamage), attacker);
-}
+	/**
+	 * （控制）玩家向某个方向移动（一格）
+	 * * 📌实际上相当于「转向+前进」
+	 */
+	moveToward(host: IBatrGame, direction: mRot): void;
 
-computeFinalCD(tool: Tool): uint {
-	return tool.getBuffedCD(this.buffCD);
-}
+	// ! 原先一些「向固定朝向旋转」的功能已停用
 
-computeFinalRadius(defaultRadius: number): number {
-	return defaultRadius * (1 + Math.min(this.buffRadius / 16, 3));
-}
+	/**
+	 * （控制）玩家转向指定方向
+	 * * 为何要附上「游戏主体」参数？其本身可能要触发一些钩子函数什么的
+	 * @param host 所依附的「游戏主体」
+	 * @param direction 要转向的方向
+	 */
+	turnTo(host: IBatrGame, direction: mRot): void;
 
-computeFinalLightningEnergy(defaultEnergy: uint): int {
-	return defaultEnergy * (1 + this._buffDamage / 20 + this._buffRadius / 10);
-}
+	/**
+	 * （控制）玩家转向后方
+	 * * 为何要附上「游戏主体」参数？其本身可能要触发一些钩子函数什么的
+	 */
+	turnBack(host: IBatrGame): void
 
-//====Control Functions====//
+	/**
+	 * （控制玩家）向指定方向旋转
+	 * * 与`turnTo`的区别：这是「相对方向」旋转
+	 * * 详情参见`rotate_M`
+	 * 
+	 * ! 注意：不能连续使用两次「协轴相同的旋转」
+	 * * 原因：第一次旋转时，玩家方向已经与协轴方向一致，导致第二次无法构造「旋转平面」
+	 * 
+	 * @param coaxis 旋转的「协轴」，与玩家的「当前朝向」构成整个「旋转平面」
+	 * @param 经过旋转的「任意维整数角」
+	 */
+	turnRelative(host: IBatrGame, coaxis: uint, step?: int): void;
 
-clearControlKeys(): void {
-	controlKey_Up = KeyCode.EMPTY;
-	controlKey_Down = KeyCode.EMPTY;
-	controlKey_Left = KeyCode.EMPTY;
-	controlKey_Right = KeyCode.EMPTY;
-	controlKey_Use = KeyCode.EMPTY;
-}
+	/**
+	 * （控制玩家）开始使用工具
+	 * * 对应「开始按下『使用』键」
+	 */
+	startUsingTool(host: IBatrGame): void
 
-turnAllKeyUp(): void {
-	this.isPress_Up = false;
-	this.isPress_Down = false;
-	this.isPress_Left = false;
-	this.isPress_Right = false;
-	this.isPress_Use = false;
-	// this.isPress_Select_Left=false;
-	// this.isPress_Select_Right=false;
-	this.keyDelay_Move = 0;
-	this.controlDelay_Move = FIXED_TPS * 0.5;
-	// this.controlDelay_Select=TPS/5;
-	this.controlLoop_Move = FIXED_TPS * 0.05;
-	// this.controlLoop_Select=TPS/40;
-}
-
-updateKeyDelay(): void {
-	// console.log(this.keyDelay_Move,this.controlDelay_Move,this.controlLoop_Move);
-	//==Set==//
-	// Move
-	if(this.someMoveKeyDown) {
-	this.keyDelay_Move++;
-	if (this.keyDelay_Move >= this.controlLoop_Move) {
-		this.keyDelay_Move = 0;
-	}
-}
-		else {
-	this.keyDelay_Move = -controlDelay_Move;
-}
-	}
-
-runActionByKeyCode(code: uint): void {
-	if(!this.isActive || this.isRespawning)
-	return;
-	switch(code) {
-			case this.controlKey_Up:
-	this.moveUp();
-	break;
-	case this.controlKey_Down:
-	this.moveDown();
-	break;
-	case this.controlKey_Left:
-	this.moveLeft();
-	break;
-	case this.controlKey_Right:
-	this.moveRight();
-	break;
-	case this.controlKey_Use:
-	if(!this.toolReverseCharge)
-	this.useTool();
-	break;
-	/*case this.controlKey_Select_Left:
-	this.moveSelect_Left();
-break;
-case this.controlKey_Select_Right:
-	this.moveSelect_Right();
-break;*/
-}
-	}
-
-dealKeyControl(): void {
-	if(!this.isActive || this.isRespawning)
-	return;
-	if(this.someKeyDown) {
-	// Move
-	if (this.keyDelay_Move == 0) {
-		// Up
-		if (this.isPress_Up) {
-			this.moveUp();
-		}
-		// Down
-		else if (this.isPress_Down) {
-			this.moveDown();
-		}
-		// Left
-		else if (this.isPress_Left) {
-			this.moveLeft();
-		}
-		// Right
-		else if (this.isPress_Right) {
-			this.moveRight();
-		}
-	} /*
-				//Select_Left
-				if(this.keyDelay_Select==0) {
-					//Select_Right
-					if(this.isPress_Select_Right) {
-						this.SelectRight();
-					}
-					else if(this.isPress_Select_Left) {
-						this.SelectLeft();
-					}
-				}*/
-}
-	}
-
-moveForward(distance: number = 1): void {
-	if(this.isRespawning)
-	return;
-	switch(this.rot) {
-			case GlobalRot.RIGHT:
-	moveRight();
-	break;
-
-			case GlobalRot.LEFT:
-	moveLeft();
-	break;
-
-			case GlobalRot.UP:
-	moveUp();
-	break;
-
-			case GlobalRot.DOWN:
-	moveDown();
-	break;
-}
-	}
-
-moveIntForward(distance: number = 1): void {
-	moveForward(distance);
-}
-
-moveLeft(): void {
-	host.movePlayer(this, GlobalRot.LEFT, this.moveDistance);
-}
-
-moveRight(): void {
-	host.movePlayer(this, GlobalRot.RIGHT, this.moveDistance);
-}
-
-moveUp(): void {
-	host.movePlayer(this, GlobalRot.UP, this.moveDistance);
-}
-
-moveDown(): void {
-	host.movePlayer(this, GlobalRot.DOWN, this.moveDistance);
-}
-
-turnUp(): void {
-	this.rot = GlobalRot.UP;
-}
-
-turnDown(): void {
-	this.rot = GlobalRot.DOWN;
-}
-
-turnAbsoluteLeft(): void {
-	this.rot = GlobalRot.LEFT;
-}
-
-turnAbsoluteRight(): void {
-	this.rot = GlobalRot.RIGHT;
-}
-
-turnBack(): void {
-	this.rot += 2;
-}
-
-turnRelativeLeft(): void {
-	this.rot += 3;
-}
-
-turnRelativeRight(): void {
-	this.rot += 1;
-}
-
-useTool(): void {
-	if(!this.toolNeedsCharge || this.chargingPercent > 0) {
-	host.playerUseTool(this, this.rot, this.chargingPercent);
-}
-if (this.toolNeedsCharge)
-	this._GUI.updateCharge();
-	}
-
-
+	/**
+	 * （控制玩家）停止使用工具
+	 * * 对应「开始按下『使用』键」
+	 */
+	stopUsingTool(host: IBatrGame): void
 
 	//============Display Implements============//
 	// Color
@@ -604,14 +418,9 @@ if (this.toolNeedsCharge)
 	get fillColor(): uint;
 
 	/** 用于在GUI上显示的文本：生命值+最大生命值+储备生命值+剩余生命数（若生命数有限） */
-	get healthText(): string {
-	let healthText: string = this._health + '/' + this._maxHealth;
+	get healthText(): string;
 
-	let healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
-
-	let lifeText: string = this._infinityLife ? '' : '[' + this._lives + ']';
-
-	return healthText + healText + lifeText;
-}
+	/** （移植自AIPlayer）用于在主图形上显示「附加装饰」 */
+	drawShapeDecoration(shape: IBatrShape): void
 
 }

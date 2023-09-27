@@ -1,4 +1,4 @@
-import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from "../../../../common/JSObjectify";
+import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP, uniLoadJSObject, uniSaveJSON, uniSaveJSObject } from "../../../../common/JSObjectify";
 import { intMax } from "../../../../common/exMath";
 import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
@@ -34,16 +34,20 @@ export default class Weapon extends Tool {
 	}
 
 	// JS对象 //
+
+	/** 模板构造函数 */
+	public static getBlank(): Weapon { return new Weapon('undefined', 0, 0, 0) };
+
 	/** 复用「工具」的「对象化映射表」 */
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = { ...Tool.OBJECTIFY_MAP };
 
-	public static readonly key_defaultDamage: key = fastAddJSObjectifyMapProperty_dashP(
+	public static readonly key_baseDamage: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
-		'defaultDamage', uint(1),
+		'baseDamage', uint(1),
 	)
-	protected _defaultDamage: uint;
+	protected _baseDamage: uint;
 	/** 武器的默认攻击伤害 */
-	public get defaultDamage(): uint { return this._defaultDamage; }
+	public get baseDamage(): uint { return this._baseDamage; }
 
 	// canHurt
 	public static readonly key_canHurtEnemy: key = fastAddJSObjectifyMapProperty_dashP(
@@ -100,19 +104,27 @@ export default class Weapon extends Tool {
 	//============Constructor & Destructor============//
 	public constructor(
 		id: string,
-		maxCD_S: number = 0,
+		baseCD_S: number = 0,
 		chargeMaxTime_S: number = 0,
-		defaultDamage: uint = 1,
+		baseDamage: uint = 1,
 		reverseCharge: boolean = false
 	) {
-		super(id, maxCD_S * FIXED_TPS, chargeMaxTime_S * FIXED_TPS);
+		super(id, baseCD_S * FIXED_TPS, chargeMaxTime_S * FIXED_TPS);
 		// defaultCD,defaultChargeTime instanceof Per Second
-		this._defaultDamage = defaultDamage;
+		this._baseDamage = baseDamage;
 		this._reverseCharge = reverseCharge;
 		// default
 		this._canHurtEnemy = true;
 		this._canHurtSelf = false;
 		this._canHurtAlly = false;
+	}
+
+	/** 覆盖：直接序列化 */
+	override copy(): Tool {
+		return uniLoadJSObject(
+			Weapon.getBlank(),
+			uniSaveJSObject(this, {})
+		)
 	}
 
 
@@ -164,34 +176,11 @@ export default class Weapon extends Tool {
 
 	//============Additional Properties============//
 	/**
-	 * 默认的每秒伤害输出
+	 * （衍生）默认的每秒伤害输出
 	 * * 由默认伤害、CD、充能时间等计算而出
 	 */
-	public get defaultDamageOutput(): uint {
-		return this._defaultDamage / (this._maxCD + this._chargeMaxTime);
-	}
-
-	/**
-	 * 用于结合玩家特性计算「最终伤害」
-	 * @param defaultDamage 默认伤害
-	 * @param buffDamage 玩家处的伤害加成
-	 * @param buffResistance 玩家处的抗性减免
-	 * @returns 最小为1的正整数值
-	 */
-	public getBuffedDamage(defaultDamage: uint, buffDamage: uint, buffResistance: uint): uint {
-		return intMax(
-			defaultDamage + buffDamage * this.extraDamageCoefficient - buffResistance * this.extraResistanceCoefficient,
-			1
-		);
-	}
-
-	/**
-	 * 用于结合玩家特性计算「最终CD」
-	 * @param buffCD 玩家处的CD减免
-	 * @returns 最小为1的冷却时间
-	 */
-	public getBuffedCD(buffCD: uint): uint {
-		return Math.ceil(this._maxCD / (1 + buffCD / 10));
+	public get baseDamageOutput(): uint {
+		return this._baseDamage / (this._baseCD + this._chargeMaxTime);
 	}
 
 }

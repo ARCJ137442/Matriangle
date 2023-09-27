@@ -75,13 +75,18 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		owner: IPlayer | null,
 		position: fPoint,
 		direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, toolExtraDamageCoefficient: uint,
 		chargePercent: number,
 		finalRadius: number,
 	) {
 		/** 从最小到最大 */
 		let tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent;
-		super(owner, attackerDamage * (tempScale / Wave.MAX_SCALE), direction);
+		super(
+			owner,
+			attackerDamage * (tempScale / Wave.MAX_SCALE),
+			toolExtraDamageCoefficient,
+			direction
+		);
 		this._nowScale = (
 			owner == null ?
 				tempScale :

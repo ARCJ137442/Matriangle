@@ -48,8 +48,8 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		shape.graphics.beginFill(this._color);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics)
 		// 然后绘制标记
-		if (this._AILabel != null)
-			AIPlayer.drawAIDecoration(shape.graphics, this._AILabel);
+		if (this._decorationLabel != null)
+			AIPlayer.drawAIDecoration(shape.graphics, this._decorationLabel);
 		// 停止绘制
 		shape.graphics.endFill();
 	}

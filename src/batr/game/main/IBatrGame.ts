@@ -9,7 +9,6 @@ import IMapDisplayer from "../../display/api/map/IMapDisplayer";
 import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import BonusBox from "../mods/native/entities/item/BonusBox";
-import AIPlayer from "../mods/native/entities/player/AIPlayer";
 import IPlayer from "../mods/native/entities/player/IPlayer";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Lightning from "../mods/native/entities/projectile/other/Lightning";
@@ -366,13 +365,11 @@ export default interface IBatrGame {
 	// Add a player uses random position and tool
 	appendPlayer(controlKeyID: uint/* = 0*/): IPlayer
 
-	createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
-
-	addAI(team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
-
-	appendAI(): IPlayer
-
-	autoGetAIName(player: AIPlayer): string
+	// TODO: 这几个应该在外部加载安排控制器时做好
+	// createAI(position: iPoint, team: PlayerTeam, isActive: boolean/* = true*/): AIPlayer
+	// addAI(team: PlayerTeam, position: iPoint, direction: mRot/* = 0*/, isActive: boolean/* = true*/, name: string/* = null*/): AIPlayer
+	// appendAI(): IPlayer
+	// autoGetAIName(player: AIPlayer): string
 
 	spawnPlayersByRule(): void
 
@@ -466,19 +463,19 @@ export default interface IBatrGame {
 
 	addTeleportEffect(position: fPoint): void
 
-	addPlayerDeathLightEffect(
-		position: fPoint, direction: mRot,
-		color: uint,
-		aiPlayer: AIPlayer/* = null*/,
-		reverse: boolean/* = false*/
-	): void
-
-	addPlayerDeathFadeoutEffect(
-		position: fPoint, direction: mRot,
-		color: uint,
-		aiPlayer: AIPlayer/* = null*/,
-		reverse: boolean/* = false*/
-	): void
+	// TODO: 此将弃用于AI玩家——只是在显示上有差异
+	// addPlayerDeathLightEffect(
+	// 	position: fPoint, direction: mRot,
+	// 	color: uint,
+	// 	aiPlayer: AIPlayer/* = null*/,
+	// 	reverse: boolean/* = false*/
+	// ): void
+	// addPlayerDeathFadeoutEffect(
+	// 	position: fPoint, direction: mRot,
+	// 	color: uint,
+	// 	aiPlayer: AIPlayer/* = null*/,
+	// 	reverse: boolean/* = false*/
+	// ): void
 
 	addPlayerDeathLightEffect2(
 		position: fPoint,

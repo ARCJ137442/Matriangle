@@ -9,59 +9,73 @@ import Weapon from "../tool/Weapon";
 export module NativeTools {
 
 	//================武器注册区================//
-	export const WEAPON_BULLET_BASIC: Weapon = new Weapon('Bullet', 0.25, 5)
+	export const WEAPON_ID_BULLET_BASIC: string = 'Bullet'
+	export const WEAPON_BULLET_BASIC: Weapon = new Weapon(WEAPON_ID_BULLET_BASIC, 0.25, 5)
 		.setExtraProperty(1, 1);
 
-	export const WEAPON_BULLET_NUKE: Weapon = new Weapon('Nuke', 5, 320, 5)
+	export const WEAPON_ID_BULLET_NUKE: string = 'Nuke'
+	export const WEAPON_BULLET_NUKE: Weapon = new Weapon(WEAPON_ID_BULLET_NUKE, 5, 320, 5)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 15)
 		.setDroneProperty(0);
 
-	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon('Sub Bomber', 1, 10, 1, true)
+	export const WEAPON_ID_BULLET_BOMBER: string = 'Sub Bomber'
+	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon(WEAPON_ID_BULLET_BOMBER, 1, 10, 1, true)
 		.setExtraProperty(2, 1)
 		.setDroneProperty(0);
 
-	export const WEAPON_BULLET_TRACKING: Weapon = new Weapon('Tracking Bullet', 0.25, 5, 0.5, true)
+	export const WEAPON_ID_BULLET_TRACKING: string = 'Tracking Bullet'
+	export const WEAPON_BULLET_TRACKING: Weapon = new Weapon(WEAPON_ID_BULLET_TRACKING, 0.25, 5, 0.5, true)
 		.setExtraProperty(1, 1)
 		.setDroneProperty(0);
 
 
-	export const WEAPON_LASER_BASIC: Weapon = new Weapon('Laser', 3, 120, 1)
+	export const WEAPON_ID_LASER_BASIC: string = 'Laser'
+	export const WEAPON_LASER_BASIC: Weapon = new Weapon(WEAPON_ID_LASER_BASIC, 3, 120, 1)
 		.setExtraProperty(8, 6)
 		.setDroneProperty(0.8);
 
-	export const WEAPON_LASER_PULSE: Weapon = new Weapon('Pulse Laser', 0.5, 5, 0.5, true)
+	export const WEAPON_ID_LASER_PULSE: string = 'Pulse Laser'
+	export const WEAPON_LASER_PULSE: Weapon = new Weapon(WEAPON_ID_LASER_PULSE, 0.5, 5, 0.5, true)
 		.setExtraProperty(3, 3);
 
-	export const WEAPON_LASER_TELEPORT: Weapon = new Weapon('Teleport Laser', 3.5, 40)
+	export const WEAPON_ID_LASER_TELEPORT: string = 'Teleport Laser'
+	export const WEAPON_LASER_TELEPORT: Weapon = new Weapon(WEAPON_ID_LASER_TELEPORT, 3.5, 40)
 		.setExtraProperty(4, 3);
 
-	export const WEAPON_LASER_ABSORPTION: Weapon = new Weapon('Absorption Laser', 4, 10)
+	export const WEAPON_ID_LASER_ABSORPTION: string = 'Absorption Laser'
+	export const WEAPON_LASER_ABSORPTION: Weapon = new Weapon(WEAPON_ID_LASER_ABSORPTION, 4, 10)
 		.setExtraProperty(4, 2);
 
 
-	export const WEAPON_WAVE: Weapon = new Weapon('Wave', 0.5, 20, 2)
+	export const WEAPON_ID_WAVE: string = 'Wave'
+	export const WEAPON_WAVE: Weapon = new Weapon(WEAPON_ID_WAVE, 0.5, 20, 2)
 		.setExtraProperty(3, 3)
 		.setDroneProperty(0.25); // Not Full Charge
 
 
-	export const WEAPON_MELEE: Weapon = new Weapon('Melee', 0.25, 5)
+	export const WEAPON_ID_MELEE: string = 'Melee'
+	export const WEAPON_MELEE: Weapon = new Weapon(WEAPON_ID_MELEE, 0.25, 5)
 		.setExtraProperty(5, 3); // Used in BATR-alpha&beta
 
-	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon('Block Thrower', .5, 200, 1)
+	export const WEAPON_ID_BLOCK_THROWER: string = 'Block Thrower'
+	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon(WEAPON_ID_BLOCK_THROWER, .5, 200, 1)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 10);
 
-	export const WEAPON_LIGHTNING: Weapon = new Weapon('Lightning', 0.25, 20, 0.5, true)
+	export const WEAPON_ID_LIGHTNING: string = 'Lightning'
+	export const WEAPON_LIGHTNING: Weapon = new Weapon(WEAPON_ID_LIGHTNING, 0.25, 20, 0.5, true)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(12, 10);
 
 	// 这些武器更像是BOSS用的 //
 
-	export const WEAPON_SHOCKWAVE_ALPHA: Weapon = new Weapon('Shockwave-α', 10, 100)
+	export const WEAPON_ID_SHOCKWAVE_ALPHA: string = 'Shockwave_alpha'
+	export const WEAPON_SHOCKWAVE_ALPHA: Weapon = new Weapon(WEAPON_ID_SHOCKWAVE_ALPHA, 10, 100)
 		.setExtraProperty(10, 2);
 
-	export const WEAPON_SHOCKWAVE_BETA: Weapon = new Weapon('Shockwave-β', 10, 100)
+	export const WEAPON_ID_SHOCKWAVE_BETA: string = 'Shockwave_beta'
+	export const WEAPON_SHOCKWAVE_BETA: Weapon = new Weapon(WEAPON_ID_SHOCKWAVE_BETA, 10, 100)
 		.setExtraProperty(10, 2, true);
 
 	// 一些归类

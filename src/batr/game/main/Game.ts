@@ -773,7 +773,7 @@ export default class Game implements IBatrGame {
 						player.pressRight = isKeyDown;
 						break;
 					case player.controlKey_Use:
-						player.pressUse = isKeyDown;
+						player.isUsing = isKeyDown;
 						break; /*
 						case player.controlKey_Select_Left:
 							player.pressLeftSelect=isKeyDown;
@@ -1954,7 +1954,7 @@ export default class Game implements IBatrGame {
 		this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
 	}
 
-	//======Hook Functions======//
+	//======Hook Functions======// ? 保留这堆「钩子函数」有何意义？等待后续重构
 	public onPlayerMove(player: Player): void {
 	}
 

@@ -135,12 +135,75 @@ export function axis2mRot_n(rot: mRot): uint {
  */
 export function rotate_M(rot: mRot, coAxis: uint, step: int): mRot {
 	// if (coAxis === rotAxis) return rot; // ! 待算轴与目标轴本不应该相同（需要构成旋转平面），但需要能用
-	switch (step & 3) {
+	switch (step & 3) { // 取模，使之可适用于任意整数旋转步数
 		default: return rot; // 原朝向
 		case 1: return coAxis << 1; // 协面轴+
 		case 2: return toOpposite_M(rot); // 反方向
 		case 3: return (coAxis << 1) + 1 //协面轴-
 	}
+}
+
+/**
+ * 任意维整数角的「旋转」，但是「独立版本」
+ * * 使用两个旋转轴构成「旋转平面」
+ *   * 一个是「起始角」，一个是「终止角」——二者构成一个「平面旋转2-向量」
+ *   * ⚠两个「任意维整数角」必须成90°角（即在不同轴向上，例如x+/y-、w+/z-）
+ * * 若「待旋转角」不在这个「旋转平面」内，其将保持不变
+ * * 否则在这个「旋转平面」内旋转
+ * 
+ * @param rot 待算角
+ * @param rotStart 起始角
+ * @param rotEnd 终止角
+ * @param step 旋转角数
+ */
+export function rotateInPlane_M(rot: mRot, rotStart: mRot, rotEnd: mRot, step: int): mRot {
+	// if (coAxis === rotAxis) return rot; // ! 起始角与目标轴本不应该相同（需要构成旋转平面），但需要能用
+	// if (rotStart >> 1 === rotEnd >> 1) return rot; // ! 「起始角」「终止角」不应该在同一个轴向
+	switch (rot ^ rotStart) { // 取异或，构造出最后一位
+		// 待算角=起始角⇒从起始角开始
+		case 0:
+			return rotate_M(
+				rotStart, rotEnd >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「终止轴的正负向」纠正
+				(rotEnd & 1) === 0 ? step : step + 2
+			);
+		// 待算角=-起始角⇒从起始角对面开始
+		case 1:
+			return rotate_M(
+				rotStart, rotEnd >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「终止轴的正负向」纠正
+				(rotEnd & 1) === 0 ? step + 2 : step
+			);
+		// 若与「起始角」不在一个轴⇒判断其与「终止角」的关系
+		default:
+			switch (rot ^ rotEnd) {
+				// 待算角=终止角⇒从终止角开始
+				case 0:
+					return rotate_M(
+						rotEnd, rotStart >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「起始轴的正负向」纠正
+						(rotStart & 1) === 0 ? step : step + 2
+					);
+				// 待算角=-终止角⇒从终止角对面开始
+				case 1:
+					return rotate_M(
+						rotEnd, rotStart >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「起始轴的正负向」纠正
+						(rotStart & 1) === 0 ? step + 2 : step
+					);
+				// 若与「终止角」还是不在一个轴⇒返回其自身
+				default:
+					return rot
+			}
+	}
+}
+
+/**
+ * 判断一个「任意维整数角」是否在「两个轴向构成的平面」内
+ * 
+ * @param rot 要检测的「任意维整数角」
+ * @param axis1 构成平面的第一个轴向
+ * @param axis2 构成平面的第二个轴向
+ * @returns 这个「任意维整数角」是否在「两个轴向构成的平面」内
+ */
+export function isRotInPlane_M(rot: mRot, axis1: uint, axis2: uint): boolean {
+	return ((rot >> 1) === axis1) || ((rot >> 1) === axis2)
 }
 
 /** 内置的「轴向名」 */
@@ -355,3 +418,14 @@ export function towardX_MF(rot: mRot, radius: number = 1): number {
 export function towardY_MF(rot: mRot, radius: number = 1): number {
 	return exMath.psi(rot - 2) * radius
 }
+
+
+console.info(
+	nameOfRot_M(2),
+	nameOfRot_M(3),
+	nameOfRot_M(1),
+	nameOfRot_M(rotateInPlane_M(2, 3, 1, 0)),
+	nameOfRot_M(rotateInPlane_M(2, 3, 1, 1)),
+	nameOfRot_M(rotateInPlane_M(2, 3, 1, 2)),
+	nameOfRot_M(rotateInPlane_M(2, 3, 1, 3)),
+)

@@ -1,4 +1,4 @@
-import { randInt } from "../../../../common/exMath";
+import { intMax, intMin, randInt } from "../../../../common/exMath";
 import { iPoint, fPoint } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
@@ -85,19 +85,19 @@ export function playerPickupBonusBox(
             playerPickupBonusBox(host, player, bonusBox, randomIn(NativeBonusTypes._ABOUT_BUFF));
             return;
         case NativeBonusTypes.BUFF_DAMAGE:
-            player.buffDamage += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffDamage += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
             break;
         case NativeBonusTypes.BUFF_CD:
-            player.buffCD += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffCD += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_CD_COLOR;
             break;
         case NativeBonusTypes.BUFF_RESISTANCE:
-            player.buffResistance += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffResistance += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
             break;
         case NativeBonusTypes.BUFF_RADIUS:
-            player.buffRadius += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffRadius += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RADIUS_COLOR;
             break;
         case NativeBonusTypes.ADD_EXPERIENCE:
@@ -132,6 +132,93 @@ export function playerPickupBonusBox(
     host.entitySystem.remove(bonusBox);
 }
 
+/**
+ * 根据（使用武器的）玩家与（被玩家使用的）武器计算「攻击者伤害」
+ * * 应用：玩家发射抛射体，伤害&系数均转移到抛射体上
+ * 
+ * * 📌攻击者伤害 = 武器基础伤害 + 玩家「伤害加成」 * 武器「附加伤害系数」
+ * 
+ * ? 似乎确实是导出一个箭头函数就足够了
+ * 
+ * @param baseDamage （来自武器的）基础伤害
+ * @param buffDamage （来自使用者的）伤害加成
+ * @param extraDamageCoefficient （来自武器的）伤害提升系数
+ * @returns 攻击者伤害：已经由攻击者完全提供，后续计算不再与攻击者有关的伤害
+ */
+export const computeAttackerDamage = (
+    baseDamage: uint,
+    buffDamage: uint,
+    extraDamageCoefficient: uint,
+): uint => baseDamage + buffDamage * extraDamageCoefficient
+
+/**
+ * 根据（已得到攻击者「攻击伤害」加成的）「攻击者伤害」与「玩家抗性」「抗性系数」计算「最终伤害」（整数）
+ * * 应用：抛射体伤害玩家
+ * 
+ * * 📌最终伤害 = Max{攻击者伤害 - 玩家「伤害减免」 * 武器「抗性减免系数」, 1}
+ * 
+ * ! 相比AS3版本的变动：
+ * * 对「抛射体伤害玩家」的逻辑：现在不传入「攻击者所用工具」（从抛射体处已移除），在计算上直接使用「攻击者伤害」
+ * 
+ * @param attackerDamage （已把「伤害加成」算入内的）攻击者伤害
+ * @param buffResistance （来自被攻击者的）伤害减免
+ * @param extraResistanceCoefficient （来自武器/抛射体的）抗性减免系数
+ * @returns 
+ */
+export const computeFinalDamage = (
+    attackerDamage: uint,
+    buffResistance: uint,
+    extraResistanceCoefficient: uint,
+): uint => intMax(
+    attackerDamage - buffResistance * extraResistanceCoefficient,
+    1 // ! 保证不能有「无敌」的情况发生
+);
+
+/**
+* 用于结合玩家特性计算「最终CD」
+* @param baseCD （来自武器的）基础冷却
+* @param buffCD （来自玩家的）冷却减免
+* @returns 最终冷却时间：最小为1
+*/
+export const computeFinalCD = (
+    baseCD: uint,
+    buffCD: uint,
+): uint => Math.ceil( // 使用向上取整保证最小为1
+    baseCD / (1 + buffCD / 10)
+);
+
+/**
+ * 计算（武器的）影响半径
+ * * 应用：给抛射体作参考，如「子弹爆炸」「波浪大小」……
+ * 
+ * * 📌最终半径 = 基础半径 * (1 + Min{范围加成/16, 3})
+ * 
+ * @param baseRadius （来自武器的）基础半径（浮点数）
+ * @returns 计算好的「最终半径」（浮点数）
+ */
+export const computeFinalRadius = (
+    baseRadius: number,
+    buffRadius: uint,
+): number => baseRadius * (1 + Math.min(buffRadius / 16, 3))
+
+/**
+ * 计算（用于「闪电」武器的）最终闪电能量
+ * * 应用：给「闪电」抛射体作参考
+ * 
+ * * 📌最终闪电能量 = 基础能量 * Min{1 + 伤害加成 / 20 + 范围加成 / 10, 10}
+ * 
+ * @param baseEnergy （来自武器/抛射体内置的）基础能量
+ * @param buffDamage （来自玩家的）伤害加成
+ * @param buffRadius （来自玩家的）范围加成
+ * @returns 最终的「闪电能量」（整数）
+ */
+export const computeFinalLightningEnergy = (
+    baseEnergy: uint,
+    buffDamage: uint, buffRadius: uint,
+): uint => (
+    baseEnergy * intMin(1 + buffDamage / 20 + buffRadius / 10, 10)
+)
+
 //================ 方块随机刻函数 ================//
 
 /**
@@ -161,10 +248,12 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block
         p = new ThrownBlock(
             null, // 无主
             alignToGridCenter_P(position, _temp_randomTick_MoveableWall),
-            Math.random(),
-            NativeTools.WEAPON_BLOCK_THROWER.defaultDamage,
-            block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
             randomRot,
+            Math.random(),
+            block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
+            NativeTools.WEAPON_BLOCK_THROWER.baseDamage,
+            NativeTools.WEAPON_BLOCK_THROWER.extraResistanceCoefficient,
+            1, // 始终完全充能
         );
         host.map.storage.setVoid(position);
         host.entitySystem.register(p); // TODO: 不区分类型——后期完善实体系统时统一分派
@@ -234,21 +323,21 @@ export const randomTick_LaserTrap: randomTickEventF = (
             case 1:
                 p = new LaserTeleport(
                     null, position, randomR,
-                    NativeTools.WEAPON_LASER_TELEPORT.defaultDamage,
+                    NativeTools.WEAPON_LASER_TELEPORT.baseDamage,
                     laserLength
                 );
                 break;
             case 2:
                 p = new LaserAbsorption(
                     null, position, randomR,
-                    NativeTools.WEAPON_LASER_ABSORPTION.defaultDamage,
+                    NativeTools.WEAPON_LASER_ABSORPTION.baseDamage,
                     laserLength
                 );
                 break;
             case 3:
                 p = new LaserPulse(
                     null, position, randomR,
-                    NativeTools.WEAPON_LASER_PULSE.defaultDamage,
+                    NativeTools.WEAPON_LASER_PULSE.baseDamage,
                     Math.random(),
                     laserLength,
                 );
@@ -256,7 +345,7 @@ export const randomTick_LaserTrap: randomTickEventF = (
             default:
                 p = new LaserBasic(
                     null, position, randomR,
-                    NativeTools.WEAPON_LASER_BASIC.defaultDamage,
+                    NativeTools.WEAPON_LASER_BASIC.baseDamage,
                     1.0,
                     laserLength,
                 );
@@ -369,13 +458,14 @@ export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
     }
 }
 
-/**
- * （原「是否为AI玩家」）判断一个玩家是否「受AI操控」
- * * 原理：使用「控制器是否为『AI控制器』」判断
- */
-export function isAIControl(player: IPlayer): boolean {
-    return player.controller instanceof AIController;
-}
+// /**
+//  * （原「是否为AI玩家」）判断一个玩家是否「受AI操控」
+//  * * 原理：使用「控制器是否为『AI控制器』」判断
+//  */
+// export function isAIControl(player: IPlayer): boolean {
+//     return player.controller instanceof AIController;
+// }
+// !【2023-09-27 23:49:23】↑现在不知道要不要「如此主观地判断」——好像「玩家和AI的区分」就那么理所当然一样
 
 /**
  * 【玩家】获取一个玩家升级所需的经验
@@ -393,13 +483,13 @@ export function isAIControl(player: IPlayer): boolean {
  * @param level 所基于的等级
  * @returns 该等级的最大经验（升级所需经验-1）
  */
-export function getLevelUpExperience(level: uint): uint {
+export function playerLevelUpExperience(level: uint): uint {
     return (level + 1) * 5 + (level >> 1);
 }
 
 // 键盘控制相关 //
 
-export type nativeControlKeyConfig = {
+export type NativeControlKeyConfig = {
     // 移动键（多个） // ! 注意：是根据「任意维整数角」排列的，方向为「右左下上」
     move: KeyCode[],
     // 使用键
@@ -409,14 +499,24 @@ export type nativeControlKeyConfig = {
     // select_right:KeyCode,
 }
 
-export type nativeControlKeyConfigs = {
-    [n: uint]: nativeControlKeyConfig
+export type NativeControlKeyConfigs = {
+    [n: uint]: NativeControlKeyConfig
 }
 
 /**
  * 存储（靠键盘操作的）玩家默认的「控制按键组」
  */
-export const DEFAULT_PLAYER_CONTROL_KEYS: nativeControlKeyConfigs = {
+export const DEFAULT_PLAYER_CONTROL_KEYS: NativeControlKeyConfigs = {
+    // P0: 占位符 
+    0: {
+        move: [
+            keyCodes.EMPTY, // 右
+            keyCodes.EMPTY, // 左
+            keyCodes.EMPTY, // 下
+            keyCodes.EMPTY, // 上
+        ],
+        use: keyCodes.EMPTY, // 用
+    },
     // P1: WASD, Space 
     1: {
         move: [

@@ -516,7 +516,7 @@ export default class GameRule_V1 implements IGameRule {
 		identity, // 保存时自动处理
 		identity, // 加载时自动处理
 		(value: JSObjectValue): boolean => typeof value !== 'string',
-		(): Tool => Tool.newBlank(),
+		(): Tool => Tool.getBlank(),
 	);
 	protected _defaultTool: Tool | 'u-random' | 'c-random' = GameRule_V1.d_defaultTool;
 	public get defaultTool(): Tool | 'u-random' | 'c-random' { return this._defaultTool; }

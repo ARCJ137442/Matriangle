@@ -44,10 +44,10 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 		moveDirection: mRot,
 		toolDirection: mRot,
 		tool: Tool,
-		toolDamage: uint,
+		toolDamage: uint, toolExtraDamageCoefficient: uint,
 		toolChargePercent: number
 	) {
-		super(owner, toolDamage, moveDirection);
+		super(owner, toolDamage, toolExtraDamageCoefficient, moveDirection);
 		this._position.copyFrom(position);
 		this._tool = tool;
 		this._weaponChargePercent = toolChargePercent;

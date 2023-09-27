@@ -24,11 +24,11 @@ export default class BulletBasic extends Bullet {
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		speed: number = BulletBasic.DEFAULT_SPEED,
 		defaultExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS,
 	) {
-		super(owner, position, direction, attackerDamage, speed, defaultExplodeRadius)
+		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, defaultExplodeRadius)
 	}
 
 	/** 覆盖：通知「游戏主体」创建爆炸 */

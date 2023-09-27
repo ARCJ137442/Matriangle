@@ -1,6 +1,5 @@
-
-
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
+import { NativeControllerLabels } from "../../ControllerLabels";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
@@ -11,7 +10,7 @@ import IAIProgram from "../IAIProgram";
  */
 export default class AIProgram_Novice implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = 'Novice';
+	public static readonly LABEL: string = NativeControllerLabels.NOVICE;
 	public static readonly LABEL_SHORT: string = 'N';
 
 	//============Static Functions============//

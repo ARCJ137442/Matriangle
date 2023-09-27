@@ -1,5 +1,4 @@
-
-
+// TODO: 此类即将废弃，转变为「使用AI控制器的玩家」（但相关控制代码如「缓冲区机制」会存留）
 export default class AIPlayer extends Player {
 	//============Static Variables============//
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
@@ -16,35 +15,6 @@ export default class AIPlayer extends Player {
 				return new AIProgram_Master();
 			default:
 				return new AIProgram_Dummy();
-		}
-	}
-
-	/**
-	 * The Function betweens beginFill and endFill.
-	 * @param	AILabel	The Label that determine shape.
-	 * @param	radius	The scale of decoration.
-	 */
-	public static drawAIDecoration(graphics: Graphics, AILabel: string, radius: number = SIZE / 10): void {
-		switch (AILabel) {
-			case AIProgram_Dummy.LABEL:
-				graphics.drawCircle(0, 0, radius);
-				break;
-			case AIProgram_Novice.LABEL:
-				graphics.drawRect(-radius, -radius, radius * 2, radius * 2);
-				break;
-			case AIProgram_Adventurer.LABEL:
-				graphics.moveTo(-radius, -radius);
-				graphics.lineTo(radius, 0);
-				graphics.lineTo(-radius, radius);
-				graphics.lineTo(-radius, -radius);
-				break;
-			case AIProgram_Master.LABEL:
-				graphics.moveTo(-radius, 0);
-				graphics.lineTo(0, radius);
-				graphics.lineTo(radius, 0);
-				graphics.lineTo(0, -radius);
-				graphics.lineTo(-radius, -0);
-				break;
 		}
 	}
 

@@ -39,13 +39,13 @@ export default class BulletTracking extends Bullet {
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
-		attackerDamage: uint,
+		attackerDamage: uint, extraDamageCoefficient: uint,
 		playersInGame: IPlayer[], chargePercent: number
 	) {
 		super(
 			owner,
 			position, direction,
-			attackerDamage,
+			attackerDamage, extraDamageCoefficient,
 			BulletTracking.DEFAULT_SPEED,
 			BulletTracking.DEFAULT_EXPLODE_RADIUS
 		);

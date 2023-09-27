@@ -38,7 +38,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	public get objectifyMap(): JSObjectifyMap { return Tool.OBJECTIFY_MAP }
 
 	/** 模板构造函数 */
-	public static newBlank(): Tool { return new Tool('undefined', 0, 0, false) };
+	public static getBlank(): Tool { return new Tool('undefined', 0, 0, false) };
 
 	/**
 	 * 存储「工具id」
@@ -57,26 +57,36 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	/**
 	 * 构造方法
 	 * @param id 工具ID（逻辑&国际化 识别）
-	 * @param maxCD 工具的「使用冷却」
+	 * @param baseCD 工具的「使用冷却」
 	 * @param chargeMaxTime 工具的「最大充能时间」
 	 */
 	public constructor(
 		id: string,
-		maxCD: uint,
+		baseCD: uint,
 		chargeMaxTime: uint = 0,
 		reverseCharge: boolean = false,
 	) {
 		this._id = id;
-		this._CD = this._maxCD = maxCD;
+		this._CD = this._baseCD = baseCD;
 		this._chargeTime = this._chargeMaxTime = chargeMaxTime;
 		this._reverseCharge = reverseCharge;
+	}
+
+	/** 复制：直接用构造函数（扩展性不强） */
+	public copy(): Tool {
+		return new Tool(
+			this._id,
+			this._baseCD,
+			this._chargeMaxTime,
+			this._reverseCharge,
+		);
 	}
 
 	//============Game Mechanics============//
 
 	/**
 	 * 工具使用冷却
-	 * * 原理：完全冷却 maxCD ~ 0 可使用
+	 * * 原理：完全冷却 baseCD ~ 0 可使用
 	 * * 决定玩家使用工具的最快频率
 	 * 
 	 * ! 在设置时（玩家需）更新：
@@ -91,18 +101,18 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	)
 
 	/**
-	 * 工具使用最大冷却
+	 * 工具使用基础冷却
 	 * * 决定「工具使用冷却」在重置会重置到的值
 	 * 
 	 * ! 在设置时（玩家需）更新：
 	 * * GUI状态
 	*/
-	get maxCD(): uint { return this._maxCD }
-	set maxCD(value: uint) { this._maxCD = value }
-	protected _maxCD: uint;
-	public static readonly key_maxCD: key = fastAddJSObjectifyMapProperty_dashP(
+	get baseCD(): uint { return this._baseCD }
+	set baseCD(value: uint) { this._baseCD = value }
+	protected _baseCD: uint;
+	public static readonly key_baseCD: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
-		'maxCD', uint(1),
+		'baseCD', uint(1),
 	)
 
 	/**
@@ -153,22 +163,22 @@ export default class Tool implements IJSObjectifiable<Tool> {
 
 	/**
 	 * （衍生）工具是否需要「冷却时间」
-	 * * 返回「工具最大冷却时间」是否>0
+	 * * 返回「工具基础冷却时间」是否>0
 	 * * 应用：GUI显示（在「无需冷却」时不显示冷却条）
 	 */
-	get needsCD(): boolean { return this._maxCD > 0 }
+	get needsCD(): boolean { return this._baseCD > 0 }
 
 	/**
 	 * （衍生）工具的「冷却百分比」
 	 * * 原理：完全冷却 1~0 完全可用
-	 * * 算法：工具冷却时间（倒计时）/最大冷却时间
+	 * * 算法：工具冷却时间（倒计时）/基础冷却时间
 	 * 
-	 * ! TODO: 【2023-09-23 11:42:01】现在在计算「最大冷却时间」时，不再直接依赖系统的「无CD最小冷却时间」
+	 * ! TODO: 【2023-09-23 11:42:01】现在在计算「基础冷却时间」时，不再直接依赖系统的「无CD最小冷却时间」
 	 * * 缘由：出于「通用性」着想
 	 * * 现在系统将根据此设置在「分派武器时」自动设置CD
 	 * * 原先的`toolMaxCD`已启用
 	 */
-	get CDPercent(): number { return this._CD / this._maxCD }
+	get CDPercent(): number { return this._CD / this._baseCD }
 
 	/**
 	 * （衍生）工具是否需要充能
@@ -194,7 +204,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 重置CD：变为最大值
 	 */
 	public resetCD(): void {
-		this._CD = this._maxCD;
+		this._CD = this._baseCD;
 	}
 
 	/**
@@ -227,4 +237,5 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	public onUseByPlayer(host: IBatrGame, user: IPlayer): void {
 		console.log('Tool', this, 'is used by', user, 'in', host)
 	}
+
 }
