@@ -193,111 +193,84 @@ export default class AIPlayer extends Player {
 		switch (action) {
 			case AIPlayerAction.MOVE_UP:
 				this.moveUp();
-
 				break;
 			case AIPlayerAction.MOVE_DOWN:
 				this.moveDown();
-
 				break;
 			case AIPlayerAction.MOVE_LEFT_ABS:
 				this.moveLeft();
-
 				break;
 			case AIPlayerAction.MOVE_RIGHT_ABS:
 				this.moveRight();
-
 				break;
 			case AIPlayerAction.MOVE_FORWARD:
 				this.moveForward();
-
 				break;
 			case AIPlayerAction.MOVE_BACK:
 				this.turnBack(), this.moveForward();
-
 				break;
 			case AIPlayerAction.MOVE_LEFT_REL:
 				this.turnRelativeLeft(), this.moveForward();
-
 				break;
 			case AIPlayerAction.MOVE_RIGHT_REL:
 				this.turnRelativeRight(), this.moveForward();
-
 				break;
 			case AIPlayerAction.TURN_UP:
 				this.turnUp();
-
 				break;
 			case AIPlayerAction.TURN_DOWN:
 				this.turnDown();
-
 				break;
 			case AIPlayerAction.TURN_LEFT_ABS:
 				this.turnAbsoluteLeft();
-
 				break;
 			case AIPlayerAction.TURN_RIGHT_ABS:
 				this.turnAbsoluteRight();
-
 				break;
 			case AIPlayerAction.TURN_BACK:
 				this.turnBack();
-
 				break;
 			case AIPlayerAction.TURN_LEFT_REL:
 				this.turnRelativeLeft();
-
 				break;
 			case AIPlayerAction.TURN_RIGHT_REL:
 				this.turnRelativeRight();
-
 				break;
 			case AIPlayerAction.USE_TOOL:
 				this.useTool();
-
 				break;
 			case AIPlayerAction.PRESS_KEY_UP:
 				this.pressUp = true;
-
 				break;
 			case AIPlayerAction.PRESS_KEY_DOWN:
 				this.pressDown = true;
-
 				break;
 			case AIPlayerAction.PRESS_KEY_LEFT:
 				this.pressLeft = true;
-
 				break;
 			case AIPlayerAction.PRESS_KEY_RIGHT:
 				this.pressRight = true;
-
 				break;
 			case AIPlayerAction.PRESS_KEY_USE:
 				this.pressUse = true;
-
 				break;
 			case AIPlayerAction.RELEASE_KEY_UP:
 				this.pressUp = false;
-
 				break;
 			case AIPlayerAction.RELEASE_KEY_DOWN:
 				this.pressDown = false;
-
 				break;
 			case AIPlayerAction.RELEASE_KEY_LEFT:
 				this.pressLeft = false;
-
 				break;
 			case AIPlayerAction.RELEASE_KEY_RIGHT:
 				this.pressRight = false;
-
 				break;
 			case AIPlayerAction.RELEASE_KEY_USE:
 				this.pressUse = false;
-
 				break;
 			case AIPlayerAction.DISABLE_CHARGE:
 				this.onDisableCharge();
-
 				break;
 		}
 	}

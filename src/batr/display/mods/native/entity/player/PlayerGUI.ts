@@ -264,7 +264,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		this._chargeBarCharge.visible = this._chargeBarFrame.visible = this.getVisibleCharge();
 		if (sort)
 			this.sortUnderBars();
-		this._chargeBarCharge.scaleX = this._owner.chargingPercent;
+		this._chargeBarCharge.scaleX = this._owner.toolChargingPercent;
 	}
 
 	public updateCD(sort: boolean = true): void {

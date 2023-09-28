@@ -412,9 +412,6 @@ export interface IEntityHasHPAndLives extends IEntityHasHP {
     get lifeNotDecay(): boolean;
     set lifeNotDecay(value: boolean);
 
-    /** 仍然保留先前「是否无限生命」的概念 */
-    get infinityLife(): boolean;
-
     /**
      * （如果有重生间隔的话）实体是否「正在重生」
      */

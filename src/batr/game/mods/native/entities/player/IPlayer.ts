@@ -42,7 +42,7 @@ TODO: 【2023-09-23 00:20:12】现在工作焦点：
  * * 可以使用「工具」的
  * 实体
  */
-export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityNeedsIO, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives {
+export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives {
 
 	/**
 	 * 玩家的「经验值」
@@ -176,16 +176,14 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 
 	//============Instance Functions============//
 
-	// ! 「根据规则」
 	/**
 	 * 按照「游戏规则」初始化变量
 	 * * 如：生命值，最大生命值等
 	 * 
 	 * ! 因涉及到内部变量的设置，不能提取到外面去
 	 * 
-	 * @param tool 分配给玩家的工具
 	 */
-	initVariablesByRule(rule: IGameRule, tool: Tool): void;
+	initVariablesByRule(rule: IGameRule): void;
 
 	//====Functions About Health====//
 	/** 实现：这个「治疗者」必须是玩家 */
@@ -360,7 +358,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * !【2023-09-27 20:19:33】现在废除了「非整数前进」，因为已经锁定玩家为「格点实体」
 	 * * 同时也废除了「不定长度前进」，限定为「只前进一格」
 	 */
-	moveForward(host: IBatrGame,): void;
+	moveForward(host: IBatrGame): void;
 
 	/**
 	 * （控制）玩家向某个方向移动（一格）
@@ -385,7 +383,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	turnBack(host: IBatrGame): void
 
 	/**
-	 * （控制玩家）向指定方向旋转
+	 * （可选）（控制玩家）向指定方向旋转
 	 * * 与`turnTo`的区别：这是「相对方向」旋转
 	 * * 详情参见`rotate_M`
 	 * 
@@ -395,7 +393,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityN
 	 * @param coaxis 旋转的「协轴」，与玩家的「当前朝向」构成整个「旋转平面」
 	 * @param 经过旋转的「任意维整数角」
 	 */
-	turnRelative(host: IBatrGame, coaxis: uint, step?: int): void;
+	turnRelative?(host: IBatrGame, coaxis: uint, step?: int): void;
 
 	/**
 	 * （控制玩家）开始使用工具

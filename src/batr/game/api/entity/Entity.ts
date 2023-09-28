@@ -9,18 +9,19 @@ import EntityType from "./EntityType";
  */
 export default abstract class Entity {
 
+	/** 只读：「实体类型」 */
+	public abstract get type(): EntityType
+
 	/**
-	 * 存储「实体是否激活」的信息
+	 * 内部存储「实体是否激活」的信息
+	 */
+	protected _isActive: boolean = false;
+	/**
+	 * 读写「实体是否激活」
 	 * * 用于在事件分派时「是否忽略」（激活⇔需要分派）
 	 * 
 	 * ! 注意：与「活跃实体」的概念不同
 	 */
-	protected _isActive: boolean = false;
-
-	/** 只读：「实体类型」 */
-	public abstract get type(): EntityType
-
-	/** 读写「实体是否激活」 */
 	public get isActive(): boolean { return this._isActive }
 	public set isActive(value: boolean) { this._isActive = value }
 

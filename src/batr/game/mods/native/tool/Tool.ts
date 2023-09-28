@@ -67,7 +67,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		reverseCharge: boolean = false,
 	) {
 		this._id = id;
-		this._CD = this._baseCD = baseCD;
+		this._usingCD = this._baseCD = baseCD;
 		this._chargeTime = this._chargeMaxTime = chargeMaxTime;
 		this._reverseCharge = reverseCharge;
 	}
@@ -92,12 +92,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ! 在设置时（玩家需）更新：
 	 * * GUI状态
 	*/
-	get CD(): uint { return this._CD }
-	set CD(value: uint) { this._CD = value }
-	protected _CD: uint;
-	public static readonly key_CD: key = fastAddJSObjectifyMapProperty_dashP(
+	get usingCD(): uint { return this._usingCD }
+	set usingCD(value: uint) { this._usingCD = value }
+	protected _usingCD: uint;
+	public static readonly key_usingCD: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
-		'CD', uint(1),
+		'usingCD', uint(1),
 	)
 
 	/**
@@ -178,7 +178,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * * 现在系统将根据此设置在「分派武器时」自动设置CD
 	 * * 原先的`toolMaxCD`已启用
 	 */
-	get CDPercent(): number { return this._CD / this._baseCD }
+	get CDPercent(): number { return this._usingCD / this._baseCD }
 
 	/**
 	 * （衍生）工具是否需要充能
@@ -196,15 +196,22 @@ export default class Tool implements IJSObjectifiable<Tool> {
 
 	/**
 	 * （衍生）工具的充能百分比
-	 * * 范围：无（需）充能 0 ~ 1 完全充能
+	 * * 范围：无充能 0 ~ 1 完全充能
+	 * * 特殊：无需充能⇔完全充能
 	 */
-	get chargingPercent(): number { return this._chargeTime / this._chargeMaxTime; }
+	get chargingPercent(): number {
+		return (
+			this.needsCharge ?
+				this._chargeTime / this._chargeMaxTime :
+				1
+		);
+	}
 
 	/**
 	 * 重置CD：变为最大值
 	 */
 	public resetCD(): void {
-		this._CD = this._baseCD;
+		this._usingCD = this._baseCD;
 	}
 
 	/**
