@@ -31,6 +31,7 @@ import AIController from "../entities/player/controller/AIController";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
+import IGameRule from "../../../api/rule/IGameRule";
 
 
 /**
@@ -41,12 +42,61 @@ import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify
  * TODO: 是否「显示事件」也要这样「外包到『事件注册表』中」去？
  */
 
-//================ 主要机制 ================//
+//================ 游戏加载机制 ================//
+
+/**
+ * 按照「游戏规则」初始化玩家变量
+ * * 如：生命值，最大生命值等
+ * 
+ * !【2023-09-28 20:27:56】有关「设置生命值可能导致的『显示更新』副作用」，或许可以需要通过「外部屏蔽更新/玩家未激活时」等方式避免
+ * * 主打：避免Player类中出现与「游戏主体」耦合的代码
+ * 
+ */
+export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
+    // 处理工具
+    let defaultTool: Tool | string = rule.safeGetRule<Tool | string>(GameRule_V1.key_defaultTool);
+    switch (defaultTool) {
+        // 统一随机
+        case 'u-random':
+            // 随机选一个
+            defaultTool = randomIn<Tool>(
+                rule.safeGetRule<Tool[]>(GameRule_V1.key_enabledTools)
+            );
+            break;
+        // 完全随机
+        case 'c-random':
+            defaultTool = '' // ! 设置为空串，到时好比对（💭用函数式搞一个闭包也不是不行，但这会拖慢其它模式的初始化速度）
+            break;
+        // 固定武器：没啥事做
+        default:
+            break;
+    }
+    // 开始逐个玩家分派属性
+    for (const player of players) {
+        // 生命 //
+        player.HP = rule.safeGetRule<uint>(GameRule_V1.key_defaultHealth);
+        player.maxHP = rule.safeGetRule<uint>(GameRule_V1.key_defaultMaxHealth);
+
+        // TODO: 下面的「判断是否AI」留给创建者。。。
+        // player.setLifeByInt(player instanceof AIPlayer ? rule.remainLivesAI : rule.remainLivesPlayer);
+
+        // 分派工具 //
+        // 空串⇒完全随机，否则直接设置成之前的武器
+        player.tool = (
+            defaultTool === '' ?
+                randomIn<Tool>(
+                    rule.safeGetRule<Tool[]>(GameRule_V1.key_enabledTools)
+                ) :
+                defaultTool as Tool
+        );
+    }
+    // TODO: 后续还有至少是「生命条数」没有初始化的……留给在「创建玩家」时做（只有那时候才能分辨「哪个是人类，哪个是AI」）
+}
+
+//================ 玩家机制 ================//
 
 /**
  * 当玩家「得到奖励」所用的逻辑
- * 
- * TODO: 似乎应该提取到「游戏逻辑」中，而非放到实体这里
  * 
  * @param host 调用的游戏主体
  * @param player 奖励箱将作用到的玩家
@@ -71,7 +121,7 @@ export function playerPickupBonusBox(
             player.heal += 5 * (1 + randInt(25));
             break;
         case NativeBonusTypes.ADD_LIFE:
-            if (player.infinityLife || player.isFullHP)
+            if (player.lifeNotDecay || player.isFullHP)
                 player.maxHP += host.rule.getRule(GameRule_V1.key_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
             else
                 player.lives++;
@@ -256,9 +306,9 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block
             1, // 始终完全充能
         );
         host.map.storage.setVoid(position);
-        host.entitySystem.register(p); // TODO: 不区分类型——后期完善实体系统时统一分派
-        // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
-        if ((block as MoveableWall).virus)
+        host.entitySystem.register(p);
+        // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次
+        if (!(block as MoveableWall)?.virus)
             break;
     }
     while (++i < 0x10);

@@ -14,7 +14,7 @@ import { NativeControllerLabels } from "../../ControllerLabels";
  */
 export default class AIProgram_Dummy implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.DUMMY;
+	public static readonly LABEL: string = NativeControllerLabels.AI_DUMMY;
 	public static readonly LABEL_SHORT: string = 'D';
 
 	//============Instance Variables============//

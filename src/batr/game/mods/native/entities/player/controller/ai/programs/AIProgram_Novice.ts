@@ -10,7 +10,7 @@ import IAIProgram from "../IAIProgram";
  */
 export default class AIProgram_Novice implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.NOVICE;
+	public static readonly LABEL: string = NativeControllerLabels.AI_NOVICE;
 	public static readonly LABEL_SHORT: string = 'N';
 
 	//============Static Functions============//

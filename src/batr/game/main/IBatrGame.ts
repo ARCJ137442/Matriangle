@@ -514,9 +514,9 @@ export default interface IBatrGame {
 
 	onPlayerRespawn(player: IPlayer): void
 
-	prePlayerLocationChange(player: IPlayer, oldX: number, oldY: number): void
+	prePlayerLocationChange(player: IPlayer, oldP: iPoint): void
 
-	onPlayerLocationChange(player: IPlayer, newX: number, newY: number): void
+	onPlayerLocationChange(player: IPlayer, newP: iPoint): void
 
 	onPlayerTeamsChange(event: GameRuleEvent): void
 

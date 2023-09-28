@@ -17,7 +17,7 @@ import { NativeControllerLabels } from "../../ControllerLabels";
  */
 export default class AIProgram_Adventurer implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.ADVENTURER;
+	public static readonly LABEL: string = NativeControllerLabels.AI_ADVENTURER;
 	public static readonly LABEL_SHORT: string = 'A';
 
 	public static readonly DEBUG: boolean = false;

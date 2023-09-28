@@ -16,7 +16,7 @@ import { NativeControllerLabels } from "../../ControllerLabels";
  */
 export default class AIProgram_Master implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.MASTER;
+	public static readonly LABEL: string = NativeControllerLabels.AI_MASTER;
 	public static readonly LABEL_SHORT: string = 'M';
 
 	public static readonly DEBUG: boolean = false;

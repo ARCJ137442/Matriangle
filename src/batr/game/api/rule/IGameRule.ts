@@ -26,6 +26,15 @@ export default interface IGameRule extends IJSObjectifiable<IGameRule> {
 	getRule<T>(key: key): T | undefined;
 
 	/**
+	 * 从名称安全获取规则
+	 * 
+	 * ! 未找到则报错
+	 * 
+	 * @param key 规则名
+	 */
+	safeGetRule<T>(key: key): T;
+
+	/**
 	 * 从名称、值处设置规则
 	 * * 类似Julia的`getindex`
 	 * 

@@ -4,11 +4,10 @@ import PlayerController from "./controller/PlayerController";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint } from "../../../../../common/geometricTools";
-import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityNeedsIO, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
+import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IBatrGame from "../../../../main/IBatrGame";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
-import IGameRule from './../../../../api/rule/IGameRule';
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 
@@ -136,61 +135,23 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	get customName(): string;
 	set customName(value: string);
 
-	/** 获取「上一个伤害它的玩家」 */
-	get lastHurtByPlayer(): IPlayer | null;
-
-	// Key&Control
-	/**
-	 * 获取「是否有任一『按键』按下」
-	 * * 包括「移动键」与「使用键」
-	 * 
-	 * ! 实际应该是存在于「控制器」中的概念，但这里还是沿用来做了
-	 */
-	get someKeyDown(): boolean;
-
-	/**
-	 * 获取「是否有任一『移动键』按下」
-	 * 
-	 * 💡使用「按键数组」来兼容任意维：0123右左下上
-	 * * 实现方法：利用JS特性直接使用「自动转换成布尔值后的值」判断，true/undefined
-	 * * 一般来说，只有「按键被按下时」与「按键保持一定时间后」才会触发移动
-	 */
-	get someMoveKeyDown(): boolean;
-
-	/** 获取「朝某个方向移动」的按键是否按下 */
-	isPressMoveAt(direction: mRot): boolean;
-	/** 设置「朝某个方向移动」的按键是否按下 */
-	pressMoveAt(direction: mRot): void;
-	releaseMoveAt(direction: mRot): void;
-
-	/**
-	 * 设置「是否『正在使用（工具）』」
-	 * * 机制：松开使用键⇒充能中断（附带显示更新）
-	 */
-	set isUsing(turn: boolean);
-
-	/*
-	set pressLeftSelect(turn:Boolean)
-	set pressRightSelect(turn:Boolean)
-	*/
+	// /** 获取「上一个伤害它的玩家」 */ // !【2023-09-28 20:55:34】弃用：不再需要
+	// get lastHurtByPlayer(): IPlayer | null;
 
 	//============Instance Functions============//
 
-	/**
-	 * 按照「游戏规则」初始化变量
-	 * * 如：生命值，最大生命值等
-	 * 
-	 * ! 因涉及到内部变量的设置，不能提取到外面去
-	 * 
-	 */
-	initVariablesByRule(rule: IGameRule): void;
-
 	//====Functions About Health====//
-	/** 实现：这个「治疗者」必须是玩家 */
-	addHealth(value: uint, healer: IPlayer | null): void;
+	/**
+	 * 增加生命值
+	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 */
+	addHealth(host: IBatrGame, value: uint, healer: IPlayer | null): void;
 
-	/** 实现：这个「攻击者」必须是玩家 */
-	removeHealth(value: uint, attacker: IPlayer | null): void;
+	/**
+	 * 减少生命值
+	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 */
+	removeHealth(host: IBatrGame, value: uint, attacker: IPlayer | null): void;
 
 	//====Functions About Gameplay====//
 

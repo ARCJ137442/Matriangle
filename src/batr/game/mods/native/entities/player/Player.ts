@@ -24,6 +24,7 @@ import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGU
 import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import IGameRule from './../../../../api/rule/IGameRule';
 import GameRule_V1 from "../../rule/GameRule_V1";
+import { intMin } from "../../../../../common/exMath";
 
 /**
  * 「玩家」的主类
@@ -166,30 +167,32 @@ export default class Player extends Entity implements IPlayer {
 	// 生命（有生命实体） //
 
 	/** 玩家内部生命值 */
-	protected _health: uint = Player.DEFAULT_HEALTH
-	/** 玩家生命值 */
-	public get health(): uint { return this._health; }
-	// !【2023-09-28 18:26:07】因涉及「游戏主体」，现在不开放直接设置玩家生命值，用专门的「伤害」「治疗」方法替代
-	/* public set health(value: uint) {
-		if (value == this._health)
-			return;
-
-		this._health = Math.min(value, this._maxHealth);
-
-		if (this._GUI != null)
-			// this._GUI.updateHealth(); // TODO: 显示更新
-	} */
+	protected _HP: uint = Player.DEFAULT_HEALTH
+	/**
+	 * 玩家生命值
+	 * 
+	 * !【2023-09-28 20:31:19】注意：生命值的更新（触发「伤害」「死亡」等事件）涉及游戏主体，非必要不要走这个setter
+	 * * 请转向「专用方法」如`addHP`
+	 */
+	public get HP(): uint { return this._HP; }
+	public set HP(value: uint) {
+		if (value == this._HP) return;
+		this._HP = intMin(value, this._maxHP);
+		// *【2023-09-28 20:32:49】更新还是要更新的
+		// if (this._GUI != null)
+		// this._GUI.updateHealth(); // TODO: 显示更新
+	}
 
 	/** 玩家内部最大生命值 */
-	protected _maxHealth: uint = Player.DEFAULT_MAX_HEALTH
+	protected _maxHP: uint = Player.DEFAULT_MAX_HEALTH
 	/** 玩家生命值 */ // * 设置时无需过游戏主体，故无需只读
-	public get maxHealth(): uint { return this._maxHealth; }
-	public set maxHealth(value: uint) {
-		if (value == this._maxHealth)
+	public get maxHP(): uint { return this._maxHP; }
+	public set maxHP(value: uint) {
+		if (value == this._maxHP)
 			return;
-		this._maxHealth = value;
-		if (value < this._health)
-			this._health = value;
+		this._maxHP = value;
+		if (value < this._HP)
+			this._HP = value;
 		// this._GUI.updateHealth(); // TODO: 显示更新
 	}
 
@@ -204,9 +207,9 @@ export default class Player extends Entity implements IPlayer {
 		// this._GUI.updateHealth(); // TODO: 显示更新
 	}
 	/** （衍生）是否满生命值 */
-	public get isFullHealth(): boolean { return this._health >= this._maxHealth; }
+	public get isFullHealth(): boolean { return this._HP >= this._maxHP; }
 	/** 玩家的「生命百分比」 */
-	public get healthPercent(): number { return this.health / this.maxHealth; }
+	public get HPPercent(): number { return this.HP / this.maxHP; }
 
 	/** 上一个伤害它的玩家（弃用） */
 	// protected _lastHurtByPlayer: IPlayer | null = null;
@@ -214,6 +217,26 @@ export default class Player extends Entity implements IPlayer {
 	protected _damageDelay: int = 0;
 	/** 治疗延时（用于在「储备生命值」治疗玩家时延时） */
 	protected _healDelay: uint = 0;
+
+	/**
+	 * 增加生命值
+	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 */
+	public addHealth(host: IBatrGame, value: uint, healer: IPlayer | null = null): void {
+		this.HP += value;
+		this.onHeal(host, value, healer);
+	}
+
+	public removeHealth(value: uint, attacker: IPlayer | null = null): void {
+		if (this.HP > value) {
+			this.HP -= value;
+			this.onHurt(value, attacker);
+		}
+		else {
+			this.HP = 0;
+			this.onDeath(this.HP, attacker);
+		}
+	}
 
 	/** 玩家的剩余生命数 */
 	protected _lives: uint = 0;
@@ -246,7 +269,7 @@ export default class Player extends Entity implements IPlayer {
 	 */
 	public get isNoLives(): boolean {
 		return (
-			this.health == 0 &&
+			this.HP == 0 &&
 			this.lives == 0
 		);
 	}
@@ -256,6 +279,16 @@ export default class Player extends Entity implements IPlayer {
 	 * * `-1`意味着「不在重生时」
 	 */
 	public respawnTick: int = -1;
+
+	public setLifeByInt(lives: int): void {
+		if (lives < 0) {
+			this._lifeNotDecay = true;
+		}
+		else {
+			this._lifeNotDecay = false;
+			this._lives = lives;
+		}
+	}
 
 	// 经验 //
 
@@ -310,10 +343,17 @@ export default class Player extends Entity implements IPlayer {
 	/** 玩家的所有属性 */
 	public get attributes(): PlayerAttributes { return this._attributes }
 
-	// !【2023-09-28 18:13:17】现不再在「玩家」一侧绑定「控制器」链接，改由「游戏本体⇒控制器⇒玩家」的调用路线
+	// 生命值文本
+	public get HPText(): string {
+		let HPText: string = `${this._HP}/${this._maxHP}`;
+		let healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
+		let lifeText: string = this.lifeNotDecay ? '' : `[${this._lives}]`;
+		return HPText + healText + lifeText;
+	}
 
 	// 控制器 // TODO: 模仿AI玩家，实现其「操作缓冲区」「自动执行」等
 
+	// !【2023-09-28 18:13:17】现不再在「玩家」一侧绑定「控制器」链接，改由「游戏本体⇒控制器⇒玩家」的调用路线
 
 
 	//============Constructor & Destructor============//
@@ -361,7 +401,7 @@ export default class Player extends Entity implements IPlayer {
 		// Set Shape
 		// this.shapeInit(shape: IBatrShape);
 		// Set GUI And Effects
-		// this._GUI = new IPlayerGUI(this);
+		// this._GUI = new PlayerGUI(this);
 		// this.addChildren();
 
 		// ! 控制器不在这里留有引用
@@ -379,14 +419,11 @@ export default class Player extends Entity implements IPlayer {
 		this._stats.destructor();
 		// this._stats = null;
 		// this._tool = null;
-		this._GUI.destructor();
+		// this._GUI.destructor();
 		// this._GUI = null;
 
 		super.destructor();
 	}
-
-
-	// TODO: 继续实现 //
 
 	// 格点实体 //
 	public readonly i_InGrid: true = true;
@@ -418,6 +455,7 @@ export default class Player extends Entity implements IPlayer {
 	public get stats(): PlayerStats { return this._stats }
 
 	// 可显示实体 // TODO: 【2023-09-28 18:22:42】这是不是要移出去。。。
+
 	/** 显示时的像素大小 */
 	public static readonly SIZE: number = 1 * DEFAULT_SIZE;
 	/** 线条粗细 */
@@ -432,8 +470,8 @@ export default class Player extends Entity implements IPlayer {
 	/** 填充颜色2（用于渐变） */
 	protected _fillColor2: uint = 0xcccccc;
 
-	// TODO: remove the _GUI to remove the reliances
-	protected _GUI: IPlayerGUI;
+	// TODO: 继续思考&处理「显示依赖」的事。。。
+	// protected _GUI: IPlayerGUI;
 
 	public readonly i_displayable: true = true;
 	public get gui(): IPlayerGUI { return this._GUI; }
@@ -461,9 +499,10 @@ export default class Player extends Entity implements IPlayer {
 		let realRadiusY: number = (Player.SIZE - Player.LINE_SIZE) / 2;
 		shape.graphics.clear();
 		shape.graphics.lineStyle(Player.LINE_SIZE, this._lineColor);
-		// shape.graphics.beginFill(this._fillColor,Alpha);
+		shape.graphics.beginFill(this._fillColor, 1.0);
 		// TODO: 渐变填充
-		let m: Matrix = new Matrix();
+		// !【2023-09-28 20:14:05】暂时不使用渐变填充，使用普通填充代替
+		/* let m: Matrix = new Matrix();
 		m.createGradientBox(
 			DEFAULT_SIZE, DEFAULT_SIZE,
 			0,
@@ -477,7 +516,7 @@ export default class Player extends Entity implements IPlayer {
 			SpreadMethod.PAD,
 			InterpolationMethod.RGB,
 			1
-		);
+		); */
 		shape.graphics.moveTo(-realRadiusX, -realRadiusY);
 		shape.graphics.lineTo(realRadiusX, 0);
 		shape.graphics.lineTo(-realRadiusX, realRadiusY);
@@ -493,19 +532,19 @@ export default class Player extends Entity implements IPlayer {
 	): void {
 		// TODO: 有待整理
 		switch (decorationLabel) {
-			case NativeControllerLabels.DUMMY:
+			case NativeControllerLabels.AI_DUMMY:
 				graphics.drawCircle(0, 0, radius);
 				break;
-			case NativeControllerLabels.NOVICE:
+			case NativeControllerLabels.AI_NOVICE:
 				graphics.drawRect(-radius, -radius, radius * 2, radius * 2);
 				break;
-			case NativeControllerLabels.ADVENTURER:
+			case NativeControllerLabels.AI_ADVENTURER:
 				graphics.moveTo(-radius, -radius);
 				graphics.lineTo(radius, 0);
 				graphics.lineTo(-radius, radius);
 				graphics.lineTo(-radius, -radius);
 				break;
-			case NativeControllerLabels.MASTER:
+			case NativeControllerLabels.AI_MASTER:
 				graphics.moveTo(-radius, 0);
 				graphics.lineTo(0, radius);
 				graphics.lineTo(radius, 0);
@@ -529,109 +568,58 @@ export default class Player extends Entity implements IPlayer {
 
 	// !【2023-09-27 23:36:42】删去「面前坐标」
 
-	// Display for GUI
-	public get healthText(): string {
-		let healthText: string = this._health + '/' + this._maxHealth;
-		let healText: string = this._heal > 0 ? '<' + this._heal + '>' : '';
-		let lifeText: string = this.infinityLife ? '' : '[' + this._lives + ']';
-		return healthText + healText + lifeText;
-	}
-
 	//============Instance Functions============//
-	//====Functions About Rule====//
-
-	/**
-	 * This function init the variables without update when this Player has been created.
-	 */
-	public initVariablesByRule(rule: IGameRule): void {
-		// Health&Life
-		this._maxHealth = rule.getRule(GameRule_V1.key_defaultMaxHealth);
-
-		this._health = rule.getRule(GameRule_V1.key_defaultHealth);
-
-		// TODO: 下面的「判断是否AI」似乎要留给调用者
-		// this.setLifeByInt(this instanceof AIPlayer ? rule.remainLivesAI : rule.remainLivesPlayer);
-
-		// Tool
-		if (toolID < - 1)
-			this._tool = rule.randomToolEnable;
-		else if (!Tool.isValidAvailableToolID(toolID) && uniformTool != null)
-			this._tool = uniformTool;
-		else
-			this._tool = Tool.fromToolID(toolID);
-	}
-
-	//====Functions About Health====//
-	public addHealth(value: uint, healer: IPlayer | null = null): void {
-		this.health += value;
-		this.onHeal(value, healer);
-	}
-
-	public removeHealth(value: uint, attacker: IPlayer | null = null): void {
-		if (this.health > value) {
-			this.health -= value;
-			this.onHurt(value, attacker);
-		}
-		else {
-			this.health = 0;
-			this.onDeath(this.health, attacker);
-		}
-	}
-
-	public setLifeByInt(lives: number): void {
-		this._infinityLife = (lives < 0);
-		if (this._lives >= 0)
-			this._lives = lives;
-	}
-
 	//====Functions About Hook====//
+	/**
+	 * 钩子函数的作用：
+	 */
 	// TODO: 所有「钩子函数」直接向控制器发送信息，作为「外界环境」的一部分（这些不是接口的部分）
-	protected onHeal(amount: uint, healer: IPlayer | null = null): void {
+	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
+	protected onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null = null): void {
+
 	}
 
-	protected onHurt(damage: uint, attacker: IPlayer | null = null): void {
+	protected onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
 		host.addPlayerHurtEffect(this);
 		host.onPlayerHurt(attacker, this, damage);
 	}
 
-	protected onDeath(damage: uint, attacker: IPlayer | null = null): void {
+	protected onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
 		host.onPlayerDeath(attacker, this, damage);
 		if (attacker != null)
 			attacker.onKillPlayer(this, damage);
 	}
 
-	protected onKillPlayer(victim: IPlayer, damage: uint): void {
+	protected onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void {
+		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
 			this.experience++;
 	}
 
-	protected onRespawn(): void {
+	protected onRespawn(host: IBatrGame,): void {
+
 	}
 
-	public onMapTransform(): void {
+	public onMapTransform(host: IBatrGame,): void {
 		this.resetCD();
 		this.resetCharge(false);
 	}
 
-	public onPickupBonusBox(box: BonusBox): void {
+	public onPickupBonusBox(host: IBatrGame, box: BonusBox): void {
 	}
 
-	override preLocationUpdate(oldX: number, oldY: number): void {
-		host.prePlayerLocationChange(this, oldX, oldY);
-		super.preLocationUpdate(oldX, oldY);
+	public preLocationUpdate(host: IBatrGame, oldP: iPoint): void {
+		host.prePlayerLocationChange(this, oldP);
+		// super.preLocationUpdate(oldP); // TODO: 已经忘记这里在做什么了
 	}
 
-	override onLocationUpdate(newX: number, newY: number): void {
-		if (this._GUI != null) {
-			this._GUI.logicalX = this.entityX;
-			this._GUI.logicalY = this.entityY;
-		}
-		host.onPlayerLocationChange(this, newX, newY);
-		super.onLocationUpdate(newX, newY);
+	public onLocationUpdate(host: IBatrGame, newP: iPoint): void {
+		host.onPlayerLocationChange(this, newP);
+		// super.onLocationUpdate(newP); // TODO: 已经忘记这里在做什么了
 	}
 
-	public onLevelup(): void {
+	public onLevelup(host: IBatrGame): void {
 		host.onPlayerLevelup(this);
 	}
 
@@ -680,12 +668,12 @@ export default class Player extends Entity implements IPlayer {
 	public dealHeal(): void {
 		if (this._heal < 1)
 			return;
-		if (this._healDelay > TPS * (0.1 + this.healthPercent * 0.15)) {
+		if (this._healDelay > TPS * (0.1 + this.HPPercent * 0.15)) {
 			if (this.isFullHealth)
 				return;
 			this._healDelay = 0;
 			this._heal--;
-			this.health++;
+			this.HP++;
 		}
 		else {
 			this._healDelay++;

@@ -314,9 +314,11 @@ export interface IEntityHasHP extends Entity {
      * * 取值范围：0 < health < maxHealth
      * 
      * ! 其不能超过「最大生命值」
+     * ! 协议：该值被修改时，不能超过最大生命值
      * 
      */
     get HP(): uint;
+    set HP(value: uint);
 
     /**
      * 当前最大生命值

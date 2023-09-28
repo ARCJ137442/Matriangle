@@ -629,13 +629,16 @@ export default class GameRule_V1 implements IGameRule {
 		return this.hasOwnProperty(`_${key}`);
 	}
 
-	/** 实现：直接访问内部变量 */
+	/** 实现：直接访问内部变量，但使用「非空访问」运算符 */
 	public getRule<T>(key: key): T | undefined {
-		if (!this.hasRule(key)) {
-			console.error(`规则「${key}」未找到`);
-			return undefined;
-		}
-		return ((this as any)[`_${key}`] as T)
+		return (this as any)?.[`_${key}`];
+	}
+
+	/** 实现：直接访问内部变量 */
+	public safeGetRule<T>(key: key): T {
+		if (this.hasRule(key))
+			return ((this as any)[`_${key}`] as T);
+		throw new Error(`规则「${key}」未找到`);
 	}
 
 	/** 实现：直接访问内部变量 */
