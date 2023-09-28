@@ -41,7 +41,7 @@ export default class BlockAttributes {
 
 	/**
 	 * -1 means instanceof will damage player as asphyxia
-	 * -2 means it will supplying player health and experience
+	 * -2 means it will supplying player HP and experience
 	 * int.MIN_VALUE means no damage
 	 * int.MAX_VALUE means they can kill player once a damage
 	 */

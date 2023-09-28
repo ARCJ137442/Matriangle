@@ -9,7 +9,7 @@ import IBatrGame from "../../../../main/IBatrGame";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -140,18 +140,18 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 
 	//============Instance Functions============//
 
-	//====Functions About Health====//
+	//====Functions About HP====//
 	/**
 	 * 增加生命值
 	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
 	 */
-	addHealth(host: IBatrGame, value: uint, healer: IPlayer | null): void;
+	addHP(host: IBatrGame, value: uint, healer: IPlayer | null): void;
 
 	/**
 	 * 减少生命值
 	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
 	 */
-	removeHealth(host: IBatrGame, value: uint, attacker: IPlayer | null): void;
+	removeHP(host: IBatrGame, value: uint, attacker: IPlayer | null): void;
 
 	//====Functions About Gameplay====//
 
@@ -377,9 +377,13 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	get fillColor(): uint;
 
 	/** 用于在GUI上显示的文本：生命值+最大生命值+储备生命值+剩余生命数（若生命数有限） */
-	get healthText(): string;
+	get HPText(): string;
 
 	/** （移植自AIPlayer）用于在主图形上显示「附加装饰」 */
-	drawShapeDecoration(shape: IBatrShape): void
+	drawShapeDecoration(
+		graphics: IBatrGraphicContext,
+		decorationLabel: string,
+		radius: number,
+	): void
 
 }

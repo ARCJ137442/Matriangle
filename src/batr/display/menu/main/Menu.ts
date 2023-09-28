@@ -536,15 +536,15 @@ export default class Menu extends Sprite {
 					false
 				).quickAppendSelector( // New
 					this,
-					BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultHealth),
-					I18nKey.DEFAULT_HEALTH,
+					BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultHP),
+					I18nKey.DEFAULT_HP,
 					false
 				).quickAppendSelector(
 					this,
-					BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultMaxHealth),
-					I18nKey.DEFAULT_MAX_HEALTH,
+					BatrSelectorContent.createPositiveIntegerContent(this.gameRule.defaultMaxHP),
+					I18nKey.DEFAULT_MAX_HP,
 					false,
-					this.onMaxHealthSelectorClick
+					this.onMaxHPSelectorClick
 				).quickAppendSelector(
 					this,
 					BatrSelectorContent.createUnsignedIntegerAndOneSpecialContent(
@@ -783,12 +783,12 @@ export default class Menu extends Sprite {
 			rule.initialMapID = initialMapSelector == null ? -1 : initialMapSelector.currentValue - 1;
 			//========Advanced========//
 			//====Left====//
-			// DefaultHealth
-			let defaultHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH);
-			rule.defaultHealth = defaultHealthSelector == null ? 100 : defaultHealthSelector.currentValue;
-			// DefaultMaxHealth
-			let defaultMaxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH);
-			rule.defaultMaxHealth = defaultMaxHealthSelector == null ? 100 : defaultMaxHealthSelector.currentValue;
+			// DefaultHP
+			let defaultHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HP);
+			rule.defaultHP = defaultHPSelector == null ? 100 : defaultHPSelector.currentValue;
+			// DefaultMaxHP
+			let defaultMaxHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HP);
+			rule.defaultMaxHP = defaultMaxHPSelector == null ? 100 : defaultMaxHPSelector.currentValue;
 			// DefaultLivesPlayer
 			let defaultLivesSelectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_PLAYER);
 			rule.remainLivesPlayer = defaultLivesSelectorP == null ? -1 : defaultLivesSelectorP.currentValue;
@@ -908,14 +908,14 @@ export default class Menu extends Sprite {
 		this.setNowSheet(this._sheetMain);
 	}
 
-	protected onMaxHealthSelectorClick(event: BatrGUIEvent): void {
-		let healthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HEALTH) as BatrSelector;
-		let maxHealthSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HEALTH) as BatrSelector;
-		if (healthSelector == null && maxHealthSelector != null)
+	protected onMaxHPSelectorClick(event: BatrGUIEvent): void {
+		let HPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HP) as BatrSelector;
+		let maxHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HP) as BatrSelector;
+		if (HPSelector == null && maxHPSelector != null)
 			return;
-		if (healthSelector.currentValue > maxHealthSelector.currentValue) {
-			healthSelector.content.intMax = maxHealthSelector.currentValue;
-			healthSelector.updateTextByContent();
+		if (HPSelector.currentValue > maxHPSelector.currentValue) {
+			HPSelector.content.intMax = maxHPSelector.currentValue;
+			HPSelector.updateTextByContent();
 		}
 	}
 

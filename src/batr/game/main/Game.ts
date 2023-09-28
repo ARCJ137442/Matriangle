@@ -446,7 +446,7 @@ export default class Game implements IBatrGame {
 		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
-			if (player.health > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
+			if (player.HP > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
 				result.push(player);
 		}
 		return result;
@@ -917,7 +917,7 @@ export default class Game implements IBatrGame {
 				if (projectile == null ||
 					(creator == null || creator.canUseToolHurtPlayer(player, projectile.ownerTool))) {
 					// Hurt With FinalDamage
-					player.finalRemoveHealth(creator, projectile.ownerTool, damage);
+					player.finalRemoveHP(creator, projectile.ownerTool, damage);
 				}
 			}
 		}
@@ -968,7 +968,7 @@ export default class Game implements IBatrGame {
 				// Effects
 				if (attacker == null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
 					// Damage
-					victim.removeHealth(finalDamage, attacker);
+					victim.removeHP(finalDamage, attacker);
 
 					// Absorption
 					if (attacker != null && !attacker.isRespawning && absorption)
@@ -1002,7 +1002,7 @@ export default class Game implements IBatrGame {
 			// FinalDamage
 			if (attacker == null || attacker.canUseToolHurtPlayer(victim, block.ownerTool)) {
 				if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
-					victim.finalRemoveHealth(attacker, block.ownerTool, damage);
+					victim.finalRemoveHP(attacker, block.ownerTool, damage);
 				}
 			}
 		}
@@ -1014,7 +1014,7 @@ export default class Game implements IBatrGame {
 			p = players[i];
 			d = damages[i];
 			if (p != null)
-				p.finalRemoveHealth(lightning.owner, lightning.ownerTool, d);
+				p.finalRemoveHP(lightning.owner, lightning.ownerTool, d);
 		}
 	}
 
@@ -1041,17 +1041,17 @@ export default class Game implements IBatrGame {
 		let returnBoo: boolean = false;
 		if (attributes != null) {
 			if (attributes.playerDamage == -1) {
-				player.removeHealth(this.computeFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
+				player.removeHP(this.computeFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
 				returnBoo = true;
 			}
 			else if (attributes.playerDamage > -1) {
-				player.removeHealth(this.computeFinalPlayerHurtDamage(player, x, y, attributes.playerDamage), null);
+				player.removeHP(this.computeFinalPlayerHurtDamage(player, x, y, attributes.playerDamage), null);
 				returnBoo = true;
 			}
 			else if (attributes.playerDamage == -2) {
 				if (!isLocationChange) {
-					if (!player.isFullHealth)
-						player.addHealth(1);
+					if (!player.isFullHP)
+						player.addHP(1);
 					else
 						player.heal++;
 					returnBoo = true;
@@ -1070,7 +1070,7 @@ export default class Game implements IBatrGame {
 	 * int.MAX_VALUE -> uint$MAX_VALUE
 	 * [...-2) -> 0
 	 * -1 -> uint$MAX_VALUE
-	 * [0,100] -> player.maxHealth*playerDamage/100
+	 * [0,100] -> player.maxHP*playerDamage/100
 	 * (100...] -> playerDamage-100
 	 * @return	The damage.
 	 */
@@ -1082,7 +1082,7 @@ export default class Game implements IBatrGame {
 		if (playerDamage == int.MAX_VALUE)
 			return uint$MAX_VALUE;
 		if (playerDamage <= 100)
-			return player.maxHealth * playerDamage / 100;
+			return player.maxHP * playerDamage / 100;
 		return playerDamage - 100;
 	}
 
@@ -1325,7 +1325,7 @@ export default class Game implements IBatrGame {
 		// Variables
 		player.initVariablesByRule(this.rule.defaultTool, this._tempUniformTool);
 		// GUI
-		player.gui.updateHealth();
+		player.gui.updateHP();
 		// Stats
 		this._stat.addPlayer(player);
 
@@ -2072,7 +2072,7 @@ export default class Game implements IBatrGame {
 
 	public onPlayerRespawn(player: Player): void {
 		// Active
-		player.health = player.maxHealth;
+		player.HP = player.maxHP;
 		player.isActive = true;
 		// Visible
 		player.visible = true;

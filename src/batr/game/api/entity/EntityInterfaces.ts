@@ -50,7 +50,7 @@ export interface IEntityInGrid extends Entity {
      * 
      * @param host 调用它的「游戏主体」
      */
-    onPositedBlockUpdate(host: IBatrGame): void;
+    onPositedBlockUpdate(host: IBatrGame, ...args: any[]): void;
 }
 
 /**
@@ -311,7 +311,7 @@ export interface IEntityHasHP extends Entity {
     /**
      * 当前生命值
      * * 英文来源："Health Point"
-     * * 取值范围：0 < health < maxHealth
+     * * 取值范围：0 < HP < maxHP
      * 
      * ! 其不能超过「最大生命值」
      * ! 协议：该值被修改时，不能超过最大生命值
@@ -332,7 +332,7 @@ export interface IEntityHasHP extends Entity {
      * （衍生）判断「生命值是否为满」
      * * 应用：判断「是否要从『储备生命值』里回血」
      */
-    get isFullHP(): uint
+    get isFullHP(): boolean
 
     /**
      * （衍生）判断「生命值是否为空」

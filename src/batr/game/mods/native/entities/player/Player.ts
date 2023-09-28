@@ -34,8 +34,8 @@ export default class Player extends Entity implements IPlayer {
 
 	override get type(): EntityType { return NativeEntityTypes.PLAYER; }
 
-	public static readonly DEFAULT_MAX_HEALTH: int = 100;
-	public static readonly DEFAULT_HEALTH: int = Player.DEFAULT_MAX_HEALTH;
+	public static readonly DEFAULT_MAX_HP: int = 100;
+	public static readonly DEFAULT_HP: int = Player.DEFAULT_MAX_HP;
 	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 
 	// **独有属性** //
@@ -165,9 +165,12 @@ export default class Player extends Entity implements IPlayer {
 	public get toolChargingPercent(): number { return this._tool.chargingPercent; }
 
 	// 生命（有生命实体） //
+	public readonly i_hasHP: true = true;
+	public readonly i_hasHPAndHeal: true = true;
+	public readonly i_hasHPAndLives: true = true;
 
 	/** 玩家内部生命值 */
-	protected _HP: uint = Player.DEFAULT_HEALTH
+	protected _HP: uint = Player.DEFAULT_HP
 	/**
 	 * 玩家生命值
 	 * 
@@ -180,11 +183,11 @@ export default class Player extends Entity implements IPlayer {
 		this._HP = intMin(value, this._maxHP);
 		// *【2023-09-28 20:32:49】更新还是要更新的
 		// if (this._GUI != null)
-		// this._GUI.updateHealth(); // TODO: 显示更新
+		// this._GUI.updateHP(); // TODO: 显示更新
 	}
 
 	/** 玩家内部最大生命值 */
-	protected _maxHP: uint = Player.DEFAULT_MAX_HEALTH
+	protected _maxHP: uint = Player.DEFAULT_MAX_HP
 	/** 玩家生命值 */ // * 设置时无需过游戏主体，故无需只读
 	public get maxHP(): uint { return this._maxHP; }
 	public set maxHP(value: uint) {
@@ -193,7 +196,7 @@ export default class Player extends Entity implements IPlayer {
 		this._maxHP = value;
 		if (value < this._HP)
 			this._HP = value;
-		// this._GUI.updateHealth(); // TODO: 显示更新
+		// this._GUI.updateHP(); // TODO: 显示更新
 	}
 
 	/** 玩家的「治疗值」（储备生命值） */
@@ -204,10 +207,12 @@ export default class Player extends Entity implements IPlayer {
 		if (value == this._heal)
 			return;
 		this._heal = value;
-		// this._GUI.updateHealth(); // TODO: 显示更新
+		// this._GUI.updateHP(); // TODO: 显示更新
 	}
 	/** （衍生）是否满生命值 */
-	public get isFullHealth(): boolean { return this._HP >= this._maxHP; }
+	public get isFullHP(): boolean { return this._HP >= this._maxHP; }
+	/** （衍生）是否空生命值 */
+	public get isEmptyHP(): boolean { return this._HP == 0; }
 	/** 玩家的「生命百分比」 */
 	public get HPPercent(): number { return this.HP / this.maxHP; }
 
@@ -222,19 +227,21 @@ export default class Player extends Entity implements IPlayer {
 	 * 增加生命值
 	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
 	 */
-	public addHealth(host: IBatrGame, value: uint, healer: IPlayer | null = null): void {
+	public addHP(host: IBatrGame, value: uint, healer: IPlayer | null = null): void {
 		this.HP += value;
 		this.onHeal(host, value, healer);
 	}
 
-	public removeHealth(value: uint, attacker: IPlayer | null = null): void {
+	public removeHP(host: IBatrGame, value: uint, attacker: IPlayer | null = null): void {
+		// 非致死⇒受伤
 		if (this.HP > value) {
 			this.HP -= value;
-			this.onHurt(value, attacker);
+			this.onHurt(host, value, attacker);
 		}
+		// 致死⇒死亡
 		else {
 			this.HP = 0;
-			this.onDeath(this.HP, attacker);
+			this.onDeath(host, this.HP, attacker);
 		}
 	}
 
@@ -244,7 +251,7 @@ export default class Player extends Entity implements IPlayer {
 	public set lives(value: uint) {
 		if (value !== this._lives) {
 			this._lives = value;
-			// this._GUI.updateHealth(); // TODO: 显示更新
+			// this._GUI.updateHP(); // TODO: 显示更新
 		}
 	}
 
@@ -254,7 +261,7 @@ export default class Player extends Entity implements IPlayer {
 	public set lifeNotDecay(value: boolean) {
 		if (value !== this._lifeNotDecay) {
 			this._lifeNotDecay = value;
-			// this._GUI.updateHealth(); // TODO: 显示更新
+			// this._GUI.updateHP(); // TODO: 显示更新
 		}
 	}
 
@@ -280,10 +287,18 @@ export default class Player extends Entity implements IPlayer {
 	 */
 	public respawnTick: int = -1;
 
+	/**
+	 * 以整数设置生命
+	 * * 负数⇒无限
+	 * 
+	 * @param lives 生命数
+	 */
 	public setLifeByInt(lives: int): void {
+		// 负数⇒无限
 		if (lives < 0) {
 			this._lifeNotDecay = true;
 		}
+		// 非负⇒有限
 		else {
 			this._lifeNotDecay = false;
 			this._lives = lives;
@@ -306,11 +321,13 @@ export default class Player extends Entity implements IPlayer {
 	 * @param host 用于在后续「生成特效」时访问的「游戏主体」
 	 */
 	public setExperience(host: IBatrGame, value: uint): void {
+		// 大于「最大经验」⇒升级
 		while (value > this.levelupExperience) {
 			value -= this.levelupExperience;
 			this.level++;
 			this.onLevelup(host);
 		}
+		// 设置生命值
 		this._experience = value;
 		//TODO: 显示更新
 		// if (this._GUI != null) this._GUI.updateExperience();
@@ -525,7 +542,7 @@ export default class Player extends Entity implements IPlayer {
 		shape.graphics.endFill();
 	}
 
-	public static drawShapeDecoration(
+	public drawShapeDecoration(
 		graphics: IBatrGraphicContext,
 		decorationLabel: string = '',
 		radius: number = Player.SIZE / 10
@@ -581,7 +598,7 @@ export default class Player extends Entity implements IPlayer {
 
 	protected onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
-		host.addPlayerHurtEffect(this);
+		host.addPlayerHurtEffect(this, false);
 		host.onPlayerHurt(attacker, this, damage);
 	}
 
@@ -645,21 +662,21 @@ export default class Player extends Entity implements IPlayer {
 		return this._carriedBlock != null && this._carriedBlock.visible;
 	}
 
-	public onPositedBlockUpdate(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
-		this.dealMoveInTest(x, y, ignoreDelay, isLocationChange);
+	public onPositedBlockUpdate(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+		this.dealMoveInTest(this._position, ignoreDelay, isLocationChange);
 	}
 
-	public dealMoveInTest(x: number, y: number, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public dealMoveInTest(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		if (ignoreDelay) {
-			host.moveInTestPlayer(this, isLocationChange);
+			// host.moveInTestPlayer(this, isLocationChange); // TODO: 这个似乎文不对题，似乎是被移除以至于没必要了？
 			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > 0) {
 			this._damageDelay--;
 		}
-		else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) {
-			this._damageDelay = Player.MAX_DAMAGE_DELAY;
-		}
+		// else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) { // TODO: 这个似乎文不对题，似乎是被移除以至于没必要了？
+		// 	this._damageDelay = Player.MAX_DAMAGE_DELAY;
+		// }
 		else if (this._damageDelay > -1) {
 			this._damageDelay = -1;
 		}
@@ -669,7 +686,7 @@ export default class Player extends Entity implements IPlayer {
 		if (this._heal < 1)
 			return;
 		if (this._healDelay > TPS * (0.1 + this.HPPercent * 0.15)) {
-			if (this.isFullHealth)
+			if (this.isFullHP)
 				return;
 			this._healDelay = 0;
 			this._heal--;
@@ -839,6 +856,16 @@ export default class Player extends Entity implements IPlayer {
 	public turnRelativeRight(): void {
 		this.rot += 1;
 	}
+
+	public startUsingTool(host: IBatrGame): void {
+
+	}
+
+	public stopUsingTool(host: IBatrGame): void {
+
+	}
+
+
 
 	public directUseTool(host: IBatrGame): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的

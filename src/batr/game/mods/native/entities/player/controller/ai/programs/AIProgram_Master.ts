@@ -59,7 +59,7 @@ export default class AIProgram_Master implements IAIProgram {
 		let _leastF: int = int.MAX_VALUE;
 		for (let node of nearbyNodes) {
 			if (node == null || AIProgram_Adventurer.pointInRemember(node, remember) ||
-				host.computeFinalPlayerHurtDamage(owner, node.x, node.y, host.getBlockPlayerDamage(node.x, node.y)) >= owner.health)
+				host.computeFinalPlayerHurtDamage(owner, node.x, node.y, host.getBlockPlayerDamage(node.x, node.y)) >= owner.HP)
 				continue;
 			if (node.F < _leastF) {
 				_leastNode = node;
@@ -217,7 +217,7 @@ export default class AIProgram_Master implements IAIProgram {
 				AIProgram_Adventurer.traceLog(player, 'Clear invalid target!');
 			}
 			/*//Change target when weak
-			else if(lastTargetPlayer!=null&&player.health<lastTargetPlayer.health) {
+			else if(lastTargetPlayer!=null&&player.HP<lastTargetPlayer.HP) {
 				if((this._pickupWeight++)<0) {
 					this.addCloseTarget(this._lastTarget);
 					AIProgram_Adventurer.traceLog(player,'close target when wreak:'+getEntityName(this._lastTarget));
@@ -339,7 +339,7 @@ export default class AIProgram_Master implements IAIProgram {
 
 	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 		// Run
-		if (player.healthPercent < 0.5) {
+		if (player.HPPercent < 0.5) {
 			if (this._pickupWeight > 0)
 				this._pickupWeight = -this._pickupWeight;
 			if (attacker != null)

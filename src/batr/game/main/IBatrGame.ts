@@ -290,7 +290,7 @@ export default interface IBatrGame {
 	 * int.MAX_VALUE -> uint$MAX_VALUE
 	 * [...-2) -> 0
 	 * -1 -> uint$MAX_VALUE
-	 * [0,100] -> player.maxHealth*playerDamage/100
+	 * [0,100] -> player.maxHP*playerDamage/100
 	 * (100...] -> playerDamage-100
 	 * @return	The damage.
 	 */
@@ -502,7 +502,7 @@ export default interface IBatrGame {
 
 	onPlayerUse(player: IPlayer, direction: mRot, distance: number): void
 
-	onPlayerHurt(attacker: IPlayer, victim: IPlayer, damage: uint): void
+	onPlayerHurt(attacker: IPlayer | null, victim: IPlayer, damage: uint): void
 
 	/**
 	 * Deal the (victim&attacker)'s (stat&heal),add effect and reset (CD&charge)
@@ -510,7 +510,7 @@ export default interface IBatrGame {
 	 * @param	victim
 	 * @param	damage
 	 */
-	onPlayerDeath(attacker: IPlayer, victim: IPlayer, damage: uint): void
+	onPlayerDeath(attacker: IPlayer | null, victim: IPlayer, damage: uint): void
 
 	onPlayerRespawn(player: IPlayer): void
 

@@ -46,7 +46,7 @@ export default interface IPlayerGUI extends IBatrShape {
 	/** 更新队伍（玩家颜色&「指示三角」） */
 	updateTeam(): void;
 	/** 更新「生命栏」 */
-	updateHealth(): void;
+	updateHP(): void;
 	/** 更新「充能栏」（+是否触发「下栏排序」） */
 	updateCharge(sort?: boolean): void;
 	/** 更新「冷却栏」（+是否触发「下栏排序」） */

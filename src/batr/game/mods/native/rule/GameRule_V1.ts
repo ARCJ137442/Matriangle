@@ -134,38 +134,38 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	//====GamePlay====//
-	protected static readonly d_defaultHealth: uint = 100;
-	public static readonly key_defaultHealth: key = fastAddJSObjectifyMapProperty_dashP(
+	protected static readonly d_defaultHP: uint = 100;
+	public static readonly key_defaultHP: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
-		'defaultHealth',
-		GameRule_V1.d_defaultHealth,
+		'defaultHP',
+		GameRule_V1.d_defaultHP,
 	);
-	protected _defaultHealth: uint = GameRule_V1.d_defaultHealth;
-	public get defaultHealth(): uint { return this._defaultHealth; }
-	public set defaultHealth(value: uint) {
+	protected _defaultHP: uint = GameRule_V1.d_defaultHP;
+	public get defaultHP(): uint { return this._defaultHP; }
+	public set defaultHP(value: uint) {
 		if (
 			GameRule_V1.preUpdateVariable(
-				this, GameRule_V1.key_defaultHealth,
-				this._defaultHealth, value
+				this, GameRule_V1.key_defaultHP,
+				this._defaultHP, value
 			)
-		) this._defaultHealth = value;
+		) this._defaultHP = value;
 	}
 
-	protected static readonly d_defaultMaxHealth: uint = 100;
-	public static readonly key_defaultMaxHealth: key = fastAddJSObjectifyMapProperty_dashP(
+	protected static readonly d_defaultMaxHP: uint = 100;
+	public static readonly key_defaultMaxHP: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
-		'defaultMaxHealth',
-		GameRule_V1.d_defaultMaxHealth,
+		'defaultMaxHP',
+		GameRule_V1.d_defaultMaxHP,
 	);
-	protected _defaultMaxHealth: uint = GameRule_V1.d_defaultMaxHealth;
-	public get defaultMaxHealth(): uint { return this._defaultMaxHealth; }
-	public set defaultMaxHealth(value: uint) {
+	protected _defaultMaxHP: uint = GameRule_V1.d_defaultMaxHP;
+	public get defaultMaxHP(): uint { return this._defaultMaxHP; }
+	public set defaultMaxHP(value: uint) {
 		if (
 			GameRule_V1.preUpdateVariable(
-				this, GameRule_V1.key_defaultMaxHealth,
-				this._defaultMaxHealth, value
+				this, GameRule_V1.key_defaultMaxHP,
+				this._defaultMaxHP, value
 			)
-		) this._defaultMaxHealth = value;
+		) this._defaultMaxHP = value;
 	}
 
 	/** Use as a int with negative numbers means infinity */
@@ -379,21 +379,21 @@ export default class GameRule_V1 implements IGameRule {
 	}
 
 	/** Determines bonus(type=ADD_LIFE)'s amount of addition */
-	protected static readonly d_bonusMaxHealthAdditionAmount: uint = 5;
-	public static readonly key_bonusMaxHealthAdditionAmount: key = fastAddJSObjectifyMapProperty_dashP(
+	protected static readonly d_bonusMaxHPAdditionAmount: uint = 5;
+	public static readonly key_bonusMaxHPAdditionAmount: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
-		'bonusMaxHealthAdditionAmount',
-		GameRule_V1.d_bonusMaxHealthAdditionAmount,
+		'bonusMaxHPAdditionAmount',
+		GameRule_V1.d_bonusMaxHPAdditionAmount,
 	);
-	protected _bonusMaxHealthAdditionAmount: uint = GameRule_V1.d_bonusMaxHealthAdditionAmount;
-	public get bonusMaxHealthAdditionAmount(): uint { return this._bonusMaxHealthAdditionAmount; }
-	public set bonusMaxHealthAdditionAmount(value: uint) {
+	protected _bonusMaxHPAdditionAmount: uint = GameRule_V1.d_bonusMaxHPAdditionAmount;
+	public get bonusMaxHPAdditionAmount(): uint { return this._bonusMaxHPAdditionAmount; }
+	public set bonusMaxHPAdditionAmount(value: uint) {
 		if (
 			GameRule_V1.preUpdateVariable(
-				this, GameRule_V1.key_bonusMaxHealthAdditionAmount,
-				this._bonusMaxHealthAdditionAmount, value
+				this, GameRule_V1.key_bonusMaxHPAdditionAmount,
+				this._bonusMaxHPAdditionAmount, value
 			)
-		) this._bonusMaxHealthAdditionAmount = value;
+		) this._bonusMaxHPAdditionAmount = value;
 	}
 
 	//====Map====//

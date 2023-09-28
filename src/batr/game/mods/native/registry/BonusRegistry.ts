@@ -5,8 +5,8 @@
  */
 export module NativeBonusTypes {
 	//============Static Variables============//
-	// Health,Life
-	export const ADD_HEALTH: BonusType = 'addHealth';
+	// HP,Life
+	export const ADD_HP: BonusType = 'addHP';
 	export const ADD_HEAL: BonusType = 'addHeal';
 	export const ADD_LIFE: BonusType = 'addLife';
 
@@ -33,8 +33,8 @@ export module NativeBonusTypes {
 	export const UNITE_AI: BonusType = 'uniteAI';
 
 	// General
-	export const _ABOUT_HEALTH: BonusType[] = [
-		NativeBonusTypes.ADD_HEALTH,
+	export const _ABOUT_HP: BonusType[] = [
+		NativeBonusTypes.ADD_HP,
 		NativeBonusTypes.ADD_HEAL,
 		NativeBonusTypes.ADD_LIFE
 	];
@@ -69,7 +69,7 @@ export module NativeBonusTypes {
 
 	export const _ALL_AVAILABLE_TYPE: BonusType[] = [
 		...NativeBonusTypes._OTHER,
-		...NativeBonusTypes._ABOUT_HEALTH,
+		...NativeBonusTypes._ABOUT_HP,
 		...NativeBonusTypes._ABOUT_TOOL,
 		...NativeBonusTypes._ABOUT_ATTRIBUTES,
 		...NativeBonusTypes._ABOUT_TEAM

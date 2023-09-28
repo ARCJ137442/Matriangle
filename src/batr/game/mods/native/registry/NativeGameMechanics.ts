@@ -12,7 +12,6 @@ import IBatrGame from "../../../main/IBatrGame";
 import BlockColored from "../blocks/Colored";
 import BlockGate from "../blocks/Gate";
 import BonusBox from "../entities/item/BonusBox";
-import Player from "../entities/player/Player";
 import PlayerTeam from "../entities/player/team/PlayerTeam";
 import ThrownBlock from "../entities/projectile/other/ThrownBlock";
 import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
@@ -27,7 +26,6 @@ import Projectile from "../entities/projectile/Projectile";
 import Wave from "../entities/projectile/other/Wave";
 import { NativeTools } from './ToolRegistry';
 import IPlayer from "../entities/player/IPlayer";
-import AIController from "../entities/player/controller/AIController";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
@@ -74,8 +72,8 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
     // 开始逐个玩家分派属性
     for (const player of players) {
         // 生命 //
-        player.HP = rule.safeGetRule<uint>(GameRule_V1.key_defaultHealth);
-        player.maxHP = rule.safeGetRule<uint>(GameRule_V1.key_defaultMaxHealth);
+        player.HP = rule.safeGetRule<uint>(GameRule_V1.key_defaultHP);
+        player.maxHP = rule.safeGetRule<uint>(GameRule_V1.key_defaultMaxHP);
 
         // TODO: 下面的「判断是否AI」留给创建者。。。
         // player.setLifeByInt(player instanceof AIPlayer ? rule.remainLivesAI : rule.remainLivesPlayer);
@@ -113,16 +111,17 @@ export function playerPickupBonusBox(
     // Effect
     let buffColor: int = -1;
     switch (forcedBonusType) {
-        // Health,Heal&Life
-        case NativeBonusTypes.ADD_HEALTH:
-            player.addHealth(5 * (1 + randInt(10)), null);
+        // HP,Heal&Life
+        case NativeBonusTypes.ADD_HP:
+            // 随机
+            player.addHP(host, uint(player.HP * (0.05 * (1 + randInt(10)))), null);
             break;
         case NativeBonusTypes.ADD_HEAL:
             player.heal += 5 * (1 + randInt(25));
             break;
         case NativeBonusTypes.ADD_LIFE:
             if (player.lifeNotDecay || player.isFullHP)
-                player.maxHP += host.rule.getRule(GameRule_V1.key_bonusMaxHealthAdditionAmount) as uint; // ! 可能出错
+                player.maxHP += host.rule.getRule(GameRule_V1.key_bonusMaxHPAdditionAmount) as uint; // ! 可能出错
             else
                 player.lives++;
             break;
@@ -502,7 +501,7 @@ export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
         // FinalDamage
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {
-                victim.removeHealth(wave.attackerDamage, wave.owner);
+                victim.removeHP(wave.attackerDamage, wave.owner);
             }
         }
     }

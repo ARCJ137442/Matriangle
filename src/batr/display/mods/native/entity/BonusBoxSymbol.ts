@@ -15,7 +15,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
 
 	// HHL
-	public static readonly HEALTH_COLOR: uint = PlayerGUI.HEALTH_COLOR;
+	public static readonly HP_COLOR: uint = PlayerGUI.HP_COLOR;
 
 	// Tool
 	public static readonly TOOL_COLOR: uint = 0x555555;
@@ -99,9 +99,9 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	/** 工具函数：绘制图形 */
 	public drawSymbol(graphics: IBatrGraphicContext): void {
 		switch (this._type) {
-			// HHL(Health,Heal&Life)
-			case NativeBonusTypes.ADD_HEALTH:
-				this.drawHealthSymbol(graphics);
+			// HHL(HP,Heal&Life)
+			case NativeBonusTypes.ADD_HP:
+				this.drawHPSymbol(graphics);
 				break;
 			case NativeBonusTypes.ADD_HEAL:
 				this.drawHealSymbol(graphics);
@@ -150,20 +150,20 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	}
 
 	//====HHL====//
-	protected drawHealthSymbol(graphics: IBatrGraphicContext): void {
+	protected drawHPSymbol(graphics: IBatrGraphicContext): void {
 		// V
-		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
 		graphics.endFill();
 		// H
-		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
 		graphics.endFill();
 	}
 
 	protected drawHealSymbol(graphics: IBatrGraphicContext): void {
 		// V
-		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
 		// H
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
@@ -172,10 +172,10 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 
 	protected drawLifeSymbol(graphics: IBatrGraphicContext): void {
 		// L
-		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 2);
 		graphics.endFill();
-		graphics.beginFill(BonusBoxSymbol.HEALTH_COLOR);
+		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 3, BonusBoxSymbol.GRID_SIZE);
 		graphics.endFill();
 	}

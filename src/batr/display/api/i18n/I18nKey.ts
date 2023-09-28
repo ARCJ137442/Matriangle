@@ -45,8 +45,8 @@ export default class I18nKey {
 
 	// batr.custom
 	public static readonly DEFAULT_TOOL: string = 'batr.custom.defaultTool';
-	public static readonly DEFAULT_HEALTH: string = 'batr.custom.defaultHealth';
-	public static readonly DEFAULT_MAX_HEALTH: string = 'batr.custom.defaultMaxHealth';
+	public static readonly DEFAULT_HP: string = 'batr.custom.defaultHP';
+	public static readonly DEFAULT_MAX_HP: string = 'batr.custom.defaultMaxHP';
 	public static readonly REMAIN_LIVES_PLAYER: string = 'batr.custom.remainLivesPlayer';
 	public static readonly REMAIN_LIVES_AI: string = 'batr.custom.remainLivesAI';
 	public static readonly MAX_BONUS_COUNT: string = 'batr.custom.maxBonusCount';

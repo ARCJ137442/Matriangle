@@ -11,8 +11,8 @@ import { logical2Real, real2Logical } from "../../../../api/PosTransform";
 export default class PlayerGUI implements IBatrShapeContainer {
 	//============Static Variables============//
 	// Display Color
-	public static readonly HEALTH_COLOR: uint = 0xff0000;
-	public static readonly HEALTH_BAR_FRAME_COLOR: uint = 0xbbbbbb;
+	public static readonly HP_COLOR: uint = 0xff0000;
+	public static readonly HP_BAR_FRAME_COLOR: uint = 0xbbbbbb;
 	public static readonly CHARGE_COLOR: uint = 0x88ffff;
 	public static readonly CHARGE_BAR_FRAME_COLOR: uint = 0xaadddd;
 	public static readonly CD_COLOR: uint = 0x88ff88;
@@ -22,7 +22,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	public static readonly LEVEL_COLOR: uint = 0x8800ff;
 
 	// Display Graphics
-	public static readonly HEALTH_BAR_HEIGHT: number = DEFAULT_SIZE / 10;
+	public static readonly HP_BAR_HEIGHT: number = DEFAULT_SIZE / 10;
 	public static readonly BAR_FRAME_SIZE: number = DEFAULT_SIZE / 320;
 	public static readonly UNDER_BAR_HEIGHT: number = DEFAULT_SIZE / 16;
 	public static readonly UNDER_BAR_Y_0: number = 0.5 * DEFAULT_SIZE;
@@ -53,13 +53,13 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	protected _owner: Player | null;
 
 	// Texts
-	protected _healthBarFormat: TextFormat = new TextFormat();
+	protected _HPBarFormat: TextFormat = new TextFormat();
 	protected _nameTagFormat: TextFormat = new TextFormat();
 
 	// Graphics
 	protected _pointerTriangle: IBatrShape = new Shape();
-	protected _healthBarHealth: IBatrShape = new Shape();
-	protected _healthBarFrame: IBatrShape = new Shape();
+	protected _HPBarHP: IBatrShape = new Shape();
+	protected _HPBarFrame: IBatrShape = new Shape();
 	protected _chargeBarCharge: IBatrShape = new Shape();
 	protected _chargeBarFrame: IBatrShape = new Shape();
 	protected _CDBarCD: IBatrShape = new Shape();
@@ -67,7 +67,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	protected _experienceBarExperience: IBatrShape = new Shape();
 	protected _experienceBarFrame: IBatrShape = new Shape();
 
-	protected _healthBarText: TextField = new TextField();
+	protected _HPBarText: TextField = new TextField();
 	protected _nameTagText: TextField = new TextField();
 	protected _levelText: TextField = new TextField();
 
@@ -86,9 +86,9 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	public destructor(): void {
 		this.removeChildren();
 		// ! 与其自身显示相关的（子元素这些）不用置空，其引用与自身绑定
-		// this._healthBarHealth = null;
-		// this._healthBarFrame = null;
-		// this._healthBarText = null;
+		// this._HPBarHP = null;
+		// this._HPBarFrame = null;
+		// this._HPBarText = null;
 		// this._CDBarCD = null;
 		// this._CDBarFrame = null;
 		// this._chargeBarCharge = null;
@@ -98,7 +98,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		// this._levelText = null;
 		// this._nameTagText = null;
 		// this._pointerTriangle = null;
-		// this._healthBarFormat = null;
+		// this._HPBarFormat = null;
 		// this._nameTagFormat = null;
 		// 清空其对所链接玩家的引用，使之可以在析构后被删除
 		this._owner = null;
@@ -237,7 +237,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 
 	//============Instance Functions============//
 	public update(): void {
-		this.updateHealth();
+		this.updateHP();
 		this.updateCD(false);
 		this.updateCharge(false);
 		this.updateExperience(false);
@@ -259,11 +259,11 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		this._nameTagText.textColor = this._owner.lineColor;
 	}
 
-	public updateHealth(): void {
+	public updateHP(): void {
 		if (this._owner == null)
 			return;
-		this._healthBarHealth.scaleX = this._owner.healthPercent;
-		this._healthBarText.text = this._owner.healthText == null ? '' : this._owner.healthText;
+		this._HPBarHP.scaleX = this._owner.HPPercent;
+		this._HPBarText.text = this._owner.HPText == null ? '' : this._owner.HPText;
 	}
 
 	public updateCharge(sort: boolean = true): void {
@@ -307,12 +307,12 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	protected setFormats(): void {
-		// Health Bar
-		this._healthBarFormat.font = MAIN_FONT.fontName;
-		this._healthBarFormat.align = TextFormatAlign.CENTER;
-		this._healthBarFormat.bold = true;
-		this._healthBarFormat.color = PlayerGUI.HEALTH_COLOR;
-		this._healthBarFormat.size = 0.3 * DEFAULT_SIZE;
+		// HP Bar
+		this._HPBarFormat.font = MAIN_FONT.fontName;
+		this._HPBarFormat.align = TextFormatAlign.CENTER;
+		this._HPBarFormat.bold = true;
+		this._HPBarFormat.color = PlayerGUI.HP_COLOR;
+		this._HPBarFormat.size = 0.3 * DEFAULT_SIZE;
 		// NameTag
 		this._nameTagFormat.font = MAIN_FONT.fontName;
 		this._nameTagFormat.align = TextFormatAlign.CENTER;
@@ -322,14 +322,14 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	protected setFormatsToFields(): void {
-		this._healthBarText.defaultTextFormat = this._healthBarFormat;
+		this._HPBarText.defaultTextFormat = this._HPBarFormat;
 		this._nameTagText.defaultTextFormat = this._nameTagFormat;
 		this._levelText.defaultTextFormat = PlayerGUI.EXPERIENCE_FORMAT;
-		this._healthBarText.selectable = this._nameTagText.selectable = this._levelText.selectable = false;
-		this._healthBarText.multiline = this._nameTagText.multiline = this._levelText.multiline = false;
-		this._healthBarText.embedFonts = this._nameTagText.embedFonts = this._levelText.embedFonts = true;
-		this._healthBarText.autoSize = this._nameTagText.autoSize = this._levelText.autoSize = TextFieldAutoSize.CENTER;
-		// this._healthBarText.border=this._nameTagText.border=true;
+		this._HPBarText.selectable = this._nameTagText.selectable = this._levelText.selectable = false;
+		this._HPBarText.multiline = this._nameTagText.multiline = this._levelText.multiline = false;
+		this._HPBarText.embedFonts = this._nameTagText.embedFonts = this._levelText.embedFonts = true;
+		this._HPBarText.autoSize = this._nameTagText.autoSize = this._levelText.autoSize = TextFieldAutoSize.CENTER;
+		// this._HPBarText.border=this._nameTagText.border=true;
 	}
 
 	public shapeInit(): void {
@@ -346,14 +346,14 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		this._levelText.y = -1.9375 * DEFAULT_SIZE;
 		this._levelText.width = 3.75 * DEFAULT_SIZE;
 		this._levelText.height = 0.6 * DEFAULT_SIZE;
-		// Health Bar
-		this.drawHealthBar();
-		this._healthBarFrame.x = this._healthBarHealth.x = -0.46875 * DEFAULT_SIZE;
-		this._healthBarFrame.y = this._healthBarHealth.y = -0.725 * DEFAULT_SIZE;
-		this._healthBarText.x = -1.5625 * DEFAULT_SIZE;
-		this._healthBarText.y = -1.1 * DEFAULT_SIZE;
-		this._healthBarText.width = 3.125 * DEFAULT_SIZE;
-		this._healthBarText.height = 0.375 * DEFAULT_SIZE;
+		// HP Bar
+		this.drawHPBar();
+		this._HPBarFrame.x = this._HPBarHP.x = -0.46875 * DEFAULT_SIZE;
+		this._HPBarFrame.y = this._HPBarHP.y = -0.725 * DEFAULT_SIZE;
+		this._HPBarText.x = -1.5625 * DEFAULT_SIZE;
+		this._HPBarText.y = -1.1 * DEFAULT_SIZE;
+		this._HPBarText.width = 3.125 * DEFAULT_SIZE;
+		this._HPBarText.height = 0.375 * DEFAULT_SIZE;
 		// CD Bar
 		this.drawCDBar();
 		this._CDBarFrame.x = this._CDBarCD.x = -0.5 * DEFAULT_SIZE;
@@ -382,17 +382,17 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		graphics.endFill();
 	}
 
-	protected drawHealthBar(): void {
-		this._healthBarFrame.graphics.lineStyle(DEFAULT_SIZE / 200, PlayerGUI.HEALTH_BAR_FRAME_COLOR);
-		this._healthBarFrame.graphics.drawRect(0, 0,
+	protected drawHPBar(): void {
+		this._HPBarFrame.graphics.lineStyle(DEFAULT_SIZE / 200, PlayerGUI.HP_BAR_FRAME_COLOR);
+		this._HPBarFrame.graphics.drawRect(0, 0,
 			0.9375 * DEFAULT_SIZE,
-			PlayerGUI.HEALTH_BAR_HEIGHT);
-		this._healthBarFrame.graphics.endFill();
-		this._healthBarHealth.graphics.beginFill(PlayerGUI.HEALTH_COLOR);
-		this._healthBarHealth.graphics.drawRect(0, 0,
+			PlayerGUI.HP_BAR_HEIGHT);
+		this._HPBarFrame.graphics.endFill();
+		this._HPBarHP.graphics.beginFill(PlayerGUI.HP_COLOR);
+		this._HPBarHP.graphics.drawRect(0, 0,
 			0.9375 * DEFAULT_SIZE,
-			PlayerGUI.HEALTH_BAR_HEIGHT);
-		this._healthBarFrame.graphics.endFill();
+			PlayerGUI.HP_BAR_HEIGHT);
+		this._HPBarFrame.graphics.endFill();
 	}
 
 	protected drawCDBar(): void {
@@ -435,9 +435,9 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	protected addChildren(): void {
-		this.addChild(this._healthBarHealth);
-		this.addChild(this._healthBarFrame);
-		this.addChild(this._healthBarText);
+		this.addChild(this._HPBarHP);
+		this.addChild(this._HPBarFrame);
+		this.addChild(this._HPBarText);
 		this.addChild(this._CDBarCD);
 		this.addChild(this._CDBarFrame);
 		this.addChild(this._chargeBarCharge);
@@ -450,9 +450,9 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	protected removeChildren(): void {
-		this.removeChild(this._healthBarHealth);
-		this.removeChild(this._healthBarFrame);
-		this.removeChild(this._healthBarText);
+		this.removeChild(this._HPBarHP);
+		this.removeChild(this._HPBarFrame);
+		this.removeChild(this._HPBarText);
 		this.removeChild(this._CDBarCD);
 		this.removeChild(this._CDBarFrame);
 		this.removeChild(this._chargeBarCharge);
