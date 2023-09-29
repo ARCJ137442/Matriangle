@@ -8,8 +8,9 @@ import IBatrGame from './../../../main/IBatrGame';
  * 原`Tool`，现为（暂时轻量级的）「工具」类
  *
  *  「工具」是
- * * 能被「使用者」（暂定为玩家）使用的
- * * 对「使用」而言有「使用冷却」与「充能状态」（百分比）的
+ * * 能被「使用者」（暂定为使用者）使用的
+ * * 对「使用」而言缓存了几乎所有「和自身有关的状态」的
+ *   * 有「使用冷却」与「充能状态」（百分比）的
  * * 可以绑定各种属性的
  * * 作为一个提供「原型复制」的「独立物品」，而非「共用模板对象」的
  * 对象类型
@@ -23,7 +24,7 @@ import IBatrGame from './../../../main/IBatrGame';
  *   * 其他情况可以用来开发一些像「方块迁移器」（临时名，其存储「所持有的方块」以兼容TriangleCraft这类沙盒向游戏）的「更自定义化工具」
  *   
  * 
- * ! 【2023-09-23 11:45:07】现在不再使用「共用引用」的形式，改为「一个玩家，一个工具」
+ * ! 【2023-09-23 11:45:07】现在不再使用「共用引用」的形式，改为「一个使用者，一个工具」
  * * 日后游戏机制的「随机武器」（初始分派、奖励箱……）也将使用「原型复制」的方式，而非「共用引用」的方法
  */
 export default class Tool implements IJSObjectifiable<Tool> {
@@ -87,9 +88,9 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	/**
 	 * 工具使用冷却
 	 * * 原理：完全冷却 baseCD ~ 0 可使用
-	 * * 决定玩家使用工具的最快频率
+	 * * 决定使用者使用工具的最快频率
 	 * 
-	 * ! 在设置时（玩家需）更新：
+	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	*/
 	get usingCD(): uint { return this._usingCD }
@@ -104,7 +105,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 工具使用基础冷却
 	 * * 决定「工具使用冷却」在重置会重置到的值
 	 * 
-	 * ! 在设置时（玩家需）更新：
+	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	*/
 	get baseCD(): uint { return this._baseCD }
@@ -120,7 +121,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * * 原理：未充能 0 ~ chargeMaxTime 完全充能 （正计时）
 	 * * 默认值@无需充能的工具：如「完全充能」
 	 * 
-	 * ! 在设置时（玩家需）更新：
+	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	 */
 	get chargeTime(): uint { return this._chargeTime }
@@ -135,7 +136,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 工具最大充能时间
 	 * * 其值为0意味着「无需充能」
 	 * 
-	 * ! 在设置时（玩家需）更新：
+	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	 */
 	get chargeMaxTime(): uint { return this._chargeMaxTime }
@@ -164,7 +165,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	/**
 	 * （衍生）工具是否需要「冷却时间」
 	 * * 返回「工具基础冷却时间」是否>0
-	 * * 应用：GUI显示（在「无需冷却」时不显示冷却条）
+	 * 
+	 * ? 目前似乎没啥用，因为还没有工具不用CD。。。
 	 */
 	get needsCD(): boolean { return this._baseCD > 0 }
 
@@ -231,6 +233,58 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this.resetCharge();
 	}
 
+	/**
+	 * 处理「冷却机制」
+	 * * 逻辑：不断递减自身「冷却时间」，直到「冷却时间」为零
+	 *   * 其后返回`isUsing`，表明「武器可以『随时使用』」
+	 *   * 否则返回false，表明武器「还没到使用的时候」
+	 * @param isUsing 判断使用者「是否在使用这个工具」（用于在「反向充能」时「打断充能」）
+	 * @returns 是否「可以使用」
+	 */
+	public dealCD(isUsing: boolean): boolean {
+		if (this._usingCD > 0) {
+			this._usingCD--;
+			return false;
+		}
+		else {
+			this.resetCD();
+			return isUsing;
+		}
+	}
+
+	/**
+	 * 处理「充能机制」
+	 * * 逻辑：不断递增自身「充能时间」，直到「充能时间」达到自身的「最大充能时间」
+	 *   * 其后返回true，表明「武器可以使用」
+	 *   * 否则返回false，表明武器「还没到使用的时候」
+	 * * 正反向逻辑模式：
+	 *   * 正向：需要使用者**主动**使用工具充能，当满充能/停止使用时直接释放
+	 *   * 反向：相当于一次额外的冷却，但使用者无需**主动使用**工具
+	 * 
+	 * @param isUsing 判断使用者「是否在使用这个工具」（用于在「反向充能」时「打断充能」）
+	 * @returns 是否「可以使用」
+	 */
+	public dealCharge(isUsing: boolean): boolean {
+		if (this._reverseCharge) {
+			if (isUsing) { // 反向充能「只要使用就直接成功」
+				this.resetCharge(); // 自动重置充能状态
+				return true;
+			}
+			else if (this._chargeTime < this._chargeMaxTime)
+				this._chargeTime++;
+		}
+		else if (isUsing) { // 正向充能只能在使用时
+			if (this._chargeTime >= this._chargeMaxTime) {
+				this.resetCharge(); // 自动重置充能状态
+				return true;
+			}
+			else
+				this._chargeTime++;
+		}
+		// 若先前未因「充能完毕/使用打断充能」返回true
+		return false;
+	}
+
 	//============Game Mechanics============//
 	/**
 	 * 钩子「工具被使用」
@@ -239,7 +293,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ? 使用「函数钩子」似乎不行……没法序列化
 	 * 
 	 * @param host 调用时处在的「游戏主体」
-	 * @param user 使用者（暂定为玩家）
+	 * @param user 使用者（暂定为使用者）
 	 */
 	public onUseByPlayer(host: IBatrGame, user: IPlayer): void {
 		console.log('Tool', this, 'is used by', user, 'in', host)

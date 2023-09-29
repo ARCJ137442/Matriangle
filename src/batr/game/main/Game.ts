@@ -791,48 +791,6 @@ export default class Game implements IBatrGame {
 
 	//====Functions About Gameplay====//
 
-	/**
-	 * @param	x	The position x.
-	 * @param	y	The position y.
-	 * @param	asPlayer	Judge as player
-	 * @param	asBullet	Judge as Bullet
-	 * @param	asLaser	Judge as Laser
-	 * @param	includePlayer	Avoid player(returns false)
-	 * @param	avoidHurting	Avoid harmful block(returns false)
-	 * @return	true if can pass.
-	 */
-	public testCanPass(x: number, y: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		return this.testIntCanPass(alignToGrid(x), alignToGrid(y), asPlayer, asBullet, asLaser, includePlayer, avoidHurting);
-	}
-
-	public testIntCanPass(x: int, y: int, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: console.log('testCanPass:'+arguments+';'+this.getBlockAttributes(x,y).bulletCanPass,isHitAnyPlayer(x,y))
-		let mapX: int = this.lockPosInMap(x, true);
-
-		let mapY: int = this.lockPosInMap(y, false);
-
-		// if(isOutOfMap(gridX,gridY)) return true
-		let attributes: BlockAttributes = this.getBlockAttributes(mapX, mapY);
-
-		if (avoidHurting && attributes.playerDamage > -1)
-			return false;
-
-		if (asPlayer && !attributes.playerCanPass)
-			return false;
-
-		if (asBullet && !attributes.bulletCanPass)
-			return false;
-
-		if (asLaser && !attributes.laserCanPass)
-			return false;
-
-		if (includePlayer && this.isHitAnyPlayer(mapX, mapY))
-			return false;
-
-		return true;
-	}
-
-	/** return testCanPass in player's front position. */
 	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
 		// Debug: console.log('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
 		return this.testCanPass(
@@ -843,59 +801,7 @@ export default class Game implements IBatrGame {
 		);
 	}
 
-	public testBonusBoxCanPlaceAt(x: int, y: int): boolean {
-		return this.testIntCanPass(x, y, true, false, false, true, true);
-	}
-
-	/** return testCanPass as player in other position. */
-	public testPlayerCanPass(player: Player, x: int, y: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: console.log('testPlayerCanPass:'+player.customName+','+x+','+y+','+includePlayer)
-		// Define
-		let gridX: int = this.lockIntPosInMap(x, true);
-
-		let gridY: int = this.lockIntPosInMap(y, false);
-
-		let attributes: BlockAttributes = this.getBlockAttributes(gridX, gridY);
-
-		// Test
-		// if(isOutOfMap(gridX,gridY)) return true
-		if (avoidHurting && attributes.playerDamage > -1)
-			return false;
-
-		if (!attributes.playerCanPass)
-			return false;
-
-		if (includePlayer && this.isHitAnyPlayer(gridX, gridY))
-			return false;
-
-		return true;
-	}
-
-	public testFullPlayerCanPass(player: Player, x: int, y: int, oldX: int, oldY: int, includePlayer: boolean = true, avoidHurting: boolean = false): boolean {
-		// Debug: console.log('testFullPlayerCanPass:'+player.customName+','+x+','+y+','+oldX+','+oldY+','+includePlayer)
-		// Target can pass
-		if (!this.testPlayerCanPass(player, x, y, includePlayer, avoidHurting))
-			return false;
-		// Test Whether OldBlock can Support
-		// if(!testPlayerCanPass(player,oldX,oldY,includePlayer,avoidHurting)) return false;//don't support
-		return true;
-	}
-
-	public testPlayerCanPassToFront(player: Player, rotatedAsRot: uint = 5, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
-		return this.testFullPlayerCanPass(player,
-			PosTransform.alignToGrid(player.getFrontIntX(player.moveDistance, rotatedAsRot)),
-			PosTransform.alignToGrid(player.getFrontIntY(player.moveDistance, rotatedAsRot)),
-			player.gridX, player.gridY,
-			includePlayer, avoidTrap);
-	}
-
-	public testCarriableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
-		return blockAtt.isCarriable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
-	}
-
-	public testBreakableWithMap(blockAtt: BlockAttributes, map: IMap): boolean {
-		return blockAtt.isBreakable && !(map.isArenaMap && blockAtt.unbreakableInArenaMap);
-	}
+	// !【2023-09-30 13:20:38】testCarriableWithMap, testBreakableWithMap⇒地图の存储の判断
 
 	public toolCreateExplode(x: number, y: number, finalRadius: number,
 		damage: uint, projectile: Projectile,

@@ -17,7 +17,7 @@ export module NativeBlockAttributes {
 	export const VOID: BlockAttributes = new BlockAttributes(0xffffff, 0x0).asGas;
 	export const WALL: BlockAttributes = new BlockAttributes(0xBBBBBB).asSolid;
 	export const WATER: BlockAttributes = new BlockAttributes(0x2222FF, 0x40000000).asLiquid.asArenaBlock;
-	export const GLASS: BlockAttributes = new BlockAttributes(0x000000, 0x80000000).asTransparent.asArenaBlock;
+	export const GLASS: BlockAttributes = new BlockAttributes(0x000000, 0x80000000).asTransparentSolid.asArenaBlock;
 	export const BEDROCK: BlockAttributes = new BlockAttributes(0x888888).asSolid.asUnbreakable;
 
 	export const X_TRAP_HURT: BlockAttributes = new BlockAttributes(0xffff00, 0xc0000000).asGas.asHurtZone.asArenaBlock;
@@ -32,7 +32,7 @@ export module NativeBlockAttributes {
 	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(0x6666ff).asBase;
 
 	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
-	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGate;
+	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen;
 
 	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
 

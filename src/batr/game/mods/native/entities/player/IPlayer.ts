@@ -3,13 +3,14 @@ import PlayerStats from "../../stat/PlayerStats";
 import PlayerController from "./controller/PlayerController";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
-import { iPoint } from "../../../../../common/geometricTools";
+import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IBatrGame from "../../../../main/IBatrGame";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import BonusBox from "../item/BonusBox";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -72,23 +73,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * * 包括「伤害提升」「冷却减免」「抗性提升」「范围提升」
 	*/
 	get attributes(): PlayerAttributes;
-
-	//============Constructor & Destructor============//
-	/**
-	 * 构造函数
-	 * @param position 位置信息
-	 * @param direction 朝向信息（任意维整数角）
-	 * @param team 玩家队伍（存储颜色等信息）
-	 * @param controller 玩家控制器
-	 * @param args 其它附加参数
-	 */
-	new(
-		position: iPoint,
-		direction: mRot,
-		team: PlayerTeam,
-		controller: PlayerController | null,
-		...args: any[] // ! 其它附加参数
-	): void;
 
 	// /**
 	//  * 获取玩家的「控制器」
@@ -153,6 +137,21 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	removeHP(host: IBatrGame, value: uint, attacker: IPlayer | null): void;
 
+	/**
+	 * 处理「储备生命值」
+	 * * 功能：实现玩家「储备生命值」的「储备」效果
+	 * 
+	 * 逻辑：
+	 * * 无「储备生命值」⇒不进行处理
+	 * * 「治疗延时」达到一定值后：
+	 *   * 生命值满⇒不处理
+	 *   * 未满⇒将一点「储备生命值」移入「生命值」
+	 *   * 重置「治疗延时」
+	 * * 否则：
+	 *   * 持续计时
+	 */
+	dealHeal(): void;
+
 	//====Functions About Gameplay====//
 
 	/*
@@ -175,6 +174,8 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * * 【2023-09-23 16:56:03】目前的功能就是「测试移动」 
 	 * * 现在使用自身位置作「更新后位置」
 	 * 
+	 * ! 这个因为涉及封装玩家的内部变量，所以不能迁移至「原生游戏机制」中
+	 * 
 	 * 迁移前逻辑：
 	 * * 调用游戏处理「『在方块内时』动作」
 	 *   * 如果调用者「忽略冷却」则不论如何立即开始
@@ -183,25 +184,52 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 *   * 递减到0时停止递减，等待下一个处理
 	 *   * 且一般只在位置更新/方块更新后才开始——一旦「当前位置无需额外处理动作」就停下来
 	 * 
+	 * @param host 所处的「游戏主体」
 	 * @param ignoreDelay 是否忽略「方块伤害」等冷却直接开始
 	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
-	dealMoveInTest(host: IBatrGame, ignoreDelay?: boolean, isLocationChange?: boolean): void;
+	dealMoveInTest(
+		host: IBatrGame,
+		ignoreDelay?: boolean/* =false */,
+		isLocationChange?: boolean/* =false */
+	): void;
 
 	/**
-	 * 处理「储备生命值」
-	 * * 功能：实现玩家「储备生命值」的「储备」效果
+	 * 用于判断「玩家是否可当前位置移动到另一位置」
+	 * * 会用到「玩家自身的坐标」作为「移动前坐标」
 	 * 
-	 * 逻辑：
-	 * * 无「储备生命值」⇒不进行处理
-	 * * 「治疗延时」达到一定值后：
-	 *   * 生命值满⇒不处理
-	 *   * 未满⇒将一点「储备生命值」移入「生命值」
-	 *   * 重置「治疗延时」
-	 * * 否则：
-	 *   * 持续计时
+	 * TODO: 日后细化「试题类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
+	 * 
+	 * @param host 判断所发生在的游戏主体
+	 * //@param player 要判断的玩家// !【2023-09-30 12:23:44】现在就直接用this
+	 * @param p 位置
+	 * @param avoidHurt 避免伤害（主要用于AI）
+	 * @param avoidOthers 是否避开其它（格点）实体
+	 * @param others 避开的实体列表
 	 */
-	dealHeal(): void;
+	testCanGoTo(
+		host: IBatrGame, p: iPointRef,
+		avoidHurt?: boolean/* = false*/,
+		avoidOthers?: boolean/* = true*/,
+		others?: IEntityInGrid[]/* =[] */,
+	): boolean
+
+	/**
+	 * （快捷封装）用于判断「玩家是否可向前移动（一格）」
+	 * 
+	 * @param host 判断所发生在的游戏主体
+	 * //@param player 要判断的玩家（整数坐标）// !【2023-09-30 12:23:44】现在就直接用this
+	 * @param rotatedAsRot 是否采用「特定方向」覆盖「使用玩家方向」
+	 * @param avoidOthers 是否包括其他玩家
+	 * @param avoidHurt 避免伤害（主要用于AI）
+	 * @param others 避开的实体列表
+	 */
+	testCanGoForward(
+		host: IBatrGame, rotatedAsRot?: uint/* = 5*/,
+		avoidHurt?: boolean/* = false*/,
+		avoidOthers?: boolean/* = true*/,
+		others?: IEntityInGrid[]/* =[] */,
+	): boolean;
 
 	//====Functions About Respawn====//
 	/**
@@ -233,79 +261,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param newT 新工具
 	 */
 	onToolChange?(oldT: Tool, newT: Tool): void;
-
-	/**
-	 * 处理玩家工具的使用时间（冷却+充能）
-	 * * 每个游戏刻调用一次
-	 * * 逻辑：
-	 *   * CD未归零⇒CD递减 + GUI更新CD
-	 *   * CD已归零⇒
-	 *     * 无需充能⇒在使用⇒使用工具
-	 *     * 需要充能⇒正向充能|反向充能（现在因废弃掉`-1`的状态，不再需要「初始化充能」了）
-	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
-	 *   * 一个是为了显示更新方便
-	 *   * 一个是为了对接逻辑方便
-	 * 
-	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
-	*/
-	dealUsingTime(host: IBatrGame): void;
-
-	/**
-	 * 处理玩家工具的充能状态
-	 * * 逻辑：需要玩家**主动**使用工具充能，当满充能/停止使用时直接释放
-	 * * 每个游戏刻调用一次
-	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
-	 *   * 一个是为了显示更新方便
-	 *   * 一个是为了对接逻辑方便
-	 * 
-	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
-	 */
-	dealToolCharge(host: IBatrGame): void;
-
-	/**
-	 * 处理玩家工具的充能状态（反向）
-	 * * 逻辑：相当于一次额外的冷却，但玩家无需**主动使用**工具
-	 * * 每个游戏刻调用一次
-	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
-	 *   * 一个是为了显示更新方便
-	 *   * 一个是为了对接逻辑方便
-	 * 
-	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
-	 */
-	dealToolReverseCharge(host: IBatrGame): void;
-
-	/**
-	 * 在玩家停止充能之时
-	 * * 逻辑：工具需充能 && 工具冷却结束 && 自身已激活 && 自身不在重生 ⇒ 使用工具+重置充能状态
-	 */
-	onDisableCharge(host: IBatrGame): void;
-
-	/**
-	 * 初始化工具充能状态
-	 * * 逻辑：工具「已充能时长」归零
-	 * 
-	 * ! 即将废弃
-	 * 
-	 * ! 已移除：无需再根据「工具的默认充能（所需）时长」调整「最大充能时长」
-	 */
-	initToolCharge(): void;
-
-	/**
-	 * 重置充能状态
-	 * * 逻辑：工具「已充能时长」归零
-	 * 
-	 * ! 现在对「已充能时长」不再使用`-1`作为「未充能」的标志——统一为无符号整数
-	 * 
-	 * ! 已移除 @param includeMaxTime 现在的「所需充能时长」由其自身工具决定
-	 * @param updateGUI 是否更新GUI信息 // TODO: 暂时无用
-	 */
-	resetCharge(updateGUI: boolean): void;
-
-	/**
-	 * 重置冷却
-	 * * 逻辑：冷却时间归零 + GUI更新
-	 */
-	resetCD(): void;
 
 	//====Control Functions====//
 	/**
@@ -341,7 +296,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * （控制）玩家转向后方
 	 * * 为何要附上「游戏主体」参数？其本身可能要触发一些钩子函数什么的
 	 */
-	turnBack(host: IBatrGame): void
+	turnBack(host: IBatrGame): void;
 
 	/**
 	 * （可选）（控制玩家）向指定方向旋转
@@ -360,13 +315,25 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * （控制玩家）开始使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	startUsingTool(host: IBatrGame): void
+	startUsingTool(host: IBatrGame): void;
 
 	/**
 	 * （控制玩家）停止使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	stopUsingTool(host: IBatrGame): void
+	stopUsingTool(host: IBatrGame): void;
+
+	// 钩子函数 //
+	onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null/*  = null */): void
+	onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void
+	onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void
+	onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void
+	onRespawn(host: IBatrGame,): void
+	onMapTransform(host: IBatrGame,): void
+	onPickupBonusBox(host: IBatrGame, box: BonusBox): void
+	preLocationUpdate(host: IBatrGame, oldP: iPoint): void
+	onLocationUpdate(host: IBatrGame, newP: iPoint): void
+	onLevelup(host: IBatrGame): void
 
 	//============Display Implements============//
 	// Color
@@ -384,6 +351,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 		graphics: IBatrGraphicContext,
 		decorationLabel: string,
 		radius: number,
-	): void
+	): void;
 
 }

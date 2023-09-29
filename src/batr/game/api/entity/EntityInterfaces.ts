@@ -338,7 +338,7 @@ export interface IEntityHasHP extends Entity {
      * （衍生）判断「生命值是否为空」
      * * 应用：判断玩家「是否已死亡」
      */
-    get isEmptyHP(): uint
+    get isEmptyHP(): boolean;
 
     /**
      * （衍生）生命值百分比
@@ -349,11 +349,13 @@ export interface IEntityHasHP extends Entity {
     /**
      * 增加生命值
      * * 可能会因此调用一些钩子函数
+     * * 现在可能要跟「游戏主体」关联。。。
      * 
+     * @param host 游戏主体
      * @param value 增加的生命值
      * @param healer 增加生命值者（治疗者）
      */
-    addHP(value: uint, healer: Entity | null): void
+    addHP(host: IBatrGame, value: uint, healer: Entity | null): void
 
     /**
      * 减少生命值
@@ -362,7 +364,7 @@ export interface IEntityHasHP extends Entity {
      * @param value 减少的生命值
      * @param attacker 减少生命值者（攻击者）
      */
-    removeHP(value: uint, attacker: Entity | null): void
+    removeHP(host: IBatrGame, value: uint, attacker: Entity | null): void
 
 }
 

@@ -76,7 +76,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * !出于性能考虑，不会检查原朝向（轴向）是否合法
 	 * * 可以借用上面的代码
 	 */
-	randomRotateDirectionAt(p: iPoint, rot: mRot, step: int): mRot;
+	randomRotateDirectionAt(p: iPoint, direction: mRot, step: int): mRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标，即便只用其中几个分量也是如此
 

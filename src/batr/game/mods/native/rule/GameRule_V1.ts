@@ -253,8 +253,13 @@ export default class GameRule_V1 implements IGameRule {
 		) this._recordPlayerStats = value;
 	}
 
-	/** Negative Number means asphyxia can kill player */
-	protected static readonly d_playerAsphyxiaDamage: int = 15;
+	/**
+	 * 记录玩家「身处『不能通过的方块』」（即「窒息」）时的惩罚伤害（整数）
+	 * * 参见「原生游戏机制」的`computeFinalBlockDamage`
+	 * 
+	 * ! 这里的「窒息伤害」无视玩家护甲（机制使然）
+	 */
+	protected static readonly d_playerAsphyxiaDamage: int = - 15;
 	public static readonly key_playerAsphyxiaDamage: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
 		'playerAsphyxiaDamage',

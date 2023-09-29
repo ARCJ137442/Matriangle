@@ -13,14 +13,30 @@ export default class BlockAttributes {
 
 	//============Instance Variables============//
 	//==Attributes==//
-	public playerCanPass: boolean = false;
+	/**
+	 * 是否「可进入」
+	 * * 影响玩家是否可经过
+	 */
+	public canEnter: boolean = false;
 
-	public bulletCanPass: boolean = false;
+	/**
+	 * 是否「可射入」
+	 * * 影响子弹是否可经过
+	 */
+	public canShotIn: boolean = false;
 
-	public laserCanPass: boolean = false;
+	/**
+	 * 是否「透明」
+	 * * 影响激光是否可经过
+	 */
+	public transparent: boolean = false;
 
+	/**
+	 * 是否「透明」
+	 * * 影响激光是否可经过
+	 */
 	/** Allows player */
-	public isTransparent: boolean = false;
+	// public isTransparent: boolean = false; // !【2023-09-29 11:12:58】弃用
 
 	/**
 	 * GUI, HUD, EffectTop
@@ -80,24 +96,11 @@ export default class BlockAttributes {
 
 	public clone(): BlockAttributes {
 		let tempAttributes: BlockAttributes = new BlockAttributes();
-		// tempAttributes.playerCanPass = this.playerCanPass;
-		// tempAttributes.bulletCanPass = this.bulletCanPass;
-		// tempAttributes.laserCanPass = this.laserCanPass;
-		// tempAttributes.isTransparent = this.isTransparent;
-		// tempAttributes.drawLayer = this.drawLayer;
-		// tempAttributes.isCarriable = this.isCarriable;
-		// tempAttributes.isBreakable = this.isBreakable;
-		// tempAttributes.playerDamage = this.playerDamage;
-		// tempAttributes.rotateWhenMoveIn = this.rotateWhenMoveIn;
-		// tempAttributes.electricResistance = this.electricResistance;
-		// tempAttributes.unbreakableInArenaMap = this.unbreakableInArenaMap;
-		// tempAttributes.supplyingBonus = this.supplyingBonus;
-		// tempAttributes.defaultPixelAlpha = this.defaultPixelAlpha;
-		// tempAttributes.defaultPixelColor = this.defaultPixelColor;
 		/**
-		 * ! Now use `for in` to iterate over the replication properties in batch
+		 * !【2023-09-29 11:18:16】现在使用for-in遍历所有键值对进行复制
 		 */
 		for (let key in this) {
+			// ! 注意：必须是「独有属性」，否则会复制getter
 			if (this.hasOwnProperty(key)) {
 				(tempAttributes as any)[key] = this[key];
 			}
@@ -105,72 +108,16 @@ export default class BlockAttributes {
 		return tempAttributes;
 	}
 
-	//============Destructor Function============//
 	public destructor(): void { }
 
-	//============Instance Getter And Setter============//
-	public get asSolid(): BlockAttributes {
-		return this.loadAsSolid();
-	}
-
-	public get asLiquid(): BlockAttributes {
-		return this.loadAsLiquid();
-	}
-
-	public get asGas(): BlockAttributes {
-		return this.loadAsGas();
-	}
-
-	public get asTransparent(): BlockAttributes {
-		return this.loadAsTransparent();
-	}
-
-	public get asUnbreakable(): BlockAttributes {
-		return this.loadAsUnbreakable();
-	}
-
-	public get asHurtZone(): BlockAttributes {
-		return this.loadAsHurtZone();
-	}
-
-	public get asKillZone(): BlockAttributes {
-		return this.loadAsKillZone();
-	}
-
-	public get asRotateZone(): BlockAttributes {
-		return this.loadAsRotateZone();
-	}
-
-	public get asMetal(): BlockAttributes {
-		return this.loadAsMetal();
-	}
-
-	public get asArenaBlock(): BlockAttributes {
-		return this.loadAsArenaBlock();
-	}
-
-	public get asBase(): BlockAttributes {
-		return this.loadAsBase();
-	}
-
-	public get asSupplyPoint(): BlockAttributes {
-		return this.loadAsSupplyPoint();
-	}
-
-	public get asGate(): BlockAttributes {
-		return this.loadAsGate();
-	}
-
-	public get asGateClose(): BlockAttributes {
-		return this.loadAsGateClose();
-	}
-
 	//============Instance Functions============//
+	/** 以固体形式加载 */
+	public get asSolid(): BlockAttributes { return this.loadAsSolid(); }
 	public loadAsSolid(): BlockAttributes {
-		this.playerCanPass = false;
-		this.bulletCanPass = false;
-		this.laserCanPass = false;
-		this.isTransparent = false;
+		this.canEnter = false;
+		this.canShotIn = false;
+		this.transparent = false;
+		// this.isTransparent = false; // !【2023-09-29 11:13:50】弃用
 		this.isCarriable = true;
 		this.isBreakable = true;
 		this.drawLayer = 0;
@@ -181,11 +128,13 @@ export default class BlockAttributes {
 		return this;
 	}
 
+	/** 以流体形式加载 */
+	public get asLiquid(): BlockAttributes { return this.loadAsLiquid(); }
 	public loadAsLiquid(): BlockAttributes {
-		this.playerCanPass = false;
-		this.bulletCanPass = true;
-		this.laserCanPass = true;
-		this.isTransparent = true;
+		this.canEnter = false;
+		this.canShotIn = true;
+		this.transparent = true;
+		// this.isTransparent = true; // !【2023-09-29 11:13:50】弃用
 		this.isCarriable = false;
 		this.isBreakable = true;
 		this.drawLayer = -1;
@@ -195,11 +144,13 @@ export default class BlockAttributes {
 		return this;
 	}
 
+	/** 以气体形式加载 */
+	public get asGas(): BlockAttributes { return this.loadAsGas(); }
 	public loadAsGas(): BlockAttributes {
-		this.playerCanPass = true;
-		this.bulletCanPass = true;
-		this.laserCanPass = true;
-		this.isTransparent = true;
+		this.canEnter = true;
+		this.canShotIn = true;
+		this.transparent = true;
+		// this.isTransparent = true; // !【2023-09-29 11:13:50】弃用
 		this.isCarriable = false;
 		this.isBreakable = true;
 		this.drawLayer = -1;
@@ -209,11 +160,13 @@ export default class BlockAttributes {
 		return this;
 	}
 
+	/** 以「透明固体」形式加载 */
+	public get asTransparentSolid(): BlockAttributes { return this.loadAsTransparent(); }
 	public loadAsTransparent(): BlockAttributes {
-		this.playerCanPass = false;
-		this.bulletCanPass = false;
-		this.laserCanPass = true;
-		this.isTransparent = true;
+		this.canEnter = false;
+		this.canShotIn = false;
+		this.transparent = true;
+		// this.isTransparent = true; // !【2023-09-29 11:13:50】弃用
 		this.isCarriable = true;
 		this.isBreakable = true;
 		this.drawLayer = 1;
@@ -224,51 +177,59 @@ export default class BlockAttributes {
 		return this;
 	}
 
+	/** 以「无法破坏」形式加载 */
+	public get asUnbreakable(): BlockAttributes { return this.loadAsUnbreakable(); }
 	public loadAsUnbreakable(): BlockAttributes {
 		this.isCarriable = false;
 		this.isBreakable = false;
 		return this;
 	}
 
+	/** 以「伤害区」形式加载 */
+	public get asHurtZone(): BlockAttributes { return this.loadAsHurtZone(); }
 	public loadAsHurtZone(damage: int = 10): BlockAttributes {
 		this.playerDamage = damage;
 		this.electricResistance = 20;
 		return this;
 	}
 
+	/** 以「死亡区」形式加载 */
+	public get asKillZone(): BlockAttributes { return this.loadAsKillZone(); }
 	public loadAsKillZone(): BlockAttributes {
 		this.playerDamage = int$MAX_VALUE;
 		this.electricResistance = 40;
 		return this;
 	}
 
+	/** 以「旋转区」形式加载 */
+	public get asRotateZone(): BlockAttributes { return this.loadAsRotateZone(); }
 	public loadAsRotateZone(): BlockAttributes {
 		this.rotateWhenMoveIn = true;
 		this.electricResistance = 20;
 		return this;
 	}
 
+	/** 以「金属」形式加载 */
+	public get asMetal(): BlockAttributes { return this.loadAsMetal(); }
 	public loadAsMetal(): BlockAttributes {
 		this.electricResistance = 2;
 		return this;
 	}
 
+	/** 以「竞技场形式」加载 */
+	public get asArenaBlock(): BlockAttributes { return this.loadAsArenaBlock(); }
 	public loadAsArenaBlock(): BlockAttributes {
 		this.unbreakableInArenaMap = true;
 		return this;
 	}
 
-	public loadAsSupplyPoint(): BlockAttributes {
-		this.playerDamage = -2;
-		this.supplyingBonus = true;
-		return this;
-	}
-
+	/** 以「基座」形式加载 */
+	public get asBase(): BlockAttributes { return this.loadAsBase(); }
 	public loadAsBase(): BlockAttributes {
-		this.playerCanPass = true;
-		this.bulletCanPass = false;
-		this.laserCanPass = true;
-		this.isTransparent = true;
+		this.canEnter = true;
+		this.canShotIn = false;
+		this.transparent = true;
+		// this.isTransparent = true; // !【2023-09-29 11:13:50】弃用
 		this.isCarriable = false;
 		this.isBreakable = false;
 		this.electricResistance = 100;
@@ -277,7 +238,17 @@ export default class BlockAttributes {
 		return this;
 	}
 
-	/** Gate Open */
+	/** 以「供应点」形式加载 */
+	public get asSupplyPoint(): BlockAttributes { return this.loadAsSupplyPoint(); }
+	public loadAsSupplyPoint(): BlockAttributes {
+		this.playerDamage = -2;
+		this.supplyingBonus = true;
+		return this;
+	}
+
+
+	/** 以「打开的门」形式加载 */
+	public get asGateOpen(): BlockAttributes { return this.loadAsGate(); }
 	public loadAsGate(): BlockAttributes {
 		this.loadAsGas();
 		this.isCarriable = true;
@@ -286,7 +257,8 @@ export default class BlockAttributes {
 		return this;
 	}
 
-	/** Gate Close */
+	/** 以「关闭的门」形式加载 */
+	public get asGateClose(): BlockAttributes { return this.loadAsGateClose(); }
 	public loadAsGateClose(): BlockAttributes {
 		this.loadAsSolid();
 		this.unbreakableInArenaMap = true;

@@ -1,30 +1,25 @@
 import { int, uint } from "../../../../../legacy/AS3Legacy";
-import { Matrix } from "../../../../../legacy/flash/geom";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
-import Block from "../../../../api/block/Block";
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
-import { iPoint } from "../../../../../common/geometricTools";
-import { CommonIO_IR } from "../../../../api/io/CommonIO";
+import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import IBatrGame from "../../../../main/IBatrGame";
 import { DisplayLayers, IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalGameVariables";
 import Tool from "../../tool/Tool";
-import IPlayerGUI from './IPlayerGUI';
-import { mRot } from "../../../../general/GlobalRot";
+import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerLevelUpExperience } from "../../registry/NativeGameMechanics";
+import { playerMoveInTest, playerLevelUpExperience } from "../../registry/NativeGameMechanics";
 import { NativeControllerLabels } from "./controller/ControllerLabels";
 import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGUI";
 import { NativeEntityTypes } from "../../registry/EntityRegistry";
-import IGameRule from './../../../../api/rule/IGameRule';
-import GameRule_V1 from "../../rule/GameRule_V1";
 import { intMin } from "../../../../../common/exMath";
+import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 
 /**
  * 「玩家」的主类
@@ -83,86 +78,13 @@ export default class Player extends Entity implements IPlayer {
 	public set tool(value: Tool) {
 		if (value !== this._tool) {
 			this._tool = value;
-			// ? 可能的「显示更新」如「方块投掷器⇒持有的方块」}
+			// TODO: 可能需要的「显示更新」如「方块投掷器⇒持有的方块」
 		}
 	}
-
-	/**
-	 * （根据工具信息）初始化冷却
-	 * * 应用：显示更新
-	 */
-	protected initCD(): void {
-		// TODO: 显示更新
-		// this._GUI.updateCharge();
-	}
-
-	/** （内部使用）玩家工具的冷却 */
-	protected get toolUsingCD(): uint { return this._tool.usingCD; }
-	protected set toolUsingCD(value: uint) {
-		if (value != this.toolUsingCD) {
-			this._tool.usingCD = value;
-			// TODO: 显示更新
-			// this._GUI.updateCD();
-		}
-	}
-
-	/**
-	 * （根据工具信息）初始化充能状态
-	 * * 应用：显示更新
-	 */
-	protected initCharge(): void {
-		// TODO: 显示更新
-		// this._GUI.updateCD();
-	}
-	/** （内部使用）玩家工具的充能状态 */
-	protected get toolChargeTime(): int { return this._tool.chargeTime; }
-	protected set toolChargeTime(value: int) {
-		if (value == this.toolChargeTime) return;
-		this._tool.chargeTime = value;
-		// TODO: 显示更新
-		// this._GUI.updateCharge();
-	}
-
-	/** 工具是否需要冷却 */
-	public get toolNeedsCD(): boolean { return this._tool.needsCD }
 
 	// !【2023-09-27 19:44:37】现在废除「根据游戏主体计算CD」这条规则，改为更软编码的「游戏根据规则在分派工具时决定」方式
 	// !【2023-09-28 17:32:59】💭设置工具使用时间，这个不需要过早优化显示，但若以后的显示方式不是「充能条」，它就需要更新了
-	/** 工具基础使用冷却 */
-	public get toolBaseCD(): uint { return this._tool.baseCD; }
-	/**
-	 * !【2023-09-28 17:36:43】注意：设置值的时候，需要经过玩家这里设置，而不能直接设置工具
-	 * *  这样是为了确保「工具更换之后，能及时更新显示」
-	 */
-	public set toolBaseCD(value: uint) {
-		this._tool.usingCD = value;
-		// TODO: 后续更新显示
-	}
-
-	/** 工具CD百分比 */
-	public get toolCDPercent(): number {
-		return (
-			this.toolNeedsCD ?
-				this.toolUsingCD / this.toolBaseCD :
-				1
-		);
-	}
-
-	/** 工具是否需要充能 */
-	public get toolNeedsCharge(): boolean {
-		return this._tool.needsCharge;
-	}
-
-	/** 工具是否在充能 */
-	public get toolIsCharging(): boolean { return this._tool.isCharging; }
-
-	/**
-	 * 工具充能百分比
-	 * * 无需充能⇒1
-	 * * 未开始充能⇒0
-	 * * 其它情况⇒充能时间/最大充能时间
-	 */
-	public get toolChargingPercent(): number { return this._tool.chargingPercent; }
+	// !【2023-09-30 20:09:21】废除「工具相关函数」，但这使得游戏没法在Player层保证「及时更新」，所以需要在外部「设置武器」时及时更新
 
 	// 生命（有生命实体） //
 	public readonly i_hasHP: true = true;
@@ -242,6 +164,31 @@ export default class Player extends Entity implements IPlayer {
 		else {
 			this.HP = 0;
 			this.onDeath(host, this.HP, attacker);
+		}
+	}
+
+	// 生命值文本
+	public get HPText(): string {
+		let HPText: string = `${this._HP}/${this._maxHP}`;
+		let healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
+		let lifeText: string = this.lifeNotDecay ? '' : `[${this._lives}]`;
+		return HPText + healText + lifeText;
+	}
+
+	/**
+	 * 处理「储备生命值」
+	 * * 📌机制：生命百分比越小，回复速度越快
+	 */
+	public dealHeal(): void {
+		if (this._heal < 1) return;
+		if (this._healDelay > TPS * (0.1 + this.HPPercent * 0.15)) {
+			if (this.isFullHP) return;
+			this._healDelay = 0;
+			this._heal--;
+			this.HP++;
+		}
+		else {
+			this._healDelay++;
 		}
 	}
 
@@ -327,7 +274,7 @@ export default class Player extends Entity implements IPlayer {
 			this.level++;
 			this.onLevelup(host);
 		}
-		// 设置生命值
+		// 设置经验值
 		this._experience = value;
 		//TODO: 显示更新
 		// if (this._GUI != null) this._GUI.updateExperience();
@@ -359,14 +306,6 @@ export default class Player extends Entity implements IPlayer {
 	protected _attributes: PlayerAttributes = new PlayerAttributes()
 	/** 玩家的所有属性 */
 	public get attributes(): PlayerAttributes { return this._attributes }
-
-	// 生命值文本
-	public get HPText(): string {
-		let HPText: string = `${this._HP}/${this._maxHP}`;
-		let healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
-		let lifeText: string = this.lifeNotDecay ? '' : `[${this._lives}]`;
-		return HPText + healText + lifeText;
-	}
 
 	// 控制器 // TODO: 模仿AI玩家，实现其「操作缓冲区」「自动执行」等
 
@@ -453,9 +392,9 @@ export default class Player extends Entity implements IPlayer {
 	public readonly i_active: true = true;
 
 	public onTick(host: IBatrGame): void {
-		this.dealUsingTime();
+		this.dealUsingTime(host);
 		// this.updateControl(); // TODO: 根据「输入缓冲区」响应输入
-		this.dealMoveInTest(this.entityX, this.entityY, false, false);
+		this.dealMoveInTest(host, false, false);
 		this.dealHeal();
 	}
 
@@ -489,9 +428,11 @@ export default class Player extends Entity implements IPlayer {
 
 	// TODO: 继续思考&处理「显示依赖」的事。。。
 	// protected _GUI: IPlayerGUI;
+	// public get gui(): IPlayerGUI { return this._GUI; }
+	// /** 用于实现玩家的GUI显示 */ // TODO: 留给日后显示？实际上就是个「通知更新」的翻版？存疑。。。
+	// public get guiShape(): IPlayerGUI { return this._GUI };
 
 	public readonly i_displayable: true = true;
-	public get gui(): IPlayerGUI { return this._GUI; }
 
 	// Color
 	public get lineColor(): uint {
@@ -501,9 +442,6 @@ export default class Player extends Entity implements IPlayer {
 	public get fillColor(): uint {
 		return this._fillColor;
 	}
-
-	/** 用于实现玩家的GUI显示 */ // TODO: 留给日后显示？实际上就是个「通知更新」的翻版？存疑。。。
-	public get guiShape(): IPlayerGUI { return this._GUI };
 
 	/** 堆叠覆盖层级：默认是「玩家」层级 */
 	protected _zIndex: uint = DisplayLayers.PLAYER;
@@ -589,38 +527,41 @@ export default class Player extends Entity implements IPlayer {
 	//====Functions About Hook====//
 	/**
 	 * 钩子函数的作用：
+	 * * 直接向控制器发送信息，作为「外界环境」的一部分传递事件
+	 * * 处理各自的触发事件
 	 */
-	// TODO: 所有「钩子函数」直接向控制器发送信息，作为「外界环境」的一部分（这些不是接口的部分）
+	// ? 所有「钩子函数」
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
-	protected onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null = null): void {
+	public onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null = null): void {
 
 	}
 
-	protected onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
+	public onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
 		host.addPlayerHurtEffect(this, false);
 		host.onPlayerHurt(attacker, this, damage);
 	}
 
-	protected onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
+	public onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
 		host.onPlayerDeath(attacker, this, damage);
 		if (attacker != null)
-			attacker.onKillPlayer(this, damage);
+			attacker.onKillPlayer(host, this, damage);
 	}
 
-	protected onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void {
+	public onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void {
 		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
-			this.experience++;
+			this.setExperience(host, this.experience + 1);
 	}
 
-	protected onRespawn(host: IBatrGame,): void {
+	public onRespawn(host: IBatrGame,): void {
 
 	}
 
 	public onMapTransform(host: IBatrGame,): void {
-		this.resetCD();
-		this.resetCharge(false);
+		// 地图切换后，武器状态清除
+		this._tool.resetUsingState();
+		// TODO: 显示更新
 	}
 
 	public onPickupBonusBox(host: IBatrGame, box: BonusBox): void {
@@ -654,137 +595,108 @@ export default class Player extends Entity implements IPlayer {
 			this.team === player.team);
 	}
 
-	public get carriedBlock(): Block {
-		return this._carriedBlock;
-	}
-
-	public get isCarriedBlock(): boolean {
-		return this._carriedBlock != null && this._carriedBlock.visible;
-	}
+	// public get carriedBlock(): Block {return this._carriedBlock;}
+	// public get isCarriedBlock(): boolean {return this._carriedBlock != null && this._carriedBlock.visible;}
 
 	public onPositedBlockUpdate(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
-		this.dealMoveInTest(this._position, ignoreDelay, isLocationChange);
+		this.dealMoveInTest(host, ignoreDelay, isLocationChange);
 	}
 
 	public dealMoveInTest(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		if (ignoreDelay) {
-			// host.moveInTestPlayer(this, isLocationChange); // TODO: 这个似乎文不对题，似乎是被移除以至于没必要了？
+			playerMoveInTest(host, this, isLocationChange); // !原`Game.moveInTestPlayer`，现在已经提取到「原生游戏机制」中
 			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
 		else if (this._damageDelay > 0) {
 			this._damageDelay--;
 		}
-		// else if (this._damageDelay == 0 && host.moveInTestPlayer(this, isLocationChange)) { // TODO: 这个似乎文不对题，似乎是被移除以至于没必要了？
-		// 	this._damageDelay = Player.MAX_DAMAGE_DELAY;
-		// }
+		else if (this._damageDelay == 0 && playerMoveInTest(host, this, isLocationChange)) { // !原`Game.moveInTestPlayer`，现在已经提取到「原生游戏机制」中
+			this._damageDelay = Player.MAX_DAMAGE_DELAY;
+		}
 		else if (this._damageDelay > -1) {
 			this._damageDelay = -1;
 		}
 	}
 
-	public dealHeal(): void {
-		if (this._heal < 1)
-			return;
-		if (this._healDelay > TPS * (0.1 + this.HPPercent * 0.15)) {
-			if (this.isFullHP)
-				return;
-			this._healDelay = 0;
-			this._heal--;
-			this.HP++;
-		}
-		else {
-			this._healDelay++;
-		}
+	protected _temp_testCanGoForward_P: iPoint = new iPoint();
+	public testCanGoForward(host: IBatrGame, rotatedAsRot?: number | undefined, avoidHurt?: boolean | undefined, avoidOthers?: boolean | undefined, others?: IEntityInGrid[] | undefined): boolean {
+		return this.testCanGoTo(host,
+			host.map.towardWithRot_II(
+				this._temp_testCanGoForward_P.copyFrom(this.position),
+				this._direction, 1
+			),
+			avoidHurt,
+			avoidOthers, others
+		);
 	}
 
+	/**
+	 * 一个测试「是否可通过」的快捷方式
+	 * * 原`Game.testPlayerCanPass`
+	 * * 链接指向「游戏主体」的地图（逻辑层）
+	 */
+	public testCanGoTo(
+		host: IBatrGame, p: intPoint,
+		avoidHurt: boolean = false,
+		avoidOthers: boolean = true,
+		others: IEntityInGrid[] = [],
+	): boolean {
+		return host.map.testCanPass_I(
+			p,
+			true, false, false,
+			avoidHurt,
+			avoidOthers, others,
+		)
+	}
+
+	// !【2023-09-30 13:21:34】`Game.testFullPlayerCanPass`移动到此，并被移除
+
 	//====Functions About Respawn====//
+	/**
+	 * 处理重生
+	 * * 重生后「剩余生命值」递减
+	 */
 	public dealRespawn(host: IBatrGame): void {
 		if (this.respawnTick > 0)
 			this.respawnTick--;
-
 		else {
 			this.respawnTick = -1;
-			if (!this._infinityLife && this._lives > 0)
+			if (!this._lifeNotDecay && this._lives > 0)
 				this._lives--;
-			host.onPlayerRespawn(this);
-			this.onRespawn();
+			host.onPlayerRespawn(this as IPlayer);
+			this.onRespawn(host);
 		}
 	}
 
 	//====Functions About Tool====//
-	protected onToolChange(oldT: Tool, newT: Tool): void {
+	public onToolChange(oldT: Tool, newT: Tool): void {
 		// TODO: 不再使用（待迁移）
 	}
 
-	protected dealUsingTime(): void {
-		// console.log(this._tool.name,this.toolChargeTime,this._tool.chargeTime)
-		if (this.toolUsingCD > 0) {
-			this.toolUsingCD--;
-			// this._GUI.updateCD(); // TODO: 显示更新
-		}
-		else {
-			if (!this.toolNeedsCD) {
-				if (this.isPress_Use)
-					this.directUseTool();
+	/**
+	 * 处理玩家工具的使用时间（冷却+充能）
+	 * * 每个游戏刻调用一次
+	 * * 逻辑：
+	 *   * CD未归零⇒CD递减 + GUI更新CD
+	 *   * CD已归零⇒
+	 *     * 无需充能⇒在使用⇒使用工具
+	 *     * 需要充能⇒正向充能|反向充能（现在因废弃掉`-1`的状态，不再需要「初始化充能」了）
+	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
+	 *   * 一个是为了显示更新方便
+	 *   * 一个是为了对接逻辑方便
+	 * 
+	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
+	*/
+	protected dealUsingTime(host: IBatrGame): void {
+		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
+		if (!this._tool.needsCD || this._tool.dealCD(this._isUsing)) {
+			// this._GUI.updateCD(); // TODO: 显示更新冷却
+			// *逻辑：要么「无需充能」，要么「充能方面已允许使用」
+			if (!this._tool.needsCharge || this.tool.dealCharge(this._isUsing)) {
+				this.directUseTool(host);
+				// this._GUI.updateCharge(); // TODO: 显示更新
 			}
-			else if (this.toolChargeTime < 0) {
-				this.initToolCharge();
-			}
-			else {
-				if (this.dealToolReverseCharge) {
-					this.dealToolReverseCharge();
-				}
-				else if (this.isPress_Use) {
-					this.dealToolCharge();
-				}
-			}
 		}
-	}
-
-	protected dealToolCharge(): void {
-		if (this.toolChargeTime >= this._tool.chargeTime) {
-			this.directUseTool();
-			this.resetCharge(false, false);
-		}
-		else
-			this.toolChargeTime++;
-		// this._GUI.updateCharge(); // TODO: 显示更新
-	}
-
-	protected dealToolReverseCharge(): void {
-		if (this.toolChargeTime < this.toolChargeMaxTime) {
-			this.toolChargeTime++;
-		}
-		if (this.isPress_Use) {
-			this.directUseTool();
-			this.resetCharge(false, false);
-		}
-		// this._GUI.updateCharge(); // TODO: 显示更新
-	}
-
-	protected onDisableCharge(): void {
-		if (!this.toolNeedsCD || this.toolUsingCD > 0 || !this.isActive || this.isRespawning)
-			return;
-		this.directUseTool();
-		this.resetCharge();
-	}
-
-	public initToolCharge(): void {
-		this.toolChargeTime = 0;
-		this._tool.chargeTime = this._tool.defaultChargeTime;
-	}
-
-	public resetCharge(includeMaxTime: boolean = true, updateGUI: boolean = true): void {
-		this.toolChargeTime = -1;
-		if (includeMaxTime)
-			this._tool.chargeTime = 0;
-		if (updateGUI)
-	// this._GUI.updateCharge(); // TODO: 显示更新
-}
-
-	public resetCD(): void {
-		this._tool.usingCD = 0;
-		// this._GUI.updateCD(); // TODO: 显示更新
 	}
 
 	//====Functions About Graphics====//
@@ -810,67 +722,66 @@ export default class Player extends Entity implements IPlayer {
 	} */
 
 	//====Control Functions====//
+	/**
+	 * 主要职责：管理玩家的「基本操作」「行为缓冲区」，与外界操作（控制器等）进行联络
+	 * * 目前一个玩家对应一个「控制器」
+	 * 
+	 */
+
+
+	/**
+	 * 缓存玩家「正在使用工具」的状态
+	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
+	 */
+	protected _isUsing: boolean = false;
 
 	// !【2023-09-23 16:53:17】把涉及「玩家基本操作」的部分留下（作为接口），把涉及「具体按键」的部分外迁
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中
+	// ! 现在这里的代码尽可能地使用`setter`
 	// TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏主体』行动」
 
-	public moveForward(): void {
-		host.movePlayer(this, this.direction, 1);
+	public moveForward(host: IBatrGame): void {
+		host.movePlayer(this as IPlayer, this.direction, 1);
+		// TODO: 显示更新
 	}
 
-	public moveToward(direction: mRot): void {
+	public moveToward(host: IBatrGame, direction: mRot): void {
 		// host.movePlayer(this, direction, this.moveDistance);
-		this.direction = direction; // 使用setter以便显示更新
-		this.moveForward();
+		this.turnTo(host, direction); // 使用setter以便显示更新
+		this.moveForward(host);
+		// TODO: 显示更新
 	}
 
 	public turnTo(host: IBatrGame, direction: number): void {
 		this._direction = direction
+		// TODO: 显示更新
 	}
 
-	public turnUp(): void {
-		this.rot = GlobalRot.UP;
+	public turnBack(host: IBatrGame): void {
+		this.direction = toOpposite_M(this._direction);
+		// TODO: 显示更新
 	}
 
-	public turnDown(): void {
-		this.rot = GlobalRot.DOWN;
-	}
+	// 可选
+	public turnRelative(host: IBatrGame): void {
 
-	public turnAbsoluteLeft(): void {
-		this.rot = GlobalRot.LEFT;
-	}
-
-	public turnAbsoluteRight(): void {
-		this.rot = GlobalRot.RIGHT;
-	}
-
-	public turnBack(): void {
-		this.rot += 2;
-	}
-
-	public turnRelativeLeft(): void {
-		this.rot += 3;
-	}
-
-	public turnRelativeRight(): void {
-		this.rot += 1;
 	}
 
 	public startUsingTool(host: IBatrGame): void {
-
+		this._isUsing = true;
 	}
 
 	public stopUsingTool(host: IBatrGame): void {
-
+		this._isUsing = false;
 	}
-
-
 
 	public directUseTool(host: IBatrGame): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
 		this._tool.onUseByPlayer(host, this);
-		host.playerUseTool(this, this.rot, this.toolChargingPercent);
+		host.playerUseTool(
+			this, this._direction,
+			this._tool.chargingPercent
+		);
 		// // 工具使用后⇒通知GUI更新
 		// if (this.toolNeedsCharge) // TODO: 待显示模块完善
 		// 	this._GUI.updateCharge();

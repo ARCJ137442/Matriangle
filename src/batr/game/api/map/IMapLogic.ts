@@ -1,10 +1,12 @@
-import { fPoint, iPoint } from "../../../common/geometricTools";
+import { fPoint, fPointRef, iPoint, iPointRef } from "../../../common/geometricTools";
 import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import Entity from "../entity/Entity";
 import Player from "../../mods/native/entities/player/Player";
 import BlockAttributes from "../block/BlockAttributes";
 import IMapStorage from "./IMapStorage";
+import { IEntityInGrid, IEntityOutGrid } from "../entity/EntityInterfaces";
+import IPlayer from "../../mods/native/entities/player/IPlayer";
 
 
 /**
@@ -53,14 +55,14 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * 
 	 * @param p 方块坐标
 	 */
-	getBlockPlayerDamage(p: iPoint): int
+	getBlockPlayerDamage(p: iPointRef): int
 
 	/**
 	 * 获取地图中方块「是否为死亡区」
 	 * @param x 方块x坐标
 	 * @param y 方块y坐标
 	 */
-	isKillZone(p: iPoint): boolean
+	isKillZone(p: iPointRef): boolean
 
 	/**
 	 * 测试一个坐标「是否在地图之内」
@@ -68,13 +70,13 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * 
 	 * @param p 浮点坐标
 	 */
-	isInMap_F(p: fPoint): boolean
+	isInMap_F(p: fPointRef): boolean
 
 	/**
 	 * 测试一个整数坐标「是否在地图之内」
 	 * @param p 被测试的坐标整体
 	 */
-	isInMap_I(p: iPoint): boolean
+	isInMap_I(p: iPointRef): boolean
 
 	// TODO: 更多「2d/通用」分离
 
@@ -92,7 +94,7 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param rot 任意维整数角
 	 * @param step 前进的步长（浮点）
 	 */
-	towardWithRot_FF(p: fPoint, rot: mRot, step?: number/* = 1*/): fPoint
+	towardWithRot_FF(p: fPointRef, rot: mRot, step?: number/* = 1*/): fPoint
 
 	/**
 	 * （整形优化版本）从某位置向某方向「前进」，获取「前进到的坐标」
@@ -108,14 +110,17 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param rot 任意维整数角
 	 * @param step 前进的步长（整数）
 	 */
-	towardWithRot_II(p: iPoint, rot: mRot, step?: int/* = 1*/): iPoint
+	towardWithRot_II(p: iPointRef, rot: mRot, step?: int/* = 1*/): iPoint
 
 	// TODO: 有待移植
 
 	/**
 	 * 判断一个地方「是否可通过」
+	 * * 原`Game.as/testCanPass`
 	 * 
 	 * ! 不要在地图边界外使用这个
+	 * 
+	 * ! 不考虑其它实体（如玩家）
 	 * 
 	 * @param p 要判断的坐标（浮点）
 	 * @param asPlayer 作为玩家
@@ -123,11 +128,20 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param asLaser 作为激光
 	 * @param includePlayer 是否包括（其它）玩家
 	 * @param avoidHurting 避免伤害（主要用于AI）
+	 * @param players 所涉及的玩家
 	 */
-	testCanPass_F(p: fPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+	testCanPass_F(p: fPointRef,
+		asPlayer: boolean,
+		asBullet: boolean,
+		asLaser: boolean,
+		includePlayer?: boolean/* = true*/,
+		avoidHurting?: boolean/* = false*/,
+		players?: IPlayer[]/* = [] */,
+	): boolean
 
 	/**
 	 * 判断一个「整数位置」是否「可通过」
+	 * * 原`Game.as/testIntCanPass`
 	 * 
 	 * ! 不要在地图边界外使用这个
 	 * 
@@ -135,13 +149,22 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param asPlayer 作为玩家
 	 * @param asBullet 作为子弹
 	 * @param asLaser 作为激光
-	 * @param includePlayer 是否包括其它玩家
-	 * @param avoidHurting 避免伤害（主要用于AI）
+	 * @param avoidHurt 避免伤害（主要用于AI）
+	 * @param avoidOthers 是否避开其它格点实体
+	 * @param others 所涉及的格点实体列表
 	 */
-	testCanPass_I(p: iPoint, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurting?: boolean/* = false*/): boolean
+	testCanPass_I(p: iPointRef,
+		asPlayer: boolean,
+		asBullet: boolean,
+		asLaser: boolean,
+		avoidHurt?: boolean/* = false*/,
+		avoidOthers?: boolean/* = true*/,
+		others?: IEntityInGrid[]/* = [] */,
+	): boolean
 
 	/**
 	 * （快捷封装）用于判断「实体前方的位置是否可以通过」
+	 * * 原`Game.as/testFrontCanPass`
 	 * * 不考虑「移动前的点」
 	 * 
 	 * @param entity 要判断的实体
@@ -149,38 +172,34 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param asPlayer 作为玩家
 	 * @param asBullet 作为子弹
 	 * @param asLaser 作为激光
-	 * @param includePlayer 是否包括其他玩家
 	 * @param avoidHurt 避免伤害（主要用于AI）
+	 * @param avoidOthers 是否避开其它格点实体
+	 * @param others 所涉及的格点实体列表
 	 */
-	testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
+	testFrontCanPass_FF(
+		entity: IEntityOutGrid, distance: number,
+		asPlayer: boolean, asBullet: boolean, asLaser: boolean,
+		avoidOthers?: boolean/* = true*/,
+		avoidHurt?: boolean/* = false*/,
+		others?: IEntityInGrid[]/* = [] */,
+	): boolean;
+
+	/**
+	 * 一个整数位置是否接触到任何格点实体
+	 * @param p 位置
+	 * @param entities 从外部传入的格点实体列表（应该是引用）
+	 */
+	isHitAnyEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): boolean;
 
 	/**
 	 * 判断一个位置是否「可放置奖励箱」
+	 * * 逻辑：使用「玩家可通过」「不接触所有玩家」
 	 * @param p 位置
+	 * @param avoids 避开的格点实体列表（一般是「玩家列表」）
 	 */
-	testBonusBoxCanPlaceAt(p: iPoint): boolean
+	testBonusBoxCanPlaceAt(p: iPoint, avoids: IEntityInGrid[]): boolean
 
-	/**
-	 * 用于判断「玩家是否可当前位置移动到另一位置」
-	 * * 会用到「玩家自身的坐标」作为「移动前坐标」
-	 * 
-	 * TODO: 日后细化「试题类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
-	 * 
-	 * @param player 要判断的玩家
-	 * @param p 位置
-	 * @param includePlayer 是否包括其他玩家
-	 * @param avoidHurt 避免伤害（主要用于AI）
-	 */
-	testPlayerCanGo(player: Player, p: iPoint, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
-
-	/**
-	 * （快捷封装）用于判断「玩家是否可向前移动（一格）」
-	 * @param player 要判断的玩家（整数坐标）
-	 * @param rotatedAsRot 是否采用「特定方向」覆盖「使用玩家方向」
-	 * @param includePlayer 是否包括其他玩家
-	 * @param avoidHurt 避免伤害（主要用于AI）
-	 */
-	testPlayerCanGoForward(player: Player, rotatedAsRot?: uint/* = 5*/, includePlayer?: boolean/* = true*/, avoidHurt?: boolean/* = false*/): boolean
+	// !【2023-09-30 12:13:45】现在把「testPlayer」系列函数（都使用了玩家的实例，且更多与玩家相关）放在了Player类中
 
 	/**
 	 * 判断一个位置的方块「是否能被拿起」
@@ -195,7 +214,7 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
 	 * @returns 这个位置的方块「是否能被拿起」
 	 */
-	isBlockCarriable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean
+	isBlockCarriable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean
 
 	/**
 	 * 判断一个位置的方块「是否能破坏」
@@ -212,6 +231,6 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
 	 * @returns 这个位置的方块「是否能破坏」
 	 */
-	isBlockBreakable(position: iPoint, defaultWhenNotFound: BlockAttributes): boolean
+	isBlockBreakable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean
 
 }

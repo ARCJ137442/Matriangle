@@ -1,8 +1,8 @@
 import { intMax, intMin, randInt } from "../../../../common/exMath";
-import { iPoint, fPoint } from "../../../../common/geometricTools";
+import { iPoint, fPoint, iPointRef } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
-import { uint, int } from "../../../../legacy/AS3Legacy";
+import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
 import { iRot } from "../../../general/GlobalRot";
 import { alignToGridCenter_P } from "../../../general/PosTransform";
@@ -30,6 +30,8 @@ import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
 import IGameRule from "../../../api/rule/IGameRule";
+import BlockAttributes from "../../../api/block/BlockAttributes";
+import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 
 
 /**
@@ -179,6 +181,114 @@ export function playerPickupBonusBox(
     player.stats.pickupBonusBoxCount++;
     // Remove
     host.entitySystem.remove(bonusBox);
+}
+
+
+/**
+ * 当每个玩家「移动到某个方块」时，在移动后的测试
+ * * 测试位置即为玩家「当前位置」（移动后！）
+ * * 有副作用：用于处理「伤害玩家的方块」
+ * 
+ * @param host 检测所在的游戏主体
+ * @param player 被检测的玩家
+ * @param isLocationChange 是否是「位置变更」所需要的（false用于「陷阱检测」）
+ * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
+ */
+export function playerMoveInTest(
+    host: IBatrGame, player: IPlayer,
+    isLocationChange: Boolean = false
+): boolean {
+    // 非激活&无属性⇒不检测（返回）
+    if (!player.isActive) return false;
+    let attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(player.position);
+    if (attributes === null) return false;
+
+    let returnBoo: boolean = false;
+    // 开始计算
+    let finalPlayerDamage: int = computeFinalBlockDamage(
+        player.maxHP,
+        host.rule.safeGetRule<int>(GameRule_V1.key_playerAsphyxiaDamage),
+        attributes.playerDamage
+    );
+    // int$MIN_VALUE⇒无伤害
+    if (finalPlayerDamage !== int$MIN_VALUE)
+        // 负数⇒治疗
+        if (finalPlayerDamage < 0) {
+            if (!isLocationChange)
+                player.isFullHP ?
+                    player.heal += finalPlayerDamage : // 满生命值⇒加「储备生命值」
+                    player.addHP(host, finalPlayerDamage, null); // 否则直接加生命值
+        }
+        // 正数⇒伤害
+        else player.removeHP(
+            host,
+            finalPlayerDamage,
+            null,
+        );
+    // 附加的「旋转」效果
+    if (attributes.rotateWhenMoveIn) {
+        // 玩家向随机方向旋转
+        player.turnTo(
+            host,
+            host.map.storage.randomRotateDirectionAt(
+                player.position,
+                player.direction,
+                1
+            )
+        );
+        returnBoo = true;
+    }
+    return returnBoo;
+}
+
+/**
+ * 综合「玩家最大生命值」「规则的『窒息伤害』」「方块的『玩家伤害』」计算「最终方块伤害」
+ * * 返回负数以包括「治疗」的情况
+ * 
+ * 具体规则：
+ * * [-inf, -1) -> playerDamage+1（偏置后的治疗值）
+ * * -1 -> 重定向到「使用规则伤害作『方块伤害』」
+ * * [0,100] -> player.maxHP * playerDamage/100（百分比）
+ * * (100...] -> playerDamage-100（偏置后的实际伤害值）
+ * * int.MAX_VALUE -> uint.MAX_VALUE
+ * @return 最终计算好的「方块伤害」
+ */
+export const computeFinalBlockDamage = (
+    playerMaxHP: uint,
+    ruleAsphyxiaDamage: int,
+    playerDamage: int
+): uint => (
+    playerDamage < -1 ?
+        playerDamage + 1 :
+        playerDamage == -1 ?
+            computeFinalBlockDamage(playerMaxHP, 0, ruleAsphyxiaDamage) : // 为了避免「循环递归」的问题，这里使用了硬编码0
+            playerDamage == 0 ?
+                0 :
+                playerDamage <= 100 ?
+                    playerMaxHP * playerDamage / 100 :
+                    playerDamage == int$MAX_VALUE ?
+                        uint$MAX_VALUE :
+                        playerDamage - 100
+);
+
+// TODO: 后续完善实体系统后，再进行处理
+export function testCanGoTo(
+    host: IBatrGame, p: iPointRef,
+    avoidHurt: boolean = false,
+    avoidOthers: boolean = true,
+    others: IEntityInGrid[] = [],
+): boolean {
+    throw new Error("Method not implemented.");
+}
+
+// TODO: 后续完善实体系统后，再进行处理
+export function testCanGoForward(
+    host: IBatrGame, rotatedAsRot: uint | -1 = -1,
+    avoidHurt: boolean = false,
+    avoidOthers: boolean = true,
+    others: IEntityInGrid[] = [],
+): boolean {
+    throw new Error("Method not implemented.");
 }
 
 /**
@@ -501,7 +611,7 @@ export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
         // FinalDamage
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {
-                victim.removeHP(wave.attackerDamage, wave.owner);
+                victim.removeHP(host, wave.attackerDamage, wave.owner);
             }
         }
     }
@@ -665,7 +775,7 @@ export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
     return rule;
 }
 
-
+// 测试代码
 console.log(
     new GameRule_V1(),
     GameRule_V1.TEMPLATE,

@@ -89,37 +89,14 @@ export default class KeyboardController extends PlayerController {
         return (this.isPress_Select_Left||this.isPress_Select_Right)
     }*/
 
-    public set pressLeft(turn: boolean) {
-        this.isPress_Left = turn;
-    }
-
-    public set pressRight(turn: boolean) {
-        this.isPress_Right = turn;
-    }
-
-    public set pressUp(turn: boolean) {
-        this.isPress_Up = turn;
-    }
-
-    public set pressDown(turn: boolean) {
-        this.isPress_Down = turn;
-    }
-
-    public set pressUse(turn: boolean) {
-        if (this.isPress_Use && !turn) {
-            this.isPress_Use = turn;
-            return;
-        }
-        this.isPress_Use = turn;
-    }
-
-    /*public set pressLeftSelect(turn:Boolean) {
-        this.isPress_Select_Left=turn
-    }
-	
-    public set pressRightSelect(turn:Boolean) {
-        this.isPress_Select_Right=turn
-    }*/
+    public set isUsing(turn: boolean) { this.isPress_Use = turn; }
+    public set pressLeft(turn: boolean) { this.isPress_Left = turn; }
+    public set pressRight(turn: boolean) { this.isPress_Right = turn; }
+    public set pressUp(turn: boolean) { this.isPress_Up = turn; }
+    public set pressDown(turn: boolean) { this.isPress_Down = turn; }
+    public set pressUse(turn: boolean) { this.isPress_Use = turn; }
+    // public set pressLeftSelect(turn: Boolean) { this.isPress_Select_Left = turn }
+    // public set pressRightSelect(turn: Boolean) { this.isPress_Select_Right = turn }
 
     public turnAllKeyUp(): void {
         this.isPress_Up = false;

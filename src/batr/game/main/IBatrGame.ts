@@ -246,10 +246,13 @@ export default interface IBatrGame {
 
 	testBonusBoxCanPlaceAt(position: iPoint): boolean
 
-	/** return testCanPass as player in other position. */
-	testPlayerCanPass(player: IPlayer, position: iPoint, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
-
-	testFullPlayerCanPass(player: IPlayer, position: iPoint, oldX: int, oldY: int, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
+	/**
+	 * TODO: 【2023-09-29 12:20:42】留存存疑
+	 * @param player 待测试的玩家
+	 * @param includePlayer 是否包括其它玩家
+	 * @param avoidHurting 是否避免伤害
+	 */
+	testPlayerCanPass(player: IPlayer, destination: iPoint, includePlayer: boolean/* = true*/, avoidHurting: boolean/* = false*/): boolean
 
 	testPlayerCanPassToFront(player: IPlayer, rotatedAsDirection: mRot/* = 5*/, includePlayer: boolean/* = true*/, avoidTrap: boolean/* = false*/): boolean
 
