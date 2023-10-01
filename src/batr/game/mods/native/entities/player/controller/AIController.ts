@@ -1,4 +1,4 @@
-import GameController from "../../../../../api/control/GameControl";
+import { GameController } from "../../../../../api/control/GameControl";
 
 /**
  * A type of controller used for player who controlled by AI
@@ -6,7 +6,7 @@ import GameController from "../../../../../api/control/GameControl";
  * * Equals to the former version `AIProgram`
  */
 export default class AIController extends GameController {
-    public constructor() {
-        super();
+    public constructor(label: string) {
+        super(label);
     }
 }

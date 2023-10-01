@@ -17,7 +17,7 @@ import { playerMoveInTest, playerLevelUpExperience } from "../../registry/Native
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
-import { IGameControlReceiver } from "../../../../api/control/GameControl";
+import { GameController, IGameControlReceiver } from "../../../../api/control/GameControl";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
 
 /**
@@ -389,6 +389,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	public readonly i_active: true = true;
 
 	public onTick(host: IBatrGame): void {
+		this.dealCachedActions(host);
 		this.dealUsingTime(host);
 		// this.updateControl(); // TODO: 根据「输入缓冲区」响应输入
 		this.dealMoveInTest(host, false, false);
@@ -730,7 +731,6 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 
 	 */
 
-
 	/**
 	 * 缓存玩家「正在使用工具」的状态
 	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
@@ -741,16 +741,13 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中
 	// ! 现在这里的代码尽可能地使用`setter`
 	// TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏主体』行动」
+	/**
+	 * 控制这个玩家的游戏控制器
+	 */
+	protected _controller: GameController | null = null;
 
 	public moveForward(host: IBatrGame): void {
 		host.movePlayer(this as IPlayer, this.direction, 1);
-		// TODO: 显示更新
-	}
-
-	public moveToward(host: IBatrGame, direction: mRot): void {
-		// host.movePlayer(this, direction, this.moveDistance);
-		this.turnTo(host, direction); // 使用setter以便显示更新
-		this.moveForward(host);
 		// TODO: 显示更新
 	}
 
@@ -789,17 +786,29 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		// 	this._GUI.updateCharge();
 	}
 
-	/** 缓存的 */
-	protected readonly _cachedActions: PlayerAction[] = [];
+	public moveToward(host: IBatrGame, direction: mRot): void {
+		// host.movePlayer(this, direction, this.moveDistance);
+		this.turnTo(host, direction); // 使用setter以便显示更新
+		this.moveForward(host);
+		// TODO: 显示更新
+	}
+
+	/**
+	 * 玩家动作缓冲区
+	 * * 用于对「控制器异步输入的行为」进行缓存
+	 * * 正常情况下应该是空的——即没有「被阻塞」，所有事件在一送进来后便执行
+	 */
+	protected readonly _actionBuffer: PlayerAction[] = [];
 	/**
 	 * 处理「缓存的玩家操作」
+	 * * 逻辑：一次执行完所有缓冲的「玩家动作」，然后清空缓冲区
 	 */
-	protected handleCachedActions(host: IBatrGame): void {
-		if (this._cachedActions.length === 0) return;
-		else this.runPlayerAction(
-			host,
-			this._cachedActions.shift() as PlayerAction // 保证非空
-		);
+	protected dealCachedActions(host: IBatrGame): void {
+		if (this._actionBuffer.length === 0) return;
+		else {
+			this.runAllPlayerActions(host);
+			this.clearActionBuffer();
+		}
 	}
 
 	/**
@@ -843,6 +852,26 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	/**
+	 * 执行所有的玩家动作
+	 * * 执行所有的玩家动作
+	 * 
+	 * ! 不会清空「动作缓冲区」
+	 */
+	protected runAllPlayerActions(host: IBatrGame): void {
+		for (const action of this._actionBuffer) {
+			this.runPlayerAction(host, action);
+		}
+	}
+
+	/**
+	 * 清除所有的玩家动作
+	 * * 技术原理：直接设置length属性
+	 */
+	protected clearActionBuffer(): void {
+		this._actionBuffer.length = 0;
+	}
+
+	/**
 	 * 实现：从「收到游戏事件」到「缓冲操作」再到「执行操作」
 	 * * 功能：
 	 *   * 「添加行为」⇒直接添加到「缓存的行为」中
@@ -852,10 +881,12 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 */
 	public onReceive(type: string, action: PlayerAction | undefined = undefined): void {
 		switch (type) {
+			// 增加待执行的行为
 			case ADD_ACTION:
 				if (action === undefined) throw new Error('未指定要缓存的行为！');
-				this._cachedActions.push(action as PlayerAction);
+				this._actionBuffer.push(action as PlayerAction);
 				break;
 		}
 	}
+
 }

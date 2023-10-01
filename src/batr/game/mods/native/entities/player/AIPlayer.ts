@@ -1,3 +1,19 @@
+import { iPoint } from "../../../../../common/geometricTools";
+import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
+import { uint } from "../../../../../legacy/AS3Legacy";
+import EntityType from "../../../../api/entity/EntityType";
+import { TPS } from "../../../../main/GlobalGameVariables";
+import IBatrGame from "../../../../main/IBatrGame";
+import BonusBox from "../item/BonusBox";
+import Player from "./Player";
+import { PlayerAction } from "./controller/PlayerAction";
+import IAIProgram from "./controller/ai/IAIProgram";
+import AIProgram_Adventurer from "./controller/ai/programs/AIProgram_Adventurer";
+import AIProgram_Dummy from "./controller/ai/programs/AIProgram_Dummy";
+import AIProgram_Master from "./controller/ai/programs/AIProgram_Master";
+import AIProgram_Novice from "./controller/ai/programs/AIProgram_Novice";
+import PlayerTeam from "./team/PlayerTeam";
+
 // TODO: 此类即将废弃，转变为「使用AI控制器的玩家」（但相关控制代码如「缓冲区机制」会存留）
 export default class AIPlayer extends Player {
 	//============Static Variables============//
@@ -23,20 +39,20 @@ export default class AIPlayer extends Player {
 
 	protected _AIRunDelay: uint;
 	protected _AIRunMaxDelay: uint;
-	protected _actionThread: AIPlayerAction[] = new AIPlayerAction[];
+	protected _actionThread: PlayerAction[] = new PlayerAction[];
 
 	//============Constructor & Destructor============//
 	public constructor(
 		host: IBatrGame,
-		x: number, y: number,
+		position: iPoint,
 		team: PlayerTeam,
 		isActive: boolean = true,
 		program: IAIProgram = null,
 		fillColor: number = NaN,
 		lineColor: number = NaN): void {
+		super(position, team, 0, isActive, fillColor, lineColor);
 		this._AIProgram = program == null ? AIPlayer.randomAIProgram() : program;
 		this.AIRunSpeed = Math.random() < 0.01 ? 100 : this._AIProgram.referenceSpeed;
-		super(position, team, 0, isActive, fillColor, lineColor);
 	}
 
 	//============Destructor Function============//
@@ -78,7 +94,7 @@ export default class AIPlayer extends Player {
 		return this._AIProgram == null ? null : this._AIProgram.label;
 	}
 
-	public get ActionThread(): AIPlayerAction[] {
+	public get ActionThread(): PlayerAction[] {
 		return this._actionThread;
 	}
 
@@ -126,7 +142,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onHurt(damage, attacker);
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnHurt(this, damage, attacker);
+		let action: PlayerAction = this.AIProgram.requestActionOnHurt(this, damage, attacker);
 		this.runAction(action);
 	}
 
@@ -134,7 +150,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onDeath(damage, attacker);
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnDeath(this, damage, attacker);
+		let action: PlayerAction = this.AIProgram.requestActionOnDeath(this, damage, attacker);
 		this.runAction(action);
 	}
 
@@ -142,7 +158,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onKillPlayer(victim, damage);
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnKill(this, damage, victim);
+		let action: PlayerAction = this.AIProgram.requestActionOnKill(this, damage, victim);
 		this.runAction(action);
 	}
 
@@ -150,7 +166,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onPickupBonusBox(box);
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnPickupBonusBox(this, box);
+		let action: PlayerAction = this.AIProgram.requestActionOnPickupBonusBox(this, box);
 		this.runAction(action);
 	}
 
@@ -158,7 +174,7 @@ export default class AIPlayer extends Player {
 		// super
 		super.onRespawn();
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnRespawn(this);
+		let action: PlayerAction = this.AIProgram.requestActionOnRespawn(this);
 		this.runAction(action);
 	}
 
@@ -166,14 +182,14 @@ export default class AIPlayer extends Player {
 		// super
 		super.onMapTransform();
 		// act
-		let action: AIPlayerAction = this.AIProgram.requestActionOnMapTransform(this);
+		let action: PlayerAction = this.AIProgram.requestActionOnMapTransform(this);
 		this.runAction(action);
 	}
 
 	//========AI Control:The main auto-control of AI========//
 	protected AIControl(): void {
 		// Tick
-		let action: AIPlayerAction;
+		let action: PlayerAction;
 
 		action = this.AIProgram.requestActionOnTick(this);
 
@@ -187,165 +203,17 @@ export default class AIPlayer extends Player {
 		}
 	}
 
-	public runAction(action: AIPlayerAction): void {
-		if (this.isRespawning)
-			return;
-		switch (action) {
-			case AIPlayerAction.MOVE_UP:
-				this.moveUp();
-				break;
-			case AIPlayerAction.MOVE_DOWN:
-				this.moveDown();
-				break;
-			case AIPlayerAction.MOVE_LEFT_ABS:
-				this.moveLeft();
-				break;
-			case AIPlayerAction.MOVE_RIGHT_ABS:
-				this.moveRight();
-				break;
-			case AIPlayerAction.MOVE_FORWARD:
-				this.moveForward();
-				break;
-			case AIPlayerAction.MOVE_BACK:
-				this.turnBack(), this.moveForward();
-				break;
-			case AIPlayerAction.MOVE_LEFT_REL:
-				this.turnRelativeLeft(), this.moveForward();
-				break;
-			case AIPlayerAction.MOVE_RIGHT_REL:
-				this.turnRelativeRight(), this.moveForward();
-				break;
-			case AIPlayerAction.TURN_UP:
-				this.turnUp();
-				break;
-			case AIPlayerAction.TURN_DOWN:
-				this.turnDown();
-				break;
-			case AIPlayerAction.TURN_LEFT_ABS:
-				this.turnAbsoluteLeft();
-				break;
-			case AIPlayerAction.TURN_RIGHT_ABS:
-				this.turnAbsoluteRight();
-				break;
-			case AIPlayerAction.TURN_BACK:
-				this.turnBack();
-				break;
-			case AIPlayerAction.TURN_LEFT_REL:
-				this.turnRelativeLeft();
-				break;
-			case AIPlayerAction.TURN_RIGHT_REL:
-				this.turnRelativeRight();
-				break;
-			case AIPlayerAction.USE_TOOL:
-				this.useTool();
-				break;
-			case AIPlayerAction.PRESS_KEY_UP:
-				this.pressUp = true;
-				break;
-			case AIPlayerAction.PRESS_KEY_DOWN:
-				this.pressDown = true;
-				break;
-			case AIPlayerAction.PRESS_KEY_LEFT:
-				this.pressLeft = true;
-				break;
-			case AIPlayerAction.PRESS_KEY_RIGHT:
-				this.pressRight = true;
-				break;
-			case AIPlayerAction.PRESS_KEY_USE:
-				this.pressUse = true;
-				break;
-			case AIPlayerAction.RELEASE_KEY_UP:
-				this.pressUp = false;
-				break;
-			case AIPlayerAction.RELEASE_KEY_DOWN:
-				this.pressDown = false;
-				break;
-			case AIPlayerAction.RELEASE_KEY_LEFT:
-				this.pressLeft = false;
-				break;
-			case AIPlayerAction.RELEASE_KEY_RIGHT:
-				this.pressRight = false;
-				break;
-			case AIPlayerAction.RELEASE_KEY_USE:
-				this.pressUse = false;
-				break;
-			case AIPlayerAction.DISABLE_CHARGE:
-				this.onDisableCharge();
-				break;
-		}
-	}
-
-	public runActions(actions: AIPlayerAction[]): void {
-		for (let i: uint = 0; i < actions.length; i++) {
-			runAction(actions[i]);
-		}
-	}
-
-	public runActions2(...actions): void {
-		let runV: AIPlayerAction[] = new AIPlayerAction[];
-
-		for (let i: uint = 0; i < actions.length; i++) {
-			if (actions[i] instanceof AIPlayerAction) {
-				runAction(actions[i] as AIPlayerAction);
-			}
-		}
-	}
-
-	public addActionToThread(action: AIPlayerAction): void {
-		this._actionThread.push(action);
-	}
-
-	public addActionsToThread(actions: AIPlayerAction[]): void {
-		this._actionThread = this._actionThread.concat(actions);
-	}
-
-	public addActionToThreadAtFirst(action: AIPlayerAction): void {
-		this._actionThread.unshift(action);
-	}
-
-	public addActionsToThreadAtFirst(actions: AIPlayerAction[]): void {
-		this._actionThread = actions.concat(this._actionThread);
-	}
-
-	public shiftActionToThread(): AIPlayerAction {
-		return this._actionThread.shift();
-	}
-
-	public popActionInThread(): AIPlayerAction {
-		return this._actionThread.pop();
-	}
-
-	public reverseActionThread(): void {
-		this._actionThread = this._actionThread.reverse();
-	}
-
-	public repeatActionThread(count: uint = 1): void {
-		// this._actionThread*=(count+1)
-		if (count < 1)
-			return;
-
-		else if (count == 1) {
-			this._actionThread = this._actionThread.concat(this._actionThread);
-		}
-		else {
-			let tempActions: AIPlayerAction[] = this._actionThread.concat();
-
-			for (let i: uint = 0; i < count; i++) {
-				this._actionThread = this._actionThread.concat(tempActions);
-			}
-		}
-	}
-
-	public clearActionThread(): void {
-		this._actionThread.splice(0, this._actionThread.length);
-	}
-
-	public runAllActionsOfThreadImmediately(): void {
-		if (this._actionThread.length < 1)
-			return;
-
-		this.runActions(this._actionThread);
-
-		this.clearActionThread();
-	}
+	// !【2023-10-01 18:31:50】`runAction`已有
+	// !【2023-10-01 18:35:10】`runActions`暂无必要
+	// !【2023-10-01 18:35:10】`runActions2`暂无必要
+	// !【2023-10-01 18:35:10】`addActionToThread`暂无必要
+	// !【2023-10-01 18:35:10】`addActionsToThread`暂无必要
+	// !【2023-10-01 18:35:10】`addActionToThreadAtFirst`暂无必要
+	// !【2023-10-01 18:35:10】`addActionsToThreadAtFirst`暂无必要
+	// !【2023-10-01 18:35:10】`shiftActionToThread`暂无必要
+	// !【2023-10-01 18:35:10】`popActionInThread`暂无必要
+	// !【2023-10-01 18:35:10】`reverseActionThread`暂无必要
+	// !【2023-10-01 18:35:10】`repeatActionThread`暂无必要
+	// !【2023-10-01 18:35:10】`clearActionThread`暂无必要
+	// !【2023-10-01 18:41:19】`runAllActionsOfThreadImmediately`已移植
 }

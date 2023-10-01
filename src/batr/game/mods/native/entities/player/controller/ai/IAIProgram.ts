@@ -1,29 +1,35 @@
-
-
-import { uint } from "../../../../../legacy/AS3Legacy";
-import BonusBox from "../item/BonusBox";
-import AIPlayer from "../player/AIPlayer";
-import Player from "../player/Player";
+import { uint } from "../../../../../../../legacy/AS3Legacy";
+import BonusBox from "../../../item/BonusBox";
+import AIPlayer from "../../AIPlayer";
+import Player from "../../Player";
+import { PlayerAction } from "../PlayerAction";
 
 /**
  * Running as a Agent:Perception->Decision->Behavior
  */
 export default interface IAIProgram {
-	// Destructor
+	/** 析构函数 */
 	destructor(): void;
-	// AI Variables
+
+	/** 名称 */
 	get label(): string;
+	/** 名称简称（用于显示） */
 	get labelShort(): string;
+	/** 参考运行速度 */
 	get referenceSpeed(): uint;
-	// AI Methods
-	requestActionOnTick(player: AIPlayer): AIPlayerAction;
-	requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction;
-	requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction;
-	requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction;
-	requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction;
-	requestActionOnRespawn(player: AIPlayer): AIPlayerAction;
 
-	requestActionOnMapTransform(player: AIPlayer): AIPlayerAction;
+	/**
+	 * TODO: 【2023-10-01 16:51:55】当下计划：整合入`Player.ts`，以「生成迭代」的形式（响应式）请求
+	 */
+	// 各个「请求事件响应」
+	requestActionOnTick(player: AIPlayer): PlayerAction;
+	requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): PlayerAction;
+	requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): PlayerAction;
+	requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): PlayerAction;
+	requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): PlayerAction;
+	requestActionOnRespawn(player: AIPlayer): PlayerAction;
 
-	requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): AIPlayerAction;
+	requestActionOnMapTransform(player: AIPlayer): PlayerAction;
+
+	requestActionOnPickupBonusBox(player: AIPlayer, box: BonusBox): PlayerAction;
 }
