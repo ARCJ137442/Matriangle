@@ -384,7 +384,6 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	protected _position: iPoint = new iPoint();
 	public get position(): iPoint { return this._position }
 
-	// 有朝向实体 //
 	// 活跃实体 //
 	public readonly i_active: true = true;
 
@@ -606,16 +605,20 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	public dealMoveInTest(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+		// 忽略（强制更新）伤害延迟⇒立即开始判定
 		if (ignoreDelay) {
 			playerMoveInTest(host, this, isLocationChange); // !原`Game.moveInTestPlayer`，现在已经提取到「原生游戏机制」中
 			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
+		// 否则，若「伤害延迟」未归零⇒伤害延迟递减
 		else if (this._damageDelay > 0) {
 			this._damageDelay--;
 		}
+		// 否则，「伤害延迟」归零 && 方块对玩家执行了副作用⇒「伤害延迟」重置（&&继续）
 		else if (this._damageDelay == 0 && playerMoveInTest(host, this, isLocationChange)) { // !原`Game.moveInTestPlayer`，现在已经提取到「原生游戏机制」中
 			this._damageDelay = Player.MAX_DAMAGE_DELAY;
 		}
+		// 否则⇒停止状态检测
 		else if (this._damageDelay > -1) {
 			this._damageDelay = -1;
 		}
@@ -852,7 +855,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	/**
-	 * 执行所有的玩家动作
+	 * 执行所有已缓冲的玩家动作
 	 * * 执行所有的玩家动作
 	 * 
 	 * ! 不会清空「动作缓冲区」

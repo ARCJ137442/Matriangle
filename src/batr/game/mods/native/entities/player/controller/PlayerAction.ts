@@ -2,7 +2,8 @@ import { int } from "../../../../../../legacy/AS3Legacy";
 import { GameEventType } from "../../../../../api/control/GameControl";
 
 /**
- * 玩家事件
+ * 玩家事件：从「控制器」向玩家回分派的事件类型
+ * * 目前只有一个——添加动作
  */
 export const ADD_ACTION: GameEventType = 'addAction';
 
@@ -12,7 +13,11 @@ export const ADD_ACTION: GameEventType = 'addAction';
  */
 export enum EnumPlayerAction {
 	// **空操作** //
-	/** 空操作：执行时不会做任何事情 */
+	/**
+	 * 空操作
+	 * * 不会被「AI控制器」分派
+	 * * 执行时不会做任何事情
+	 */
 	NULL = '',
 
 	// **基本操作集** //
@@ -84,3 +89,19 @@ export enum EnumPlayerAction {
  *   * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
  */
 export type PlayerAction = EnumPlayerAction | int;
+
+/**
+ * 原「requestActionOn」系列事件
+ * * 现在用于从「玩家」到「控制器」的事件分派
+ */
+export enum PlayerEvent {
+	TICK = 'Tick',
+	AI_TICK = 'AITick', // 这个是AI独有 // TODO: 暂时还不明确是否要移除/合并
+	CAUSE_DAMAGE = 'CauseDamage',
+	HURT = 'Hurt',
+	KILL = 'Kill',
+	DEATH = 'Death',
+	RESPAWN = 'Respawn',
+	MAP_TRANSFORM = 'MapTransform',
+	PICKUP_BONUS_BOX = 'PickupBonusBox',
+}
