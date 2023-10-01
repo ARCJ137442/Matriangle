@@ -18,11 +18,7 @@ import IPlayer from "../../player/IPlayer";
  * ...
  * @author ARCJ137442
  */
-export default class ShockWaveBase extends Projectile implements IEntityInGrid, IEntityFixedLived {
-
-	override get type(): EntityType { return NativeEntityTypes.SHOCKWAVE_BASE }
-
-	//============Static Variables============//
+export default class ShockWaveBase extends Projectile implements IEntityInGrid, IEntityFixedLived {	//============Static Variables============//
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2;
 
 	/**

@@ -7,7 +7,6 @@ import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import IBatrGame from "../../../../main/IBatrGame";
 import { DisplayLayers, IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
-import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalGameVariables";
 import Tool from "../../tool/Tool";
 import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
@@ -15,19 +14,18 @@ import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
 import { playerMoveInTest, playerLevelUpExperience } from "../../registry/NativeGameMechanics";
-import { NativeControllerLabels } from "./controller/ControllerLabels";
-import PlayerGUI from "../../../../../display/mods/native/entity/player/PlayerGUI";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
+import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
+import { IGameControlReceiver } from "../../../../api/control/GameControl";
+import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
 
 /**
  * 「玩家」的主类
  * * 具体特性参考「IPlayer」
  */
-export default class Player extends Entity implements IPlayer {
-
-	override get type(): EntityType { return NativeEntityTypes.PLAYER; }
+export default class Player extends Entity implements IPlayer, IGameControlReceiver {
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	public static readonly DEFAULT_MAX_HP: int = 100;
 	public static readonly DEFAULT_HP: int = Player.DEFAULT_MAX_HP;
@@ -350,7 +348,6 @@ export default class Player extends Entity implements IPlayer {
 		this._stats = new PlayerStats(this);
 
 		// 可显示实体 //
-		new PlayerGUI(this)
 		this._fillColor = fillColor;
 		this._fillColor2 = turnBrightnessTo(fillColor, 0.75);
 		this._lineColor = lineColor;
@@ -421,10 +418,14 @@ export default class Player extends Entity implements IPlayer {
 
 	/** 线条颜色 */
 	protected _lineColor: uint = 0x888888;
+	public get lineColor(): uint { return this._lineColor; }
 	/** 填充颜色1 */
 	protected _fillColor: uint = 0xffffff;
+	public get fillColor(): uint { return this._fillColor; }
 	/** 填充颜色2（用于渐变） */
 	protected _fillColor2: uint = 0xcccccc;
+	/** 用于判断「装饰类型」的标记 */
+	public decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY;
 
 	// TODO: 继续思考&处理「显示依赖」的事。。。
 	// protected _GUI: IPlayerGUI;
@@ -433,15 +434,6 @@ export default class Player extends Entity implements IPlayer {
 	// public get guiShape(): IPlayerGUI { return this._GUI };
 
 	public readonly i_displayable: true = true;
-
-	// Color
-	public get lineColor(): uint {
-		return this._lineColor;
-	}
-
-	public get fillColor(): uint {
-		return this._fillColor;
-	}
 
 	/** 堆叠覆盖层级：默认是「玩家」层级 */
 	protected _zIndex: uint = DisplayLayers.PLAYER;
@@ -480,26 +472,36 @@ export default class Player extends Entity implements IPlayer {
 		shape.graphics.endFill();
 	}
 
-	public drawShapeDecoration(
+	/**
+	 * （移植自AIPlayer）用于在主图形上显示「附加装饰」
+	 * 
+	 * ?【2023-10-01 15:39:00】这个似乎应该迁移到「显示端」做
+	 * @param graphics 绘制的图形上下文
+	 * @param decorationLabel 绘制的「装饰类型」
+	 * @param radius 装饰半径
+	 */
+	public static drawShapeDecoration(
 		graphics: IBatrGraphicContext,
-		decorationLabel: string = '',
+		decorationLabel: NativeDecorationLabel,
 		radius: number = Player.SIZE / 10
 	): void {
 		// TODO: 有待整理
 		switch (decorationLabel) {
-			case NativeControllerLabels.AI_DUMMY:
+			case NativeDecorationLabel.EMPTY:
+				break;
+			case NativeDecorationLabel.CIRCLE:
 				graphics.drawCircle(0, 0, radius);
 				break;
-			case NativeControllerLabels.AI_NOVICE:
+			case NativeDecorationLabel.SQUARE:
 				graphics.drawRect(-radius, -radius, radius * 2, radius * 2);
 				break;
-			case NativeControllerLabels.AI_ADVENTURER:
+			case NativeDecorationLabel.TRIANGLE:
 				graphics.moveTo(-radius, -radius);
 				graphics.lineTo(radius, 0);
 				graphics.lineTo(-radius, radius);
 				graphics.lineTo(-radius, -radius);
 				break;
-			case NativeControllerLabels.AI_MASTER:
+			case NativeDecorationLabel.DIAMOND:
 				graphics.moveTo(-radius, 0);
 				graphics.lineTo(0, radius);
 				graphics.lineTo(radius, 0);
@@ -530,7 +532,7 @@ export default class Player extends Entity implements IPlayer {
 	 * * 直接向控制器发送信息，作为「外界环境」的一部分传递事件
 	 * * 处理各自的触发事件
 	 */
-	// ? 所有「钩子函数」
+
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
 	public onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null = null): void {
 
@@ -785,5 +787,75 @@ export default class Player extends Entity implements IPlayer {
 		// // 工具使用后⇒通知GUI更新
 		// if (this.toolNeedsCharge) // TODO: 待显示模块完善
 		// 	this._GUI.updateCharge();
+	}
+
+	/** 缓存的 */
+	protected readonly _cachedActions: PlayerAction[] = [];
+	/**
+	 * 处理「缓存的玩家操作」
+	 */
+	protected handleCachedActions(host: IBatrGame): void {
+		if (this._cachedActions.length === 0) return;
+		else this.runPlayerAction(
+			host,
+			this._cachedActions.shift() as PlayerAction // 保证非空
+		);
+	}
+
+	/**
+	 * 执行玩家动作
+	 * * 参见`PlayerAction`
+	 */
+	protected runPlayerAction(host: IBatrGame, action: PlayerAction): void {
+		// 正整数⇒处理转向相关
+		if (typeof action === 'number') {
+			if (action > 0) {
+				this.turnTo(host, action);
+			}
+			else {
+				this.moveToward(host, -action - 1);
+			}
+		}
+		// 其它枚举类
+		else switch (action) {
+			case EnumPlayerAction.DISABLE_CHARGE:
+				if (this._isUsing) {
+					this.stopUsingTool(host);
+					this.startUsingTool(host);
+				}
+				break;
+			case EnumPlayerAction.NULL:
+				break;
+			case EnumPlayerAction.MOVE_FORWARD:
+				this.moveForward(host);
+				break;
+			case EnumPlayerAction.START_USING:
+				this.startUsingTool(host);
+				break;
+			case EnumPlayerAction.STOP_USING:
+				this.stopUsingTool(host);
+				break;
+			case EnumPlayerAction.MOVE_BACK:
+				this.turnBack(host);
+				this.moveForward(host);
+				break;
+		}
+	}
+
+	/**
+	 * 实现：从「收到游戏事件」到「缓冲操作」再到「执行操作」
+	 * * 功能：
+	 *   * 「添加行为」⇒直接添加到「缓存的行为」中
+	 * 
+	 * @param type 
+	 * @param args 
+	 */
+	public onReceive(type: string, action: PlayerAction | undefined = undefined): void {
+		switch (type) {
+			case ADD_ACTION:
+				if (action === undefined) throw new Error('未指定要缓存的行为！');
+				this._cachedActions.push(action as PlayerAction);
+				break;
+		}
 	}
 }

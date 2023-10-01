@@ -58,8 +58,8 @@ export { default as XTrapKill } from "../blocks/XTrapKill";
 import XTrapRotate from "../blocks/XTrapRotate";
 export { default as XTrapRotate } from "../blocks/XTrapRotate";
 
-import { PatchIndexType } from "../../../main/GlobalGameVariables";
 import { key } from "../../../../common/utils";
+import { BlockPatchIndex } from "../../../api/control/BlockEventTypes";
 
 /**
  * Define all `BlockType` of the native block types in the game
@@ -115,7 +115,7 @@ export const ALL_NATIVE_BLOCKS: BlockType[] = [
  * @param blockType 用于事件派发的方块类型
  * @returns 用于事件派发的索引
  */
-export function hashBlockType(blockType: BlockType): PatchIndexType {
+export function hashBlockType(blockType: BlockType): BlockPatchIndex {
 	return blockType.name
 }
 

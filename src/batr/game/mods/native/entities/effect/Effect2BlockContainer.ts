@@ -5,17 +5,12 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import Effect from "../../../../api/entity/Effect";
 import { IEntityDisplayableContainer } from "../../../../api/entity/EntityInterfaces";
 import EntityType from "../../../../api/entity/EntityType";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 
 /**
  * 双方块容器
  * * 由「特效/重生」「特效/传送」抽象出来
  */
-export default abstract class Effect2BlockContainer extends Effect implements IEntityDisplayableContainer {
-
-	override get type(): EntityType { return NativeEntityTypes.EFFECT_TELEPORT }
-
-	//============Constructor & Destructor============//
+export default abstract class Effect2BlockContainer extends Effect implements IEntityDisplayableContainer {	//============Constructor & Destructor============//
 	public constructor(position: fPoint, LIFE: uint, scale: number = Effect2BlockContainer.SCALE) {
 		super(position, LIFE);
 		this.maxScale = scale;

@@ -7,14 +7,14 @@ import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
-import { NativeControllerLabels } from "../../ControllerLabels";
+import { NativeDecorationLabel } from "../../../../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 
 /**
  * Random move and Always Press Use.
  */
 export default class AIProgram_Dummy implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.AI_DUMMY;
+	public static readonly LABEL: string = NativeDecorationLabel.CIRCLE;
 	public static readonly LABEL_SHORT: string = 'D';
 
 	//============Instance Variables============//

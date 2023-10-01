@@ -3,7 +3,6 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import Effect from "../../../../api/entity/Effect";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import EntityType from "../../../../api/entity/EntityType";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import { fPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalGameVariables";
 
@@ -12,11 +11,7 @@ import { TPS } from "../../../../main/GlobalGameVariables";
  * * 呈现一个特定颜色的、加速上升并迅速淡出的（向上）箭头
  * * 用于提示玩家属性（Buff）的提升
  */
-export default class EffectPlayerLevelup extends Effect {
-
-	override get type(): EntityType { return NativeEntityTypes.EFFECT_PLAYER_LEVELUP }
-
-	//============Static Variables============//
+export default class EffectPlayerLevelup extends Effect {	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x000000;
 	public static readonly LINE_ALPHA: number = 0.8;
 	public static readonly FILL_ALPHA: number = 0.75;

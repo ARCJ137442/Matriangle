@@ -18,7 +18,7 @@ export default class PlayerEffectOverlay extends Shape {
 	//============Constructor & Destructor============//
 	public constructor(owner: IPlayer | null, color: uint = PlayerEffectOverlay.COLOR) {
 		super();
-		this.drawShape(owner instanceof AIPlayer ? (owner as AIPlayer).AILabel : null);
+		this.drawShape(owner instanceof AIPlayer ? (owner as AIPlayer).decorationLabel : null);
 		this.dealLife();
 	}
 
@@ -28,7 +28,7 @@ export default class PlayerEffectOverlay extends Shape {
 	}
 
 	//============Instance Functions============//
-	protected drawShape(AILabel: string = null): void {
+	protected drawShape(decorationLabel: string = null): void {
 		let realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
 		let realRadiusY: number = Player.SIZE / 2;
 		shape.graphics.clear();
@@ -38,8 +38,8 @@ export default class PlayerEffectOverlay extends Shape {
 		shape.graphics.lineTo(realRadiusX, 0);
 		shape.graphics.lineTo(-realRadiusX, realRadiusY);
 		shape.graphics.lineTo(-realRadiusX, -realRadiusY);
-		if (AILabel != null)
-			AIPlayer.drawAIDecoration(shape.graphics, AILabel);
+		if (decorationLabel != null)
+			AIPlayer.drawAIDecoration(shape.graphics, decorationLabel);
 		shape.graphics.endFill();
 	}
 

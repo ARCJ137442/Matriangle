@@ -74,7 +74,7 @@ export default class AIPlayer extends Player {
 		return this._actionThread != null && this._actionThread.length > 0;
 	}
 
-	public get AILabel(): string {
+	public get decorationLabel(): string {
 		return this._AIProgram == null ? null : this._AIProgram.label;
 	}
 

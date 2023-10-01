@@ -27,9 +27,6 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	/** 先前是否已对实体造成伤害 */
 	public hasDamaged: boolean = false;
 
-	// * 两个「类型映射」属性
-	abstract override get type(): EntityType; // ? 是否要优化成「只读常量」 TODO: 性能测试ing
-
 	//============Constructor & Destructor============//
 	public constructor(
 		owner: IPlayer | null,

@@ -21,8 +21,7 @@ import BulletBasic from "./BulletBasic";
  */
 export default class BulletBomber extends Bullet {
 
-	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */
-	override get type(): EntityType { return NativeEntityTypes.BULLET_BOMBER; }
+	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	//============Static Variables============//
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;

@@ -1,6 +1,5 @@
 import { int, uint } from "../../../../../legacy/AS3Legacy";
 import PlayerStats from "../../stat/PlayerStats";
-import PlayerController from "./controller/PlayerController";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
@@ -11,6 +10,7 @@ import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import BonusBox from "../item/BonusBox";
+import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -324,16 +324,16 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	stopUsingTool(host: IBatrGame): void;
 
 	// 钩子函数 //
-	onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null/*  = null */): void
-	onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void
-	onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void
-	onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void
-	onRespawn(host: IBatrGame,): void
-	onMapTransform(host: IBatrGame,): void
-	onPickupBonusBox(host: IBatrGame, box: BonusBox): void
-	preLocationUpdate(host: IBatrGame, oldP: iPoint): void
-	onLocationUpdate(host: IBatrGame, newP: iPoint): void
-	onLevelup(host: IBatrGame): void
+	onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null/*  = null */): void;
+	onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void;
+	onRespawn(host: IBatrGame,): void;
+	onMapTransform(host: IBatrGame,): void;
+	onPickupBonusBox(host: IBatrGame, box: BonusBox): void;
+	preLocationUpdate(host: IBatrGame, oldP: iPoint): void;
+	onLocationUpdate(host: IBatrGame, newP: iPoint): void;
+	onLevelup(host: IBatrGame): void;
 
 	//============Display Implements============//
 	// Color
@@ -345,12 +345,10 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 
 	/** 用于在GUI上显示的文本：生命值+最大生命值+储备生命值+剩余生命数（若生命数有限） */
 	get HPText(): string;
-
-	/** （移植自AIPlayer）用于在主图形上显示「附加装饰」 */
-	drawShapeDecoration(
-		graphics: IBatrGraphicContext,
-		decorationLabel: string,
-		radius: number,
-	): void;
+	/**
+	 * 用于判断「装饰类型」的标记
+	 * * 用途：在「玩家类特效」从玩家处构造时，用于获取到所有绘制信息
+	 */
+	decorationLabel: NativeDecorationLabel;
 
 }

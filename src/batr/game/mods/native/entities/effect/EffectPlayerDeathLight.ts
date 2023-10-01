@@ -2,10 +2,10 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
 import EntityType from "../../../../api/entity/EntityType";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";
+import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 
 /**
  * 玩家死亡光效
@@ -13,8 +13,7 @@ import EffectPlayerLike from "./EffectPlayerLike";
  * * 用于提示玩家的死亡
  */
 export default class EffectPlayerDeathLight extends EffectPlayerLike {
-
-	override get type(): EntityType { return NativeEntityTypes.EFFECT_PLAYER_DEATH_LIGHT; }
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	//============Static Variables============//
 	/** 尺寸过渡的最大值 */
@@ -34,7 +33,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		return new EffectPlayerDeathLight(
 			position, 0, //player.direction, // TODO: 等待玩家方迁移
 			player.fillColor,
-			"TODO: 等待玩家方迁移", // player instanceof AIPlayer ? (player as AIPlayer).AILabel : null,
+			player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
 			reverse
 		);
 	}
@@ -42,12 +41,13 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint, rot: uint = 0,
-		color: uint = 0xffffff, AILabel: string = "TODO: 等待玩家方迁移",
+		color: uint = 0xffffff,
+		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false, life: uint = EffectPlayerLike.MAX_LIFE
 	) {
 		super(
 			position, rot,
-			color, AILabel,
+			color, decorationLabel,
 			reverse, life
 		);
 	}
@@ -59,8 +59,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值
 		// 然后绘制玩家标记
-		if (this._decorationLabel != null)
-			Player.drawShapeDecoration(shape.graphics, this._decorationLabel);
+		this.drawDecoration(shape);
 		// 这时才停止
 		shape.graphics.endFill();
 	}

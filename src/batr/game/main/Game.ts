@@ -1829,11 +1829,11 @@ export default class Game implements IBatrGame {
 	}
 
 	public addPlayerDeathLightEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-		this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
+		this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
 	}
 
 	public addPlayerDeathFadeoutEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-		this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.AILabel, reverse));
+		this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
 	}
 
 	public addPlayerDeathLightEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {

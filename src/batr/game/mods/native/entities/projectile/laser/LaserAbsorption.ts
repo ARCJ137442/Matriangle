@@ -25,8 +25,7 @@ export default class LaserAbsorption extends Laser {
 	public static readonly SIZE: number = DEFAULT_SIZE / 4;
 	public static readonly SCALE_V: number = 1 / 4;
 
-	// 类型注册 //
-	override get type(): EntityType { return NativeEntityTypes.LASER_ABSORPTION; }
+	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	//============Instance Variables============//
 	/** 纵轴的「尺寸」（用于控制动画与同步伤害） */

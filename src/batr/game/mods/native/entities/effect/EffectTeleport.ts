@@ -4,7 +4,6 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import { uint } from "../../../../../legacy/AS3Legacy";
 import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import Effect2BlockContainer from "./Effect2BlockContainer";
 
 /**
@@ -12,11 +11,7 @@ import Effect2BlockContainer from "./Effect2BlockContainer";
  * * 呈现一个快速旋转并缩小到最小尺寸的绿色八角形
  * * 用于提示玩家被传送
  */
-export default class EffectTeleport extends Effect2BlockContainer {
-
-	override get type(): EntityType { return NativeEntityTypes.EFFECT_TELEPORT }
-
-	//============Static Variables============//
+export default class EffectTeleport extends Effect2BlockContainer {	//============Static Variables============//
 	public static readonly LIFE: uint = FIXED_TPS;
 
 	//============Constructor & Destructor============//

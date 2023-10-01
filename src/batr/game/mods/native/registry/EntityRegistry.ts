@@ -1,6 +1,7 @@
-﻿import { isExtend } from "../../../../common/utils";
+﻿import { getClass, isExtend } from "../../../../common/utils";
 import { DisplayLayers } from "../../../../display/api/BatrDisplayInterfaces";
 import Effect from "../../../api/entity/Effect";
+import Entity from "../../../api/entity/Entity";
 import EntityType from "../../../api/entity/EntityType";
 import EffectBlockLight from "../entities/effect/EffectBlockLight";
 import EffectExplode from "../entities/effect/EffectExplode";
@@ -34,47 +35,50 @@ import Wave from "../entities/projectile/other/Wave";
  * * 存储与「实体类」有关的元信息
  * 
  * ! 这应该是静态的：即「一个『类型实例』对应多个『实体实例』的引用」
+ * 
+ * !【2023-10-01 16:18:46】这不应该在「所有实体类加载完成前」被导入
+ * 
  */
 export module NativeEntityTypes {
 	//============Registry============//
 
 	// TODO: 增加「显示层级」
 	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
-	export const BULLET_BASIC: EntityType = new EntityType(BulletBasic, DisplayLayers.PROJECTILE);
-	export const BULLET_NUKE: EntityType = new EntityType(BulletNuke, DisplayLayers.PROJECTILE);
-	export const BULLET_BOMBER: EntityType = new EntityType(BulletBomber, DisplayLayers.PROJECTILE);
-	export const BULLET_TRACKING: EntityType = new EntityType(BulletTracking, DisplayLayers.PROJECTILE);
+	export const BULLET_BASIC: EntityType = new EntityType('BulletBasic', BulletBasic, DisplayLayers.PROJECTILE);
+	export const BULLET_NUKE: EntityType = new EntityType('BulletNuke', BulletNuke, DisplayLayers.PROJECTILE);
+	export const BULLET_BOMBER: EntityType = new EntityType('BulletBomber', BulletBomber, DisplayLayers.PROJECTILE);
+	export const BULLET_TRACKING: EntityType = new EntityType('BulletTracking', BulletTracking, DisplayLayers.PROJECTILE);
 
 	// 激光
-	export const LASER_BASIC: EntityType = new EntityType(LaserBasic, DisplayLayers.PROJECTILE);
-	export const LASER_PULSE: EntityType = new EntityType(LaserPulse, DisplayLayers.PROJECTILE);
-	export const LASER_TELEPORT: EntityType = new EntityType(LaserTeleport, DisplayLayers.PROJECTILE);
-	export const LASER_ABSORPTION: EntityType = new EntityType(LaserAbsorption, DisplayLayers.PROJECTILE);
+	export const LASER_BASIC: EntityType = new EntityType('LaserBasic', LaserBasic, DisplayLayers.PROJECTILE);
+	export const LASER_PULSE: EntityType = new EntityType('LaserPulse', LaserPulse, DisplayLayers.PROJECTILE);
+	export const LASER_TELEPORT: EntityType = new EntityType('LaserTeleport', LaserTeleport, DisplayLayers.PROJECTILE);
+	export const LASER_ABSORPTION: EntityType = new EntityType('LaserAbsorption', LaserAbsorption, DisplayLayers.PROJECTILE);
 
 	// 其它抛射物
-	export const WAVE: EntityType = new EntityType(Wave, DisplayLayers.PROJECTILE);
-	export const THROWN_BLOCK: EntityType = new EntityType(ThrownBlock, DisplayLayers.PROJECTILE);
-	export const LIGHTNING: EntityType = new EntityType(Lightning, DisplayLayers.PROJECTILE);
+	export const WAVE: EntityType = new EntityType('Wave', Wave, DisplayLayers.PROJECTILE);
+	export const THROWN_BLOCK: EntityType = new EntityType('ThrownBlock', ThrownBlock, DisplayLayers.PROJECTILE);
+	export const LIGHTNING: EntityType = new EntityType('Lightning', Lightning, DisplayLayers.PROJECTILE);
 
 	// 冲击波（子机）相关
-	export const SHOCKWAVE_BASE: EntityType = new EntityType(ShockWaveBase, DisplayLayers.PROJECTILE);
-	export const SHOCKWAVE_DRONE: EntityType = new EntityType(ShockWaveDrone, DisplayLayers.PROJECTILE);
+	export const SHOCKWAVE_BASE: EntityType = new EntityType('ShockWaveBase', ShockWaveBase, DisplayLayers.PROJECTILE);
+	export const SHOCKWAVE_DRONE: EntityType = new EntityType('ShockWaveDrone', ShockWaveDrone, DisplayLayers.PROJECTILE);
 
 	// 奖励箱
-	export const BONUS_BOX: EntityType = new EntityType(BonusBox, DisplayLayers.BONUS_BOX);
+	export const BONUS_BOX: EntityType = new EntityType('BonusBox', BonusBox, DisplayLayers.BONUS_BOX);
 
 	// 玩家
-	export const PLAYER: EntityType = new EntityType(Player, DisplayLayers.PLAYER);
+	export const PLAYER: EntityType = new EntityType('Player', Player, DisplayLayers.PLAYER);
 
 	// 特效
-	export const EFFECT_EXPLODE: EntityType = new EntityType(EffectExplode, DisplayLayers.EFFECT_TOP);
-	export const EFFECT_SPAWN: EntityType = new EntityType(EffectSpawn, DisplayLayers.EFFECT_BOTTOM);
-	export const EFFECT_TELEPORT: EntityType = new EntityType(EffectTeleport, DisplayLayers.EFFECT_BOTTOM);
-	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(EffectPlayerDeathLight, DisplayLayers.EFFECT_TOP);
-	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(EffectPlayerDeathFadeout, DisplayLayers.EFFECT_MIDDLE);
-	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(EffectPlayerHurt, DisplayLayers.EFFECT_TOP);
-	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(EffectPlayerLevelup, DisplayLayers.EFFECT_TOP);
-	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(EffectBlockLight, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_EXPLODE: EntityType = new EntityType('EffectExplode', EffectExplode, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_SPAWN: EntityType = new EntityType('EffectSpawn', EffectSpawn, DisplayLayers.EFFECT_BOTTOM);
+	export const EFFECT_TELEPORT: EntityType = new EntityType('EffectTeleport', EffectTeleport, DisplayLayers.EFFECT_BOTTOM);
+	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType('EffectPlayerDeathLight', EffectPlayerDeathLight, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType('EffectPlayerDeathFadeout', EffectPlayerDeathFadeout, DisplayLayers.EFFECT_MIDDLE);
+	export const EFFECT_PLAYER_HURT: EntityType = new EntityType('EffectPlayerHurt', EffectPlayerHurt, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType('EffectPlayerLevelup', EffectPlayerLevelup, DisplayLayers.EFFECT_TOP);
+	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType('EffectBlockLight', EffectBlockLight, DisplayLayers.EFFECT_TOP);
 
 	/**
 	 * 注册表：声明所有原生实体
@@ -129,4 +133,13 @@ export module NativeEntityTypes {
 		(type: EntityType): boolean => isExtend(type.entityClass, Effect)
 	);
 
+}
+
+export function getEntityType(entity: Entity, types: EntityType[] = NativeEntityTypes._ALL_ENTITY): EntityType {
+	for (const entityType of types) {
+		if (entityType.entityClass === getClass(entity)) {
+			return entityType;
+		}
+	}
+	throw new Error(`未找到${entity}在${types}对应的实体类型`)
 }

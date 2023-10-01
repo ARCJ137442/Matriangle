@@ -1,5 +1,5 @@
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import { NativeControllerLabels } from "../../ControllerLabels";
+import { NativeDecorationLabel } from "../../../../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
@@ -10,7 +10,7 @@ import IAIProgram from "../IAIProgram";
  */
 export default class AIProgram_Novice implements IAIProgram {
 	//============Static Variables============//
-	public static readonly LABEL: string = NativeControllerLabels.AI_NOVICE;
+	public static readonly LABEL: string = NativeDecorationLabel.SQUARE;
 	public static readonly LABEL_SHORT: string = 'N';
 
 	//============Static Functions============//

@@ -3,12 +3,12 @@ import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../IPlayer";
-import PlayerController from "./PlayerController";
+import GameController from "../../../../../api/control/GameControl";
 
 /**
  * 一个接受键盘信号，解析并以此控制玩家的
  */
-export default class KeyboardController extends PlayerController {
+export default class KeyboardController extends GameController {
 
     protected _listener: KeyListener;
     /** 控制器所控制的玩家 */

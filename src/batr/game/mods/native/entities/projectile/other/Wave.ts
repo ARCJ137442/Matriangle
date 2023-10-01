@@ -19,8 +19,7 @@ import IPlayer from "../../player/IPlayer";
  * * 在生成后随时间自身逐渐放大，伤害范围也逐渐扩大
  */
 export default class Wave extends Projectile implements IEntityOutGrid, IEntityFixedLived {
-
-	override get type(): EntityType { return NativeEntityTypes.WAVE; }
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;

@@ -1,4 +1,4 @@
-import { intMax, intMin, randInt } from "../../../../common/exMath";
+import { ReLU_I, intMax, intMin, randInt } from "../../../../common/exMath";
 import { iPoint, fPoint, iPointRef } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
@@ -6,7 +6,7 @@ import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../.
 import Block from "../../../api/block/Block";
 import { iRot } from "../../../general/GlobalRot";
 import { alignToGridCenter_P } from "../../../general/PosTransform";
-import { randomTickEventF } from "../../../main/GameEventPatcher";
+import { randomTickEventF } from "../../../api/control/BlockEventTypes";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
 import IBatrGame from "../../../main/IBatrGame";
 import BlockColored from "../blocks/Colored";
@@ -32,6 +32,7 @@ import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify
 import IGameRule from "../../../api/rule/IGameRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
+import PlayerStats from "../stat/PlayerStats";
 
 
 /**
@@ -377,6 +378,27 @@ export const computeFinalLightningEnergy = (
 ): uint => (
     baseEnergy * intMin(1 + buffDamage / 20 + buffRadius / 10, 10)
 )
+
+
+/**
+ * 计算玩家的「总游戏分数」
+ * * 应用：衡量一个玩家在游戏中的「一般表现」
+ * * 逻辑：经验+击杀/死亡+伤害
+ */
+export const computeTotalPlayerScore = (stats: PlayerStats): uint => ReLU_I(
+    // 经验等级
+    + (stats.profile?.level ?? 0) * 50
+    + (stats.profile?.experience ?? 0) * 5
+    // 击杀/死亡
+    // + stats.killAllyCount // !【2023-10-01 15:09:10】现在击杀友方不计分
+    + stats.killCount * 2
+    - stats.deathCount * 2
+    // - stats.suicideCount // !【2023-10-01 15:09:10】现在自杀不计分
+    + stats.pickupBonusBoxCount * 10
+    // 伤害
+    + stats.causeDamage
+    - stats.damageBy
+);
 
 //================ 方块随机刻函数 ================//
 

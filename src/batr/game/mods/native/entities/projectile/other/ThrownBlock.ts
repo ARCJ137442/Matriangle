@@ -19,11 +19,7 @@ import IPlayer from "../../player/IPlayer";
  * * 承载一种「移动的方块」以便「把方块作为可移动对象/武器」的
  * 抛射体
  */
-export default class ThrownBlock extends Projectile implements IEntityOutGrid {
-
-	override get type(): EntityType { return NativeEntityTypes.THROWN_BLOCK }
-
-	//============Static Variables============//
+export default class ThrownBlock extends Projectile implements IEntityOutGrid {	//============Static Variables============//
 	public static readonly MAX_SPEED: number = 15 / FIXED_TPS;
 	public static readonly MIN_SPEED: number = 1 / 3 * ThrownBlock.MAX_SPEED;
 

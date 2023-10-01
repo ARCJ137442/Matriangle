@@ -418,14 +418,3 @@ export function towardX_MF(rot: mRot, radius: number = 1): number {
 export function towardY_MF(rot: mRot, radius: number = 1): number {
 	return exMath.psi(rot - 2) * radius
 }
-
-
-console.info(
-	nameOfRot_M(2),
-	nameOfRot_M(3),
-	nameOfRot_M(1),
-	nameOfRot_M(rotateInPlane_M(2, 3, 1, 0)),
-	nameOfRot_M(rotateInPlane_M(2, 3, 1, 1)),
-	nameOfRot_M(rotateInPlane_M(2, 3, 1, 2)),
-	nameOfRot_M(rotateInPlane_M(2, 3, 1, 3)),
-)

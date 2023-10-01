@@ -13,11 +13,7 @@ import { alignToGridCenter_P } from "../../../../../general/PosTransform";
 import Tool from "../../../tool/Tool";
 import IPlayer from "../../player/IPlayer";
 
-export default class ShockWaveDrone extends Projectile implements IEntityInGrid {
-
-	override get type(): EntityType { return NativeEntityTypes.SHOCKWAVE_DRONE }
-
-	//============Static Variables============//
+export default class ShockWaveDrone extends Projectile implements IEntityInGrid {	//============Static Variables============//
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2;
 

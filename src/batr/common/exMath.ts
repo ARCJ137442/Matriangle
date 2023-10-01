@@ -154,6 +154,11 @@ export function intMin(a: int, b: int): int {
 	return a < b ? a : b;
 }
 
+/** （源自DL）正⇒正；非正⇒零 */
+export function ReLU_I(n: int): int {
+	return n > 0 ? n : 0;
+}
+
 export function mod(num: number, modNum: number): number {
 	return (num / modNum - Math.floor(num / modNum)) * modNum;
 }

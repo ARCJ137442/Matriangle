@@ -23,8 +23,7 @@ export default class LaserBasic extends Laser {
 	public static readonly WIDTH: number = DEFAULT_SIZE / 2; // ! 默认宽度：半格
 	public static readonly LENGTH: uint = 32; // ! 默认长度：32格
 
-	// 类型注册 //
-	override get type(): EntityType { return NativeEntityTypes.LASER_BASIC; }
+	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
 
 	//============Constructor & Destructor============//
 	public constructor(

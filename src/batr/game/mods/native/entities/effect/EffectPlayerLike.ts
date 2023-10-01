@@ -6,6 +6,8 @@ import { TPS } from "../../../../main/GlobalGameVariables";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
+import Player from "../player/Player";
+import { NativeDecorationLabel as NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 
 /**
  * （抽象）类玩家特效
@@ -35,19 +37,19 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	public get color(): uint { return this._color; }
 
 	/** 用于仿制（AI）玩家的标识 */ // TODO: 等待玩家方迁移
-	protected _decorationLabel: string;
+	protected _decorationLabel: NativeDecorationLabel;
 	protected _alphaFunction: (effect: EffectPlayerLike) => number;
 
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint, rot: uint = 0,
-		color: uint = 0xffffff, AILabel: string = "TODO: 等待玩家方迁移",
+		color: uint = 0xffffff, decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false, life: uint = EffectPlayerLike.MAX_LIFE
 	) {
 		super(position, life);
 		this._color = color;
 		this._direction = rot;
-		this._decorationLabel = AILabel;
+		this._decorationLabel = decorationLabel;
 		this._alphaFunction = (
 			reverse ?
 				EffectPlayerLike.reversedAlpha :
@@ -100,6 +102,11 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 		graphics.lineTo(-realRadiusX, realRadiusY);
 		graphics.lineTo(-realRadiusX, -realRadiusY);
 		// graphics.endFill();
+	}
+
+	protected drawDecoration(shape: IBatrShape): void {
+		if (this._decorationLabel !== null)
+			Player.drawShapeDecoration(shape.graphics, this._decorationLabel);
 	}
 
 	/** 实现接口：更新不透明度 */

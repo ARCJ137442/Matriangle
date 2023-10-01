@@ -12,6 +12,8 @@ export default class EntityType extends TypeCommon {
 
 	//============Constructor & Destructor============//
 	public constructor(
+		// ! 现在不能用entityClass，因为「循环导入」可能没有初始化
+		name: string,
 		/**
 		 * 对应的实体类
 		 * 
@@ -25,7 +27,8 @@ export default class EntityType extends TypeCommon {
 		 */
 		public readonly displayLayer: int = DisplayLayers.PLAYER,
 	) {
-		super(entityClass.name, 'entity');
+		super(name, 'entity');
+		if (!entityClass) throw new Error('entityClass is required');
 	}
 
 }

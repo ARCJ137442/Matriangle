@@ -5,7 +5,6 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import Effect2BlockContainer from "./Effect2BlockContainer";
 
 /**
@@ -13,11 +12,7 @@ import Effect2BlockContainer from "./Effect2BlockContainer";
  * * 呈现一个从无放大到有，交替旋转，并线性缩小消失的蓝色八角形
  * * 用于提示玩家的重生
  */
-export default class EffectSpawn extends Effect2BlockContainer {
-
-	override get type(): EntityType { return NativeEntityTypes.EFFECT_SPAWN }
-
-	//============Static Variables============//
+export default class EffectSpawn extends Effect2BlockContainer {	//============Static Variables============//
 	public static readonly DEFAULT_COLOR: uint = 0x6666ff;
 	public static readonly LINE_ALPHA: number = 0.6;
 	public static readonly FILL_ALPHA: number = 0.5;

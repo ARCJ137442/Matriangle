@@ -9,7 +9,6 @@ import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import BonusBoxSymbol from "../../../../../display/mods/native/entity/BonusBoxSymbol";
 import EntityType from "../../../../api/entity/EntityType";
 import { BonusType } from "../../registry/BonusRegistry";
-import { NativeEntityTypes } from "../../registry/EntityRegistry";
 import IBatrGame from "../../../../main/IBatrGame";
 
 /**
@@ -20,11 +19,7 @@ import IBatrGame from "../../../../main/IBatrGame";
  * * 用于在游戏机制中被玩家拾取的
  * 实体
  */
-export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {
-
-	override get type(): EntityType { return NativeEntityTypes.BONUS_BOX }
-
-	//============Static Variables============//
+export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {	//============Static Variables============//
 	public static readonly LINE_COLOR: uint = 0x777777;
 	public static readonly FILL_COLOR: uint = 0xdddddd;
 

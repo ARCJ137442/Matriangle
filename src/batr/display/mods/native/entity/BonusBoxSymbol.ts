@@ -3,7 +3,6 @@ import { BonusType, NativeBonusTypes } from "../../../../game/mods/native/regist
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrGraphicContext, IBatrShape } from "../../../api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
-import PlayerGUI from "./player/PlayerGUI";
 
 /**
  * 奖励箱图形
@@ -15,7 +14,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
 
 	// HHL
-	public static readonly HP_COLOR: uint = PlayerGUI.HP_COLOR;
+	public static readonly HP_COLOR: uint = 0xff0000//PlayerGUI.HP_COLOR;
 
 	// Tool
 	public static readonly TOOL_COLOR: uint = 0x555555;
