@@ -7,7 +7,6 @@ import Entity from "../../../../api/entity/Entity";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import BonusBoxSymbol from "../../../../../display/mods/native/entity/BonusBoxSymbol";
-import EntityType from "../../../../api/entity/EntityType";
 import { BonusType } from "../../registry/BonusRegistry";
 import IBatrGame from "../../../../main/IBatrGame";
 

@@ -796,14 +796,3 @@ export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
     initBasicPlayerTeams(rule.playerTeams, 3, 8); // 扩展只读属性
     return rule;
 }
-
-// 测试代码
-console.log(
-    new GameRule_V1(),
-    GameRule_V1.TEMPLATE,
-    GameRule_V1.TEMPLATE.allKeys,
-    uniSaveJSObject(GameRule_V1.TEMPLATE),
-    uniLoadJSObject(new GameRule_V1(), uniSaveJSObject(GameRule_V1.TEMPLATE)),
-)
-
-console.log("It's done.")

@@ -1,7 +1,6 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
 import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
-import EntityType from "../../../../api/entity/EntityType";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";

@@ -2,7 +2,6 @@ import { fPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
-import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import IBatrGame from "../../../../main/IBatrGame";
 import Player from "../player/Player";

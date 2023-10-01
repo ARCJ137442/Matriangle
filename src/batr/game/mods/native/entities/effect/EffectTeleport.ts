@@ -2,7 +2,6 @@ import { fPoint } from "../../../../../common/geometricTools";
 import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../legacy/AS3Legacy";
-import EntityType from "../../../../api/entity/EntityType";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import Effect2BlockContainer from "./Effect2BlockContainer";
 

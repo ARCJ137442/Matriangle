@@ -2,7 +2,6 @@ import { fPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
-import EntityType from "../../../../api/entity/EntityType";
 import { TPS } from "../../../../main/GlobalGameVariables";
 import IPlayer from "../player/IPlayer";
 import EffectPlayerLike from "./EffectPlayerLike";

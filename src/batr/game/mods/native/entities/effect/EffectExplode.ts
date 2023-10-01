@@ -5,7 +5,6 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import { logical2Real } from "../../../../../display/api/PosTransform";
 import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import Effect from "../../../../api/entity/Effect";
-import EntityType from "../../../../api/entity/EntityType";
 import { TPS } from "../../../../main/GlobalGameVariables";
 
 /**

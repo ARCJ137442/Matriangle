@@ -4,7 +4,6 @@ import Block from "../../../../api/block/Block";
 import Effect from "../../../../api/entity/Effect";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { uintToPercent } from "../../../../../common/utils";
-import EntityType from "../../../../api/entity/EntityType";
 import { fPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalGameVariables";
 

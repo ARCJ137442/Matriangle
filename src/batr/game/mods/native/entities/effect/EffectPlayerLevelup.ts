@@ -2,7 +2,6 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Effect from "../../../../api/entity/Effect";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
-import EntityType from "../../../../api/entity/EntityType";
 import { fPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalGameVariables";
 

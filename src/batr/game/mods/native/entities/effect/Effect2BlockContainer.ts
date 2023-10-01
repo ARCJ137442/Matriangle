@@ -4,7 +4,6 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Effect from "../../../../api/entity/Effect";
 import { IEntityDisplayableContainer } from "../../../../api/entity/EntityInterfaces";
-import EntityType from "../../../../api/entity/EntityType";
 
 /**
  * 双方块容器
