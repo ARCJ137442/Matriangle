@@ -53,7 +53,7 @@ export default class KeyListener {
 			return;
 
 		// Set Old
-		if (this._listenTo != null) {
+		if (this._listenTo !== null) {
 			if (this._listenTo.hasEventListener(KeyboardEvent.KEY_DOWN)) {
 				this._listenTo.removeEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
 			}
@@ -117,7 +117,7 @@ export default class KeyListener {
 	protected onKeyUp(E: KeyboardEvent): void {
 		this.onKeyDeal(E);
 
-		if (this._pressedKeys[E.keyCode] != undefined) // Key.pressedKeys.splice(Key.pressedKeys.indexOf(E.keyCode),1)
+		if (this._pressedKeys[E.keyCode] !== undefined) // Key.pressedKeys.splice(Key.pressedKeys.indexOf(E.keyCode),1)
 			this._pressedKeys[E.keyCode] = false;
 	}
 

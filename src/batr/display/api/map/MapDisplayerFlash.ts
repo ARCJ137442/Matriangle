@@ -64,7 +64,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 		let b: Block;
 		for (let i: int = this.numChildren - 1; i >= 0; i--) {
 			b = this.getBlockAsChildAt(i);
-			if (b != null)
+			if (b !== null)
 				b.destructor();
 			this.removeChild(b);
 		}

@@ -6,7 +6,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
@@ -70,9 +70,9 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 * 游戏刻更新函数
 	 *  * 可被子类多次&任意顺序的`super.onTick`调用
 	 * 
-	 * @param host 调用它的「游戏主体」
+	 * @param host 调用它的「游戏母体」
 	 */
-	public onTick(host: IBatrGame): void {
+	public onTick(host: IBatrMatrix): void {
 		super.onTick(host);
 		// Move
 		// Detect
@@ -81,7 +81,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		// 在移动进去之前
 		if (this.lastBlock != this.nowBlock) {
 			// Random rotate
-			if (this.nowBlock != null &&
+			if (this.nowBlock !== null &&
 				this.nowBlock.attributes.rotateWhenMoveIn) {
 				this.direction = host.map.storage.randomRotateDirectionAt(this._position_I, this._direction, 1);
 			}
@@ -157,11 +157,11 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	//============Game Mechanics============//
 	/**
 	 * 子弹（在碰撞等情况中）爆炸的逻辑
-	 * * 默认逻辑：通知「游戏主体」移除自身
+	 * * 默认逻辑：通知「游戏母体」移除自身
 	 * 
-	 * @param host 要处理爆炸的游戏主体
+	 * @param host 要处理爆炸的游戏母体
 	 */
-	protected explode(host: IBatrGame): void {
+	protected explode(host: IBatrMatrix): void {
 		host.removeEntity(this);
 	}
 

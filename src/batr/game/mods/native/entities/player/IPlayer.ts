@@ -4,7 +4,7 @@ import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
-import IBatrGame from "../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../main/IBatrMatrix";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
@@ -127,15 +127,15 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	//====Functions About HP====//
 	/**
 	 * 增加生命值
-	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 * * 需要「游戏母体」以处理「伤害」「死亡」事件
 	 */
-	addHP(host: IBatrGame, value: uint, healer: IPlayer | null): void;
+	addHP(host: IBatrMatrix, value: uint, healer: IPlayer | null): void;
 
 	/**
 	 * 减少生命值
-	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 * * 需要「游戏母体」以处理「伤害」「死亡」事件
 	 */
-	removeHP(host: IBatrGame, value: uint, attacker: IPlayer | null): void;
+	removeHP(host: IBatrMatrix, value: uint, attacker: IPlayer | null): void;
 
 	/**
 	 * 处理「储备生命值」
@@ -163,11 +163,11 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	// }
 
 	// get isCarriedBlock(): boolean {
-	// 	return this._carriedBlock != null && this._carriedBlock.visible;
+	// 	return this._carriedBlock !== null && this._carriedBlock.visible;
 	// }
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IBatrGame): void;
+	onPositedBlockUpdate(host: IBatrMatrix): void;
 
 	/**
 	 * 在玩家位置改变时「测试移动」
@@ -184,12 +184,12 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 *   * 递减到0时停止递减，等待下一个处理
 	 *   * 且一般只在位置更新/方块更新后才开始——一旦「当前位置无需额外处理动作」就停下来
 	 * 
-	 * @param host 所处的「游戏主体」
+	 * @param host 所处的「游戏母体」
 	 * @param ignoreDelay 是否忽略「方块伤害」等冷却直接开始
 	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
 	dealMoveInTest(
-		host: IBatrGame,
+		host: IBatrMatrix,
 		ignoreDelay?: boolean/* =false */,
 		isLocationChange?: boolean/* =false */
 	): void;
@@ -200,7 +200,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * 
 	 * TODO: 日后细化「实体类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
 	 * 
-	 * @param host 判断所发生在的游戏主体
+	 * @param host 判断所发生在的游戏母体
 	 * //@param player 要判断的玩家// !【2023-09-30 12:23:44】现在就直接用this
 	 * @param p 位置
 	 * @param avoidHurt 避免伤害（主要用于AI）
@@ -208,7 +208,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param others 避开的实体列表
 	 */
 	testCanGoTo(
-		host: IBatrGame, p: iPointRef,
+		host: IBatrMatrix, p: iPointRef,
 		avoidHurt?: boolean/* = false*/,
 		avoidOthers?: boolean/* = true*/,
 		others?: IEntityInGrid[]/* =[] */,
@@ -217,7 +217,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	/**
 	 * （快捷封装）用于判断「玩家是否可向前移动（一格）」
 	 * 
-	 * @param host 判断所发生在的游戏主体
+	 * @param host 判断所发生在的游戏母体
 	 * //@param player 要判断的玩家（整数坐标）// !【2023-09-30 12:23:44】现在就直接用this
 	 * @param rotatedAsRot 是否采用「特定方向」覆盖「使用玩家方向」
 	 * @param avoidOthers 是否包括其他玩家
@@ -225,7 +225,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param others 避开的实体列表
 	 */
 	testCanGoForward(
-		host: IBatrGame, rotatedAsRot?: uint/* = 5*/,
+		host: IBatrMatrix, rotatedAsRot?: uint/* = 5*/,
 		avoidHurt?: boolean/* = false*/,
 		avoidOthers?: boolean/* = true*/,
 		others?: IEntityInGrid[]/* =[] */,
@@ -246,7 +246,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 *     * 生成一个「重生」特效
 	 *   * 发送事件「重生时」
 	 */
-	dealRespawn(host: IBatrGame): void;
+	dealRespawn(host: IBatrMatrix): void;
 
 	//====Functions About Tool====//
 	/**
@@ -271,7 +271,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	//====Control Functions====//
 	/**
 	 * * 下面是一些用于「从IO中读取并执行」的「基本操作集合」
-	 * TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏主体』行动」
+	 * TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏母体』行动」
 	 */
 
 	/**
@@ -280,29 +280,29 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * !【2023-09-27 20:19:33】现在废除了「非整数前进」，因为已经锁定玩家为「格点实体」
 	 * * 同时也废除了「不定长度前进」，限定为「只前进一格」
 	 */
-	moveForward(host: IBatrGame): void;
+	moveForward(host: IBatrMatrix): void;
 
 	/**
 	 * （控制）玩家向某个方向移动（一格）
 	 * * 📌实际上相当于「转向+前进」
 	 */
-	moveToward(host: IBatrGame, direction: mRot): void;
+	moveToward(host: IBatrMatrix, direction: mRot): void;
 
 	// ! 原先一些「向固定朝向旋转」的功能已停用
 
 	/**
 	 * （控制）玩家转向指定方向
-	 * * 为何要附上「游戏主体」参数？其本身可能要触发一些钩子函数什么的
-	 * @param host 所依附的「游戏主体」
+	 * * 为何要附上「游戏母体」参数？其本身可能要触发一些钩子函数什么的
+	 * @param host 所依附的「游戏母体」
 	 * @param direction 要转向的方向
 	 */
-	turnTo(host: IBatrGame, direction: mRot): void;
+	turnTo(host: IBatrMatrix, direction: mRot): void;
 
 	/**
 	 * （控制）玩家转向后方
-	 * * 为何要附上「游戏主体」参数？其本身可能要触发一些钩子函数什么的
+	 * * 为何要附上「游戏母体」参数？其本身可能要触发一些钩子函数什么的
 	 */
-	turnBack(host: IBatrGame): void;
+	turnBack(host: IBatrMatrix): void;
 
 	/**
 	 * （可选）（控制玩家）向指定方向旋转
@@ -315,31 +315,31 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param coaxis 旋转的「协轴」，与玩家的「当前朝向」构成整个「旋转平面」
 	 * @param 经过旋转的「任意维整数角」
 	 */
-	turnRelative?(host: IBatrGame, coaxis: uint, step?: int): void;
+	turnRelative?(host: IBatrMatrix, coaxis: uint, step?: int): void;
 
 	/**
 	 * （控制玩家）开始使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	startUsingTool(host: IBatrGame): void;
+	startUsingTool(host: IBatrMatrix): void;
 
 	/**
 	 * （控制玩家）停止使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	stopUsingTool(host: IBatrGame): void;
+	stopUsingTool(host: IBatrMatrix): void;
 
 	// 钩子函数 //
-	onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null/*  = null */): void;
-	onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void;
-	onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null/*  = null */): void;
-	onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void;
-	onRespawn(host: IBatrGame,): void;
-	onMapTransform(host: IBatrGame,): void;
-	onPickupBonusBox(host: IBatrGame, box: BonusBox): void;
-	preLocationUpdate(host: IBatrGame, oldP: iPoint): void;
-	onLocationUpdate(host: IBatrGame, newP: iPoint): void;
-	onLevelup(host: IBatrGame): void;
+	onHeal(host: IBatrMatrix, amount: uint, healer: IPlayer | null/*  = null */): void;
+	onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void;
+	onRespawn(host: IBatrMatrix,): void;
+	onMapTransform(host: IBatrMatrix,): void;
+	onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void;
+	preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void;
+	onLocationUpdate(host: IBatrMatrix, newP: iPoint): void;
+	onLevelup(host: IBatrMatrix): void;
 
 	//============Display Implements============//
 	// Color

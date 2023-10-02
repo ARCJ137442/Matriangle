@@ -1,7 +1,7 @@
 ﻿
 
 import Map_V1 from "../../game/mods/native/maps/Map_V1";
-import Game from "../../game/main/Game";
+import Game from "../../game/main/Game_V1";
 import Tool from "../game/registry/Tool";
 import GameRule_V1 from "../../game/mods/native/rule/GameRule_V1";
 import I18ns from "../api/i18n/I18ns";

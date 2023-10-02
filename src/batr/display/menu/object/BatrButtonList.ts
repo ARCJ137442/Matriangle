@@ -88,7 +88,7 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 		let button: BatrButton;
 		for (let i: int = 0; i < elements.length; i++) {
 			button = elements[i] as BatrButton;
-			if (button != null)
+			if (button !== null)
 				this._buttons.push(button);
 		}
 		return this;
@@ -104,7 +104,7 @@ export default class BatrButtonList extends BatrMenuGUI implements IBatrMenuElem
 
 	public getElementByName(name: string): BatrMenuGUI {
 		for (let button of this._buttons) {
-			if (button != null && button.name == name)
+			if (button !== null && button.name == name)
 				return (button as BatrMenuGUI);
 		}
 		return null;

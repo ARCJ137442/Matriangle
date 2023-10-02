@@ -38,7 +38,7 @@ export default class PlayerEffectOverlay extends Shape {
 		shape.graphics.lineTo(realRadiusX, 0);
 		shape.graphics.lineTo(-realRadiusX, realRadiusY);
 		shape.graphics.lineTo(-realRadiusX, -realRadiusY);
-		if (decorationLabel != null)
+		if (decorationLabel !== null)
 			AIPlayer.drawAIDecoration(shape.graphics, decorationLabel);
 		shape.graphics.endFill();
 	}

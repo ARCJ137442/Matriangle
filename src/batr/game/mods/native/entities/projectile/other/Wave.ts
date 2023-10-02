@@ -6,7 +6,7 @@ import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../../common/geometricTools";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { waveHurtPlayers } from "../../../registry/NativeGameMechanics";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -19,7 +19,7 @@ import IPlayer from "../../player/IPlayer";
  * * 在生成后随时间自身逐渐放大，伤害范围也逐渐扩大
  */
 export default class Wave extends Projectile implements IEntityOutGrid, IEntityFixedLived {
-	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;
@@ -134,7 +134,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	}
 
 	//====Tick Function====//
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		super.onTick(host);
 		host.map.towardWithRot_FF(this._position, this._direction, this.speed); // ? 每次都要自己实现一遍？
 		// 每过一固定周期伤害玩家

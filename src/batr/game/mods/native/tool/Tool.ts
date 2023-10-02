@@ -2,7 +2,7 @@ import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP }
 import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import IPlayer from "../entities/player/IPlayer";
-import IBatrGame from './../../../main/IBatrGame';
+import IBatrMatrix from '../../../main/IBatrMatrix';
 
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类
@@ -292,10 +292,10 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 
 	 * ? 使用「函数钩子」似乎不行……没法序列化
 	 * 
-	 * @param host 调用时处在的「游戏主体」
+	 * @param host 调用时处在的「游戏母体」
 	 * @param user 使用者（暂定为使用者）
 	 */
-	public onUseByPlayer(host: IBatrGame, user: IPlayer): void {
+	public onUseByPlayer(host: IBatrMatrix, user: IPlayer): void {
 		console.log('Tool', this, 'is used by', user, 'in', host)
 	}
 

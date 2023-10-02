@@ -1,6 +1,6 @@
 import { iPoint } from "../../../common/geometricTools";
 import { uint } from "../../../legacy/AS3Legacy";
-import IBatrGame from "../../main/IBatrGame";
+import IBatrMatrix from "../../main/IBatrMatrix";
 import Block from "../block/Block";
 
 
@@ -19,7 +19,7 @@ export type BlockPatchIndex = string;
 /**
  * 事件处理函数的通用类型
  */
-export type HandlerF = (host: IBatrGame, ...args: any[]) => void;
+export type HandlerF = (host: IBatrMatrix, ...args: any[]) => void;
 
 /**
  * 事件分派中的「元素类型⇒处理函数」映射
@@ -39,7 +39,7 @@ export type BlockEventPatchMap = {
  * 「游戏随机刻」的「事件处理函数」类型
  */
 export type randomTickEventF = (
-    host: IBatrGame,
+    host: IBatrMatrix,
     block: Block,
     position: iPoint
 ) => void;
@@ -48,7 +48,7 @@ export type randomTickEventF = (
  * 「游戏方块刻」的「事件处理函数」类型
  */
 export type blockTickEventF = (
-    host: IBatrGame,
+    host: IBatrMatrix,
     block: Block,
     position: iPoint,
     time: uint

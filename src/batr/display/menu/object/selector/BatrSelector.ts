@@ -102,7 +102,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	}
 
 	protected isValidTarget(other: BatrSelector): boolean {
-		while (other != null) {
+		while (other !== null) {
 			if (other.linkTarget == this)
 				return false;
 			other = other.linkTarget;
@@ -124,11 +124,11 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	protected copyContentTo(other: BatrSelector, callee: boolean = true): void {
 		if (other == null)
 			return;
-		if (this._Content != null)
+		if (this._Content !== null)
 			other.setContent(this._Content);
 		if (!callee)
 			return;
-		while (other != null && other._linkTarget != null) {
+		while (other !== null && other._linkTarget !== null) {
 			if (other._linkTarget == this)
 				break;
 			other._linkTarget._Content = other._Content;

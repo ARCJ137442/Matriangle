@@ -1,8 +1,13 @@
+/*
 
+!【2023-10-02 21:55:52】整个类行将弃用
+* 实际上不应该在「加载地图」时特别指定，更不应该变成一个「注册表」一样的机制
 
-import { NULL } from "../../general/GlobalRot";
-import { uint } from "../../../legacy/AS3Legacy";
-import TypeCommon from "../template/TypeCommon";
+TODO: 或许「更正确的用法」在于——选择一些「有特定加载模式的世界」，类似于Matrix中可随意加载的「训练程序」
+
+import { NULL } from "../general/GlobalRot";
+import { uint } from "../../legacy/AS3Legacy";
+import TypeCommon from "../api/template/TypeCommon";
 
 export default class GameModeType extends TypeCommon {
 	//============Static Variables============//
@@ -53,4 +58,4 @@ export default class GameModeType extends TypeCommon {
 	override get label(): string {
 		return 'gameMode';
 	}
-}
+} */

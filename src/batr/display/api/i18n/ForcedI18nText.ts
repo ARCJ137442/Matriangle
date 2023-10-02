@@ -52,7 +52,7 @@ export default class ForcedI18nText extends I18nText {
 	}
 
 	override get currentText(): string {
-		if (this._forcedText != null)
+		if (this._forcedText !== null)
 			return this._forcedText;
 		return super.currentText;
 	}

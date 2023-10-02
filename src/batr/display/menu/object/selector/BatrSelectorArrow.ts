@@ -95,7 +95,7 @@ class BatrSelectorArrow extends BatrMenuGUI implements IBatrMenuElement {
 
 	override onClick(event: MouseEvent): void {
 		super.onClick(event);
-		if (this._clickFunc != null)
+		if (this._clickFunc !== null)
 			this._clickFunc(event);
 	}
 }

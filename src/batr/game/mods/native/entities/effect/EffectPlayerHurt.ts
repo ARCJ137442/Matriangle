@@ -3,7 +3,7 @@ import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import IBatrGame from "../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../main/IBatrMatrix";
 import Player from "../player/Player";
 import EffectPlayerLike from "./EffectPlayerLike";
 
@@ -13,7 +13,7 @@ import EffectPlayerLike from "./EffectPlayerLike";
  * * 用于提示玩家受到伤害
  */
 export default class EffectPlayerHurt extends EffectPlayerLike {
-	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	//============Static Variables============//
 	/** 颜色：固定红色 */
@@ -22,7 +22,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public static readonly LIFE: uint = FIXED_TPS * 0.25;
 
 	//============Static Functions============//
-	public static fromPlayer(host: IBatrGame, player: Player, reverse: boolean = false): EffectPlayerHurt {
+	public static fromPlayer(host: IBatrMatrix, player: Player, reverse: boolean = false): EffectPlayerHurt {
 		return new EffectPlayerHurt(
 			player.position, 0, //player.direction, // TODO: 等待玩家方迁移
 			player.fillColor,

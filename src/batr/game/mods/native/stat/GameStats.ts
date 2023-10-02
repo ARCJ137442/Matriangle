@@ -2,7 +2,7 @@
 
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Player from "../entities/player/Player";
-import Game from "../../../main/Game";
+import Game from "../../../main/Game_V1";
 import GameRule_V1 from "../rule/GameRule_V1";
 import PlayerStats from "./PlayerStats";
 
@@ -24,7 +24,7 @@ export default class GameStats {
 	public constructor(rule: GameRule_V1, players: Player[] = null) {
 		super();
 		this.rule = rule;
-		if (players != null)
+		if (players !== null)
 			this.loadPlayers(players);
 	}
 
@@ -91,7 +91,7 @@ export default class GameStats {
 
 	public importPlayersFromGame(game: Game): void {
 		for (let player of game.entitySystem.players) {
-			if (player != null)
+			if (player !== null)
 				this._players.push(player.stats);
 		}
 	}

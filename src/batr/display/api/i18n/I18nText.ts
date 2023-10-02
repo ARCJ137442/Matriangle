@@ -3,7 +3,7 @@
 import BonusType from "../game/registry/BonusRegistry";
 import EntityType from "../game/registry/EntityRegistry";
 import Tool from "../game/registry/Tool";
-import GameModeType from "../../../game/api/rule/GameModeType";
+import GameModeType from "../../../game/rule/GameModeType";
 import GameRule_V1 from "../../../game/mods/native/rule/GameRule_V1";
 import { uint } from "../../../legacy/AS3Legacy";
 import ForcedI18nText from "./ForcedI18nText";

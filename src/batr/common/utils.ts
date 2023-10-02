@@ -36,7 +36,7 @@ export function percentToUint(value: number): uint {
 
 //============Display Methods============//
 export function removeChildIfContains(parent: DisplayObjectContainer, child: DisplayObject): void {
-	if (child != null && parent.contains(child))
+	if (child !== null && parent.contains(child))
 		parent.removeChild(child);
 }
 

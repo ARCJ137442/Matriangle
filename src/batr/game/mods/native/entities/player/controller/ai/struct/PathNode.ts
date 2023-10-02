@@ -18,7 +18,7 @@ class PathNode extends iPoint {
 	}
 
 	public get hasParent(): boolean {
-		return this.parent != null;
+		return this.parent !== null;
 	}
 
 	public get hasFromRot(): boolean {
@@ -27,7 +27,7 @@ class PathNode extends iPoint {
 
 	public get rootParent(): PathNode {
 		let p: PathNode = this.parent;
-		while (p.parent != null && p.parent != this) {
+		while (p.parent !== null && p.parent != this) {
 			p = p.parent;
 		}
 		return p;

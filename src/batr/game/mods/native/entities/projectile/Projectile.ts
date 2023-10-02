@@ -4,7 +4,7 @@ import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
-import IBatrGame from "../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../main/IBatrMatrix";
 import IPlayer from "../player/IPlayer";
 
 /**
@@ -102,9 +102,9 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * 游戏刻更新函数
 	 *  * 可被子类多次&任意顺序的`super.onTick`调用
 	 * 
-	 * @param host 调用它的「游戏主体」
+	 * @param host 调用它的「游戏母体」
 	 */
-	public onTick(host: IBatrGame): void { }
+	public onTick(host: IBatrMatrix): void { }
 
 	// 朝向 //
 	readonly i_hasDirection: true = true;

@@ -103,7 +103,7 @@ export default class Menu extends Sprite {
 	//============Static Functions============//
 	protected static setFixedTextSuffix(text: BatrTextField, suffix: any): void {
 		let fText: FixedI18nText = text.translationalText as FixedI18nText;
-		if (fText != null) {
+		if (fText !== null) {
 			fText.suffix = '\t\t' + String(suffix);
 			text.updateByI18n();
 		}
@@ -318,14 +318,14 @@ export default class Menu extends Sprite {
 
 	public setNowSheet(value: BatrMenuSheet, addHistory: boolean = true): void {
 		// Change
-		if (this._nowSheet != null)
+		if (this._nowSheet !== null)
 			this.removeChild(this._nowSheet);
 		this._lastSheet = this._nowSheet;
 		this._nowSheet = value;
 		// Set
 		if (addHistory)
 			this.addSheetHistory(this._sheets.indexOf(this._lastSheet) + 1);
-		if (this._nowSheet != null)
+		if (this._nowSheet !== null)
 			this.addChildAt(this._nowSheet, 0);
 		this._title.visible = this._nowSheet.keepTitle;
 	}
@@ -337,7 +337,7 @@ export default class Menu extends Sprite {
 			DEFAULT_SIZE * blockHeight,
 			this.translations, tKey);
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
-		if (clickListenerFunction != null)
+		if (clickListenerFunction !== null)
 			button.addEventListener(BatrGUIEvent.CLICK, clickListenerFunction);
 		return button;
 	}
@@ -348,7 +348,7 @@ export default class Menu extends Sprite {
 			DEFAULT_SIZE * blockHeight,
 			this.translations, tKey, true, color);
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, button.onI18nsChange);
-		if (clickListenerFunction != null)
+		if (clickListenerFunction !== null)
 			button.addEventListener(BatrGUIEvent.CLICK, clickListenerFunction);
 		return button;
 	}
@@ -396,7 +396,7 @@ export default class Menu extends Sprite {
 		minTextBlockWidth: number = 1, selectorClickFunction: Function = null): BatrSelector {
 		let selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 		this._subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
-		if (selectorClickFunction != null)
+		if (selectorClickFunction !== null)
 			selector.addEventListener(BatrGUIEvent.CLICK, selectorClickFunction);
 		return selector;
 	}
@@ -911,7 +911,7 @@ export default class Menu extends Sprite {
 	protected onMaxHPSelectorClick(event: BatrGUIEvent): void {
 		let HPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HP) as BatrSelector;
 		let maxHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HP) as BatrSelector;
-		if (HPSelector == null && maxHPSelector != null)
+		if (HPSelector == null && maxHPSelector !== null)
 			return;
 		if (HPSelector.currentValue > maxHPSelector.currentValue) {
 			HPSelector.content.intMax = maxHPSelector.currentValue;

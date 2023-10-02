@@ -6,7 +6,7 @@ import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -71,23 +71,23 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * * 不断减少「生命值」
 	 * * 减少到0及以下：通知游戏移除自身
 	 * 
-	 * @param host 游戏主体
+	 * @param host 游戏母体
 	 */
-	public dealLife(host: IBatrGame): void {
+	public dealLife(host: IBatrMatrix): void {
 		if (--this._life <= 0) // ! 一到0便移除，避免多余的一次游戏刻处理
 			host.removeEntity(this); // TODO: 有待「实体系统」的修缮
 	}
 
 	/**
 	 * 默认的「游戏刻逻辑」：处理生命周期
-	 * @param host 游戏主体
+	 * @param host 游戏母体
 	 */
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		this.dealLife(host);
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrGame): void { }
+	public onPositedBlockUpdate(host: IBatrMatrix): void { }
 
 	//============Display Implements============//
 

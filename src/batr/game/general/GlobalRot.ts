@@ -2,7 +2,7 @@ import * as exMath from "../../common/exMath";
 import { iPoint } from "../../common/geometricTools";
 import { int, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
 
-// ! 有待后续更新：支持多个维度、解决「连续角度」等问题
+// TODO: 后续解决「Rot🆚Direction」的历史遗留问题
 /**
  * 「π/4⇔1」机制的角度（整数值）
  */
@@ -275,7 +275,7 @@ export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
 }
 
 /**
- * ! 下面这些函数应该只在「地图逻辑结构」中使用，游戏主体不应直接调用
+ * ! 下面这些函数应该只在「地图逻辑结构」中使用，游戏母体不应直接调用
  * * 根据参数类型的不同，分别使用不同的方法
  *   * I 整数 int
  *   * F 浮点 number

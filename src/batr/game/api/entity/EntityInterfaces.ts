@@ -10,7 +10,7 @@
 import { fPoint, iPoint } from "../../../common/geometricTools";
 import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
-import IBatrGame from "../../main/IBatrGame";
+import IBatrMatrix from "../../main/IBatrMatrix";
 import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
@@ -48,9 +48,9 @@ export interface IEntityInGrid extends Entity {
      * 当「所处位置方块更新」时调用
      * * 应用：玩家的「窒息伤害/陷阱伤害/随机旋转」，奖励箱的「窒息消失」
      * 
-     * @param host 调用它的「游戏主体」
+     * @param host 调用它的「游戏母体」
      */
-    onPositedBlockUpdate(host: IBatrGame, ...args: any[]): void;
+    onPositedBlockUpdate(host: IBatrMatrix, ...args: any[]): void;
 }
 
 /**
@@ -147,9 +147,9 @@ export interface IEntityActive extends Entity {
      * 
      * * 不用担心「循环导入」问题：TS的接口在编译后会被删除，对编译后的执行毫无影响
      * 
-     * @param host 调用它的「游戏主体」
+     * @param host 调用它的「游戏母体」
      */
-    onTick(host: IBatrGame): void;
+    onTick(host: IBatrMatrix): void;
 
 }
 
@@ -172,10 +172,10 @@ export interface IEntityActiveLite extends Entity {
      * 响应游戏刻
      * 
      * 在游戏调用事件循环时，随之调用以处理其自身逻辑
-     * * 与先前「活跃实体」不同：不涉及「游戏主体」，因此无需操作游戏逻辑
+     * * 与先前「活跃实体」不同：不涉及「游戏母体」，因此无需操作游戏逻辑
      * * 只需要一个「自删除回调函数」，而无需传入整个游戏对象
      * 
-     * @param remove 调用`remove(this)`即可通知「游戏主体」删除自身
+     * @param remove 调用`remove(this)`即可通知「游戏母体」删除自身
      */
     onTick(remove: (entity: Entity) => void): void;
 
@@ -205,9 +205,9 @@ export interface IEntityNeedsIO extends Entity {
      * 
      * * 不用担心「循环导入」问题：TS的接口在编译后会被删除，对编译后的执行毫无影响
      * 
-     * @param host 调用它的「游戏主体」
+     * @param host 调用它的「游戏母体」
      */
-    onIO(host: IBatrGame, inf: CommonIO_IR): void;
+    onIO(host: IBatrMatrix, inf: CommonIO_IR): void;
 
     /**
      * 获取实体的IO缓冲区
@@ -349,13 +349,13 @@ export interface IEntityHasHP extends Entity {
     /**
      * 增加生命值
      * * 可能会因此调用一些钩子函数
-     * * 现在可能要跟「游戏主体」关联。。。
+     * * 现在可能要跟「游戏母体」关联。。。
      * 
-     * @param host 游戏主体
+     * @param host 游戏母体
      * @param value 增加的生命值
      * @param healer 增加生命值者（治疗者）
      */
-    addHP(host: IBatrGame, value: uint, healer: Entity | null): void
+    addHP(host: IBatrMatrix, value: uint, healer: Entity | null): void
 
     /**
      * 减少生命值
@@ -364,7 +364,7 @@ export interface IEntityHasHP extends Entity {
      * @param value 减少的生命值
      * @param attacker 减少生命值者（攻击者）
      */
-    removeHP(host: IBatrGame, value: uint, attacker: Entity | null): void
+    removeHP(host: IBatrMatrix, value: uint, attacker: Entity | null): void
 
 }
 

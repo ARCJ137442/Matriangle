@@ -80,14 +80,14 @@ export default class Map_V1 implements IMap {
 	//============Game Mechanics: 原「逻辑层」的机制============//
 	public getBlockPlayerDamage(p: iPointRef, defaultValue: int = 0): int {
 		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
-		if (blockAtt != null)
+		if (blockAtt !== null)
 			return blockAtt.playerDamage;
 		return defaultValue;
 	}
 
 	public isKillZone(p: iPointRef, defaultValue: boolean = false): boolean {
 		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
-		if (blockAtt != null)
+		if (blockAtt !== null)
 			return blockAtt.playerDamage == int$MAX_VALUE;
 		return defaultValue;
 	}

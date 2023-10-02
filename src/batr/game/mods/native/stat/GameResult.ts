@@ -3,7 +3,7 @@
 import ForcedI18nText from "../../../../display/api/i18n/ForcedI18nText";
 import I18nText from "../../../../display/api/i18n/I18nText";
 import { int } from "../../../../legacy/AS3Legacy";
-import Game from "../../../main/Game";
+import Game from "../../../main/Game_V1";
 import GameStats from "./GameStats";
 import PlayerStats from "./PlayerStats";
 

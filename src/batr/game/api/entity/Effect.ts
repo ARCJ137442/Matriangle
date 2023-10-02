@@ -46,7 +46,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
      * 超类方法：处理生命时长
      * * 这里只需要一个「自删除回调函数」回调自己即可
      * 
-     * @param remove 调用`remove(this)`即可通知「游戏主体」删除自身
+     * @param remove 调用`remove(this)`即可通知「游戏母体」删除自身
      */
     public onTick(remove: (entity: Entity) => void): void {
         if (--this._life <= 0) {

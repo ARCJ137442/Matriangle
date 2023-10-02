@@ -200,7 +200,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 
 	// TODO: 后续的「位置更新」
 	public updateLocation(): void {
-		if (this._GUI != null) {
+		if (this._GUI !== null) {
 			this._GUI.logicalX = this.owner.entityX;
 			this._GUI.logicalY = this.owner.entityY;
 		}

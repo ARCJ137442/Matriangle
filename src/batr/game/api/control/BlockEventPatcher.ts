@@ -1,11 +1,11 @@
-﻿import IBatrGame from "../../main/IBatrGame";
+﻿import IBatrMatrix from "../../main/IBatrMatrix";
 import { BlockEventPatchMap, BlockEventType, TypePatchMap, BlockPatchIndex, randomTickEventF } from "./BlockEventTypes";
 
 /**
  * 游戏事件分派器
  * * 使用**函数式编程**，集中管理与游戏方块、游戏实体等相关的游戏事件
  * 
- * ! 最初是为了解决「事件处理函数定义在方块类内，导致『方块 import 实体 import 游戏主体 import 地图 import 方块』循环导入」的问题
+ * ! 最初是为了解决「事件处理函数定义在方块类内，导致『方块 import 实体 import 游戏母体 import 地图 import 方块』循环导入」的问题
  * 
  * TODO: 【2023-10-01 12:00:17】考虑「方块事件」与「控制器事件」的统一
  * 
@@ -52,7 +52,7 @@ export default class BlockEventPatcher {
 	 * ? 是否频繁地「数组解构封装」会导致性能降低
 	 * ! 后续可能遇到效率瓶颈，但「先实现再重构」
 	 */
-	public dispatchEvent(host: IBatrGame, eventType: BlockEventType, patchIndexType: BlockPatchIndex, ...args: any[]): void {
+	public dispatchEvent(host: IBatrMatrix, eventType: BlockEventType, patchIndexType: BlockPatchIndex, ...args: any[]): void {
 		this._blockPatchMap[eventType][patchIndexType](host, ...args);
 		// this._blockPatchMap?.[eventType]?.[patchIndexType]?.(host, ...args);
 	}

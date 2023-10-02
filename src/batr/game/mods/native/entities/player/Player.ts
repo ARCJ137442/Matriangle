@@ -4,7 +4,7 @@ import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
-import IBatrGame from "../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../main/IBatrMatrix";
 import { DisplayLayers, IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalGameVariables";
@@ -25,7 +25,7 @@ import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerA
  * * 具体特性参考「IPlayer」
  */
 export default class Player extends Entity implements IPlayer, IGameControlReceiver {
-	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	public static readonly DEFAULT_MAX_HP: int = 100;
 	public static readonly DEFAULT_HP: int = Player.DEFAULT_MAX_HP;
@@ -80,7 +80,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		}
 	}
 
-	// !【2023-09-27 19:44:37】现在废除「根据游戏主体计算CD」这条规则，改为更软编码的「游戏根据规则在分派工具时决定」方式
+	// !【2023-09-27 19:44:37】现在废除「根据游戏母体计算CD」这条规则，改为更软编码的「游戏根据规则在分派工具时决定」方式
 	// !【2023-09-28 17:32:59】💭设置工具使用时间，这个不需要过早优化显示，但若以后的显示方式不是「充能条」，它就需要更新了
 	// !【2023-09-30 20:09:21】废除「工具相关函数」，但这使得游戏没法在Player层保证「及时更新」，所以需要在外部「设置武器」时及时更新
 
@@ -94,7 +94,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	/**
 	 * 玩家生命值
 	 * 
-	 * !【2023-09-28 20:31:19】注意：生命值的更新（触发「伤害」「死亡」等事件）涉及游戏主体，非必要不要走这个setter
+	 * !【2023-09-28 20:31:19】注意：生命值的更新（触发「伤害」「死亡」等事件）涉及游戏母体，非必要不要走这个setter
 	 * * 请转向「专用方法」如`addHP`
 	 */
 	public get HP(): uint { return this._HP; }
@@ -102,13 +102,13 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		if (value == this._HP) return;
 		this._HP = intMin(value, this._maxHP);
 		// *【2023-09-28 20:32:49】更新还是要更新的
-		// if (this._GUI != null)
+		// if (this._GUI !== null)
 		// this._GUI.updateHP(); // TODO: 显示更新
 	}
 
 	/** 玩家内部最大生命值 */
 	protected _maxHP: uint = Player.DEFAULT_MAX_HP
-	/** 玩家生命值 */ // * 设置时无需过游戏主体，故无需只读
+	/** 玩家生命值 */ // * 设置时无需过游戏母体，故无需只读
 	public get maxHP(): uint { return this._maxHP; }
 	public set maxHP(value: uint) {
 		if (value == this._maxHP)
@@ -121,7 +121,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	/** 玩家的「治疗值」（储备生命值） */
 	protected _heal: uint = 0;
-	/** 玩家储备生命值 */ // * 设置时无需过游戏主体，故无需只读
+	/** 玩家储备生命值 */ // * 设置时无需过游戏母体，故无需只读
 	public get heal(): uint { return this._heal; }
 	public set heal(value: uint) {
 		if (value == this._heal)
@@ -145,14 +145,14 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	/**
 	 * 增加生命值
-	 * * 需要「游戏主体」以处理「伤害」「死亡」事件
+	 * * 需要「游戏母体」以处理「伤害」「死亡」事件
 	 */
-	public addHP(host: IBatrGame, value: uint, healer: IPlayer | null = null): void {
+	public addHP(host: IBatrMatrix, value: uint, healer: IPlayer | null = null): void {
 		this.HP += value;
 		this.onHeal(host, value, healer);
 	}
 
-	public removeHP(host: IBatrGame, value: uint, attacker: IPlayer | null = null): void {
+	public removeHP(host: IBatrMatrix, value: uint, attacker: IPlayer | null = null): void {
 		// 非致死⇒受伤
 		if (this.HP > value) {
 			this.HP -= value;
@@ -263,9 +263,9 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	/**
 	 * 设置经验值
-	 * @param host 用于在后续「生成特效」时访问的「游戏主体」
+	 * @param host 用于在后续「生成特效」时访问的「游戏母体」
 	 */
-	public setExperience(host: IBatrGame, value: uint): void {
+	public setExperience(host: IBatrMatrix, value: uint): void {
 		// 大于「最大经验」⇒升级
 		while (value > this.levelupExperience) {
 			value -= this.levelupExperience;
@@ -275,11 +275,11 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		// 设置经验值
 		this._experience = value;
 		//TODO: 显示更新
-		// if (this._GUI != null) this._GUI.updateExperience();
+		// if (this._GUI !== null) this._GUI.updateExperience();
 	}
 
 	/** 增加经验值 */
-	public addExperience(host: IBatrGame, value: uint): void {
+	public addExperience(host: IBatrMatrix, value: uint): void {
 		this.setExperience(host, this.experience + value);
 	}
 
@@ -307,7 +307,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	// 控制器 // TODO: 模仿AI玩家，实现其「操作缓冲区」「自动执行」等
 
-	// !【2023-09-28 18:13:17】现不再在「玩家」一侧绑定「控制器」链接，改由「游戏本体⇒控制器⇒玩家」的调用路线
+	// !【2023-09-28 18:13:17】现不再在「玩家」一侧绑定「控制器」链接，改由「游戏母体⇒控制器⇒玩家」的调用路线
 
 
 	//============Constructor & Destructor============//
@@ -387,7 +387,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	// 活跃实体 //
 	public readonly i_active: true = true;
 
-	public onTick(host: IBatrGame): void {
+	public onTick(host: IBatrMatrix): void {
 		this.dealCachedActions(host);
 		this.dealUsingTime(host);
 		// this.updateControl(); // TODO: 根据「输入缓冲区」响应输入
@@ -534,52 +534,52 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 */
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
-	public onHeal(host: IBatrGame, amount: uint, healer: IPlayer | null = null): void {
+	public onHeal(host: IBatrMatrix, amount: uint, healer: IPlayer | null = null): void {
 
 	}
 
-	public onHurt(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
+	public onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
 		host.addPlayerHurtEffect(this, false);
 		host.onPlayerHurt(attacker, this, damage);
 	}
 
-	public onDeath(host: IBatrGame, damage: uint, attacker: IPlayer | null = null): void {
+	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		host.onPlayerDeath(attacker, this, damage);
-		if (attacker != null)
+		if (attacker !== null)
 			attacker.onKillPlayer(host, this, damage);
 	}
 
-	public onKillPlayer(host: IBatrGame, victim: IPlayer, damage: uint): void {
+	public onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void {
 		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1);
 	}
 
-	public onRespawn(host: IBatrGame,): void {
+	public onRespawn(host: IBatrMatrix,): void {
 
 	}
 
-	public onMapTransform(host: IBatrGame,): void {
+	public onMapTransform(host: IBatrMatrix,): void {
 		// 地图切换后，武器状态清除
 		this._tool.resetUsingState();
 		// TODO: 显示更新
 	}
 
-	public onPickupBonusBox(host: IBatrGame, box: BonusBox): void {
+	public onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void {
 	}
 
-	public preLocationUpdate(host: IBatrGame, oldP: iPoint): void {
+	public preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void {
 		host.prePlayerLocationChange(this, oldP);
 		// super.preLocationUpdate(oldP); // TODO: 已经忘记这里在做什么了
 	}
 
-	public onLocationUpdate(host: IBatrGame, newP: iPoint): void {
+	public onLocationUpdate(host: IBatrMatrix, newP: iPoint): void {
 		host.onPlayerLocationChange(this, newP);
 		// super.onLocationUpdate(newP); // TODO: 已经忘记这里在做什么了
 	}
 
-	public onLevelup(host: IBatrGame): void {
+	public onLevelup(host: IBatrMatrix): void {
 		host.onPlayerLevelup(this);
 	}
 
@@ -593,18 +593,18 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	public isAlly(player: IPlayer, includeSelf: boolean = false): boolean {
-		return player != null && ((includeSelf || !this.isSelf(player)) &&
+		return player !== null && ((includeSelf || !this.isSelf(player)) &&
 			this.team === player.team);
 	}
 
 	// public get carriedBlock(): Block {return this._carriedBlock;}
-	// public get isCarriedBlock(): boolean {return this._carriedBlock != null && this._carriedBlock.visible;}
+	// public get isCarriedBlock(): boolean {return this._carriedBlock !== null && this._carriedBlock.visible;}
 
-	public onPositedBlockUpdate(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public onPositedBlockUpdate(host: IBatrMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange);
 	}
 
-	public dealMoveInTest(host: IBatrGame, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public dealMoveInTest(host: IBatrMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		// 忽略（强制更新）伤害延迟⇒立即开始判定
 		if (ignoreDelay) {
 			playerMoveInTest(host, this, isLocationChange); // !原`Game.moveInTestPlayer`，现在已经提取到「原生游戏机制」中
@@ -625,7 +625,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	protected _temp_testCanGoForward_P: iPoint = new iPoint();
-	public testCanGoForward(host: IBatrGame, rotatedAsRot?: number | undefined, avoidHurt?: boolean | undefined, avoidOthers?: boolean | undefined, others?: IEntityInGrid[] | undefined): boolean {
+	public testCanGoForward(host: IBatrMatrix, rotatedAsRot?: number | undefined, avoidHurt?: boolean | undefined, avoidOthers?: boolean | undefined, others?: IEntityInGrid[] | undefined): boolean {
 		return this.testCanGoTo(host,
 			host.map.towardWithRot_II(
 				this._temp_testCanGoForward_P.copyFrom(this.position),
@@ -639,10 +639,10 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	/**
 	 * 一个测试「是否可通过」的快捷方式
 	 * * 原`Game.testPlayerCanPass`
-	 * * 链接指向「游戏主体」的地图（逻辑层）
+	 * * 链接指向「游戏母体」的地图（逻辑层）
 	 */
 	public testCanGoTo(
-		host: IBatrGame, p: intPoint,
+		host: IBatrMatrix, p: intPoint,
 		avoidHurt: boolean = false,
 		avoidOthers: boolean = true,
 		others: IEntityInGrid[] = [],
@@ -662,7 +662,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 处理重生
 	 * * 重生后「剩余生命值」递减
 	 */
-	public dealRespawn(host: IBatrGame): void {
+	public dealRespawn(host: IBatrMatrix): void {
 		if (this.respawnTick > 0)
 			this.respawnTick--;
 		else {
@@ -691,9 +691,9 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 *   * 一个是为了显示更新方便
 	 *   * 一个是为了对接逻辑方便
 	 * 
-	 * ! 注意：因为「使用武器」需要对接「游戏主体」，所以需要传入「游戏主体」参数
+	 * ! 注意：因为「使用武器」需要对接「游戏母体」，所以需要传入「游戏母体」参数
 	*/
-	protected dealUsingTime(host: IBatrGame): void {
+	protected dealUsingTime(host: IBatrMatrix): void {
 		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
 		if (!this._tool.needsCD || this._tool.dealCD(this._isUsing)) {
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
@@ -713,7 +713,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 			this._carriedBlock.visible = false;
 		}
 		else {
-			if (this._carriedBlock != null && this.contains(this._carriedBlock))
+			if (this._carriedBlock !== null && this.contains(this._carriedBlock))
 				this.removeChild(this._carriedBlock);
 			this._carriedBlock = copyBlock ? block.clone() : block;
 			this._carriedBlock.x = DEFAULT_SIZE / 2;
@@ -744,41 +744,41 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	// !【2023-09-23 16:53:17】把涉及「玩家基本操作」的部分留下（作为接口），把涉及「具体按键」的部分外迁
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中
 	// ! 现在这里的代码尽可能地使用`setter`
-	// TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏主体』行动」
+	// TODO: 【2023-09-27 22:34:09】目前这些「立即执行操作」还需要以「PlayerIO」的形式重构成「读取IO⇒根据读取时传入的『游戏母体』行动」
 	/**
 	 * 控制这个玩家的游戏控制器
 	 */
 	protected _controller: GameController | null = null;
 
-	public moveForward(host: IBatrGame): void {
+	public moveForward(host: IBatrMatrix): void {
 		host.movePlayer(this as IPlayer, this.direction, 1);
 		// TODO: 显示更新
 	}
 
-	public turnTo(host: IBatrGame, direction: number): void {
+	public turnTo(host: IBatrMatrix, direction: number): void {
 		this._direction = direction
 		// TODO: 显示更新
 	}
 
-	public turnBack(host: IBatrGame): void {
+	public turnBack(host: IBatrMatrix): void {
 		this.direction = toOpposite_M(this._direction);
 		// TODO: 显示更新
 	}
 
 	// 可选
-	public turnRelative(host: IBatrGame): void {
+	public turnRelative(host: IBatrMatrix): void {
 
 	}
 
-	public startUsingTool(host: IBatrGame): void {
+	public startUsingTool(host: IBatrMatrix): void {
 		this._isUsing = true;
 	}
 
-	public stopUsingTool(host: IBatrGame): void {
+	public stopUsingTool(host: IBatrMatrix): void {
 		this._isUsing = false;
 	}
 
-	public directUseTool(host: IBatrGame): void {
+	public directUseTool(host: IBatrMatrix): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
 		this._tool.onUseByPlayer(host, this);
 		host.playerUseTool(
@@ -790,7 +790,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		// 	this._GUI.updateCharge();
 	}
 
-	public moveToward(host: IBatrGame, direction: mRot): void {
+	public moveToward(host: IBatrMatrix, direction: mRot): void {
 		// host.movePlayer(this, direction, this.moveDistance);
 		this.turnTo(host, direction); // 使用setter以便显示更新
 		this.moveForward(host);
@@ -807,7 +807,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 处理「缓存的玩家操作」
 	 * * 逻辑：一次执行完所有缓冲的「玩家动作」，然后清空缓冲区
 	 */
-	protected dealCachedActions(host: IBatrGame): void {
+	protected dealCachedActions(host: IBatrMatrix): void {
 		if (this._actionBuffer.length === 0) return;
 		else {
 			this.runAllPlayerActions(host);
@@ -819,7 +819,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 执行玩家动作
 	 * * 参见`PlayerAction`
 	 */
-	protected runPlayerAction(host: IBatrGame, action: PlayerAction): void {
+	protected runPlayerAction(host: IBatrMatrix, action: PlayerAction): void {
 		// 正整数⇒处理转向相关
 		if (typeof action === 'number') {
 			if (action > 0) {
@@ -861,7 +861,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 
 	 * ! 不会清空「动作缓冲区」
 	 */
-	protected runAllPlayerActions(host: IBatrGame): void {
+	protected runAllPlayerActions(host: IBatrMatrix): void {
 		for (const action of this._actionBuffer) {
 			this.runPlayerAction(host, action);
 		}

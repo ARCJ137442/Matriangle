@@ -1,6 +1,6 @@
-﻿import { IJSObjectifiable } from "../../../common/JSObjectify";
-import { key } from "../../../common/utils";
-import IMap from "../map/IMap";
+﻿import { IJSObjectifiable } from "../../common/JSObjectify";
+import { key } from "../../common/utils";
+import IMap from "../api/map/IMap";
 
 /**
  * 定义统一、可扩展的「游戏规则」接口

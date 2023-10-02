@@ -5,7 +5,7 @@ import Laser from "./Laser";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -26,7 +26,7 @@ export default class LaserPulse extends Laser {
 
 	//============Instance Variables============//
 
-	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	/** 决定这个激光是「回拽激光」还是「前推激光」 */
 	public isPull: boolean = false;
@@ -52,7 +52,7 @@ export default class LaserPulse extends Laser {
 	//============Instance Getter And Setter============//
 
 	//============Instance Functions============//
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		if (!this.hasDamaged)
 			host.laserHurtPlayers(this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期

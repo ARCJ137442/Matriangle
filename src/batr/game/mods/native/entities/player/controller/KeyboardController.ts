@@ -1,9 +1,9 @@
 import KeyListener from "../../../../../../common/KeyListener";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
+import { GameController } from "../../../../../api/control/GameControl";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../IPlayer";
-import GameController from "../../../../../api/control/GameControl";
 
 /**
  * 一个接受键盘信号，解析并以此控制玩家的
@@ -54,10 +54,11 @@ export default class KeyboardController extends GameController {
 
     //============Constructor & Destructor============//
     public constructor(
+        label: string,
         owner: IPlayer,
         listener: KeyListener,
     ) {
-        super();
+        super(label);
         this._owner = owner;
         this._listener = listener;
     }

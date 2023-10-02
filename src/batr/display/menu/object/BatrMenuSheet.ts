@@ -79,7 +79,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 		let element: IBatrMenuElement;
 		for (let i: int = 0; i < elements.length; i++) {
 			element = elements[i] as IBatrMenuElement;
-			if (element != null)
+			if (element !== null)
 				this._directElements.push(element);
 		}
 		return this;
@@ -102,7 +102,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 
 	public getElementByName(name: string): BatrMenuGUI {
 		for (let element of this._directElements) {
-			if (element != null &&
+			if (element !== null &&
 				element instanceof BatrMenuGUI &&
 				(element as DisplayObject).name == name)
 				return (element as BatrMenuGUI);

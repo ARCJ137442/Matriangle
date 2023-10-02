@@ -270,7 +270,7 @@ export default class BatrSelectorContent {
 	}
 
 	public alignI18nsFrom(translations: I18ns): BatrSelectorContent {
-		if (this._enumTexts != null) {
+		if (this._enumTexts !== null) {
 			for (let tText of this._enumTexts) {
 				tText.translations = translations;
 			}

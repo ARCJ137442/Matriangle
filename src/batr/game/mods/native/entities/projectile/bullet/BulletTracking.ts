@@ -4,7 +4,7 @@ import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import EntityType from "../../../../../api/entity/EntityType";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
@@ -32,7 +32,7 @@ export default class BulletTracking extends Bullet {
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: IPlayer[] = [];
 
-	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -65,7 +65,7 @@ export default class BulletTracking extends Bullet {
 	 */
 	protected cacheTargetsIn(players: IPlayer[]): void {
 		for (let player of players) {
-			if (player != null && // not null
+			if (player !== null && // not null
 				(
 					this._owner == null ||
 					projectileCanHurtOther(this, player) // TODO: 以后需要改成「实例无关」方法
@@ -77,9 +77,9 @@ export default class BulletTracking extends Bullet {
 
 	/**
 	 * ! 【20230915 20:12:19】重要的是：使用存取器设置属性，而非直接设定值
-	 * @param host 游戏主体
+	 * @param host 游戏母体
 	 */
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		let tempRot: mRot;
 		// 没目标⇒找目标
 		if (this._target == null) {
@@ -120,7 +120,7 @@ export default class BulletTracking extends Bullet {
 		return (
 			// player == null || // ! 非空，但在上下文中不会发生（减少重复判断）
 			player.isRespawning || // not respawning
-			(this._owner != null && !projectileCanHurtOther(this, player)) // should can use it to hurt
+			(this._owner !== null && !projectileCanHurtOther(this, player)) // should can use it to hurt
 		);
 	}
 
@@ -157,10 +157,14 @@ export default class BulletTracking extends Bullet {
 		);
 	}
 
-	/** 覆盖：通知「游戏主体」创建爆炸 */
-	override explode(host: IBatrGame): void {
+	/** 覆盖：通知「游戏母体」创建爆炸 */
+	override explode(host: IBatrMatrix): void {
 		// TODO: 等待「游戏逻辑」完善
-		// host.toolCreateExplode(this.position, this.finalExplodeRadius, this.damage, this, BulletNuke.DEFAULT_EXPLODE_COLOR, 0.5);
+		host.toolCreateExplode(
+			this.position, this.finalExplodeRadius,
+			this.damage, this,
+			BulletNuke.DEFAULT_EXPLODE_COLOR, 0.5
+		);
 		// 超类逻辑：移除自身
 		super.explode(host);
 	}

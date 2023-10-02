@@ -4,13 +4,13 @@ import { IBatrDisplayable, IBatrShape } from "../../../display/api/BatrDisplayIn
 import BlockAttributes from "./BlockAttributes";
 import { IJSObjectifiable, JSObject, JSObjectifyMap, fastGenerateJSObjectifyMapProperty, loadRecursiveCriterion_false, uniLoadJSObject } from "../../../common/JSObjectify";
 
+/** 【2023-10-02 23:13:00】所谓「方块类型」就是类本身 */
 export type BlockType = Class;
 
 /**
  * One of the fundamental element in BaTr
  * 
- * ! [20230908 21:13:57] The **Block** isn't contains information of "position"
- * ! which instanceof controlled by Game and Player
+ * !【2023-10-02 23:12:26】方块不存储位置信息
  * 
  * TODO: 【2023-09-24 18:42:16】这玩意儿也要参与序列化吗？
  */

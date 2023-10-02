@@ -205,7 +205,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 
 	public getSelectorByName(name: string): BatrSelector {
 		for (let selector of this._selectors) {
-			if (selector != null && selector.name == name)
+			if (selector !== null && selector.name == name)
 				return selector;
 		}
 		return null;
@@ -215,7 +215,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 		let selector: BatrSelector = new BatrSelector(content, PosTransform.localPosToRealPos(minTextBlockWidth));
 		selector.setName(keyName);
 		menu.subject.addEventListener(I18nsChangeEvent.TYPE, selector.onI18nChange);
-		if (clickListener != null)
+		if (clickListener !== null)
 			selector.addEventListener(BatrGUIEvent.CLICK, clickListener);
 		this.appendSelectorAndText(menu.subject, selector, keyName, shiftEmptyLine);
 		return this;

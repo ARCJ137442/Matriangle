@@ -7,7 +7,7 @@ import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/Enti
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { fPoint, iPoint, iPointRef, iPointVal } from "../../../../../../common/geometricTools";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { random1 } from "../../../../../../common/exMath";
 import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
@@ -92,7 +92,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	public get position(): iPointRef { return this._position; }
 	public set position(value: iPointRef) { this._position.copyFrom(value) }
 
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		// Charging
 		if (this._life <= 0) {
 			this.summonDrones(host);
@@ -106,14 +106,14 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrGame): void { }
+	public onPositedBlockUpdate(host: IBatrMatrix): void { }
 
 	/**
 	 * 根据自身的「模式」生成「冲击波子机」
 	 * 
-	 * @param host 基于的游戏主体
+	 * @param host 基于的游戏母体
 	 */
-	public summonDrones(host: IBatrGame): void {
+	public summonDrones(host: IBatrMatrix): void {
 		// Summon Drone
 		switch (this.mode) {
 			// * ALPHA模式（参见常量の注释）
@@ -155,7 +155,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	}
 
 	public summonDrone(
-		host: IBatrGame,
+		host: IBatrMatrix,
 		droneMoveDirection: mRot,
 		toolDirection: mRot = this._direction
 	): void {

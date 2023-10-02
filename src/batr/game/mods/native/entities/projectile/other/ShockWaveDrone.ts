@@ -5,7 +5,7 @@ import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalGameVariables";
@@ -58,7 +58,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 
 	//====Tick Function====//
 	protected _temp_entityP: fPoint = new fPoint();
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		super.onTick(host);
 		// Ticking
 		if (this._moveDuration > 0)
@@ -97,7 +97,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrGame): void { }
+	public onPositedBlockUpdate(host: IBatrMatrix): void { }
 
 	//============Display Implements============//
 	public shapeInit(shape: IBatrShape): void {

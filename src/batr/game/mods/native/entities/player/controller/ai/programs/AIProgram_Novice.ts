@@ -89,7 +89,7 @@ export default class AIProgram_Novice implements IAIProgram {
 		let target: Player = AIProgram_Novice.getLineEnemyPlayer(player);
 		let lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
 		// Auto Pickup BonusBox
-		if (lineBonus != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
+		if (lineBonus !== null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
 			// Turn
 			player.clearActionThread();
 			this._moveSum = this._moveMaxSum;
@@ -103,7 +103,7 @@ export default class AIProgram_Novice implements IAIProgram {
 				return AIPlayerAction.MOVE_FORWARD;
 		}
 		// Auto Attack Target
-		else if (target != null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
+		else if (target !== null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
 			// Turn
 			player.clearActionThread();
 			this._moveSum = this._moveMaxSum;

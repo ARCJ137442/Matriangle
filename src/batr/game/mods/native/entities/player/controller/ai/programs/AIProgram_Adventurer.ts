@@ -390,9 +390,9 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		// Act
 		if (!player.hasAction) {
 			// Clear Invalid Target
-			if (this._lastTarget != null && !this._lastTarget.isActive ||
-				lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
-					lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
+			if (this._lastTarget !== null && !this._lastTarget.isActive ||
+				lastTargetPlayer !== null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
+					lastTargetPlayer !== null && lastTargetPlayer.isRespawning)) {
 				this.resetTarget();
 			}
 			//====Dynamic A*====//
@@ -409,7 +409,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 					else
 						target = getNearestEnemy(player, host);
 				}
-				if (target != null) {
+				if (target !== null) {
 					this.changeTarget(player, target);
 					traceLog(player, 'turn target to ' + getEntityName(this._lastTarget));
 				}
@@ -423,7 +423,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 				// Attack Enemy
 				if (GlobalRot.isValidRot(tempRot) &&
 					detectCarryBlock(player) &&
-					lastTargetPlayer != null &&
+					lastTargetPlayer !== null &&
 					toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
 					player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
 					// Reset
@@ -460,7 +460,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 					// Find Path
 					let finalNode: PathNode;
 					// Attack player
-					if (lastTargetPlayer != null) {
+					if (lastTargetPlayer !== null) {
 						finalNode = getDynamicNode(
 							ownerPoint,
 							iPoint.getLineTargetPoint2(
@@ -510,7 +510,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 
 	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
 		// Hurt By Target
-		if (attacker != null && attacker != this._lastTarget && attacker != player &&
+		if (attacker !== null && attacker != this._lastTarget && attacker != player &&
 			player.canUseToolHurtPlayer(attacker, player.tool)) {
 			this.changeTarget(player, attacker);
 		}
@@ -557,7 +557,7 @@ class PathNode extends iPoint {
 	}
 
 	public get hasParent(): boolean {
-		return this.parent != null;
+		return this.parent !== null;
 	}
 
 	public get hasFromRot(): boolean {
@@ -566,7 +566,7 @@ class PathNode extends iPoint {
 
 	public get rootParent(): PathNode {
 		let p: PathNode = this.parent;
-		while (p.parent != null && p.parent != this) {
+		while (p.parent !== null && p.parent != this) {
 			p = p.parent;
 		}
 		return p;
@@ -697,7 +697,7 @@ class NodeHeap {
 	}
 
 	protected hasNode(i: uint): boolean {
-		return this.length > i && this._list[i] != null;
+		return this.length > i && this._list[i] !== null;
 	}
 
 	protected hasParent(i: uint): boolean {

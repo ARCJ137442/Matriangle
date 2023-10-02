@@ -5,7 +5,7 @@ import Projectile from "../Projectile";
 import { fPoint, iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import { NativeEntityTypes } from "../../../registry/EntityRegistry";
@@ -113,7 +113,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 
 
 	//============Game Mechanics============//
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		super.onTick(host);
 		// 在地图内&可通过&没碰到玩家：继续飞行
 		if (
@@ -138,7 +138,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		}
 	}
 
-	protected onBlockHit(host: IBatrGame): void {
+	protected onBlockHit(host: IBatrMatrix): void {
 		// 将坐标位置对齐到网格
 		let _temp_iPoint: iPoint = new iPoint();
 		alignToGrid_P(this._position, _temp_iPoint);
@@ -175,7 +175,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	public shapeInit(blockShape: IBatrShape): void {
 		// 内部方块的显示
 		return this._carriedBlock?.shapeInit(blockShape)
-		/* if (this._carriedBlock != null) {
+		/* if (this._carriedBlock !== null) {
 			// ↓ 现在采用了新坐标系统
 			// this._carriedBlock.x = -this._carriedBlock.width / 2;
 			// this._carriedBlock.y = -this._carriedBlock.height / 2;

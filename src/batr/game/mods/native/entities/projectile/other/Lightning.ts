@@ -6,7 +6,7 @@ import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from './../../../../../api/entity/EntityInterfaces';
 import { TPS } from "../../../../../main/GlobalGameVariables";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import IBatrGame from './../../../../../main/IBatrGame';
+import IBatrMatrix from '../../../../../main/IBatrMatrix';
 import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
 import { intAbs, intMin } from "../../../../../../common/exMath";
 import EntityType from "../../../../../api/entity/EntityType";
@@ -94,7 +94,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	/**
 	 * 计算电弧路径
 	 */
-	protected lightningWays(host: IBatrGame): void {
+	protected lightningWays(host: IBatrMatrix): void {
 		// Draw in location in this
 		let head: iPoint = this._position.copy();
 		let cost: int = 0;
@@ -114,7 +114,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 				break;
 			// 标记（并在后续伤害）当前位置的玩家
 			player = host.getHitPlayerAt(head);
-			if (player != null && (
+			if (player !== null && (
 				this.owner == null ||
 				playerCanHurtOther(
 					this.owner, player,
@@ -158,12 +158,12 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	/**
 	 * 给出「能量耗损最少」的前进方向
 	 * * 使用贪心算法遍历
-	 * @param host 所属游戏主体
+	 * @param host 所属游戏母体
 	 * @param p 当前点
 	 * @param nowRot 当前朝向（默认方向）
 	 * @returns 新的「目标朝向」（若已找到前进方向），或`-1`（未找到前进方向，一般不会发生）
 	 */
-	protected getLeastWeightRot(host: IBatrGame, p: iPoint, nowRot: mRot): mRot | -1 {
+	protected getLeastWeightRot(host: IBatrMatrix, p: iPoint, nowRot: mRot): mRot | -1 {
 		let cost: int;
 		let result: mRot | -1 = -1;
 		// 默认
@@ -193,18 +193,18 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	/** 临时缓存 */
 	protected _temp_getLeastWeightRot: iPoint = new iPoint();
 
-	protected operateCost(host: IBatrGame, p: iPoint): int {
+	protected operateCost(host: IBatrMatrix, p: iPoint): int {
 		if (host.isHitAnyPlayer_I(p))
 			return 5; // The electricResistance of player
 		if (host.map.storage.isInMap(p))
 			return int$MAX_VALUE; // The electricResistance out of world
-		let attributes: BlockAttributes = host.getBlockAttributes(p);
-		if (attributes != null)
+		let attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(p);
+		if (attributes !== null)
 			return attributes.electricResistance;
 		return 0;
 	}
 
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		super.onTick(host);
 		if (!this.isCalculated) {
 			this.isCalculated = true;
@@ -216,11 +216,11 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			this._life--;
 		else
 			// 大限若至，移除自身
-			host.entitySystem.remove(this);
+			host.removeEntity(this);
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrGame): void { }
+	public onPositedBlockUpdate(host: IBatrMatrix): void { }
 
 	//============Display Implements============//
 	public static readonly LIGHT_ALPHA: number = 0.5;

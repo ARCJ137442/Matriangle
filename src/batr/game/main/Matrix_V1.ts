@@ -22,8 +22,6 @@ import Effect from "../api/entity/Effect";
 import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
-import GameRuleEvent from "../api/rule/GameRuleEvent";
-import { alignToGrid } from "../general/PosTransform";
 import EffectBlockLight from "../mods/native/entities/effect/EffectBlockLight";
 import EffectExplode from "../mods/native/entities/effect/EffectExplode";
 import EffectPlayerDeathFadeout from "../mods/native/entities/effect/EffectPlayerDeathFadeout";
@@ -33,7 +31,6 @@ import EffectPlayerLevelup from "../mods/native/entities/effect/EffectPlayerLeve
 import EffectSpawn from "../mods/native/entities/effect/EffectSpawn";
 import EffectTeleport from "../mods/native/entities/effect/EffectTeleport";
 import BonusBox from "../mods/native/entities/item/BonusBox";
-import AIPlayer from "../mods/native/entities/player/AIPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Projectile from "../mods/native/entities/projectile/Projectile";
@@ -52,10 +49,16 @@ import { BonusType } from "../mods/native/registry/BonusRegistry";
 import GameResult from "../mods/native/stat/GameResult";
 import GameStats from "../mods/native/stat/GameStats";
 import Tool from "../mods/native/tool/Tool";
+import GameRuleEvent from "../rule/GameRuleEvent";
+import Game from "./Game_deprecated.test";
 import { TICK_TIME_MS, PROJECTILES_SPAWN_DISTANCE, TOOL_MIN_CD } from "./GlobalGameVariables";
-import IBatrGame from "./IBatrGame";
+import IBatrMatrix from "./IBatrMatrix";
 
-export default class Game implements IBatrGame {
+/**
+ * 「游戏母体」的第一代实现
+ * * 具体功能&作用，参考其实现的接口
+ */
+export default class Matrix_V1 implements IBatrMatrix {
 
 	// TODO: 🏗事件订阅、分派机制完善
 	protected _eventBus: Function[] = [];//EventBus;
@@ -230,6 +233,19 @@ export default class Game implements IBatrGame {
 		this.isActive = active;
 		this.addEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 	}
+	public addEntity(entity: Entity): void {
+		this._entitySystem.register(entity);
+	}
+	public removeEntity(entity: Entity): boolean {
+		return this._entitySystem.remove(entity);
+	}
+
+	get loadedMaps(): IMap[] {
+		throw new Error("Method not implemented.");
+	}
+	get numLoadedMaps(): number {
+		throw new Error("Method not implemented.");
+	}
 
 	//============Instance Getter And Setter============//
 	//======Main Getters======//
@@ -388,11 +404,11 @@ export default class Game implements IBatrGame {
 	}
 
 	public set mapVisible(value: boolean) {
-		if (this._mapDisplayerBottom as DisplayObject != null)
+		if (this._mapDisplayerBottom as DisplayObject !== null)
 			(this._mapDisplayerBottom as DisplayObject).visible = value;
-		if (this._mapDisplayerMiddle as DisplayObject != null)
+		if (this._mapDisplayerMiddle as DisplayObject !== null)
 			(this._mapDisplayerMiddle as DisplayObject).visible = value;
-		if (this._mapDisplayerTop as DisplayObject != null)
+		if (this._mapDisplayerTop as DisplayObject !== null)
 			(this._mapDisplayerTop as DisplayObject).visible = value;
 	}
 
@@ -625,7 +641,7 @@ export default class Game implements IBatrGame {
 		}
 		//=====Entity TickRun=====//
 		for (let entity of this._entitySystem.entities) {
-			if (entity != null) {
+			if (entity !== null) {
 				if (entity.isActive) {
 					entity.tickFunction();
 				}
@@ -636,7 +652,7 @@ export default class Game implements IBatrGame {
 		}
 		//=====Player TickRun=====//
 		for (let player of this._entitySystem.players) {
-			if (player != null) {
+			if (player !== null) {
 				// Respawn About
 				if (player.infinityLife || player.lives > 0) {
 					if (!player.isActive && player.respawnTick >= 0) {
@@ -647,7 +663,7 @@ export default class Game implements IBatrGame {
 		}
 		//=====Effect TickRun=====//
 		for (let effect of this._effectSystem.effects) {
-			if (effect != null) {
+			if (effect !== null) {
 				if (effect.isActive) {
 					effect.onEffectTick();
 				}
@@ -877,7 +893,7 @@ export default class Game implements IBatrGame {
 					victim.removeHP(finalDamage, attacker);
 
 					// Absorption
-					if (attacker != null && !attacker.isRespawning && absorption)
+					if (attacker !== null && !attacker.isRespawning && absorption)
 						attacker.heal += damage;
 				}
 				if (victim != attacker && !victim.isRespawning) {
@@ -919,7 +935,7 @@ export default class Game implements IBatrGame {
 		for (let i in players) {
 			p = players[i];
 			d = damages[i];
-			if (p != null)
+			if (p !== null)
 				p.finalRemoveHP(lightning.owner, lightning.ownerTool, d);
 		}
 	}
@@ -945,7 +961,7 @@ export default class Game implements IBatrGame {
 		let type: BlockType = this.getBlockType(player.gridX, player.gridY);
 		let attributes: BlockAttributes = BlockAttributes.fromType(type);
 		let returnBoo: boolean = false;
-		if (attributes != null) {
+		if (attributes !== null) {
 			if (attributes.playerDamage == -1) {
 				player.removeHP(this.computeFinalPlayerHurtDamage(player, x, y, this.rule.playerAsphyxiaDamage), null);
 				returnBoo = true;
@@ -1141,7 +1157,7 @@ export default class Game implements IBatrGame {
 	/* Change Map into Other
 	 */
 	public loadMap(isInitial: boolean = false, update: boolean = true, reSpreadPlayer: boolean = false): void {
-		if (isInitial && this.rule.initialMap != null)
+		if (isInitial && this.rule.initialMap !== null)
 			this.changeMap(this.rule.initialMap, update, reSpreadPlayer);
 		else if (this.rule.mapRandomPotentials == null && this.rule.initialMapID)
 			this.changeMap(this.getRandomMap(), update, reSpreadPlayer);
@@ -1159,7 +1175,7 @@ export default class Game implements IBatrGame {
 	 */
 	public changeMap(map: IMap, update: boolean = true, reSpreadPlayer: boolean = false): void {
 		// Remove and generateNew
-		if (this._map != null)
+		if (this._map !== null)
 			this._map.destructor();
 		this._map = map.generateNew();
 		if (update)
@@ -1335,7 +1351,7 @@ export default class Game implements IBatrGame {
 			return player;
 		let p: iPoint = this.map.randomSpawnPoint;
 		// Position offer
-		if (p != null)
+		if (p !== null)
 			p = this.findFitSpawnPoint(player, p.x, p.y);
 		// p as spawn point
 		if (p == null)
@@ -1348,7 +1364,7 @@ export default class Game implements IBatrGame {
 			);
 		// Spawn Effect
 		this.addSpawnEffect(player.entityX, player.entityY);
-		this.addPlayerDeathLightEffect2(player.entityX, player.entityY, player, true);
+		this.addPlayerDeathLightEffect(player.entityX, player.entityY, player, true);
 		// Return
 		// Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
 		return player;
@@ -1641,7 +1657,7 @@ export default class Game implements IBatrGame {
 				}
 				else if (chargePercent >= 1) {
 					// Carry
-					if (frontBlock != null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
+					if (frontBlock !== null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
 						player.setCarriedBlock(frontBlock, false);
 						this.setBlock(carryX, carryY, null);
 						// Effect
@@ -1662,7 +1678,7 @@ export default class Game implements IBatrGame {
 				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
 				break;
 		}
-		if (p != null) {
+		if (p !== null) {
 			p.rot = toolRot;
 			this._entitySystem.registerProjectile(p);
 			this._projectileContainer.addChild(p);
@@ -1836,11 +1852,11 @@ export default class Game implements IBatrGame {
 		this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
 	}
 
-	public addPlayerDeathLightEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
+	public addPlayerDeathLightEffect(x: number, y: number, player: Player, reverse: boolean = false): void {
 		this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
 	}
 
-	public addPlayerDeathFadeoutEffect2(x: number, y: number, player: Player, reverse: boolean = false): void {
+	public addPlayerDeathFadeoutEffect(x: number, y: number, player: Player, reverse: boolean = false): void {
 		this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
 	}
 
@@ -1878,7 +1894,7 @@ export default class Game implements IBatrGame {
 
 			victim.stats.addDamageByPlayerCount(attacker, damage);
 
-			if (attacker != null) {
+			if (attacker !== null) {
 				attacker.stats.causeDamage += damage;
 
 				attacker.stats.addCauseDamagePlayerCount(victim, damage);
@@ -1909,9 +1925,9 @@ export default class Game implements IBatrGame {
 		// Clear Heal
 		victim.heal = 0;
 		// Add Effect
-		this.addPlayerDeathLightEffect2(victim.entityX, victim.entityY, victim);
+		this.addPlayerDeathLightEffect(victim.entityX, victim.entityY, victim);
 
-		this.addPlayerDeathFadeoutEffect2(victim.entityX, victim.entityY, victim);
+		this.addPlayerDeathFadeoutEffect(victim.entityX, victim.entityY, victim);
 
 		// Set Victim
 		victim.visible = false;
@@ -1939,7 +1955,7 @@ export default class Game implements IBatrGame {
 		if (this.rule.recordPlayerStats) {
 			victim.stats.deathCount++;
 
-			if (attacker != null) {
+			if (attacker !== null) {
 				// Attacker
 				attacker.stats.killCount++;
 

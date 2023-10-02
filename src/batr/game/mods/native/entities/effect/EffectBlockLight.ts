@@ -13,7 +13,7 @@ import { TPS } from "../../../../main/GlobalGameVariables";
  * * 用于提示方块的变化
  */
 export default class EffectBlockLight extends Effect {
-	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	//============Static Variables============//
 	public static readonly SIZE: number = DEFAULT_SIZE;

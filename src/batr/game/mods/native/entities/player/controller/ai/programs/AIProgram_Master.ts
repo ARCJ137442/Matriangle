@@ -210,9 +210,9 @@ export default class AIProgram_Master implements IAIProgram {
 		// Act
 		if (!player.hasAction) {
 			// Clear Invalid Target
-			if (this._lastTarget != null && !this._lastTarget.isActive ||
-				lastTargetPlayer != null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
-					lastTargetPlayer != null && lastTargetPlayer.isRespawning)) {
+			if (this._lastTarget !== null && !this._lastTarget.isActive ||
+				lastTargetPlayer !== null && (!player.canUseToolHurtPlayer(lastTargetPlayer, player.tool) ||
+					lastTargetPlayer !== null && lastTargetPlayer.isRespawning)) {
 				this.resetTarget();
 				AIProgram_Adventurer.traceLog(player, 'Clear invalid target!');
 			}
@@ -238,7 +238,7 @@ export default class AIProgram_Master implements IAIProgram {
 					else
 						target = getNearestEnemy(player, host);
 				}
-				if (target != null) {
+				if (target !== null) {
 					this.changeTarget(player, target);
 					AIProgram_Adventurer.traceLog(player, 'turn target to ' + AIProgram_Adventurer.getEntityName(this._lastTarget));
 				}
@@ -251,7 +251,7 @@ export default class AIProgram_Master implements IAIProgram {
 				// Attack Enemy
 				if (GlobalRot.isValidRot(tempRot) &&
 					AIProgram_Adventurer.detectCarryBlock(player) &&
-					lastTargetPlayer != null &&
+					lastTargetPlayer !== null &&
 					AIProgram_Adventurer.toolUseTestWall(player, host, tempRot, ownerPoint.getManhattanDistance(lastTargetPlayerPoint)) &&
 					player.canUseToolHurtPlayer(lastTargetPlayer, player.tool)) {
 					// Reset
@@ -288,7 +288,7 @@ export default class AIProgram_Master implements IAIProgram {
 					// Find Path
 					let finalNode: PathNode;
 					// Attack player
-					if (lastTargetPlayer != null) {
+					if (lastTargetPlayer !== null) {
 						finalNode = getDynamicNode(
 							ownerPoint,
 							iPoint.getLineTargetPoint2(
@@ -342,12 +342,12 @@ export default class AIProgram_Master implements IAIProgram {
 		if (player.HPPercent < 0.5) {
 			if (this._pickupWeight > 0)
 				this._pickupWeight = -this._pickupWeight;
-			if (attacker != null)
+			if (attacker !== null)
 				this.addCloseTarget(attacker);
 			this.resetTarget();
 		}
 		// Hurt By Target
-		else if (attacker != null && attacker != this._lastTarget && attacker != player &&
+		else if (attacker !== null && attacker != this._lastTarget && attacker != player &&
 			player.canUseToolHurtPlayer(attacker, player.tool)) {
 			this._pickupWeight -= damage;
 			this.changeTarget(player, attacker);

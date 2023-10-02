@@ -8,7 +8,7 @@ import { iRot } from "../../../general/GlobalRot";
 import { alignToGridCenter_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
-import IBatrGame from "../../../main/IBatrGame";
+import IBatrMatrix from "../../../main/IBatrMatrix";
 import BlockColored from "../blocks/Colored";
 import BlockGate from "../blocks/Gate";
 import BonusBox from "../entities/item/BonusBox";
@@ -29,7 +29,7 @@ import IPlayer from "../entities/player/IPlayer";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
-import IGameRule from "../../../api/rule/IGameRule";
+import IGameRule from "../../../rule/IGameRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../stat/PlayerStats";
@@ -50,7 +50,7 @@ import PlayerStats from "../stat/PlayerStats";
  * * 如：生命值，最大生命值等
  * 
  * !【2023-09-28 20:27:56】有关「设置生命值可能导致的『显示更新』副作用」，或许可以需要通过「外部屏蔽更新/玩家未激活时」等方式避免
- * * 主打：避免Player类中出现与「游戏主体」耦合的代码
+ * * 主打：避免Player类中出现与「游戏母体」耦合的代码
  * 
  */
 export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
@@ -99,12 +99,12 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
 /**
  * 当玩家「得到奖励」所用的逻辑
  * 
- * @param host 调用的游戏主体
+ * @param host 调用的游戏母体
  * @param player 奖励箱将作用到的玩家
  * @param forcedBonusType 要强制应用的类型（若非空则强制应用此类型的奖励）
  */
 export function playerPickupBonusBox(
-    host: IBatrGame, player: IPlayer, bonusBox: BonusBox,
+    host: IBatrMatrix, player: IPlayer, bonusBox: BonusBox,
     forcedBonusType: BonusType = bonusBox.bonusType
 ): void {
     if (player == null)
@@ -190,13 +190,13 @@ export function playerPickupBonusBox(
  * * 测试位置即为玩家「当前位置」（移动后！）
  * * 有副作用：用于处理「伤害玩家的方块」
  * 
- * @param host 检测所在的游戏主体
+ * @param host 检测所在的游戏母体
  * @param player 被检测的玩家
  * @param isLocationChange 是否是「位置变更」所需要的（false用于「陷阱检测」）
  * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
  */
 export function playerMoveInTest(
-    host: IBatrGame, player: IPlayer,
+    host: IBatrMatrix, player: IPlayer,
     isLocationChange: Boolean = false
 ): boolean {
     // 非激活&无属性⇒不检测（返回）
@@ -274,7 +274,7 @@ export const computeFinalBlockDamage = (
 
 // TODO: 后续完善实体系统后，再进行处理
 export function testCanGoTo(
-    host: IBatrGame, p: iPointRef,
+    host: IBatrMatrix, p: iPointRef,
     avoidHurt: boolean = false,
     avoidOthers: boolean = true,
     others: IEntityInGrid[] = [],
@@ -284,7 +284,7 @@ export function testCanGoTo(
 
 // TODO: 后续完善实体系统后，再进行处理
 export function testCanGoForward(
-    host: IBatrGame, rotatedAsRot: uint | -1 = -1,
+    host: IBatrMatrix, rotatedAsRot: uint | -1 = -1,
     avoidHurt: boolean = false,
     avoidOthers: boolean = true,
     others: IEntityInGrid[] = [],
@@ -410,11 +410,11 @@ export const computeTotalPlayerScore = (stats: PlayerStats): uint => ReLU_I(
  * * 原`moveableWallMove`
  * 
  * ? 是否可以放开一点，通过TS合法手段让`block`成为任意`Block`的子类
- * @param host 调用此函数的游戏主体
+ * @param host 调用此函数的游戏母体
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_MoveableWall: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_MoveableWall: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
     let randomRot: uint, tPoint: fPoint;
     // add laser by owner=null
     let p: ThrownBlock;
@@ -451,11 +451,11 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * * 机制：当「颜色生成器」收到一个随机刻时，随机在「周围曼哈顿距离≤2处」生成一个随机颜色的「颜色块」
  * * 原`colorSpawnerSpawnBlock`
  * 
- * @param host 调用此函数的游戏主体
+ * @param host 调用此函数的游戏母体
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
     let randomPoint: iPoint = host.map.storage.randomPoint;
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
     if (!host.map.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
@@ -475,12 +475,12 @@ const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
  * 
  * ! 性能提示：此处使用copy新建了多维点对象
  * 
- * @param host 调用此函数的游戏主体
+ * @param host 调用此函数的游戏母体
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
 export const randomTick_LaserTrap: randomTickEventF = (
-    host: IBatrGame, block: Block, position: iPoint): void => {
+    host: IBatrMatrix, block: Block, position: iPoint): void => {
     let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
     let randomR: iRot, entityX: number, entityY: number, laserLength: number = 0;
     // add laser by owner=null
@@ -532,7 +532,7 @@ export const randomTick_LaserTrap: randomTickEventF = (
                 );
                 break;
         }
-        if (p != null) {
+        if (p !== null) {
             host.entitySystem.register(p);
             // host.projectileContainer.addChild(p);
             // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
@@ -545,11 +545,11 @@ export const randomTick_LaserTrap: randomTickEventF = (
  * （示例）响应游戏随机刻 @ Gate
  * * 机制：当「门」收到一个随机刻且是关闭时，切换其开关状态
  * 
- * @param host 调用此函数的游戏主体
+ * @param host 调用此函数的游戏母体
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_Gate: randomTickEventF = (host: IBatrGame, block: Block, position: iPoint): void => {
+export const randomTick_Gate: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
     let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
     newBlock.open = true;
     host.setBlock(position, newBlock);
@@ -620,10 +620,10 @@ export function playerCanHurtOther(
 
 /**
  * 抛射体「波浪」伤害玩家的逻辑
- * @param host 游戏主体
+ * @param host 游戏母体
  * @param wave 在其中运行的抛射体「波浪」
  */
-export function waveHurtPlayers(host: IBatrGame, wave: Wave): void {
+export function waveHurtPlayers(host: IBatrMatrix, wave: Wave): void {
     /** 引用 */
     let base: fPoint = wave.position;
     /** Wave的尺寸即为其伤害半径 */

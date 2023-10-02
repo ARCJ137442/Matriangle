@@ -1,6 +1,6 @@
-﻿import Player from "./Player";
-import { IBatrShape } from '../../../../../display/api/BatrDisplayInterfaces';
-import IPlayer from "./IPlayer";
+﻿import Player from "../../../../../game/mods/native/entities/player/Player";
+import { IBatrShape } from '../../../../api/BatrDisplayInterfaces';
+import IPlayer from "../../../../../game/mods/native/entities/player/IPlayer";
 
 /**
  * 一个与玩家显示高度绑定的「玩家悬浮指示器」（简称「玩家GUI」）

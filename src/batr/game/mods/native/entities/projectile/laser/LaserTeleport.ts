@@ -2,7 +2,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import EntityType from "../../../../../api/entity/EntityType";
 import Laser from "./Laser";
-import IBatrGame from "../../../../../main/IBatrGame";
+import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
@@ -23,7 +23,7 @@ export default class LaserTeleport extends Laser {
 	public static readonly LIFE: number = FIXED_TPS * 0.5;
 	public static readonly SIZE: number = DEFAULT_SIZE / 4;
 
-	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏主体提供的）
+	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -43,7 +43,7 @@ export default class LaserTeleport extends Laser {
 	//============Instance Getter And Setter============//
 
 	//============Instance Functions============//
-	override onTick(host: IBatrGame): void {
+	override onTick(host: IBatrMatrix): void {
 		if ((this.life & 3) == 0)
 			host.laserHurtPlayers(this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期

@@ -1,5 +1,10 @@
-import { Event } from "../../../legacy/flash/events";
+import { Event } from "../../legacy/flash/events";
 
+/**
+ * !【2023-10-02 21:58:44】整个类行将弃用
+ * * 目前来说，因为「逻辑」与「显示」的解耦，这里不再需要「规则更新」
+ * * （实际上目的已不明）这个类不再需要，等待被删除
+ */
 export default class GameRuleEvent extends Event {
 	//============Static Variables============//
 	public static readonly VARIABLE_UPDATE: string = 'variableUpdate';
