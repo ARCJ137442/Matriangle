@@ -1,3 +1,4 @@
+import { uint } from "../../../../../../../legacy/AS3Legacy";
 import IBatrGame from "../../../../../../main/IBatrGame";
 import BonusBox from "../../../item/BonusBox";
 import IPlayer from "../../IPlayer";
@@ -36,6 +37,11 @@ export default class AIControllerGenerator extends AIController {
 
     /**
      * 构造函数
+     * 
+     * ! 其会在从生成函数初始化生成器时跳过第一个「自创建到第一个yield」的yield结果
+     * * 🎯保证后面是「先有输入，后有输出」
+     * * 📌此时「生成函数」大致是「跳过循环外的第一个yield，进入循环」
+     * 
      * @param label 标志
      * @param actionGeneratorF 初始化所用的「生成函数」
      */
@@ -45,6 +51,7 @@ export default class AIControllerGenerator extends AIController {
     ) {
         super(label)
         this._actionGenerator = actionGeneratorF(this);
+        this._actionGenerator.next(PlayerEvent.INIT); // ! 跳过第一个「无用生成」
     }
 
     // 一些AI用的公开实例变量（在使用前是undefined，但这绝对不会在调用后发生）
@@ -52,7 +59,22 @@ export default class AIControllerGenerator extends AIController {
     public _temp_currentPlayer?: IPlayer;
     /** 存储「当前事件处理时的『当前所在游戏主体』」 */
     public _temp_currentHost?: IBatrGame;
+    /** 上一次受到的伤害 */
+    public _temp_lastHurtByDamage?: uint;
+    /** 上一次受到伤害的攻击者 */
+    public _temp_lastHurtByAttacker?: IPlayer | null;
+    /** 上一次致死的伤害 */
+    public _temp_lastDeathDamage?: uint;
+    /** 上一次致死的攻击者 */
+    public _temp_lastDeathAttacker?: IPlayer | null;
+    /** 上一次击杀所用伤害 */
+    public _temp_lastKillDamage?: uint;
+    /** 上一次击杀的受害者 */
+    public _temp_lastKillTarget?: IPlayer | null;
+    /** 上一次拾取的奖励箱 */
+    public _temp_lastPickupBox?: BonusBox;
 
+    /** 上一次返回的行动 */
     protected _lastYieldedAction: PlayerAction | undefined = undefined;
     /**
      * 用指定的「事件类型」请求「生成函数」给出应答
@@ -77,24 +99,43 @@ export default class AIControllerGenerator extends AIController {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         return this.requestAction(PlayerEvent.TICK);
-    } // TODO: 【2023-10-02 00:49:53】链接到「生成函数」中去
-    public reactHurt(self: IPlayer, damage: number, attacker?: IPlayer | undefined): PlayerAction {
-        throw new Error("Method not implemented.");
     }
-    public reactDeath(self: IPlayer, damage: number, attacker?: IPlayer | undefined): PlayerAction {
-        throw new Error("Method not implemented.");
+    public reactHurt(self: IPlayer, host: IBatrGame, damage: number, attacker?: IPlayer | undefined): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        this._temp_lastHurtByDamage = damage;
+        this._temp_lastHurtByAttacker = attacker;
+        return this.requestAction(PlayerEvent.HURT);
     }
-    public reactKillPlayer(self: IPlayer, victim: IPlayer, damage: number): PlayerAction {
-        throw new Error("Method not implemented.");
+    public reactDeath(self: IPlayer, host: IBatrGame, damage: number, attacker?: IPlayer | undefined): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        this._temp_lastDeathDamage = damage;
+        this._temp_lastDeathAttacker = attacker;
+        return this.requestAction(PlayerEvent.DEATH);
     }
-    public reactPickupBonusBox(self: IPlayer, box: BonusBox): PlayerAction {
-        throw new Error("Method not implemented.");
+    public reactKillPlayer(self: IPlayer, host: IBatrGame, victim: IPlayer, damage: number): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        this._temp_lastKillDamage = damage;
+        this._temp_lastKillTarget = victim;
+        return this.requestAction(PlayerEvent.KILL_PLAYER);
     }
-    public reactRespawn(self: IPlayer): PlayerAction {
-        throw new Error("Method not implemented.");
+    public reactPickupBonusBox(self: IPlayer, host: IBatrGame, box: BonusBox): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        this._temp_lastPickupBox = box;
+        return this.requestAction(PlayerEvent.PICKUP_BONUS_BOX)
     }
-    public reactMapTransform(self: IPlayer): PlayerAction {
-        throw new Error("Method not implemented.");
+    public reactRespawn(self: IPlayer, host: IBatrGame): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        return this.requestAction(PlayerEvent.RESPAWN);
+    }
+    public reactMapTransform(self: IPlayer, host: IBatrGame): PlayerAction {
+        this._temp_currentPlayer = self;
+        this._temp_currentHost = host;
+        return this.requestAction(PlayerEvent.MAP_TRANSFORM);
     }
 
 }

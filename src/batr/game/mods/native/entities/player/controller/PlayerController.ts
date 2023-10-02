@@ -26,16 +26,16 @@ export default abstract class PlayerController extends GameController {
     /** 在「每个游戏刻」中响应 */
     public abstract reactTick(self: IPlayer, host: IBatrGame): PlayerAction;
     /** 在「受到伤害」时响应（应用如：Novice的「条件反射式回避」） */
-    public abstract reactHurt(self: IPlayer, damage: uint, attacker?: IPlayer): PlayerAction;
+    public abstract reactHurt(self: IPlayer, host: IBatrGame, damage: uint, attacker?: IPlayer): PlayerAction;
     /** 在「死亡」时响应（应用如Adventurer的「死亡时清除路径记忆」） */
-    public abstract reactDeath(self: IPlayer, damage: uint, attacker?: IPlayer): PlayerAction;
+    public abstract reactDeath(self: IPlayer, host: IBatrGame, damage: uint, attacker?: IPlayer): PlayerAction;
     /** 在「击杀玩家」时响应 */
-    public abstract reactKillPlayer(self: IPlayer, victim: IPlayer, damage: uint): PlayerAction;
+    public abstract reactKillPlayer(self: IPlayer, host: IBatrGame, victim: IPlayer, damage: uint): PlayerAction;
     /** 在「拾起奖励箱」时响应 */
-    public abstract reactPickupBonusBox(self: IPlayer, box: BonusBox): PlayerAction;
+    public abstract reactPickupBonusBox(self: IPlayer, host: IBatrGame, box: BonusBox): PlayerAction;
     /** 在「重生」时响应（⚠这时候应该已经恢复了状态，比如active参数） */
-    public abstract reactRespawn(self: IPlayer): PlayerAction;
+    public abstract reactRespawn(self: IPlayer, host: IBatrGame): PlayerAction;
     /** 在「地图变换」时响应（这时候地图应已变换完成） */
-    public abstract reactMapTransform(self: IPlayer): PlayerAction;
+    public abstract reactMapTransform(self: IPlayer, host: IBatrGame): PlayerAction;
 
 }

@@ -95,12 +95,15 @@ export type PlayerAction = EnumPlayerAction | int;
  * * 现在用于从「玩家」到「控制器」的事件分派
  */
 export enum PlayerEvent {
+	NULL = '', // !【2023-10-02 08:09:40】空事件，不必响应
+	INIT = 'init', // !【2023-10-02 08:09:40】用于跳过第一个「无用yield」
 	TICK = 'Tick',
 	AI_TICK = 'AITick', // 这个是AI独有 // TODO: 暂时还不明确是否要移除/合并
 	CAUSE_DAMAGE = 'CauseDamage',
 	HURT = 'Hurt',
 	KILL = 'Kill',
 	DEATH = 'Death',
+	KILL_PLAYER = 'KillPlayer',
 	RESPAWN = 'Respawn',
 	MAP_TRANSFORM = 'MapTransform',
 	PICKUP_BONUS_BOX = 'PickupBonusBox',
