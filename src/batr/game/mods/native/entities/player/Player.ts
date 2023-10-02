@@ -739,6 +739,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
 	 */
 	protected _isUsing: boolean = false;
+	public get isUsing(): boolean { return this._isUsing; }
 
 	// !【2023-09-23 16:53:17】把涉及「玩家基本操作」的部分留下（作为接口），把涉及「具体按键」的部分外迁
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中

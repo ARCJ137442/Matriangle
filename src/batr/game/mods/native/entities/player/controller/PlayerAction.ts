@@ -1,5 +1,6 @@
 import { int } from "../../../../../../legacy/AS3Legacy";
 import { GameEventType } from "../../../../../api/control/GameControl";
+import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 玩家事件：从「控制器」向玩家回分派的事件类型
@@ -78,6 +79,13 @@ export enum EnumPlayerAction {
 	 */
 	DISABLE_CHARGE = 'disableCharge',
 
+}
+
+/**
+ * 从「转向方向」获取对应的「玩家行为」
+ */
+export function getPlayerActionFromTurn(direction: mRot): PlayerAction {
+	return direction as PlayerAction;
 }
 
 /**

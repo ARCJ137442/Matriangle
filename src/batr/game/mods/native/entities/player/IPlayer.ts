@@ -262,6 +262,12 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	onToolChange?(oldT: Tool, newT: Tool): void;
 
+	/**
+	 * 缓存玩家「正在使用工具」的状态
+	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
+	 */
+	get isUsing(): boolean;
+
 	//====Control Functions====//
 	/**
 	 * * 下面是一些用于「从IO中读取并执行」的「基本操作集合」
