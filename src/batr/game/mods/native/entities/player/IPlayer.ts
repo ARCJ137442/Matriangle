@@ -198,7 +198,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * 用于判断「玩家是否可当前位置移动到另一位置」
 	 * * 会用到「玩家自身的坐标」作为「移动前坐标」
 	 * 
-	 * TODO: 日后细化「试题类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
+	 * TODO: 日后细化「实体类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
 	 * 
 	 * @param host 判断所发生在的游戏主体
 	 * //@param player 要判断的玩家// !【2023-09-30 12:23:44】现在就直接用this

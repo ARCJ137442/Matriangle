@@ -9,9 +9,9 @@ import { PlayerAction, PlayerEvent } from "../PlayerAction";
  * 「AI行为生成器」
  * * 输入「事件类型」（通过「内部状态」传参）
  *   * 会通过其中self变量的`currentPlayer:IPlayer`进行「当前自我接入」
- * * 输出「玩家行为」
+ * * 输出「玩家行为」（不管是yield还是return）
  */
-export type AIActionGenerator = Generator<PlayerAction, undefined, PlayerEvent>;
+export type AIActionGenerator = Generator<PlayerAction, PlayerAction, PlayerEvent>;
 
 /** 「AI行为生成器」的生成函数 */
 export type AIActionGeneratorF = (self: AIControllerGenerator) => AIActionGenerator;
