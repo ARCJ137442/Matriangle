@@ -60,7 +60,7 @@ import IBatrMatrix from "./IBatrMatrix";
  */
 export default class Matrix_V1 implements IBatrMatrix {
 
-	// TODO: 🏗事件订阅、分派机制完善
+	// TODO: 🏗️事件订阅、分派机制完善
 	protected _eventBus: Function[] = [];//EventBus;
 
 	//============Static Variables============//

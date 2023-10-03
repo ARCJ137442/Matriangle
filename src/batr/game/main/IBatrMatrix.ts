@@ -67,7 +67,7 @@ export default interface IBatrMatrix {
 	 */
 	removeEntity(entity: Entity): boolean;
 
-	//========🧊地图部分：地图加载、地图变换等========//
+	//========🗺️地图部分：地图加载、地图变换等========//
 	/**
 	 * 游戏中所有加载的地图
 	 * * 用于地图切换时在此中选择
