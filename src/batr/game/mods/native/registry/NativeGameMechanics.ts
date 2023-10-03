@@ -1,9 +1,9 @@
 import { ReLU_I, intMax, intMin, randInt } from "../../../../common/exMath";
-import { iPoint, fPoint, iPointRef } from "../../../../common/geometricTools";
+import { iPoint, fPoint, iPointRef, fPointRef } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
-import Block from "../../../api/block/Block";
+import Block, { BlockType } from "../../../api/block/Block";
 import { iRot } from "../../../general/GlobalRot";
 import { alignToGridCenter_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
@@ -33,6 +33,9 @@ import IGameRule from "../../../rule/IGameRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../stat/PlayerStats";
+import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
+import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
+import EffectPlayerDeathFadeout from "../entities/effect/EffectPlayerDeathFadeout";
 
 
 /**
@@ -43,7 +46,7 @@ import PlayerStats from "../stat/PlayerStats";
  * TODO: 是否「显示事件」也要这样「外包到『事件注册表』中」去？
  */
 
-//================ 游戏加载机制 ================//
+//================🎛️游戏加载================//
 
 /**
  * 按照「游戏规则」初始化玩家变量
@@ -94,7 +97,75 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
     // TODO: 后续还有至少是「生命条数」没有初始化的……留给在「创建玩家」时做（只有那时候才能分辨「哪个是人类，哪个是AI」）
 }
 
-//================ 玩家机制 ================//
+//================⚙️实体管理================//
+
+// 特效 //
+
+// 
+/* export function addPlayerHurtEffect(host: IBatrMatrix, player: IPlayer, reverse: boolean = false): void {
+    host.addEntity(
+        EffectPlayerHurt.fromPlayer(host, player, reverse)
+    );
+}
+
+export function addSpawnEffect(host: IBatrMatrix, position: fPointRef): void {
+    this._effectSystem.addEffect(new EffectSpawn(this, x, y));
+}
+
+export function addTeleportEffect(host: IBatrMatrix, position: fPointRef): void {
+    this._effectSystem.addEffect(new EffectTeleport(this, x, y));
+}
+
+export function addPlayerDeathLightEffect(host: IBatrMatrix, position: fPointRef, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
+    this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
+}
+
+export function addPlayerDeathFadeoutEffect(host: IBatrMatrix, position: fPointRef, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
+    this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
+}
+
+export function addPlayerDeathLightEffect(host: IBatrMatrix, position: fPointRef, player: IPlayer, reverse: boolean = false): void {
+    this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
+}
+
+export function addPlayerDeathFadeoutEffect(host: IBatrMatrix, position: fPointRef, player: IPlayer, reverse: boolean = false): void {
+    this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
+}
+
+export function addPlayerLevelupEffect(host: IBatrMatrix, position: fPointRef, color: uint, scale: number): void {
+    this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
+}
+
+export function addBlockLightEffect(host: IBatrMatrix, position: fPointRef, color: uint, alpha: uint, reverse: boolean = false): void {
+    this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
+}
+
+export function addBlockLightEffect2(host: IBatrMatrix, position: fPointRef, block: Block, reverse: boolean = false): void {
+    this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
+} */
+
+
+//================🕹️玩家================//
+
+/**
+ * 根据「队伍id」判断「是否互为敌方」
+ * @param player 其中一个玩家
+ * @param other 另一个玩家
+ * @returns 是否「互为敌方」
+ */
+export function isEnemy(player: IPlayer, other: IPlayer): boolean {
+    return player.team.id != other.team.id;
+}
+
+/**
+ * 根据「队伍id」判断「是否互为友方」
+ * @param player 其中一个玩家
+ * @param other 另一个玩家
+ * @returns 是否「互为友方」
+ */
+export function isAlly(player: IPlayer, other: IPlayer): boolean {
+    return player.team.id == other.team.id;
+}
 
 /**
  * 当玩家「得到奖励」所用的逻辑
@@ -181,7 +252,7 @@ export function playerPickupBonusBox(
     // Stats Operations
     player.stats.pickupBonusBoxCount++;
     // Remove
-    host.entitySystem.remove(bonusBox);
+    host.removeEntity(bonusBox);
 }
 
 
@@ -379,7 +450,6 @@ export const computeFinalLightningEnergy = (
     baseEnergy * intMin(1 + buffDamage / 20 + buffRadius / 10, 10)
 )
 
-
 /**
  * 计算玩家的「总游戏分数」
  * * 应用：衡量一个玩家在游戏中的「一般表现」
@@ -399,6 +469,242 @@ export const computeTotalPlayerScore = (stats: PlayerStats): uint => ReLU_I(
     + stats.causeDamage
     - stats.damageBy
 );
+
+// 玩家钩子函数（from`Game.as`） //
+
+export function handlePlayerMove(host: IBatrMatrix, player: IPlayer): void {
+}
+
+export function handlePlayerUse(host: IBatrMatrix, player: IPlayer, rot: uint, distance: number): void {
+}
+
+/**
+ * 处理「玩家伤害」事件
+ * @param host 所处的「游戏母体」
+ * @param attacker 攻击者
+ * @param victim 受害者
+ * @param damage 伤害
+ */
+export function handlePlayerHurt(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
+    // 存入统计信息
+    if (host.rule.getRule<boolean>(GameRule_V1.key_recordPlayerStats)) {
+        // 受害者の统计
+        victim.stats.damageBy += damage;
+        victim.stats.addDamageByPlayerCount(attacker, damage);
+        // 攻击者の统计
+        if (attacker !== null) {
+            attacker.stats.causeDamage += damage;
+            // 对特定玩家的统计
+            attacker.stats.addCauseDamagePlayerCount(victim, damage);
+            // 伤害自身
+            if (victim === attacker)
+                victim.stats.causeDamageOnSelf += damage;
+            // 伤害友方
+            if (isAlly(attacker, victim)) {
+                victim.stats.damageByAlly += damage;
+                attacker.stats.causeDamageOnAlly += damage;
+            }
+        }
+    }
+}
+
+/**
+ * 处理「玩家死亡」
+ * @param host 所处的「游戏母体」
+ * @param attacker 攻击者
+ * @param victim 受害者
+ * @param damage 致死的伤害
+ */
+export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
+    // 清除「储备生命值」 //
+    victim.heal = 0;
+    // 特效 //
+    // 死亡光效
+    host.addEntities(
+        EffectPlayerDeathLight.fromPlayer(
+            victim.position,
+            victim, false/* 淡出 */
+        ),
+        EffectPlayerDeathFadeout.fromPlayer(
+            victim.position,
+            victim, false/* 淡出 */
+        )
+    );
+
+    // Set Victim
+    // victim.visible = false; // !【2023-10-03 21:09:59】交给「显示端」
+
+    // 取消激活
+    victim.isActive = false;
+    // 工具使用状态重置
+    victim.tool.resetUsingState();
+
+    // 重生 //
+    // 重置重生时间
+    // 保存死亡点，在后续生成奖励箱时使用
+    let deadP: iPoint = victim.position.copy();
+    // 移动受害者到指定地方
+    victim.position = host.rule.safeGetRule<iPoint>(GameRule_V1.key_deadPlayerMoveTo);
+    // TODO: 统一设置位置？
+
+    // victim.gui.visible = false; // TODO: 显示更新
+
+    // Store Stats
+    if (host.rule.safeGetRule<boolean>(GameRule_V1.key_recordPlayerStats)) {
+        // 总体死亡数据
+        victim.stats.deathCount++;
+        // 总体死亡
+        victim.stats.deathByPlayer++;
+        victim.stats.addDeathByPlayerCount(attacker);
+        // 击杀者非空
+        if (attacker !== null) {
+            // 自杀
+            if (victim === attacker)
+                victim.stats.suicideCount++;
+            // 击杀者
+            attacker.stats.killCount++;
+            attacker.stats.addKillPlayerCount(victim);
+            // 友方
+            if (isAlly(attacker, victim)) {
+                attacker.stats.killAllyCount++;
+                victim.stats.deathByAllyCount++;
+            }
+        }
+    }
+    // 死后在当前位置生成奖励箱
+    if (host.rule.bonusBoxSpawnAfterPlayerDeath &&
+        (host.rule.bonusBoxMaxCount < 0 || host._entitySystem.bonusBoxCount < host.rule.bonusBoxMaxCount) &&
+        host.testCanPass(deadX, deadY, true, false, true, true, true)) {
+        host.addBonusBox(deadX, deadY, host.rule.randomBonusEnable);
+    }
+    // 触发击杀者的「击杀玩家」事件
+    if (attacker !== null)
+        attacker.onKillPlayer(host, this, damage);
+    // 检测「游戏结束」 // TODO: 
+    host.testGameEnd();
+}
+
+/**
+ * 当一个玩家首次调用「重生」时
+ * * 逻辑：恢复生命⇒（打开显示⇒）特效&坐标分派
+ * @param host 所涉及的「游戏母体」
+ * @param player 重生的玩家
+ */
+export function handlePlayerRespawn(host: IBatrMatrix, player: IPlayer): void {
+    // Active
+    player.HP = player.maxHP;
+    player.isActive = true;
+    /* // Visible // !【2023-10-03 23:37:11】弃置，留给「显示端」
+    player.visible = true;
+    player.gui.visible = true; */
+    // Spread&Effect
+    host.respawnPlayer(player);
+}
+
+/**
+ * 在玩家移出方块之前
+ */
+export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
+    if (!player.isActive) return;
+    // TODO: 这里应该是要分派一个方块事件，而非把专用代码塞里头
+    // let type: BlockType | null = host.map.storage.getBlockType(oldP);
+    // let attr: BlockAttributes | null = host.map.storage.getBlockAttributes(oldP);
+    let block: Block | null = host.map.storage.getBlock(oldP);
+    // 一个逻辑：「打开的门」在玩家移走（后）关闭
+    if (block instanceof BlockGate) {
+        (block as BlockGate).open = false;
+        // ? 直接修改方块属性是否靠谱？利不利于游戏响应（特别是显示端）
+    }
+}
+
+/**
+ * 在玩家位置改变时
+ * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
+ */
+export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
+    // Detect
+    if (!player.isActive || !player.visible)
+        return;
+    // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
+    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
+    // 测试「是否拾取到奖励箱」
+    bonusBoxTest(host, player, newP);
+}
+
+/**
+ * 用于获取一个「游戏母体」内所有的奖励箱
+ * * 特殊高效分派逻辑：使用「约定属性」`bonusBoxes`（可以是getter）
+ * 
+ * 📌JS知识：`in`能匹配getter，而`hasOwnProperty`不行
+ * 
+ * @param host 所在的「游戏母体」
+ * @returns 所有奖励箱的列表
+ */
+export function getBonusBoxes(host: IBatrMatrix): BonusBox[] {
+    // 💭【2023-10-03 23:44:22】根据类型做分派，但要导入「具体类型」……
+    // 📌【2023-10-03 23:46:04】约定使用特殊的「bonusBoxes」属性做「特殊化」
+    if ('bonusBoxes' in host) {
+        return (host as any).bonusBoxes;
+    }
+    // 否则用最笨的方法
+    else {
+        return host.entities.filter(
+            (e) => e instanceof BonusBox
+        ) as BonusBox[];
+    }
+}
+
+/**
+ * 测试玩家「拾取奖励箱」的逻辑
+ * 
+ * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
+ */
+export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
+    if (!player.isActive) return false;
+    for (let bonusBox of getBonusBoxes(host)) {
+        if (host.hitTestPlayer(player, at)) { // TODO: 【2023-10-03 23:55:46】断点
+            playerPickupBonusBox(host, player, bonusBox);
+            player.onPickupBonusBox(host, bonusBox);
+            host.testGameEnd();
+            return true;
+        }
+    }
+    return false;
+}
+
+export function handlePlayerTeamsChange(host: IBatrMatrix/* , event: GameRuleEvent */): void {
+    randomizeAllPlayerTeam(host);
+}
+
+export function handlePlayerLevelup(host: IBatrMatrix, player: IPlayer): void {
+    let color: uint;
+    let i: uint = 0;
+    let nowE: uint = exMath.random(4);
+    // Add buff of cd,resistance,radius,damage
+    while (i < 3) {
+        switch (nowE) {
+            case 1:
+                color = BonusBoxSymbol.BUFF_CD_COLOR;
+                player.buffCD += host.rule.bonusBuffAdditionAmount;
+                break;
+            case 2:
+                color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
+                player.buffResistance += host.rule.bonusBuffAdditionAmount;
+                break;
+            case 3:
+                color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
+                player.buffRadius += host.rule.bonusBuffAdditionAmount;
+                break;
+            default:
+                color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
+                player.buffDamage += host.rule.bonusBuffAdditionAmount;
+        }
+        nowE = (nowE + 1) & 3;
+        i++;
+        // Add Effect
+        host.addPlayerLevelupEffect(player.entityX + (i & 1) - 0.5, player.entityY + (i >> 1) - 0.5, color, 0.75);
+    }
+}
 
 //================ 方块随机刻函数 ================//
 
@@ -437,7 +743,7 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IBatrMatrix, blo
             1, // 始终完全充能
         );
         host.map.storage.setVoid(position);
-        host.entitySystem.register(p);
+        host.addEntity(p);
         // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次
         if (!(block as MoveableWall)?.virus)
             break;
@@ -456,11 +762,12 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param position 被调用方块的位置
  */
 export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
+    // TODO: 新位置寻址逻辑
     let randomPoint: iPoint = host.map.storage.randomPoint;
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
     if (!host.map.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
-        host.setBlock(randomPoint, newBlock); // * 后续游戏需要处理「方块更新事件」
-        host.addBlockLightEffect2(
+        host.map.storage.setBlock(randomPoint, newBlock); // * 后续游戏需要处理「方块更新事件」
+        host.addBlockLightEffect(
             alignToGridCenter_P(randomPoint, _temp_randomTick_ColorSpawner),
             newBlock, false
         );
@@ -533,7 +840,7 @@ export const randomTick_LaserTrap: randomTickEventF = (
                 break;
         }
         if (p !== null) {
-            host.entitySystem.register(p);
+            host.addEntity(p);
             // host.projectileContainer.addChild(p);
             // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
         }
@@ -550,47 +857,12 @@ export const randomTick_LaserTrap: randomTickEventF = (
  * @param position 被调用方块的位置
  */
 export const randomTick_Gate: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
+    // 已经打开的不要管
+    if (block instanceof BlockGate && (block as BlockGate).open) return;
+    // 关闭的「门」随着随机刻打开
     let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
     newBlock.open = true;
     host.setBlock(position, newBlock);
-}
-
-/**
- * 根据「队伍id」判断「是否互为敌方」
- * @param player 其中一个玩家
- * @param other 另一个玩家
- * @returns 是否「互为敌方」
- */
-export function isEnemy(player: IPlayer, other: IPlayer): boolean {
-    return player.team.id != other.team.id;
-}
-
-/**
- * 根据「队伍id」判断「是否互为友方」
- * @param player 其中一个玩家
- * @param other 另一个玩家
- * @returns 是否「互为友方」
- */
-export function isAlly(player: IPlayer, other: IPlayer): boolean {
-    return player.team.id == other.team.id;
-}
-
-/**
- * 判断「玩家发射的抛射体是否能伤害另一位玩家」
- * * 重定向至「玩家是否能伤害玩家」，并使用抛射体自身属性
- * @param projectile 抛射体
- * @param other 可能被伤害的玩家
- * @returns 「是否能伤害」
- */
-export function projectileCanHurtOther(
-    projectile: Projectile, other: IPlayer,
-): boolean {
-    return playerCanHurtOther(
-        projectile.owner, other,
-        projectile.canHurtEnemy,
-        projectile.canHurtSelf,
-        projectile.canHurtAlly
-    );
 }
 
 /**
@@ -616,6 +888,24 @@ export function playerCanHurtOther(
     );
 }
 
+/**
+ * 判断「玩家发射的抛射体是否能伤害另一位玩家」
+ * * 重定向至「玩家是否能伤害玩家」，并使用抛射体自身属性
+ * @param projectile 抛射体
+ * @param other 可能被伤害的玩家
+ * @returns 「是否能伤害」
+ */
+export function projectileCanHurtOther(
+    projectile: Projectile, other: IPlayer,
+): boolean {
+    return playerCanHurtOther(
+        projectile.owner, other,
+        projectile.canHurtEnemy,
+        projectile.canHurtSelf,
+        projectile.canHurtAlly
+    );
+}
+
 // 抛射物逻辑 //
 
 /**
@@ -629,7 +919,7 @@ export function waveHurtPlayers(host: IBatrMatrix, wave: Wave): void {
     /** Wave的尺寸即为其伤害半径 */
     let radius: number = wave.nowScale;
     // 开始遍历所有玩家
-    for (let victim of host.entitySystem.players) {
+    for (let victim of host.getPlayers()) { // TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
         // FinalDamage
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {

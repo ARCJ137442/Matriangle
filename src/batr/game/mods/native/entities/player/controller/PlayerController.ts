@@ -33,7 +33,7 @@ export default abstract class PlayerController extends GameController {
     public abstract reactKillPlayer(self: IPlayer, host: IBatrMatrix, victim: IPlayer, damage: uint): PlayerAction;
     /** 在「拾起奖励箱」时响应 */
     public abstract reactPickupBonusBox(self: IPlayer, host: IBatrMatrix, box: BonusBox): PlayerAction;
-    /** 在「重生」时响应（⚠这时候应该已经恢复了状态，比如active参数） */
+    /** 在「重生」时响应（⚠️这时候应该已经恢复了状态，比如active参数） */
     public abstract reactRespawn(self: IPlayer, host: IBatrMatrix): PlayerAction;
     /** 在「地图变换」时响应（这时候地图应已变换完成） */
     public abstract reactMapTransform(self: IPlayer, host: IBatrMatrix): PlayerAction;

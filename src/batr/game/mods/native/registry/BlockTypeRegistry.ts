@@ -84,8 +84,7 @@ export module NativeBlockTypes {
 	export const METAL: BlockType = Metal
 	export const SPAWN_POINT_MARK: BlockType = SpawnPointMark
 	export const SUPPLY_POINT: BlockType = SupplyPoint
-	export const GATE_OPEN: BlockType = Gate
-	export const GATE_CLOSE: BlockType = Gate
+	export const GATE: BlockType = Gate // !【2023-10-03 22:21:37】现在合二为一，状态留给Block对象
 	export const MOVEABLE_WALL: BlockType = MoveableWall
 
 }
@@ -105,8 +104,7 @@ export const ALL_NATIVE_BLOCKS: BlockType[] = [
 	NativeBlockTypes.METAL,
 	NativeBlockTypes.SPAWN_POINT_MARK,
 	NativeBlockTypes.SUPPLY_POINT,
-	NativeBlockTypes.GATE_OPEN,
-	NativeBlockTypes.GATE_CLOSE,
+	NativeBlockTypes.GATE,
 	NativeBlockTypes.MOVEABLE_WALL,
 ]
 

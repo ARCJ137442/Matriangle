@@ -499,3 +499,40 @@ export function verifyIntPointStrict(p: iPointRef): iPointRef {
 	if (p.every(Number.isInteger)) return p
 	else throw new Error(`点${p}不是整数点`)
 }
+
+/**
+ * （整数%整数版本）把一个点在每个坐标轴的坐标都限制在「原点xi-模点xi」中
+ * * 原理：坐标逐个位取模
+ * * 应用：构建高维版本的「有限无界地图」
+ * 
+ * ! 破坏性操作：会改变参数`p`
+ * 
+ * @param p 待约束坐标的点
+ * @param modP 作为「各方面坐标上限」的点（取模后）
+ * @returns 坐标被约束后的点
+ */
+export function modPoint_II(p: iPointRef, modP: iPointRef): iPointRef {
+	for (let i: uint = 0; i < p.length; ++i) {
+		p[i] %= modP[i];
+	}
+	return p;
+}
+
+
+/**
+ * （浮点数%整数版本）把一个点在每个坐标轴的坐标都限制在「原点xi-模点xi」中
+ * * 原理：坐标逐个位取模
+ * * 应用：构建高维版本的「有限无界地图」
+ * 
+ * ! 破坏性操作：会改变参数`p`
+ * 
+ * @param p 待约束坐标的点
+ * @param modP 作为「各方面坐标上限」的点（取模后）
+ * @returns 坐标被约束后的点
+ */
+export function modPoint_FI(p: fPointRef, modP: iPointRef): fPointRef {
+	for (let i: uint = 0; i < p.length; ++i) {
+		p[i] %= modP[i];
+	}
+	return p;
+}

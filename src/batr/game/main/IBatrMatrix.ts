@@ -49,10 +49,15 @@ export default interface IBatrMatrix {
 	 * * 📌或许这个应该把「内部的实体管理者」封装好，不要让外界过多访问
 	 */
 	// get entitySystem(): EntitySystem;
-	get numPlayers(): uint;
+	// get numPlayers(): uint; // !【2023-10-03 23:42:20】目前废弃：这里不应该留有任何「专用代码」……通用与效率的冲突，且「没有任何后门……」
 	// get nextPlayerID(): uint // !【2023-10-02 22:04:47】废弃：应该在外部缓存，而非在母体之中
 	// get nextAIID(): uint // !【2023-10-02 22:04:47】废弃：应该在外部缓存，而非在母体之中
 	// set entityAndEffectVisible(value: boolean); // !【2023-10-02 22:36:32】弃用：不再涉及「显示呈现」
+
+	/**
+	 * 获取所有实体
+	 */
+	get entities(): Entity[];
 
 	/**
 	 * （新）管理实体
@@ -61,6 +66,11 @@ export default interface IBatrMatrix {
 	 * @returns 是否添加成功
 	 */
 	addEntity(entity: Entity): boolean;
+
+	/**
+	 * 批量添加一系列实体
+	 */
+	addEntities(...entities: Entity[]): void;
 
 	/**
 	 * @returns 是否删除成功

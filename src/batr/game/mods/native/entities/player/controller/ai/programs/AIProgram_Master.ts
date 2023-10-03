@@ -36,7 +36,7 @@ export default class AIProgram_Master implements IAIProgram {
 	 * @param	player	The player.
 	 * @return	A int will be multi with G.
 	 */
-	protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
+	protected static getPathWeight(node: PathNode, host: IBatrGame, player: IPlayer): int {
 		let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 		if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 			return 1000;
@@ -157,12 +157,12 @@ export default class AIProgram_Master implements IAIProgram {
 		return _nearestBox;
 	}
 
-	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): Player {
+	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): IPlayer {
 		// getManhattanDistance
-		let _nearestEnemy: Player = null;
+		let _nearestEnemy: IPlayer = null;
 		let _nearestDistance: int = int.MAX_VALUE;
 		let _tempDistance: int;
-		let players: Player[] = host.getAlivePlayers();
+		let players: IPlayer[] = host.getAlivePlayers();
 		for (let player of players) {
 			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 				player == null || this.inCloseTarget(player))
@@ -201,7 +201,7 @@ export default class AIProgram_Master implements IAIProgram {
 		// Set Variables
 		let host: IBatrGame = player.host;
 		let ownerPoint: iPoint = player.gridPoint;
-		let lastTargetPlayer: Player = this._lastTarget as Player;
+		let lastTargetPlayer: IPlayer = this._lastTarget as Player;
 		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
 		// Init remember
 		if (this._remember == null) {
@@ -332,12 +332,12 @@ export default class AIProgram_Master implements IAIProgram {
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		this._pickupWeight += damage;
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		// Run
 		if (player.HPPercent < 0.5) {
 			if (this._pickupWeight > 0)
@@ -362,13 +362,13 @@ export default class AIProgram_Master implements IAIProgram {
 			return AIPlayerAction.MOVE_RIGHT_REL;
 	}
 
-	public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnKill(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		this.resetTarget();
 		this.resetCloseTarget();
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		return AIPlayerAction.NULL;
 	}
 

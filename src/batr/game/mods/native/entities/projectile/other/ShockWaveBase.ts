@@ -97,7 +97,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 		if (this._life <= 0) {
 			this.summonDrones(host);
 			// Remove
-			host.entitySystem.remove(this);
+			host.removeEntity(this);
 		}
 		else {
 			this._life--;
@@ -168,7 +168,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			this._attackerDamage, this._extraDamageCoefficient,
 			this._toolChargePercent
 		);
-		host.entitySystem.register(drone);
+		host.addEntities(drone);
 		// host.projectileContainer.addChild(drone); // ! 解耦
 	}
 

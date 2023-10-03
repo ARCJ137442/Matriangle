@@ -1,5 +1,4 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
-import AIPlayer from "../player/AIPlayer";
 import Player from "../player/Player";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../common/geometricTools";
@@ -28,7 +27,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 	 * @param reverse 是否倒放
 	 * @returns 一个新特效
 	 */
-	public static fromPlayer(position: fPoint, player: Player, reverse: boolean = false): EffectPlayerDeathLight {
+	public static fromPlayer(position: fPoint, player: IPlayer, reverse: boolean = false): EffectPlayerDeathLight {
 		return new EffectPlayerDeathLight(
 			position, 0, //player.direction, // TODO: 等待玩家方迁移
 			player.fillColor,

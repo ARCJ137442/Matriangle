@@ -8,7 +8,6 @@ import IBatrMatrix from "../../../../main/IBatrMatrix";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import BonusBox from "../item/BonusBox";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 

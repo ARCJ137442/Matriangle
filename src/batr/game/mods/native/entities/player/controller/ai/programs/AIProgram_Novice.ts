@@ -14,10 +14,10 @@ export default class AIProgram_Novice implements IAIProgram {
 	public static readonly LABEL_SHORT: string = 'N';
 
 	//============Static Functions============//
-	protected static getLineEnemyPlayer(owner: AIPlayer): Player {
+	protected static getLineEnemyPlayer(owner: AIPlayer): IPlayer {
 		if (owner == null)
 			return null;
-		let mapPlayers: Player[] = owner.host.getInMapPlayers();
+		let mapPlayers: IPlayer[] = owner.host.getInMapPlayers();
 		for (let player of mapPlayers) {
 			if (player == owner)
 				continue;
@@ -86,7 +86,7 @@ export default class AIProgram_Novice implements IAIProgram {
 		// Refresh Wait
 		if (this._waitTime >= this._maxWaitTime)
 			this._waitTime = -this._moveMaxSum;
-		let target: Player = AIProgram_Novice.getLineEnemyPlayer(player);
+		let target: IPlayer = AIProgram_Novice.getLineEnemyPlayer(player);
 		let lineBonus: BonusBox = AIProgram_Novice.getLineBonusBox(player);
 		// Auto Pickup BonusBox
 		if (lineBonus !== null && this._waitTime >= 0 && this._waitTime < this._maxWaitTime) {
@@ -146,12 +146,12 @@ export default class AIProgram_Novice implements IAIProgram {
 		return AIPlayerAction.MOVE_FORWARD;
 	}
 
-	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		this._waitTime = 0;
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		// random move beside on under attack
 		if (Utils.randomBoolean())
 			return AIPlayerAction.MOVE_LEFT_REL;
@@ -159,12 +159,12 @@ export default class AIProgram_Novice implements IAIProgram {
 			return AIPlayerAction.MOVE_RIGHT_REL;
 	}
 
-	public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnKill(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		this._waitTime = 0;
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		this._waitTime = 0;
 		return AIPlayerAction.NULL;
 	}

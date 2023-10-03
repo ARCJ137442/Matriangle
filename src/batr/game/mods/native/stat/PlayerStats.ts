@@ -11,7 +11,7 @@ export default class PlayerStats {
 	protected _profile: IPlayerProfile | null;
 
 	/** 重定向玩家 */
-	public redirectPlayer(player: IPlayer): PlayerStats {
+	public redirectPlayer(player: IPlayer | null): PlayerStats {
 		this._profile = player;
 		return this;
 	}
@@ -32,19 +32,19 @@ export default class PlayerStats {
 	/** 死亡因玩家 */
 	public deathByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
 
-	public getKillPlayerCount(player: IPlayer): uint { return this.killPlayers.getPlayerValue(player); }
-	public setKillPlayerCount(player: IPlayer, value: uint): void {
+	public getKillPlayerCount(player: IPlayer | null): uint { return this.killPlayers.getPlayerValue(player); }
+	public setKillPlayerCount(player: IPlayer | null, value: uint): void {
 		this.killPlayers.setPlayerValue(player, value);
 	}
-	public addKillPlayerCount(player: IPlayer, value: uint = 1): void {
+	public addKillPlayerCount(player: IPlayer | null, value: uint = 1): void {
 		this.killPlayers.setPlayerValue(player, this.getKillPlayerCount(player) + value);
 	}
 
-	public getDeathByPlayerCount(player: IPlayer): uint { return this.deathByPlayers.getPlayerValue(player); }
-	public setDeathByPlayerCount(player: IPlayer, value: uint): void {
+	public getDeathByPlayerCount(player: IPlayer | null): uint { return this.deathByPlayers.getPlayerValue(player); }
+	public setDeathByPlayerCount(player: IPlayer | null, value: uint): void {
 		this.deathByPlayers.setPlayerValue(player, value);
 	}
-	public addDeathByPlayerCount(player: IPlayer, value: uint = 1): void {
+	public addDeathByPlayerCount(player: IPlayer | null, value: uint = 1): void {
 		this.deathByPlayers.setPlayerValue(player, this.getDeathByPlayerCount(player) + value);
 	}
 
@@ -56,20 +56,20 @@ export default class PlayerStats {
 
 	/** 对玩家造成伤害 */
 	public causeDamagePlayers: Stat_PlayerCount = new Stat_PlayerCount();
-	public getCauseDamagePlayerCount(player: IPlayer): uint { return this.causeDamagePlayers.getPlayerValue(player); }
-	public setCauseDamagePlayerCount(player: IPlayer, value: uint): void {
+	public getCauseDamagePlayerCount(player: IPlayer | null): uint { return this.causeDamagePlayers.getPlayerValue(player); }
+	public setCauseDamagePlayerCount(player: IPlayer | null, value: uint): void {
 		this.causeDamagePlayers.setPlayerValue(player, value);
 	}
-	public addCauseDamagePlayerCount(player: IPlayer, value: uint = 1): void {
+	public addCauseDamagePlayerCount(player: IPlayer | null, value: uint = 1): void {
 		this.causeDamagePlayers.setPlayerValue(player, this.getCauseDamagePlayerCount(player) + value);
 	}
 	/** 受到玩家之伤害 */
 	public damageByPlayers: Stat_PlayerCount = new Stat_PlayerCount();
-	public getDamageByPlayerCount(player: IPlayer): uint { return this.damageByPlayers.getPlayerValue(player); }
-	public setDamageByPlayerCount(player: IPlayer, value: uint): void {
+	public getDamageByPlayerCount(player: IPlayer | null): uint { return this.damageByPlayers.getPlayerValue(player); }
+	public setDamageByPlayerCount(player: IPlayer | null, value: uint): void {
 		this.damageByPlayers.setPlayerValue(player, value);
 	}
-	public addDamageByPlayerCount(player: IPlayer, value: uint = 1): void {
+	public addDamageByPlayerCount(player: IPlayer | null, value: uint = 1): void {
 		this.damageByPlayers.setPlayerValue(player, this.getDamageByPlayerCount(player) + value);
 	}
 
@@ -141,7 +141,7 @@ class Stat_PlayerCount extends Map<IPlayer | null, uint> {
 	 * @param player 获取的玩家
 	 * @returns 这个玩家对应的值
 	 */
-	public getPlayerValue(player: IPlayer | null): uint {
+	public getPlayerValue(player: IPlayer | null | null): uint {
 		return uint(this.get(player));
 	}
 
@@ -151,12 +151,12 @@ class Stat_PlayerCount extends Map<IPlayer | null, uint> {
 	 * @param value 设置的值
 	 * @returns 自身
 	 */
-	public setPlayerValue(player: IPlayer | null, value: uint): Stat_PlayerCount {
+	public setPlayerValue(player: IPlayer | null | null, value: uint): Stat_PlayerCount {
 		this.set(player, value);
 		return this;
 	}
 
-	public resetPlayerValue(player: IPlayer): Stat_PlayerCount {
+	public resetPlayerValue(player: IPlayer | null): Stat_PlayerCount {
 		this.set(player, 0);
 		return this;
 	}

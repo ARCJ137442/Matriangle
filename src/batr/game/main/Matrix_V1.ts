@@ -64,27 +64,6 @@ export default class Matrix_V1 implements IBatrMatrix {
 	protected _eventBus: Function[] = [];//EventBus;
 
 	//============Static Variables============//
-	// public static readonly ALL_MAPS: IMap[] = [
-	// 	Map_V1.EMPTY,
-	// 	Map_V1.FRAME,
-	// 	Map_V1.MAP_1,
-	// 	Map_V1.MAP_2,
-	// 	Map_V1.MAP_3,
-	// 	Map_V1.MAP_4,
-	// 	Map_V1.MAP_5,
-	// 	Map_V1.MAP_6,
-	// 	Map_V1.MAP_7,
-	// 	Map_V1.MAP_8,
-	// 	Map_V1.MAP_9,
-	// 	Map_V1.MAP_A,
-	// 	Map_V1.MAP_B,
-	// 	Map_V1.MAP_C,
-	// 	Map_V1.MAP_D,
-	// 	Map_V1.MAP_E,
-	// 	Map_V1.MAP_F,
-	// 	Map_V1.MAP_G,
-	// 	Map_V1.MAP_H
-	// ];
 
 	public static readonly MAP_TRANSFORM_TEXT_FORMAT: TextFormat = new TextFormat(
 		new MainFont().fontName,
@@ -137,7 +116,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	// Tools
-	public static joinNamesFromPlayers(players: Player[]): string {
+	public static joinNamesFromPlayers(players: IPlayer[]): string {
 		let result: string = '';
 		for (let i: uint = 0; i < players.length; i++) {
 			if (players[i] == null)
@@ -194,8 +173,11 @@ export default class Matrix_V1 implements IBatrMatrix {
 	protected _effectContainerTop: Sprite = new Sprite();
 
 	// Global
-	protected _isActive: boolean;
-	protected _isLoaded: boolean;
+	protected _isActive: boolean = false;
+	public get isActive(): boolean { return this._isActive; }
+	protected _isLoaded: boolean = false;
+	public get isLoaded(): boolean { return this._isLoaded; }
+
 	protected _tickTimer: Timer = new Timer(TICK_TIME_MS);
 	// protected _secondTimer:Timer=new Timer(1000);//When a timer stop and start the timer will lost its phase.
 	protected _speed: number;
@@ -216,12 +198,17 @@ export default class Matrix_V1 implements IBatrMatrix {
 	protected _second: uint;
 	protected _temp_game_rate: number = 0.0;
 
-	// HUD
-	protected _globalHUDContainer: Sprite = new Sprite();
+	//========🎯规则部分：规则加载、规则读写========//
 
-	protected _mapTransformTimeText: BatrTextField = BatrTextField.fromKey(null, null);
 
-	protected _gamePlayingTimeText: BatrTextField = BatrTextField.fromKey(null, null);
+	//========🗺️地图部分：地图加载、地图变换等========//
+	get loadedMaps(): IMap[] {
+		throw new Error("Method not implemented.");
+	}
+
+	get numLoadedMaps(): number {
+		throw new Error("Method not implemented.");
+	}
 
 	//============Constructor & Destructor============//
 	public constructor(subject: BatrSubject, active: boolean = false) {
@@ -233,18 +220,24 @@ export default class Matrix_V1 implements IBatrMatrix {
 		this.isActive = active;
 		this.addEventListener(Event.ADDED_TO_STAGE, this.onAddedToStage);
 	}
-	public addEntity(entity: Entity): void {
-		this._entitySystem.register(entity);
-	}
-	public removeEntity(entity: Entity): boolean {
-		return this._entitySystem.remove(entity);
+
+	//========🌟实体部分：实体管理、实体事件等========//
+
+	// 实现：委托到「实体系统」
+	public addEntity(entity: Entity): boolean {
+		this._entitySystem.add(entity)
+		return true;
 	}
 
-	get loadedMaps(): IMap[] {
-		throw new Error("Method not implemented.");
+	// 实现：委托到「实体系统」
+	public addEntities(...entities: Entity[]): void {
+		for (const entity of entities)
+			this._entitySystem.add(entity);
 	}
-	get numLoadedMaps(): number {
-		throw new Error("Method not implemented.");
+
+	// 实现：委托到「实体系统」
+	public removeEntity(entity: Entity): boolean {
+		return this._entitySystem.remove(entity);
 	}
 
 	//============Instance Getter And Setter============//
@@ -259,14 +252,6 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public get rule(): GameRule {
 		return this._rule;
-	}
-
-	public get translations(): I18ns {
-		return this._subject.translations;
-	}
-
-	public get isActive(): boolean {
-		return this._isActive;
 	}
 
 	public set isActive(value: boolean) {
@@ -303,10 +288,6 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public set visibleHUD(value: boolean) {
 		this._globalHUDContainer.visible = value;
-	}
-
-	public get isLoaded(): boolean {
-		return this._isLoaded;
 	}
 
 	public get speed(): number {
@@ -433,7 +414,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	//========About Game End========//
 
 	/** Condition: Only one team's player alive. */
-	protected isPlayersEnd(players: Player[]): boolean {
+	protected isPlayersEnd(players: IPlayer[]): boolean {
 		if (this.numPlayers < 2)
 			return false;
 		let team: PlayerTeam = null;
@@ -446,8 +427,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return true;
 	}
 
-	public getAlivePlayers(): Player[] {
-		let result: Player[] = new Array<Player>();
+	public getAlivePlayers(): IPlayer[] {
+		let result: IPlayer[] = new Array<Player>();
 		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
@@ -457,8 +438,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return result;
 	}
 
-	public getInMapPlayers(): Player[] {
-		let result: Player[] = new Array<Player>();
+	public getInMapPlayers(): IPlayer[] {
+		let result: IPlayer[] = new Array<Player>();
 		for (let player of this._entitySystem.players) {
 			if (player == null)
 				continue;
@@ -469,7 +450,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	public testGameEnd(force: boolean = false): void {
-		let alivePlayers: Player[] = this.getAlivePlayers();
+		let alivePlayers: IPlayer[] = this.getAlivePlayers();
 		if (this.isPlayersEnd(alivePlayers) || force) {
 			// if allowTeamVictory=false,reset team colors
 			if (!force && alivePlayers.length > 1 && !this.rule.allowTeamVictory) {
@@ -481,7 +462,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	protected resetPlayersTeamInDifferent(players: Player[]): void {
+	protected resetPlayersTeamInDifferent(players: IPlayer[]): void {
 		let tempTeamIndex: uint = exMath.random(this.rule.playerTeams.length);
 		for (let player of players) {
 			player.team = this.rule.playerTeams[tempTeamIndex];
@@ -489,13 +470,13 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	protected onGameEnd(winners: Player[]): void {
+	protected onGameEnd(winners: IPlayer[]): void {
 		this.subject.pauseGame();
 		this.subject.gotoMenu();
 		this.subject.menuObj.loadResult(this.getGameResult(winners));
 	}
 
-	protected getGameResult(winners: Player[]): GameResult {
+	protected getGameResult(winners: IPlayer[]): GameResult {
 		let result: GameResult = new GameResult(this,
 			this.getResultMessage(winners),
 			this._stat
@@ -503,7 +484,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return result;
 	}
 
-	protected getResultMessage(winners: Player[]): I18nText {
+	protected getResultMessage(winners: IPlayer[]): I18nText {
 		if (winners.length < 1) {
 			return new I18nText(this.translations, I18nKey.NOTHING_WIN);
 		}
@@ -823,7 +804,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		damage: uint, projectile: Projectile,
 		color: uint, edgePercent: number = 1): void {
 		// Operate
-		let creator: Player = projectile.owner;
+		let creator: IPlayer = projectile.owner;
 		// Effect
 		this._effectSystem.addEffect(new EffectExplode(this, x, y, finalRadius, color));
 		// Hurt Player
@@ -847,7 +828,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public laserHurtPlayers(laser: LaserBasic): void {
 		// Set Variables
-		let attacker: Player = laser.owner;
+		let attacker: IPlayer = laser.owner;
 
 		let damage: uint = laser.damage;
 
@@ -870,7 +851,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 		let vy: int = GlobalRot.towardYInt(rot, 1);
 
-		let cx: int = baseX, cy: int = baseY, players: Player[];
+		let cx: int = baseX, cy: int = baseY, players: IPlayer[];
 
 		// let nextBlockAtt:BlockAttributes
 		// Damage
@@ -916,7 +897,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	public thrownBlockHurtPlayer(block: ThrownBlock): void {
-		let attacker: Player = block.owner;
+		let attacker: IPlayer = block.owner;
 		let damage: uint = block.damage;
 		for (let victim of this._entitySystem.players) {
 			if (victim == null)
@@ -930,8 +911,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	public lightningHurtPlayers(lightning: Lightning, players: Player[], damages: uint[]): void {
-		let p: Player, d: uint;
+	public lightningHurtPlayers(lightning: Lightning, players: IPlayer[], damages: uint[]): void {
+		let p: IPlayer, d: uint;
 		for (let i in players) {
 			p = players[i];
 			d = damages[i];
@@ -953,7 +934,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	/** Execute when Player Move in block */
-	public onPlayerWalkIn(player: Player, isLocationChange: boolean = false): boolean {
+	public onPlayerWalkIn(player: IPlayer, isLocationChange: boolean = false): boolean {
 		if (!player.isActive)
 			return false;
 		let x: int = player.gridX;
@@ -988,55 +969,14 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	/**
-	 * Operate damage to player by blockAtt.playerDamage,
-	 * int.MAX_VALUE -> uint$MAX_VALUE
-	 * [...-2) -> 0
-	 * -1 -> uint$MAX_VALUE
-	 * [0,100] -> player.maxHP*playerDamage/100
-	 * (100...] -> playerDamage-100
-	 * @return	The damage.
+	 * 对接「原生游戏机制」`getBonusBoxes`的约定
+	 * 
+	 * TODO: 仍然要等进一步「专用化」，或许「实体系统」要再次抽象？
 	 */
-	public computeFinalPlayerHurtDamage(player: Player, x: int, y: int, playerDamage: int): uint {
-		if (playerDamage < -1)
-			return 0;
-		if (playerDamage == -1)
-			return this.rule.playerAsphyxiaDamage;
-		if (playerDamage == int.MAX_VALUE)
-			return uint$MAX_VALUE;
-		if (playerDamage <= 100)
-			return player.maxHP * playerDamage / 100;
-		return playerDamage - 100;
-	}
-
-	/**
-	 * Execute when Player Move out block
-	 * @param	x	the old X
-	 * @param	y	the old Y
-	 */
-	public moveOutTestPlayer(player: Player, x: int, y: int, isLocationChange: boolean = false): void {
-		if (!player.isActive)
-			return;
-		let type: BlockType = this.getBlockType(x, y);
-		if (type == BlockType.GATE_OPEN) {
-			this.setBlock(x, y, Block.fromType(BlockType.GATE_CLOSE));
-		}
-	}
-
-	/** Function about Player pickup BonusBox */
-	public bonusBoxTest(player: Player, x: number = NaN, y: number = NaN): boolean {
-		if (!player.isActive)
-			return false;
-		x = isNaN(x) ? player.gridX : x;
-		y = isNaN(y) ? player.gridY : y;
-		for (let bonusBox of this._entitySystem.bonusBoxes) {
-			if (this.hitTestPlayer(player, bonusBox.gridX, bonusBox.gridY)) {
-				bonusBox.onPlayerPickup(player);
-				player.onPickupBonusBox(bonusBox);
-				this.testGameEnd();
-				return true;
-			}
-		}
-		return false;
+	get bonusBoxes(): BonusBox[] {
+		return this._entitySystem.getAllEntry().filter(
+			(e) => e instanceof BonusBox
+		) as BonusBox[];
 	}
 
 	//====Functions About Map====//
@@ -1192,7 +1132,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		else
 			this.changeMap(destination, true, true);
 		// Call AI
-		let players: Player[] = this.getAlivePlayers();
+		let players: IPlayer[] = this.getAlivePlayers();
 		for (let player of players) {
 			if (player instanceof Player)
 				(player as Player).onMapTransform();
@@ -1223,14 +1163,14 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	//====Functions About Player====//
-	protected createPlayer(x: int, y: int, id: uint, team: PlayerTeam, isActive: boolean = true): Player {
+	protected createPlayer(x: int, y: int, id: uint, team: PlayerTeam, isActive: boolean = true): IPlayer {
 		return new Player(this, x, y, team, id, isActive);
 	}
 
-	public addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): Player {
+	public addPlayer(id: uint, team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): IPlayer {
 		// Define
-		let p: Player = this.createPlayer(x, y, id, team, isActive);
-		this._entitySystem.registerPlayer(p);
+		let p: IPlayer = this.createPlayer(x, y, id, team, isActive);
+		this._entitySystem.addPlayer(p);
 		// Set
 		p.rot = rot;
 		p.customName = name == null ? 'P' + id : name;
@@ -1241,7 +1181,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	// Set player datas for gaming
-	public setupPlayer(player: Player): Player {
+	public setupPlayer(player: IPlayer): IPlayer {
 		// Position
 		this.respawnPlayer(player);
 		// Variables
@@ -1255,7 +1195,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	// Add a player uses random position and tool
-	public appendPlayer(controlKeyID: uint = 0): Player {
+	public appendPlayer(controlKeyID: uint = 0): IPlayer {
 		let id: uint = controlKeyID == 0 ? this.nextPlayerID : controlKeyID;
 		console.log('Append Player in ID', id);
 		return this.setupPlayer(
@@ -1270,7 +1210,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	public addAI(team: PlayerTeam, x: int, y: int, rot: uint = 0, isActive: boolean = true, name: string = null): AIPlayer {
 		// Define
 		let p: AIPlayer = this.createAI(x, y, team, isActive);
-		this._entitySystem.registerPlayer(p);
+		this._entitySystem.addPlayer(p);
 		// Set
 		p.rot = rot;
 		p.customName = name == null ? this.autoGetAIName(p) : name;
@@ -1280,7 +1220,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return p;
 	}
 
-	public appendAI(): Player {
+	public appendAI(): IPlayer {
 		return this.setupPlayer(
 			this.addAI(this.rule.randomTeam, -1, -1, 0, false, null)
 		);
@@ -1291,7 +1231,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	public spawnPlayersByRule(): void {
-		let i: uint, player: Player;
+		let i: uint, player: IPlayer;
 
 		// Setup Player
 		for (i = 0; i < this.rule.playerCount; i++) {
@@ -1307,7 +1247,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	public teleportPlayerTo(player: Player, x: int, y: int, rotateTo: uint = GlobalRot.NULL, effect: boolean = false): Player {
+	public teleportPlayerTo(player: IPlayer, x: int, y: int, rotateTo: uint = GlobalRot.NULL, effect: boolean = false): IPlayer {
 		player.isActive = false;
 		if (GlobalRot.isValidRot(rotateTo))
 			player.setPositions(PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), rotateTo);
@@ -1324,7 +1264,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return player;
 	}
 
-	public spreadPlayer(player: Player, rotatePlayer: boolean = true, createEffect: boolean = true): Player {
+	public spreadPlayer(player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
 		if (player == null || player.isRespawning)
 			return player;
 		let p: iPoint = new iPoint(0, 0);
@@ -1345,7 +1285,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	 * @param	player	The player will respawn.
 	 * @return	The same as param:player.
 	 */
-	public respawnPlayer(player: Player): Player {
+	public respawnPlayer(player: IPlayer): IPlayer {
 		// Test
 		if (player == null || player.isRespawning)
 			return player;
@@ -1375,7 +1315,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	 * @param	y	SpawnPoint.y
 	 * @return	The nearest point from SpawnPoint.
 	 */
-	protected findFitSpawnPoint(player: Player, x: int, y: int): iPoint {
+	protected findFitSpawnPoint(player: IPlayer, x: int, y: int): iPoint {
 		// Older Code uses Open List/Close List
 		/*{
 			let oP:uint[]=[UintPointCompress.compressFromPoint(x,y)];
@@ -1408,7 +1348,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return p;
 	}
 
-	protected subFindSpawnPoint(player: Player, x: int, y: int, r: int): iPoint {
+	protected subFindSpawnPoint(player: IPlayer, x: int, y: int, r: int): iPoint {
 		for (let cx: int = x - r; cx <= x + r; cx++) {
 			for (let cy: int = y - r; cy <= y + r; cy++) {
 				if (exMath.intAbs(cx - x) == r && exMath.intAbs(cy - y) == r) {
@@ -1426,11 +1366,11 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	public hitTestOfPlayer(p1: Player, p2: Player): boolean {
+	public hitTestOfPlayer(p1: IPlayer, p2: IPlayer): boolean {
 		return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
 	}
 
-	public hitTestPlayer(player: Player, x: int, y: int): boolean {
+	public hitTestPlayer(player: IPlayer, x: int, y: int): boolean {
 		return (x == player.gridX && y == player.gridY);
 	}
 
@@ -1444,7 +1384,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return false;
 	}
 
-	public isHitAnotherPlayer(player: Player): boolean {
+	public isHitAnotherPlayer(player: IPlayer): boolean {
 		// Loop
 		for (let p2 of this._entitySystem.players) {
 			if (p2 == player)
@@ -1459,7 +1399,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public hitTestOfPlayers(...players): boolean {
 		// Transform
-		let _pv: Player[] = new Player[];
+		let _pv: IPlayer[] = new Player[];
 
 		let p: any;
 
@@ -1482,9 +1422,9 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return false;
 	}
 
-	public getHitPlayers(x: number, y: number): Player[] {
+	public getHitPlayers(x: number, y: number): IPlayer[] {
 		// Set
-		let returnV: Player[] = new Player[];
+		let returnV: IPlayer[] = new Player[];
 
 		// Test
 		for (let player of this._entitySystem.players) {
@@ -1496,7 +1436,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return returnV;
 	}
 
-	public getHitPlayerAt(x: int, y: int): Player {
+	public getHitPlayerAt(x: int, y: int): IPlayer {
 		for (let player of this._entitySystem.players) {
 			if (this.hitTestPlayer(player, x, y)) {
 				return player;
@@ -1511,7 +1451,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	public randomizePlayerTeam(player: Player): void {
+	public randomizePlayerTeam(player: IPlayer): void {
 		let tempT: PlayerTeam, i: uint = 0;
 		do {
 			tempT = this.rule.randomTeam;
@@ -1555,7 +1495,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 	}
 
-	public movePlayer(player: Player, rot: uint, distance: number): void {
+	public movePlayer(player: IPlayer, rot: uint, distance: number): void {
 		// Detect
 		if (!player.isActive || !player.visible)
 			return;
@@ -1572,20 +1512,20 @@ export default class Matrix_V1 implements IBatrMatrix {
 		this.onPlayerMove(player);
 	}
 
-	public playerUseTool(player: Player, rot: uint, chargePercent: number): void {
+	public playerUseTool(player: IPlayer, rot: uint, chargePercent: number): void {
 		// Test CD
 		if (player.toolUsingCD > 0)
 			return;
 		// Set Variables
-		let spawnX: number = player.tool.useOnCenter ? player.entityX : player.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
-		let spawnY: number = player.tool.useOnCenter ? player.entityY : player.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
+		let spawnX: number = player.tool.useOnCenter ? player.entityX : IPlayer.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
+		let spawnY: number = player.tool.useOnCenter ? player.entityY : IPlayer.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
 		// Use
 		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
 		// Set CD
-		player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : player.computeFinalCD(player.tool);
+		player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : IPlayer.computeFinalCD(player.tool);
 	}
 
-	public playerUseToolAt(player: Player, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
+	public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
 		// Set Variables
 		let p: Projectile = null;
 
@@ -1672,20 +1612,20 @@ export default class Matrix_V1 implements IBatrMatrix {
 				p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
 				break;
 			case Tool.SHOCKWAVE_ALPHA:
-				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone);
+				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone);
 				break;
 			case Tool.SHOCKWAVE_BETA:
-				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : player.droneTool, player.droneTool.chargePercentInDrone, 1);
+				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone, 1);
 				break;
 		}
 		if (p !== null) {
 			p.rot = toolRot;
-			this._entitySystem.registerProjectile(p);
+			this._entitySystem.add(p);
 			this._projectileContainer.addChild(p);
 		}
 	}
 
-	protected getLaserLength(player: Player, rot: uint): uint {
+	protected getLaserLength(player: IPlayer, rot: uint): uint {
 		return this.getLaserLength2(player.entityX, player.entityY, rot);
 	}
 
@@ -1770,7 +1710,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	//======Entity Functions======//
-	public updateProjectilesColor(player: Player = null): void {
+	public updateProjectilesColor(player: IPlayer = null): void {
 		// null means update all projectiles
 		for (let projectile of this._entitySystem.projectile) {
 			if (player == null || projectile.owner == player) {
@@ -1785,7 +1725,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 			return;
 		// Execute
 		let bonusBox: BonusBox = new BonusBox(this, x, y, type);
-		this._entitySystem.registerBonusBox(bonusBox);
+		this._entitySystem.addBonusBox(bonusBox);
 		this._bonusBoxContainer.addChild(bonusBox);
 		// Stat
 		this._stat.bonusGenerateCount++;
@@ -1825,7 +1765,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	//======Effect Functions======//
-	public addEffectChild(effect: Effect): void {
+	// !【2023-10-03 15:12:45】后续废置
+	/* public addEffectChild(effect: Effect): void {
 		if (effect.layer > 0)
 			this._effectContainerTop.addChild(effect);
 
@@ -1834,223 +1775,9 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 		else
 			this._effectContainerBottom.addChild(effect);
-	}
-
-	public addSpawnEffect(x: number, y: number): void {
-		this._effectSystem.addEffect(new EffectSpawn(this, x, y));
-	}
-
-	public addTeleportEffect(x: number, y: number): void {
-		this._effectSystem.addEffect(new EffectTeleport(this, x, y));
-	}
-
-	public addPlayerDeathLightEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-		this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
-	}
-
-	public addPlayerDeathFadeoutEffect(x: number, y: number, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-		this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
-	}
-
-	public addPlayerDeathLightEffect(x: number, y: number, player: Player, reverse: boolean = false): void {
-		this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
-	}
-
-	public addPlayerDeathFadeoutEffect(x: number, y: number, player: Player, reverse: boolean = false): void {
-		this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
-	}
-
-	public addPlayerLevelupEffect(x: number, y: number, color: uint, scale: number): void {
-		this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
-	}
-
-	public addBlockLightEffect(x: number, y: number, color: uint, alpha: uint, reverse: boolean = false): void {
-		this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
-	}
-
-	public addBlockLightEffect2(x: number, y: number, block: Block, reverse: boolean = false): void {
-		this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
-	}
-
-	public addPlayerHurtEffect(player: Player, reverse: boolean = false): void {
-		this._effectSystem.addEffect(EffectPlayerHurt.fromPlayer(this, player, reverse));
-	}
+	} */
 
 	//======Hook Functions======// ? 保留这堆「钩子函数」有何意义？等待后续重构
-	public onPlayerMove(player: Player): void {
-	}
-
-	public onPlayerUse(player: Player, rot: uint, distance: number): void {
-	}
-
-	public onPlayerHurt(attacker: Player, victim: Player, damage: uint): void {
-		// It's no meaningless of hurt NULL
-		if (victim == null)
-			return;
-
-		// Set Stats
-		if (this.rule.recordPlayerStats) {
-			victim.stats.damageBy += damage;
-
-			victim.stats.addDamageByPlayerCount(attacker, damage);
-
-			if (attacker !== null) {
-				attacker.stats.causeDamage += damage;
-
-				attacker.stats.addCauseDamagePlayerCount(victim, damage);
-
-				if (victim.isSelf(attacker))
-					victim.stats.causeDamageOnSelf += damage;
-
-				if (victim.isAlly(attacker))
-					victim.stats.damageByAlly += damage;
-
-				if (attacker.isAlly(victim))
-					attacker.stats.causeDamageOnAlly += damage;
-			}
-		}
-	}
-
-	/**
-	 * Deal the (victim&attacker)'s (stat&heal),add effect and reset (CD&charge)
-	 * @param	attacker
-	 * @param	victim
-	 * @param	damage
-	 */
-	public onPlayerDeath(attacker: Player, victim: Player, damage: uint): void {
-		// It's no meaningless of kill NULL
-		if (victim == null)
-			return;
-
-		// Clear Heal
-		victim.heal = 0;
-		// Add Effect
-		this.addPlayerDeathLightEffect(victim.entityX, victim.entityY, victim);
-
-		this.addPlayerDeathFadeoutEffect(victim.entityX, victim.entityY, victim);
-
-		// Set Victim
-		victim.visible = false;
-
-		victim.isActive = false;
-
-		// victim.turnAllKeyUp()
-		victim.resetCD();
-
-		victim.resetCharge();
-
-		if (Player.isAI(victim))
-			(victim as AIPlayer).resetAITick();
-
-		// Set Respawn
-		let deadX: int = victim.lockedEntityX, deadY: int = victim.lockedEntityY;
-
-		victim.setXY(this.rule.deadPlayerMoveToX, this.rule.deadPlayerMoveToY);
-
-		victim.respawnTick = this.rule.defaultRespawnTime;
-
-		victim.gui.visible = false;
-
-		// Store Stats
-		if (this.rule.recordPlayerStats) {
-			victim.stats.deathCount++;
-
-			if (attacker !== null) {
-				// Attacker
-				attacker.stats.killCount++;
-
-				if (Player.isAI(victim))
-					attacker.stats.killAICount++;
-
-				attacker.stats.addKillPlayerCount(victim);
-
-				if (attacker.isAlly(victim))
-					attacker.stats.killAllyCount++;
-
-				// Victim
-				victim.stats.deathByPlayer++;
-
-				if (Player.isAI(attacker))
-					victim.stats.deathByAI++;
-
-				if (victim.isSelf(attacker))
-					victim.stats.suicideCount++;
-
-				if (victim.isAlly(attacker))
-					victim.stats.deathByAllyCount++;
-
-				victim.stats.addDeathByPlayerCount(attacker);
-			}
-		}
-		// Add Bonus By Rule
-		if (this.rule.bonusBoxSpawnAfterPlayerDeath &&
-			(this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-			this.testCanPass(deadX, deadY, true, false, true, true, true)) {
-			this.addBonusBox(deadX, deadY, this.rule.randomBonusEnable);
-		}
-		// If Game End
-		this.testGameEnd();
-	}
-
-	public onPlayerRespawn(player: Player): void {
-		// Active
-		player.HP = player.maxHP;
-		player.isActive = true;
-		// Visible
-		player.visible = true;
-		player.gui.visible = true;
-		// Spread&Effect
-		this.respawnPlayer(player);
-	}
-
-	public prePlayerLocationChange(player: Player, oldX: number, oldY: number): void {
-		this.moveOutTestPlayer(player, oldX, oldY);
-	}
-
-	public onPlayerLocationChange(player: Player, newX: number, newY: number): void {
-		// Detect
-		if (!player.isActive || !player.visible)
-			return;
-		// TransForm Pos:Lock Player In Map
-		if (this.isOutOfMap(player.entityX, player.entityY))
-			this.lockEntityInMap(player);
-		player.dealMoveInTestOnLocationChange(newX, newY, true, true);
-		this.bonusBoxTest(player, newX, newY);
-	}
-
-	public onPlayerTeamsChange(event: GameRuleEvent): void {
-		this.randomizeAllPlayerTeam();
-	}
-
-	public onPlayerLevelup(player: Player): void {
-		let color: uint;
-		let i: uint = 0;
-		let nowE: uint = exMath.random(4);
-		// Add buff of cd,resistance,radius,damage
-		while (i < 3) {
-			switch (nowE) {
-				case 1:
-					color = BonusBoxSymbol.BUFF_CD_COLOR;
-					player.buffCD += this.rule.bonusBuffAdditionAmount;
-					break;
-				case 2:
-					color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-					player.buffResistance += this.rule.bonusBuffAdditionAmount;
-					break;
-				case 3:
-					color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-					player.buffRadius += this.rule.bonusBuffAdditionAmount;
-					break;
-				default:
-					color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-					player.buffDamage += this.rule.bonusBuffAdditionAmount;
-			}
-			nowE = (nowE + 1) & 3;
-			i++;
-			// Add Effect
-			this.addPlayerLevelupEffect(player.entityX + (i & 1) - 0.5, player.entityY + (i >> 1) - 0.5, color, 0.75);
-		}
-	}
 
 	public onRandomTick(x: int, y: int): void {
 		// BonusBox(Supply)

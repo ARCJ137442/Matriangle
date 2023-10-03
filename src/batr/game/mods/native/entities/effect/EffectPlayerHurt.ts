@@ -4,7 +4,7 @@ import { NativeDecorationLabel } from "../../../../../display/mods/native/entity
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../main/IBatrMatrix";
-import Player from "../player/Player";
+import IPlayer from "../player/IPlayer";
 import EffectPlayerLike from "./EffectPlayerLike";
 
 /**
@@ -22,7 +22,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public static readonly LIFE: uint = FIXED_TPS * 0.25;
 
 	//============Static Functions============//
-	public static fromPlayer(host: IBatrMatrix, player: Player, reverse: boolean = false): EffectPlayerHurt {
+	public static fromPlayer(host: IBatrMatrix, player: IPlayer, reverse: boolean = false): EffectPlayerHurt {
 		return new EffectPlayerHurt(
 			player.position, 0, //player.direction, // TODO: 等待玩家方迁移
 			player.fillColor,

@@ -50,7 +50,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	//============Instance Variables============//
-	protected _owner: Player | null;
+	protected _owner: IPlayer | null;
 
 	// Texts
 	protected _HPBarFormat: TextFormat = new TextFormat();
@@ -72,7 +72,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	protected _levelText: TextField = new TextField();
 
 	//============Constructor & Destructor============//
-	public constructor(owner: Player) {
+	public constructor(owner: IPlayer) {
 		// Set Owner
 		this._owner = owner;
 		// Set Graphics
@@ -207,7 +207,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	//============Instance Getter And Setter============//
-	public get owner(): Player | null {
+	public get owner(): IPlayer | null {
 		return this._owner;
 	}
 

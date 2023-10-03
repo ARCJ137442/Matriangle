@@ -1,5 +1,5 @@
 import { randInt } from "../../../../common/exMath";
-import { iPoint } from "../../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../../common/geometricTools";
 import { randomIn, randomBoolean2 } from "../../../../common/utils";
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Block, { BlockType } from "../../../api/block/Block";
@@ -71,25 +71,27 @@ export module NativeMaps {
     const STORAGE_H: MapStorageSparse = new MapStorageSparse(2);
 
     // 所有地图的常量
-    export const EMPTY: IMap = new Map_V1('EMPTY', STORAGE_EMPTY);
-    export const FRAME: IMap = new Map_V1('FRAME', STORAGE_FRAME);
-    export const MAP_1: IMap = new Map_V1('1', STORAGE_1);
-    export const MAP_2: IMap = new Map_V1('2', STORAGE_2);
-    export const MAP_3: IMap = new Map_V1('3', STORAGE_3);
-    export const MAP_4: IMap = new Map_V1('4', STORAGE_4);
-    export const MAP_5: IMap = new Map_V1('5', STORAGE_5);
-    export const MAP_6: IMap = new Map_V1('6', STORAGE_6);
-    export const MAP_7: IMap = new Map_V1('7', STORAGE_7);
-    export const MAP_8: IMap = new Map_V1('8', STORAGE_8);
-    export const MAP_9: IMap = new Map_V1('9', STORAGE_9);
-    export const MAP_A: IMap = new Map_V1('A', STORAGE_A, true);
-    export const MAP_B: IMap = new Map_V1('B', STORAGE_B, true);
-    export const MAP_C: IMap = new Map_V1('C', STORAGE_C, true);
-    export const MAP_D: IMap = new Map_V1('D', STORAGE_D, true);
-    export const MAP_E: IMap = new Map_V1('E', STORAGE_E, true);
-    export const MAP_F: IMap = new Map_V1('F', STORAGE_F, true);
-    export const MAP_G: IMap = new Map_V1('G', STORAGE_G, true);
-    export const MAP_H: IMap = new Map_V1('H', STORAGE_H, true);
+    /** 原先AS3的地图尺寸：24×24 */
+    export const _AS3_CONSERVED_MAP_SIZE: iPoint = new iPoint(24, 24)
+    export const EMPTY: Map_V1 = new Map_V1('EMPTY', STORAGE_EMPTY, _AS3_CONSERVED_MAP_SIZE);
+    export const FRAME: Map_V1 = new Map_V1('FRAME', STORAGE_FRAME, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_1: Map_V1 = new Map_V1('1', STORAGE_1, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_2: Map_V1 = new Map_V1('2', STORAGE_2, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_3: Map_V1 = new Map_V1('3', STORAGE_3, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_4: Map_V1 = new Map_V1('4', STORAGE_4, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_5: Map_V1 = new Map_V1('5', STORAGE_5, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_6: Map_V1 = new Map_V1('6', STORAGE_6, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_7: Map_V1 = new Map_V1('7', STORAGE_7, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_8: Map_V1 = new Map_V1('8', STORAGE_8, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_9: Map_V1 = new Map_V1('9', STORAGE_9, _AS3_CONSERVED_MAP_SIZE);
+    export const MAP_A: Map_V1 = new Map_V1('A', STORAGE_A, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_B: Map_V1 = new Map_V1('B', STORAGE_B, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_C: Map_V1 = new Map_V1('C', STORAGE_C, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_D: Map_V1 = new Map_V1('D', STORAGE_D, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_E: Map_V1 = new Map_V1('E', STORAGE_E, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_F: Map_V1 = new Map_V1('F', STORAGE_F, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_G: Map_V1 = new Map_V1('G', STORAGE_G, _AS3_CONSERVED_MAP_SIZE, true);
+    export const MAP_H: Map_V1 = new Map_V1('H', STORAGE_H, _AS3_CONSERVED_MAP_SIZE, true);
 
     export const ALL_NATIVE_MAPS: IMap[] = [
         EMPTY,

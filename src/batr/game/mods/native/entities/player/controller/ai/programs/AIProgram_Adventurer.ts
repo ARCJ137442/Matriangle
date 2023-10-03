@@ -64,13 +64,13 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return tool == Tool.BLOCK_THROWER;
 	}
 
-	static detectCarryBlock(player: Player): boolean {
+	static detectCarryBlock(player: IPlayer): boolean {
 		if (toolNeedCarryBlock(player.tool) && !player.isCarriedBlock)
 			return false;
 		return true;
 	}
 
-	static detectBlockCanCarry(player: Player, blockAtt: BlockAttributes): boolean {
+	static detectBlockCanCarry(player: IPlayer, blockAtt: BlockAttributes): boolean {
 		return !player.isCarriedBlock && blockAtt.isCarriable && player.host.testCarriableWithMap(blockAtt, player.host.map);
 	}
 
@@ -189,7 +189,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	 * @param	player	The player.
 	 * @return	A int will be multi with G.
 	 */
-	protected static getPathWeight(node: PathNode, host: IBatrGame, player: Player): int {
+	protected static getPathWeight(node: PathNode, host: IBatrGame, player: IPlayer): int {
 		let damage: int = host.getBlockPlayerDamage(node.x, node.y);
 		if (!host.testPlayerCanPass(player, node.x, node.y, true, false))
 			return 1000;
@@ -341,12 +341,12 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return _nearestBox;
 	}
 
-	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): Player {
+	public getNearestEnemy(owner: IPlayer | null, host: IBatrGame): IPlayer {
 		// getManhattanDistance
-		let _nearestEnemy: Player = null;
+		let _nearestEnemy: IPlayer = null;
 		let _nearestDistance: int = int.MAX_VALUE;
 		let _tempDistance: int;
-		let players: Player[] = host.getAlivePlayers();
+		let players: IPlayer[] = host.getAlivePlayers();
 		for (let player of players) {
 			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
 				player == null || this.inCloseTarget(player))
@@ -381,7 +381,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		// Set Variables
 		let host: IBatrGame = player.host;
 		let ownerPoint: iPoint = player.gridPoint;
-		let lastTargetPlayer: Player = this._lastTarget as Player;
+		let lastTargetPlayer: IPlayer = this._lastTarget as Player;
 		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
 		// Init remember
 		if (this._remember == null) {
@@ -504,11 +504,11 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnCauseDamage(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnHurt(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		// Hurt By Target
 		if (attacker !== null && attacker != this._lastTarget && attacker != player &&
 			player.canUseToolHurtPlayer(attacker, player.tool)) {
@@ -517,13 +517,13 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnKill(player: AIPlayer, damage: uint, victim: Player): AIPlayerAction {
+	public requestActionOnKill(player: AIPlayer, damage: uint, victim: IPlayer): AIPlayerAction {
 		this.resetTarget();
 		this.resetCloseTarget();
 		return AIPlayerAction.NULL;
 	}
 
-	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: Player): AIPlayerAction {
+	public requestActionOnDeath(player: AIPlayer, damage: uint, attacker: IPlayer): AIPlayerAction {
 		return AIPlayerAction.NULL;
 	}
 

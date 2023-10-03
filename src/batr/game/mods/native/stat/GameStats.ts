@@ -21,7 +21,7 @@ export default class GameStats {
 	protected _bonusGenerateCount: uint = 0;
 
 	//============Constructor============//
-	public constructor(rule: GameRule_V1, players: Player[] = null) {
+	public constructor(rule: GameRule_V1, players: IPlayer[] = null) {
 		super();
 		this.rule = rule;
 		if (players !== null)
@@ -70,7 +70,7 @@ export default class GameStats {
 	}
 
 	//============Instance Functions============//
-	public addPlayer(player: Player): GameStats {
+	public addPlayer(player: IPlayer): GameStats {
 		this._players.push(player.stats);
 		return this;
 	}
@@ -80,7 +80,7 @@ export default class GameStats {
 		return this;
 	}
 
-	public loadPlayers(players: Player[]): void {
+	public loadPlayers(players: IPlayer[]): void {
 		for (let player of players)
 			this.addPlayer(player);
 	}

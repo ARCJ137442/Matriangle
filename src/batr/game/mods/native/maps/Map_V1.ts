@@ -2,9 +2,9 @@ import IMap from "../../../api/map/IMap";
 import IMapStorage from "../../../api/map/IMapStorage";
 import IMapLogic from "../../../api/map/IMapLogic";
 import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_true } from "../../../../common/JSObjectify";
-import { fPoint, fPointRef, iPoint, iPointRef } from "../../../../common/geometricTools";
+import { fPoint, fPointRef, iPoint, iPointRef, modPoint_FI } from "../../../../common/geometricTools";
 import { identity, key } from "../../../../common/utils";
-import { int, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
+import { int, int$MAX_VALUE, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import Entity from "../../../api/entity/Entity";
 import { mRot, mRot2axis, towardX_MF } from "../../../general/GlobalRot";
@@ -22,7 +22,6 @@ import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
  * * 因为二者「需要使用不同的方式进行对象化」
  */
 export default class Map_V1 implements IMap {
-
 
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
 
@@ -62,22 +61,72 @@ export default class Map_V1 implements IMap {
 	public static getBlank(storage: IMapStorage): IMap {
 		return new Map_V1(
 			'blank', storage,
+			undefined
 		)
 	}
 
 	//============Constructor & Destructor============//
-	public constructor(name: string, storage: IMapStorage, isArena: boolean = false) {
+	public constructor(
+		name: string,
+		storage: IMapStorage,
+		size: iPointRef | undefined,
+		isArena: boolean = false
+	) {
 		this._name = name;
 		this._storage = storage;
 		this._isArena = isArena;
+		if (size !== undefined) this._size = size; // 复制值
 	}
 
 	public destructor(): void {
 		// this.storage.clearBlock(); // ! 存储结构可能共用，不能陪葬
 	}
 
-
 	//============Game Mechanics: 原「逻辑层」的机制============//
+
+	// 有限无界逻辑
+	/**
+	 * 地图写死的一个「固定边界」是0~x_i
+	 * * 由先前AS3版本迁移而来
+	 * * 或许未来某个版本会被泛化，以允许非零边界和负数坐标
+	 */
+	protected readonly _size: iPoint = new iPoint();
+	public static readonly key_size: key = fastAddJSObjectifyMapProperty_dash(
+		Map_V1.OBJECTIFY_MAP,
+		'size', iPoint,
+		identity, identity,
+		loadRecursiveCriterion_true,
+		(): iPoint => new iPoint(),
+	) // ? copy的时候怎么办呢
+	/** ⚠️注意：setter只复制元素 */
+	public get size(): iPoint { return this._size; }
+	public set size(v: iPoint) { this._size.copyFrom(v); }
+
+	/**
+	 * （非实现）将一个点的坐标做「有限无界」处理（浮点版本）
+	 */
+	public limitPoint_F(p: fPointRef): fPointRef {
+		for (let i: uint = 0; i < p.length; i++) {
+			if (p[i] < 0 || p[i] >= this._size[i])
+				// modPoint_FI(p, this._size);
+				p[i] %= this._size[i];
+		}
+		return p;
+	}
+
+	/**
+	 * （非实现）将一个点的坐标做「有限无界」处理（整数版本）
+	 */
+	public limitPoint_I(p: iPointRef): iPointRef {
+		for (let i: uint = 0; i < p.length; i++) {
+			if (p[i] < 0 || p[i] > this._size[i])
+				// modPoint_FI(p, this._size);
+				p[i] %= this._size[i];
+		}
+		return p;
+	}
+
+	// 对接世界逻辑
 	public getBlockPlayerDamage(p: iPointRef, defaultValue: int = 0): int {
 		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
 		if (blockAtt !== null)
@@ -112,13 +161,13 @@ export default class Map_V1 implements IMap {
 	// 实现：直接用
 	public towardWithRot_FF(p: fPointRef, rot: mRot, step: number = 1.0): fPointRef {
 		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
-		return p
+		return this.limitPoint_F(p);
 	}
 
 	// 实现：直接用
 	public towardWithRot_II(p: iPointRef, rot: mRot, step: int = 1): iPointRef {
 		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
-		return p
+		return this.limitPoint_I(p);
 	}
 
 	// protected _temp_testCanPass_F: fPoint = new fPoint()

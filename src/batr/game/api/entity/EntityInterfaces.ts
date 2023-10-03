@@ -41,7 +41,13 @@ export interface IEntityInGrid extends Entity {
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的整数坐标（引用） */
     get position(): iPoint;
-    /** 设置实体的整数坐标（引用） */
+    /**
+     * 设置实体的整数坐标（引用）
+     * * 作为统一的「设置坐标」入口
+     * * 用于在设置坐标前后更新
+     * 
+     * TODO: 考虑引入的host问题
+     */
     set position(value: iPoint);
 
     /**

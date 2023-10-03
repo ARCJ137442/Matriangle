@@ -16,7 +16,7 @@ export default interface IPlayerGUI extends IBatrShape {
 	destructor(): void;
 
 	/** 获取「所属玩家」（可能是空引用，因为要被释放） */ // ? 可空性存疑
-	get owner(): Player | null;
+	get owner(): IPlayer | null;
 
 	/** 从「显示坐标」获取自身「逻辑坐标」 */ // ? 是否其实只是一个「单向过程」？
 	get logicalX(): number;

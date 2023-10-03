@@ -13,12 +13,13 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience } from "../../registry/NativeGameMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer } from "../../registry/NativeGameMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { GameController, IGameControlReceiver } from "../../../../api/control/GameControl";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
+import EffectPlayerHurt from "../effect/EffectPlayerHurt";
 
 /**
  * 「玩家」的主类
@@ -210,10 +211,13 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		}
 	}
 
-	/** 玩家剩余生命数是否会随「死亡」而减少 */
+	/**
+	 * 重生刻
+	 * * `-1`意味着「不在重生时」
+	 */
 	protected _respawnTick: int = -1;
 	/** 玩家是否在重生 */
-	public get isRespawning(): boolean { return this.respawnTick >= 0; }
+	public get isRespawning(): boolean { return this._respawnTick >= 0; }
 
 	/** 
 	 * （原`isCertainlyOut`）玩家是否「耗尽生命」
@@ -225,12 +229,6 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 			this.lives == 0
 		);
 	}
-
-	/**
-	 * 重生刻
-	 * * `-1`意味着「不在重生时」
-	 */
-	public respawnTick: int = -1;
 
 	/**
 	 * 以整数设置生命
@@ -531,6 +529,8 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * 钩子函数的作用：
 	 * * 直接向控制器发送信息，作为「外界环境」的一部分传递事件
 	 * * 处理各自的触发事件
+	 * 
+	 * ! 🎯代码全部迁移到「原生游戏机制」中，除「涉及内部变量设置」（如「向内部控制器发信息」「重生刻重置」）
 	 */
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
@@ -540,14 +540,17 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	public onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
-		host.addPlayerHurtEffect(this, false);
-		host.onPlayerHurt(attacker, this, damage);
+		host.addEntity(
+			EffectPlayerHurt.fromPlayer(host, this, false/* 淡出 */)
+		);
+		handlePlayerHurt(host, attacker, this, damage);
 	}
 
 	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
-		host.onPlayerDeath(attacker, this, damage);
-		if (attacker !== null)
-			attacker.onKillPlayer(host, this, damage);
+		// 清除重生刻
+		this._respawnTick = host.rule.defaultRespawnTime;
+		// 全局处理
+		handlePlayerDeath(host, attacker, this, damage);
 	}
 
 	public onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void {
@@ -569,18 +572,28 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	public onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void {
 	}
 
+	/**
+	 * 这个「移动前事件」在AS3版本中是在「设置坐标」前触发的，
+	 * TODO: 打通这一段逻辑——建立一个统一的「坐标设置」系统
+	 * * 💭【2023-10-03 22:13:26】目前思路：不管怎样都要走一个「setPosition」之类的逻辑，统一管理这些「坐标设置」
+	 * 
+	 * * 其「旧位置」理当是「玩家现在的位置」
+	 *   * 无需提供「oldXX」
+	 * 
+	 * * 【2023-10-03 22:04:56】现有逻辑：用于分派「玩家移出方块」事件
+	 */
 	public preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void {
-		host.prePlayerLocationChange(this, oldP);
+		moveOutTestPlayer(host, this, oldP); //! 【2023-10-03 23:34:22】原先的`preHandlePlayerLocationChange`
 		// super.preLocationUpdate(oldP); // TODO: 已经忘记这里在做什么了
 	}
 
 	public onLocationUpdate(host: IBatrMatrix, newP: iPoint): void {
-		host.onPlayerLocationChange(this, newP);
+		handlePlayerLocationChange(host, this, newP);
 		// super.onLocationUpdate(newP); // TODO: 已经忘记这里在做什么了
 	}
 
 	public onLevelup(host: IBatrMatrix): void {
-		host.onPlayerLevelup(this);
+		handlePlayerLevelup(host, this);
 	}
 
 	//====Functions About Gameplay====//
@@ -663,13 +676,13 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	 * * 重生后「剩余生命值」递减
 	 */
 	public dealRespawn(host: IBatrMatrix): void {
-		if (this.respawnTick > 0)
-			this.respawnTick--;
+		if (this._respawnTick > 0)
+			this._respawnTick--;
 		else {
-			this.respawnTick = -1;
+			this._respawnTick = -1;
 			if (!this._lifeNotDecay && this._lives > 0)
 				this._lives--;
-			host.onPlayerRespawn(this as IPlayer);
+			handlePlayerRespawn(host, this);
 			this.onRespawn(host);
 		}
 	}
