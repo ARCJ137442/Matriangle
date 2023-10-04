@@ -10,6 +10,7 @@ import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import BonusBox from "../item/BonusBox";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import PlayerController from "./controller/PlayerController";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -78,10 +79,22 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	*/
 	get attributes(): PlayerAttributes;
 
-	// /**
-	//  * 获取玩家的「控制器」
-	//  */
-	// get controller(): PlayerController | null; // !【2023-09-27 23:45:42】现在弃用
+	/**
+	 * 获取玩家的「控制器」
+	 * 
+	 * ? 目前还是有些存疑：是否只需要控制器一方控制？但实际上必须由玩家向控制器分派事件
+	 */
+	get controller(): PlayerController | null; // !【2023-10-05 01:19:13】重新启用，以作为玩家一侧的请求
+
+	/**
+	 * 连接到一个控制器
+	 */
+	connectController(controller: PlayerController): void
+
+	/**
+		 * 与当前控制器断开
+		 */
+	disconnectController(): void
 
 	/**
 	 * 存取玩家队伍

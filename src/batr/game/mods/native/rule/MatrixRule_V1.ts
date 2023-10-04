@@ -3,7 +3,7 @@ import IMap from "../../../api/map/IMap";
 import PlayerTeam from "../entities/player/team/PlayerTeam";
 // import GameRuleEvent from "../../../api/rule/GameRuleEvent"; // TODO: 待事件系统移植后
 import { TPS } from "../../../main/GlobalGameVariables";
-import IMatrixRule from "../../../rule/IGameRule";
+import IMatrixRule from "../../../rule/IMatrixRule";
 import { clearArray, identity, key, randomIn } from "../../../../common/utils";
 import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
 import Tool from "../tool/Tool";

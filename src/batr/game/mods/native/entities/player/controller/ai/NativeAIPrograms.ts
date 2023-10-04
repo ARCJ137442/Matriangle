@@ -91,86 +91,86 @@ export module MicroAIBehaviors {
             }
         }
     }
+}
+
+/**
+ * 使用「行为生成器」的形式，用生成函数还原所有先前的「AI程序」
+ */
+export module NativeAIPrograms {
 
     /**
-     * 使用「行为生成器」的形式，用生成函数还原所有先前的「AI程序」
+     * （迁移自BaTr）最简单的AI程序之一
+     * * 随机的四处走动
+     * * 不断使用其工具
+     * 
+     * @param controller 传入的「控制器」状态
      */
-    export module NativeAIPrograms {
+    export function* AIProgram_Dummy(controller: AIControllerGenerator): AIActionGenerator {
+        // 初始化所有子行为
+        let rWalk: AIActionGenerator = MicroAIBehaviors.roboticWalk(
+            controller,
+            4 + randInt(16) // 这是个硬编码
+        );
+        let aUsing: AIActionGenerator = MicroAIBehaviors.keepAlwaysUsingTool(controller);
 
-        /**
-         * （迁移自BaTr）最简单的AI程序之一
-         * * 随机的四处走动
-         * * 不断使用其工具
-         * 
-         * @param controller 传入的「控制器」状态
-         */
-        export function* AIProgram_Dummy(controller: AIControllerGenerator): AIActionGenerator {
-            // 初始化所有子行为
-            let rWalk: AIActionGenerator = roboticWalk(
-                controller,
-                4 + randInt(16) // 这是个硬编码
-            );
-            let aUsing: AIActionGenerator = keepAlwaysUsingTool(controller);
-
-            // 检查未定义值，不应该的情况就报错 // !【2023-10-02 20:47:35】但实际上只有一次——因为后面如果是`undefined`也会报错（无法访问属性/方法），无需手动检测
+        // 第一个「没有外界输入」的事件 //
+        let event: PlayerEvent = yield EnumPlayerAction.NULL;
+        let reaction: PlayerAction;
+        // 「行为生成器」总循环 //
+        while (true) {
+            // 屏蔽其它事件 //
+            if (event !== PlayerEvent.AI_TICK)
+                event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新e变量
+            console.log("[LOG] AIProgram_Dummy: event = ", event);
+            // 检查未定义值，不应该的情况就报错 // !【2023-10-05 00:41:11】必须在事件发生之后，变量才有相应的值
             if (controller._temp_currentPlayer === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentPlayer is undefined");
             if (controller._temp_currentHost === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentHost is undefined");
-
-            // 第一个「没有外界输入」的事件 //
-            let event: PlayerEvent = yield EnumPlayerAction.NULL;
-            let reaction: PlayerAction;
-            // 「行为生成器」总循环 //
-            while (true) {
-                // 屏蔽其它事件 //
-                if (event !== PlayerEvent.AI_TICK)
-                    event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新e变量
-                // 第一层反应：优先保持使用工具
-                reaction = aUsing.next(event).value;
-                // 非空⇒产出，空⇒下一个行为
-                if (reaction === EnumPlayerAction.NULL)
-                    // 移动
-                    reaction = rWalk.next(event).value;
-                // 最后肯定输出行为
-                yield reaction;
-            }
+            // 第一层反应：优先保持使用工具
+            reaction = aUsing.next(event).value;
+            // 非空⇒产出，空⇒下一个行为
+            if (reaction === EnumPlayerAction.NULL)
+                // 移动
+                reaction = rWalk.next(event).value;
+            // 最后肯定输出行为
+            yield reaction;
         }
+    }
 
-        /**
-         * （迁移自BaTr）另一个简单的AI程序
-         * * 仍然随机走动
-         * * 有一个「等待时间」，以便在「持续利益受损」「系统无聊」等情况下「撤手」
-         * 
-         * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
-         */
-        export function* AIProgram_Novice(controller: AIControllerGenerator): AIActionGenerator {
-            while (true) {
-                yield EnumPlayerAction.NULL;
-            }
+    /**
+     * （迁移自BaTr）另一个简单的AI程序
+     * * 仍然随机走动
+     * * 有一个「等待时间」，以便在「持续利益受损」「系统无聊」等情况下「撤手」
+     * 
+     * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
+     */
+    export function* AIProgram_Novice(controller: AIControllerGenerator): AIActionGenerator {
+        while (true) {
+            yield EnumPlayerAction.NULL;
         }
+    }
 
-        /**
-         * （迁移自BaTr）一个使用A*寻路算法进行「玩家追踪」「奖励箱搜寻」的AI
-         * * 核心算法来自A*搜索，但以「基于『记忆』的状态机」的形式异步搜索
-         * 
-         * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
-         */
-        export function* AIProgram_Adventurer(controller: AIControllerGenerator): AIActionGenerator {
-            while (true) {
-                yield EnumPlayerAction.NULL;
-            }
+    /**
+     * （迁移自BaTr）一个使用A*寻路算法进行「玩家追踪」「奖励箱搜寻」的AI
+     * * 核心算法来自A*搜索，但以「基于『记忆』的状态机」的形式异步搜索
+     * 
+     * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
+     */
+    export function* AIProgram_Adventurer(controller: AIControllerGenerator): AIActionGenerator {
+        while (true) {
+            yield EnumPlayerAction.NULL;
         }
+    }
 
-        /**
-         * （迁移自BaTr）结合Adventurer与Novice的产物
-         * * 「无聊算法」来自Novice
-         * * 「寻路算法」来自Adventurer
-         * 
-         * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
-         */
-        export function* AIProgram_Master(controller: AIControllerGenerator): AIActionGenerator {
-            while (true) {
-                yield EnumPlayerAction.NULL;
-            }
+    /**
+     * （迁移自BaTr）结合Adventurer与Novice的产物
+     * * 「无聊算法」来自Novice
+     * * 「寻路算法」来自Adventurer
+     * 
+     * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
+     */
+    export function* AIProgram_Master(controller: AIControllerGenerator): AIActionGenerator {
+        while (true) {
+            yield EnumPlayerAction.NULL;
         }
     }
 }

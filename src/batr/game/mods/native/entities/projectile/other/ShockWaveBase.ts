@@ -84,7 +84,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	public get lifePercent(): number { return this._life / this.LIFE }
 
 	// 格点实体 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 
 	protected _position: iPointVal = new iPoint();
 	public get position(): iPointRef { return this._position; }

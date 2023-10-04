@@ -26,7 +26,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	protected _moveDuration: uint = 0;
 
 	// 格点实体 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 	protected _position: iPoint = new iPoint();
 	public get position(): iPointRef { return this._position }
 	public set position(value: iPointRef) { this._position.copyFrom(value) }

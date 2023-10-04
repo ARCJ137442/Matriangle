@@ -384,18 +384,22 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	}
 
 	// 格点实体 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 
 	protected _position: iPoint = new iPoint();
 	public get position(): iPoint { return this._position }
+	public set position(value: iPoint) {
+		console.log("Entity position changed!", this._position, value);
+		this._position.copyFrom(value);
+	}
 
 	// 活跃实体 //
 	public readonly i_active: true = true;
 
 	public onTick(host: IBatrMatrix): void {
 		this.dealCachedActions(host);
+		this.dealController(host);
 		this.dealUsingTime(host);
-		// this.updateControl(); // TODO: 根据「输入缓冲区」响应输入
 		this.dealMoveInTest(host, false, false);
 		this.dealHeal();
 	}
@@ -504,6 +508,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
 	public onHeal(host: IBatrMatrix, amount: uint, healer: IPlayer | null = null): void {
 
+		// TODO: 通知控制器
 	}
 
 	public onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
@@ -512,6 +517,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 			EffectPlayerHurt.fromPlayer(host, this, false/* 淡出 */)
 		);
 		handlePlayerHurt(host, attacker, this, damage);
+		// TODO: 通知控制器
 	}
 
 	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
@@ -521,25 +527,29 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRule_V1.key_defaultRespawnTime);
 		// 全局处理
 		handlePlayerDeath(host, attacker, this, damage);
+		// TODO: 通知控制器
 	}
 
 	public onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void {
 		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1);
+		// TODO: 通知控制器
 	}
 
 	public onRespawn(host: IBatrMatrix,): void {
-
+		// TODO: 通知控制器
 	}
 
 	public onMapTransform(host: IBatrMatrix,): void {
 		// 地图切换后，武器状态清除
 		this._tool.resetUsingState();
+		// TODO: 通知控制器
 		// TODO: 显示更新
 	}
 
 	public onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void {
+		// TODO: 通知控制器
 	}
 
 	/**
@@ -555,30 +565,21 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	public preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void {
 		moveOutTestPlayer(host, this, oldP); //! 【2023-10-03 23:34:22】原先的`preHandlePlayerLocationChange`
 		// super.preLocationUpdate(oldP); // TODO: 已经忘记这里在做什么了
+		// TODO: 通知控制器
 	}
 
 	public onLocationUpdate(host: IBatrMatrix, newP: iPoint): void {
 		handlePlayerLocationChange(host, this, newP);
 		// super.onLocationUpdate(newP); // TODO: 已经忘记这里在做什么了
+		// TODO: 通知控制器
 	}
 
 	public onLevelup(host: IBatrMatrix): void {
 		handlePlayerLevelup(host, this);
+		// TODO: 通知控制器
 	}
 
 	//====Functions About Gameplay====//
-	public isEnemy(player: IPlayer): boolean {
-		return (!this.isAlly(player, true));
-	}
-
-	public isSelf(player: IPlayer): boolean {
-		return player === this;
-	}
-
-	public isAlly(player: IPlayer, includeSelf: boolean = false): boolean {
-		return player !== null && ((includeSelf || !this.isSelf(player)) &&
-			this.team === player.team);
-	}
 
 	// public get carriedBlock(): Block {return this._carriedBlock;}
 	// public get isCarriedBlock(): boolean {return this._carriedBlock !== null && this._carriedBlock.visible;}
@@ -732,6 +733,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	 * 控制这个玩家的游戏控制器
 	 */
 	protected _controller: PlayerController | null = null;
+	public get controller(): PlayerController | null { return this._controller; }
 
 	// !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
 	public moveForward(host: IBatrMatrix): void {
@@ -796,6 +798,33 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 		this.turnTo(host, direction); // 使用setter以便显示更新
 		this.moveForward(host);
 		// TODO: 显示更新
+	}
+
+	/**
+	 * 连接到一个控制器
+	 */
+	public connectController(controller: PlayerController): void {
+		// 设置对象
+		this._controller = controller;
+		// 添加订阅
+		this._controller.addSubscriber(this);
+	}
+
+	/**
+	 * 与当前控制器断开
+	 */
+	public disconnectController(): void {
+		// 移除订阅
+		this._controller?.removeSubscriber(this);
+		// 设置对象
+		this._controller = null;
+	}
+
+	/**
+	 * 处理与「控制器」的关系
+	 */
+	protected dealController(host: IBatrMatrix): void {
+		this._controller?.onPlayerTick(this, host)
 	}
 
 	/**

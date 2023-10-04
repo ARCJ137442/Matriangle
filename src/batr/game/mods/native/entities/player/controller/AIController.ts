@@ -88,9 +88,9 @@ export default abstract class AIController extends PlayerController {
      * 
      * ? 这个「AI刻」存在的意义是什么
      */
-    public onGameTick(self: IPlayer, host: IBatrMatrix): void {
+    public onPlayerTick(player: IPlayer, host: IBatrMatrix): void {
         // 先处理游戏刻
-        this.temp_add_action[0] = this.reactTick(self, host);
+        this.temp_add_action[0] = this.reactTick(player, host);
         // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
         if (this.temp_add_action[0] !== EnumPlayerAction.NULL) this.dispatchEvent(
             ADD_ACTION,
@@ -99,7 +99,7 @@ export default abstract class AIController extends PlayerController {
         // 然后处理AI刻
         if (this.dealAITick()) {
             // 1: 获取游戏刻行为
-            this.temp_add_action[0] = this.reactAITick(self, host);
+            this.temp_add_action[0] = this.reactAITick(player, host);
             // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
             if (this.temp_add_action[0] !== EnumPlayerAction.NULL) this.dispatchEvent(
                 ADD_ACTION,

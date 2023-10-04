@@ -29,7 +29,7 @@ function show(name: string, obj: any = null): void {
 
 function 地图读取测试(): void {
     let m: IMap = NativeMaps.MAP_B
-    let ml: IMapLogic = m.logic, ms: IMapStorage = m.storage
+    let ml: IMapLogic = m, ms: IMapStorage = m.storage
 
     assert_equal(ml.getBlockPlayerDamage(new iPoint(19, 4)), -1)
     assert(ml.getBlockPlayerDamage(new iPoint(19, 2)) !== 0)
@@ -105,7 +105,7 @@ function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void 
     }
 }
 for (const map of NativeMaps.ALL_NATIVE_MAPS) {
-    log(`<========MAP "${map.logic.name}"========>`)
+    log(`<========MAP "${map.name}"========>`)
     地图可视化(map.storage as MapStorageSparse);
     log()
 }
@@ -141,8 +141,8 @@ for (const map of NativeMaps.ALL_NATIVE_MAPS) {
         rot = map.storage.randomForwardDirectionAt(pi)
         step_i = randInt(5)
         step_f = Math.random()
-        log(`Random toward-I [${pi.join(', ')}] --(${rot}, ${step_i})->`, map.logic.towardWithRot_II(pi, rot, step_i))
-        log(`Random toward-F [${pf.join(', ')}] --(${rot}, ${step_f})->`, map.logic.towardWithRot_FF(pf, rot, step_f))
+        log(`Random toward-I [${pi.join(', ')}] --(${rot}, ${step_i})->`, map.towardWithRot_II(pi, rot, step_i))
+        log(`Random toward-F [${pf.join(', ')}] --(${rot}, ${step_f})->`, map.towardWithRot_FF(pf, rot, step_f))
     }
 
 })(NativeMaps.FRAME, 100);

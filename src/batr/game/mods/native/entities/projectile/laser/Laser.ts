@@ -54,7 +54,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	}
 
 	// 格点 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 	/** 
 	 * 存储激光的格点位置
 	 * * 坐标即为「激光根部」，又称「起始点」

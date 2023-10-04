@@ -8,7 +8,7 @@ import IPlayer from "../mods/native/entities/player/IPlayer";
 import { getPlayers, getRandomMap } from "../mods/native/registry/NativeMatrixMechanics";
 import MatrixRule_V1 from "../mods/native/rule/MatrixRule_V1";
 import GameResult from "../mods/native/stat/GameResult";
-import IMatrixRule from "../rule/IGameRule";
+import IMatrixRule from "../rule/IMatrixRule";
 import IBatrMatrix from "./IBatrMatrix";
 import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
 

@@ -27,7 +27,7 @@ import { NativeTools } from './ToolRegistry';
 import IPlayer from "../entities/player/IPlayer";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
-import IGameRule from "../../../rule/IGameRule";
+import IMatrixRule from "../../../rule/IMatrixRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../stat/PlayerStats";
@@ -61,7 +61,7 @@ import EffectExplode from "../entities/effect/EffectExplode";
  * * 主打：避免Player类中出现与「游戏母体」耦合的代码
  * 
  */
-export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
+export function initPlayersByRule(players: IPlayer[], rule: IMatrixRule): void {
     // 处理工具
     let defaultTool: Tool | string = rule.safeGetRule<Tool | string>(MatrixRule_V1.key_defaultTool);
     switch (defaultTool) {
@@ -1671,16 +1671,21 @@ export function loadAsBackgroundRule(rule: MatrixRule_V1): MatrixRule_V1 {
     return rule;
 }
 
-// Rule Random About
-export function randomToolEnable(rule: IGameRule): Tool {
+/**
+ * 基于游戏规则获取一个新的工具
+ * 
+ * @param rule 所基于的游戏规则
+ * @returns 一个新的工具，基于「游戏规则」中的原型
+ */
+export function randomToolEnable(rule: IMatrixRule): Tool {
     return randomIn(
         rule.safeGetRule<Tool[]>(
             MatrixRule_V1.key_enabledTools
         )
-    );
+    ).copy();
 }
 
-export function getRandomMap(rule: IGameRule): IMap {
+export function getRandomMap(rule: IMatrixRule): IMap {
     return randomInWeightMap(
         rule.safeGetRule<Map<IMap, number>>(
             MatrixRule_V1.key_mapRandomPotentials
@@ -1698,7 +1703,7 @@ let _temp_filterBonusType: Map<BonusType, number> = new Map<BonusType, number>()
  * 
  * ! 返回一个新映射，但不会深拷贝
  */
-function filterBonusType(rule: IGameRule, m: Map<BonusType, number>): Map<BonusType, number> {
+function filterBonusType(rule: IMatrixRule, m: Map<BonusType, number>): Map<BonusType, number> {
     // 先清除
     _temp_filterBonusType.clear();
     // 开始添加
@@ -1723,7 +1728,7 @@ function filterBonusType(rule: IGameRule, m: Map<BonusType, number>): Map<BonusT
  * 
  * @returns 随机出来的奖励类型
  */
-export function getRandomBonusType(rule: IGameRule): BonusType {
+export function getRandomBonusType(rule: IMatrixRule): BonusType {
     return randomInWeightMap(
         filterBonusType(
             rule,

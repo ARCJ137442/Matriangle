@@ -35,7 +35,7 @@ export interface IEntityInGrid extends Entity {
      * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
      * * 后续可在「接口编译时被删去」后使用`entity?.isInGrid`（或更精确地，`entity?.isInGrid === true`）判断
      */
-    readonly i_InGrid: true;
+    readonly i_inGrid: true;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的整数坐标（引用） */

@@ -5,7 +5,9 @@
  * * 📌其本身适合作为一个「智能体」存在（或者像Matrix那样，人通过这个「玩家」连接到这个世界中）
  */
 
+import IBatrMatrix from "../../main/IBatrMatrix";
 import Entity from "../entity/Entity";
+import { IEntityActive } from "../entity/EntityInterfaces";
 
 export type MatrixControllerLabel = string;
 export type MatrixEventType = string;

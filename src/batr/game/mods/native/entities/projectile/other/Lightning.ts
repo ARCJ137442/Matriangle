@@ -68,7 +68,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	get lifePercent(): number { return this._life / this.LIFE }
 
 	// 格点实体 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 
 	/** 实现：返回自身整数位置（根节点所在方块位置） */
 	get position(): intPoint { return this._position }

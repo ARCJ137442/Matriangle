@@ -51,7 +51,7 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	}
 
 	// 格点实体 //
-	public readonly i_InGrid: true = true;
+	public readonly i_inGrid: true = true;
 
 	public readonly _position: iPoint = new iPoint();
 	public get position(): intPoint { return this._position }

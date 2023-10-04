@@ -1,6 +1,9 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { MatrixProgram } from "../../../../../api/control/MatrixControl";
+import Entity from "../../../../../api/entity/Entity";
+import { IEntityActive } from "../../../../../api/entity/EntityInterfaces";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import { isPlayer } from "../../../registry/NativeMatrixMechanics";
 import BonusBox from "../../item/BonusBox";
 import IPlayer from "../IPlayer";
 import { PlayerAction } from "./PlayerAction";
@@ -10,16 +13,32 @@ import { PlayerAction } from "./PlayerAction";
  * * 一个专用的用于控制玩家的游戏控制器
  * * 封装了一系列有关玩家的钩子
  */
-export default abstract class PlayerController extends MatrixProgram {
+export default abstract class PlayerController extends MatrixProgram implements IEntityActive {
+
+    // 活跃实体 //
+    public readonly i_active: true = true;
 
     /**
-     * 在每个游戏刻中被调用
+     * 在每个玩家「调用游戏刻」时调用
+     * * 参见`Player.dealController`
      * 
      * @param host 调用它的「游戏母体」
-     * @param self 调用（分派事件过来的）玩家「自身」
+     * @param player 调用（分派事件过来的）玩家「自身」
      * * 这个参数存在的意义：用于让「与具体实体解耦的控制器」识别
      */
-    public abstract onGameTick(self: IPlayer, host: IBatrMatrix): void;
+    public abstract onPlayerTick(player: IPlayer, host: IBatrMatrix): void;
+
+    /**
+     * 作为实体处理一个游戏刻
+     */
+    public onTick(host: IBatrMatrix): void {
+        /* for (const subscriber of this.subscribers) {
+            // 给每个玩家分派
+            if (subscriber instanceof Entity && isPlayer(subscriber)) {
+
+            }
+        } */
+    };
 
     // 响应函数：响应所有钩子 //
     // ? 一个疑点：是否要如此地「专用」以至于「每次增加一个新类型的事件，都要在这里新注册一个钩子函数」？至于「需要传递的、明确类型的参数」，有什么好的解决办法？

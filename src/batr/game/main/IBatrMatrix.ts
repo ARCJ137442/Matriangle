@@ -18,7 +18,7 @@ import Wave from "../mods/native/entities/projectile/other/Wave";
 import Tool from "../mods/native/tool/Tool";
 import { BonusType } from "../mods/native/registry/BonusRegistry";
 import Laser from "../mods/native/entities/projectile/laser/Laser";
-import IMatrixRule from "../rule/IGameRule";
+import IMatrixRule from "../rule/IMatrixRule";
 import { mRot } from "../general/GlobalRot";
 import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
 
