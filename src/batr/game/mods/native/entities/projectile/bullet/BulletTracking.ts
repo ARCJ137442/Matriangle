@@ -7,7 +7,7 @@ import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
-import { projectileCanHurtOther, toolCreateExplode } from "../../../registry/NativeGameMechanics";
+import { projectileCanHurtOther, toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 
 /**

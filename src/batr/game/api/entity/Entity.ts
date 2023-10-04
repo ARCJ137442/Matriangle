@@ -1,5 +1,3 @@
-import EntityType from "./EntityType";
-
 /**
  * @author ARCJ137442
  * @class 一切「游戏内实体」的抽象基类，拥有「激活」属性

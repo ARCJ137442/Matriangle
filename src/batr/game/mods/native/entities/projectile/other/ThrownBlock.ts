@@ -11,7 +11,7 @@ import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTr
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 import IPlayer from "../../player/IPlayer";
 import EffectBlockLight from "../../effect/EffectBlockLight";
-import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../registry/NativeGameMechanics";
+import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../registry/NativeMatrixMechanics";
 
 /**
  * 「掷出的方块」是

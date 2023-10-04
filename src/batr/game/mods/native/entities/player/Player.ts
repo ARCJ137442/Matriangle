@@ -13,14 +13,14 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer, getPlayers } from "../../registry/NativeGameMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer, getPlayers } from "../../registry/NativeMatrixMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
 import EffectPlayerHurt from "../effect/EffectPlayerHurt";
-import GameRule_V1 from "../../rule/GameRule_V1";
+import MatrixRule_V1 from "../../rule/MatrixRule_V1";
 import PlayerController from "./controller/PlayerController";
 
 /**
@@ -518,7 +518,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 		// 清除「储备生命值」 //
 		this.heal = 0;
 		// 清除重生刻
-		this._respawnTick = host.rule.safeGetRule<uint>(GameRule_V1.key_defaultRespawnTime);
+		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRule_V1.key_defaultRespawnTime);
 		// 全局处理
 		handlePlayerDeath(host, attacker, this, damage);
 	}

@@ -1,5 +1,5 @@
-import { BlockType } from "../api/block/Block";
-import EntityType from "../api/entity/EntityType";
+import { BlockType } from "../../../api/block/Block";
+import EntityType from "../../../api/entity/EntityType";
 
 export type typeID = string;
 

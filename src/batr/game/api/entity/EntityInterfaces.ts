@@ -15,7 +15,6 @@ import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
 import PlayerStats from "../../mods/native/stat/PlayerStats";
-import Block from "../block/Block";
 
 /**
  * 「格点实体」是

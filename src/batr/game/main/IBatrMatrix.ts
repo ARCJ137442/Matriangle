@@ -20,7 +20,7 @@ import { BonusType } from "../mods/native/registry/BonusRegistry";
 import Laser from "../mods/native/entities/projectile/laser/Laser";
 import IMatrixRule from "../rule/IGameRule";
 import { mRot } from "../general/GlobalRot";
-import IBatrRegistry from "./IBatrRegistry";
+import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
 
 /**
  * 「游戏母体」：承载并控制所有「世界运行」有关的事物
@@ -81,11 +81,15 @@ export default interface IBatrMatrix {
 	/**
 	 * 游戏中所有加载的地图
 	 * * 用于地图切换时在此中选择
+	 * 
 	 * ! 游戏地图不再以「ID」作为索引：当一个游戏/游戏规则被导出成JS对象时，会直接原样输出所有地图文件
+	 * 
 	 * ? 具体实现有待商议：或许需要某种「内联机制」比如「NativeMapPointer」（ID→指向内联地图的「内联指针」）
+	 * 
+	 * !【2023-10-04 23:25:48】现在「游戏母体」不再管理地图，转而由其「规则」管理。。。
 	 */
-	get loadedMaps(): IMap[];
-	get numLoadedMaps(): uint;
+	// get loadedMaps(): IMap[];
+	// get numLoadedMaps(): uint;
 
 	/**
 	 * ? 是否要把这个「当前地图」暴露出去？
@@ -96,7 +100,11 @@ export default interface IBatrMatrix {
 	// get mapIndex(): uint; // !【2023-10-02 23:26:35】现在讨论「索引」无意义
 	// get mapWidth(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
 	// get mapHeight(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
-	get mapTransformPeriod(): uint; // ? 外置
+	/**
+	 * 获取地图的「变换周期」
+	 * * 或许也需要外置？
+	 */
+	get mapTransformPeriod(): uint;
 	// set mapVisible(value: boolean); // !【2023-10-02 22:36:32】弃用：不再涉及「显示呈现」
 
 	//========🎯规则部分：规则加载、规则读写========//
@@ -108,36 +116,91 @@ export default interface IBatrMatrix {
 	 */
 	get rule(): IMatrixRule;
 
-	load(rule: IMatrixRule, becomeActive?: boolean/* = false*/): boolean;
-	clearGame(): boolean;
-	restartGame(rule: IMatrixRule, becomeActive?: boolean/* = false*/): void;
-	forceStartGame(rule: IMatrixRule, becomeActive?: boolean/* = false*/): boolean;
-	dealGameTick(): void;
+	/**
+	 * 根据自身所加载的规则初始化
+	 * * 源自`Game.load`方法
+	 * 
+	 * @returns 是否初始化成功
+	 */
+	initByRule(): boolean;
+	// becomeActive?: boolean/* = false*/ // !【2023-10-04 23:44:00】现已废弃
+
+	/**
+	 * 重置「游戏母体」状态
+	 * * 重置规则
+	 * * 删除侦听器
+	 * * 清空实体
+	 * * 清空地图
+	 * * 取消活跃状态
+	 */
+	reset(): boolean;
+	/**
+	 * 使用当前规则重新开始
+	 * * 具体以原有实现为准
+	 */
+	restart(rule: IMatrixRule,): void;
+	// becomeActive?: boolean/* = false*/ // !【2023-10-04 23:44:00】现已废弃
+	/**
+	 * 使用某个规则强制重置&重启
+	 * * 具体以原有实现为准
+	 */
+	forceStart(rule: IMatrixRule,): boolean;
+	// becomeActive?: boolean/* = false*/ // !【2023-10-04 23:44:00】现已废弃
+	/**
+	 * 游戏主时钟
+	 * * 决定游戏各个实体的运行
+	 */
+	tick(): void;
 
 	//========🤖控制部分：主循环、控制器等========//
-	/** * 在设置「是否激活」的时候，可能需要「更改侦听器」等附加动作辅助 */
-	get isActive(): boolean;
-	set isActive(value: boolean);
-	get isLoaded(): boolean;
-	get speed(): number;
-	set speed(value: number);
-	get enableFrameComplement(): boolean;
-	set enableFrameComplement(value: boolean);
+	/**
+	 * 控制游戏自身「是否活跃」
+	 * * 在设置「是否活跃」的时候，可能需要「更改侦听器」等附加动作辅助
+	 * 
+	 * !【2023-10-04 23:39:22】现在因「作用不明」取消该特性
+	*/
+	// get isActive(): boolean;
+	// set isActive(value: boolean);
+	/**
+	 * 「游戏母体」本身「是否已加载」
+	 * 
+	 * !【2023-10-04 23:39:22】现在因「作用不明」取消该特性
+	 */
+	// get isLoaded(): boolean;
 
-	onGameTick(E: Event): void;
+	/**
+	 * 决定「游戏速度」
+	 * 
+	 * !【2023-10-04 23:40:44】现在其作用已准备外迁，故不应出现于此
+	*/
+	// get speed(): number;
+	// set speed(value: number);
+	/**
+	 * 决定「游戏补帧」效果
+	 * * 曾用于解决「游戏卡顿」的补救措施
+	 * 
+	 * !【2023-10-04 23:40:44】现在其作用已准备外迁，故不应出现于此
+	 */
+	// get enableFrameComplement(): boolean;
+	// set enableFrameComplement(value: boolean);
+
+	/**
+	 * !【2023-10-04 23:42:08】旧Flash事件系统遗留，废弃
+	 */
+	// onGameTick(E: Event): void;
 
 	//========💭其它函数：考虑外迁========//
-	//====About Game End====// ? 是否也要实现为一个「游戏控制器」
+	//====About Game End====// ? 是否也可以实现为一个「游戏控制器」
+	// TODO: 待外置
 	/** Condition: Only one team's player alive. */
-	isPlayersEnd(players: IPlayer[]): boolean;
-	getAlivePlayers(): IPlayer[]
-	getInMapPlayers(): IPlayer[]
-	testGameEnd(force?: boolean/* = false*/): void;
-	resetPlayersTeamInDifferent(players: IPlayer[]): void;
-	onGameEnd(winners: IPlayer[]): void;
-	getGameResult(winners: IPlayer[]): GameResult;
+	// isPlayersEnd(players: IPlayer[]): boolean;
+	// getAlivePlayers(): IPlayer[]
+	// getInMapPlayers(): IPlayer[]
+	// testGameEnd(force?: boolean/* = false*/): void;
+	// onGameEnd(winners: IPlayer[]): void;
+	// getGameResult(winners: IPlayer[]): GameResult;
+	// resetPlayersTeamInDifferent(players: IPlayer[]): void; // !【2023-10-04 23:45:31】作用不明，已移除
 	// getResultMessage(winners: IPlayer[]): I18nText; // !【2023-10-02 22:36:32】弃用：不再涉及「国际化文本」
-
 
 
 	//========Game AI Interface========// TODO: 待外置

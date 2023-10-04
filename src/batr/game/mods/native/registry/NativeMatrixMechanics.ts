@@ -1,13 +1,12 @@
 import { ReLU_I, intMax, intMin, randInt } from "../../../../common/exMath";
-import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquare, traverseNDSquareSurface } from "../../../../common/geometricTools";
-import { randomWithout, randomIn, clearArray, randomByWeight, randomByWeight_KW, randomInWeightMap } from "../../../../common/utils";
+import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquareSurface } from "../../../../common/geometricTools";
+import { randomWithout, randomIn, clearArray, randomInWeightMap } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
-import Block, { BlockType } from "../../../api/block/Block";
-import { iRot, mRot, mRot2axis, mRot2increment, toward_MI } from "../../../general/GlobalRot";
+import Block from "../../../api/block/Block";
+import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
-import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../main/IBatrMatrix";
 import BlockColored from "../blocks/Colored";
 import BlockGate from "../blocks/Gate";
@@ -18,7 +17,7 @@ import LaserAbsorption from "../entities/projectile/laser/LaserAbsorption";
 import LaserBasic from "../entities/projectile/laser/LaserBasic";
 import LaserPulse from "../entities/projectile/laser/LaserPulse";
 import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
-import GameRule_V1 from "../rule/GameRule_V1";
+import MatrixRule_V1 from "../rule/MatrixRule_V1";
 import Tool from "../tool/Tool";
 import { MoveableWall, NativeBlockTypes } from "./BlockTypeRegistry";
 import { BonusType, NativeBonusTypes } from "./BonusRegistry";
@@ -28,12 +27,10 @@ import { NativeTools } from './ToolRegistry';
 import IPlayer from "../entities/player/IPlayer";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
-import { uniSaveJSObject, uniLoadJSObject } from "../../../../common/JSObjectify";
 import IGameRule from "../../../rule/IGameRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../stat/PlayerStats";
-import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
 import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
 import EffectPlayerDeathFadeout from "../entities/effect/EffectPlayerDeathFadeout";
 import Entity from "../../../api/entity/Entity";
@@ -41,7 +38,7 @@ import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
 import EffectTeleport from "../entities/effect/EffectTeleport";
 import EffectSpawn from "../entities/effect/EffectSpawn";
 import EffectBlockLight from "../entities/effect/EffectBlockLight";
-import IMap from './../../../api/map/IMap';
+import IMap from '../../../api/map/IMap';
 import Laser from "../entities/projectile/laser/Laser";
 import EffectExplode from "../entities/effect/EffectExplode";
 
@@ -66,13 +63,13 @@ import EffectExplode from "../entities/effect/EffectExplode";
  */
 export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
     // 处理工具
-    let defaultTool: Tool | string = rule.safeGetRule<Tool | string>(GameRule_V1.key_defaultTool);
+    let defaultTool: Tool | string = rule.safeGetRule<Tool | string>(MatrixRule_V1.key_defaultTool);
     switch (defaultTool) {
         // 统一随机
         case 'u-random':
             // 随机选一个
             defaultTool = randomIn<Tool>(
-                rule.safeGetRule<Tool[]>(GameRule_V1.key_enabledTools)
+                rule.safeGetRule<Tool[]>(MatrixRule_V1.key_enabledTools)
             );
             break;
         // 完全随机
@@ -86,8 +83,8 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
     // 开始逐个玩家分派属性
     for (const player of players) {
         // 生命 //
-        player.HP = rule.safeGetRule<uint>(GameRule_V1.key_defaultHP);
-        player.maxHP = rule.safeGetRule<uint>(GameRule_V1.key_defaultMaxHP);
+        player.HP = rule.safeGetRule<uint>(MatrixRule_V1.key_defaultHP);
+        player.maxHP = rule.safeGetRule<uint>(MatrixRule_V1.key_defaultMaxHP);
 
         // TODO: 下面的「判断是否AI」留给创建者。。。
         // player.setLifeByInt(player instanceof AIPlayer ? rule.remainLivesAI : rule.remainLivesPlayer);
@@ -97,7 +94,7 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
         player.tool = (
             defaultTool === '' ?
                 randomIn<Tool>(
-                    rule.safeGetRule<Tool[]>(GameRule_V1.key_enabledTools)
+                    rule.safeGetRule<Tool[]>(MatrixRule_V1.key_enabledTools)
                 ) :
                 defaultTool as Tool
         );
@@ -342,32 +339,32 @@ export function playerPickupBonusBox(
             break;
         case NativeBonusTypes.ADD_LIFE:
             if (player.lifeNotDecay || player.isFullHP)
-                player.maxHP += host.rule.getRule(GameRule_V1.key_bonusMaxHPAdditionAmount) as uint; // ! 可能出错
+                player.maxHP += host.rule.getRule(MatrixRule_V1.key_bonusMaxHPAdditionAmount) as uint; // ! 可能出错
             else
                 player.lives++;
             break;
         // Tool
         case NativeBonusTypes.RANDOM_TOOL:
-            player.tool = randomWithout(host.rule.getRule(GameRule_V1.key_enabledTools) as Tool[], player.tool);
+            player.tool = randomWithout(host.rule.getRule(MatrixRule_V1.key_enabledTools) as Tool[], player.tool);
             break;
         // Attributes
         case NativeBonusTypes.BUFF_RANDOM:
             playerPickupBonusBox(host, player, bonusBox, randomIn(NativeBonusTypes._ABOUT_BUFF));
             return;
         case NativeBonusTypes.BUFF_DAMAGE:
-            player.attributes.buffDamage += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffDamage += host.rule.getRule(MatrixRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
             break;
         case NativeBonusTypes.BUFF_CD:
-            player.attributes.buffCD += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffCD += host.rule.getRule(MatrixRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_CD_COLOR;
             break;
         case NativeBonusTypes.BUFF_RESISTANCE:
-            player.attributes.buffResistance += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffResistance += host.rule.getRule(MatrixRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
             break;
         case NativeBonusTypes.BUFF_RADIUS:
-            player.attributes.buffRadius += host.rule.getRule(GameRule_V1.key_bonusBuffAdditionAmount) as uint;
+            player.attributes.buffRadius += host.rule.getRule(MatrixRule_V1.key_bonusBuffAdditionAmount) as uint;
             buffColor = BonusBoxSymbol.BUFF_RADIUS_COLOR;
             break;
         case NativeBonusTypes.ADD_EXPERIENCE:
@@ -538,7 +535,7 @@ export function playerMoveInTest(
     // 开始计算
     let finalPlayerDamage: int = computeFinalBlockDamage(
         player.maxHP,
-        host.rule.safeGetRule<int>(GameRule_V1.key_playerAsphyxiaDamage),
+        host.rule.safeGetRule<int>(MatrixRule_V1.key_playerAsphyxiaDamage),
         attributes.playerDamage
     );
     // int$MIN_VALUE⇒无伤害
@@ -723,7 +720,7 @@ export function handlePlayerUse(host: IBatrMatrix, player: IPlayer, rot: uint, d
  */
 export function handlePlayerHurt(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
     // 存入统计信息
-    if (host.rule.getRule<boolean>(GameRule_V1.key_recordPlayerStats)) {
+    if (host.rule.getRule<boolean>(MatrixRule_V1.key_recordPlayerStats)) {
         // 受害者の统计
         victim.stats.damageBy += damage;
         victim.stats.addDamageByPlayerCount(attacker, damage);
@@ -777,13 +774,13 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
     // 保存死亡点，在后续生成奖励箱时使用
     let deadP: iPoint = victim.position.copy();
     // 移动受害者到指定地方
-    victim.position = host.rule.safeGetRule<iPoint>(GameRule_V1.key_deadPlayerMoveTo);
+    victim.position = host.rule.safeGetRule<iPoint>(MatrixRule_V1.key_deadPlayerMoveTo);
     // TODO: 统一设置位置？
 
     // victim.gui.visible = false; // TODO: 显示更新
 
     // Store Stats
-    if (host.rule.safeGetRule<boolean>(GameRule_V1.key_recordPlayerStats)) {
+    if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_recordPlayerStats)) {
         // 总体死亡数据
         victim.stats.deathCount++;
         // 总体死亡
@@ -805,10 +802,10 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
         }
     }
     // 死后在当前位置生成奖励箱
-    if (host.rule.safeGetRule<boolean>(GameRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
+    if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
         (
-            host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBoxMaxCount) < 0 ||
-            getBonusBoxCount(host) < host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBoxMaxCount)
+            host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount) < 0 ||
+            getBonusBoxCount(host) < host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount)
         ) &&
         host.map.testBonusBoxCanPlaceAt(deadP, getPlayers(host))
     ) {
@@ -818,7 +815,7 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
     if (attacker !== null)
         attacker.onKillPlayer(host, victim, damage);
     // 检测「游戏结束」 // TODO: 通用化
-    host.testGameEnd();
+    // host.testGameEnd();
 }
 
 /**
@@ -829,7 +826,7 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
  * @param host 所在的「游戏母体」
  * @param p 添加的坐标
  */
-function addBonusBoxInRandomTypeByRule(host: IBatrMatrix, p: intPoint): void {
+export function addBonusBoxInRandomTypeByRule(host: IBatrMatrix, p: intPoint): void {
     host.addEntity(
         new BonusBox(
             p,
@@ -1123,7 +1120,7 @@ export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef =
         if (hitTestEntity_I_Grid(player, at)) { // TODO: 【2023-10-03 23:55:46】断点
             playerPickupBonusBox(host, player, bonusBox);
             player.onPickupBonusBox(host, bonusBox);
-            host.testGameEnd();
+            // host.testGameEnd(); // TODO: 通用化
             return true;
         }
     }
@@ -1219,7 +1216,7 @@ export function randomizeAllPlayerTeam(host: IBatrMatrix): void {
  * @param host 所在的「游戏母体」
  */
 export function getRandomTeam(host: IBatrMatrix): PlayerTeam {
-    return randomIn(host.rule.safeGetRule<PlayerTeam[]>(GameRule_V1.key_playerTeams));
+    return randomIn(host.rule.safeGetRule<PlayerTeam[]>(MatrixRule_V1.key_playerTeams));
 }
 
 /**
@@ -1245,19 +1242,19 @@ export function handlePlayerLevelup(host: IBatrMatrix, player: IPlayer): void {
         switch (nowE) {
             case 1:
                 color = BonusBoxSymbol.BUFF_CD_COLOR;
-                player.attributes.buffCD += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
+                player.attributes.buffCD += host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBuffAdditionAmount);
                 break;
             case 2:
                 color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-                player.attributes.buffResistance += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
+                player.attributes.buffResistance += host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBuffAdditionAmount);
                 break;
             case 3:
                 color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-                player.attributes.buffRadius += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
+                player.attributes.buffRadius += host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBuffAdditionAmount);
                 break;
             default:
                 color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-                player.attributes.buffDamage += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
+                player.attributes.buffDamage += host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBuffAdditionAmount);
         }
         nowE = (nowE + 1) & 3;
         i++;
@@ -1447,7 +1444,7 @@ function calculateLaserLength(host: IBatrMatrix, rootP: iPointRef, rot: mRot): u
     let l: uint = 0;
     // 当前轴向&增量
     let axis = mRot2axis(rot), inc = mRot2increment(rot);
-    let maxL: uint = host.rule.safeGetRule<uint>(GameRule_V1.key_maxLaserLength)
+    let maxL: uint = host.rule.safeGetRule<uint>(MatrixRule_V1.key_maxLaserLength)
     while (
         host.map.testCanPass_I(
             _temp_calculateLaserLength,
@@ -1663,12 +1660,7 @@ export function initBasicPlayerTeams(parent: PlayerTeam[], coloredTeamCount: uin
  * * 不断切换的地图
  * * 混战
  */
-export const MENU_BACKGROUND: GameRule_V1 = loadAsBackgroundRule(new GameRule_V1());
-
-/**
- * 获取作为「菜单背景」的游戏规则
- */
-export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
+export function loadAsBackgroundRule(rule: MatrixRule_V1): MatrixRule_V1 {
     rule.playerCount = 0;
     rule.AICount = 8;
     rule.defaultTool = 'c-random'; // 完全随机
@@ -1679,13 +1671,11 @@ export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
     return rule;
 }
 
-
-
 // Rule Random About
 export function randomToolEnable(rule: IGameRule): Tool {
     return randomIn(
         rule.safeGetRule<Tool[]>(
-            GameRule_V1.key_enabledTools
+            MatrixRule_V1.key_enabledTools
         )
     );
 }
@@ -1693,7 +1683,7 @@ export function randomToolEnable(rule: IGameRule): Tool {
 export function getRandomMap(rule: IGameRule): IMap {
     return randomInWeightMap(
         rule.safeGetRule<Map<IMap, number>>(
-            GameRule_V1.key_mapRandomPotentials
+            MatrixRule_V1.key_mapRandomPotentials
         )
     );
 }
@@ -1738,7 +1728,7 @@ export function getRandomBonusType(rule: IGameRule): BonusType {
         filterBonusType(
             rule,
             rule.safeGetRule<Map<BonusType, number>>(
-                GameRule_V1.key_bonusTypePotentials
+                MatrixRule_V1.key_bonusTypePotentials
             )
         )
     );

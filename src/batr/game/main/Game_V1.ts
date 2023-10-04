@@ -1,6 +1,6 @@
 ﻿import IBatrMatrix from "./IBatrMatrix";
 import IBatrGame from "./IBatrGame";
-import IBatrRegistry from "./IBatrRegistry";
+import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
 
 /**
  * 第一代「游戏主体」

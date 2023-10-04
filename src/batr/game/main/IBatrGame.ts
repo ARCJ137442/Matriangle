@@ -1,5 +1,5 @@
 ﻿import IBatrMatrix from "./IBatrMatrix";
-import IBatrRegistry from "./IBatrRegistry";
+import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
 
 /**
  * TODO: 有待施工

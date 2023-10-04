@@ -3,7 +3,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { toolCreateExplode } from "../../../registry/NativeGameMechanics";
+import { toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 import Bullet from "./Bullet";
 

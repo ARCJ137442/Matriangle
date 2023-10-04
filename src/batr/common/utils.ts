@@ -129,7 +129,8 @@ export function randomWithout<T>(array: T[], excepts: T): T {
  * @returns the selected index of the weight
  */
 export function randomByWeight(weights: number[]): uint {
-	if (weights.length == 1) return 0;
+	if (weights.length === 0) throw new Error("根本就没有要随机选择的对象！");
+	if (weights.length === 1) return 0;
 
 	let all: number = exMath.sum(weights);
 	let r: number = exMath.randomFloat(all);
@@ -142,6 +143,7 @@ export function randomByWeight(weights: number[]): uint {
 		if (r <= rs + N)
 			return i;
 	}
+	console.error(weights, all, r)
 	throw new Error("加权随机：未正常随机到结果！")
 }
 

@@ -3,7 +3,7 @@
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Player from "../entities/player/Player";
 import Game from "../../../main/Game_V1";
-import GameRule_V1 from "../rule/GameRule_V1";
+import MatrixRule_V1 from "../rule/MatrixRule_V1";
 import PlayerStats from "./PlayerStats";
 
 /**
@@ -14,14 +14,14 @@ export default class GameStats {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _rule: GameRule_V1;
+	protected _rule: MatrixRule_V1;
 	protected _players: PlayerStats[] = new Array<PlayerStats>();
 
 	protected _mapTransformCount: uint = 0;
 	protected _bonusGenerateCount: uint = 0;
 
 	//============Constructor============//
-	public constructor(rule: GameRule_V1, players: IPlayer[] = null) {
+	public constructor(rule: MatrixRule_V1, players: IPlayer[] = null) {
 		super();
 		this.rule = rule;
 		if (players !== null)
@@ -41,11 +41,11 @@ export default class GameStats {
 	}
 
 	//============Instance Getter And Setter============//
-	public get rule(): GameRule_V1 {
+	public get rule(): MatrixRule_V1 {
 		return this._rule;
 	}
 
-	public set rule(value: GameRule_V1) {
+	public set rule(value: MatrixRule_V1) {
 		this._rule = value;
 	}
 

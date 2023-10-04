@@ -13,7 +13,7 @@ import Player from "../entities/player/Player";
 import { IEntityInGrid, IEntityOutGrid } from "../../../api/entity/EntityInterfaces";
 import IPlayer from "../entities/player/IPlayer";
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
-import { isHitAnyEntity_I_Grid } from "../registry/NativeGameMechanics";
+import { isHitAnyEntity_I_Grid } from "../registry/NativeMatrixMechanics";
 
 /**
  * 第一版地图
