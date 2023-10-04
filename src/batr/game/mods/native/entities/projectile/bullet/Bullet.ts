@@ -42,7 +42,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		this.speed = speed;
 		this._position.copyFrom(position)
 
-		// this.finalExplodeRadius = (owner == null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
+		// this.finalExplodeRadius = (owner === null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = finalExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
 	}
@@ -76,7 +76,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		super.onTick(host);
 		// Move
 		// Detect
-		// if (host == null) return;
+		// if (host === null) return;
 		this.nowBlock = host.map.storage.getBlock(this.position);
 		// 在移动进去之前
 		if (this.lastBlock != this.nowBlock) {

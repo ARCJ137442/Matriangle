@@ -9,9 +9,7 @@ import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces"
 import IBatrMatrix from '../../../../../main/IBatrMatrix';
 import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
 import { intAbs, intMin } from "../../../../../../common/exMath";
-import EntityType from "../../../../../api/entity/EntityType";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import { playerCanHurtOther } from "../../../registry/NativeGameMechanics";
+import { getHitEntity_I_Grid, getPlayers, isHitAnyEntity_I_Grid, playerCanHurtOther } from "../../../registry/NativeGameMechanics";
 import { clearArray } from "../../../../../../common/utils";
 import IPlayer from "../../player/IPlayer";
 
@@ -28,13 +26,7 @@ import IPlayer from "../../player/IPlayer";
  * @author ARCJ137442
  */
 export default class Lightning extends Projectile implements IEntityFixedLived, IEntityInGrid {
-	public get type(): EntityType { return NativeEntityTypes.LIGHTNING; }
 
-	//============Static Variables============//
-
-	//============Static Functions============//
-
-	//============Instance Variables============//
 	protected _position: iPoint = new iPoint();
 	protected _life: uint = Lightning.LIFE;
 
@@ -113,9 +105,9 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			if ((this._energy -= cost) < 0)
 				break;
 			// 标记（并在后续伤害）当前位置的玩家
-			player = host.getHitPlayerAt(head);
+			player = getHitEntity_I_Grid(head, getPlayers(host)) as (IPlayer | null);
 			if (player !== null && (
-				this.owner == null ||
+				this.owner === null ||
 				playerCanHurtOther(
 					this.owner, player,
 					this.canHurtEnemy,
@@ -193,9 +185,14 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	/** 临时缓存 */
 	protected _temp_getLeastWeightRot: iPoint = new iPoint();
 
+	/**
+	 * 计算每个点「通过」所需的「预算值」
+	 * @param host 所处的「游戏母体」
+	 * @param p 待计算的点
+	 * @returns 当前点的「预算值」
+	 */
 	protected operateCost(host: IBatrMatrix, p: iPoint): int {
-		if (host.isHitAnyPlayer_I(p))
-			return 5; // The electricResistance of player
+		if (isHitAnyEntity_I_Grid(p, getPlayers(host))) return 5; // The electricResistance of player
 		if (host.map.storage.isInMap(p))
 			return int$MAX_VALUE; // The electricResistance out of world
 		let attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(p);
@@ -209,7 +206,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		if (!this.isCalculated) {
 			this.isCalculated = true;
 			this.lightningWays(host);
-			host.lightningHurtPlayers(this, this._hurtPlayers, this._hurtDefaultDamage);
+			// lightningHurtPlayers(host, this, this._hurtPlayers, this._hurtDefaultDamage);
+			console.warn('WIP lightningHurtPlayers!', this, this._hurtPlayers, this._hurtDefaultDamage)
 		}
 		// 处理生命周期
 		if (this._life > 0)

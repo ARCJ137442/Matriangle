@@ -13,19 +13,26 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer } from "../../registry/NativeGameMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer, getPlayers } from "../../registry/NativeGameMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
-import { GameController, IGameControlReceiver } from "../../../../api/control/GameControl";
+import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
 import EffectPlayerHurt from "../effect/EffectPlayerHurt";
+import GameRule_V1 from "../../rule/GameRule_V1";
+import PlayerController from "./controller/PlayerController";
 
 /**
  * 「玩家」的主类
  * * 具体特性参考「IPlayer」
  */
-export default class Player extends Entity implements IPlayer, IGameControlReceiver {
+export default class Player extends Entity implements IPlayer, IMatrixControlReceiver {
+
+	// 判断「是玩家」标签
+	public readonly i_isPlayer: true = true;
+
+
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 
 	public static readonly DEFAULT_MAX_HP: int = 100;
@@ -470,45 +477,6 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 		shape.graphics.endFill();
 	}
 
-	/**
-	 * （移植自AIPlayer）用于在主图形上显示「附加装饰」
-	 * 
-	 * ?【2023-10-01 15:39:00】这个似乎应该迁移到「显示端」做
-	 * @param graphics 绘制的图形上下文
-	 * @param decorationLabel 绘制的「装饰类型」
-	 * @param radius 装饰半径
-	 */
-	public static drawShapeDecoration(
-		graphics: IBatrGraphicContext,
-		decorationLabel: NativeDecorationLabel,
-		radius: number = Player.SIZE / 10
-	): void {
-		// TODO: 有待整理
-		switch (decorationLabel) {
-			case NativeDecorationLabel.EMPTY:
-				break;
-			case NativeDecorationLabel.CIRCLE:
-				graphics.drawCircle(0, 0, radius);
-				break;
-			case NativeDecorationLabel.SQUARE:
-				graphics.drawRect(-radius, -radius, radius * 2, radius * 2);
-				break;
-			case NativeDecorationLabel.TRIANGLE:
-				graphics.moveTo(-radius, -radius);
-				graphics.lineTo(radius, 0);
-				graphics.lineTo(-radius, radius);
-				graphics.lineTo(-radius, -radius);
-				break;
-			case NativeDecorationLabel.DIAMOND:
-				graphics.moveTo(-radius, 0);
-				graphics.lineTo(0, radius);
-				graphics.lineTo(radius, 0);
-				graphics.lineTo(0, -radius);
-				graphics.lineTo(-radius, -0);
-				break;
-		}
-	}
-
 	/** TODO: 待实现的「更新」函数 */
 	public shapeRefresh(shape: IBatrShape): void {
 		throw new Error("Method not implemented.");
@@ -547,8 +515,10 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	}
 
 	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
+		// 清除「储备生命值」 //
+		this.heal = 0;
 		// 清除重生刻
-		this._respawnTick = host.rule.defaultRespawnTime;
+		this._respawnTick = host.rule.safeGetRule<uint>(GameRule_V1.key_defaultRespawnTime);
 		// 全局处理
 		handlePlayerDeath(host, attacker, this, damage);
 	}
@@ -722,7 +692,7 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 
 	// TODO: 日后呈现时可能会用到这段代码
 	/* public setCarriedBlock(block: Block, copyBlock: boolean = true): void {
-		if (block == null) {
+		if (block === null) {
 			this._carriedBlock.visible = false;
 		}
 		else {
@@ -761,10 +731,23 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	/**
 	 * 控制这个玩家的游戏控制器
 	 */
-	protected _controller: GameController | null = null;
+	protected _controller: PlayerController | null = null;
 
+	// !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
 	public moveForward(host: IBatrMatrix): void {
-		host.movePlayer(this as IPlayer, this.direction, 1);
+		// 能前进⇒前进
+		if (this.testCanGoForward(
+			host, this._direction,
+			false, true, getPlayers(host)
+		))
+			// 向前移动	
+			host.map.towardWithRot_II(
+				this._position,
+				this._direction,
+				1
+			)
+		// 处理其它事件（！串起来了）
+		// handlePlayerMove(host, this); // !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
 		// TODO: 显示更新
 	}
 
@@ -794,10 +777,15 @@ export default class Player extends Entity implements IPlayer, IGameControlRecei
 	public directUseTool(host: IBatrMatrix): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
 		this._tool.onUseByPlayer(host, this);
-		host.playerUseTool(
+		// TODO: 代码待迁移
+		console.warn('WIP@directUseTool',
 			this, this._direction,
 			this._tool.chargingPercent
-		);
+		)/* playerUseTool(
+			host,
+			this, this._direction,
+			this._tool.chargingPercent
+		); */
 		// // 工具使用后⇒通知GUI更新
 		// if (this.toolNeedsCharge) // TODO: 待显示模块完善
 		// 	this._GUI.updateCharge();

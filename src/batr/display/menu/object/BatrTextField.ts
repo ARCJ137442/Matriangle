@@ -10,7 +10,7 @@ export default class BatrTextField extends TextField implements IBatrMenuElement
 	//============Static Constructor============//
 	public static fromKey(translations: I18ns, translationKey: string = null, autoSize: string = TextFieldAutoSize.LEFT): BatrTextField {
 		return new BatrTextField(new I18nText(
-			translations == null ? I18ns.getI18nByLanguage() : translations,
+			translations === null ? I18ns.getI18nByLanguage() : translations,
 			translationKey
 		), autoSize);
 	}

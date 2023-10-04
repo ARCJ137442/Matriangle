@@ -27,7 +27,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 		let b: Block;
 		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
-			if (b == null)
+			if (b === null)
 				continue;
 			if (isBlockLocationEquals(b, x, y))
 				return true;
@@ -39,7 +39,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 		let b: Block;
 		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
-			if (b == null)
+			if (b === null)
 				continue;
 			if (isBlockLocationEquals(b, x, y))
 				return b;
@@ -51,7 +51,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 		let b: Block;
 		for (let i: int = 0; i < this.numChildren; i++) {
 			b = this.getBlockAsChildAt(i);
-			if (b == null)
+			if (b === null)
 				continue;
 			if (isBlockLocationEquals(b, x, y)) {
 				this.removeChildAt(i);
@@ -71,7 +71,7 @@ export default class MapDisplayerFlash extends Sprite implements IMapDisplayer {
 	}
 
 	public setBlock(x: int, y: int, block: Block, overwrite: boolean = true): void {
-		if (block == null)
+		if (block === null)
 			return;
 		let iBlock: Block = this.getBlock(x, y);
 		if (overwrite || !block.displayEquals(iBlock))

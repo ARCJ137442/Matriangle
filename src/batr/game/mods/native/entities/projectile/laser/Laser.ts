@@ -1,7 +1,6 @@
 
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../../../api/entity/EntityType";
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";

@@ -5,8 +5,6 @@ import { iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import Laser from "./Laser";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import EntityType from "../../../../../api/entity/EntityType";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -46,8 +44,7 @@ export default class LaserBasic extends Laser {
 
 	/** 覆盖：没有伤害过玩家，就触发「游戏母体」计算伤害 */
 	override onTick(host: IBatrMatrix): void {
-		if (!this.hasDamaged)
-			host.laserHurtPlayers(this);
+		if (!this.hasDamaged) console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}
 

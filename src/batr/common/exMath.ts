@@ -268,7 +268,7 @@ export function average(a: number[]): number {
 
 export function removeEmptyInArray(arr: (number | null)[]): void {
 	for (let i: number = Math.max(arr.length - 1, 0); i >= 0; i--) {
-		if (arr[i] == null || isNaN(arr[i] as number))
+		if (arr[i] === null || isNaN(arr[i] as number))
 			arr.splice(i, 1);
 	}
 }

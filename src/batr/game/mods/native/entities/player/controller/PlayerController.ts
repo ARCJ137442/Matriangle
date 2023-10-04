@@ -1,5 +1,5 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
-import { GameController } from "../../../../../api/control/GameControl";
+import { MatrixProgram } from "../../../../../api/control/MatrixControl";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import BonusBox from "../../item/BonusBox";
 import IPlayer from "../IPlayer";
@@ -10,7 +10,7 @@ import { PlayerAction } from "./PlayerAction";
  * * 一个专用的用于控制玩家的游戏控制器
  * * 封装了一系列有关玩家的钩子
  */
-export default abstract class PlayerController extends GameController {
+export default abstract class PlayerController extends MatrixProgram {
 
     /**
      * 在每个游戏刻中被调用

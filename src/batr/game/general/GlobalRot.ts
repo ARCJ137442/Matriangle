@@ -94,11 +94,11 @@ export function mRot2axis(rot: mRot): uint {
  * 
  * ! 处于性能考量，不强制要求本文件内使用，但建议在其它地方统一使用以便日后统一修改
  * 
- * @param rot 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
+ * @param axis 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
  * @returns 这个轴向上的「任意维整数角」（正方向）
  */
-export function axis2mRot_p(rot: mRot): uint {
-	return rot << 1;
+export function axis2mRot_p(axis: uint): mRot {
+	return axis << 1;
 }
 
 /**
@@ -106,11 +106,20 @@ export function axis2mRot_p(rot: mRot): uint {
  * 
  * ! 处于性能考量，不强制要求本文件内使用，但建议在其它地方统一使用以便日后统一修改
  * 
- * @param rot 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
+ * @param axis 「任意维整数角」对应的轴向（01→x@0, 12→y@1, ...）
  * @returns 这个轴向上的「任意维整数角」（负方向）
  */
-export function axis2mRot_n(rot: mRot): uint {
-	return (rot << 1) + 1;
+export function axis2mRot_n(axis: uint): mRot {
+	return (axis << 1) + 1;
+}
+
+/**
+ * 从「任意维整数角」直接获取「方向增量」
+ * @param rot 「任意维整数角」
+ * @returns 正方向⇒+1，负方向⇒-1
+ */
+export function mRot2increment(rot: mRot): 1 | -1 {
+	return (rot & 1) === 0 ? 1 : -1;
 }
 
 /**

@@ -1,13 +1,11 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../../../api/entity/EntityType";
 import Projectile from "../Projectile";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../../common/geometricTools";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { waveHurtPlayers } from "../../../registry/NativeGameMechanics";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
@@ -87,7 +85,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 			direction
 		);
 		this._nowScale = (
-			owner == null ?
+			owner === null ?
 				tempScale :
 				// (1 + owner.computeFinalRadius(tempScale) / 2)
 				// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「游戏逻辑」对象中访问，而非「放在玩家的类里」任由其与游戏耦合
@@ -145,6 +143,6 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		if (this._life > 0)
 			this._life--;
 		else
-			host.entitySystem.remove(this);
+			host.removeEntity(this);
 	}
 }

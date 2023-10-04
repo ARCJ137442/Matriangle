@@ -1,6 +1,6 @@
 import KeyListener from "../../../../../../common/KeyListener";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import { GameController } from "../../../../../api/control/GameControl";
+import { MatrixProgram } from "../../../../../api/control/MatrixControl";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../IPlayer";
@@ -8,7 +8,7 @@ import IPlayer from "../IPlayer";
 /**
  * 一个接受键盘信号，解析并以此控制玩家的
  */
-export default class KeyboardController extends GameController {
+export default class KeyboardController extends MatrixProgram {
 
     protected _listener: KeyListener;
     /** 控制器所控制的玩家 */

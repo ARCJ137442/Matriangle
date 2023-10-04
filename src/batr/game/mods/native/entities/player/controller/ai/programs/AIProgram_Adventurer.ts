@@ -120,7 +120,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		}
 		// Now the _tempNode instanceof the succeed Node.
 		// Return
-		return _tempNode == null ? null : _tempNode.pathToRoot;
+		return _tempNode === null ? null : _tempNode.pathToRoot;
 	}
 
 	protected static containNode(node: PathNode, nodes: PathNode[]): boolean {
@@ -155,12 +155,12 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	}
 
 	protected static getLeastFNode(nodes: PathNode[]): PathNode {
-		if (nodes == null)
+		if (nodes === null)
 			return null;
 		let _leastNode: PathNode = null;
 		let _leastF: int = int.MAX_VALUE;
 		for (let node of nodes) {
-			if (node == null)
+			if (node === null)
 				continue;
 			if (node.F < _leastF) {
 				_leastNode = node;
@@ -209,7 +209,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		let _leastNode: PathNode = null;
 		let _leastF: int = int.MAX_VALUE;
 		for (let node of nearbyNodes) {
-			if (node == null || pointInRemember(node, remember) ||
+			if (node === null || pointInRemember(node, remember) ||
 				host.isKillZone(node.x, node.y))
 				continue;
 			if (node.F < _leastF) {
@@ -221,7 +221,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	}
 
 	static pointInRemember(p: iPoint, r: Vector.<Boolean[]>): boolean {
-		if (p == null || r == null || r.length < 1)
+		if (p === null || r === null || r.length < 1)
 			return false;
 		return r[p.x][p.y];
 	}
@@ -235,7 +235,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 	}
 
 	static getEntityName(target: Entity): string {
-		if (target == null)
+		if (target === null)
 			return 'null';
 		if (target instanceof Player)
 			return (target as Player).customName;
@@ -330,7 +330,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		let _nearestDistance: int = int.MAX_VALUE;
 		let _tempDistance: int;
 		for (let box of host.entitySystem.bonusBoxes) {
-			if (box == null || this.inCloseTarget(box))
+			if (box === null || this.inCloseTarget(box))
 				continue;
 			_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
 			if (_tempDistance < _nearestDistance) {
@@ -349,7 +349,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		let players: IPlayer[] = host.getAlivePlayers();
 		for (let player of players) {
 			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
-				player == null || this.inCloseTarget(player))
+				player === null || this.inCloseTarget(player))
 				continue;
 			_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
 			if (_tempDistance < _nearestDistance) {
@@ -376,15 +376,15 @@ export default class AIProgram_Adventurer implements IAIProgram {
 
 	/*========AI Program Main========*/
 	public requestActionOnTick(player: AIPlayer): AIPlayerAction {
-		if (player == null)
+		if (player === null)
 			return AIPlayerAction.NULL;
 		// Set Variables
 		let host: IBatrGame = player.host;
 		let ownerPoint: iPoint = player.gridPoint;
 		let lastTargetPlayer: IPlayer = this._lastTarget as Player;
-		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
+		let lastTargetPlayerPoint: iPoint = lastTargetPlayer === null ? null : lastTargetPlayer.gridPoint;
 		// Init remember
-		if (this._remember == null) {
+		if (this._remember === null) {
 			this.initRemember(host);
 		}
 		// Act
@@ -397,13 +397,13 @@ export default class AIProgram_Adventurer implements IAIProgram {
 			}
 			//====Dynamic A*====//
 			// If Invalid Target,Get New Target
-			if (this._lastTarget == null || this._lastTarget == player) {
+			if (this._lastTarget === null || this._lastTarget == player) {
 				//========Find BonusBox========//
 				let target: Entity = null;
 				// set Player as Target
 				target = this._pickupFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 				// if cannot find player
-				if (target == null) {
+				if (target === null) {
 					if (!this._pickupFirst && host.entitySystem.bonusBoxCount > 0)
 						target = getNearestBonusBox(ownerPoint, host);
 					else
@@ -482,7 +482,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 					}
 					//==Execute==//
 					// Find Failed
-					if (finalNode == null) {
+					if (finalNode === null) {
 						this.addCloseTarget(this._lastTarget);
 						this.resetTarget();
 						traceLog(player, 'finalNode==null,forget target');
@@ -664,7 +664,7 @@ class NodeHeap {
 	}
 
 	public add(node: PathNode): void {
-		if (node == null)
+		if (node === null)
 			return;
 		this._list.push(node);
 		let index: uint = this.length - 1;
@@ -689,7 +689,7 @@ class NodeHeap {
 	}
 
 	protected setNode(n: PathNode, i: uint): void {
-		if (n == null)
+		if (n === null)
 			return;
 		if (this.length < i)
 			this._list.length = i + 1;

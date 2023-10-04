@@ -1,12 +1,12 @@
 import { int } from "../../../../../../legacy/AS3Legacy";
-import { GameEventType } from "../../../../../api/control/GameControl";
+import { MatrixEventType } from "../../../../../api/control/MatrixControl";
 import { mRot } from "../../../../../general/GlobalRot";
 
 /**
  * 玩家事件：从「控制器」向玩家回分派的事件类型
  * * 目前只有一个——添加动作
  */
-export const ADD_ACTION: GameEventType = 'addAction';
+export const ADD_ACTION: MatrixEventType = 'addAction';
 
 /**
  * 一个用于统一所有玩家输出的枚举

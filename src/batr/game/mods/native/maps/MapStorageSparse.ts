@@ -289,8 +289,8 @@ export default class MapStorageSparse implements IMapStorage {
         return this._spawnPoints.length > 0;
     }
 
-    public get randomSpawnPoint(): iPoint {
-        return randomIn(this._spawnPoints)
+    public get randomSpawnPoint(): iPoint | null {
+        return this._spawnPoints.length === 0 ? null : randomIn(this._spawnPoints);
     }
 
     // ! 实现：会，因为这里的点不能保证「不是临时的」
@@ -615,7 +615,7 @@ export default class MapStorageSparse implements IMapStorage {
 
     // 		iBlock = this._getBlock(ix, iy);
 
-    // 		if (iBlock == null)
+    // 		if (iBlock === null)
     // 			continue;
 
     // 		iLayer = iBlock.attributes.drawLayer;

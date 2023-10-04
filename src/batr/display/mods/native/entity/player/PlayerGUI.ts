@@ -247,27 +247,27 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	public updateName(): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
-		this._nameTagText.text = this._owner.customName == null ? '' : this._owner.customName;
+		this._nameTagText.text = this._owner.customName === null ? '' : this._owner.customName;
 	}
 
 	public updateTeam(): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
 		this.drawPointerTriangle(this._pointerTriangle.graphics);
 		this._nameTagText.textColor = this._owner.lineColor;
 	}
 
 	public updateHP(): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
 		this._HPBarHP.scaleX = this._owner.HPPercent;
-		this._HPBarText.text = this._owner.HPText == null ? '' : this._owner.HPText;
+		this._HPBarText.text = this._owner.HPText === null ? '' : this._owner.HPText;
 	}
 
 	public updateCharge(sort: boolean = true): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
 		this._chargeBarCharge.visible = this._chargeBarFrame.visible = this.getVisibleCharge();
 		if (sort)
@@ -276,7 +276,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	public updateCD(sort: boolean = true): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
 		this._CDBarCD.visible = this._CDBarFrame.visible = this.getVisibleCD();
 		if (sort)
@@ -285,7 +285,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	public updateExperience(sort: boolean = true): void {
-		if (this._owner == null)
+		if (this._owner === null)
 			return;
 		this._experienceBarExperience.visible = this._experienceBarFrame.visible = this.getVisibleExperience();
 		/*if(sort) sortUpperBars()*/

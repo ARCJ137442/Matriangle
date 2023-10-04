@@ -136,7 +136,7 @@ export default class I18nText {
 	}
 
 	public get currentText(): string {
-		if (this._translations == null)
+		if (this._translations === null)
 			return null;
 		return this._translations.getI18n(this._key);
 	}

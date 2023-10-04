@@ -1,9 +1,9 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
-import Player from "../player/Player";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { fPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import IPlayer from "../player/IPlayer";
 
 /**
  * 玩家死亡光效

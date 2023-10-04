@@ -6,8 +6,8 @@ import { TPS } from "../../../../main/GlobalGameVariables";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
-import Player from "../player/Player";
 import { NativeDecorationLabel as NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { drawShapeDecoration } from "../../../../../display/mods/native/NativeDisplayImplements";
 
 /**
  * （抽象）类玩家特效
@@ -106,7 +106,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 
 	protected drawDecoration(shape: IBatrShape): void {
 		if (this._decorationLabel !== null)
-			Player.drawShapeDecoration(shape.graphics, this._decorationLabel);
+			drawShapeDecoration(shape.graphics, this._decorationLabel);
 	}
 
 	/** 实现接口：更新不透明度 */

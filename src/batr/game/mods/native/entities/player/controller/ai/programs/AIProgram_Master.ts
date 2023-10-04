@@ -25,7 +25,7 @@ export default class AIProgram_Master implements IAIProgram {
 	protected static initFGH(n: PathNode, host: IBatrGame, owner: IPlayer | null, target: iPoint): PathNode {
 		// Set Rot in mapDealNode
 		n.G = getPathWeight(n, host, owner);
-		n.H = target == null ? 0 : n.getManhattanDistance(target) * 10 // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
+		n.H = target === null ? 0 : n.getManhattanDistance(target) * 10 // exMath.intAbs((n.x-target.x)*(n.y-target.y))*10;//With Linear distance
 		return n;
 	}
 
@@ -58,7 +58,7 @@ export default class AIProgram_Master implements IAIProgram {
 		let _leastNode: PathNode = null;
 		let _leastF: int = int.MAX_VALUE;
 		for (let node of nearbyNodes) {
-			if (node == null || AIProgram_Adventurer.pointInRemember(node, remember) ||
+			if (node === null || AIProgram_Adventurer.pointInRemember(node, remember) ||
 				host.computeFinalPlayerHurtDamage(owner, node.x, node.y, host.getBlockPlayerDamage(node.x, node.y)) >= owner.HP)
 				continue;
 			if (node.F < _leastF) {
@@ -146,7 +146,7 @@ export default class AIProgram_Master implements IAIProgram {
 		let _nearestDistance: int = int.MAX_VALUE;
 		let _tempDistance: int;
 		for (let box of host.entitySystem.bonusBoxes) {
-			if (box == null || this.inCloseTarget(box))
+			if (box === null || this.inCloseTarget(box))
 				continue;
 			_tempDistance = exMath.intAbs(box.gridX - ownerPoint.x) + exMath.intAbs(box.gridY - ownerPoint.y);
 			if (_tempDistance < _nearestDistance) {
@@ -165,7 +165,7 @@ export default class AIProgram_Master implements IAIProgram {
 		let players: IPlayer[] = host.getAlivePlayers();
 		for (let player of players) {
 			if (player == owner || !owner.canUseToolHurtPlayer(player, owner.tool) ||
-				player == null || this.inCloseTarget(player))
+				player === null || this.inCloseTarget(player))
 				continue;
 			_tempDistance = iPoint.getLineTargetDistance2(owner.gridX, owner.gridY, player.gridX, player.gridY);
 			if (_tempDistance < _nearestDistance) {
@@ -196,15 +196,15 @@ export default class AIProgram_Master implements IAIProgram {
 
 	/*========AI Program Main========*/
 	public requestActionOnTick(player: AIPlayer): AIPlayerAction {
-		if (player == null)
+		if (player === null)
 			return AIPlayerAction.NULL;
 		// Set Variables
 		let host: IBatrGame = player.host;
 		let ownerPoint: iPoint = player.gridPoint;
 		let lastTargetPlayer: IPlayer = this._lastTarget as Player;
-		let lastTargetPlayerPoint: iPoint = lastTargetPlayer == null ? null : lastTargetPlayer.gridPoint;
+		let lastTargetPlayerPoint: iPoint = lastTargetPlayer === null ? null : lastTargetPlayer.gridPoint;
 		// Init remember
-		if (this._remember == null) {
+		if (this._remember === null) {
 			this.initRemember(host);
 		}
 		// Act
@@ -226,13 +226,13 @@ export default class AIProgram_Master implements IAIProgram {
 			}*/
 			//====Dynamic A*====//
 			// If Invalid Target,Get New Target
-			if (this._lastTarget == null || this._lastTarget == player) {
+			if (this._lastTarget === null || this._lastTarget == player) {
 				//========Find BonusBox========//
 				let target: Entity = null;
 				// set Player as Target
 				target = this.pickBonusFirst ? getNearestBonusBox(ownerPoint, host) : getNearestEnemy(player, host);
 				// if cannot find box/player
-				if (target == null) {
+				if (target === null) {
 					if (!this.pickBonusFirst && host.entitySystem.bonusBoxCount > 0)
 						target = getNearestBonusBox(ownerPoint, host);
 					else
@@ -310,7 +310,7 @@ export default class AIProgram_Master implements IAIProgram {
 					}
 					//==Execute==//
 					// Find Failed
-					if (finalNode == null) {
+					if (finalNode === null) {
 						this.addCloseTarget(this._lastTarget);
 						this.resetTarget();
 						AIProgram_Adventurer.traceLog(player, 'finalNode==null,forget target');

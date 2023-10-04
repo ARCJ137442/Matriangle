@@ -69,7 +69,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 
 	//========By IBatrMenuElementContainer========//
 	public appendDirectElement(element: IBatrMenuElement): IBatrMenuElement {
-		if (element == null)
+		if (element === null)
 			return this;
 		this._directElements.push(element);
 		return this;
@@ -87,7 +87,7 @@ export default class BatrMenuSheet extends BatrMenuGUI implements IBatrMenuEleme
 
 	public addChildPerDirectElements(): void {
 		for (let element of this._directElements) {
-			if (element == null)
+			if (element === null)
 				continue;
 			if (element instanceof IBatrMenuElementContainer)
 				(element as IBatrMenuElementContainer).addChildPerDirectElements();

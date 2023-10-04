@@ -1,13 +1,11 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../../../api/entity/EntityType";
 import Laser from "./Laser";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import LaserBasic from "./LaserBasic";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -58,7 +56,7 @@ export default class LaserAbsorption extends Laser {
 		this.scaleY += LaserAbsorption.SCALE_V * (this.scaleReverse ? -1 : 1);
 		if (this.scaleY >= 1) {
 			this.scaleReverse = true;
-			host.laserHurtPlayers(this);
+			console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		}
 		else if (this.scaleY <= -1)
 			this.scaleReverse = false;

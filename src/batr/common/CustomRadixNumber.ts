@@ -51,12 +51,12 @@ export default class CustomRadixNumber {
 
 	// Tools
 	protected static isEmptyString(string: string | null): boolean {
-		return (string == null || string.length < 1);
+		return (string === null || string.length < 1);
 	}
 
 	protected static dealCharSet(charSet: string): string {
 		// Test
-		if (charSet == null || charSet.length < 1)
+		if (charSet === null || charSet.length < 1)
 			return '';
 		// Set
 		let returnCharSet: string = charSet;

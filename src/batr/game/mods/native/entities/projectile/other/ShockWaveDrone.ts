@@ -1,12 +1,10 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import EntityType from "../../../../../api/entity/EntityType";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalGameVariables";
 import { alignToGridCenter_P } from "../../../../../general/PosTransform";
@@ -74,7 +72,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 				!host.map.testCanPass_I(this._position, false, true, false)
 			) {
 				// Gone
-				host.entitySystem.remove(this);
+				host.removeEntity(this);
 			}
 			// 根据工具模拟玩家使用工具（武器） // ! 💭实际上的考量：似乎可以放开「工具/武器」的区别
 			else {
@@ -85,13 +83,18 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 					PROJECTILES_SPAWN_DISTANCE,
 				)
 				// 模拟使用 // ! 【2023-09-23 11:16:04】不限于「武器」！
-				host.playerUseToolAt(
+				/* playerUseTool(
 					this.owner,
 					this._tool,
 					this._temp_entityP,
 					this._toolDirection,
 					this._weaponChargePercent, PROJECTILES_SPAWN_DISTANCE
-				);
+				); */console.warn('WIP: playerUseTool@ShockWaveDrone',
+					this.owner,
+					this._tool,
+					this._temp_entityP,
+					this._toolDirection,
+					this._weaponChargePercent, PROJECTILES_SPAWN_DISTANCE)
 			}
 		}
 	}

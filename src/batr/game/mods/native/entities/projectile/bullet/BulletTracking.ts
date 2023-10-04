@@ -5,11 +5,9 @@ import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import EntityType from "../../../../../api/entity/EntityType";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import { projectileCanHurtOther } from "../../../registry/NativeGameMechanics";
+import { projectileCanHurtOther, toolCreateExplode } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../../player/IPlayer";
 
 /**
@@ -18,12 +16,13 @@ import IPlayer from "../../player/IPlayer";
  * * + 智能追踪
  * * ± 可变速度
  */
+
 export default class BulletTracking extends Bullet {
 
 	//============Static Variables============//
 	public static readonly SIZE: number = logical2Real(3 / 8);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
-	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffff00;
+	public static readonly DEFAULT_EXPLODE_COLOR: uint = 16776960;
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.625;
 
 	//============Instance Variables============//
@@ -32,8 +31,7 @@ export default class BulletTracking extends Bullet {
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: IPlayer[] = [];
 
-	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
-
+	/** 类型注册（TS中实现抽象属性，可以把类型限定为其子类） */ // !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给游戏母体提供的）
 	//============Constructor & Destructor============//
 	public constructor(
 		owner: IPlayer | null,
@@ -58,7 +56,6 @@ export default class BulletTracking extends Bullet {
 	}
 
 	//============Instance Functions============//
-
 	/**
 	 * Cached some static properties, during the short lifespan of the bullet
 	 * * 因其短周期性&访问高频性，直接缓存一个数组，以缩小搜索范围
@@ -67,7 +64,7 @@ export default class BulletTracking extends Bullet {
 		for (let player of players) {
 			if (player !== null && // not null
 				(
-					this._owner == null ||
+					this._owner === null ||
 					projectileCanHurtOther(this, player) // TODO: 以后需要改成「实例无关」方法
 				) // 需可使用工具伤害
 			)
@@ -82,7 +79,7 @@ export default class BulletTracking extends Bullet {
 	override onTick(host: IBatrMatrix): void {
 		let tempRot: mRot;
 		// 没目标⇒找目标
-		if (this._target == null) {
+		if (this._target === null) {
 			let player: IPlayer;
 			// 根据缓存的目标开始检查，并择机开始跟踪
 			for (let i: int = this._cachedTargets.length - 1; i >= 0; i--) {
@@ -101,13 +98,14 @@ export default class BulletTracking extends Bullet {
 				}
 			}
 		}
+
 		// 如果失去了目标（玩家等待重生、不再能被工具伤害、目标「跟丢了」），重置
-		else if (
-			this.checkTargetInvalid(this._target) || // 先检查「玩家是否合法」
+		else if (this.checkTargetInvalid(this._target) || // 先检查「玩家是否合法」
 			(tempRot = this._trackingFunction(this._target)) < 0 // 再检查「是否跟丢了」
 		) {
 			this._target = null;
 		}
+
 		// 如果目标还在，那就继续追踪目标
 		else {
 			this.direction = tempRot;
@@ -118,7 +116,7 @@ export default class BulletTracking extends Bullet {
 
 	protected checkTargetInvalid(player: IPlayer): boolean {
 		return (
-			// player == null || // ! 非空，但在上下文中不会发生（减少重复判断）
+			// player === null || // ! 非空，但在上下文中不会发生（减少重复判断）
 			player.isRespawning || // not respawning
 			(this._owner !== null && !projectileCanHurtOther(this, player)) // should can use it to hurt
 		);
@@ -126,7 +124,7 @@ export default class BulletTracking extends Bullet {
 
 	/**
 	 * 决定是否要触发「玩家追踪」
-	 * 
+	 *
 	 * ! 【20230915 20:53:40】现在由于适配任意维空间的需要，此函数被确定为「开启跟踪的条件」
 	 * @param player 所追踪的玩家
 	 * @returns 该玩家是否值得开启追踪
@@ -148,7 +146,7 @@ export default class BulletTracking extends Bullet {
 	 */
 	protected getTargetRot(player: IPlayer): int {
 		// 先获取一个最小索引，代表「绝对距离最小」的轴向
-		let iMinAbsDistance: uint = this._position_I.indexOfAbsMinDistance(player.position)
+		let iMinAbsDistance: uint = this._position_I.indexOfAbsMinDistance(player.position);
 		// 然后根据轴向生成「任意维整数角」
 		return (iMinAbsDistance << 1) + (
 			this.position[iMinAbsDistance] > player.position[iMinAbsDistance] ?
@@ -159,11 +157,13 @@ export default class BulletTracking extends Bullet {
 
 	/** 覆盖：通知「游戏母体」创建爆炸 */
 	override explode(host: IBatrMatrix): void {
-		// TODO: 等待「游戏逻辑」完善
-		host.toolCreateExplode(
-			this.position, this.finalExplodeRadius,
-			this.damage, this,
-			BulletNuke.DEFAULT_EXPLODE_COLOR, 0.5
+		toolCreateExplode(
+			host, this.owner,
+			this._position, this.finalExplodeRadius,
+			this._attackerDamage, this.extraDamageCoefficient,
+			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
+			BulletTracking.DEFAULT_EXPLODE_COLOR,
+			1 // 边缘百分比
 		);
 		// 超类逻辑：移除自身
 		super.explode(host);

@@ -1,11 +1,11 @@
 import { ReLU_I, intMax, intMin, randInt } from "../../../../common/exMath";
-import { iPoint, fPoint, iPointRef, fPointRef } from "../../../../common/geometricTools";
-import { randomWithout, randomIn, clearArray } from "../../../../common/utils";
+import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquare, traverseNDSquareSurface } from "../../../../common/geometricTools";
+import { randomWithout, randomIn, clearArray, randomByWeight, randomByWeight_KW, randomInWeightMap } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Block, { BlockType } from "../../../api/block/Block";
-import { iRot } from "../../../general/GlobalRot";
-import { alignToGridCenter_P } from "../../../general/PosTransform";
+import { iRot, mRot, mRot2axis, mRot2increment, toward_MI } from "../../../general/GlobalRot";
+import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../main/IBatrMatrix";
@@ -36,6 +36,14 @@ import PlayerStats from "../stat/PlayerStats";
 import EffectPlayerHurt from "../entities/effect/EffectPlayerHurt";
 import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
 import EffectPlayerDeathFadeout from "../entities/effect/EffectPlayerDeathFadeout";
+import Entity from "../../../api/entity/Entity";
+import EffectPlayerLevelup from "../entities/effect/EffectPlayerLevelup";
+import EffectTeleport from "../entities/effect/EffectTeleport";
+import EffectSpawn from "../entities/effect/EffectSpawn";
+import EffectBlockLight from "../entities/effect/EffectBlockLight";
+import IMap from './../../../api/map/IMap';
+import Laser from "../entities/projectile/laser/Laser";
+import EffectExplode from "../entities/effect/EffectExplode";
 
 
 /**
@@ -99,51 +107,190 @@ export function initPlayersByRule(players: IPlayer[], rule: IGameRule): void {
 
 //================⚙️实体管理================//
 
-// 特效 //
+// 实体调用的工具函数：各类抛射体伤害玩家的逻辑…… //
 
-// 
-/* export function addPlayerHurtEffect(host: IBatrMatrix, player: IPlayer, reverse: boolean = false): void {
+// !【2023-09-30 13:20:38】testCarriableWithMap, testBreakableWithMap⇒地图の存储の判断
+
+/**
+ * 使用工具创造爆炸
+ * 
+ * @param host 发生地
+ * @param p 发生地点
+ * @param finalRadius 最终爆炸半径
+ * @param damage 爆炸伤害
+ * @param projectile 抛射体
+ * @param color 爆炸颜色
+ * @param edgePercent 边缘百分比（用于「伤害随距离递减」）
+ */
+export function toolCreateExplode(
+    host: IBatrMatrix, creator: IPlayer | null,
+    p: fPointRef, finalRadius: number,
+    damage: uint, extraDamageCoefficient: uint,
+    canHurtEnemy: boolean, canHurtSelf: boolean, canHurtAlly: boolean,
+    color: uint, edgePercent: number = 1): void {
+    // 生成特效
     host.addEntity(
-        EffectPlayerHurt.fromPlayer(host, player, reverse)
+        new EffectExplode(p, finalRadius, color)
     );
+    // 遍历伤害玩家
+    let distanceP: number;
+    for (let player of getPlayers(host)) {
+        // 玩家坐标视作网格中心：对齐
+        alignToGridCenter_P(
+            player.position,
+            _temp_toolCreateExplode_playerCenterP
+        )
+        // 使用「平方比例」计算百分比
+        distanceP = p.getDistance(
+            _temp_toolCreateExplode_playerCenterP
+        ) / (finalRadius * finalRadius);
+        if (distanceP <= 1) {
+            // Operate damage by percent
+            if (edgePercent < 1)
+                damage *= edgePercent + (distanceP * (1 - edgePercent));
+            if (
+                creator === null ||
+                playerCanHurtOther(
+                    creator, player,
+                    canHurtEnemy, canHurtSelf, canHurtAlly
+                )
+            ) {
+                // Hurt With FinalDamage
+                player.removeHP(
+                    host,
+                    computeFinalDamage(
+                        uint(damage),
+                        player.attributes.buffResistance,
+                        extraDamageCoefficient
+                    ),
+                    creator
+                );
+            }
+        }
+    }
+}
+const _temp_toolCreateExplode_playerCenterP: fPoint = new fPoint();
+
+/**
+ * 抛射体「波浪」伤害玩家的逻辑
+ * @param host 游戏母体
+ * @param wave 在其中运行的抛射体「波浪」
+ */
+export function waveHurtPlayers(host: IBatrMatrix, wave: Wave): void {
+    /** 引用 */
+    let base: fPoint = wave.position;
+    /** Wave的尺寸即为其伤害半径 */
+    let radius: number = wave.nowScale;
+    // 开始遍历所有玩家
+    for (let victim of getPlayers(host)) { // TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
+        // FinalDamage
+        if (projectileCanHurtOther(wave, victim)) {
+            if (base.getDistance(victim.position) <= radius) {
+                victim.removeHP(host, wave.attackerDamage, wave.owner);
+            }
+        }
+    }
 }
 
-export function addSpawnEffect(host: IBatrMatrix, position: fPointRef): void {
-    this._effectSystem.addEffect(new EffectSpawn(this, x, y));
-}
+// !【2023-10-04 22:27:25】下面的代码全部在迁移之中，等待复活🏗️
 
-export function addTeleportEffect(host: IBatrMatrix, position: fPointRef): void {
-    this._effectSystem.addEffect(new EffectTeleport(this, x, y));
-}
+/* export function laserHurtPlayers(
+    host: IBatrMatrix, creator: IPlayer | null,
+    laser: LaserBasic,
+    damage: uint,
+): void {
+    // Set Variables
+    let attacker: IPlayer | null = laser.owner;
+    let damage: uint = laser.damage;
 
-export function addPlayerDeathLightEffect(host: IBatrMatrix, position: fPointRef, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-    this._effectSystem.addEffect(new EffectPlayerDeathLight(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
-}
+    let length: uint = laser.length;
 
-export function addPlayerDeathFadeoutEffect(host: IBatrMatrix, position: fPointRef, color: uint, rot: uint, aiPlayer: AIPlayer = null, reverse: boolean = false): void {
-    this._effectSystem.addEffect(new EffectPlayerDeathFadeout(this, x, y, rot, color, aiPlayer == null ? null : aiPlayer.decorationLabel, reverse));
-}
+    let rot: uint = laser.rot;
 
-export function addPlayerDeathLightEffect(host: IBatrMatrix, position: fPointRef, player: IPlayer, reverse: boolean = false): void {
-    this._effectSystem.addEffect(EffectPlayerDeathLight.fromPlayer(this, x, y, player, reverse));
-}
+    let teleport: boolean = laser instanceof LaserTeleport;
 
-export function addPlayerDeathFadeoutEffect(host: IBatrMatrix, position: fPointRef, player: IPlayer, reverse: boolean = false): void {
-    this._effectSystem.addEffect(EffectPlayerDeathFadeout.fromPlayer(this, x, y, player, reverse));
-}
+    let absorption: boolean = laser instanceof LaserAbsorption;
 
-export function addPlayerLevelupEffect(host: IBatrMatrix, position: fPointRef, color: uint, scale: number): void {
-    this._effectSystem.addEffect(new EffectPlayerLevelup(this, x, y, color, scale));
-}
+    let pulse: boolean = laser instanceof LaserPulse;
 
-export function addBlockLightEffect(host: IBatrMatrix, position: fPointRef, color: uint, alpha: uint, reverse: boolean = false): void {
-    this._effectSystem.addEffect(new EffectBlockLight(this, x, y, color, alpha, reverse));
-}
+    // Pos
+    let baseX: int = PosTransform.alignToGrid(laser.entityX);
 
-export function addBlockLightEffect2(host: IBatrMatrix, position: fPointRef, block: Block, reverse: boolean = false): void {
-    this._effectSystem.addEffect(EffectBlockLight.fromBlock(this, x, y, block, reverse));
+    let baseY: int = PosTransform.alignToGrid(laser.entityY);
+
+    let vx: int = GlobalRot.towardXInt(rot, 1);
+
+    let vy: int = GlobalRot.towardYInt(rot, 1);
+
+    let cx: int = baseX, cy: int = baseY, players: IPlayer[];
+
+    // let nextBlockAtt:BlockAttributes
+    // Damage
+    laser.hasDamaged = true;
+
+    let finalDamage: uint;
+    for (let i: uint = 0; i < length; i++) {
+        // nextBlockAtt=host.getBlockAttributes(cx+vx,cy+vy);
+        players = host.getHitPlayers(cx, cy);
+
+        for (let victim of players) {
+            if (victim === null)
+                continue;
+
+            // Operate
+            finalDamage = attacker === null ? damage : victim.computeFinalDamage(attacker, laser.ownerTool, damage);
+            // Effects
+            if (attacker === null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
+                // Damage
+                victim.removeHP(finalDamage, attacker);
+
+                // Absorption
+                if (attacker !== null && !attacker.isRespawning && absorption)
+                    attacker.heal += damage;
+            }
+            if (victim != attacker && !victim.isRespawning) {
+                if (teleport) {
+                    host.spreadPlayer(victim);
+                }
+                if (pulse) {
+                    if ((laser as LaserPulse).isPull) {
+                        if (host.testCanPass(cx - vx, cy - vy, true, false, false, true, false))
+                            victim.addXY(-vx, -vy);
+                    }
+                    else if (host.testCanPass(cx + vx, cy + vy, true, false, false, true, false))
+                        victim.addXY(vx, vy);
+                }
+            }
+        }
+        cx += vx;
+        cy += vy;
+    }
 } */
 
+/* export function thrownBlockHurtPlayer(host: IBatrMatrix, block: ThrownBlock): void {
+    let attacker: IPlayer = block.owner;
+    let damage: uint = block.damage;
+    for (let victim of host._entitySystem.players) {
+        if (victim === null)
+            continue;
+        // FinalDamage
+        if (attacker === null || attacker.canUseToolHurtPlayer(victim, block.ownerTool)) {
+            if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
+                victim.finalRemoveHP(attacker, block.ownerTool, damage);
+            }
+        }
+    }
+} */
+
+/* export function lightningHurtPlayers(host: IBatrMatrix, lightning: Lightning, players: IPlayer[], damages: uint[]): void {
+    let p: IPlayer, d: uint;
+    for (let i in players) {
+        p = players[i];
+        d = damages[i];
+        if (p !== null)
+            p.finalRemoveHP(lightning.owner, lightning.ownerTool, d);
+    }
+} */
 
 //================🕹️玩家================//
 
@@ -178,7 +325,7 @@ export function playerPickupBonusBox(
     host: IBatrMatrix, player: IPlayer, bonusBox: BonusBox,
     forcedBonusType: BonusType = bonusBox.bonusType
 ): void {
-    if (player == null)
+    if (player === null)
         return;
     // Deactivate
     bonusBox.isActive = false;
@@ -229,32 +376,144 @@ export function playerPickupBonusBox(
             break;
         // Team
         case NativeBonusTypes.RANDOM_CHANGE_TEAM:
-            host.randomizePlayerTeam(player);
-            break;
-        case NativeBonusTypes.UNITE_AI:
-            host.setATeamToAIPlayer(
-                randomIn(host.rule.getRule(GameRule_V1.key_playerTeams) as PlayerTeam[])
-            );
-            break;
-        case NativeBonusTypes.UNITE_PLAYER:
-            host.setATeamToNotAIPlayer(
-                randomIn(host.rule.getRule(GameRule_V1.key_playerTeams) as PlayerTeam[])
-            );
+            randomizePlayerTeam(host, player);
             break;
         // Other
         case NativeBonusTypes.RANDOM_TELEPORT:
-            host.spreadPlayer(player, false, true);
+            spreadPlayer(host, player, false, true);
             break;
     }
-    // 广义的右下角添加效果
+    // （用于「获得buff」）广义的右下角添加效果
     if (buffColor >= 0)
-        host.addPlayerLevelupEffect(player.position.copy().addFromSingle(0.5), buffColor, 0.75);
+        host.addEntity(
+            new EffectPlayerLevelup(
+                temp_playerPickupBonusBox_effectP.copyFrom(player.position).addFromSingle(0.5),
+                buffColor, 0.75
+            )
+        );
     // Stats Operations
     player.stats.pickupBonusBoxCount++;
     // Remove
     host.removeEntity(bonusBox);
 }
+const temp_playerPickupBonusBox_effectP: fPoint = new fPoint();
 
+/**
+ * 玩家使用工具的代码
+ * TODO: 代码太多太大太集中，需要迁移！重构！💢
+ */
+/* public playerUseTool(host: IBatrMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
+    // Test CD
+    if (player.toolUsingCD > 0)
+        return;
+    // Set Variables
+    let spawnX: number = player.tool.useOnCenter ? player.entityX : IPlayer.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
+    let spawnY: number = player.tool.useOnCenter ? player.entityY : IPlayer.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
+    // Use
+    this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
+    // Set CD
+    player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : IPlayer.computeFinalCD(player.tool);
+}
+
+public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
+    // Set Variables
+    let p: Projectile = null;
+
+    let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
+
+    let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
+
+    let frontBlock: Block;
+
+    let laserLength: number = this.rule.maxLaserLength;
+
+    if (Tool.isIncludeIn(tool, Tool._LASERS) &&
+        !this._rule.allowLaserThroughAllBlock) {
+        laserLength = this.getLaserLength2(x, y, toolRot);
+
+        // -projectilesSpawnDistance
+    }
+    // Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
+    // Summon Projectile
+    switch (tool) {
+        case Tool.BULLET:
+            p = new BulletBasic(this, x, y, player);
+
+            break;
+        case Tool.NUKE:
+            p = new BulletNuke(this, x, y, player, chargePercent);
+
+            break;
+        case Tool.SUB_BOMBER:
+            p = new SubBomber(this, x, y, player, chargePercent);
+
+            break;
+        case Tool.TRACKING_BULLET:
+            p = new BulletTracking(this, x, y, player, chargePercent);
+
+            break;
+        case Tool.LASER:
+            p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
+
+            break;
+        case Tool.PULSE_LASER:
+            p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
+
+            break;
+        case Tool.TELEPORT_LASER:
+            p = new LaserTeleport(this, x, y, player, laserLength);
+
+            break;
+        case Tool.ABSORPTION_LASER:
+            p = new LaserAbsorption(this, x, y, player, laserLength);
+
+            break;
+        case Tool.WAVE:
+            p = new Wave(this, x, y, player, chargePercent);
+
+            break;
+        case Tool.BLOCK_THROWER:
+            let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
+            let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
+            frontBlock = this.getBlock(carryX, carryY);
+            if (player.isCarriedBlock) {
+                // Throw
+                if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
+                    // Add Block
+                    p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
+                    // Clear
+                    player.setCarriedBlock(null);
+                }
+            }
+            else if (chargePercent >= 1) {
+                // Carry
+                if (frontBlock !== null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
+                    player.setCarriedBlock(frontBlock, false);
+                    this.setBlock(carryX, carryY, null);
+                    // Effect
+                    this.addBlockLightEffect2(centerX, centerY, frontBlock, true);
+                }
+            }
+            break;
+        case Tool.MELEE:
+
+            break;
+        case Tool.LIGHTNING:
+            p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
+            break;
+        case Tool.SHOCKWAVE_ALPHA:
+            p = new ShockWaveBase(this, centerX, centerY, player, player === null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone);
+            break;
+        case Tool.SHOCKWAVE_BETA:
+            p = new ShockWaveBase(this, centerX, centerY, player, player === null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone, 1);
+            break;
+    }
+    if (p !== null) {
+        p.rot = toolRot;
+        this._entitySystem.add(p);
+        this._projectileContainer.addChild(p);
+    }
+} */
 
 /**
  * 当每个玩家「移动到某个方块」时，在移动后的测试
@@ -342,26 +601,6 @@ export const computeFinalBlockDamage = (
                         uint$MAX_VALUE :
                         playerDamage - 100
 );
-
-// TODO: 后续完善实体系统后，再进行处理
-export function testCanGoTo(
-    host: IBatrMatrix, p: iPointRef,
-    avoidHurt: boolean = false,
-    avoidOthers: boolean = true,
-    others: IEntityInGrid[] = [],
-): boolean {
-    throw new Error("Method not implemented.");
-}
-
-// TODO: 后续完善实体系统后，再进行处理
-export function testCanGoForward(
-    host: IBatrMatrix, rotatedAsRot: uint | -1 = -1,
-    avoidHurt: boolean = false,
-    avoidOthers: boolean = true,
-    others: IEntityInGrid[] = [],
-): boolean {
-    throw new Error("Method not implemented.");
-}
 
 /**
  * 根据（使用武器的）玩家与（被玩家使用的）武器计算「攻击者伤害」
@@ -472,9 +711,6 @@ export const computeTotalPlayerScore = (stats: PlayerStats): uint => ReLU_I(
 
 // 玩家钩子函数（from`Game.as`） //
 
-export function handlePlayerMove(host: IBatrMatrix, player: IPlayer): void {
-}
-
 export function handlePlayerUse(host: IBatrMatrix, player: IPlayer, rot: uint, distance: number): void {
 }
 
@@ -516,8 +752,6 @@ export function handlePlayerHurt(host: IBatrMatrix, attacker: IPlayer | null, vi
  * @param damage 致死的伤害
  */
 export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
-    // 清除「储备生命值」 //
-    victim.heal = 0;
     // 特效 //
     // 死亡光效
     host.addEntities(
@@ -531,7 +765,6 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
         )
     );
 
-    // Set Victim
     // victim.visible = false; // !【2023-10-03 21:09:59】交给「显示端」
 
     // 取消激活
@@ -572,16 +805,197 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
         }
     }
     // 死后在当前位置生成奖励箱
-    if (host.rule.bonusBoxSpawnAfterPlayerDeath &&
-        (host.rule.bonusBoxMaxCount < 0 || host._entitySystem.bonusBoxCount < host.rule.bonusBoxMaxCount) &&
-        host.testCanPass(deadX, deadY, true, false, true, true, true)) {
-        host.addBonusBox(deadX, deadY, host.rule.randomBonusEnable);
+    if (host.rule.safeGetRule<boolean>(GameRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
+        (
+            host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBoxMaxCount) < 0 ||
+            getBonusBoxCount(host) < host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBoxMaxCount)
+        ) &&
+        host.map.testBonusBoxCanPlaceAt(deadP, getPlayers(host))
+    ) {
+        addBonusBoxInRandomTypeByRule(host, deadP);
     }
     // 触发击杀者的「击杀玩家」事件
     if (attacker !== null)
-        attacker.onKillPlayer(host, this, damage);
-    // 检测「游戏结束」 // TODO: 
+        attacker.onKillPlayer(host, victim, damage);
+    // 检测「游戏结束」 // TODO: 通用化
     host.testGameEnd();
+}
+
+/**
+ * 在指定坐标添加随机类型的奖励箱
+ * 
+ * ! 忽略「特定情况忽略」的选项，例如允许「在『锁定玩家队伍』的情况下改变玩家队伍」
+ * 
+ * @param host 所在的「游戏母体」
+ * @param p 添加的坐标
+ */
+function addBonusBoxInRandomTypeByRule(host: IBatrMatrix, p: intPoint): void {
+    host.addEntity(
+        new BonusBox(
+            p,
+            getRandomBonusType(host.rule)
+        )
+    );
+}
+
+/**
+ * 传送玩家到指定位置
+ * * 先取消玩家激活
+ * * 不考虑「是否可通过」
+ * * 可选的「传送特效」
+ * 
+ * @param host 所在的「游戏母体」
+ * @param player 被传送的玩家
+ * @param p 传送目的地
+ * @param rotateTo 玩家传送后要被旋转到的方向（默认为玩家自身方向）
+ * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
+ * @returns 玩家自身
+ */
+export function teleportPlayerTo(
+    host: IBatrMatrix,
+    player: IPlayer,
+    p: iPointRef,
+    rotateTo: mRot = player.direction,
+    isTeleport: boolean = false
+): IPlayer {
+    player.isActive = false;
+    // !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
+    player.position = p;
+    player.direction = rotateTo;
+    // 在被传送的时候可能捡到奖励箱
+    bonusBoxTest(host, player, p);
+    // 被传送后添加特效
+    if (isTeleport) {
+        let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
+        host.addEntity(
+            new EffectTeleport(fp)
+        )
+        // 只有在「有特效」的情况下算作「被传送」
+        player.stats.beTeleportCount++;
+    }
+    player.isActive = true;
+    return player;
+}
+
+/**
+ * 分散玩家
+ */
+export function spreadPlayer(host: IBatrMatrix, player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
+    // !【2023-10-04 17:12:26】现在不管玩家是否在重生
+    let p: iPointRef = host.map.storage.randomPoint;
+    const players: IPlayer[] = getPlayers(host);
+    // 尝试最多256次
+    for (let i: uint = 0; i < 0xff; i++) {
+        // 找到一个合法位置⇒停
+        if (player.testCanGoTo(host, p, true, true, players)) {
+            break;
+        }
+        // 没找到⇒继续
+        p = host.map.storage.randomPoint; // 复制一个引用
+    }
+    // 传送玩家
+    teleportPlayerTo(
+        host,
+        player,
+        p, // 传引用
+        ( // 是否要改变玩家朝向
+            rotatePlayer ?
+                host.map.storage.randomForwardDirectionAt(p) :
+                player.direction
+        ),
+        createEffect
+    );
+    // Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
+    return player;
+}
+
+/**
+ * 分散所有玩家
+ */
+export function spreadAllPlayer(host: IBatrMatrix): void {
+    for (let player of getPlayers(host)) {
+        spreadPlayer(host, player);
+    }
+}
+
+/**
+ * 在一个重生点处「重生」玩家
+ * * 逻辑：寻找随机重生点⇒移动玩家⇒设置随机特效
+ */
+export function respawnPlayer(host: IBatrMatrix, player: IPlayer): IPlayer {
+    let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy(); // 空值访问`null.copy()`会变成undefined
+    // 没位置⇒直接分散玩家
+    if (p === undefined) {
+        spreadPlayer(host, player, true, false);
+        p = player.position; // 重新确定重生地
+    }
+    // 有位置⇒进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
+    else
+        teleportPlayerTo(
+            host,
+            player,
+            findFitSpawnPoint(host, player, p),
+            host.map.storage.randomForwardDirectionAt(p),
+            false
+        ) // 无需重新确定重生地
+    // 加特效
+    let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
+    host.addEntities(
+        new EffectSpawn(fp), // 重生效果
+        EffectPlayerDeathLight.fromPlayer(p, player, true), // 重生时动画反向
+    )
+    // Return
+    // Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
+    return player;
+}
+
+const _temp_findFitSpawnPoint_pMax: iPoint = new iPoint();
+const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint();
+/**
+ * 在一个重生点附近寻找可用的重生位置
+ * * 重生点处可用就直接在重生点处，否则向外寻找
+ * * 若实在找不到，就强制在重生点处重生
+ * * 符合「可重生」的条件：地图内&可通过
+ * 
+ * ! 目前的bug：（来自于`traverseNDSquareSurface`）不会检查对角线上的位置
+ * 
+ * ! 会改变点spawnP的位置，以作为「最终重生点」
+ * 
+ * ? 【2023-10-04 18:11:09】实际上应该有一个「从重生点开始，从内向外遍历」的算法
+ * 
+ * @param searchR 搜索的最大曼哈顿半径（默认为16）
+ */
+function findFitSpawnPoint(
+    host: IBatrMatrix, player: IPlayer,
+    spawnP: iPointRef, searchR: uint = 16,
+): iPoint {
+    let players: IPlayer[] = getPlayers(host);
+    let isFound: boolean = false;
+    // 直接遍历
+    _temp_findFitSpawnPoint_pMax.copyFrom(spawnP);
+    _temp_findFitSpawnPoint_pMin.copyFrom(spawnP);
+    for (let r: uint = 1; r <= searchR; r++) {
+        traverseNDSquareSurface(
+            _temp_findFitSpawnPoint_pMin,
+            _temp_findFitSpawnPoint_pMax,
+            (p: iPointRef): void => {
+                // 判断の条件：
+                if (!isFound &&
+                    host.map.storage.isInMap(p) &&
+                    player.testCanGoTo(host, p, true, true, players)
+                ) {
+                    spawnP.copyFrom(p);
+                    isFound = true;
+                }
+            }
+        );
+        // 找到就直接返回
+        if (isFound) break;
+        // 没找到⇒坐标递增，继续
+        _temp_findFitSpawnPoint_pMax.addFromSingle(1);
+        _temp_findFitSpawnPoint_pMin.addFromSingle(-1);
+    }
+    return spawnP;
 }
 
 /**
@@ -597,8 +1011,8 @@ export function handlePlayerRespawn(host: IBatrMatrix, player: IPlayer): void {
     /* // Visible // !【2023-10-03 23:37:11】弃置，留给「显示端」
     player.visible = true;
     player.gui.visible = true; */
-    // Spread&Effect
-    host.respawnPlayer(player);
+    // 安排位置&特效
+    respawnPlayer(host, player);
 }
 
 /**
@@ -623,16 +1037,17 @@ export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPoi
  */
 export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
     // Detect
-    if (!player.isActive || !player.visible)
+    if (!player.isActive)
         return;
     // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
+    // 告知玩家开始处理「方块伤害」等逻辑
     player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
     // 测试「是否拾取到奖励箱」
     bonusBoxTest(host, player, newP);
 }
 
 /**
- * 用于获取一个「游戏母体」内所有的奖励箱
+ * （🚩专用代码迁移）用于获取一个「游戏母体」内所有的奖励箱
  * * 特殊高效分派逻辑：使用「约定属性」`bonusBoxes`（可以是getter）
  * 
  * 📌JS知识：`in`能匹配getter，而`hasOwnProperty`不行
@@ -655,6 +1070,49 @@ export function getBonusBoxes(host: IBatrMatrix): BonusBox[] {
 }
 
 /**
+ * （🚩专用代码迁移）获取一个「游戏母体」的奖励箱数量
+ * @param host 所在的「游戏母体」
+ * @returns 奖励箱数量
+ */
+export function getBonusBoxCount(host: IBatrMatrix): uint {
+    if ('bonusBoxes' in host) {
+        return (host as any).bonusBoxes.length;
+    }
+    // 否则用最笨的方法
+    else {
+        let c: uint = 0;
+        for (const e of host.entities)
+            if (e instanceof BonusBox) c++;
+        return c;
+    }
+}
+
+/**
+ * （🚩专用代码迁移）用于在「只有接口」的情况下判断「是否为玩家」
+ */
+export function isPlayer(e: Entity): boolean {
+    return 'i_isPlayer' in e // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
+}
+
+/**
+ * 用于在「通用化」后继续「专用化」，获取所有玩家的列表
+ * 
+ * @param host 所在的「游戏母体」
+ * @returns 所有玩家的列表
+ */
+export function getPlayers(host: IBatrMatrix): IPlayer[] {
+    if ('players' in host) {
+        return (host as any).players;
+    }
+    // 否则原样筛选
+    else {
+        return host.entities.filter(
+            (e) => isPlayer(e)
+        ) as IPlayer[];
+    }
+}
+
+/**
  * 测试玩家「拾取奖励箱」的逻辑
  * 
  * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
@@ -662,7 +1120,7 @@ export function getBonusBoxes(host: IBatrMatrix): BonusBox[] {
 export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
     if (!player.isActive) return false;
     for (let bonusBox of getBonusBoxes(host)) {
-        if (host.hitTestPlayer(player, at)) { // TODO: 【2023-10-03 23:55:46】断点
+        if (hitTestEntity_I_Grid(player, at)) { // TODO: 【2023-10-03 23:55:46】断点
             playerPickupBonusBox(host, player, bonusBox);
             player.onPickupBonusBox(host, bonusBox);
             host.testGameEnd();
@@ -672,37 +1130,148 @@ export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef =
     return false;
 }
 
-export function handlePlayerTeamsChange(host: IBatrMatrix/* , event: GameRuleEvent */): void {
-    randomizeAllPlayerTeam(host);
+/**
+ * 一个整数位置是否接触到任何格点实体
+ * * 迁移自`Game.isHitAnyPlayer`
+ * 
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 是否接触到任意一个格点实体
+ * 
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+export function isHitAnyEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): boolean {
+    for (const entity of entities) {
+        if (entity.position.isEqual(p)) // 暂时使用「坐标是否相等」的逻辑
+            return true;
+    }
+    return false;
+}
+
+/**
+ * 一个浮点数数位置是否接触到任何格点实体
+ * * 迁移自`Game.isHitAnyPlayer`
+ * 
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 是否接触到任意一个格点实体
+ * 
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+export function isHitAnyEntity_F_Grid(p: fPointRef, entities: IEntityInGrid[]): boolean {
+    for (const entity of entities) {
+        // 对齐后相等
+        if (alignToGrid_P(p, _temp_isHitAnyEntity_F_Grid_aligned).isEqual(entity.position)) // 暂时使用「坐标是否相等」的逻辑
+            return true;
+    }
+    return false;
+}
+const _temp_isHitAnyEntity_F_Grid_aligned: iPointVal = new iPoint();
+
+/**
+ * 获取一个格点位置所接触到的第一个「格点实体」
+ * * 迁移自`Game.getHitPlayerAt`
+ * 
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 第一个满足条件的「格点实体」
+ * 
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+export function getHitEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): IEntityInGrid | null {
+    for (const entity of entities) {
+        if (entity.position.isEqual(p)) // 暂时使用「坐标是否相等」的逻辑
+            return entity;
+    }
+    return null;
+}
+
+/**
+ * 碰撞检测：两个「格点实体」之间
+ * * 原`hitTestOfPlayer`
+ */
+export function hitTestEntity_between_Grid(e1: IEntityInGrid, e2: IEntityInGrid): boolean {
+    return e1.position.isEqual(e2.position);
+}
+
+/**
+ * 碰撞检测：「格点实体」与「格点」之间
+ * * 原`hitTestPlayer`
+ */
+export function hitTestEntity_I_Grid(e: IEntityInGrid, p: iPointRef): boolean {
+    return e.position.isEqual(p);
+}
+
+// !【2023-10-04 22:26:28】已废弃：`handlePlayerTeamsChange`（原`onPlayerTeamsChange`）
+
+/**
+ * 随机安排所有玩家的队伍
+ */
+export function randomizeAllPlayerTeam(host: IBatrMatrix): void {
+    for (const player of getPlayers(host)) {
+        randomizePlayerTeam(host, player);
+    }
+}
+
+/**
+ * 随机获取一个队伍
+ * * 迁移自`GameRule_V1.randomTeam`
+ * @param host 所在的「游戏母体」
+ */
+export function getRandomTeam(host: IBatrMatrix): PlayerTeam {
+    return randomIn(host.rule.safeGetRule<PlayerTeam[]>(GameRule_V1.key_playerTeams));
+}
+
+/**
+ * 随机安排一个玩家的队伍
+ * 
+ * !【2023-10-04 11:54:17】现在直接安排一个随机队伍，不管其是否与玩家先前队伍一致
+ * 
+ * @param host 所在的「游戏母体」
+ * @param player 要安排队伍的玩家
+ */
+export function randomizePlayerTeam(host: IBatrMatrix, player: IPlayer): void {
+    player.team = getRandomTeam(host);
 }
 
 export function handlePlayerLevelup(host: IBatrMatrix, player: IPlayer): void {
     let color: uint;
     let i: uint = 0;
-    let nowE: uint = exMath.random(4);
-    // Add buff of cd,resistance,radius,damage
-    while (i < 3) {
+    let nowE: uint = randInt(4);
+    let effP: fPoint = new fPoint();
+    const N: uint = 3;
+    // 随机增强三个属性
+    while (i < N) {
         switch (nowE) {
             case 1:
                 color = BonusBoxSymbol.BUFF_CD_COLOR;
-                player.buffCD += host.rule.bonusBuffAdditionAmount;
+                player.attributes.buffCD += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
                 break;
             case 2:
                 color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-                player.buffResistance += host.rule.bonusBuffAdditionAmount;
+                player.attributes.buffResistance += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
                 break;
             case 3:
                 color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-                player.buffRadius += host.rule.bonusBuffAdditionAmount;
+                player.attributes.buffRadius += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
                 break;
             default:
                 color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-                player.buffDamage += host.rule.bonusBuffAdditionAmount;
+                player.attributes.buffDamage += host.rule.safeGetRule<uint>(GameRule_V1.key_bonusBuffAdditionAmount);
         }
         nowE = (nowE + 1) & 3;
         i++;
-        // Add Effect
-        host.addPlayerLevelupEffect(player.entityX + (i & 1) - 0.5, player.entityY + (i >> 1) - 0.5, color, 0.75);
+        // 特效
+        effP.copyFrom(player.position);
+        for (let j: uint = 0; j < N; j++) { // 获取一个不重复、但又在角落的位置（高维化）
+            effP[j] += player.position[j] + ((i >> j) & 1)
+        }
+        host.addEntity(
+            new EffectPlayerLevelup(
+                effP,
+                color, 0.75
+            )
+        );
     }
 }
 
@@ -767,10 +1336,17 @@ export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrMatrix, blo
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
     if (!host.map.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
         host.map.storage.setBlock(randomPoint, newBlock); // * 后续游戏需要处理「方块更新事件」
-        host.addBlockLightEffect(
-            alignToGridCenter_P(randomPoint, _temp_randomTick_ColorSpawner),
-            newBlock, false
-        );
+        host.addEntity(
+            new EffectBlockLight(
+                alignToGridCenter_P( // 把位置转移到中央
+                    randomPoint,
+                    _temp_randomTick_ColorSpawner
+                ),
+                newBlock.pixelColor,
+                newBlock.pixelAlpha,
+                false // 淡出
+            )
+        )
     }
 }
 const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
@@ -782,71 +1358,110 @@ const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
  * 
  * ! 性能提示：此处使用copy新建了多维点对象
  * 
+ * !【2023-10-04 21:46:30】现在变为「格点实体」后，激光生成的相关逻辑得到简化
+ * 
  * @param host 调用此函数的游戏母体
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
 export const randomTick_LaserTrap: randomTickEventF = (
     host: IBatrMatrix, block: Block, position: iPoint): void => {
-    let sourceX = position.x, sourceY = position.y; // TODO: 这里的东西需要等到后期「对实体的多维坐标化」后再实现「多维化」
-    let randomR: iRot, entityX: number, entityY: number, laserLength: number = 0;
+    let randomR: mRot;
     // add laser by owner=null
-    let p: LaserBasic, tp: fPoint, entityP: fPoint;
-    let i: uint = 0;
-    do {
+    let p: Laser;
+    let laserLength: uint;
+    // 最大尝试16次
+    for (let i: uint = 0; i < 0x10; ++i) {
+        // 随机生成方向&位置
         randomR = host.map.storage.randomForwardDirectionAt(position);
-        tp = host.map.towardWithRot_FF(
-            position,
-            randomR, PROJECTILES_SPAWN_DISTANCE
+        host.map.towardWithRot_II(
+            _temp_randomTick_LaserTrap,
+            randomR, 1
         );
-        entityP = alignToGridCenter_P(position, new fPoint()).addFrom(tp);
-        entityX = entityP.x;
-        entityY = entityP.y;
-        if (host.map.isInMap_F(entityP))
-            continue;
-        laserLength = host.getLaserLength2(position, randomR);
-        if (laserLength <= 0)
-            continue;
-        switch (randInt(4)) {
-            case 1:
-                p = new LaserTeleport(
-                    null, position, randomR,
-                    NativeTools.WEAPON_LASER_TELEPORT.baseDamage,
-                    laserLength
-                );
-                break;
-            case 2:
-                p = new LaserAbsorption(
-                    null, position, randomR,
-                    NativeTools.WEAPON_LASER_ABSORPTION.baseDamage,
-                    laserLength
-                );
-                break;
-            case 3:
-                p = new LaserPulse(
-                    null, position, randomR,
-                    NativeTools.WEAPON_LASER_PULSE.baseDamage,
-                    Math.random(),
-                    laserLength,
-                );
-                break;
-            default:
-                p = new LaserBasic(
-                    null, position, randomR,
-                    NativeTools.WEAPON_LASER_BASIC.baseDamage,
-                    1.0,
-                    laserLength,
-                );
-                break;
-        }
-        if (p !== null) {
+        // 地图内外检测
+        if (host.map.isInMap_I(_temp_randomTick_LaserTrap)) {
+            // 长度
+            laserLength = calculateLaserLength(
+                host,
+                _temp_randomTick_LaserTrap,
+                randomR
+            );
+            if (laserLength <= 0) continue;
+            // 生成随机激光
+            switch (randInt(4)) {
+                case 1:
+                    p = new LaserTeleport(
+                        null, position, randomR,
+                        NativeTools.WEAPON_LASER_TELEPORT.baseDamage,
+                        laserLength
+                    );
+                    break;
+                case 2:
+                    p = new LaserAbsorption(
+                        null, position, randomR,
+                        NativeTools.WEAPON_LASER_ABSORPTION.baseDamage,
+                        laserLength
+                    );
+                    break;
+                case 3:
+                    p = new LaserPulse(
+                        null, position, randomR,
+                        NativeTools.WEAPON_LASER_PULSE.baseDamage,
+                        randInt(2), // 0|1
+                        laserLength,
+                    );
+                    break;
+                default:
+                    p = new LaserBasic(
+                        null, position, randomR,
+                        NativeTools.WEAPON_LASER_BASIC.baseDamage,
+                        1.0,
+                        laserLength,
+                    );
+                    break;
+            }
             host.addEntity(p);
             // host.projectileContainer.addChild(p);
-            // console.log('laser at'+'('+p.entityX+','+p.entityY+'),'+p.life,p.length,p.visible,p.alpha,p.owner);
+            console.log('laser at' + '(', p.position, '),' + p.life, p.length, p.owner);
+            break;
         }
     }
-    while (laserLength <= 0 && ++i < 0x10);
 }
+/** 用于「激光生成的位置」 */
+const _temp_randomTick_LaserTrap: iPoint = new iPoint();
+
+/**
+ * 从一个「发出点」计算「应有的激光长度」
+ * * 原`getLaserLength`、`getLaserLength2`
+ * * 逻辑：从「发出点」出发，沿着方向直线遍历（直到「最大长度」）
+ *   * 通过某一格的条件：以「激光」的方式可通过
+ * 
+ * @param rootP 激光发出的点（根部坐标）
+ * @param rot 激光的方向
+ * @returns 计算出来的激光长度
+ */
+function calculateLaserLength(host: IBatrMatrix, rootP: iPointRef, rot: mRot): uint {
+    // 当前位置移至根部
+    _temp_calculateLaserLength.copyFrom(rootP);
+    // 当前长度
+    let l: uint = 0;
+    // 当前轴向&增量
+    let axis = mRot2axis(rot), inc = mRot2increment(rot);
+    let maxL: uint = host.rule.safeGetRule<uint>(GameRule_V1.key_maxLaserLength)
+    while (
+        host.map.testCanPass_I(
+            _temp_calculateLaserLength,
+            false, false, true, false, false
+        ) && l < maxL
+    ) {
+        l++;
+        // 一定要走直线，不能用地图里的那个「前进」
+        _temp_calculateLaserLength[axis] += inc;
+
+    }
+    return l;
+}
+const _temp_calculateLaserLength: iPointVal = new iPoint();
 
 /**
  * （示例）响应游戏随机刻 @ Gate
@@ -862,7 +1477,7 @@ export const randomTick_Gate: randomTickEventF = (host: IBatrMatrix, block: Bloc
     // 关闭的「门」随着随机刻打开
     let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
     newBlock.open = true;
-    host.setBlock(position, newBlock);
+    host.map.storage.setBlock(position, newBlock);
 }
 
 /**
@@ -881,7 +1496,7 @@ export function playerCanHurtOther(
     canHurtSelf: boolean,
     canHurtAlly: boolean,
 ): boolean {
-    return player == null || (
+    return player === null || (
         isEnemy(player, other) && canHurtEnemy || // 敌方
         player === other && canHurtSelf || // 自己（使用全等运算符）
         isAlly(player, other) && canHurtAlly // 友方
@@ -904,29 +1519,6 @@ export function projectileCanHurtOther(
         projectile.canHurtSelf,
         projectile.canHurtAlly
     );
-}
-
-// 抛射物逻辑 //
-
-/**
- * 抛射体「波浪」伤害玩家的逻辑
- * @param host 游戏母体
- * @param wave 在其中运行的抛射体「波浪」
- */
-export function waveHurtPlayers(host: IBatrMatrix, wave: Wave): void {
-    /** 引用 */
-    let base: fPoint = wave.position;
-    /** Wave的尺寸即为其伤害半径 */
-    let radius: number = wave.nowScale;
-    // 开始遍历所有玩家
-    for (let victim of host.getPlayers()) { // TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
-        // FinalDamage
-        if (projectileCanHurtOther(wave, victim)) {
-            if (base.getDistance(victim.position) <= radius) {
-                victim.removeHP(host, wave.attackerDamage, wave.owner);
-            }
-        }
-    }
 }
 
 // /**
@@ -1085,4 +1677,69 @@ export function loadAsBackgroundRule(rule: GameRule_V1): GameRule_V1 {
     // 加载玩家队伍
     initBasicPlayerTeams(rule.playerTeams, 3, 8); // 扩展只读属性
     return rule;
+}
+
+
+
+// Rule Random About
+export function randomToolEnable(rule: IGameRule): Tool {
+    return randomIn(
+        rule.safeGetRule<Tool[]>(
+            GameRule_V1.key_enabledTools
+        )
+    );
+}
+
+export function getRandomMap(rule: IGameRule): IMap {
+    return randomInWeightMap(
+        rule.safeGetRule<Map<IMap, number>>(
+            GameRule_V1.key_mapRandomPotentials
+        )
+    );
+}
+
+/** 缓存的「新映射」变量 */
+let _temp_filterBonusType: Map<BonusType, number> = new Map<BonusType, number>();
+/**
+ * 根据规则过滤奖励类型
+ * 
+ * 过滤列表：
+ * * 是否锁定队伍⇒排除关闭所有「能改变玩家队伍的奖励类型」
+ * 
+ * ! 返回一个新映射，但不会深拷贝
+ */
+function filterBonusType(rule: IGameRule, m: Map<BonusType, number>): Map<BonusType, number> {
+    // 先清除
+    _temp_filterBonusType.clear();
+    // 开始添加
+    m.forEach((weight: number, type: BonusType): void => {
+        // 过滤1：「锁定队伍」
+        if (
+            type == NativeBonusTypes.RANDOM_CHANGE_TEAM/*  ||
+				type == NativeBonusTypes.UNITE_PLAYER ||
+				type == NativeBonusTypes.UNITE_AI */ // !【2023-10-04 22:57:24】现已被移除
+        ) return;
+        // 添加
+        _temp_filterBonusType.set(type, weight);
+    })
+    // 返回
+    return _temp_filterBonusType;
+}
+
+/**
+ * 随机获取奖励类型
+ * 
+ * ! 会被某些规则预过滤
+ * 
+ * @returns 随机出来的奖励类型
+ */
+export function getRandomBonusType(rule: IGameRule): BonusType {
+    return randomInWeightMap(
+        filterBonusType(
+            rule,
+            rule.safeGetRule<Map<BonusType, number>>(
+                GameRule_V1.key_bonusTypePotentials
+            )
+        )
+    );
 }

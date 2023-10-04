@@ -15,7 +15,7 @@ export default class AIProgram_Novice implements IAIProgram {
 
 	//============Static Functions============//
 	protected static getLineEnemyPlayer(owner: AIPlayer): IPlayer {
-		if (owner == null)
+		if (owner === null)
 			return null;
 		let mapPlayers: IPlayer[] = owner.host.getInMapPlayers();
 		for (let player of mapPlayers) {
@@ -30,11 +30,11 @@ export default class AIProgram_Novice implements IAIProgram {
 	}
 
 	protected static getLineBonusBox(owner: AIPlayer): BonusBox {
-		if (owner == null)
+		if (owner === null)
 			return null;
 		let boxes: BonusBox[] = owner.host.allAvailableBonusBox;
 		for (let box of boxes) {
-			if (box == null)
+			if (box === null)
 				continue;
 			if (box.gridX == owner.gridX || box.gridY == owner.gridY) {
 				return box;
@@ -81,7 +81,7 @@ export default class AIProgram_Novice implements IAIProgram {
 
 	/*========AI Program Main========*/
 	public requestActionOnTick(player: AIPlayer): AIPlayerAction {
-		if (player == null)
+		if (player === null)
 			return AIPlayerAction.NULL;
 		// Refresh Wait
 		if (this._waitTime >= this._maxWaitTime)

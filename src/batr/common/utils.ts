@@ -290,11 +290,11 @@ export function spliceAndReturnCount<T>(arr: T[], input: T | T[], count: uint = 
 }
 
 export function isEmptyArray<T>(A: Array<T> | null): boolean {
-	return (A == null || A.length < 1);
+	return (A === null || A.length < 1);
 }
 
 export function isEmptyString(S: string): boolean {
-	return (S == null || S.length < 1);
+	return (S === null || S.length < 1);
 }
 
 export function clearArray<T>(arr: Array<T>): void {

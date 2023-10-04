@@ -64,14 +64,14 @@ export default class Background extends Sprite {
 
 	//============Instance Getter And Setter============//
 	public get frameVisible(): boolean {
-		if (this._frame == null)
+		if (this._frame === null)
 			return false;
 
 		return _frame.visible;
 	}
 
 	public set frameVisible(value: boolean) {
-		if (this._frame == null)
+		if (this._frame === null)
 			return;
 
 		_frame.visible = value;
@@ -132,13 +132,13 @@ export default class Background extends Sprite {
 	}
 
 	public toggleFrameVisible(): void {
-		if (this._frame == null)
+		if (this._frame === null)
 			return;
 		_frame.visible = _frame.visible ? false : true;
 	}
 
 	protected drawFrame(width: uint, height: uint): void {
-		if (this._frame == null)
+		if (this._frame === null)
 			return;
 		for (let xi: uint = 0; xi < width; xi++) {
 			for (let yi: uint = 0; yi < height; yi++) {
@@ -153,7 +153,7 @@ export default class Background extends Sprite {
 	}
 
 	protected deleteFrame(): void {
-		if (this._frame == null)
+		if (this._frame === null)
 			return;
 
 		let child: DisplayObject;

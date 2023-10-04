@@ -454,7 +454,7 @@ const _temp_forEachPoint: iPointVal = new iPoint();
  * 
  * ! 已知问题：直接使用args数组，TS编译会不通过
  * 
- * ! 注意：处于性能考虑，不会对pMax与pMin的长度一致性进行检查
+ * ! 注意：出于性能考虑，不会对pMax与pMin的长度一致性进行检查
  * 
  * @param pMin 所有坐标的最小值
  * @param pMax 所有坐标的最大值，其长度决定遍历的维数
@@ -484,6 +484,193 @@ export function traverseNDSquare(
 			// 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
 		}
 	}
+}
+
+const _temp_forEachPointFrame_Meta: iPointVal = new iPoint();
+/**
+ * 循环遍历任意维超方形内部，但是「元编程」
+ * * 由先前「地图遍历」算法迁移而来
+ * * 基本逻辑：递归生成专用for循环代码⇒直接执行专用代码
+ * * 性能：甚至比「纯算法」的性能好
+ * 
+ * ! 注意：出于性能考虑，不会对pMax与pMin的长度一致性进行检查
+ * 
+ * @param pMin 所有坐标的最小值
+ * @param pMax 所有坐标的最大值，其长度决定遍历的维数
+ * @param f 回调函数：第一个回传的参数是「遍历到的点的坐标」
+ * @param args 附加在「点坐标」后的参数
+ */
+export function traverseNDSquare_Meta(
+	pMin: iPointRef, pMax: iPointRef,
+	f: (p: iPointRef, ...args: any[]) => void,
+	...args: any[]
+): void {
+	// 缓存常量
+	let p: iPointRef = _temp_forEachPointFrame_Meta;
+	// 直接执行代码
+	return eval(traverseNDSquare_Meta_Code(
+		pMin, pMax,
+		'f(p, ...args);'
+	))
+}
+function traverseNDSquare_Meta_Code(
+	pMin: iPointRef, pMax: iPointRef,
+	f_str: string,
+): string {
+	// 通过数组长度获取维数
+	const nDim: uint = pMax.length; // !【2023-10-04 20:47:24】用空间复杂度还时间复杂度，避免不断访问
+	// 循环生成专用代码
+	let code: string = f_str;
+	// for循环不断套壳
+	for (let i: uint = 0; i < nDim; i++) {
+		// * 边界直接当常量嵌入；原先的遍历作为每一个数组下标
+		code = `for(p[${i}] = ${pMin[i]}; p[${i}] <= ${pMax[i]}; ++p[${i}]) {
+			${code}
+		};`
+	}
+	// 返回代码
+	return code;
+}
+
+const _temp_forEachPointFrame: iPointVal = new iPoint();
+/**
+ * 循环遍历任意维超方形的框架
+ * * 由先前「地图遍历」算法迁移而来
+ * * 基本逻辑：「数值进位」思想+「固定一位『二值遍历』」
+ * * 性能🆚递归：复杂度更胜一筹，处理高维大规模均胜过递归算法
+ * 
+ * ! 已知问题
+ * * 直接使用args数组，TS编译会不通过
+ * * 会导致在边角处的「重复遍历」问题
+ * 
+ * 📌示例：下面这段代码会输出包括四个角落在内的十二个点，但不包括`intPoint(2) [ 0, 0 ]`
+ * ```
+ * traverseNDSquareFrame(
+ * 	new iPoint(-1, -1),
+ * 	new iPoint(1, 1),
+ * 	console.log
+ * )
+ * ```
+ * 
+ * ! 注意：出于性能考虑，不会对pMax与pMin的长度一致性进行检查
+ * 
+ * @param pMin 所有坐标的最小值
+ * @param pMax 所有坐标的最大值，其长度决定遍历的维数
+ * @param f 回调函数：第一个回传的参数是「遍历到的点的坐标」
+ * @param args 附加在「点坐标」后的参数
+ */
+export function traverseNDSquareFrame(
+	pMin: iPointRef, pMax: iPointRef,
+	f: (p: iPointRef, ...args: any[]) => void,
+	...args: any[]
+): void {
+	// 通过数组长度获取维数
+	const nDim: uint = pMax.length;
+	// 当前点坐标的表示：复制mins数组
+	_temp_forEachPointFrame.copyFrom(pMin);
+	/** 表示「当前正在进位的位」 */
+	let i: uint = 0;
+	/** 锁定的i：锁定后只能在「最大值/最小值」之间 */
+	let iLocked: uint = 0;
+	// 不断遍历，直到「最高位进位」后返回
+	while (iLocked < nDim) {
+		while (i < nDim) {
+			// 执行当前点：调用回调函数
+			f(_temp_forEachPointFrame, ...args)
+			// 迭代到下一个点：不断循环尝试进位
+			// 先让第i轴递增（或「锁定性递增」），然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
+			i = 0;
+			while (
+				i < nDim && (
+					i === iLocked ? // 锁定⇒直接从最小值递增到最大值
+						(_temp_forEachPointFrame[i] += pMax[i] - pMin[i]) : // 这里必须再递增，不然会死循环
+						++_temp_forEachPointFrame[i] // 否则正常递增
+					// ?💭这或许可以被拆分成两个for循环
+				) > pMax[i]
+			) {
+				// 旧位清零
+				_temp_forEachPointFrame[i] = pMin[i];
+				// 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
+				++i
+			}
+		}
+		iLocked++;
+		i = 0;
+	}
+}
+
+const _temp_forEachPointSurface: iPointVal = new iPoint();
+/**
+ * 循环遍历任意维超方形的表面（类似于「框架」版本，但不会遍历「角落」处）
+ * * 算法：for循环生成代码⇒eval动态解释执行
+ * 
+ * ! 已知问题
+ * * 直接使用args数组，TS编译会不通过
+ * 
+ * 📌示例：下面这段代码只会输出四个点，且每个点都有一个坐标分量的绝对值为1
+ * ```
+ * traverseNDSquareFrame(
+ * 	new iPoint(-1, -1),
+ * 	new iPoint(1, 1),
+ * 	console.log
+ * )
+ * ```
+ * 
+ * ! 注意：出于性能考虑，不会对pMax与pMin的长度一致性进行检查
+ * 
+ * @param pMin 所有坐标的最小值
+ * @param pMax 所有坐标的最大值，其长度决定遍历的维数
+ * @param f 回调函数：第一个回传的参数是「遍历到的点的坐标」
+ * @param args 附加在「点坐标」后的参数
+ */
+export function traverseNDSquareSurface(
+	pMin: iPointRef, pMax: iPointRef,
+	f: (p: iPointRef, ...args: any[]) => void,
+	...args: any[]
+): void {
+	const p: iPointRef = _temp_forEachPointSurface;
+	eval(traverseNDSquareSurface_Code(
+		pMin, pMax,
+		'f(p, ...args)'
+	))
+}
+function traverseNDSquareSurface_Code(
+	pMin: iPointRef, pMax: iPointRef,
+	f_code: string
+): string {
+	const nDim = pMax.length;
+	let code: string = ''
+
+	let temp_code: string
+	for (let iLocked: uint = 0; iLocked < nDim; ++iLocked) {
+		// 从函数执行本身开始
+		temp_code = f_code;
+		let i: uint;
+		// iLocked之前
+		for (i = 0; i < iLocked; ++i) {
+			temp_code = `
+			for(p[${i}] = ${pMin[i] + 1}; p[${i}] < ${pMax[i]}; ++p[${i}]) {
+				${temp_code}
+			}`
+		}
+		// 扩展代码，在iLocked的前后做文章
+		temp_code = `
+		p[${iLocked}] = ${pMin[iLocked]};
+		${temp_code}
+		p[${iLocked}] = ${pMax[iLocked]};
+		${temp_code}
+		`
+		// iLocked之后
+		for (i = iLocked + 1; i < nDim; ++i) {
+			temp_code = `
+			for(p[${i}] = ${pMin[i] + 1}; p[${i}] < ${pMax[i]}; ++p[${i}]) {
+				${temp_code}
+			}`
+		}
+		// 并入代码之中
+		code += temp_code;
+	}
+	return code
 }
 
 /**

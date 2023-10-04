@@ -6,7 +6,6 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import Entity from "../../../../api/entity/Entity";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
-import BonusBoxSymbol from "../../../../../display/mods/native/entity/BonusBoxSymbol";
 import { BonusType } from "../../registry/BonusRegistry";
 import IBatrMatrix from "../../../../main/IBatrMatrix";
 
@@ -18,7 +17,7 @@ import IBatrMatrix from "../../../../main/IBatrMatrix";
  * * 用于在游戏机制中被玩家拾取的
  * 实体
  */
-export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {	//============Static Variables============//
+export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {
 	public static readonly LINE_COLOR: uint = 0x777777;
 	public static readonly FILL_COLOR: uint = 0xdddddd;
 
@@ -36,18 +35,18 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 		// this._symbol.shapeInit(shape: IBatrShape); // TODO: 请求更新
 	}
 
-	protected _symbol: BonusBoxSymbol;
+	// protected _symbol: BonusBoxSymbol; // !【2023-10-04 21:58:22】现在显示端不能再用了
 
 	//============Constructor & Destructor============//
 	public constructor(position: iPoint, type: BonusType) {
 		super();
 		this._bonusType = type;
-		this._symbol = new BonusBoxSymbol(this._bonusType);
+		// this._symbol = new BonusBoxSymbol(this._bonusType);
 	}
 
 	override destructor(): void {
 		// this._bonusType = null; // ! 静态引用不需要
-		this._symbol.destructor();
+		// this._symbol.destructor(); // !【2023-10-04 21:58:22】现在显示端不能再用了
 		super.destructor();
 	}
 
@@ -78,10 +77,10 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 		// 绘制盒子
 		this.drawBox(shape);
 		// 初始化符号
-		this._symbol.type = this._bonusType;
+		/* this._symbol.type = this._bonusType;
 		this._symbol.shapeInit(shape);
 		symbol.x = symbol.y = DEFAULT_SIZE / 2; // 将「符号」置于中心
-		shape.addChild(symbol); // 添加子元素
+		shape.addChild(symbol); // 添加子元素 */
 	}
 
 	public shapeRefresh(shape: IBatrShapeContainer): void {

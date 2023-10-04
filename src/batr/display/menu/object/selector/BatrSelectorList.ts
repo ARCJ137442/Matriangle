@@ -102,7 +102,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 			let textField: BatrTextField;
 			for (dy = i = 0; i < this.selectTextFieldCount; i++) {
 				textField = this._selectTextFields[i];
-				if (textField == null) {
+				if (textField === null) {
 					dy += this.verticalDistance;
 					continue;
 				}
@@ -116,7 +116,7 @@ export default class BatrSelectorList extends BatrMenuGUI implements IBatrMenuEl
 			let selector: BatrSelector;
 			for (dy = i = 0; i < this.selectorCount; i++) {
 				selector = this._selectors[i];
-				if (selector == null) {
+				if (selector === null) {
 					dy += this.verticalDistance;
 					continue;
 				}

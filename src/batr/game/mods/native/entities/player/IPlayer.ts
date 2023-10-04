@@ -44,6 +44,11 @@ TODO: 【2023-09-23 00:20:12】现在工作焦点：
 export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives {
 
 	/**
+	 * 用于替代`instanceof`
+	 */
+	readonly i_isPlayer: true;
+
+	/**
 	 * 玩家的「经验值」
 	 * * 目前在游戏机制上的应用仅在于「升级时的加成」以及「玩家表现的平均化、单一化测量」
 	 * * 📌机制：在设置的经验超过「目前等级最大经验」时，玩家会直接升级
@@ -195,7 +200,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 
 	/**
 	 * 用于判断「玩家是否可当前位置移动到另一位置」
-	 * * 会用到「玩家自身的坐标」作为「移动前坐标」
+	 * * 【2023-10-04 18:07:01】不会考虑「移动前坐标」
 	 * 
 	 * TODO: 日后细化「实体类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
 	 * 

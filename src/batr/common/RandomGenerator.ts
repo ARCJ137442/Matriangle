@@ -16,7 +16,7 @@ export default class RandomGenerator {
 	 * @returns the calculated
 	 */
 	public static calcPoly(x: number, coefficients: number[]): number {
-		if (isNaN(x) || coefficients == null)
+		if (isNaN(x) || coefficients === null)
 			return 0;
 		// let zeroIndex: uint = uint(coefficients[0]);
 		let result: number = 0;

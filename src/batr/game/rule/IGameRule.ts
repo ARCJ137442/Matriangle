@@ -59,11 +59,13 @@ export default interface IGameRule extends IJSObjectifiable<IGameRule> {
 	onVariableUpdate<T>(key: key, oldValue: T, newValue: T): void;
 
 	//============Game Mechanics============//
+	// ? 矛盾的是，这本是一个通用系统，结果还是要做「专用化」
+
 	/**
 	 * 获取一个随机地图
 	 * 
 	 * ! 仅获取引用，并且不会「生成下一个」
 	 */
-	getRandomMap(): IMap;
+	// getRandomMap(): IMap; // !【2023-10-04 23:00:40】专用系统，废弃。
 
 }

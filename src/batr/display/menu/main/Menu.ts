@@ -296,7 +296,7 @@ export default class Menu extends Sprite {
 	}
 
 	public updateMapSize(): void {
-		if (this._backGround == null)
+		if (this._backGround === null)
 			return;
 		this._backGround.x = this.x;
 		this._backGround.y = this.y;
@@ -774,27 +774,27 @@ export default class Menu extends Sprite {
 			//====Select====//
 			// PlayerCount
 			let playerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.PLAYER_COUNT);
-			rule.playerCount = playerCountSelector == null ? 4 : playerCountSelector.currentValue;
+			rule.playerCount = playerCountSelector === null ? 4 : playerCountSelector.currentValue;
 			// AIPlayerCount
 			let AIPlayerCountSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.AI_PLAYER_COUNT);
-			rule.AICount = AIPlayerCountSelector == null ? 6 : AIPlayerCountSelector.currentValue;
+			rule.AICount = AIPlayerCountSelector === null ? 6 : AIPlayerCountSelector.currentValue;
 			// InitialMap(Map)
 			let initialMapSelector: BatrSelector = this._selectorListCustom.getSelectorByName(I18nKey.INITIAL_MAP);
-			rule.initialMapID = initialMapSelector == null ? -1 : initialMapSelector.currentValue - 1;
+			rule.initialMapID = initialMapSelector === null ? -1 : initialMapSelector.currentValue - 1;
 			//========Advanced========//
 			//====Left====//
 			// DefaultHP
 			let defaultHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HP);
-			rule.defaultHP = defaultHPSelector == null ? 100 : defaultHPSelector.currentValue;
+			rule.defaultHP = defaultHPSelector === null ? 100 : defaultHPSelector.currentValue;
 			// DefaultMaxHP
 			let defaultMaxHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HP);
-			rule.defaultMaxHP = defaultMaxHPSelector == null ? 100 : defaultMaxHPSelector.currentValue;
+			rule.defaultMaxHP = defaultMaxHPSelector === null ? 100 : defaultMaxHPSelector.currentValue;
 			// DefaultLivesPlayer
 			let defaultLivesSelectorP: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_PLAYER);
-			rule.remainLivesPlayer = defaultLivesSelectorP == null ? -1 : defaultLivesSelectorP.currentValue;
+			rule.remainLivesPlayer = defaultLivesSelectorP === null ? -1 : defaultLivesSelectorP.currentValue;
 			// DefaultLivesAI
 			let defaultLivesSelectorA: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.REMAIN_LIVES_AI);
-			rule.remainLivesAI = defaultLivesSelectorA == null ? -1 : defaultLivesSelectorA.currentValue;
+			rule.remainLivesAI = defaultLivesSelectorA === null ? -1 : defaultLivesSelectorA.currentValue;
 			// DefaultRespawnTime
 			let defaultRespawnTimeSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.RESPAWN_TIME);
 			rule.defaultRespawnTime = defaultRespawnTimeSelector.currentValue * TPS;
@@ -804,7 +804,7 @@ export default class Menu extends Sprite {
 			//====Right====//
 			// DefaultTool
 			let defaultToolSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.DEFAULT_TOOL);
-			rule.defaultTool = defaultToolSelector == null ? -2 : defaultToolSelector.currentValue;
+			rule.defaultTool = defaultToolSelector === null ? -2 : defaultToolSelector.currentValue;
 			// ToolsNoCD
 			let toolsNoCDSelector: BatrSelector = this._selectorListAdvanced_R.getSelectorByName(I18nKey.TOOLS_NO_CD);
 			rule.toolsNoCD = toolsNoCDSelector.currentValue > 0;
@@ -868,7 +868,7 @@ export default class Menu extends Sprite {
 
 	protected onMapPreviewSwitch(event: BatrGUIEvent): void {
 		let selector: BatrSelector = event.gui as BatrSelector;
-		if (selector == null)
+		if (selector === null)
 			return;
 		let nowMapIndex: int = selector.currentValue;
 		// console.log('Now Map ID: '+nowMapIndex);
@@ -911,7 +911,7 @@ export default class Menu extends Sprite {
 	protected onMaxHPSelectorClick(event: BatrGUIEvent): void {
 		let HPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_HP) as BatrSelector;
 		let maxHPSelector: BatrSelector = this._selectorListAdvanced_L.getSelectorByName(I18nKey.DEFAULT_MAX_HP) as BatrSelector;
-		if (HPSelector == null && maxHPSelector !== null)
+		if (HPSelector === null && maxHPSelector !== null)
 			return;
 		if (HPSelector.currentValue > maxHPSelector.currentValue) {
 			HPSelector.content.intMax = maxHPSelector.currentValue;

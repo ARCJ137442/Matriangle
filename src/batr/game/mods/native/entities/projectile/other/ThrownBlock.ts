@@ -1,6 +1,5 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
-import EntityType from "../../../../../api/entity/EntityType";
 import Projectile from "../Projectile";
 import { fPoint, iPoint } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
@@ -8,10 +7,11 @@ import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTransform";
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 import IPlayer from "../../player/IPlayer";
+import EffectBlockLight from "../../effect/EffectBlockLight";
+import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../registry/NativeGameMechanics";
 
 /**
  * 「掷出的方块」是
@@ -125,14 +125,14 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 				false, true, false, false
 			) &&
 			// 没碰到玩家
-			!host.isHitAnyPlayer_F(this._position)
+			isHitAnyEntity_F_Grid(this._position, getPlayers(host))
 		) {
 			host.map.towardWithRot_FF(this._position, this._direction, this._speed);
 		}
 		else {
 			console.log('Block hit at', this._position);
 			// * 如果不是伤害到玩家，就后退（被外部阻挡的情形）
-			if (!host.isHitAnyPlayer_F(this._position))
+			if (isHitAnyEntity_F_Grid(this._position, getPlayers(host)))
 				host.map.towardWithRot_FF(this._position, this._direction, -this._speed);
 			this.onBlockHit(host);
 		}
@@ -143,26 +143,23 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		let _temp_iPoint: iPoint = new iPoint();
 		alignToGrid_P(this._position, _temp_iPoint);
 		// 尝试伤害玩家 // TODO: 有待迁移
-		host.thrownBlockHurtPlayer(this);
+		console.warn('WIP thrownBlockHurtPlayer!', this)// host.thrownBlockHurtPlayer(this);
 		// 放置判断
 		if (host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
 			// 放置
-			host.setBlock(_temp_iPoint, this._carriedBlock);
-			// 特效
-			host.addBlockLightEffect2(
-				this._position, // ! 非格点实体的「坐标」
-				this.carriedBlock, false
-			);
+			host.map.storage.setBlock(_temp_iPoint, this._carriedBlock);
 		}
-		else {
-			// ! 会更改自身坐标：复用自身坐标，更改为「将要生成的特效坐标」
-			host.addBlockLightEffect2(
+		// 特效
+		// ! 会更改自身坐标：复用自身坐标，更改为「将要生成的特效坐标」
+		host.addEntity(
+			EffectBlockLight.fromBlock(
 				alignToGridCenter_P(this._position, this._position),
-				this.carriedBlock, false
-			);
-		}
+				this._carriedBlock,
+				false
+			),
+		)
 		// Remove
-		host.entitySystem.remove(this);
+		host.removeEntity(this);
 	}
 
 	//============Display Implements============//

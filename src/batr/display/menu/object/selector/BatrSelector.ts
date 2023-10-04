@@ -122,7 +122,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	 * @param	callee	the boolean determines to callee
 	 */
 	protected copyContentTo(other: BatrSelector, callee: boolean = true): void {
-		if (other == null)
+		if (other === null)
 			return;
 		if (this._Content !== null)
 			other.setContent(this._Content);
@@ -159,7 +159,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	}
 
 	public updateTextByContent(): BatrSelector {
-		if (this._Content == null)
+		if (this._Content === null)
 			return this;
 		this._textField.setText(this._Content.currentText);
 		this.updateText();
@@ -191,7 +191,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 	public onI18nChange(E: I18nsChangeEvent): void {
 		/* console.log(this.name,this._textField.text,this._Content);
 		 * The Player selector in Game Result Menu doesn't has content when INITIAL LOAD! */
-		if (this._Content == null)
+		if (this._Content === null)
 			return;
 		this._Content.alignI18nsFrom(E.nowI18ns);
 		this.updateTextByContent();
@@ -205,7 +205,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 
 	public turnSelectLeft(): void {
 		// Check
-		if (this._Content == null)
+		if (this._Content === null)
 			return;
 		// Select
 		this._Content.currentValue--;
@@ -218,7 +218,7 @@ export default class BatrSelector extends BatrMenuGUI implements IBatrMenuElemen
 
 	public turnSelectRight(): void {
 		// Check
-		if (this._Content == null)
+		if (this._Content === null)
 			return;
 		// Select
 		this._Content.currentValue++;

@@ -1,5 +1,5 @@
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
-import { iPoint, intPoint } from "../../../common/geometricTools";
+import { iPoint, iPointRef, iPointVal, intPoint } from "../../../common/geometricTools";
 import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
@@ -44,7 +44,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * 仅在地图层面判断一个点是否「在地图之内」
 	 * @param p 判断用的位置
 	 */
-	isInMap(p: intPoint): boolean;
+	isInMap(p: iPointRef): boolean;
 
 	/**
 	 * 获取地图的维数
@@ -63,20 +63,20 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * ! 高维版本
 	 * 获取地图在某位置「可前进的所有方向」
 	 */
-	getForwardDirectionsAt(p: iPoint): mRot[];
+	getForwardDirectionsAt(p: iPointRef): mRot[];
 
 	/**
 	 * 在某一处**等概率**随机获取一个「可前进方向」
 	 * * 可以借用上面的代码
 	 */
-	randomForwardDirectionAt(p: iPoint): mRot;
+	randomForwardDirectionAt(p: iPointRef): mRot;
 	/**
 	 * 在某一处**等概率**随机旋转「可前进方向」
 	 * 
 	 * !出于性能考虑，不会检查原朝向（轴向）是否合法
 	 * * 可以借用上面的代码
 	 */
-	randomRotateDirectionAt(p: iPoint, direction: mRot, step: int): mRot;
+	randomRotateDirectionAt(p: iPointRef, direction: mRot, step: int): mRot;
 
 	// ! 【20230910 20:27:44】现在地图必须要「获取完整的随机坐标」而非再设计什么分离的坐标，即便只用其中几个分量也是如此
 
@@ -87,7 +87,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * 
 	 * ! 从此处获取的量是只读的
 	 */
-	get randomPoint(): iPoint;
+	get randomPoint(): iPointRef;
 
 	/**
 	 * 【对接游戏、显示】遍历地图上每个有效位置
@@ -100,7 +100,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
 	 * @param args ：用于在回调后附加的其它参数
 	 */
-	forEachValidPositions(f: (p: iPoint, ...args: any[]) => void, ...args: any[]): IMapStorage;
+	forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: any[]): IMapStorage;
 
 	/**
 	 * 复制地图本身
@@ -155,7 +155,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	hasBlock(p: iPoint): boolean;
+	hasBlock(p: iPointRef): boolean;
 
 	/**
 	 * 获取地图上某位置的「方块实体」
@@ -163,7 +163,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlock(p: iPoint): Block | null;
+	getBlock(p: iPointRef): Block | null;
 
 	/**
 	 * 获取地图上某位置的方块属性
@@ -171,7 +171,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockAttributes(p: iPoint): BlockAttributes | null;
+	getBlockAttributes(p: iPointRef): BlockAttributes | null;
 
 	/**
 	 * 获取地图上某位置的方块类型
@@ -180,7 +180,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockType(p: iPoint): BlockType | null;
+	getBlockType(p: iPointRef): BlockType | null;
 
 	/**
 	 * 设置地图上某位置的方块
@@ -188,7 +188,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param y y坐标
 	 * @param block 方块对象
 	 */
-	setBlock(p: iPoint, block: Block): IMapStorage;
+	setBlock(p: iPointRef, block: Block): IMapStorage;
 
 	/**
 	 * 【快捷方式】获取地图上某个位置「是否是『空』」
@@ -196,7 +196,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	isVoid(p: iPoint): boolean;
+	isVoid(p: iPointRef): boolean;
 
 	/**
 	 * 【快捷方式】将地图上某个位置设置成「空」
@@ -205,7 +205,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	setVoid(p: iPoint): IMapStorage;
+	setVoid(p: iPointRef): IMapStorage;
 
 	/**
 	 * 删除地图上的所有方块
@@ -215,7 +215,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	clearBlocks(deleteBlock?: boolean/* = true*/): IMapStorage;
 
 	/** 【机制需要】获取所有重生点的位置 */
-	get spawnPoints(): iPoint[];
+	get spawnPoints(): iPointVal[];
 
 	/** 【机制需要】获取重生点的数量 */
 	get numSpawnPoints(): uint;
@@ -223,8 +223,11 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	/** 【机制需要】获取「是否有重生点」 */
 	get hasSpawnPoint(): boolean;
 
-	/** 【机制需要】随机获取一个重生点 */
-	get randomSpawnPoint(): iPoint;
+	/**
+	 * 【机制需要】随机获取一个重生点
+	 * * 没有注册的重生点⇒返回空
+	 */
+	get randomSpawnPoint(): iPointRef | null;
 
 	/**
 	 * 在地图上添加（注册）重生点

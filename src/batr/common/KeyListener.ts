@@ -65,7 +65,7 @@ export default class KeyListener {
 		this._listenTo = stage;
 
 		// Set New
-		if (this._listenTo == null) return;
+		if (this._listenTo === null) return;
 
 		// Add Event Listeners
 		this._listenTo.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);

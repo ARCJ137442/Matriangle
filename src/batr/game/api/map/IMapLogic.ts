@@ -185,17 +185,12 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	): boolean;
 
 	/**
-	 * 一个整数位置是否接触到任何格点实体
-	 * @param p 位置
-	 * @param entities 从外部传入的格点实体列表（应该是引用）
-	 */
-	isHitAnyEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): boolean;
-
-	/**
 	 * 判断一个位置是否「可放置奖励箱」
 	 * * 逻辑：使用「玩家可通过」「不接触所有玩家」
 	 * @param p 位置
 	 * @param avoids 避开的格点实体列表（一般是「玩家列表」）
+	 * 
+	 * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
 	 */
 	testBonusBoxCanPlaceAt(p: iPoint, avoids: IEntityInGrid[]): boolean
 

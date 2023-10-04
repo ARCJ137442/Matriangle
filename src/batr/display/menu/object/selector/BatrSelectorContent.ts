@@ -146,7 +146,7 @@ export default class BatrSelectorContent {
 
 	public get currentText(): string {
 		let t = this.enumText;
-		return (t == null) ? String(this.currentValue) : t;
+		return (t === null) ? String(this.currentValue) : t;
 	}
 
 	public get enableLoopSelectLeft(): boolean {
@@ -258,9 +258,9 @@ export default class BatrSelectorContent {
 	}
 
 	public hasEnumTextAt(index: int): boolean {
-		return !(this._enumTexts == null ||
+		return !(this._enumTexts === null ||
 			index < 0 || index >= this._enumTexts.length ||
-			this._enumTexts[index] == null);
+			this._enumTexts[index] === null);
 	}
 
 	public getEnumTextAt(index: int): string {

@@ -33,7 +33,7 @@ export function RGBtoHEX(R: uint, G: uint, B: uint): uint {
 }
 
 export function RGBtoHEX2(RGB: Array<uint>): uint {
-	if (RGB == null ||
+	if (RGB === null ||
 		RGB.length != 3)
 		return defaultHEX;
 	return RGBtoHEX(RGB[0] as uint,
@@ -94,7 +94,7 @@ export function RGBtoHSV(R: uint, G: uint, B: uint): Array<uint> {
 }
 
 export function RGBtoHSV2(RGB: Array<uint>): Array<uint> {
-	if (RGB == null ||
+	if (RGB === null ||
 		RGB.length != 3)
 		return defaultHSV;
 	let R: uint = RGB[0];
@@ -167,7 +167,7 @@ export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
 }
 
 export function HSVtoRGB2(HSV: Array<uint>): Array<uint> {
-	if (HSV == null ||
+	if (HSV === null ||
 		HSV.length != 3)
 		return defaultRGB;
 	let H: uint = HSV[0];

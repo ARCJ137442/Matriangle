@@ -13,6 +13,7 @@ import Player from "../entities/player/Player";
 import { IEntityInGrid, IEntityOutGrid } from "../../../api/entity/EntityInterfaces";
 import IPlayer from "../entities/player/IPlayer";
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
+import { isHitAnyEntity_I_Grid } from "../registry/NativeGameMechanics";
 
 /**
  * 第一版地图
@@ -209,39 +210,11 @@ export default class Map_V1 implements IMap {
 			(asPlayer && !attributes.canEnter) || // 判断「玩家是否可通过」
 			(asBullet && !attributes.canShotIn) || // 判断「子弹是否可通过」
 			(asLaser && !attributes.transparent) || // 判断「激光是否可通过」
-			(avoidOthers && this.isHitAnyEntity_I_Grid(p, others))
+			(avoidOthers && isHitAnyEntity_I_Grid(p, others))
 		);
 	}
 
-	/**
-	 * 测试「是否接触到任意一个格点实体」
-	 * * 迁移自`Game.isHitAnyPlayer`
-	 * 
-	 * @param p 要测试的位置
-	 * @param entities 需要检测的（格点）实体
-	 * @returns 是否接触到任意一个格点实体
-	 */
-	public isHitAnyEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): boolean {
-		for (const entity of entities) {
-			if (entity.position.isEqual(p)) // 暂时使用「坐标是否相等」的逻辑
-				return true;
-		}
-		return false;
-	}
-
 	protected _temp_testFrontCanPass_P: iPoint = new iPoint()
-	/**
-	 * 
-	 * @param entity 待测试的实体
-	 * @param distance 距离（浮点数）
-	 * @param asPlayer 作为玩家
-	 * @param asBullet 作为子弹
-	 * @param asLaser 作为激光
-	 * @param includePlayer 是否包括玩家
-	 * @param avoidHurt 避免伤害
-	 * @param players 所涉及的玩家
-	 * @returns 实体前方是否可通行
-	 */
 	public testFrontCanPass_FF(
 		entity: IEntityOutGrid & IEntityWithDirection, distance: number,
 		asPlayer: boolean,

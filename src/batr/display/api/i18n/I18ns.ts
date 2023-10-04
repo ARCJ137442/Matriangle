@@ -55,7 +55,7 @@ export default class I18ns {
 
 		let returnT: I18ns = new I18ns();
 
-		if (str.length < 1 || str == null)
+		if (str.length < 1 || str === null)
 			return returnT;
 		let str1: string[], k: string, v: string;
 		for (let value of str) {
@@ -71,7 +71,7 @@ export default class I18ns {
 	}
 
 	public static getI18n(translation: I18ns, key: string): string | null {
-		return translation == null ? null : translation.getI18n(key);
+		return translation === null ? null : translation.getI18n(key);
 	}
 
 	// 'index:text','index2:text2','index3:text3','...'

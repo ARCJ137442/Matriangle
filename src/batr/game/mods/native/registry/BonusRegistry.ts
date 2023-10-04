@@ -28,9 +28,9 @@ export module NativeBonusTypes {
 	// Team
 	export const RANDOM_CHANGE_TEAM: BonusType = 'randomChangeTeam';
 
-	export const UNITE_PLAYER: BonusType = 'unitePlayer';
+	// export const UNITE_PLAYER: BonusType = 'unitePlayer'; // !【2023-10-04 21:54:12】因「AI plays matter」，废除这个「人机分异」的奖励类型
 
-	export const UNITE_AI: BonusType = 'uniteAI';
+	// export const UNITE_AI: BonusType = 'uniteAI'; // !【2023-10-04 21:54:12】因「AI plays matter」，废除这个「人机分异」的奖励类型
 
 	// General
 	export const _ABOUT_HP: BonusType[] = [
@@ -62,8 +62,8 @@ export module NativeBonusTypes {
 
 	// Unused:Union
 	export const _UNUSED: BonusType[] = [
-		NativeBonusTypes.UNITE_PLAYER,
-		NativeBonusTypes.UNITE_AI,
+		// NativeBonusTypes.UNITE_PLAYER,
+		// NativeBonusTypes.UNITE_AI,
 		...NativeBonusTypes._ABOUT_BUFF
 	];
 

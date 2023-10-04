@@ -534,21 +534,21 @@ export default class GameRule_V1 implements IGameRule {
 		) this._defaultTool = value;
 	}
 
-	protected static readonly d_defaultLaserLength: uint = 32;
-	public static readonly key_defaultLaserLength: key = fastAddJSObjectifyMapProperty_dashP(
+	protected static readonly d_maxLaserLength: uint = 32;
+	public static readonly key_maxLaserLength: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
-		'defaultLaserLength',
-		GameRule_V1.d_defaultLaserLength,
+		'maxLaserLength',
+		GameRule_V1.d_maxLaserLength,
 	);
-	protected _defaultLaserLength: uint = GameRule_V1.d_defaultLaserLength;
-	public get defaultLaserLength(): uint { return this._defaultLaserLength; }
-	public set defaultLaserLength(value: uint) {
+	protected _maxLaserLength: uint = GameRule_V1.d_maxLaserLength;
+	public get maxLaserLength(): uint { return this._maxLaserLength; }
+	public set maxLaserLength(value: uint) {
 		if (
 			GameRule_V1.preUpdateVariable(
-				this, GameRule_V1.key_defaultLaserLength,
-				this._defaultLaserLength, value
+				this, GameRule_V1.key_maxLaserLength,
+				this._maxLaserLength, value
 			)
-		) this._defaultLaserLength = value;
+		) this._maxLaserLength = value;
 	}
 
 	protected static readonly d_allowLaserThroughAllBlock: boolean = false;
@@ -654,62 +654,6 @@ export default class GameRule_V1 implements IGameRule {
 		}
 		(this as any)[`_${key}`] = value;
 		return true;
-	}
-
-	// Rule Random About
-	public get randomToolEnable(): Tool {
-		return randomIn(this._enabledTools);
-	}
-
-	public getRandomMap(): IMap {
-		return randomInWeightMap(this._mapRandomPotentials);
-	}
-
-	/** 缓存的「新映射」变量 */
-	protected _temp_filterBonusType: Map<BonusType, number> = new Map<BonusType, number>();
-	/**
-	 * 根据规则过滤奖励类型
-	 * 
-	 * 过滤列表：
-	 * * 是否锁定队伍⇒排除关闭所有「能改变玩家队伍的奖励类型」
-	 * 
-	 * ! 返回一个新映射，但不会深拷贝
-	 */
-	protected filterBonusType(m: Map<BonusType, number>): Map<BonusType, number> {
-		// 先清除
-		this._temp_filterBonusType.clear();
-		// 开始添加
-		m.forEach((weight: number, type: BonusType): void => {
-			// 过滤1：「锁定队伍」
-			if (
-				type == NativeBonusTypes.RANDOM_CHANGE_TEAM ||
-				type == NativeBonusTypes.UNITE_PLAYER ||
-				type == NativeBonusTypes.UNITE_AI
-			) return;
-			// 添加
-			this._temp_filterBonusType.set(type, weight);
-		})
-		// 返回
-		return this._temp_filterBonusType;
-	}
-
-	/**
-	 * 随机获取奖励类型
-	 * 
-	 * ! 非接口实现
-	 * 
-	 * ! 会被某些规则预过滤
-	 * 
-	 * @returns 随机出来的奖励类型
-	 */
-	public randomBonusType(): BonusType {
-		return randomInWeightMap(
-			this.filterBonusType(this._bonusTypePotentials)
-		);
-	}
-
-	public get randomTeam(): PlayerTeam {
-		return randomIn(this._playerTeams);
 	}
 
 	//============Instance Functions============//

@@ -135,12 +135,12 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 			case NativeBonusTypes.RANDOM_CHANGE_TEAM:
 				this.drawTeamSymbol(graphics, BonusBoxSymbol.RANDOM_CHANGE_TEAM_LINE_COLOR);
 				break;
-			case NativeBonusTypes.UNITE_PLAYER:
-				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_PLAYER_LINE_COLOR);
-				break;
-			case NativeBonusTypes.UNITE_AI:
-				this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_AI_LINE_COLOR);
-				break;
+			// case NativeBonusTypes.UNITE_PLAYER:
+			// 	this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_PLAYER_LINE_COLOR);
+			// 	break;
+			// case NativeBonusTypes.UNITE_AI:
+			// 	this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_AI_LINE_COLOR);
+			// 	break;
 			// Other
 			case NativeBonusTypes.RANDOM_TELEPORT:
 				this.drawRandomTeleportSymbol(graphics);

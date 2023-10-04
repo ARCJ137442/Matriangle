@@ -1,16 +1,12 @@
 import { fPoint } from "../../../../../../common/geometricTools";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
-import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import EntityType from "../../../../../api/entity/EntityType";
+import { uint } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
-import { NativeTools } from "../../../registry/ToolRegistry";
-import Weapon from "../../../tool/Weapon";
+import { toolCreateExplode } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../../player/IPlayer";
-import Player from "../../player/Player";
 import Bullet from "./Bullet";
 import BulletBasic from "./BulletBasic";
 
@@ -69,11 +65,14 @@ export default class BulletBomber extends Bullet {
 	}
 
 	protected setBomb(host: IBatrMatrix): void {
-		host.toolCreateExplode(
-			this._position, this.finalExplodeRadius, this._attackerDamage, this,
-			BulletBomber.DEFAULT_EXPLODE_COLOR, 1 // ? 这里的「1」用途何在？
+		toolCreateExplode(
+			host, this.owner,
+			this._position, this.finalExplodeRadius,
+			this._attackerDamage, this.extraDamageCoefficient,
+			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
+			BulletBomber.DEFAULT_EXPLODE_COLOR,
+			1 // 边缘百分比
 		);
-		// TODO: ↑等待游戏母体完善
 	}
 
 	//============Display Implements============//

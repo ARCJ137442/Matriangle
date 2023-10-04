@@ -11,32 +11,23 @@ import Background from "../../display/main/Background";
 import BatrSubject from "../../display/main/BatrSubject";
 import I18nsChangeEvent from "../../display/menu/event/I18nsChangeEvent";
 import Menu from "../../display/menu/main/Menu";
-import BatrTextField from "../../display/menu/object/BatrTextField";
-import BonusBoxSymbol from "../../display/mods/native/entity/BonusBoxSymbol";
-import { int, uint, uint$MAX_VALUE } from "../../legacy/AS3Legacy";
+import { int, uint } from "../../legacy/AS3Legacy";
 import { Sprite, DisplayObject } from "../../legacy/flash/display";
 import { getTimer } from "../../legacy/flash/utils";
 import Block, { BlockType } from "../api/block/Block";
 import BlockAttributes from "../api/block/BlockAttributes";
-import Effect from "../api/entity/Effect";
 import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
-import EffectBlockLight from "../mods/native/entities/effect/EffectBlockLight";
 import EffectExplode from "../mods/native/entities/effect/EffectExplode";
-import EffectPlayerDeathFadeout from "../mods/native/entities/effect/EffectPlayerDeathFadeout";
-import EffectPlayerDeathLight from "../mods/native/entities/effect/EffectPlayerDeathLight";
-import EffectPlayerHurt from "../mods/native/entities/effect/EffectPlayerHurt";
-import EffectPlayerLevelup from "../mods/native/entities/effect/EffectPlayerLevelup";
-import EffectSpawn from "../mods/native/entities/effect/EffectSpawn";
-import EffectTeleport from "../mods/native/entities/effect/EffectTeleport";
 import BonusBox from "../mods/native/entities/item/BonusBox";
+import IPlayer from "../mods/native/entities/player/IPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import Projectile from "../mods/native/entities/projectile/Projectile";
 import BulletBasic from "../mods/native/entities/projectile/bullet/BulletBasic";
 import BulletNuke from "../mods/native/entities/projectile/bullet/BulletNuke";
-import BulletTracking from "../mods/native/entities/projectile/bullet/BulletTracking";
+import BulletTracking from "../mods/native/entities/projectile/bullet/BulletTracking.1";
 import LaserAbsorption from "../mods/native/entities/projectile/laser/LaserAbsorption";
 import LaserBasic from "../mods/native/entities/projectile/laser/LaserBasic";
 import LaserPulse from "../mods/native/entities/projectile/laser/LaserPulse";
@@ -46,6 +37,7 @@ import ShockWaveBase from "../mods/native/entities/projectile/other/ShockWaveBas
 import ThrownBlock from "../mods/native/entities/projectile/other/ThrownBlock";
 import Wave from "../mods/native/entities/projectile/other/Wave";
 import { BonusType } from "../mods/native/registry/BonusRegistry";
+import { getPlayers } from "../mods/native/registry/NativeGameMechanics";
 import GameResult from "../mods/native/stat/GameResult";
 import GameStats from "../mods/native/stat/GameStats";
 import Tool from "../mods/native/tool/Tool";
@@ -119,7 +111,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	public static joinNamesFromPlayers(players: IPlayer[]): string {
 		let result: string = '';
 		for (let i: uint = 0; i < players.length; i++) {
-			if (players[i] == null)
+			if (players[i] === null)
 				result += 'NULL';
 			else
 				result += players[i].customName;
@@ -347,7 +339,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public get nextPlayerID(): uint {
 		let id: uint = 1;
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (!Player.isAI(player))
 				id++;
 		}
@@ -356,7 +348,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public get nextAIID(): uint {
 		let id: uint = 1;
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (Player.isAI(player))
 				id++;
 		}
@@ -419,7 +411,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 			return false;
 		let team: PlayerTeam = null;
 		for (let player of players) {
-			if (team == null)
+			if (team === null)
 				team = player.team;
 			else if (player.team != team)
 				return false;
@@ -429,8 +421,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public getAlivePlayers(): IPlayer[] {
 		let result: IPlayer[] = new Array<Player>();
-		for (let player of this._entitySystem.players) {
-			if (player == null)
+		for (let player of getPlayers(this)) {
+			if (player === null)
 				continue;
 			if (!player.isCertainlyOut)
 				result.push(player);
@@ -440,8 +432,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	public getInMapPlayers(): IPlayer[] {
 		let result: IPlayer[] = new Array<Player>();
-		for (let player of this._entitySystem.players) {
-			if (player == null)
+		for (let player of getPlayers(this)) {
+			if (player === null)
 				continue;
 			if (player.HP > 0 && !(player.isRespawning || this.isOutOfMap(player.entityX, player.entityY)))
 				result.push(player);
@@ -632,7 +624,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 			}
 		}
 		//=====Player TickRun=====//
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (player !== null) {
 				// Respawn About
 				if (player.infinityLife || player.lives > 0) {
@@ -707,7 +699,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	protected updateGUIText(): void {
-		if (this.translations == null || this.rule == null)
+		if (this.translations === null || this.rule === null)
 			return;
 		this._mapTransformTimeText.setText(
 			I18ns.getI18n(
@@ -749,7 +741,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	protected dealKeyDownWithPlayers(code: uint, isKeyDown: boolean): void {
 		if (this._entitySystem.playerCount > 0) {
-			for (let player of this._entitySystem.players) {
+			for (let player of getPlayers(this)) {
 				// Detect - NOT USE:if(player.isRespawning) continue;
 				// Initial Action
 				if (isKeyDown && !player.isOwnKeyDown(code)) {
@@ -788,143 +780,10 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	//====Functions About Gameplay====//
 
-	public testFrontCanPass(entity: Entity, distance: number, asPlayer: boolean, asBullet: boolean, asLaser: boolean, includePlayer: boolean = true, avoidTrap: boolean = false): boolean {
-		// Debug: console.log('testFrontCanPass:'+entity.type.name+','+entity.getFrontX(distance)+','+entity.getFrontY(distance))
-		return this.testCanPass(
-			entity.getFrontX(distance),
-			entity.getFrontY(distance),
-			asPlayer, asBullet, asLaser,
-			includePlayer, avoidTrap
-		);
-	}
-
-	// !【2023-09-30 13:20:38】testCarriableWithMap, testBreakableWithMap⇒地图の存储の判断
-
-	public toolCreateExplode(x: number, y: number, finalRadius: number,
-		damage: uint, projectile: Projectile,
-		color: uint, edgePercent: number = 1): void {
-		// Operate
-		let creator: IPlayer = projectile.owner;
-		// Effect
-		this._effectSystem.addEffect(new EffectExplode(this, x, y, finalRadius, color));
-		// Hurt Player
-		let distanceP: number;
-		for (let player of this._entitySystem.players) {
-			if (player == null)
-				continue;
-			distanceP = exMath.getDistanceSquare(x, y, player.entityX, player.entityY) / (finalRadius * finalRadius);
-			if (distanceP <= 1) {
-				// Operate damage by percent
-				if (edgePercent < 1)
-					damage *= edgePercent + (distanceP * (1 - edgePercent));
-				if (projectile == null ||
-					(creator == null || creator.canUseToolHurtPlayer(player, projectile.ownerTool))) {
-					// Hurt With FinalDamage
-					player.finalRemoveHP(creator, projectile.ownerTool, damage);
-				}
-			}
-		}
-	}
-
-	public laserHurtPlayers(laser: LaserBasic): void {
-		// Set Variables
-		let attacker: IPlayer = laser.owner;
-
-		let damage: uint = laser.damage;
-
-		let length: uint = laser.length;
-
-		let rot: uint = laser.rot;
-
-		let teleport: boolean = laser instanceof LaserTeleport;
-
-		let absorption: boolean = laser instanceof LaserAbsorption;
-
-		let pulse: boolean = laser instanceof LaserPulse;
-
-		// Pos
-		let baseX: int = PosTransform.alignToGrid(laser.entityX);
-
-		let baseY: int = PosTransform.alignToGrid(laser.entityY);
-
-		let vx: int = GlobalRot.towardXInt(rot, 1);
-
-		let vy: int = GlobalRot.towardYInt(rot, 1);
-
-		let cx: int = baseX, cy: int = baseY, players: IPlayer[];
-
-		// let nextBlockAtt:BlockAttributes
-		// Damage
-		laser.isDamaged = true;
-
-		let finalDamage: uint;
-		for (let i: uint = 0; i < length; i++) {
-			// nextBlockAtt=this.getBlockAttributes(cx+vx,cy+vy);
-			players = this.getHitPlayers(cx, cy);
-
-			for (let victim of players) {
-				if (victim == null)
-					continue;
-
-				// Operate
-				finalDamage = attacker == null ? damage : victim.computeFinalDamage(attacker, laser.ownerTool, damage);
-				// Effects
-				if (attacker == null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
-					// Damage
-					victim.removeHP(finalDamage, attacker);
-
-					// Absorption
-					if (attacker !== null && !attacker.isRespawning && absorption)
-						attacker.heal += damage;
-				}
-				if (victim != attacker && !victim.isRespawning) {
-					if (teleport) {
-						this.spreadPlayer(victim);
-					}
-					if (pulse) {
-						if ((laser as LaserPulse).isPull) {
-							if (this.testCanPass(cx - vx, cy - vy, true, false, false, true, false))
-								victim.addXY(-vx, -vy);
-						}
-						else if (this.testCanPass(cx + vx, cy + vy, true, false, false, true, false))
-							victim.addXY(vx, vy);
-					}
-				}
-			}
-			cx += vx;
-			cy += vy;
-		}
-	}
-
-	public thrownBlockHurtPlayer(block: ThrownBlock): void {
-		let attacker: IPlayer = block.owner;
-		let damage: uint = block.damage;
-		for (let victim of this._entitySystem.players) {
-			if (victim == null)
-				continue;
-			// FinalDamage
-			if (attacker == null || attacker.canUseToolHurtPlayer(victim, block.ownerTool)) {
-				if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
-					victim.finalRemoveHP(attacker, block.ownerTool, damage);
-				}
-			}
-		}
-	}
-
-	public lightningHurtPlayers(lightning: Lightning, players: IPlayer[], damages: uint[]): void {
-		let p: IPlayer, d: uint;
-		for (let i in players) {
-			p = players[i];
-			d = damages[i];
-			if (p !== null)
-				p.finalRemoveHP(lightning.owner, lightning.ownerTool, d);
-		}
-	}
-
 	public blockTestWithEntitiesInGrid(): void {
 		// TODO: 泛化为「遍历所有格点实体」
 		// All Player
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			player.dealMoveInTest(player.entityX, player.entityY, true, false);
 		}
 		// BonusBox Displace by Asphyxia/Trap
@@ -1022,7 +881,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	public forceMapDisplay(): void {
-		if (this._map == null) {
+		if (this._map === null) {
 			this._mapDisplayerBottom.clearBlock();
 			this._mapDisplayerMiddle.clearBlock();
 			this._mapDisplayerTop.clearBlock();
@@ -1046,9 +905,9 @@ export default class Matrix_V1 implements IBatrMatrix {
 		let originalStageHeight: number = originalStageWidth;
 
 		// Square
-		let mapGridWidth: uint = this._map == null ? DISPLAY_GRIDS : this._map.mapWidth;
+		let mapGridWidth: uint = this._map === null ? DISPLAY_GRIDS : this._map.mapWidth;
 
-		let mapGridHeight: uint = this._map == null ? DISPLAY_GRIDS : this._map.mapHeight;
+		let mapGridHeight: uint = this._map === null ? DISPLAY_GRIDS : this._map.mapHeight;
 
 		let mapShouldDisplayWidth: number = DEFAULT_SCALE * mapGridWidth * DEFAULT_SIZE;
 
@@ -1099,7 +958,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	public loadMap(isInitial: boolean = false, update: boolean = true, reSpreadPlayer: boolean = false): void {
 		if (isInitial && this.rule.initialMap !== null)
 			this.changeMap(this.rule.initialMap, update, reSpreadPlayer);
-		else if (this.rule.mapRandomPotentials == null && this.rule.initialMapID)
+		else if (this.rule.mapRandomPotentials === null && this.rule.initialMapID)
 			this.changeMap(this.getRandomMap(), update, reSpreadPlayer);
 		else
 			this.changeMap(Game.ALL_MAPS[exMath.intMod(exMath.randomByWeightV(this.rule.mapWeightsByGame), Game.VALID_MAP_COUNT)], update, reSpreadPlayer);
@@ -1127,7 +986,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	public transformMap(destination: IMap = null): void {
 		this._entitySystem.clearProjectile();
 		this._entitySystem.clearBonusBox();
-		if (destination == null)
+		if (destination === null)
 			this.loadMap(false, true, true);
 		else
 			this.changeMap(destination, true, true);
@@ -1173,7 +1032,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		this._entitySystem.addPlayer(p);
 		// Set
 		p.rot = rot;
-		p.customName = name == null ? 'P' + id : name;
+		p.customName = name === null ? 'P' + id : name;
 		// Add
 		this._playerContainer.addChild(p);
 		// Return
@@ -1213,7 +1072,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		this._entitySystem.addPlayer(p);
 		// Set
 		p.rot = rot;
-		p.customName = name == null ? this.autoGetAIName(p) : name;
+		p.customName = name === null ? this.autoGetAIName(p) : name;
 		// Add
 		this._playerContainer.addChild(p);
 		// Return
@@ -1242,151 +1101,14 @@ export default class Matrix_V1 implements IBatrMatrix {
 			this.appendAI();
 		}
 		// Active Player
-		for (player of this._entitySystem.players) {
+		for (player of getPlayers(this)) {
 			player.isActive = true;
 		}
 	}
 
-	public teleportPlayerTo(player: IPlayer, x: int, y: int, rotateTo: uint = GlobalRot.NULL, effect: boolean = false): IPlayer {
-		player.isActive = false;
-		if (GlobalRot.isValidRot(rotateTo))
-			player.setPositions(PosTransform.alignToEntity(x), PosTransform.alignToEntity(y), rotateTo);
-		else
-			player.setXY(PosTransform.alignToEntity(x), PosTransform.alignToEntity(y));
-		// Bonus Test<For remove BUG
-		this.bonusBoxTest(player, x, y);
-		if (effect) {
-			this.addTeleportEffect(player.entityX, player.entityY);
-			// Stat
-			player.stats.beTeleportCount++;
-		}
-		player.isActive = true;
-		return player;
-	}
-
-	public spreadPlayer(player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
-		if (player == null || player.isRespawning)
-			return player;
-		let p: iPoint = new iPoint(0, 0);
-		for (let i: uint = 0; i < 0xff; i++) {
-			p.x = this.map.randomX;
-			p.y = this.map.randomY;
-			if (this.testPlayerCanPass(player, p.x, p.y, true, true)) {
-				this.teleportPlayerTo(player, p.x, p.y, (rotatePlayer ? GlobalRot.getRandom() : GlobalRot.NULL), createEffect);
-				break;
-			}
-		}
-		// Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
-		return player;
-	}
-
-	/**
-	 * Respawn player to spawn point(if map contained)
-	 * @param	player	The player will respawn.
-	 * @return	The same as param:player.
-	 */
-	public respawnPlayer(player: IPlayer): IPlayer {
-		// Test
-		if (player == null || player.isRespawning)
-			return player;
-		let p: iPoint = this.map.randomSpawnPoint;
-		// Position offer
-		if (p !== null)
-			p = this.findFitSpawnPoint(player, p.x, p.y);
-		// p as spawn point
-		if (p == null)
-			this.spreadPlayer(player, true, false);
-		else
-			player.setPositions(
-				PosTransform.alignToEntity(p.x),
-				PosTransform.alignToEntity(p.y),
-				GlobalRot.getRandom()
-			);
-		// Spawn Effect
-		this.addSpawnEffect(player.entityX, player.entityY);
-		this.addPlayerDeathLightEffect(player.entityX, player.entityY, player, true);
-		// Return
-		// Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
-		return player;
-	}
-
-	/**
-	 * @param	x	SpawnPoint.x
-	 * @param	y	SpawnPoint.y
-	 * @return	The nearest point from SpawnPoint.
-	 */
-	protected findFitSpawnPoint(player: IPlayer, x: int, y: int): iPoint {
-		// Older Code uses Open List/Close List
-		/*{
-			let oP:uint[]=[UintPointCompress.compressFromPoint(x,y)];
-			let wP:uint[]=new array<uint>();
-			let cP:uint[]=new array<uint>();
-			let tP:iPoint;
-			while(oP.length>0) {
-				for(let p of oP) {
-					if(cP.indexOf(p)>=0) continue;
-					tP=UintPointCompress.releaseFromUint(p);
-					if(this.isIntOutOfMap(tP.x,tP.y)) continue;
-					if(this.testPlayerCanPass(player,tP.x,tP.y,true,true)) return tP;
-					wP.push(
-						this.lockIPointInMap(UintPointCompress.compressFromPoint(tP.x-1,tP.y)),
-						this.lockIPointInMap(UintPointCompress.compressFromPoint(tP.x+1,tP.y)),
-						this.lockIPointInMap(UintPointCompress.compressFromPoint(tP.x,tP.y-1)),
-						this.lockIPointInMap(UintPointCompress.compressFromPoint(tP.x,tP.y+1))
-					);
-					cP.push(p);
-				}
-				oP=oP.splice(0,oP.length).concat(wP);
-				wP.splice(0,wP.length);
-			}
-		}*/
-		// Newest code uses subFindSpawnPoint
-		let p: iPoint = null;
-		for (let i: uint = 0; p == null && i < (this.mapWidth + this.mapHeight); i++) {
-			p = this.subFindSpawnPoint(player, x, y, i);
-		}
-		return p;
-	}
-
-	protected subFindSpawnPoint(player: IPlayer, x: int, y: int, r: int): iPoint {
-		for (let cx: int = x - r; cx <= x + r; cx++) {
-			for (let cy: int = y - r; cy <= y + r; cy++) {
-				if (exMath.intAbs(cx - x) == r && exMath.intAbs(cy - y) == r) {
-					if (!this.isOutOfMap(cx, cy) && this.testPlayerCanPass(player, cx, cy, true, true))
-						return new iPoint(cx, cy);
-				}
-			}
-		}
-		return null;
-	}
-
-	public spreadAllPlayer(): void {
-		for (let player of this._entitySystem.players) {
-			this.spreadPlayer(player);
-		}
-	}
-
-	public hitTestOfPlayer(p1: IPlayer, p2: IPlayer): boolean {
-		return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
-	}
-
-	public hitTestPlayer(player: IPlayer, x: int, y: int): boolean {
-		return (x == player.gridX && y == player.gridY);
-	}
-
-	public isHitAnyPlayer(x: int, y: int): boolean {
+	/* public isHitAnotherPlayer(player: IPlayer): boolean {
 		// Loop
-		for (let player of this._entitySystem.players) {
-			if (this.hitTestPlayer(player, x, y))
-				return true;
-		}
-		// Return
-		return false;
-	}
-
-	public isHitAnotherPlayer(player: IPlayer): boolean {
-		// Loop
-		for (let p2 of this._entitySystem.players) {
+		for (let p2 of getPlayers(this)) {
 			if (p2 == player)
 				continue;
 
@@ -1395,7 +1117,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		}
 		// Return
 		return false;
-	}
+	} */
 
 	public hitTestOfPlayers(...players): boolean {
 		// Transform
@@ -1427,7 +1149,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		let returnV: IPlayer[] = new Player[];
 
 		// Test
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (this.hitTestPlayer(player, x, y)) {
 				returnV.push(player);
 			}
@@ -1437,7 +1159,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	public getHitPlayerAt(x: int, y: int): IPlayer {
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (this.hitTestPlayer(player, x, y)) {
 				return player;
 			}
@@ -1445,259 +1167,39 @@ export default class Matrix_V1 implements IBatrMatrix {
 		return null;
 	}
 
-	public randomizeAllPlayerTeam(): void {
-		for (let player of this._entitySystem.players) {
-			this.randomizePlayerTeam(player);
-		}
-	}
-
-	public randomizePlayerTeam(player: IPlayer): void {
-		let tempT: PlayerTeam, i: uint = 0;
-		do {
-			tempT = this.rule.randomTeam;
-		}
-		while (tempT == player.team && ++i < 0xf);
-		player.team = tempT;
-	}
-
 	public setATeamToNotAIPlayer(team: PlayerTeam = null): void {
-		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team === null ? this.rule.randomTeam : team;
 
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (!Player.isAI(player))
 				player.team = tempTeam;
 		}
 	}
 
 	public setATeamToAIPlayer(team: PlayerTeam = null): void {
-		let tempTeam: PlayerTeam = team == null ? this.rule.randomTeam : team;
+		let tempTeam: PlayerTeam = team === null ? this.rule.randomTeam : team;
 
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			if (Player.isAI(player))
 				player.team = tempTeam;
 		}
 	}
 
 	public changeAllPlayerTool(tool: Tool = null): void {
-		if (tool == null)
+		if (tool === null)
 			tool = Tool.RANDOM_AVAILABLE;
 
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			player.tool = tool;
 		}
 	}
 
 	public changeAllPlayerToolRandomly(): void {
-		for (let player of this._entitySystem.players) {
+		for (let player of getPlayers(this)) {
 			player.tool = Tool.RANDOM_AVAILABLE;
 
 			player.toolUsingCD = 0;
 		}
-	}
-
-	public movePlayer(player: IPlayer, rot: uint, distance: number): void {
-		// Detect
-		if (!player.isActive || !player.visible)
-			return;
-
-		/*For Debug:console.log('movePlayer:',player.customName,rot,'pos 1:',player.getX(),player.getY(),
-					'pos 2:',player.getFrontX(distance),player.getFrontY(distance),
-					'pos 3:',player.getFrontIntX(distance),player.getFrontIntY(distance))
-		*/
-		player.rot = rot;
-
-		if (this.testPlayerCanPassToFront(player))
-			player.setXY(player.frontX, player.frontY);
-
-		this.onPlayerMove(player);
-	}
-
-	public playerUseTool(player: IPlayer, rot: uint, chargePercent: number): void {
-		// Test CD
-		if (player.toolUsingCD > 0)
-			return;
-		// Set Variables
-		let spawnX: number = player.tool.useOnCenter ? player.entityX : IPlayer.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
-		let spawnY: number = player.tool.useOnCenter ? player.entityY : IPlayer.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
-		// Use
-		this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
-		// Set CD
-		player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : IPlayer.computeFinalCD(player.tool);
-	}
-
-	public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
-		// Set Variables
-		let p: Projectile = null;
-
-		let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
-
-		let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
-
-		let frontBlock: Block;
-
-		let laserLength: number = this.rule.defaultLaserLength;
-
-		if (Tool.isIncludeIn(tool, Tool._LASERS) &&
-			!this._rule.allowLaserThroughAllBlock) {
-			laserLength = this.getLaserLength2(x, y, toolRot);
-
-			// -projectilesSpawnDistance
-		}
-		// Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
-		// Summon Projectile
-		switch (tool) {
-			case Tool.BULLET:
-				p = new BulletBasic(this, x, y, player);
-
-				break;
-			case Tool.NUKE:
-				p = new BulletNuke(this, x, y, player, chargePercent);
-
-				break;
-			case Tool.SUB_BOMBER:
-				p = new SubBomber(this, x, y, player, chargePercent);
-
-				break;
-			case Tool.TRACKING_BULLET:
-				p = new BulletTracking(this, x, y, player, chargePercent);
-
-				break;
-			case Tool.LASER:
-				p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
-
-				break;
-			case Tool.PULSE_LASER:
-				p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
-
-				break;
-			case Tool.TELEPORT_LASER:
-				p = new LaserTeleport(this, x, y, player, laserLength);
-
-				break;
-			case Tool.ABSORPTION_LASER:
-				p = new LaserAbsorption(this, x, y, player, laserLength);
-
-				break;
-			case Tool.WAVE:
-				p = new Wave(this, x, y, player, chargePercent);
-
-				break;
-			case Tool.BLOCK_THROWER:
-				let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
-				let carryY: int = this.lockPosInMap(PosTransform.alignToGrid(centerY), false);
-				frontBlock = this.getBlock(carryX, carryY);
-				if (player.isCarriedBlock) {
-					// Throw
-					if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
-						// Add Block
-						p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
-						// Clear
-						player.setCarriedBlock(null);
-					}
-				}
-				else if (chargePercent >= 1) {
-					// Carry
-					if (frontBlock !== null && this.testCarriableWithMap(frontBlock.attributes, this.map)) {
-						player.setCarriedBlock(frontBlock, false);
-						this.setBlock(carryX, carryY, null);
-						// Effect
-						this.addBlockLightEffect2(centerX, centerY, frontBlock, true);
-					}
-				}
-				break;
-			case Tool.MELEE:
-
-				break;
-			case Tool.LIGHTNING:
-				p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));
-				break;
-			case Tool.SHOCKWAVE_ALPHA:
-				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone);
-				break;
-			case Tool.SHOCKWAVE_BETA:
-				p = new ShockWaveBase(this, centerX, centerY, player, player == null ? GameRule.DEFAULT_DRONE_TOOL : IPlayer.droneTool, player.droneTool.chargePercentInDrone, 1);
-				break;
-		}
-		if (p !== null) {
-			p.rot = toolRot;
-			this._entitySystem.add(p);
-			this._projectileContainer.addChild(p);
-		}
-	}
-
-	protected getLaserLength(player: IPlayer, rot: uint): uint {
-		return this.getLaserLength2(player.entityX, player.entityY, rot);
-	}
-
-	protected getLaserLength2(eX: number, eY: number, rot: uint): uint {
-		let vx: int = towardX(rot);
-
-		let vy: int = towardY(rot);
-
-		let cx: int, cy: int;
-
-		for (let i: uint = 0; i <= this.rule.defaultLaserLength; i++) {
-			cx = PosTransform.alignToGrid(eX + vx * i);
-
-			cy = PosTransform.alignToGrid(eY + vy * i);
-
-			if (!this._map.getBlockAttributes(cx, cy).laserCanPass)
-				break;
-		}
-		return i;
-	}
-
-	public lockEntityInMap(entity: Entity): void {
-		let posNum: number, posMaxNum: uint, posFunc: Function;
-
-		for (let i: uint = 0; i < 2; i++) {
-			posNum = i == 0 ? entity.entityX : entity.entityY;
-
-			posMaxNum = i == 0 ? this.mapWidth : this.mapHeight;
-
-			posFunc = i == 0 ? entity.setX : entity.setY;
-
-			if (posNum < 0) {
-				posFunc(posMaxNum + posNum);
-			}
-			if (posNum >= posMaxNum) {
-				posFunc(posNum - posMaxNum);
-			}
-		}
-	}
-
-	public lockPosInMap(posNum: number, returnAsX: boolean): number {
-		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
-
-		if (posNum < 0)
-			return this.lockPosInMap(posMaxNum + posNum, returnAsX);
-
-		else if (posNum >= posMaxNum)
-			return this.lockPosInMap(posNum - posMaxNum, returnAsX);
-
-		else
-			return posNum;
-	}
-
-	public lockIntPosInMap(posNum: int, returnAsX: boolean): int {
-		let posMaxNum: uint = returnAsX ? this.mapWidth : this.mapHeight;
-
-		if (posNum < 0)
-			return this.lockIntPosInMap(posMaxNum + posNum, returnAsX);
-
-		else if (posNum >= posMaxNum)
-			return this.lockIntPosInMap(posNum - posMaxNum, returnAsX);
-
-		else
-			return posNum;
-	}
-
-	public lockIPointInMap(point: iPoint): iPoint {
-		if (point == null)
-			return null;
-		point.x = exMath.lockInt(point.x, this.mapWidth);
-		point.y = exMath.lockInt(point.y, this.mapHeight);
-		return point;
 	}
 
 	public clearPlayer(onlyDisplay: boolean = false): void {
@@ -1713,7 +1215,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	public updateProjectilesColor(player: IPlayer = null): void {
 		// null means update all projectiles
 		for (let projectile of this._entitySystem.projectile) {
-			if (player == null || projectile.owner == player) {
+			if (player === null || projectile.owner == player) {
 				projectile.shapeInit(shape: IBatrShape);
 			}
 		}

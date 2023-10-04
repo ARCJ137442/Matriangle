@@ -1,10 +1,9 @@
 import { fPoint } from "../../../../../../common/geometricTools";
 import { uint } from "../../../../../../legacy/AS3Legacy";
-import EntityType from "../../../../../api/entity/EntityType";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { NativeEntityTypes } from "../../../registry/EntityRegistry";
+import { toolCreateExplode } from "../../../registry/NativeGameMechanics";
 import IPlayer from "../../player/IPlayer";
 import Bullet from "./Bullet";
 
@@ -32,11 +31,13 @@ export default class BulletBasic extends Bullet {
 
 	/** 覆盖：通知「游戏母体」创建爆炸 */
 	override explode(host: IBatrMatrix): void {
-		// TODO: 待完善游戏接口再使用——* 创建爆炸（+效果但不仅仅效果）* 移除自身
-		host.toolCreateExplode(
-			this._position,
-			this.finalExplodeRadius, this._attackerDamage, this,
-			0xffff00, 1 // ? 这里的「1」用途何在？
+		toolCreateExplode(
+			host, this.owner,
+			this._position, this.finalExplodeRadius,
+			this._attackerDamage, this.extraDamageCoefficient,
+			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
+			0xffff00,
+			1 // 边缘百分比，表示「各个地方伤害都一样」
 		);
 		// 超类逻辑：移除自身
 		super.explode(host);

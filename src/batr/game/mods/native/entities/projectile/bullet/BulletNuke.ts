@@ -8,6 +8,7 @@ import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
+import { toolCreateExplode } from "../../../registry/NativeGameMechanics";
 
 /**
  * 「核弹」
@@ -52,11 +53,13 @@ export default class BulletNuke extends Bullet {
 	//============Instance Functions============//
 	/** 覆盖：通知「游戏母体」创建爆炸 */
 	override explode(host: IBatrMatrix): void {
-		// TODO: 等待「游戏逻辑」完善
-		host.toolCreateExplode(
-			this.position, this.finalExplodeRadius,
-			this.damage, this,
-			BulletNuke.DEFAULT_EXPLODE_COLOR, 0.5
+		toolCreateExplode(
+			host, this.owner,
+			this._position, this.finalExplodeRadius,
+			this._attackerDamage, this.extraDamageCoefficient,
+			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
+			BulletNuke.DEFAULT_EXPLODE_COLOR,
+			0.5 // 边缘百分比
 		);
 		// 超类逻辑：移除自身
 		super.explode(host);

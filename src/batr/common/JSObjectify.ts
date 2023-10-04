@@ -207,7 +207,7 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 没属性⇒警告，跳过循环
-        if (!source?.hasOwnProperty(JSObjectKey)) {
+        if (!(JSObjectKey in source)) {
             console.error('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
             continue;
         }
