@@ -92,10 +92,10 @@ export abstract class KeyboardEvent extends Event {
 
 
     // public constructor(
-    //     type: string,
-    //     bubbles?: boolean, cancelable?: boolean,
-    //     charCodeValue?: uint, keyCodeValue?: uint, keyLocationValue?: uint,
-    //     ctrlKeyValue?: boolean, altKeyValue?: boolean, shiftKeyValue?: boolean, controlKeyValue?: boolean, commandKeyValue?: boolean
+    //	 type: string,
+    //	 bubbles?: boolean, cancelable?: boolean,
+    //	 charCodeValue?: uint, keyCodeValue?: uint, keyLocationValue?: uint,
+    //	 ctrlKeyValue?: boolean, altKeyValue?: boolean, shiftKeyValue?: boolean, controlKeyValue?: boolean, commandKeyValue?: boolean
     // )
 
     public abstract override clone(): Event;

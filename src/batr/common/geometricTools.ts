@@ -125,7 +125,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * * 【20230912 16:31:39】现在循环采用的是「遍历对方的所有值」而非「遍历自己的所有值」
 	 *   * 这样可以保证「遍历到的`point[i]`始终有效」
 	 *   * 利用JS「设置数组值无需考虑边界问题」的特性，可以实现「自己只new未初始化到指定维度，仍然可以『开箱复制即用』」
-	 *     * 便于其它地方使用「数组缓存技术」：先初始化一个空数组，需要的时候再把内容copy过去，避免「未初始化的维数」这样的情况
+	 *	 * 便于其它地方使用「数组缓存技术」：先初始化一个空数组，需要的时候再把内容copy过去，避免「未初始化的维数」这样的情况
 	 * 
 	 * ! 会修改自身
 	 * 
@@ -315,9 +315,9 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * 二维示例：
 	 * ```
 	 * #--5--S
-	 * |     |
-	 * |     3
-	 * |     |
+	 * |	 |
+	 * |	 3
+	 * |	 |
 	 * T=====R
 	 * ```
 	 * @param this 起始点

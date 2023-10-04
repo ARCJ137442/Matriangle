@@ -14,8 +14,8 @@ import { int } from "../../legacy/AS3Legacy";
 //  * @returns 实体坐标
 //  */
 // export function alignToEntity(p: int): number {
-//     // return p + 0.5;
-//     return p + 0.0;
+//	 // return p + 0.5;
+//	 return p + 0.0;
 // }
 
 /**

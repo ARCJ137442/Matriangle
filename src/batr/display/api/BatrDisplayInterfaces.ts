@@ -132,9 +132,9 @@ export interface IBatrShape extends IBatrDisplayable {
     get x(): number;
     set x(x: number)
 
-    /**
-     * （在容器中）图形的y坐标
-     */;
+	/**
+	 * （在容器中）图形的y坐标
+	 */;
     get y(): number;
     set y(y: number);
 

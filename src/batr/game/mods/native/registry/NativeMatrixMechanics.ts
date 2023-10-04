@@ -1523,7 +1523,7 @@ export function projectileCanHurtOther(
 //  * * 原理：使用「控制器是否为『AI控制器』」判断
 //  */
 // export function isAIControl(player: IPlayer): boolean {
-//     return player.controller instanceof AIController;
+//	 return player.controller instanceof AIController;
 // }
 // !【2023-09-27 23:49:23】↑现在不知道要不要「如此主观地判断」——好像「玩家和AI的区分」就那么理所当然一样
 
@@ -1593,7 +1593,7 @@ export const DEFAULT_PLAYER_CONTROL_KEYS: NativeControlKeyConfigs = {
             keyCodes.RIGHT, // 右
             keyCodes.LEFT,  // 左
             keyCodes.DOWN,  // 下
-            keyCodes.UP,    // 上
+            keyCodes.UP,	// 上
         ],
         use: keyCodes.NUMPAD_0, // 用
     },

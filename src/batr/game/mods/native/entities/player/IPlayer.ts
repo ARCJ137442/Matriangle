@@ -246,8 +246,8 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 *   * 重置到「未开始计时」状态
 	 *   * 自身「剩余生命数」递减
 	 *   * 调用游戏机制代码，设置玩家在游戏内的状态
-	 *     * 寻找并设置坐标在「合适的重生点」
-	 *     * 生成一个「重生」特效
+	 *	 * 寻找并设置坐标在「合适的重生点」
+	 *	 * 生成一个「重生」特效
 	 *   * 发送事件「重生时」
 	 */
 	dealRespawn(host: IBatrMatrix): void;
