@@ -39,7 +39,7 @@ tempCodeRunnerFile*
 # Executables
 *.air
 *.swf
-*.html
+# *.html
 *.ipa
 *.apk
 

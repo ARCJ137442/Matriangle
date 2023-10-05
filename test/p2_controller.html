@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-cn">
+
+<head>
+	<meta charset="utf-8">
+	<title>Text Input Demo</title>
+</head>
+
+<body onkeydown="onKeyDown">
+
+	<input type="text" id="address" placeholder="输入链接" value="127.0.0.1:3000">
+	<input type="text" id="key" placeholder="输入控制密钥" value="p2">
+
+	<p id="result"></p>
+
+	<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
+	<script>
+
+		const address = document.getElementById('address')
+		const key = document.getElementById('key')
+		const resultText = document.getElementById('result')
+
+		function getActionFromEvent(kerboardEvent, isDown) {
+			switch (kerboardEvent.code) {
+				case 'ArrowLeft':
+					return isDown ? -2 : undefined; // 只有按下时才响应
+				case 'ArrowRight':
+					return isDown ? -1 : undefined; // 只有按下时才响应
+				case 'ArrowUp':
+					return isDown ? -4 : undefined; // 只有按下时才响应
+				case 'ArrowDown':
+					return isDown ? -3 : undefined; // 只有按下时才响应
+				case 'Space':
+					return isDown ? 'startUsing' : 'stopUsing';
+			}
+		}
+
+		function onKeyDown(event) {
+			let url = getURL(event, true)
+			if (url === '') return;
+			console.log(`↓ url = ${url}`)
+			// 发送请求
+			sendReq(url);
+		}
+
+		function onKeyUp(event) {
+			let url = getURL(event, false)
+			console.log(`↑ url = ${url}`)
+			// 发送请求
+			sendReq(url);
+		}
+
+		function getURL(event, isDown) {
+			// TODO: 根据键位获取动作
+			console.log(event);
+			let action = getActionFromEvent(event, isDown);
+			if (action === undefined) return undefined;
+			// 生成请求链接
+			return `http://${address.value}/?key=${key.value}&action=${action}`
+		}
+
+		function sendReq(url) {
+			let xhr;
+			if (window.XMLHttpRequest)
+				xhr = new window.XMLHttpRequest()
+			else {
+				xhr = new ActiveXObject();
+			}
+			xhr.open("GET", url, true);
+			xhr.onload = function () {
+				if (xhr.status === 200) {
+					// 请求成功，处理响应数据
+					var response = xhr.responseText;
+					console.log(response);
+					resultText.innerText = response.data
+				} else {
+					// 请求失败
+					console.log('请求失败，状态码：' + xhr.status);
+				}
+			};
+			xhr.send();
+		}
+
+		window.addEventListener('keydown', onKeyDown)
+		window.addEventListener('keyup', onKeyUp)
+
+	</script>
+
+</html>
