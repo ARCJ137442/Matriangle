@@ -4,10 +4,7 @@
  * * 其向「订阅了它的分派」的「事件接收者」分派事件，以进行「运动」
  * * 📌其本身适合作为一个「智能体」存在（或者像Matrix那样，人通过这个「玩家」连接到这个世界中）
  */
-
-import IBatrMatrix from "../../main/IBatrMatrix";
 import Entity from "../entity/Entity";
-import { IEntityActive } from "../entity/EntityInterfaces";
 
 export type MatrixControllerLabel = string;
 export type MatrixEventType = string;
@@ -73,7 +70,7 @@ export abstract class MatrixProgram extends Entity {
         /**
          * 订阅者列表
          */
-        public readonly subscribers: Array<IMatrixControlReceiver> = [],
+        public readonly subscribers: IMatrixControlReceiver[] = [],
     ) {
         super();
     }

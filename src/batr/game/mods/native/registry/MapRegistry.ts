@@ -1,5 +1,5 @@
 import { randInt } from "../../../../common/exMath";
-import { fPoint, iPoint } from "../../../../common/geometricTools";
+import { iPoint } from "../../../../common/geometricTools";
 import { randomIn, randomBoolean2 } from "../../../../common/utils";
 import { uint, int } from "../../../../legacy/AS3Legacy";
 import Block, { BlockType } from "../../../api/block/Block";

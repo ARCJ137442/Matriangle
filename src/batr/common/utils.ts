@@ -359,6 +359,21 @@ export function isEqualObject(
 	return true;
 }
 
+/**
+ * 合并一个字典到另一个字典
+ * 
+ * @param a 要合并入的字典
+ * @param b 提供键值对的字典
+ */
+export function mergeMaps<K, V>(
+	a: Map<K, V>,
+	b: Map<K, V>
+): void {
+	for (let [key, value] of b) {
+		a.set(key, value);
+	}
+}
+
 export const isDefined = (obj: any): boolean => obj !== undefined;
 
 export function isPrimitiveInstance(v: any): boolean {

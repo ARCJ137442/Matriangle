@@ -122,21 +122,21 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 * 
 	 * ! 不考虑其它实体（如玩家）
 	 * 
-	 * @param p 要判断的坐标（浮点）
+	 * @param p 要判断的坐标（整数）
 	 * @param asPlayer 作为玩家
 	 * @param asBullet 作为子弹
 	 * @param asLaser 作为激光
-	 * @param includePlayer 是否包括（其它）玩家
-	 * @param avoidHurting 避免伤害（主要用于AI）
-	 * @param players 所涉及的玩家
+	 * @param avoidHurt 避免伤害（主要用于AI）
+	 * @param avoidOthers 是否避开其它格点实体
+	 * @param others 所涉及的格点实体列表
 	 */
 	testCanPass_F(p: fPointRef,
 		asPlayer: boolean,
 		asBullet: boolean,
 		asLaser: boolean,
-		includePlayer?: boolean/* = true*/,
-		avoidHurting?: boolean/* = false*/,
-		players?: IPlayer[]/* = [] */,
+		avoidHurt?: boolean/* = false*/,
+		avoidOthers?: boolean/* = true*/,
+		others?: IEntityInGrid[]/* = [] */,
 	): boolean
 
 	/**

@@ -119,13 +119,17 @@ export default class Weapon extends Tool {
 	}
 
 	/** 覆盖：直接序列化 */
-	override copy(): Tool {
+	override copy(): Weapon {
 		return uniLoadJSObject(
 			Weapon.getBlank(),
-			uniSaveJSObject(this, {})
-		)
+			uniSaveJSObject(this, {}),
+		);
 	}
 
+	/**
+	 * ! 子类继承父类，必须要使用子类自己的「对象化映射表」，不然会使用父类的对象化映射表
+	 */
+	override get objectifyMap(): JSObjectifyMap { return Weapon.OBJECTIFY_MAP }
 
 	//============Quick Initialize Tool Functions============//
 	/**

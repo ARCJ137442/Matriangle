@@ -167,7 +167,7 @@ export default class Map_V1 implements IMap {
 		// 直接在当前维限制就行了
 		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
 			p[axis] = reminder_I(p[axis], this._size[axis]);
-		if (!this.isInMap_I(p)) throw new Error('point out of map');
+		if (!this.isInMap_F(p)) throw new Error('point out of map');
 		return p;
 	}
 
@@ -190,16 +190,16 @@ export default class Map_V1 implements IMap {
 		asPlayer: boolean,
 		asBullet: boolean,
 		asLaser: boolean,
-		includePlayer: boolean = false,
 		avoidHurting: boolean = false,
-		players: IPlayer[] = [],
+		avoidOthers: boolean = false,
+		others: IEntityInGrid[] = [],
 	): boolean {
 		return this.testCanPass_I(
 			alignToGrid_P(
 				p, this._temp_testCanPass_I // ! 使用缓存
 			),
 			asPlayer, asBullet, asLaser,
-			includePlayer, avoidHurting, players
+			avoidHurting, avoidOthers, others
 		)
 	}
 

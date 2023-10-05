@@ -13,4 +13,4 @@ export const TICK_TIME_MS: number = TICK_TIME_S * 1000;
 /** 用于「武器无冷却」模式中的「最小冷却」 */
 export const TOOL_MIN_CD: uint = uint(TPS / 8);
 /** 抛射体在玩家面前生成的距离 */
-export const PROJECTILES_SPAWN_DISTANCE: number = 0.55;
+export const PROJECTILES_SPAWN_DISTANCE: number = 0.6;

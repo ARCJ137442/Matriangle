@@ -10,6 +10,7 @@ import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
+import { getPlayers } from "../../../registry/NativeMatrixMechanics";
 
 /**
  * 「子弹」是
@@ -49,7 +50,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	//============Interface Methods============//
 	// 坐标 //
-	public readonly i_OutGrid: true = true;
+	public readonly i_outGrid: true = true;
 
 	/** 内部定义的坐标 */
 	protected readonly _position: fPoint = new fPoint();
@@ -92,10 +93,18 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		alignToGrid_P(this._position, this._position_I);
 		// 移动进去之后
 		if (host.map.isInMap_F(this.position) &&
-			host.map.testCanPass_F(this._position, false, true, false)) {
+			host.map.testCanPass_F(
+				this._position,
+				false, true, false,
+				false,
+				true, getPlayers(host)
+			)) {
 			this.lastBlock = this.nowBlock;
 		}
 		else {
+			// 反向前进，不要「墙里炸」
+			host.map.towardWithRot_FF(this._position, this._direction, -this.speed);
+			// 爆炸
 			this.explode(host);
 		}
 	}

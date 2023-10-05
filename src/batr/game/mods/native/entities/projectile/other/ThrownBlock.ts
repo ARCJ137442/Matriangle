@@ -25,7 +25,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 
 	//============Instance Variables============//
 
-	public readonly i_OutGrid: true = true;
+	public readonly i_outGrid: true = true;
 
 	/**
 	 * 存储浮点位置（在方块之间移动）

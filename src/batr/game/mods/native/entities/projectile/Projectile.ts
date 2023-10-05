@@ -5,6 +5,8 @@ import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import IBatrMatrix from "../../../../main/IBatrMatrix";
+import Tool from "../../tool/Tool";
+import Weapon from "../../tool/Weapon";
 import IPlayer from "../player/IPlayer";
 
 /**
@@ -72,9 +74,39 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * 
 	 * 默认值：仅伤害「敌方」
 	 */
-	public canHurtEnemy: boolean = true
-	public canHurtSelf: boolean = false
-	public canHurtAlly: boolean = false
+	public canHurtEnemy: boolean = true;
+	public canHurtSelf: boolean = false;
+	public canHurtAlly: boolean = false;
+
+	/** 链式操作快速配置「可伤害の玩家」 */
+	public setCanHurt(
+		canHurtEnemy: boolean,
+		canHurtSelf: boolean,
+		canHurtAlly: boolean,
+	): this {
+		this.canHurtEnemy = canHurtEnemy;
+		this.canHurtSelf = canHurtSelf;
+		this.canHurtAlly = canHurtAlly;
+		return this;
+	}
+
+	/**
+	 * 链式操作：从武器处快速配置
+	 * * 「可伤害玩家」类型
+	 * * 伤害&伤害加成
+	 */
+	public initFromTool(
+		tool: Tool
+	): this {
+		if (tool instanceof Weapon) {
+			this.canHurtEnemy = tool.canHurtEnemy;
+			this.canHurtSelf = tool.canHurtSelf;
+			this.canHurtAlly = tool.canHurtAlly;
+			this._attackerDamage = tool.baseDamage;
+			this._extraDamageCoefficient = tool.extraDamageCoefficient;
+		}
+		return this;
+	}
 
 	//============Constructor & Destructor============//
 	public constructor(

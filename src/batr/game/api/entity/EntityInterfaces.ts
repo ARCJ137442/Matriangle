@@ -45,9 +45,9 @@ export interface IEntityInGrid extends Entity {
      * * 作为统一的「设置坐标」入口
      * * 用于在设置坐标前后更新
      * 
-     * TODO: 考虑引入的host问题
+     * !【2023-10-05 22:02:36】鉴于「需要`host`」问题，不再强制要求
      */
-    set position(value: iPoint);
+    // set position(value: iPoint);
 
     /**
      * 当「所处位置方块更新」时调用
@@ -73,13 +73,16 @@ export interface IEntityOutGrid extends Entity {
      * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
      * * 参见`IEntityInGrid`
      */
-    readonly i_OutGrid: true;
+    readonly i_outGrid: true;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的浮点坐标（引用） */
     get position(): fPoint;
-    /** 设置实体的浮点坐标（引用） */
-    set position(value: fPoint);
+    /**
+     * 设置实体的浮点坐标（引用）
+     * !【2023-10-05 22:02:36】鉴于「需要`host`」问题，不再强制要求
+     */
+    // set position(value: fPoint);
 
 }
 

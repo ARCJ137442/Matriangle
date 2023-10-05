@@ -220,7 +220,7 @@ export default class MatrixRule_V1 implements IMatrixRule {
 		) this._defaultRespawnTime = value;
 	}
 
-	protected static readonly d_deadPlayerMoveTo: iPoint = new iPoint(10, 10);
+	protected static readonly d_deadPlayerMoveTo: iPoint = new iPoint(-1, -1);
 	public static readonly key_deadPlayerMoveTo: key = fastAddJSObjectifyMapProperty_dash2(
 		this.OBJECTIFY_MAP,
 		'deadPlayerMoveTo', this.d_deadPlayerMoveTo,

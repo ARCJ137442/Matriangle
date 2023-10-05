@@ -3,6 +3,7 @@ import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import IPlayer from "../entities/player/IPlayer";
 import IBatrMatrix from '../../../main/IBatrMatrix';
+import { typeID } from "../registry/IBatrRegistry";
 
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类
@@ -47,8 +48,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 
 	 * !【2023-09-24 21:18:28】日后的「国际化文本支持」将基于id，而非在这里整什么「国际化文本」
 	 */
-	protected _id: string;
-	public get id(): string { return this._id }
+	protected _id: typeID;
+	public get id(): typeID { return this._id }
 	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'id', 'string',

@@ -5,7 +5,7 @@ import { DisplayLayers, IBatrShape, IBatrShapeContainer } from "../../../../../d
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
-import { iPoint, intPoint } from "../../../../../common/geometricTools";
+import { iPoint, iPointRef, intPoint } from "../../../../../common/geometricTools";
 import { BonusType } from "../../registry/BonusRegistry";
 import IBatrMatrix from "../../../../main/IBatrMatrix";
 
@@ -38,8 +38,9 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	// protected _symbol: BonusBoxSymbol; // !【2023-10-04 21:58:22】现在显示端不能再用了
 
 	//============Constructor & Destructor============//
-	public constructor(position: iPoint, type: BonusType) {
+	public constructor(position: iPointRef, type: BonusType) {
 		super();
+		this._position.copyFrom(position);
 		this._bonusType = type;
 		// this._symbol = new BonusBoxSymbol(this._bonusType);
 	}

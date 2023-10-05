@@ -11,6 +11,7 @@ import PlayerAttributes from "./attributes/PlayerAttributes";
 import BonusBox from "../item/BonusBox";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import PlayerController from "./controller/PlayerController";
+import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
 
 /* 
 TODO: 【2023-09-23 00:20:12】现在工作焦点：
@@ -40,9 +41,10 @@ TODO: 【2023-09-23 00:20:12】现在工作焦点：
  * * 拥有统计信息的
  * * 拥有「经验」「加成」机制的
  * * 可以使用「工具」的
+ * * 可以被「玩家控制器」控制的
  * 实体
  */
-export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives {
+export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives, IMatrixControlReceiver {
 
 	/**
 	 * 用于替代`instanceof`
@@ -182,6 +184,13 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	// get isCarriedBlock(): boolean {
 	// 	return this._carriedBlock !== null && this._carriedBlock.visible;
 	// }
+
+	/**
+	 * 特别的「设置坐标」函数
+	 * * 作为`position`一个特殊的setter
+	 * * 用于「坐标变更」逻辑
+	 */
+	setPosition(host: IBatrMatrix, position: iPointRef): void;
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
 	onPositedBlockUpdate(host: IBatrMatrix): void;

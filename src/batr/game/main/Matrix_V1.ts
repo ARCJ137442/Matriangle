@@ -77,6 +77,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 		if (this._temp_tick_entityToDeleted.length > 0) {
 			// 正式删除实体
 			this._temp_tick_entityToDeleted.forEach(this._entitySystem.remove.bind(this._entitySystem)); // !【2023-10-05 15:25:50】这里使用bind绑定this参数，避免「半途丢this」的情况
+			this._temp_tick_entityToDeleted.length = 0;
 			// // 通知「实体系统」清除冗余空间
 			// this._entitySystem.GC();
 		}

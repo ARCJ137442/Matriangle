@@ -1,11 +1,13 @@
-import { iPoint, traverseNDSquare } from "../src/batr/common/geometricTools";
+import { iPoint, iPointVal, traverseNDSquare } from "../src/batr/common/geometricTools";
 import { getClass } from "../src/batr/common/utils";
-import { int, uint } from "../src/batr/legacy/AS3Legacy";
+import { int, uint, uint$MAX_VALUE } from "../src/batr/legacy/AS3Legacy";
 import Entity from "../src/batr/game/api/entity/Entity";
-import { IEntityInGrid } from "../src/batr/game/api/entity/EntityInterfaces";
+import { IEntityInGrid, IEntityOutGrid } from "../src/batr/game/api/entity/EntityInterfaces";
 import BlockVoid from "../src/batr/game/mods/native/blocks/Void";
 import MapStorageSparse from "../src/batr/game/mods/native/maps/MapStorageSparse";
 import { getHitEntity_I_Grid } from "../src/batr/game/mods/native/registry/NativeMatrixMechanics";
+import { alignToGrid_P } from "../src/batr/game/general/PosTransform";
+import Player from "../src/batr/game/mods/native/entities/player/Player";
 
 /**
  * 若方块为「空」，则填充空格；否则截断并补全空格
@@ -60,6 +62,7 @@ export function 地图可视化_高维(storage: MapStorageSparse): void {
 	);
 }
 
+const _temp_母体可视化_entityIPoint: iPointVal = new iPoint();
 /**
  * 大一统的「母体可视化」
  * * 现在返回字符串
@@ -72,10 +75,13 @@ export function 母体可视化(
 	//
 	let result: string = '';
 	// 格点实体
-	const entitiesInGrid: IEntityInGrid[] = entities.filter(
-		(entity: Entity): boolean => (entity as IEntityInGrid)?.i_inGrid
-	) as IEntityInGrid[];
-	let eig: IEntityInGrid | null;
+	const entitiesPositioned: (IEntityInGrid | IEntityOutGrid)[] = entities.filter(
+		(entity: Entity): boolean => (
+			(entity as IEntityInGrid)?.i_inGrid ||
+			(entity as IEntityOutGrid)?.i_outGrid
+		)
+	) as (IEntityInGrid | IEntityOutGrid)[];
+	let e: (IEntityInGrid | IEntityOutGrid) | null;
 	// 正式开始
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
@@ -90,13 +96,22 @@ export function 母体可视化(
 			for (let x = storage.borderMin[0]; x <= storage.borderMax[0]; x++) {
 				// 每一个点
 				iP.copyFromArgs(x, y); // ! 会忽略其它地方的值
-				eig = getHitEntity_I_Grid(iP, entitiesInGrid)
+				// e = getHitEntity_I_Grid(iP, entitiesInGrid)
+				// 获取实体
+				e = null
+				for (const ent of entitiesPositioned) {
+					if (alignToGrid_P(ent.position, _temp_母体可视化_entityIPoint).isEqual(iP)) {
+						e = ent;
+						break;
+					}
+				}
+				// 打印
 				line.push(
-					eig === null ?
+					e === null ?
 						showBlock(
 							storage.getBlock(iP).type.name, string_l
 						) :
-						showEntity(eig, string_l)
+						showEntity(e, string_l)
 				);
 			}
 			result += '|' + line.join(' ') + '|' + '\n';
@@ -110,9 +125,18 @@ export function 母体可视化(
 	return result;
 }
 
-export function 列举实体(es: Entity[]): void {
-	console.info('实体列表：');
+export function 列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE): void {
+	console.info(`实体列表(${es.length})：`);
 	for (const e of es) {
-		console.log(`${getClass(e)?.name} in ${(e as IEntityInGrid).position}`, e)
+		console.log(实体标签显示(e), e)
+		if (--maxCount < 0) break;
 	}
+}
+
+function 实体标签显示(e: Entity) {
+	if (e instanceof Player)
+		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position}|${e.HPText}`
+	else if ((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
+		return `${getClass(e)?.name}@${(e as IEntityInGrid).position}`
+	return `${getClass(e)?.name}`
 }

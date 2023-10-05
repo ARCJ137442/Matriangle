@@ -1,9 +1,7 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
-import { MatrixProgram } from "../../../../../api/control/MatrixControl";
-import Entity from "../../../../../api/entity/Entity";
+import { MatrixControllerLabel, MatrixProgram } from "../../../../../api/control/MatrixControl";
 import { IEntityActive } from "../../../../../api/entity/EntityInterfaces";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { isPlayer } from "../../../registry/NativeMatrixMechanics";
 import BonusBox from "../../item/BonusBox";
 import IPlayer from "../IPlayer";
 import { PlayerAction } from "./PlayerAction";
@@ -39,6 +37,28 @@ export default abstract class PlayerController extends MatrixProgram implements 
             }
         } */
     };
+
+    /**
+     * 构造函数
+     */
+    public constructor(
+        /**
+         * 母体程序标签
+         * * 应用：区分是「玩家」还是「AI」（实际上是个历史遗留问题）
+         */
+        public readonly label: MatrixControllerLabel,
+        /**
+         * 订阅者列表：订阅者只能是玩家
+         */
+        public readonly subscribers: IPlayer[] = [],
+    ) {
+        super(label, subscribers);
+    }
+
+    // 重构：只接受玩家订阅者 //
+    override addSubscriber(subscriber: IPlayer): void { return super.addSubscriber(subscriber); }
+    override removeSubscriber(subscriber: IPlayer): boolean { return super.removeSubscriber(subscriber); }
+    override hasSubscriber(subscriber: IPlayer): boolean { return super.hasSubscriber(subscriber); }
 
     // 响应函数：响应所有钩子 //
     // ? 一个疑点：是否要如此地「专用」以至于「每次增加一个新类型的事件，都要在这里新注册一个钩子函数」？至于「需要传递的、明确类型的参数」，有什么好的解决办法？

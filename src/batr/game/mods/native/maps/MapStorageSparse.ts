@@ -1,7 +1,7 @@
 import { randInt, randIntBetween, randModWithout, randomBetween } from "../../../../common/exMath";
-import { iPoint } from "../../../../common/geometricTools";
+import { iPoint, iPointRef } from "../../../../common/geometricTools";
 import { generateArray, identity, key, mapObject, randomIn } from "../../../../common/utils";
-import { mRot, rotate_M, toOpposite_M } from "../../../general/GlobalRot";
+import { mRot, rotate_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import Block, { BlockType } from "../../../api/block/Block";
@@ -293,8 +293,8 @@ export default class MapStorageSparse implements IMapStorage {
         return this._spawnPoints.length === 0 ? null : randomIn(this._spawnPoints);
     }
 
-    // ! 实现：会，因为这里的点不能保证「不是临时的」
-    public addSpawnPointAt(p: iPoint): IMapStorage {
+    // ! 实现：会复制——因为这里的点不能保证「不是临时的」
+    public addSpawnPointAt(p: iPointRef): IMapStorage {
         if (!this.hasSpawnPointAt(p))
             this._spawnPoints.push(p.copy())
         return this;

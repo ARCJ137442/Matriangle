@@ -73,7 +73,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     public get lifePercent(): number { return this._life / this.LIFE }
 
     // 非格点 //
-    public readonly i_OutGrid: true = true;
+    public readonly i_outGrid: true = true;
 
     /** 特效作为「非格点实体」的位置 */
     protected _position: fPoint = new fPoint();

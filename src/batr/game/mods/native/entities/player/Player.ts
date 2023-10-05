@@ -5,7 +5,7 @@ import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
 import IBatrMatrix from "../../../../main/IBatrMatrix";
-import { DisplayLayers, IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { DisplayLayers, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalGameVariables";
 import Tool from "../../tool/Tool";
@@ -13,11 +13,10 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, handlePlayerRespawn, moveOutTestPlayer, getPlayers } from "../../registry/NativeMatrixMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, moveOutTestPlayer, getPlayers, playerUseTool, respawnPlayer } from "../../registry/NativeMatrixMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
-import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./controller/PlayerAction";
 import EffectPlayerHurt from "../effect/EffectPlayerHurt";
 import MatrixRule_V1 from "../../rule/MatrixRule_V1";
@@ -27,7 +26,7 @@ import PlayerController from "./controller/PlayerController";
  * 「玩家」的主类
  * * 具体特性参考「IPlayer」
  */
-export default class Player extends Entity implements IPlayer, IMatrixControlReceiver {
+export default class Player extends Entity implements IPlayer {
 
 	// 判断「是玩家」标签
 	public readonly i_isPlayer: true = true;
@@ -132,8 +131,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	/** 玩家储备生命值 */ // * 设置时无需过游戏母体，故无需只读
 	public get heal(): uint { return this._heal; }
 	public set heal(value: uint) {
-		if (value == this._heal)
-			return;
+		if (value == this._heal) return;
 		this._heal = value;
 		// this._GUI.updateHP(); // TODO: 显示更新
 	}
@@ -177,7 +175,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	public get HPText(): string {
 		let HPText: string = `${this._HP}/${this._maxHP}`;
 		let healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
-		let lifeText: string = this.lifeNotDecay ? '' : `[${this._lives}]`;
+		let lifeText: string = this._lifeNotDecay ? '' : `[${this._lives}]`;
 		return HPText + healText + lifeText;
 	}
 
@@ -388,20 +386,28 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 
 	protected _position: iPoint = new iPoint();
 	public get position(): iPoint { return this._position }
-	public set position(value: iPoint) {
-		console.log("Entity position changed!", this._position, value);
-		this._position.copyFrom(value);
+	public setPosition(host: IBatrMatrix, position: iPoint): void {
+		console.log("Entity position changed!", this, this._position, '=>', position);
+		if (position !== this._position) this._position.copyFrom(position);
+		// 处理其它事件（！串起来了） // * 原Entity中`setXY`、`setPosition`的事
+		handlePlayerLocationChange(host, this, this.position);
 	}
 
 	// 活跃实体 //
 	public readonly i_active: true = true;
 
 	public onTick(host: IBatrMatrix): void {
-		this.dealCachedActions(host);
-		this.dealController(host);
-		this.dealUsingTime(host);
-		this.dealMoveInTest(host, false, false);
-		this.dealHeal();
+		// 在重生过程中⇒先处理重生
+		if (this.isRespawning)
+			this.dealRespawn(host);
+		// 然后再处理其它
+		else {
+			this.dealCachedActions(host);
+			this.dealController(host);
+			this.dealUsingTime(host);
+			this.dealMoveInTest(host, false, false);
+			this.dealHeal();
+		}
 	}
 
 	// 有方向实体 //
@@ -523,10 +529,15 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// 清除「储备生命值」 //
 		this.heal = 0;
-		// 清除重生刻
+		// 重置
 		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRule_V1.key_defaultRespawnTime);
 		// 全局处理
 		handlePlayerDeath(host, attacker, this, damage);
+		// !【2023-10-05 18:21:43】🆕死了就是死了：生命值耗尽⇒通知游戏移除自身
+		if (!this.lifeNotDecay && this._lives <= 0) {// ! 生命数是在重生的时候递减的
+			console.log(`${this.customName} 生命耗尽，通知游戏母体移除自身`);
+			host.removeEntity(this);
+		}
 		// TODO: 通知控制器
 	}
 
@@ -653,7 +664,10 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 			this._respawnTick = -1;
 			if (!this._lifeNotDecay && this._lives > 0)
 				this._lives--;
-			handlePlayerRespawn(host, this);
+			// 自身回满血
+			this._HP = this._maxHP; // ! 无需显示更新
+			// 触发「游戏母体」响应：帮助安排位置、添加特效等
+			respawnPlayer(host, this);
 			this.onRespawn(host);
 		}
 	}
@@ -740,19 +754,21 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 
 	// !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
 	public moveForward(host: IBatrMatrix): void {
-		// 能前进⇒前进
+		// 能前进⇒前进 // !原`host.movePlayer`
 		if (this.testCanGoForward(
 			host, this._direction,
 			false, true, getPlayers(host)
 		))
 			// 向前移动	
-			host.map.towardWithRot_II(
-				this._position,
-				this._direction,
-				1
+			this.setPosition(
+				host,
+				host.map.towardWithRot_II(
+					this._position,
+					this._direction,
+					1
+				)
 			)
-		// 处理其它事件（！串起来了）
-		// handlePlayerMove(host, this); // !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
+		// !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
 		// TODO: 显示更新
 	}
 
@@ -781,17 +797,18 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 
 	public directUseTool(host: IBatrMatrix): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
-		this._tool.onUseByPlayer(host, this);
+		// this._tool.onUseByPlayer(host, this); // !【2023-10-05 17:17:26】现在使用注册表，因此废弃
 		// TODO: 代码待迁移
 		console.warn('WIP@directUseTool',
 			this._tool,
 			this, this._direction,
 			this._tool.chargingPercent
-		)/* playerUseTool(
+		)
+		playerUseTool(
 			host,
 			this, this._direction,
 			this._tool.chargingPercent
-		); */
+		);
 		// // 工具使用后⇒通知GUI更新
 		// if (this.toolNeedsCharge) // TODO: 待显示模块完善
 		// 	this._GUI.updateCharge();

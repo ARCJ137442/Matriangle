@@ -41,6 +41,11 @@ import EffectBlockLight from "../entities/effect/EffectBlockLight";
 import IMap from '../../../api/map/IMap';
 import Laser from "../entities/projectile/laser/Laser";
 import EffectExplode from "../entities/effect/EffectExplode";
+import Registry_V1, { toolUsageF } from "./Registry_V1";
+import BulletBasic from "../entities/projectile/bullet/BulletBasic";
+import { typeID } from "./IBatrRegistry";
+import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalGameVariables";
+import Weapon from "../tool/Weapon";
 
 
 /**
@@ -123,7 +128,7 @@ export function toolCreateExplode(
     host: IBatrMatrix, creator: IPlayer | null,
     p: fPointRef, finalRadius: number,
     damage: uint, extraDamageCoefficient: uint,
-    canHurtEnemy: boolean, canHurtSelf: boolean, canHurtAlly: boolean,
+    canHurtSelf: boolean, canHurtEnemy: boolean, canHurtAlly: boolean,
     color: uint, edgePercent: number = 1): void {
     // 生成特效
     host.addEntity(
@@ -329,7 +334,7 @@ export function playerPickupBonusBox(
     // Effect
     let buffColor: int = -1;
     switch (forcedBonusType) {
-        // HP,Heal&Life
+        // 生命
         case NativeBonusTypes.ADD_HP:
             // 随机
             player.addHP(host, uint(player.HP * (0.05 * (1 + randInt(10)))), null);
@@ -347,8 +352,9 @@ export function playerPickupBonusBox(
         case NativeBonusTypes.RANDOM_TOOL:
             player.tool = randomWithout(host.rule.getRule(MatrixRule_V1.key_enabledTools) as Tool[], player.tool);
             break;
-        // Attributes
+        // 属性增强
         case NativeBonusTypes.BUFF_RANDOM:
+            // 重定向buff
             playerPickupBonusBox(host, player, bonusBox, randomIn(NativeBonusTypes._ABOUT_BUFF));
             return;
         case NativeBonusTypes.BUFF_DAMAGE:
@@ -368,14 +374,14 @@ export function playerPickupBonusBox(
             buffColor = BonusBoxSymbol.BUFF_RADIUS_COLOR;
             break;
         case NativeBonusTypes.ADD_EXPERIENCE:
-            player.experience += ((player.level >> 2) + 1) << 2;
+            player.addExperience(host, ((player.level >> 2) + 1) << 2);
             buffColor = BonusBoxSymbol.EXPERIENCE_COLOR;
             break;
-        // Team
+        // 队伍
         case NativeBonusTypes.RANDOM_CHANGE_TEAM:
             randomizePlayerTeam(host, player);
             break;
-        // Other
+        // 其它
         case NativeBonusTypes.RANDOM_TELEPORT:
             spreadPlayer(host, player, false, true);
             break;
@@ -388,29 +394,58 @@ export function playerPickupBonusBox(
                 buffColor, 0.75
             )
         );
-    // Stats Operations
+    // 加入统计
     player.stats.pickupBonusBoxCount++;
-    // Remove
-    host.removeEntity(bonusBox);
 }
 const temp_playerPickupBonusBox_effectP: fPoint = new fPoint();
+
+/**
+ * 玩家使用工具
+ * * 【2023-10-05 17:19:47】现在直接导向注册表（若有相关规则）的「工具使用」函数中
+ */
+export function playerUseTool(host: IBatrMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
+    (host.registry as Registry_V1)?.toolUsageMap.get(player.tool.id)?.(host, player, player.tool, rot, chargePercent);
+}
+
+const _temp_toolUsage_PF: fPoint = new fPoint();
+/**
+ * 一个原生的「武器使用」映射表
+ * * 基本继承原先AS3版本中的玩法
+ * 
+ * * 💭【2023-10-05 17:33:39】本来放在「工具注册表」里面的，但这个映射表的「机制注册」已经多于「ID注册」了。。。
+ */
+export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
+    [
+        NativeTools.TOOL_ID_BULLET_BASIC,
+        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+            console.log('It is used!', host, user, direction, chargePercent)
+            host.addEntity(
+                new BulletBasic(
+                    user,
+                    host.map.towardWithRot_FF(
+                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
+                        direction,
+                        PROJECTILES_SPAWN_DISTANCE
+                    ),
+                    direction,
+                    0, 0, // 后续从工具处初始化
+                    BulletBasic.DEFAULT_SPEED, // ?【2023-10-05 17:39:49】是不是参数位置有问题
+                    computeFinalRadius(
+                        BulletBasic.DEFAULT_EXPLODE_RADIUS,
+                        user.attributes.buffRadius
+                    )
+                ).initFromTool(tool)
+            )
+        }
+    ]
+])
+
 
 /**
  * 玩家使用工具的代码
  * TODO: 代码太多太大太集中，需要迁移！重构！💢
  */
-/* public playerUseTool(host: IBatrMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
-    // Test CD
-    if (player.toolUsingCD > 0)
-        return;
-    // Set Variables
-    let spawnX: number = player.tool.useOnCenter ? player.entityX : IPlayer.getFrontIntX(PROJECTILES_SPAWN_DISTANCE);
-    let spawnY: number = player.tool.useOnCenter ? player.entityY : IPlayer.getFrontIntY(PROJECTILES_SPAWN_DISTANCE);
-    // Use
-    this.playerUseToolAt(player, player.tool, spawnX, spawnY, rot, chargePercent, PROJECTILES_SPAWN_DISTANCE);
-    // Set CD
-    player.toolUsingCD = this._rule.toolsNoCD ? TOOL_MIN_CD : IPlayer.computeFinalCD(player.tool);
-}
+/* 
 
 public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
     // Set Variables
@@ -538,14 +573,14 @@ export function playerMoveInTest(
         host.rule.safeGetRule<int>(MatrixRule_V1.key_playerAsphyxiaDamage),
         attributes.playerDamage
     );
-    // int$MIN_VALUE⇒无伤害
+    // int$MIN_VALUE⇒无伤害&无治疗
     if (finalPlayerDamage !== int$MIN_VALUE)
         // 负数⇒治疗
         if (finalPlayerDamage < 0) {
             if (!isLocationChange)
                 player.isFullHP ?
-                    player.heal += finalPlayerDamage : // 满生命值⇒加「储备生命值」
-                    player.addHP(host, finalPlayerDamage, null); // 否则直接加生命值
+                    player.heal -= finalPlayerDamage/* 注意：这里是负数 */ : // 满生命值⇒加「储备生命值」
+                    player.addHP(host, -finalPlayerDamage, null); // 否则直接加生命值
         }
         // 正数⇒伤害
         else player.removeHP(
@@ -574,6 +609,7 @@ export function playerMoveInTest(
  * * 返回负数以包括「治疗」的情况
  * 
  * 具体规则：
+ * * int$MIN_VALUE -> int$MIN_VALUE（忽略）
  * * [-inf, -1) -> playerDamage+1（偏置后的治疗值）
  * * -1 -> 重定向到「使用规则伤害作『方块伤害』」
  * * [0,100] -> player.maxHP * playerDamage/100（百分比）
@@ -586,17 +622,19 @@ export const computeFinalBlockDamage = (
     ruleAsphyxiaDamage: int,
     playerDamage: int
 ): uint => (
-    playerDamage < -1 ?
-        playerDamage + 1 :
-        playerDamage == -1 ?
-            computeFinalBlockDamage(playerMaxHP, 0, ruleAsphyxiaDamage) : // 为了避免「循环递归」的问题，这里使用了硬编码0
-            playerDamage == 0 ?
-                0 :
-                playerDamage <= 100 ?
-                    playerMaxHP * playerDamage / 100 :
-                    playerDamage == int$MAX_VALUE ?
-                        uint$MAX_VALUE :
-                        playerDamage - 100
+    playerDamage === (int$MIN_VALUE) ?
+        int$MIN_VALUE :
+        playerDamage < -1 ?
+            playerDamage + 1 :
+            playerDamage == -1 ?
+                computeFinalBlockDamage(playerMaxHP, 0, ruleAsphyxiaDamage) : // 为了避免「循环递归」的问题，这里使用了硬编码0
+                playerDamage == 0 ?
+                    0 :
+                    playerDamage <= 100 ?
+                        playerMaxHP * playerDamage / 100 :
+                        playerDamage == int$MAX_VALUE ?
+                            uint$MAX_VALUE :
+                            playerDamage - 100
 );
 
 /**
@@ -764,20 +802,33 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
 
     // victim.visible = false; // !【2023-10-03 21:09:59】交给「显示端」
 
-    // 取消激活
-    victim.isActive = false;
+    // 取消激活 // !【2023-10-05 19:51:35】不能取消激活：玩家需要实体刻来计算「重生刻」（不然又徒增专用代码）
+    // victim.isActive = false;
     // 工具使用状态重置
     victim.tool.resetUsingState();
+
+    // victim.gui.visible = false; // TODO: 显示更新
 
     // 重生 //
     // 重置重生时间
     // 保存死亡点，在后续生成奖励箱时使用
     let deadP: iPoint = victim.position.copy();
     // 移动受害者到指定地方
-    victim.position = host.rule.safeGetRule<iPoint>(MatrixRule_V1.key_deadPlayerMoveTo);
+    victim.setPosition(
+        host,
+        host.rule.safeGetRule<iPoint>(MatrixRule_V1.key_deadPlayerMoveTo)
+    );
     // TODO: 统一设置位置？
-
-    // victim.gui.visible = false; // TODO: 显示更新
+    // 死后在当前位置生成奖励箱
+    if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
+        (
+            host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount) < 0 ||
+            getBonusBoxCount(host) < host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount)
+        ) &&
+        host.map.testBonusBoxCanPlaceAt(deadP, getPlayers(host))
+    ) {
+        addBonusBoxInRandomTypeByRule(host, deadP);
+    }
 
     // Store Stats
     if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_recordPlayerStats)) {
@@ -801,19 +852,11 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
             }
         }
     }
-    // 死后在当前位置生成奖励箱
-    if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
-        (
-            host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount) < 0 ||
-            getBonusBoxCount(host) < host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount)
-        ) &&
-        host.map.testBonusBoxCanPlaceAt(deadP, getPlayers(host))
-    ) {
-        addBonusBoxInRandomTypeByRule(host, deadP);
-    }
+
     // 触发击杀者的「击杀玩家」事件
     if (attacker !== null)
         attacker.onKillPlayer(host, victim, damage);
+
     // 检测「游戏结束」 // TODO: 通用化
     // host.testGameEnd();
 }
@@ -857,7 +900,7 @@ export function teleportPlayerTo(
 ): IPlayer {
     player.isActive = false;
     // !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-    player.position = p;
+    player.setPosition(host, p);
     player.direction = rotateTo;
     // 在被传送的时候可能捡到奖励箱
     bonusBoxTest(host, player, p);
@@ -918,6 +961,9 @@ export function spreadAllPlayer(host: IBatrMatrix): void {
 /**
  * 在一个重生点处「重生」玩家
  * * 逻辑：寻找随机重生点⇒移动玩家⇒设置随机特效
+ * 
+ * @param host 所涉及的「游戏母体」
+ * @param player 重生的玩家
  */
 export function respawnPlayer(host: IBatrMatrix, player: IPlayer): IPlayer {
     let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy(); // 空值访问`null.copy()`会变成undefined
@@ -931,7 +977,7 @@ export function respawnPlayer(host: IBatrMatrix, player: IPlayer): IPlayer {
         teleportPlayerTo(
             host,
             player,
-            findFitSpawnPoint(host, player, p),
+            findFitSpawnPoint(host, player, p), // !就是这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
             host.map.storage.randomForwardDirectionAt(p),
             false
         ) // 无需重新确定重生地
@@ -996,23 +1042,6 @@ function findFitSpawnPoint(
 }
 
 /**
- * 当一个玩家首次调用「重生」时
- * * 逻辑：恢复生命⇒（打开显示⇒）特效&坐标分派
- * @param host 所涉及的「游戏母体」
- * @param player 重生的玩家
- */
-export function handlePlayerRespawn(host: IBatrMatrix, player: IPlayer): void {
-    // Active
-    player.HP = player.maxHP;
-    player.isActive = true;
-    /* // Visible // !【2023-10-03 23:37:11】弃置，留给「显示端」
-    player.visible = true;
-    player.gui.visible = true; */
-    // 安排位置&特效
-    respawnPlayer(host, player);
-}
-
-/**
  * 在玩家移出方块之前
  */
 export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
@@ -1033,9 +1062,6 @@ export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPoi
  * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
  */
 export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
-    // Detect
-    if (!player.isActive)
-        return;
     // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
     // 告知玩家开始处理「方块伤害」等逻辑
     player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
@@ -1115,11 +1141,14 @@ export function getPlayers(host: IBatrMatrix): IPlayer[] {
  * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
  */
 export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
-    if (!player.isActive) return false;
     for (let bonusBox of getBonusBoxes(host)) {
-        if (hitTestEntity_I_Grid(player, at)) { // TODO: 【2023-10-03 23:55:46】断点
+        if (hitTestEntity_I_Grid(bonusBox, at)) { // TODO: 【2023-10-03 23:55:46】断点
+            // 玩家获得奖励
             playerPickupBonusBox(host, player, bonusBox);
+            // 触发玩家钩子（不涉及世界机制）
             player.onPickupBonusBox(host, bonusBox);
+            // 移除
+            host.removeEntity(bonusBox);
             // host.testGameEnd(); // TODO: 通用化
             return true;
         }

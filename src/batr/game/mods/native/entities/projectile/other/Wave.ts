@@ -49,7 +49,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	public set nowScale(value: number) { this._nowScale = value; }
 
 	// 非格点实体 //
-	public readonly i_OutGrid: true = true;
+	public readonly i_outGrid: true = true;
 
 	/** 记录自身位置 */
 	protected _position: fPoint = new fPoint();
