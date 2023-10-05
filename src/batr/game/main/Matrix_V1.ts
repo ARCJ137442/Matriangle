@@ -1,16 +1,15 @@
-﻿import { iPoint, iPointRef, intPoint } from "../../common/geometricTools";
+﻿import { iPointRef } from "../../common/geometricTools";
 import { uint } from "../../legacy/AS3Legacy";
 import Entity from "../api/entity/Entity";
 import { IEntityActive, IEntityActiveLite } from "../api/entity/EntityInterfaces";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
-import IPlayer from "../mods/native/entities/player/IPlayer";
-import { getPlayers, getRandomMap } from "../mods/native/registry/NativeMatrixMechanics";
+import { getRandomMap } from "../mods/native/registry/NativeMatrixMechanics";
 import MatrixRule_V1 from "../mods/native/rule/MatrixRule_V1";
-import GameResult from "../mods/native/stat/GameResult";
 import IMatrixRule from "../rule/IMatrixRule";
 import IBatrMatrix from "./IBatrMatrix";
 import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+import { isDefined } from "../../common/utils";
 
 /**
  * 「游戏母体」的第一代实现
@@ -56,16 +55,33 @@ export default class Matrix_V1 implements IBatrMatrix {
 			this.map.storage.randomPoint
 		)
 		// 实体刻
-		for (const entity of this.entities) {
+		for (const entity of this._entitySystem.entries) {
+			// 是否合法
+			// !【2023-10-05 15:30:45】因为「实体系统」可能删掉了中间的实体，所以确实有可能遍历到`undefined`（除非用GC清除冗余……但那样还不如直接跳过）
+			if (entity === undefined) continue;
+			/*
+			!【2023-10-05 15:21:50】中途有可能会有实体（将）被删除，这没错
+			! 但我们现在不暴露「实体系统」，外界统一调用的`host.removeEntity`
+			! 💡所以我们可以在`removeEntity`处先缓存，再在每一个游戏刻后进行GC
+			! 这样就避免了「中途移除实体，导致遍历不准确，甚至遇到undefined直接报错」的问题
+			*/
 			if (entity.isActive) {
 				// 按照接口分派
 				if ((entity as IEntityActive)?.i_active)
 					(entity as IEntityActive).onTick(this);
 				else if ((entity as IEntityActiveLite)?.i_activeLite)
-					(entity as IEntityActiveLite).onTick(this.removeEntity);
+					(entity as IEntityActiveLite).onTick(this.removeEntity.bind(this)); // !【2023-10-05 15:25:50】这里使用bind绑定this参数，避免「半途丢this」的情况
 			}
 		}
+		// 实体回收（Merovingian？）
+		if (this._temp_tick_entityToDeleted.length > 0) {
+			// 正式删除实体
+			this._temp_tick_entityToDeleted.forEach(this._entitySystem.remove.bind(this._entitySystem)); // !【2023-10-05 15:25:50】这里使用bind绑定this参数，避免「半途丢this」的情况
+			// // 通知「实体系统」清除冗余空间
+			// this._entitySystem.GC();
+		}
 	}
+	protected _temp_tick_entityToDeleted: Entity[] = [];
 
 	/**
 	 * 方块随机刻
@@ -108,6 +124,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	protected _currentMap: IMap;
 	public get map(): IMap { return this._currentMap }
+	/**  setter不在接口实现范围内 */
+	public set map(value: IMap) { this._currentMap = value }
 
 	public get mapTransformPeriod(): uint { return this._rule.safeGetRule<uint>(MatrixRule_V1.key_mapTransformTime) }
 
@@ -115,7 +133,9 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	/** 实体系统（内部变量） */
 	protected _entitySystem: EntitySystem = new EntitySystem();
-	public get entities(): Entity[] { return this._entitySystem.entries }
+	public get entities(): Entity[] {
+		return this._entitySystem.entries.filter(isDefined) as Entity[];
+	}
 
 	// 实现：委托到「实体系统」
 	public addEntity(entity: Entity): boolean {
@@ -131,9 +151,11 @@ export default class Matrix_V1 implements IBatrMatrix {
 
 	// 实现：委托到「实体系统」
 	public removeEntity(entity: Entity): boolean {
-		return this._entitySystem.remove(entity);
+		// 现在直接缓存，并返回true
+		this._temp_tick_entityToDeleted.push(entity);
+		return true;
+		// return this._entitySystem.remove(entity);
 	}
-	//============Constructor & Destructor============//
 
 }
 

@@ -247,7 +247,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 			return false;
 		}
 		else {
-			this.resetCD();
+			// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑，导致「充能都没完成，就又需要等待冷却」
 			return isUsing;
 		}
 	}
@@ -267,7 +267,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	public dealCharge(isUsing: boolean): boolean {
 		if (this._reverseCharge) {
 			if (isUsing) { // 反向充能「只要使用就直接成功」
-				this.resetCharge(); // 自动重置充能状态
+				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
 				return true;
 			}
 			else if (this._chargeTime < this._chargeMaxTime)
@@ -275,7 +275,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		}
 		else if (isUsing) { // 正向充能只能在使用时
 			if (this._chargeTime >= this._chargeMaxTime) {
-				this.resetCharge(); // 自动重置充能状态
+				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
 				return true;
 			}
 			else
@@ -291,12 +291,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * * 作用：自定义工具的行为
 	 * 
 	 * ? 使用「函数钩子」似乎不行……没法序列化
+	 * * 🏗️日后预备做「ID字典」
 	 * 
 	 * @param host 调用时处在的「游戏母体」
 	 * @param user 使用者（暂定为使用者）
 	 */
 	public onUseByPlayer(host: IBatrMatrix, user: IPlayer): void {
-		console.log('Tool', this, 'is used by', user, 'in', host)
+		console.log('Tool', this._id, 'is used by', user.customName, 'in', host)
 	}
 
 }

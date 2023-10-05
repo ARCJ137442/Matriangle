@@ -51,10 +51,11 @@ export default class CommonSystem<T> {
 
 	/**
 	 * 获取所有元素（数组）
+	 * * 有可能因为「删除了中间的元素」而出现`undefined`
 	 * 
 	 * ! 返回其内部元素的引用
 	 */
-	public get entries(): T[] {
+	public get entries(): (T | undefined)[] {
 		return this._entries;
 	}
 

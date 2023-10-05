@@ -159,13 +159,31 @@ export function ReLU_I(n: int): int {
 	return n > 0 ? n : 0;
 }
 
-export function mod(num: number, modNum: number): number {
-	return (num / modNum - Math.floor(num / modNum)) * modNum;
+/**
+ * 取余运算
+ * * 与「模运算」不同的是：模运算会保留负数，而取余运算会将结果限制在[0,modNum)之间
+ */
+export function reminder_F(num: number, modNum: number): number {
+	return (
+		(_temp_reminder_F = num % modNum) < 0 ?
+			_temp_reminder_F + modNum :// 取模之后，绝对值不会超过modNum
+			_temp_reminder_F
+	);
 }
+let _temp_reminder_F: number;
 
-export function intMod(num: int, modNum: int): int {
-	return num % modNum;
+/**
+ * 取余运算
+ * * 与「模运算」不同的是：模运算会保留负数，而取余运算会将结果限制在[0,modNum)之间
+*/
+export function reminder_I(num: int, modNum: int): int {
+	return (
+		(_temp_reminder_I = num % modNum) < 0 ?
+			_temp_reminder_I + modNum :// 取模之后，绝对值不会超过modNum
+			_temp_reminder_I
+	);
 }
+let _temp_reminder_I: int;
 
 export function redirectNum(num: number, directNum: number): number {
 	return Math.round(num * directNum) / directNum;

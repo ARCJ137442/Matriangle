@@ -23,7 +23,10 @@ export default abstract class Entity {
 	public set isActive(value: boolean) { this._isActive = value }
 
 	//============Constructor & Destructor============//
-	public constructor() { }
+	public constructor() {
+		// 构造时自动激活（可被覆盖）
+		this._isActive = true;
+	}
 
 	/**
 	 * ! 默认的析构行为：停止激活

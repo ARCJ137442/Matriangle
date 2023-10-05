@@ -108,7 +108,7 @@ export default class Weapon extends Tool {
 		baseDamage: uint = 1,
 		reverseCharge: boolean = false
 	) {
-		super(id, baseCD_S * FIXED_TPS, chargeMaxTime_S * FIXED_TPS);
+		super(id, uint(baseCD_S * FIXED_TPS), uint(chargeMaxTime_S * FIXED_TPS));
 		// defaultCD,defaultChargeTime instanceof Per Second
 		this._baseDamage = baseDamage;
 		this._reverseCharge = reverseCharge;

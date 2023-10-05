@@ -683,6 +683,9 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
 			// *逻辑：要么「无需充能」，要么「充能方面已允许使用」
 			if (!this._tool.needsCharge || this.tool.dealCharge(this._isUsing)) {
+				//重置状态
+				this._tool.resetUsingState();
+				// 使用工具
 				this.directUseTool(host);
 				// this._GUI.updateCharge(); // TODO: 显示更新
 			}
@@ -781,6 +784,7 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 		this._tool.onUseByPlayer(host, this);
 		// TODO: 代码待迁移
 		console.warn('WIP@directUseTool',
+			this._tool,
 			this, this._direction,
 			this._tool.chargingPercent
 		)/* playerUseTool(

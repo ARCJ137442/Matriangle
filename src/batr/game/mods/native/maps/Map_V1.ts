@@ -14,6 +14,7 @@ import { IEntityInGrid, IEntityOutGrid } from "../../../api/entity/EntityInterfa
 import IPlayer from "../entities/player/IPlayer";
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
 import { isHitAnyEntity_I_Grid } from "../registry/NativeMatrixMechanics";
+import { reminder_I } from './../../../../common/exMath';
 
 /**
  * 第一版地图
@@ -122,7 +123,7 @@ export default class Map_V1 implements IMap {
 		for (let i: uint = 0; i < p.length; i++) {
 			if (p[i] < 0 || p[i] > this._size[i])
 				// modPoint_FI(p, this._size);
-				p[i] %= this._size[i];
+				p[i] = reminder_I(p[i], this._size[i]);
 		}
 		return p;
 	}
@@ -161,14 +162,24 @@ export default class Map_V1 implements IMap {
 
 	// 实现：直接用
 	public towardWithRot_FF(p: fPointRef, rot: mRot, step: number = 1.0): fPointRef {
-		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
-		return this.limitPoint_F(p);
+		let axis = mRot2axis(rot);
+		p[axis] += (rot & 1) === 0 ? step : -step;
+		// 直接在当前维限制就行了
+		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
+			p[axis] = reminder_I(p[axis], this._size[axis]);
+		if (!this.isInMap_I(p)) throw new Error('point out of map');
+		return p;
 	}
 
 	// 实现：直接用
 	public towardWithRot_II(p: iPointRef, rot: mRot, step: int = 1): iPointRef {
-		p[mRot2axis(rot)] += (rot & 1) === 0 ? step : -step;
-		return this.limitPoint_I(p);
+		let axis = mRot2axis(rot);
+		p[axis] += (rot & 1) === 0 ? step : -step;
+		// 直接在当前维限制就行了
+		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
+			p[axis] = reminder_I(p[axis], this._size[axis]);
+		if (!this.isInMap_I(p)) throw new Error('point out of map');
+		return p;
 	}
 
 	// protected _temp_testCanPass_F: fPoint = new fPoint()

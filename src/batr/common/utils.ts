@@ -359,6 +359,8 @@ export function isEqualObject(
 	return true;
 }
 
+export const isDefined = (obj: any): boolean => obj !== undefined;
+
 export function isPrimitiveInstance(v: any): boolean {
 	return (
 		v === undefined ||

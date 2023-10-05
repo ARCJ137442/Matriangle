@@ -30,7 +30,7 @@ export default class EffectSpawn extends Effect2BlockContainer {	//============S
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, scale: number = EffectSpawn.SCALE) {
-		super(position, scale);
+		super(position, EffectSpawn.MAX_LIFE, scale);
 		this._animationStage = 0;
 		this._tempLife = this.LIFE - this.life;
 	}

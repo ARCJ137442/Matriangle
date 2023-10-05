@@ -82,6 +82,10 @@ function sleep(ms: number): Promise<void> {
 	});
 }
 
+// 预先测试：避免「异步报错无法溯源」的问题
+matrix.map = NativeMaps.EMPTY
+for (let i: uint = 0; i < TPS * 100; i++) matrix.tick();
+
 async function 持续测试(i: int = 0, display_delay_ms: uint = 1000) {
 	for (let t = i; t !== 0; t--) {
 		// TPS次迭代
