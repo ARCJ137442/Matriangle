@@ -1088,7 +1088,7 @@ export function getBonusBoxCount(host: IBatrMatrix): uint {
  * （🚩专用代码迁移）用于在「只有接口」的情况下判断「是否为玩家」
  */
 export function isPlayer(e: Entity): boolean {
-    return 'i_isPlayer' in e // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
+    return (e as IPlayer)?.i_isPlayer // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
 }
 
 /**

@@ -1,6 +1,6 @@
 import { iPoint, traverseNDSquare } from "../src/batr/common/geometricTools";
 import { getClass } from "../src/batr/common/utils";
-import { int } from "../src/batr/legacy/AS3Legacy";
+import { int, uint } from "../src/batr/legacy/AS3Legacy";
 import Entity from "../src/batr/game/api/entity/Entity";
 import { IEntityInGrid } from "../src/batr/game/api/entity/EntityInterfaces";
 import BlockVoid from "../src/batr/game/mods/native/blocks/Void";
@@ -12,12 +12,12 @@ import { getHitEntity_I_Grid } from "../src/batr/game/mods/native/registry/Nativ
  * @param name 方块类型（类名）
  * @returns 格式化后的定长名字
  */
-export function showBlock(name: string): string {
-	return showName(name == BlockVoid.name ? '' : name.slice(5, 5 + 7))
+export function showBlock(name: string, maxLength: uint = 7): string {
+	return showName(name == BlockVoid.name ? '' : name.slice(5, 5 + maxLength), maxLength)
 }
 
-export function showName(name: string): string {
-	return name.slice(0, 8).padEnd(7)
+export function showName(name: string, maxLength: uint = 7): string {
+	return name.slice(0, maxLength).padEnd(maxLength)
 }
 
 export function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
@@ -41,8 +41,8 @@ export function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[])
  * 呈现实体
  * * 【2023-10-05 01:03:03】目前只呈现名称
  */
-export function showEntity(entity: Entity): string {
-	return showName(getClass(entity)?.name ?? 'UNDEF')
+export function showEntity(entity: Entity, maxLength: uint = 7): string {
+	return showName(getClass(entity)?.name ?? 'UNDEF', maxLength)
 }
 
 /**
@@ -62,11 +62,18 @@ export function 地图可视化_高维(storage: MapStorageSparse): void {
 
 /**
  * 大一统的「母体可视化」
+ * * 现在返回字符串
  */
-export function 母体可视化(storage: MapStorageSparse, entities: Entity[]): void {
+export function 母体可视化(
+	storage: MapStorageSparse,
+	entities: Entity[],
+	string_l: uint = 7, // 限制字长
+): string {
+	//
+	let result: string = '';
 	// 格点实体
-	let entitiesInGrid: IEntityInGrid[] = entities.filter(
-		(entity: Entity): boolean => 'i_inGrid' in entity
+	const entitiesInGrid: IEntityInGrid[] = entities.filter(
+		(entity: Entity): boolean => (entity as IEntityInGrid)?.i_inGrid
 	) as IEntityInGrid[];
 	let eig: IEntityInGrid | null;
 	// 正式开始
@@ -75,7 +82,7 @@ export function 母体可视化(storage: MapStorageSparse, entities: Entity[]): 
 	// 
 	let tvf = (zw: iPoint): void => {
 		// 每一个切片
-		console.info(`切片 [:, :, ${zw.join(', ')}] = `)
+		result += (`切片 [:, :, ${zw.join(', ')}] = `) + '\n';
 		let line: string[];
 		let iP: iPoint = new iPoint(0, 0, ...zw);
 		for (let y = storage.borderMin[1]; y <= storage.borderMax[1]; y++) {
@@ -87,12 +94,12 @@ export function 母体可视化(storage: MapStorageSparse, entities: Entity[]): 
 				line.push(
 					eig === null ?
 						showBlock(
-							storage.getBlock(iP).type.name
+							storage.getBlock(iP).type.name, string_l
 						) :
-						showEntity(eig)
+						showEntity(eig, string_l)
 				);
 			}
-			console.log('|' + line.join(' ') + '|')
+			result += '|' + line.join(' ') + '|' + '\n';
 		}
 	}
 	// 高维情况
@@ -100,4 +107,12 @@ export function 母体可视化(storage: MapStorageSparse, entities: Entity[]): 
 		zwMin, zwMax, tvf
 	);
 	else tvf(new iPoint())
+	return result;
+}
+
+export function 列举实体(es: Entity[]): void {
+	console.info('实体列表：');
+	for (const e of es) {
+		console.log(`${getClass(e)?.name} in ${(e as IEntityInGrid).position}`, e)
+	}
 }

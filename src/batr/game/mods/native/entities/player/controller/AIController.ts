@@ -98,7 +98,7 @@ export default abstract class AIController extends PlayerController {
         )
         // 然后处理AI刻
         if (this.dealAITick()) {
-            // 1: 获取游戏刻行为
+            // 1: 获取AI刻行为
             this.temp_add_action[0] = this.reactAITick(player, host);
             // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
             if (this.temp_add_action[0] !== EnumPlayerAction.NULL) this.dispatchEvent(

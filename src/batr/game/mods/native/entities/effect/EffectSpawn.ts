@@ -16,11 +16,11 @@ export default class EffectSpawn extends Effect2BlockContainer {	//============S
 	public static readonly LINE_ALPHA: number = 0.6;
 	public static readonly FILL_ALPHA: number = 0.5;
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
-	public static readonly SIZE: uint = DEFAULT_SIZE * 1.6;
-	public static readonly MAX_LIFE: uint = FIXED_TPS * 0.5;
+	public static readonly SIZE: uint = uint(DEFAULT_SIZE * 1.6);
+	public static readonly MAX_LIFE: uint = uint(FIXED_TPS);
 	public static readonly SCALE: number = 1;
-	public static readonly STAGE_1_START_TIME: uint = EffectSpawn.MAX_LIFE * 3 / 4;
-	public static readonly STAGE_2_START_TIME: uint = EffectSpawn.MAX_LIFE / 4;
+	public static readonly STAGE_1_START_TIME: uint = uint(EffectSpawn.MAX_LIFE * 3 / 4);
+	public static readonly STAGE_2_START_TIME: uint = uint(EffectSpawn.MAX_LIFE / 4);
 	public static readonly ROTATE_ANGLE: uint = 45;
 
 	//============Instance Variables============//

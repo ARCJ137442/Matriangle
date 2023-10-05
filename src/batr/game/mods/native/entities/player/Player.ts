@@ -850,11 +850,13 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	 * * 参见`PlayerAction`
 	 */
 	protected runPlayerAction(host: IBatrMatrix, action: PlayerAction): void {
-		// 正整数⇒处理转向相关
+		// 整数⇒处理转向相关
 		if (typeof action === 'number') {
-			if (action > 0) {
+			// 非负⇒转向
+			if (action >= 0) {
 				this.turnTo(host, action);
 			}
+			// 负数⇒转向&移动
 			else {
 				this.moveToward(host, -action - 1);
 			}
@@ -892,10 +894,11 @@ export default class Player extends Entity implements IPlayer, IMatrixControlRec
 	 * ! 不会清空「动作缓冲区」
 	 */
 	protected runAllPlayerActions(host: IBatrMatrix): void {
-		for (const action of this._actionBuffer) {
-			this.runPlayerAction(host, action);
+		for (this._temp_runAllPlayerActions_i = 0; this._temp_runAllPlayerActions_i < this._actionBuffer.length; this._temp_runAllPlayerActions_i++) {
+			this.runPlayerAction(host, this._actionBuffer[this._temp_runAllPlayerActions_i]);
 		}
 	}
+	protected _temp_runAllPlayerActions_i: uint = 0;
 
 	/**
 	 * 清除所有的玩家动作

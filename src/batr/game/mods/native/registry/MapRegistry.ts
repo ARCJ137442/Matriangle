@@ -130,8 +130,8 @@ export module NativeMaps {
 
     //====Map 1====//
     STORAGE_1.copyFrom(STORAGE_FRAME); {
-        for (ix = 3; ix <= MAP_MAX_X; ix += 4) {
-            for (iy = 3; iy <= MAP_MAX_Y; iy += 4) {
+        for (ix = 3; ix < MAP_MAX_X; ix += 4) {
+            for (iy = 3; iy < MAP_MAX_Y; iy += 4) {
                 fillBlock(STORAGE_1, ix, iy, ix + 1, iy + 1, WALL);
             }
         }

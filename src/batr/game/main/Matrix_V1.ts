@@ -59,9 +59,9 @@ export default class Matrix_V1 implements IBatrMatrix {
 		for (const entity of this.entities) {
 			if (entity.isActive) {
 				// 按照接口分派
-				if ('i_active' in entity)
+				if ((entity as IEntityActive)?.i_active)
 					(entity as IEntityActive).onTick(this);
-				else if ('i_activeLite' in entity)
+				else if ((entity as IEntityActiveLite)?.i_activeLite)
 					(entity as IEntityActiveLite).onTick(this.removeEntity);
 			}
 		}

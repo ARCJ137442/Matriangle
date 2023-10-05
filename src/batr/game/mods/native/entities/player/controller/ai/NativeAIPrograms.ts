@@ -72,12 +72,16 @@ export module MicroAIBehaviors {
         while (true) {
             // 不停使用工具：持续按下「使用」键 //
             if (controller._temp_currentPlayer.tool.reverseCharge) {
-                // 已充能完毕⇒使用
-                if (controller._temp_currentPlayer.tool.chargingPercent >= 1)
-                    event = yield EnumPlayerAction.START_USING;
-                // 否则⇒不要使用
-                else if (controller._temp_currentPlayer.isUsing)
-                    event = yield EnumPlayerAction.STOP_USING;
+                event = yield (
+                    // 已充能完毕⇒使用
+                    controller._temp_currentPlayer.tool.chargingPercent >= 1 ?
+                        EnumPlayerAction.START_USING :
+                        // 否则⇒不要使用
+                        controller._temp_currentPlayer.isUsing ?
+                            EnumPlayerAction.STOP_USING :
+                            // 兜底：返回空行为
+                            EnumPlayerAction.NULL
+                );
                 continue; // !【2023-10-02 20:37:49】这个`continue`是必须的：若yield后还有代码会被执行，则下一次分派事件时就会无视一开始的过滤逻辑
             }
             // 否则，未使用⇒使用
@@ -119,8 +123,10 @@ export module NativeAIPrograms {
         // 「行为生成器」总循环 //
         while (true) {
             // 屏蔽其它事件 //
-            if (event !== PlayerEvent.AI_TICK)
+            if (event !== PlayerEvent.AI_TICK) {
                 event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新e变量
+                continue;
+            }
             console.log("[LOG] AIProgram_Dummy: event = ", event);
             // 检查未定义值，不应该的情况就报错 // !【2023-10-05 00:41:11】必须在事件发生之后，变量才有相应的值
             if (controller._temp_currentPlayer === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentPlayer is undefined");
@@ -132,7 +138,7 @@ export module NativeAIPrograms {
                 // 移动
                 reaction = rWalk.next(event).value;
             // 最后肯定输出行为
-            yield reaction;
+            event = yield reaction; // !【2023-10-05 14:41:05】yield必须与`event = `搭配，不然无法刷新外界感知
         }
     }
 
