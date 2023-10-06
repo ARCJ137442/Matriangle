@@ -8,6 +8,7 @@ import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
 import { NativeDecorationLabel as NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { drawShapeDecoration } from "../../../../../display/mods/native/NativeDisplayImplements";
+import { alignToGridCenter_P } from "../../../../general/PosTransform";
 
 /**
  * （抽象）类玩家特效
@@ -28,6 +29,15 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 16;
 	/** 默认生命周期长度：半秒 */
 	public static readonly MAX_LIFE: uint = TPS / 2;
+
+	/**
+	 * 把自身位置从玩家位置对齐到网格中央
+	 * * 【2023-10-06 20:18:52】目前只在「特效从玩家坐标处创建创建」时使用
+	 */
+	public static alignToCenter(e: EffectPlayerLike): EffectPlayerLike {
+		alignToGridCenter_P(e._position, e._position)
+		return e;
+	}
 
 	//============Instance Variables============//
 

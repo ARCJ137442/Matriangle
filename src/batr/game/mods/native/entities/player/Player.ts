@@ -522,7 +522,7 @@ export default class Player extends Entity implements IPlayer {
 	public onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
 		host.addEntity(
-			EffectPlayerHurt.fromPlayer(host, this, false/* 淡出 */)
+			EffectPlayerHurt.fromPlayer(this.position, this, false/* 淡出 */)
 		);
 		handlePlayerHurt(host, attacker, this, damage);
 		// TODO: 通知控制器

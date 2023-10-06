@@ -1,6 +1,6 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
-import { fPoint } from "../../../../../common/geometricTools";
+import { fPoint, iPoint, xPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import IPlayer from "../player/IPlayer";
@@ -27,24 +27,25 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 	 * @param reverse 是否倒放
 	 * @returns 一个新特效
 	 */
-	public static fromPlayer(position: fPoint, player: IPlayer, reverse: boolean = false): EffectPlayerDeathLight {
-		return new EffectPlayerDeathLight(
-			position, 0, //player.direction, // TODO: 等待玩家方迁移
-			player.fillColor,
-			player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
-			reverse
-		);
+	public static fromPlayer(position: fPoint | iPoint, player: IPlayer, reverse: boolean = false): EffectPlayerDeathLight {
+		return EffectPlayerLike.alignToCenter(
+			new EffectPlayerDeathLight(
+				position, player.direction, // 
+				player.fillColor,
+				player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
+				reverse
+			));
 	}
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: fPoint, rot: uint = 0,
+		position: fPoint, direction: uint = 0,
 		color: uint = 0xffffff,
 		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false, life: uint = EffectPlayerLike.MAX_LIFE
 	) {
 		super(
-			position, rot,
+			position, direction,
 			color, decorationLabel,
 			reverse, life
 		);

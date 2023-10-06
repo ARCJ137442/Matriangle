@@ -1,4 +1,4 @@
-import { fPoint } from "../../../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
@@ -17,16 +17,17 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {	//=====
 
 	//============Static Functions============//
 	public static fromPlayer(
-		position: fPoint,
+		position: fPoint | iPoint,
 		player: IPlayer,
 		reverse: boolean = false
 	): EffectPlayerDeathFadeout {
-		return new EffectPlayerDeathFadeout(
-			position, 0, //player.direction, // TODO: 等待玩家方迁移
-			player.fillColor,
-			player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
-			reverse
-		);
+		return EffectPlayerLike.alignToCenter(
+			new EffectPlayerDeathFadeout(
+				position, player.direction,
+				player.fillColor,
+				player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
+				reverse
+			));
 	}
 
 	//============Constructor & Destructor============//

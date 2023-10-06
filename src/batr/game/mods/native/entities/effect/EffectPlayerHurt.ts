@@ -1,9 +1,8 @@
-import { fPoint } from "../../../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../main/GlobalGameVariables";
-import IBatrMatrix from "../../../../main/IBatrMatrix";
 import IPlayer from "../player/IPlayer";
 import EffectPlayerLike from "./EffectPlayerLike";
 
@@ -22,13 +21,14 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public static readonly LIFE: uint = FIXED_TPS * 0.25;
 
 	//============Static Functions============//
-	public static fromPlayer(host: IBatrMatrix, player: IPlayer, reverse: boolean = false): EffectPlayerHurt {
-		return new EffectPlayerHurt(
-			player.position, 0, //player.direction, // TODO: 等待玩家方迁移
-			player.fillColor,
-			player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
-			reverse
-		);
+	public static fromPlayer(position: fPoint | iPoint, player: IPlayer, reverse: boolean = false): EffectPlayerHurt {
+		return EffectPlayerLike.alignToCenter(
+			new EffectPlayerHurt(
+				position, player.direction,
+				player.fillColor,
+				player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
+				reverse
+			));
 	}
 
 	//============Constructor & Destructor============//
