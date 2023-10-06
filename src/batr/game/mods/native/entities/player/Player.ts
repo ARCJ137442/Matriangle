@@ -162,11 +162,13 @@ export default class Player extends Entity implements IPlayer {
 		// 非致死⇒受伤
 		if (this.HP > value) {
 			this.HP -= value;
+			// 触发钩子
 			this.onHurt(host, value, attacker);
 		}
 		// 致死⇒死亡
 		else {
 			this.HP = 0;
+			// 触发钩子
 			this.onDeath(host, this.HP, attacker);
 		}
 	}

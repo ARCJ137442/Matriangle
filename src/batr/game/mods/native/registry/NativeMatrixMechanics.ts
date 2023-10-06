@@ -586,7 +586,7 @@ export function playerMoveInTest(
         attributes.playerDamage
     );
     // int$MIN_VALUE⇒无伤害&无治疗
-    if (finalPlayerDamage !== int$MIN_VALUE)
+    if (finalPlayerDamage !== int$MIN_VALUE) {
         // 负数⇒治疗
         if (finalPlayerDamage < 0) {
             if (!isLocationChange)
@@ -600,6 +600,8 @@ export function playerMoveInTest(
             finalPlayerDamage,
             null,
         );
+        returnBoo = true;
+    }
     // 附加的「旋转」效果
     if (attributes.rotateWhenMoveIn) {
         // 玩家向随机方向旋转
@@ -659,7 +661,7 @@ export const computeFinalBlockDamage = (
                 playerDamage == 0 ?
                     0 :
                     playerDamage <= 100 ?
-                        playerMaxHP * playerDamage / 100 :
+                        uint(playerMaxHP * playerDamage / 100) :
                         playerDamage == int$MAX_VALUE ?
                             uint$MAX_VALUE :
                             playerDamage - 100
