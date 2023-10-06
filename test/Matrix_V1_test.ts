@@ -11,12 +11,13 @@ import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistr
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
 import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
 import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/visualizations";
-import { TPS } from "../src/batr/server/main/GlobalWorldVariables";
+import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
 import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import HTTPController from "../src/batr/server/mods/webIO/controller/HTTPController";
 import MatrixVisualizer from "../src/batr/server/mods/webIO/entity/MatrixVisualizer";
+import WSController from "../src/batr/server/mods/webIO/controller/WSController";
 
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
@@ -63,7 +64,8 @@ let ctl: AIControllerGenerator = new AIControllerGenerator(
 	'first',
 	NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
 );
-let ctlWeb: HTTPController = new HTTPController();
+// let ctlWeb: HTTPController = new HTTPController();
+let ctlWeb: WSController = new WSController();
 ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
 // 可视化信号
 let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
@@ -154,16 +156,16 @@ function 迭代(num: uint, visualize: boolean = true): void {
 	}
 }
 
-async function 持续测试(i: int = 0, display_delay_ms: uint = 1000) {
+async function 持续测试(i: int = 0, tick_time_ms: uint = 1000) {
 	/** 迭代次数，是一个常量 */
-	let numIter: uint = TPS * display_delay_ms / 1000;
+	let numIter: uint = TPS * tick_time_ms / 1000;
 	for (let t = i; t !== 0; t--) {
 		迭代(numIter, false/* 现在不再需要可视化 */);
 		// 延时
-		await sleep(display_delay_ms);
+		await sleep(tick_time_ms);
 	}
 };
 
-持续测试(-1, 200);
+持续测试(-1, TICK_TIME_MS);
 
 console.log('It is done.');

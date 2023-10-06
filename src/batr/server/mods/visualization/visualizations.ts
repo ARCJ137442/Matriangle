@@ -24,7 +24,7 @@ export function showBlock(name: string, maxLength: uint = 7): string {
 }
 
 export function showName(name: string, maxLength: uint = 7): string {
-	return name.slice(0, maxLength).padEnd(maxLength)
+	return name.slice(0, maxLength).padEnd(maxLength, ' ')
 }
 
 export function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
@@ -149,9 +149,21 @@ export function 列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE): voi
 	}
 }
 
-function 实体标签显示(e: Entity) {
+export function 实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VALUE): string {
+	let result: string = '';
+	result += `实体列表(${es.length})：\n`;
+	for (const e of es) {
+		result += 实体标签显示(e) + '\n'
+		if (--maxCount < 0) break;
+	}
+	return result;
+}
+
+function 实体标签显示(e: Entity): string {
+	// 玩家
 	if (e instanceof Player)
-		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position}|${e.HPText}`
+		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position}|${e.HPText}|${e.tool.id}`
+	// 其它网格实体
 	else if ((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
 		return `${getClass(e)?.name}@${(e as IEntityInGrid).position}`
 	return `${getClass(e)?.name}`

@@ -22,8 +22,8 @@
 		const key = document.getElementById('key')
 		const resultText = document.getElementById('result')
 
-		function getActionFromEvent(kerboardEvent, isDown) {
-			switch (kerboardEvent.code) {
+		function getActionFromEvent(keyboardEvent, isDown) {
+			switch (keyboardEvent.code) {
 				case 'ArrowLeft':
 					return isDown ? -2 : undefined; // 只有按下时才响应
 				case 'ArrowRight':

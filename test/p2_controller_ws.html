@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-cn">
+
+<head>
+	<meta charset="utf-8">
+	<title>Text Input Demo</title>
+</head>
+
+<body onkeydown="onKeyDown">
+
+	<div>
+		<p>控制器</p>
+		<input type="text" id="controlAddress" placeholder="输入链接" value="127.0.0.1:3002">
+		<input type="text" id="controlKey" placeholder="输入控制密钥" value="p2">
+	</div>
+
+	<div>
+		<p>显示器</p>
+		<input type="text" id="screenAddress" placeholder="输入链接" value="127.0.0.1:8080">
+		<input type="text" id="screenFPS" placeholder="输入FPS" value="5">
+		<input type="text" id="blockWidth" placeholder="输入单格宽度" value="7">
+	</div>
+
+	<button type="button" id="reset">重置连接</button>
+
+	<!-- 需要使用pre标签保护其中有连续空格的文本，不然HTML会把连续空格变成一个空格 -->
+	<pre>
+		<p id="screen" style="font-family: Consolas, Monaco, 'Courier New', monospace;"></p>
+	</pre>
+
+	<script>
+
+		const controlAddress = document.getElementById('controlAddress');
+		const controlKey = document.getElementById('controlKey');
+
+		const screenAddress = document.getElementById('screenAddress');
+		const screenFPS = document.getElementById('screenFPS');
+		const blockWidth = document.getElementById('blockWidth');
+		let screenIntervalID;
+		const calculateFPS = () => 1000 / parseFloat(screenFPS.value);
+		let FPS = calculateFPS();
+
+		const resetButton = document.getElementById('reset');
+
+		const screenText = document.getElementById('screen');
+
+		function getWSLinkControl() { return `ws://${controlAddress.value}` }
+		function getWSLinkScreen() { return `ws://${screenAddress.value}` }
+
+		let socketControl;
+		let socketScreen;
+
+		function resetAllWS() {
+			socketControl?.close()
+			socketControl = new WebSocket(getWSLinkControl())
+
+			socketScreen?.close()
+			socketScreen = new WebSocket(getWSLinkScreen())
+			if (socketScreen) socketScreen.onmessage = (event) => {
+				// console.log('data:', event.data.toString())
+				setScreen(event.data.toString())
+			}
+
+			FPS = calculateFPS();
+			if (screenIntervalID) clearInterval(screenIntervalID)
+			screenIntervalID = setInterval(() => {
+				// console.log('signal sent:', socketScreen, 'matrix')
+				socketScreen?.send(blockWidth.value);
+			}, calculateFPS())
+		}
+		resetAllWS();
+
+		// 控制器 //
+
+		const pressed = {}
+		function getControlMessage(event, isDown) {
+			// TODO: 根据键位获取动作
+			if (!(event.code in pressed)) console.log(event);
+			pressed[event.code] = event;
+			let action = getActionFromEvent(event, isDown);
+			if (action === undefined) return undefined;
+			// 生成套接字消息
+			return `${controlKey.value}|${action}`
+		}
+
+		function getActionFromEvent(keyboardEvent, isDown) {
+			switch (keyboardEvent.code) {
+				case 'KeyA':
+				case 'ArrowLeft':
+					return isDown ? -2 : undefined; // 只有按下时才响应
+				case 'KeyD':
+				case 'ArrowRight':
+					return isDown ? -1 : undefined; // 只有按下时才响应
+				case 'KeyW':
+				case 'ArrowUp':
+					return isDown ? -4 : undefined; // 只有按下时才响应
+				case 'KeyS':
+				case 'ArrowDown':
+					return isDown ? -3 : undefined; // 只有按下时才响应
+				case 'Space':
+					return isDown ? 'startUsing' : 'stopUsing';
+			}
+		}
+
+		function onKeyDown(event) {
+			// 产生消息
+			let message = getControlMessage(event, true);
+			if (message === undefined) return;
+			console.log(`↓ message = ${message}`)
+			// 阻止默认操作（不会造成画面滚动）
+			event.preventDefault();
+			// 发送请求
+			sendMessage(message);
+		}
+
+		function onKeyUp(event) {
+			// 产生消息
+			let message = getControlMessage(event, false);
+			if (message === undefined) return;
+			console.log(`↑ message = ${message}`)
+			// 阻止默认操作（不会造成画面滚动）
+			event.preventDefault();
+			// 发送请求
+			sendMessage(message);
+		}
+
+		function sendMessage(message) {
+			socketControl.send(message)
+		}
+
+		window.addEventListener('keydown', onKeyDown)
+		window.addEventListener('keyup', onKeyUp)
+		resetButton.addEventListener('click', resetAllWS)
+
+		// 显示器 //
+
+		// 刷新画面
+
+		function setScreen(text) {
+			// console.log('signal received:', text)
+			screenText.innerText = text;
+		}
+
+	</script>
+
+</html>

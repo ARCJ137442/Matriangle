@@ -3,7 +3,7 @@ import { MatrixProgram } from "../../../api/control/MatrixControl";
 import { createServer, Server as HTTPServer, IncomingMessage, ServerResponse } from 'node:http';
 import { Server as WSServer, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
 import IBatrMatrix from "../../../main/IBatrMatrix";
-import { 母体可视化 } from "../../visualization/visualizations";
+import { 实体列表可视化, 母体可视化 } from "../../visualization/visualizations";
 
 /**
  * 「母体可视化者」是
@@ -34,16 +34,16 @@ export default class MatrixVisualizer extends MatrixProgram {
 	 * @param mapBlockStringLen 显示母体地图每一格的字符串长度
 	 */
 	public static getVisionSignal(matrix: IBatrMatrix, mapBlockStringLen: uint = 7): string {
-		return 母体可视化(matrix.map.storage, matrix.entities)
+		return 母体可视化(matrix.map.storage, matrix.entities, mapBlockStringLen) + '\n\n' + 实体列表可视化(matrix.entities);
 	}
 
 	/**
 	 * 获取母体可视化的信号
 	 * * 未连接母体⇒空字串
 	 */
-	public getVisionSignal(): string {
+	public getVisionSignal(blockWidth: uint = 7): string {
 		if (this.linkedMatrix === null) return '';
-		return MatrixVisualizer.getVisionSignal(this.linkedMatrix);
+		return MatrixVisualizer.getVisionSignal(this.linkedMatrix, blockWidth);
 	}
 
 	// 服务器部分 //
@@ -143,9 +143,10 @@ export default class MatrixVisualizer extends MatrixProgram {
 						socket
 					);
 					// 继续往Socket添加钩子
-					socket.on('message', (): void => {
+					socket.on('message', (messageBuffer: Buffer): void => {
 						// 不管啥消息，直接发回去
-						socket.send(this.getVisionSignal());
+						let blockWidth: uint = parseInt(messageBuffer.toString());
+						socket.send(this.getVisionSignal(blockWidth));
 					});
 					socket.on('close', (code: number, reason: string): void => {
 						console.log(

@@ -57,7 +57,7 @@ export default class WSController extends MultiKeyController {
 	public get port(): uint { return this._port }
 
 	/** （衍生）获取本机服务地址 */ // ! 注意：不是wss，那个要证书
-	public get serverAddress(): string { return `${this.serverAddress}` }
+	public get serverAddress(): string { return `ws://${this.hostname}:${this._port}` }
 
 	/**
 	 * 存储当前WebSocket服务器
@@ -102,7 +102,7 @@ export default class WSController extends MultiKeyController {
 	 * 当建立WS连接时
 	 */
 	protected onWSConnect(socket: WebSocket): void {
-		// 启动成功
+		// 连接成功
 		console.log(
 			`${this.serverAddress}：WebSocket连接已建立`,
 			socket
@@ -117,17 +117,18 @@ export default class WSController extends MultiKeyController {
 	 * * 格式：`控制密钥|分派动作`
 	 *   * 💭这意味着「控制密钥」不能使用「|」字符
 	 * 
-	 * @param message 收到的纯文本消息
+	 * @param message 收到的「8bit数据缓冲区」（需要使用`String.fromCodePoint`方法）
 	 */
-	protected onWSMessage(message: string): void {
+	protected onWSMessage(message: Buffer): void {
 		// 解析消息
-		let controlKey: string, action: string
+		let controlKey: string, action: string;
+		let messageStr: string = message.toString('utf-8')
 		try {
 			// !【2023-10-06 22:15:57】这要求消息格式必须是二元组
-			[controlKey, action] = message.split('|');
+			[controlKey, action] = messageStr.split('|');
 		}
 		catch (e) {
-			console.error(`${this.serverAddress}：消息「${message}」解析失败！`, e);
+			console.error(`${this.serverAddress}：消息「${messageStr}」解析失败！`, e);
 			return;
 		}
 		// 根据消息分派操作
