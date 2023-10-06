@@ -1,8 +1,8 @@
 
 
 import { int } from "../../../legacy/AS3Legacy";
-import Block from "../../../game/api/block/Block";
-import IMapStorage from "../../../game/api/map/IMapStorage";
+import Block from "../../../server/api/block/Block";
+import IMapStorage from "../../../server/api/map/IMapStorage";
 
 /**
  * 用来定义有关地图的显示

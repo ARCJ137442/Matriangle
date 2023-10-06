@@ -1,17 +1,16 @@
-
 import { int, uint } from '../src/batr/legacy/AS3Legacy';
 import { fPoint, iPoint, traverseNDSquare } from "../src/batr/common/geometricTools";
-import IMap from '../src/batr/game/api/map/IMap';
-import IMapLogic from '../src/batr/game/api/map/IMapLogic';
-import IMapStorage from '../src/batr/game/api/map/IMapStorage';
-import MapStorageSparse from '../src/batr/game/mods/native/maps/MapStorageSparse';
-import BlockVoid from '../src/batr/game/mods/native/blocks/Void';
-import { mRot } from '../src/batr/game/general/GlobalRot';
+import IMap from '../src/batr/server/api/map/IMap';
+import IMapLogic from '../src/batr/server/api/map/IMapLogic';
+import IMapStorage from '../src/batr/server/api/map/IMapStorage';
+import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse';
+import BlockVoid from '../src/batr/server/mods/native/blocks/Void';
+import { mRot } from '../src/batr/server/general/GlobalRot';
 import { randInt, randIntBetween, sum } from '../src/batr/common/exMath';
-import { NativeMaps } from '../src/batr/game/mods/native/registry/MapRegistry';
-import BlockWall from '../src/batr/game/mods/native/blocks/Wall';
-import BlockBedrock from '../src/batr/game/mods/native/blocks/Bedrock';
-import BlockGlass from '../src/batr/game/mods/native/blocks/Glass';
+import { NativeMaps } from '../src/batr/server/mods/native/registry/MapRegistry';
+import BlockWall from '../src/batr/server/mods/native/blocks/Wall';
+import BlockBedrock from '../src/batr/server/mods/native/blocks/Bedrock';
+import BlockGlass from '../src/batr/server/mods/native/blocks/Glass';
 
 let { log, info, time, timeEnd } = console;
 log(new MapStorageSparse(2))

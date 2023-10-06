@@ -1,7 +1,7 @@
 
 
-import Block from "../../game/api/block/Block";
-import { Bedrock } from "../game/registry/BlockTypeRegistry";
+import Block from "../../server/api/block/Block";
+import { Bedrock } from "../server/registry/BlockTypeRegistry";
 import { uint, int } from "../../legacy/AS3Legacy";
 import { DisplayObject } from "../../legacy/flash/display";
 import { DEFAULT_SIZE } from "../api/GlobalDisplayVariables";

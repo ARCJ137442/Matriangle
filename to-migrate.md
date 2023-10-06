@@ -39,80 +39,80 @@
           - [x] MapDisplayer.ts
           - [x] MapGenerator.ts
           - [x] NativeMapCommon.ts
-    - [ ] effect
-      - [ ] EffectCommon.ts
-      - [ ] EffectSystem.ts
-      - [ ] effects
-        - [ ] EffectBlockLight.ts
-        - [ ] EffectExplode.ts
-        - [ ] EffectPlayerDeathFadeout.ts
-        - [ ] EffectPlayerDeathLight.ts
-        - [ ] EffectPlayerHurt.ts
-        - [ ] EffectPlayerLevelup.ts
-        - [ ] EffectSpawn.ts
-        - [ ] EffectTeleport.ts
-    - [ ] entity
-      - [ ] ai
-        - [ ] AIPlayerAction.ts
-        - [ ] IAIProgram.ts
-        - [ ] struct
-          - [ ] PathNode.ts
-        - [ ] programs
-          - [ ] AIProgram_Adventurer.ts
-          - [ ] AIProgram_Dummy.ts
-          - [ ] AIProgram_Master.ts
-          - [ ] AIProgram_Novice.ts
-      - [ ] entities
-        - [ ] EntityCommon.ts
-        - [ ] EntitySystem.ts
-        - [ ] item
-          - [ ] BonusBox.ts
-          - [ ] display
-            - [ ] BonusBoxSymbol.ts
-        - [ ] projectile
-          - [ ] BulletBasic.ts
-          - [ ] BulletNuke.ts
-          - [ ] BulletTracking.ts
-          - [ ] LaserAbsorption.ts
-          - [ ] LaserBasic.ts
-          - [ ] LaserPulse.ts
-          - [ ] LaserTeleport.ts
-          - [ ] Lightning.ts
-          - [ ] ProjectileCommon.ts
-          - [ ] ShockWaveBase.ts
-          - [ ] ShockWaveDrone.ts
-          - [ ] SubBomber.ts
-          - [ ] ThrownBlock.ts
-          - [ ] Wave.ts
-        - [ ] player
-          - [ ] Player.ts
-          - [ ] AIPlayer.ts
-          - [ ] profile
-            - [ ] IPlayerProfile.ts
-            - [ ] PlayerProfile.ts
-          - [ ] display
-            - [ ] PlayerEffectOverlay.ts
-            - [ ] PlayerGUI.ts
-          - [ ] team
-            - [ ] PlayerTeam.ts
-    - [ ] main
-      - [ ] Game.ts
-    - [ ] registry
-      - [ ] GameModeType.ts
-      - [ ] ToolType.ts
+    - [x] effect
+      - [x] EffectCommon.ts
+      - [x] EffectSystem.ts
+      - [x] effects
+        - [x] EffectBlockLight.ts
+        - [x] EffectExplode.ts
+        - [x] EffectPlayerDeathFadeout.ts
+        - [x] EffectPlayerDeathLight.ts
+        - [x] EffectPlayerHurt.ts
+        - [x] EffectPlayerLevelup.ts
+        - [x] EffectSpawn.ts
+        - [x] EffectTeleport.ts
+    - [x] entity
+      - [x] ai
+        - [x] AIPlayerAction.ts
+        - [x] IAIProgram.ts
+        - [x] struct
+          - [x] PathNode.ts
+        - [x] programs
+          - [x] AIProgram_Adventurer.ts
+          - [x] AIProgram_Dummy.ts
+          - [x] AIProgram_Master.ts
+          - [x] AIProgram_Novice.ts
+      - [x] entities
+        - [x] EntityCommon.ts
+        - [x] EntitySystem.ts
+        - [x] item
+          - [x] BonusBox.ts
+          - [x] display
+            - [x] BonusBoxSymbol.ts
+        - [x] projectile
+          - [x] BulletBasic.ts
+          - [x] BulletNuke.ts
+          - [x] BulletTracking.ts
+          - [x] LaserAbsorption.ts
+          - [x] LaserBasic.ts
+          - [x] LaserPulse.ts
+          - [x] LaserTeleport.ts
+          - [x] Lightning.ts
+          - [x] ProjectileCommon.ts
+          - [x] ShockWaveBase.ts
+          - [x] ShockWaveDrone.ts
+          - [x] SubBomber.ts
+          - [x] ThrownBlock.ts
+          - [x] Wave.ts
+        - [x] player
+          - [x] Player.ts
+          - [x] AIPlayer.ts
+          - [x] profile
+            - [x] IPlayerProfile.ts
+            - [x] PlayerProfile.ts
+          - [x] display
+            - [x] PlayerEffectOverlay.ts
+            - [x] PlayerGUI.ts
+          - [x] team
+            - [x] PlayerTeam.ts
+    - [x] main
+      - [x] Game.ts
+    - [x] registry
+      - [x] GameModeType.ts
+      - [x] ToolType.ts
       - [x] BlockType.ts
-      - [ ] EffectType.ts
-      - [ ] EntityType.ts
-    - [ ] template
-      - [ ] TypeCommon.ts
-      - [ ] CommonSystem.ts
-    - [ ] rule
-      - [ ] GameRule.ts
-      - [ ] GameRuleEvent.ts
-    - [ ] stat
-      - [ ] GameStats.ts
-      - [ ] GameResult.ts
-      - [ ] PlayerStats.ts
+      - [x] EffectType.ts
+      - [x] EntityType.ts
+    - [x] template
+      - [x] TypeCommon.ts
+      - [x] CommonSystem.ts
+    - [x] rule
+      - [x] GameRule.ts
+      - [x] GameRuleEvent.ts
+    - [x] stat
+      - [x] GameStats.ts
+      - [x] GameResult.ts
+      - [x] PlayerStats.ts
   - [x] general
     - [x] GlobalGameInformation.ts
     - [x] GlobalGameVariables.ts
@@ -158,7 +158,7 @@
 1. ~~common~~
 2. ~~fonts~~
 3. ~~general~~
-4. game
+4. ~~game~~⇒server
 5. main
 6. i18n
 7. menu

@@ -1,10 +1,8 @@
-
-
-import BonusType from "../game/registry/BonusRegistry";
-import EntityType from "../game/registry/EntityRegistry";
-import Tool from "../game/registry/Tool";
-import GameModeType from "../../../game/rule/GameModeType";
-import MatrixRule_V1 from "../../../game/mods/native/rule/MatrixRule_V1";
+import BonusType from "../server/registry/BonusRegistry";
+import EntityType from "../server/registry/EntityRegistry";
+import Tool from "../server/registry/Tool";
+import GameModeType from "../../../server/rule/WorldModeType";
+import MatrixRule_V1 from "../../../server/mods/native/rule/MatrixRule_V1";
 import { uint } from "../../../legacy/AS3Legacy";
 import ForcedI18nText from "./ForcedI18nText";
 import I18nKey from "./I18nKey";

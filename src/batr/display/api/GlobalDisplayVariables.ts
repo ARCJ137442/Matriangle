@@ -1,9 +1,6 @@
 import MainFont from "./fonts/MainFont";
 import { uint } from "../../legacy/AS3Legacy";
-
 import { Font } from "../../legacy/flash/text";
-
-
 
 export const MAIN_FONT: Font = new MainFont();
 

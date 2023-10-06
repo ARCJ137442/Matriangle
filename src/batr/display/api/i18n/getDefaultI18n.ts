@@ -1,4 +1,4 @@
-import TypeCommon from "../../../game/api/template/TypeCommon";
+import TypeCommon from "../../../server/api/template/TypeCommon";
 
 
 export function getDefaultI18n(key: string): string {

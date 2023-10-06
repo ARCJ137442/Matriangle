@@ -1,9 +1,9 @@
 ﻿
 
-import Map_V1 from "../../game/mods/native/maps/Map_V1";
-import Game from "../../game/main/Game_V1";
-import Tool from "../game/registry/Tool";
-import MatrixRule_V1 from "../../game/mods/native/rule/MatrixRule_V1";
+import Map_V1 from "../../server/mods/native/maps/Map_V1";
+import Game from "../../server/main/World_V1";
+import Tool from "../server/registry/Tool";
+import MatrixRule_V1 from "../../server/mods/native/rule/MatrixRule_V1";
 import I18ns from "../api/i18n/I18ns";
 import { uint } from "../../legacy/AS3Legacy";
 import I18nsChangeEvent from "../menu/event/I18nsChangeEvent";

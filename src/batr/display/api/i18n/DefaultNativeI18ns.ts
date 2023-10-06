@@ -1,7 +1,5 @@
-
-
 import DefaultNativeI18ns from "../../../../config/lang";
-import TypeCommon from "../../../game/api/template/TypeCommon";
+import TypeCommon from "../../../server/api/template/TypeCommon";
 
 export const EN_US = DefaultNativeI18ns.en_us; // English
 export const ZH_HANS = DefaultNativeI18ns.zh_hans; // 简体中文

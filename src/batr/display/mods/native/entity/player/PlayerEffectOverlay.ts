@@ -1,8 +1,6 @@
-
-
 import { uint, int, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
-import AIPlayer from "../../../../../game/mods/native/entities/player/AIPlayer";
-import Player from "../../../../../game/mods/native/entities/player/Player";
+import AIPlayer from "../../../../../server/mods/native/entities/player/AIPlayer";
+import Player from "../../../../../server/mods/native/entities/player/Player";
 
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//

@@ -1,10 +1,10 @@
 ﻿
 
 import MainFont from "../../display/api/fonts/MainFont";
-import Game from "../../game/main/Game";
-import GameRule from "../../game/api/rule/GameRule";
-import GameResult from "../../game/mods/native/stat/GameResult";
-import PlayerStats from "../../game/mods/native/stat/PlayerStats";
+import Game from "../../server/main/Game";
+import GameRule from "../../server/api/rule/GameRule";
+import MatrixResult from "../../server/mods/native/stat/MatrixResult";
+import PlayerStats from "../../server/mods/native/stat/PlayerStats";
 import FixedI18nText from "../../display/api/i18n/FixedI18nText";
 import ForcedI18nText from "../../display/api/i18n/ForcedI18nText";
 import I18nKey from "../../display/api/i18n/I18nKey";
@@ -128,7 +128,7 @@ export default class Menu extends Sprite {
 	protected _sheetSelect: BatrMenuSheet;
 	protected _sheetAdvancedCustom: BatrMenuSheet;
 	protected _sheetCustomGameConfig: BatrMenuSheet;
-	protected _sheetGameResult: BatrMenuSheet;
+	protected _sheetMatrixResult: BatrMenuSheet;
 	protected _sheetScoreRanking: BatrMenuSheet;
 	protected _sheetPause: BatrMenuSheet;
 
@@ -141,7 +141,7 @@ export default class Menu extends Sprite {
 	protected _selectorListAdvanced_L: BatrSelectorList;
 	protected _selectorListAdvanced_R: BatrSelectorList;
 
-	protected _storedGameResult: GameResult;
+	protected _storedMatrixResult: MatrixResult;
 	protected _gameResultText: BatrTextField;
 	protected _rankContentText: BatrTextField;
 
@@ -247,8 +247,8 @@ export default class Menu extends Sprite {
 		return Math.floor(this._sheetHistory / Math.pow(this.numSheet + 1, this.historyLength - 1));
 	}
 
-	public set storedGameResult(value: GameResult) {
-		this._storedGameResult = value;
+	public set storedMatrixResult(value: MatrixResult) {
+		this._storedMatrixResult = value;
 	}
 
 	public get languageSelector(): BatrSelector {
@@ -631,7 +631,7 @@ export default class Menu extends Sprite {
 				this.quickBackButtonBuild().setBlockPos(2, 21)
 			) as BatrMenuSheet,
 			// Game Result
-			this._sheetGameResult = this.buildSheet(I18nKey.GAME_RESULT, false).appendDirectElements(
+			this._sheetMatrixResult = this.buildSheet(I18nKey.GAME_RESULT, false).appendDirectElements(
 				// Text Title
 				this._gameResultText = quickTextFieldBuild(I18nKey.GAME_RESULT, 2, 2).setBlockSize(20, 2).setFormat(RESULT_TITLE_FORMAT, true),
 				// button
@@ -732,23 +732,23 @@ export default class Menu extends Sprite {
 	}
 
 	/** Loading game result when game end. */
-	public loadResult(result: GameResult): void {
+	public loadResult(result: MatrixResult): void {
 		// set
 		this._gameResultText.translationalText = result.message;
 		this._playerStatSelector.setContent(BatrSelectorContent.createPlayerNamesContent(result.stats.players));
-		this._storedGameResult = result;
+		this._storedMatrixResult = result;
 		this.updateStatByResult();
 		// rank
 		this._rankContentText.translationalText = result.rankingText;
 		// load
 		// turn
-		this.setNowSheet(this._sheetGameResult);
+		this.setNowSheet(this._sheetMatrixResult);
 	}
 
 	protected updateStatByResult(): void {
 		this.onPlayerStatSelectorClick(null);
-		Menu.setFixedTextSuffix(this._gameStatMapTransform, this._storedGameResult.stats.mapTransformCount);
-		Menu.setFixedTextSuffix(this._gameStatBonusGenerate, this._storedGameResult.stats.bonusGenerateCount);
+		Menu.setFixedTextSuffix(this._gameStatMapTransform, this._storedMatrixResult.stats.mapTransformCount);
+		Menu.setFixedTextSuffix(this._gameStatBonusGenerate, this._storedMatrixResult.stats.bonusGenerateCount);
 	}
 
 	protected onTitleTimerTick(event: TimerEvent): void {
@@ -922,7 +922,7 @@ export default class Menu extends Sprite {
 	protected onPlayerStatSelectorClick(event: BatrGUIEvent): void {
 		// Change Texts
 		try {
-			let currentPlayer: PlayerStats = this._storedGameResult.stats.players[this._playerStatSelector.currentValue];
+			let currentPlayer: PlayerStats = this._storedMatrixResult.stats.players[this._playerStatSelector.currentValue];
 			setFixedTextSuffix(this._playerStatCauseDamage, currentPlayer.causeDamage);
 			setFixedTextSuffix(this._playerStatDamageBy, currentPlayer.damageBy);
 			setFixedTextSuffix(this._playerStatDeath, currentPlayer.deathCount);

@@ -1,4 +1,4 @@
-import Block from "../../../game/api/block/Block";
+import Block from "../../../server/api/block/Block";
 import { int } from "../../../legacy/AS3Legacy";
 import IMapDisplayer from "./IMapDisplayer";
 

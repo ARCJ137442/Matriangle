@@ -1,22 +1,22 @@
 import { int, uint } from "../src/batr/legacy/AS3Legacy";
-import IPlayer from "../src/batr/game/mods/native/entities/player/IPlayer";
-import Player from "../src/batr/game/mods/native/entities/player/Player";
-import AIControllerGenerator from "../src/batr/game/mods/native/entities/player/controller/ai/AIControllerGenerator";
-import { NativeAIPrograms } from "../src/batr/game/mods/native/entities/player/controller/ai/NativeAIPrograms";
-import MapStorageSparse from "../src/batr/game/mods/native/maps/MapStorageSparse";
-import { NativeMaps } from "../src/batr/game/mods/native/registry/MapRegistry";
-import { NativeToolUsageMap, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/game/mods/native/registry/NativeMatrixMechanics";
-import Registry_V1 from "../src/batr/game/mods/native/registry/Registry_V1";
-import { NativeTools } from "../src/batr/game/mods/native/registry/ToolRegistry";
-import MatrixRule_V1 from "../src/batr/game/mods/native/rule/MatrixRule_V1";
-import Matrix_V1 from "../src/batr/game/main/Matrix_V1";
-import { 列举实体, 母体可视化 } from "../src/batr/game/mods/visualization/visualizations";
-import { TPS } from "../src/batr/game/main/GlobalGameVariables";
+import IPlayer from "../src/batr/server/mods/native/entities/player/IPlayer";
+import Player from "../src/batr/server/mods/native/entities/player/Player";
+import AIControllerGenerator from "../src/batr/server/mods/native/entities/player/controller/ai/AIControllerGenerator";
+import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
+import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
+import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
+import { NativeToolUsageMap, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/registry/NativeMatrixMechanics";
+import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
+import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
+import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
+import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
+import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/visualizations";
+import { TPS } from "../src/batr/server/main/GlobalWorldVariables";
 import { mergeMaps } from "../src/batr/common/utils";
-import { NativeBonusTypes } from "../src/batr/game/mods/native/registry/BonusRegistry";
+import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
-import HTTPController from "../src/batr/game/mods/webIO/controller/HTTPController";
-import MatrixVisualizer from "../src/batr/game/mods/webIO/entity/MatrixVisualizer";
+import HTTPController from "../src/batr/server/mods/webIO/controller/HTTPController";
+import MatrixVisualizer from "../src/batr/server/mods/webIO/entity/MatrixVisualizer";
 
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
@@ -136,25 +136,29 @@ function sleep(ms: number): Promise<void> {
 // 预先测试：避免「异步报错无法溯源」的问题
 // for (let i: uint = 0; i < TPS * 10000; i++) matrix.tick();
 
-function 迭代(display_delay_ms: uint = 1000): void {
+function 迭代(num: uint, visualize: boolean = true): void {
 	// TPS次迭代
-	for (let i: uint = 0; i < TPS * display_delay_ms / 1000; i++) {
+	for (let i: uint = 0; i < num; i++) {
 		matrix.tick();
 	}
-	// 可视化
-	console.log(
-		母体可视化(
-			matrix.map.storage as MapStorageSparse,
-			matrix.entities,
-			6
-		),
-	);
-	列举实体(matrix.entities, 5); // !【2023-10-05 17:51:21】实体一多就麻烦
+	if (visualize) {
+		// 可视化
+		console.log(
+			母体可视化(
+				matrix.map.storage as MapStorageSparse,
+				matrix.entities,
+				6
+			),
+		);
+		列举实体(matrix.entities, 5); // !【2023-10-05 17:51:21】实体一多就麻烦
+	}
 }
 
 async function 持续测试(i: int = 0, display_delay_ms: uint = 1000) {
+	/** 迭代次数，是一个常量 */
+	let numIter: uint = TPS * display_delay_ms / 1000;
 	for (let t = i; t !== 0; t--) {
-		迭代(display_delay_ms);
+		迭代(numIter, false/* 现在不再需要可视化 */);
 		// 延时
 		await sleep(display_delay_ms);
 	}

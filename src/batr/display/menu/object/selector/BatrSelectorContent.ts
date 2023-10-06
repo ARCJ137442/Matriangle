@@ -1,6 +1,6 @@
 
 
-import PlayerStats from "../../../game/mods/native/stat/PlayerStats";
+import PlayerStats from "../../../server/mods/native/stat/PlayerStats";
 import ForcedI18nText from "../../../display/api/i18n/ForcedI18nText";
 import I18nKey from "../../../display/api/i18n/I18nKey";
 import I18nText from "../../../display/api/i18n/I18nText";
