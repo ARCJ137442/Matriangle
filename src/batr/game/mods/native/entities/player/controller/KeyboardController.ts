@@ -6,7 +6,9 @@ import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../re
 import IPlayer from "../IPlayer";
 
 /**
- * 一个接受键盘信号，解析并以此控制玩家的
+ * 一个接受键盘信号，解析并以此控制玩家的控制器
+ * 
+ * !【2023-10-06 21:56:17】现在因为能直接使用HTTP/WebSocket发送操作，这个程序接近废弃
  */
 export default class KeyboardController extends MatrixProgram {
 

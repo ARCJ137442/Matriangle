@@ -15,8 +15,8 @@ import { TPS } from "../src/batr/game/main/GlobalGameVariables";
 import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/game/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
-import HTTPController from "../src/batr/game/mods/native/entities/player/controller/HTTPController";
-import MatrixVisualizer from "../src/batr/game/mods/visualization/entity/MatrixVisualizer";
+import HTTPController from "../src/batr/game/mods/webIO/controller/HTTPController";
+import MatrixVisualizer from "../src/batr/game/mods/webIO/entity/MatrixVisualizer";
 
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
@@ -63,11 +63,11 @@ let ctl: AIControllerGenerator = new AIControllerGenerator(
 	'first',
 	NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
 );
-let ctlHTTP: HTTPController = new HTTPController();
-ctlHTTP.launchServer('127.0.0.1', 3002) // 启动服务器
+let ctlWeb: HTTPController = new HTTPController();
+ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
 // 可视化信号
 let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
-visualizer.launchServer('127.0.0.1', 8080);
+visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 添加实体
 matrix.addEntities(
 	p, p2,
@@ -89,7 +89,7 @@ ctl.AIRunSpeed = 4; // 一秒四次行动
 p.connectController(ctl);
 respawnPlayer(matrix, p);
 // 二号机の控制器
-ctlHTTP.addConnection(p2, 'p2');
+ctlWeb.addConnection(p2, 'p2');
 /*
 * 地址：http://127.0.0.1:3001
 * 示例@前进：http://127.0.0.1:3001/?key=p2&action=moveForward
