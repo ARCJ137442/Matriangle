@@ -52,19 +52,28 @@ export default class HTTPController extends PlayerController {
 	 */
 	protected _server?: Server;
 
+
 	/**
 	 * 构造函数
 	 * * 不包括IP、端口的注册
-	 */
+	*/
 	public constructor() {
 		super(HTTPController.LABEL);
+	}
+
+	/**
+	 * 析构函数
+	 * * 关闭可能开启的服务器，避免IP/端口占用
+	 */
+	override destructor(): void {
+		this.stopServer();
 	}
 
 	// 服务器部分 //
 	/**
 	 * 启动HTTP服务器
 	 */
-	public launch(ip: string, port: uint) {
+	public launchServer(ip: string, port: uint) {
 		this._hostname = ip;
 		this._port = port;
 		// 创建服务器，并开始侦听
@@ -86,6 +95,15 @@ export default class HTTPController extends PlayerController {
 	}
 
 	/**
+	 * 终止HTTP服务器
+	 */
+	public stopServer() {
+		this._server?.close(() => {
+			console.log(`HTTP服务器${this._hostname}: ${this._port}已关闭！`);
+			// 这里可以执行一些清理操作或其他必要的处理
+		});
+	}
+	/**
 	 * 请求侦听函数
 	 * 
 	 * @param req 收到的请求
@@ -94,7 +112,7 @@ export default class HTTPController extends PlayerController {
 	public onRequest(req: IncomingMessage, res: ServerResponse): void {
 		// 解析请求
 		let queries: ParsedUrlQuery = parse(
-			req.url?.slice( // 截取出「?`a=1&b=2`...」
+			req.url?.slice( // 截取出「?`a = 1 & b=2`...」
 				req.url.indexOf('?') + 1
 			) ?? ''
 		)

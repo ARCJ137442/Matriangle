@@ -63,7 +63,7 @@ let ctl: AIControllerGenerator = new AIControllerGenerator(
 	NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
 );
 let ctlHTTP: HTTPController = new HTTPController();
-ctlHTTP.launch('127.0.0.1', 3001) // 启动服务器
+ctlHTTP.launchServer('127.0.0.1', 3002) // 启动服务器
 // 添加实体
 matrix.addEntities(
 	p, p2,
