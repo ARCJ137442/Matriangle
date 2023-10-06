@@ -93,6 +93,9 @@ ctlHTTP.addConnection(p2, 'p2');
 * 示例@转向x+：http://127.0.0.1:3001/?key=p2&action=0
 * 示例@转向前进x+：http://127.0.0.1:3001/?key=p2&action=-1
 */
+//  地图
+// matrix.map = NativeMaps.EMPTY;
+// matrix.map = NativeMaps.FRAME;
 
 // 第一次测试
 (() => {
@@ -126,8 +129,6 @@ function sleep(ms: number): Promise<void> {
 }
 
 // 预先测试：避免「异步报错无法溯源」的问题
-// matrix.map = NativeMaps.EMPTY;
-matrix.map = NativeMaps.FRAME;
 // for (let i: uint = 0; i < TPS * 10000; i++) matrix.tick();
 
 function 迭代(display_delay_ms: uint = 1000): void {

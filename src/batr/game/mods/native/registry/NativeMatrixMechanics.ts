@@ -548,6 +548,18 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
 } */
 
 /**
+ * 在玩家位置改变时
+ * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
+ */
+export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
+    // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
+    // 告知玩家开始处理「方块伤害」等逻辑
+    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
+    // 测试「是否拾取到奖励箱」
+    bonusBoxTest(host, player, newP);
+}
+
+/**
  * 当每个玩家「移动到某个方块」时，在移动后的测试
  * * 测试位置即为玩家「当前位置」（移动后！）
  * * 有副作用：用于处理「伤害玩家的方块」
@@ -602,6 +614,22 @@ export function playerMoveInTest(
         returnBoo = true;
     }
     return returnBoo;
+}
+
+/**
+ * 在玩家移出方块之前
+ */
+export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
+    if (!player.isActive) return;
+    // TODO: 这里应该是要分派一个方块事件，而非把专用代码塞里头
+    // let type: BlockType | null = host.map.storage.getBlockType(oldP);
+    // let attr: BlockAttributes | null = host.map.storage.getBlockAttributes(oldP);
+    let block: Block | null = host.map.storage.getBlock(oldP);
+    // 一个逻辑：「打开的门」在玩家移走（后）关闭
+    if (block instanceof BlockGate) {
+        (block as BlockGate).open = false;
+        // ? 直接修改方块属性是否靠谱？利不利于游戏响应（特别是显示端）
+    }
 }
 
 /**
@@ -972,7 +1000,7 @@ export function respawnPlayer(host: IBatrMatrix, player: IPlayer): IPlayer {
         spreadPlayer(host, player, true, false);
         p = player.position; // 重新确定重生地
     }
-    // 有位置⇒进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
+    // 有位置⇒直接重生在此/进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
     else
         teleportPlayerTo(
             host,
@@ -1013,10 +1041,16 @@ function findFitSpawnPoint(
     spawnP: iPointRef, searchR: uint = 16,
 ): iPoint {
     let players: IPlayer[] = getPlayers(host);
+    // 尝试直接在重生点处重生
+    if (host.map.storage.isInMap(spawnP) &&
+        player.testCanGoTo(host, spawnP, true, true, players))
+        return spawnP
+    // 重生点处条件不满足⇒开始在周围寻找
     let isFound: boolean = false;
     // 直接遍历
     _temp_findFitSpawnPoint_pMax.copyFrom(spawnP);
     _temp_findFitSpawnPoint_pMin.copyFrom(spawnP);
+    // 一层层向外遍历
     for (let r: uint = 1; r <= searchR; r++) {
         traverseNDSquareSurface(
             _temp_findFitSpawnPoint_pMin,
@@ -1039,34 +1073,6 @@ function findFitSpawnPoint(
         _temp_findFitSpawnPoint_pMin.addFromSingle(-1);
     }
     return spawnP;
-}
-
-/**
- * 在玩家移出方块之前
- */
-export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
-    if (!player.isActive) return;
-    // TODO: 这里应该是要分派一个方块事件，而非把专用代码塞里头
-    // let type: BlockType | null = host.map.storage.getBlockType(oldP);
-    // let attr: BlockAttributes | null = host.map.storage.getBlockAttributes(oldP);
-    let block: Block | null = host.map.storage.getBlock(oldP);
-    // 一个逻辑：「打开的门」在玩家移走（后）关闭
-    if (block instanceof BlockGate) {
-        (block as BlockGate).open = false;
-        // ? 直接修改方块属性是否靠谱？利不利于游戏响应（特别是显示端）
-    }
-}
-
-/**
- * 在玩家位置改变时
- * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
- */
-export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
-    // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
-    // 告知玩家开始处理「方块伤害」等逻辑
-    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
-    // 测试「是否拾取到奖励箱」
-    bonusBoxTest(host, player, newP);
 }
 
 /**
