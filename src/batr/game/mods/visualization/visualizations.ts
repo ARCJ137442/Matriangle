@@ -1,13 +1,18 @@
-import { iPoint, iPointVal, traverseNDSquare } from "../src/batr/common/geometricTools";
-import { getClass } from "../src/batr/common/utils";
-import { int, uint, uint$MAX_VALUE } from "../src/batr/legacy/AS3Legacy";
-import Entity from "../src/batr/game/api/entity/Entity";
-import { IEntityInGrid, IEntityOutGrid } from "../src/batr/game/api/entity/EntityInterfaces";
-import BlockVoid from "../src/batr/game/mods/native/blocks/Void";
-import MapStorageSparse from "../src/batr/game/mods/native/maps/MapStorageSparse";
-import { getHitEntity_I_Grid } from "../src/batr/game/mods/native/registry/NativeMatrixMechanics";
-import { alignToGrid_P } from "../src/batr/game/general/PosTransform";
-import Player from "../src/batr/game/mods/native/entities/player/Player";
+import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTools";
+import { getClass } from "../../../common/utils";
+import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
+import Entity from "../../api/entity/Entity";
+import { IEntityInGrid, IEntityOutGrid } from "../../api/entity/EntityInterfaces";
+import BlockVoid from "../native/blocks/Void";
+import MapStorageSparse from "../native/maps/MapStorageSparse";
+import { alignToGrid_P } from "../../general/PosTransform";
+import Player from "../native/entities/player/Player";
+import IMapStorage from "../../api/map/IMapStorage";
+
+/**
+ * 一个用于可视化母体的可视化函数库
+ * * 【2023-10-06 17:48:33】原先用于测试，现在转入一个附属模组
+ */
 
 /**
  * 若方块为「空」，则填充空格；否则截断并补全空格
@@ -68,11 +73,22 @@ const _temp_母体可视化_entityIPoint: iPointVal = new iPoint();
  * * 现在返回字符串
  */
 export function 母体可视化(
+	storage: IMapStorage,
+	entities: Entity[],
+	string_l: uint = 7, // 限制字长
+): string {
+	// 分派「地图存储结构」的类型
+	if (storage instanceof MapStorageSparse)
+		return 稀疏地图母体可视化(storage, entities, string_l);
+	throw new Error('不支持该地图存储结构的母体可视化');
+}
+
+export function 稀疏地图母体可视化(
 	storage: MapStorageSparse,
 	entities: Entity[],
 	string_l: uint = 7, // 限制字长
 ): string {
-	//
+	// 返回值
 	let result: string = '';
 	// 格点实体
 	const entitiesPositioned: (IEntityInGrid | IEntityOutGrid)[] = entities.filter(

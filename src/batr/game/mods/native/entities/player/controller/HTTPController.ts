@@ -1,7 +1,5 @@
-import { randInt } from "../../../../../../common/exMath";
 import { int, uint } from "../../../../../../legacy/AS3Legacy";
 import { MatrixControllerLabel } from "../../../../../api/control/MatrixControl";
-import { TPS } from "../../../../../main/GlobalGameVariables";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import BonusBox from "../../item/BonusBox";
 import IPlayer from "../IPlayer";
@@ -28,10 +26,25 @@ export default class HTTPController extends PlayerController {
 	/** 共同的标签：HTTP控制器 */
 	public static readonly LABEL: MatrixControllerLabel = 'HTTP';
 
-	/** 「控制密钥」的查询键 */
-	public static readonly KEY_CONTROL_KEY: string = 'key';
-	/** 「分派动作」的查询键 */
-	public static readonly KEY_ACTION: string = 'action';
+	// 构造函数&析构函数 //
+
+	/**
+	 * 构造函数
+	 * * 不包括IP、端口的注册
+	*/
+	public constructor() {
+		super(HTTPController.LABEL);
+	}
+
+	/**
+	 * 析构函数
+	 * * 关闭可能开启的服务器，避免IP/端口占用
+	 */
+	override destructor(): void {
+		this.stopServer();
+	}
+
+	// 服务器部分 //
 
 	/**
 	 * 主机名称，如：
@@ -52,24 +65,6 @@ export default class HTTPController extends PlayerController {
 	 */
 	protected _server?: Server;
 
-
-	/**
-	 * 构造函数
-	 * * 不包括IP、端口的注册
-	*/
-	public constructor() {
-		super(HTTPController.LABEL);
-	}
-
-	/**
-	 * 析构函数
-	 * * 关闭可能开启的服务器，避免IP/端口占用
-	 */
-	override destructor(): void {
-		this.stopServer();
-	}
-
-	// 服务器部分 //
 	/**
 	 * 启动HTTP服务器
 	 */
@@ -129,7 +124,12 @@ export default class HTTPController extends PlayerController {
 		res.end(responseText);
 	}
 
-	// 改写：额外的「控制密钥」绑定/解绑 //
+	// 基于「控制密钥」的动作分派系统 //
+
+	/** 「控制密钥」的查询键 */
+	public static readonly KEY_CONTROL_KEY: string = 'key';
+	/** 「分派动作」的查询键 */
+	public static readonly KEY_ACTION: string = 'action';
 
 	/** 自身持有的「玩家-密钥」映射表 */
 	protected readonly _playerKeyMap: Map<IPlayer, string> = new Map<IPlayer, string>();

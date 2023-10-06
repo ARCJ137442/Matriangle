@@ -10,12 +10,13 @@ import Registry_V1 from "../src/batr/game/mods/native/registry/Registry_V1";
 import { NativeTools } from "../src/batr/game/mods/native/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/game/mods/native/rule/MatrixRule_V1";
 import Matrix_V1 from "../src/batr/game/main/Matrix_V1";
-import { 列举实体, 母体可视化 } from "./可视化_test";
+import { 列举实体, 母体可视化 } from "../src/batr/game/mods/visualization/visualizations";
 import { TPS } from "../src/batr/game/main/GlobalGameVariables";
 import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/game/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import HTTPController from "../src/batr/game/mods/native/entities/player/controller/HTTPController";
+import MatrixVisualizer from "../src/batr/game/mods/visualization/entity/MatrixVisualizer";
 
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
@@ -64,10 +65,14 @@ let ctl: AIControllerGenerator = new AIControllerGenerator(
 );
 let ctlHTTP: HTTPController = new HTTPController();
 ctlHTTP.launchServer('127.0.0.1', 3002) // 启动服务器
+// 可视化信号
+let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
+visualizer.launchServer('127.0.0.1', 8080);
 // 添加实体
 matrix.addEntities(
 	p, p2,
-	ctl
+	ctl,
+	visualizer
 )
 // 添加奖励箱
 addBonusBoxInRandomTypeByRule(matrix, new iPoint(1, 2))
