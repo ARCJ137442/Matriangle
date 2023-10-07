@@ -8,10 +8,16 @@ import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
 import Player from "../native/entities/player/Player";
 import IMapStorage from "../../api/map/IMapStorage";
+import { MatrixController } from "../../api/control/MatrixControl";
+import PlayerController from "../native/entities/player/controller/PlayerController";
+import { MatrixProgram } from "../../api/control/MatrixProgram";
+import BonusBox from "../native/entities/item/BonusBox";
+import Effect from "../../api/entity/Effect";
+import Projectile from "../native/entities/projectile/Projectile";
 
 /**
  * 一个用于可视化母体的可视化函数库
- * * 【2023-10-06 17:48:33】原先用于测试，现在转入一个附属模组
+ * * 【2023-10-06 17:48:33】原先用于测试，现在提升为一个附属模组
  */
 
 /**
@@ -163,8 +169,37 @@ function 实体标签显示(e: Entity): string {
 	// 玩家
 	if (e instanceof Player)
 		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position}|${e.HPText}|${e.tool.id}`
-	// 其它网格实体
+	// 奖励箱
+	if (e instanceof BonusBox)
+		return `${getClass(e)?.name}"${e.bonusType}"@${e.position}`
+	// 特效
+	if (e instanceof Effect)
+		return `${getClass(e)?.name}|${e.life}/${e.LIFE}`
+	// 抛射体
+	if (e instanceof Projectile)
+		// 有坐标的抛射体
+		if ((e as unknown as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
+			return `${getClass(e)?.name}@${(e as unknown as (IEntityInGrid | IEntityOutGrid)).position}`
+		else
+			return `${getClass(e)?.name}`
+	// 母体程序
+	if (e instanceof MatrixProgram)
+		// 控制器
+		if (e instanceof MatrixController)
+			// 玩家控制器
+			if (e instanceof PlayerController)
+				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(实体标签显示).join(', ')}`
+			// 其它
+			else
+				return `${getClass(e)?.name}[${e.label}] -> ${//
+					e.subscribers.map(x => (x instanceof Entity) ? 实体标签显示(e) : e?.toString()).join(', ')
+					}`
+		else
+			// 普通情况：仅有一个标签
+			return `${getClass(e)?.name}[${e.label}]`
+	// 其它有坐标实体
 	else if ((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
-		return `${getClass(e)?.name}@${(e as IEntityInGrid).position}`
+		return `${getClass(e)?.name}@${(e as (IEntityInGrid | IEntityOutGrid)).position}`
+	// 其它实体
 	return `${getClass(e)?.name}`
 }

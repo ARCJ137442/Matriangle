@@ -800,12 +800,6 @@ export default class Player extends Entity implements IPlayer {
 	public directUseTool(host: IBatrMatrix): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
 		// this._tool.onUseByPlayer(host, this); // !【2023-10-05 17:17:26】现在使用注册表，因此废弃
-		// TODO: 代码待迁移
-		console.warn('WIP@directUseTool',
-			this._tool,
-			this, this._direction,
-			this._tool.chargingPercent
-		)
 		playerUseTool(
 			host,
 			this, this._direction,

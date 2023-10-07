@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-cn">
+
+<head charset="utf-8">
+	<title>Web controller WS</title>
+</head>
+
+<body onkeydown="onKeyDown">
+
+	<div>
+		<p>控制器</p>
+		<input type="text" id="controlAddress" placeholder="输入链接" value="127.0.0.1:3002">
+		<input type="text" id="controlKey" placeholder="输入控制密钥" value="p2">
+		<p id="controlMessage"></p>
+	</div>
+
+	<div>
+		<p>显示器</p>
+		<input type="text" id="screenAddress" placeholder="输入链接" value="127.0.0.1:8080">
+		<input type="text" id="screenFPS" placeholder="输入FPS" value="5">
+		<input type="text" id="blockWidth" placeholder="输入单格宽度" value="7">
+	</div>
+
+	<button type="button" id="reset">重置连接</button>
+
+	<!-- 若不使用CSS，则需要用<pre>标签保护其中有连续空格的文本，不然HTML会把连续空格变成一个空格 -->
+	<p id="screen"></p>
+
+	<!-- 脚本 -->
+	<script src="main.js"></script>
+
+	<!-- 样式资源 -->
+	<link rel="stylesheet" href="style.css">
+
+
+</html>

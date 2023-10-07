@@ -1,0 +1,7 @@
+/* 屏显 */
+#screen {
+	/* 保留空格 */
+	white-space: pre;
+	/* 等宽字体 */
+	font-family: Consolas, Monaco, 'Courier New', monospace;
+}

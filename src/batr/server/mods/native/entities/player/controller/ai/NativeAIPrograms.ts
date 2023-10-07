@@ -127,7 +127,7 @@ export module NativeAIPrograms {
                 event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新e变量
                 continue;
             }
-            console.log("[LOG] AIProgram_Dummy: event = ", event);
+            // console.log("[LOG] AIProgram_Dummy: event = ", event);
             // 检查未定义值，不应该的情况就报错 // !【2023-10-05 00:41:11】必须在事件发生之后，变量才有相应的值
             if (controller._temp_currentPlayer === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentPlayer is undefined");
             if (controller._temp_currentHost === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentHost is undefined");

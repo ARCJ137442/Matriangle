@@ -16,7 +16,7 @@ import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import HTTPController from "../src/batr/server/mods/webIO/controller/HTTPController";
-import MatrixVisualizer from "../src/batr/server/mods/webIO/entity/MatrixVisualizer";
+import MatrixVisualizer from "../src/batr/server/mods/visualization/web/MatrixVisualizer";
 import WSController from "../src/batr/server/mods/webIO/controller/WSController";
 
 const rule = new MatrixRule_V1();

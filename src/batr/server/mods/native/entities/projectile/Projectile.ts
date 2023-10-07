@@ -1,4 +1,4 @@
-import { HSVtoHEX, halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
+import { halfBrightnessTo } from "../../../../../common/color";
 import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
