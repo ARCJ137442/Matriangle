@@ -24,13 +24,28 @@ const resetButton = document.getElementById('reset');
 // 重置网络
 function resetAllWS() {
 	// 控制
-	socketControl?.close()
-	socketControl = new WebSocket(getWSLinkControl())
+	resetControlWS();
 	// 屏显
 	resetScreenWS();
 }
+// 重置控制
+function resetControlWS() {
+	socketControl?.close()
+	socketControl = new WebSocket(getWSLinkControl())
+	if (socketControl) {
+		socketControl.onopen = (event) => {
+			console.info('控制WS连接成功！', event)
+		}
+		socketControl.onclose = (event) => {
+			console.info('控制WS已断线！', event)
+		}
+		socketControl.onerror = (event) => {
+			console.warn('控制WS出错！', event)
+		}
+	}
+}
+// 重置屏显
 function resetScreenWS() {
-	// 屏显
 	socketScreen?.close()
 	socketScreen = new WebSocket(getWSLinkScreen())
 	if (socketScreen) {
@@ -62,12 +77,14 @@ function resetScreenWS() {
 		// 关闭时
 		socketScreen.onclose = (event) => {
 			console.info('屏显WS已关闭:', event);
-			// 不用关闭时钟，直接等待输入
+			// 不用关闭时钟，直接等待重连
+			console.info('五秒后尝试重新连接。。。')
+			setTimeout(resetScreenWS, 5000)
 		}
 		// 报错时
 		socketScreen.onerror = (event) => {
-			console.error('屏显WS出错:', event)
-			console.error('三秒后尝试重新连接。。。')
+			console.warn('屏显WS出错:', event)
+			console.info('三秒后尝试重新连接。。。')
 			setTimeout(resetScreenWS, 3000)
 		}
 	}
@@ -114,6 +131,12 @@ function onKeyDown(event) {
 	if (controlMessage) controlMessage.innerText = `↓ message = ${message}`
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault();
+	// 断线⇒尝试重连
+	if (!socketControl || socketControl.readyState === WebSocket.CLOSED) {
+		console.warn('控制WS断线。尝试重新连接。。。')
+		resetControlWS()
+		return;
+	}
 	// 发送请求
 	sendMessage(socketControl, message);
 }
@@ -125,6 +148,12 @@ function onKeyUp(event) {
 	if (controlMessage) controlMessage.innerText = `↑ message = ${message}`
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault();
+	// 断线⇒尝试重连
+	if (!socketControl || socketControl.readyState === WebSocket.CLOSED) {
+		console.warn('控制WS断线。尝试重新连接。。。')
+		resetControlWS()
+		return;
+	}
 	// 发送请求
 	sendMessage(socketControl, message);
 }

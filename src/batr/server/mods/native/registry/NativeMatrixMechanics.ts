@@ -46,6 +46,9 @@ import BulletBasic from "../entities/projectile/bullet/BulletBasic";
 import { typeID } from "./IBatrRegistry";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalWorldVariables";
 import Weapon from "../tool/Weapon";
+import BulletNuke from "../entities/projectile/bullet/BulletNuke";
+import BulletTracking from "../entities/projectile/bullet/BulletTracking";
+import BulletBomber from "../entities/projectile/bullet/BulletBomber";
 
 
 /**
@@ -405,6 +408,14 @@ const temp_playerPickupBonusBox_effectP: fPoint = new fPoint();
  */
 export function playerUseTool(host: IBatrMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
     (host.registry as Registry_V1)?.toolUsageMap.get(player.tool.id)?.(host, player, player.tool, rot, chargePercent);
+    // 没注册的工具才报信息
+    if ((host.registry as Registry_V1)?.toolUsageMap.has(player.tool.id)) { }
+    else
+        console.warn('WIP@directUseTool',
+            player.tool,
+            player, player.direction,
+            player.tool.chargingPercent
+        )
 }
 
 const _temp_toolUsage_PF: fPoint = new fPoint();
@@ -413,12 +424,13 @@ const _temp_toolUsage_PF: fPoint = new fPoint();
  * * 基本继承原先AS3版本中的玩法
  * 
  * * 💭【2023-10-05 17:33:39】本来放在「工具注册表」里面的，但这个映射表的「机制注册」已经多于「ID注册」了。。。
- */
+*/
 export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
+    // * 武器：基础子弹 * //
     [
         NativeTools.TOOL_ID_BULLET_BASIC,
         (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-            console.log('It is used!', host, user, direction, chargePercent)
+            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
             host.addEntity(
                 new BulletBasic(
                     user,
@@ -437,7 +449,94 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
                 ).initFromTool(tool)
             )
         }
-    ]
+    ],
+    // * 武器：核弹 * //
+    [
+        NativeTools.TOOL_ID_BULLET_NUKE,
+        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+            let scalePercent: number = (0.25 + chargePercent * 0.75);
+            host.addEntity(
+                new BulletNuke(
+                    user,
+                    host.map.towardWithRot_FF(
+                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
+                        direction,
+                        PROJECTILES_SPAWN_DISTANCE
+                    ),
+                    direction,
+                    0, 0, // 后续从工具处初始化
+                    // * 充能越充分，速度越慢
+                    BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
+                    // * 充能越充分，爆炸范围越大
+                    computeFinalRadius(
+                        BulletNuke.DEFAULT_EXPLODE_RADIUS,
+                        user.attributes.buffRadius
+                    ) * (2 - scalePercent),
+                ).initFromTool(tool)
+            )
+        }
+    ],
+    // * 武器：轰炸机 * //
+    [
+        NativeTools.TOOL_ID_BULLET_BOMBER,
+        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+            let scalePercent: number = (0.25 + chargePercent * 0.75);
+            host.addEntity(
+                new BulletBomber(
+                    user,
+                    host.map.towardWithRot_FF(
+                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
+                        direction,
+                        PROJECTILES_SPAWN_DISTANCE
+                    ),
+                    direction,
+                    0, 0, // 后续从工具处初始化
+                    // * 充能越充分，速度越慢
+                    BulletBomber.DEFAULT_SPEED,
+                    // * 充能越充分，爆炸范围越大
+                    computeFinalRadius(
+                        BulletBomber.DEFAULT_EXPLODE_RADIUS,
+                        user.attributes.buffRadius
+                    ),
+                    // * 充能越充分，爆炸频率越高
+                    uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)),
+                ).initFromTool(tool)
+            )
+        }
+    ],
+    // * 武器：跟踪子弹 * //
+    [
+        NativeTools.TOOL_ID_BULLET_TRACKING,
+        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+            host.addEntity(
+                new BulletTracking(
+                    user,
+                    host.map.towardWithRot_FF(
+                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
+                        direction,
+                        PROJECTILES_SPAWN_DISTANCE
+                    ),
+                    direction,
+                    0, 0, // 后续从工具处初始化
+                    // * 充能越充分，速度越慢
+                    BulletTracking.DEFAULT_SPEED,
+                    // * 充能越充分，爆炸范围越大
+                    computeFinalRadius(
+                        BulletTracking.DEFAULT_EXPLODE_RADIUS,
+                        user.attributes.buffRadius
+                    ),
+                    getPlayers(host),
+                    // * 充能越充分，追踪时速度越快
+                    1 + chargePercent * 0.5,
+                    // * 完全充能⇒大于1
+                    chargePercent >= 1
+                ).initFromTool(tool)
+            )
+        }
+    ],
 ])
 
 

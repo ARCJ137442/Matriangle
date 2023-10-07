@@ -42,15 +42,17 @@ export module NativeBonusTypes {
 	export const _ABOUT_TOOL: BonusType[] = [
 		NativeBonusTypes.RANDOM_TOOL
 	];
-	export const _ABOUT_ATTRIBUTES: BonusType[] = [
-		NativeBonusTypes.ADD_EXPERIENCE,
-		NativeBonusTypes.BUFF_RANDOM
-	];
 	export const _ABOUT_BUFF: BonusType[] = [
 		NativeBonusTypes.BUFF_CD,
 		NativeBonusTypes.BUFF_DAMAGE,
 		NativeBonusTypes.BUFF_RADIUS,
 		NativeBonusTypes.BUFF_RESISTANCE
+	];
+	export const _ABOUT_ATTRIBUTES: BonusType[] = [
+		NativeBonusTypes.ADD_EXPERIENCE,
+		NativeBonusTypes.BUFF_RANDOM,
+		// *【2023-10-07 14:16:31】现在不用考虑「具体加成」的显示了
+		..._ABOUT_BUFF,
 	];
 	export const _ABOUT_TEAM: BonusType[] = [
 		NativeBonusTypes.RANDOM_CHANGE_TEAM

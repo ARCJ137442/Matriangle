@@ -28,25 +28,22 @@ export default class BulletNuke extends Bullet {
 
 	//============Constructor & Destructor============//
 	/**
-	 * 
-	 * @param position 位置
-	 * @param owner 所有者
-	 * @param attackerDamage 攻击者伤害（仅在构造时「受武器影响」）
-	 * @param chargePercent 充能百分比（仅影响运作逻辑，不影响伤害计算）
+	 * 构造函数
+	 * * 子弹系「属性受充能百分比影响」的机制现统一迁移至构造侧
 	 */
 	public constructor(
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint, extraDamageCoefficient: uint,
-		chargePercent: number
+		speed: number,
+		finalExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS
 	) {
-		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
 			owner,
 			position, direction,
 			attackerDamage, extraDamageCoefficient,
-			BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
-			BulletNuke.DEFAULT_EXPLODE_RADIUS * (2 * scalePercent)
+			speed,
+			finalExplodeRadius,
 		);
 	}
 

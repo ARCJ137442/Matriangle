@@ -168,7 +168,10 @@ export function 实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VA
 function 实体标签显示(e: Entity): string {
 	// 玩家
 	if (e instanceof Player)
-		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position}|${e.HPText}|${e.tool.id}`
+		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position
+			}|${e.HPText
+			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}!${e.tool.chargeTime}/${e.tool.chargeMaxTime
+			}]`
 	// 奖励箱
 	if (e instanceof BonusBox)
 		return `${getClass(e)?.name}"${e.bonusType}"@${e.position}`

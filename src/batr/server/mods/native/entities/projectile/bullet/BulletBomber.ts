@@ -36,17 +36,18 @@ export default class BulletBomber extends Bullet {
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint, extraDamageCoefficient: uint,
-		chargePercent: number
+		speed: number,
+		finalExplodeRadius: number,
+		maxBombTick: uint
 	) {
-		let scalePercent: number = (0.25 + chargePercent * 0.75);
 		super(
 			owner,
 			position, direction,
 			attackerDamage, extraDamageCoefficient,
-			BulletBomber.DEFAULT_SPEED,
-			BulletBomber.DEFAULT_EXPLODE_RADIUS
+			speed,
+			finalExplodeRadius,
 		);
-		this._maxBombTick = BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent);
+		this._maxBombTick = maxBombTick;
 		this._bombTick = this._maxBombTick;
 	}
 

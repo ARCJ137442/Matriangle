@@ -22,7 +22,7 @@ export module NativeTools {
 		.setExtraProperty(1, 1);
 
 	export const TOOL_ID_BULLET_NUKE: string = 'Nuke';
-	export const WEAPON_BULLET_NUKE: Weapon = new Weapon(TOOL_ID_BULLET_NUKE, 5, 320, 5)
+	export const WEAPON_BULLET_NUKE: Weapon = new Weapon(TOOL_ID_BULLET_NUKE, 5, 5, 320)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 15)
 		.setDroneProperty(0);

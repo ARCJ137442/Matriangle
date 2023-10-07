@@ -37,19 +37,23 @@ export default class BulletTracking extends Bullet {
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot,
 		attackerDamage: uint, extraDamageCoefficient: uint,
-		playersInWorld: IPlayer[], chargePercent: number
+		speed: number,
+		finalExplodeRadius: number,
+		playersInWorld: IPlayer[],
+		initialScalePercent: number,
+		smartTrackingMode: boolean
 	) {
 		super(
 			owner,
 			position, direction,
 			attackerDamage, extraDamageCoefficient,
-			BulletTracking.DEFAULT_SPEED,
-			BulletTracking.DEFAULT_EXPLODE_RADIUS
+			speed,
+			finalExplodeRadius
 		);
 		// 尺寸规模（需要多次切换，因此缓存为实例变量）
-		this._scalePercent = (1 + chargePercent * 0.5);
+		this._scalePercent = initialScalePercent;
 		// 目标追踪函数
-		if (chargePercent >= 1)
+		if (smartTrackingMode)
 			this._trackingFunction = this.getTargetRot;
 		// 缓存「潜在目标」
 		this.cacheTargetsIn(playersInWorld);

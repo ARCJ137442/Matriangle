@@ -12,7 +12,7 @@ import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
 import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
 import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/visualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
-import { mergeMaps } from "../src/batr/common/utils";
+import { mergeMaps, randomIn } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import HTTPController from "../src/batr/server/mods/webIO/controller/HTTPController";
@@ -85,7 +85,11 @@ p2.customName = 'Player二号机'
 p.lifeNotDecay = p2.lifeNotDecay = true;
 // 武器
 p.tool = NativeTools.WEAPON_BULLET_BASIC.copy();
-p2.tool = NativeTools.WEAPON_BULLET_BASIC.copy();
+p2.tool = randomIn([
+	NativeTools.WEAPON_BULLET_NUKE,
+	NativeTools.WEAPON_BULLET_BOMBER,
+	NativeTools.WEAPON_BULLET_TRACKING,
+]).copy();
 // 初号机の控制器
 ctl.AIRunSpeed = 4; // 一秒四次行动
 p.connectController(ctl);
