@@ -1,5 +1,6 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
-import { MatrixControllerLabel, MatrixProgram } from "../../../../../api/control/MatrixControl";
+import { MatrixController } from "../../../../../api/control/MatrixControl";
+import { MatrixProgramLabel } from "../../../../../api/control/MatrixProgram";
 import { IEntityActive } from "../../../../../api/entity/EntityInterfaces";
 import IBatrMatrix from "../../../../../main/IBatrMatrix";
 import BonusBox from "../../item/BonusBox";
@@ -11,7 +12,7 @@ import { PlayerAction } from "./PlayerAction";
  * * 一个专用的用于控制玩家的世界控制器
  * * 封装了一系列有关玩家的钩子
  */
-export default abstract class PlayerController extends MatrixProgram implements IEntityActive {
+export default abstract class PlayerController extends MatrixController implements IEntityActive {
 
     // 活跃实体 //
     public readonly i_active: true = true;
@@ -44,9 +45,8 @@ export default abstract class PlayerController extends MatrixProgram implements 
     public constructor(
         /**
          * 母体程序标签
-         * * 应用：区分是「玩家」还是「AI」（实际上是个历史遗留问题）
          */
-        public readonly label: MatrixControllerLabel,
+        label: MatrixProgramLabel,
         /**
          * 订阅者列表：订阅者只能是玩家
          */

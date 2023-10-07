@@ -1,7 +1,7 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { MatrixControllerLabel } from "../../../api/control/MatrixControl";
 import { Server, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
 import MultiKeyController from "./MultiKeyController";
+import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 
 /**
  * 「WebSocket控制器」
@@ -20,7 +20,7 @@ import MultiKeyController from "./MultiKeyController";
 export default class WSController extends MultiKeyController {
 
 	/** 共同的标签：WebSocket控制器 */
-	public static readonly LABEL: MatrixControllerLabel = 'WebSocket';
+	public static readonly LABEL: MatrixProgramLabel = 'WebSocket';
 
 	// 构造函数&析构函数 //
 

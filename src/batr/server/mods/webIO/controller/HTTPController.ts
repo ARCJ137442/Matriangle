@@ -1,5 +1,5 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { MatrixControllerLabel } from "../../../api/control/MatrixControl";
+import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http'
 import { ParsedUrlQuery, parse } from "node:querystring";
 import MultiKeyController from "./MultiKeyController";
@@ -20,7 +20,7 @@ import MultiKeyController from "./MultiKeyController";
 export default class HTTPController extends MultiKeyController {
 
 	/** 共同的标签：HTTP控制器 */
-	public static readonly LABEL: MatrixControllerLabel = 'HTTP';
+	public static readonly LABEL: MatrixProgramLabel = 'HTTP';
 
 	// 构造函数&析构函数 //
 

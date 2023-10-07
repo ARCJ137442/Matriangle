@@ -4,9 +4,12 @@
  * * 其向「订阅了它的分派」的「事件接收者」分派事件，以进行「运动」
  * * 📌其本身适合作为一个「智能体」存在（或者像Matrix那样，人通过这个「玩家」连接到这个世界中）
  */
-import Entity from "../entity/Entity";
+import { MatrixProgram, MatrixProgramLabel } from "./MatrixProgram";
 
-export type MatrixControllerLabel = string;
+/**
+ * 「母体事件」的类型
+ * * 本质上相当于一个消息
+ */
 export type MatrixEventType = string;
 
 /**
@@ -29,10 +32,9 @@ export interface IMatrixControlReceiver {
 }
 
 /**
- * 「母体程序」是一个
- * * 📶用于接收世界刻等信号（接收世界分派的事件），以便控制世界内事物
+ * 「母体控制器」是一个
  * * 可以接受其它「订阅者」订阅，并向「订阅事件的对象」分派事件的
- * 实体
+ * 母体程序
  * 
  * 核心机制：
  * * 通过通用的「钩子函数」分派事件
@@ -56,23 +58,19 @@ export interface IMatrixControlReceiver {
  * > just like the Matrix!
  * 
  */
-export abstract class MatrixProgram extends Entity {
+export abstract class MatrixController extends MatrixProgram {
 
     /**
      * 构造函数
      */
     public constructor(
-        /**
-         * 母体程序标签
-         * * 应用：区分是「玩家」还是「AI」（实际上是个历史遗留问题）
-         */
-        public readonly label: MatrixControllerLabel,
+        label: MatrixProgramLabel,
         /**
          * 订阅者列表
          */
         public readonly subscribers: IMatrixControlReceiver[] = [],
     ) {
-        super();
+        super(label);
     }
 
     /**

@@ -1,5 +1,5 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { MatrixProgram } from "../../../api/control/MatrixControl";
+import { MatrixController } from "../../../api/control/MatrixControl";
 import { createServer, Server as HTTPServer, IncomingMessage, ServerResponse } from 'node:http';
 import { Server as WSServer, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
 import IBatrMatrix from "../../../main/IBatrMatrix";
@@ -12,7 +12,7 @@ import { 实体列表可视化, 母体可视化 } from "../../visualization/visu
  * * 响应式的
  * 母体程序
  */
-export default class MatrixVisualizer extends MatrixProgram {
+export default class MatrixVisualizer extends MatrixController {
 
 	/** 标签 */
 	public static readonly LABEL = "MatrixVisualizer";

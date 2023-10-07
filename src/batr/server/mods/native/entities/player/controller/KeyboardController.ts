@@ -1,6 +1,6 @@
 import KeyListener from "../../../../../../common/KeyListener";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import { MatrixProgram } from "../../../../../api/control/MatrixControl";
+import { MatrixController } from "../../../../../api/control/MatrixControl";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../registry/NativeMatrixMechanics";
 import IPlayer from "../IPlayer";
@@ -10,7 +10,7 @@ import IPlayer from "../IPlayer";
  * 
  * !【2023-10-06 21:56:17】现在因为能直接使用HTTP/WebSocket发送操作，这个程序接近废弃
  */
-export default class KeyboardController extends MatrixProgram {
+export default class KeyboardController extends MatrixController {
 
     protected _listener: KeyListener;
     /** 控制器所控制的玩家 */
