@@ -63,7 +63,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @param chargeMaxTime 工具的「最大充能时间」
 	 */
 	public constructor(
-		id: string,
+		id: typeID,
 		baseCD: uint,
 		chargeMaxTime: uint = 0,
 		reverseCharge: boolean = false,

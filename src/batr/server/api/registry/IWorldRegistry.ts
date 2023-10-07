@@ -1,4 +1,4 @@
-import { BlockType } from "../block/Block";
+
 import EntityType from "../entity/EntityType";
 
 /**
@@ -14,14 +14,16 @@ export type typeID = string;
  * * 只负责「查找&返回」与「保存&加载」，不负责「具体运行」
  * 
  * TODO: JS对象化
- * * 可能涉及的：对「工具使用映射表」的处理
+ * * 作为通用API，不会涉及「工具使用映射表」
  */
 export default interface IWorldRegistry {
 
     /**
      * 方块类型映射表：方块id⇒方块类型
+     * 
+     * !【2023-10-07 18:27:11】现在因为「方块数据结构」的改变（属性-状态 结构）而被放弃
      */
-    get blockTypeMap(): Map<typeID, BlockType>;
+    // get blockTypeMap(): Map<typeID, BlockType>;
 
     /**
      * 实体类型映射表：实体id⇒实体类型

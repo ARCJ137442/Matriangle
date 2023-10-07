@@ -1,7 +1,7 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import Projectile from "../Projectile";
-import { fPoint, iPoint } from "../../../../../../common/geometricTools";
+import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import IMatrix from "../../../../../main/IMatrix";
@@ -92,7 +92,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 			direction
 		);
 		// * 复制方块实例 //
-		this._carriedBlock = block.clone(); // ! 会复制出一个新实例，而非沿用原先的实例
+		this._carriedBlock = block.copy(); // ! 会复制出一个新实例，而非沿用原先的实例
 		// * 位置、速度等物理变量 //
 		this._position.copyFrom(position);
 		// this.speed.copyFrom(speed); // ! 【2023-09-22 20:23:52】现在不再存储「速度」这个变量，而是在世界刻中直接使用方向进行即时计算

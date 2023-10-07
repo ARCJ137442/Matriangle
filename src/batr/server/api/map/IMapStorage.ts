@@ -180,7 +180,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockType(p: iPointRef): BlockType | null;
+	getBlockID(p: iPointRef): BlockType | null;
 
 	/**
 	 * 设置地图上某位置的方块

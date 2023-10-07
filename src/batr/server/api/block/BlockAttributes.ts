@@ -94,7 +94,7 @@ export default class BlockAttributes {
 		this.defaultPixelAlpha = defaultPixelAlpha;
 	}
 
-	public clone(): BlockAttributes {
+	public copy(): BlockAttributes {
 		let tempAttributes: BlockAttributes = new BlockAttributes();
 		/**
 		 * !【2023-09-29 11:18:16】现在使用for-in遍历所有键值对进行复制

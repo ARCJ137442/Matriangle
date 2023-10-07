@@ -1,6 +1,6 @@
-import { ReLU_I, intMax, intMin, randInt } from "../../../../common/exMath";
+import { ReLU_I, intMax, intMin, randInt, randIntBetween } from "../../../../common/exMath";
 import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquareSurface } from "../../../../common/geometricTools";
-import { randomWithout, randomIn, clearArray, randomInWeightMap } from "../../../../common/utils";
+import { randomWithout, randomIn, clearArray, randomInWeightMap, MapFromObject } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
@@ -8,8 +8,8 @@ import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
 import IMatrix from "../../../main/IMatrix";
-import BlockColored from "../blocks/Colored";
-import BlockGate from "../blocks/Gate";
+import BSColored from "../blocks/BSColored";
+import BlockGate from "../blocks/BSGate";
 import BonusBox from "../entities/item/BonusBox";
 import PlayerTeam from "../entities/player/team/PlayerTeam";
 import ThrownBlock from "../entities/projectile/other/ThrownBlock";
@@ -19,7 +19,7 @@ import LaserPulse from "../entities/projectile/laser/LaserPulse";
 import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
 import MatrixRule_V1 from "../rule/MatrixRule_V1";
 import Tool from "../tool/Tool";
-import { MoveableWall, NativeBlockTypes } from "../registry/BlockTypeRegistry";
+import { NativeBlockIDs, NativeBlockPrototypes } from "../registry/BlockRegistry";
 import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
 import Projectile from "../entities/projectile/Projectile";
 import Wave from "../entities/projectile/other/Wave";
@@ -49,6 +49,7 @@ import Weapon from "../tool/Weapon";
 import BulletNuke from "../entities/projectile/bullet/BulletNuke";
 import BulletTracking from "../entities/projectile/bullet/BulletTracking";
 import BulletBomber from "../entities/projectile/bullet/BulletBomber";
+import BSGate from "../blocks/BSGate";
 
 
 /**
@@ -425,119 +426,107 @@ const _temp_toolUsage_PF: fPoint = new fPoint();
  * 
  * * 💭【2023-10-05 17:33:39】本来放在「工具注册表」里面的，但这个映射表的「机制注册」已经多于「ID注册」了。。。
 */
-export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
-    // * 武器：基础子弹 * //
-    [
-        NativeTools.TOOL_ID_BULLET_BASIC,
-        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-            host.addEntity(
-                new BulletBasic(
-                    user,
-                    host.map.towardWithRot_FF(
-                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                        direction,
-                        PROJECTILES_SPAWN_DISTANCE
-                    ),
+export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<typeID, toolUsageF>({
+    // * 武器：普通子弹 * //
+    [NativeTools.TOOL_ID_BULLET_BASIC]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+        host.addEntity(
+            new BulletBasic(
+                user,
+                host.map.towardWithRot_FF(
+                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
                     direction,
-                    0, 0, // 后续从工具处初始化
-                    BulletBasic.DEFAULT_SPEED, // ?【2023-10-05 17:39:49】是不是参数位置有问题
-                    computeFinalRadius(
-                        BulletBasic.DEFAULT_EXPLODE_RADIUS,
-                        user.attributes.buffRadius
-                    )
-                ).initFromTool(tool)
-            )
-        }
-    ],
+                    PROJECTILES_SPAWN_DISTANCE
+                ),
+                direction,
+                0, 0, // 后续从工具处初始化
+                BulletBasic.DEFAULT_SPEED, // ?【2023-10-05 17:39:49】是不是参数位置有问题
+                computeFinalRadius(
+                    BulletBasic.DEFAULT_EXPLODE_RADIUS,
+                    user.attributes.buffRadius
+                )
+            ).initFromTool(tool)
+        )
+    },
     // * 武器：核弹 * //
-    [
-        NativeTools.TOOL_ID_BULLET_NUKE,
-        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-            let scalePercent: number = (0.25 + chargePercent * 0.75);
-            host.addEntity(
-                new BulletNuke(
-                    user,
-                    host.map.towardWithRot_FF(
-                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                        direction,
-                        PROJECTILES_SPAWN_DISTANCE
-                    ),
+    [NativeTools.TOOL_ID_BULLET_NUKE]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+        let scalePercent: number = (0.25 + chargePercent * 0.75);
+        host.addEntity(
+            new BulletNuke(
+                user,
+                host.map.towardWithRot_FF(
+                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
                     direction,
-                    0, 0, // 后续从工具处初始化
-                    // * 充能越充分，速度越慢
-                    BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
-                    // * 充能越充分，爆炸范围越大
-                    computeFinalRadius(
-                        BulletNuke.DEFAULT_EXPLODE_RADIUS,
-                        user.attributes.buffRadius
-                    ) * scalePercent,
-                ).initFromTool(tool)
-            )
-        }
-    ],
+                    PROJECTILES_SPAWN_DISTANCE
+                ),
+                direction,
+                0, 0, // 后续从工具处初始化
+                // * 充能越充分，速度越慢
+                BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
+                // * 充能越充分，爆炸范围越大
+                computeFinalRadius(
+                    BulletNuke.DEFAULT_EXPLODE_RADIUS,
+                    user.attributes.buffRadius
+                ) * scalePercent,
+            ).initFromTool(tool)
+        )
+    },
     // * 武器：轰炸机 * //
-    [
-        NativeTools.TOOL_ID_BULLET_BOMBER,
-        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-            let scalePercent: number = (0.25 + chargePercent * 0.75);
-            host.addEntity(
-                new BulletBomber(
-                    user,
-                    host.map.towardWithRot_FF(
-                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                        direction,
-                        PROJECTILES_SPAWN_DISTANCE
-                    ),
+    [NativeTools.TOOL_ID_BULLET_BOMBER]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+        let scalePercent: number = (0.25 + chargePercent * 0.75);
+        host.addEntity(
+            new BulletBomber(
+                user,
+                host.map.towardWithRot_FF(
+                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
                     direction,
-                    0, 0, // 后续从工具处初始化
-                    // * 充能越充分，速度越慢
-                    BulletBomber.DEFAULT_SPEED,
-                    // * 充能越充分，爆炸范围越大
-                    computeFinalRadius(
-                        BulletBomber.DEFAULT_EXPLODE_RADIUS,
-                        user.attributes.buffRadius
-                    ),
-                    // * 充能越充分，爆炸频率越高
-                    uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)),
-                ).initFromTool(tool)
-            )
-        }
-    ],
+                    PROJECTILES_SPAWN_DISTANCE
+                ),
+                direction,
+                0, 0, // 后续从工具处初始化
+                // * 充能越充分，速度越慢
+                BulletBomber.DEFAULT_SPEED,
+                // * 充能越充分，爆炸范围越大
+                computeFinalRadius(
+                    BulletBomber.DEFAULT_EXPLODE_RADIUS,
+                    user.attributes.buffRadius
+                ),
+                // * 充能越充分，爆炸频率越高
+                uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)),
+            ).initFromTool(tool)
+        )
+    },
     // * 武器：跟踪子弹 * //
-    [
-        NativeTools.TOOL_ID_BULLET_TRACKING,
-        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-            // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-            host.addEntity(
-                new BulletTracking(
-                    user,
-                    host.map.towardWithRot_FF(
-                        alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                        direction,
-                        PROJECTILES_SPAWN_DISTANCE
-                    ),
+    [NativeTools.TOOL_ID_BULLET_TRACKING]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
+        host.addEntity(
+            new BulletTracking(
+                user,
+                host.map.towardWithRot_FF(
+                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
                     direction,
-                    0, 0, // 后续从工具处初始化
-                    // * 充能越充分，速度越慢
-                    BulletTracking.DEFAULT_SPEED,
-                    // * 充能越充分，爆炸范围越大
-                    computeFinalRadius(
-                        BulletTracking.DEFAULT_EXPLODE_RADIUS,
-                        user.attributes.buffRadius
-                    ),
-                    getPlayers(host),
-                    // * 充能越充分，追踪时速度越快
-                    1 + chargePercent * 0.5,
-                    // * 完全充能⇒大于1
-                    chargePercent >= 1
-                ).initFromTool(tool)
-            )
-        }
-    ],
-])
+                    PROJECTILES_SPAWN_DISTANCE
+                ),
+                direction,
+                0, 0, // 后续从工具处初始化
+                // * 充能越充分，速度越慢
+                BulletTracking.DEFAULT_SPEED,
+                // * 充能越充分，爆炸范围越大
+                computeFinalRadius(
+                    BulletTracking.DEFAULT_EXPLODE_RADIUS,
+                    user.attributes.buffRadius
+                ),
+                getPlayers(host),
+                // * 充能越充分，追踪时速度越快
+                1 + chargePercent * 0.5,
+                // * 完全充能⇒大于1
+                chargePercent >= 1
+            ).initFromTool(tool)
+        )
+    },
+})
 
 
 /**
@@ -611,7 +600,7 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
                 // Throw
                 if (this.testCanPass(carryX, carryY, false, true, false, false, false)) {
                     // Add Block
-                    p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.clone(), toolRot, chargePercent);
+                    p = new ThrownBlock(this, centerX, centerY, player, player.carriedBlock.copy(), toolRot, chargePercent);
                     // Clear
                     player.setCarriedBlock(null);
                 }
@@ -1422,7 +1411,7 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_MoveableWall: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
+export const randomTick_MoveableWall: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
     let randomRot: uint, tPoint: fPoint;
     // add laser by owner=null
     let p: ThrownBlock;
@@ -1446,9 +1435,9 @@ export const randomTick_MoveableWall: randomTickEventF = (host: IMatrix, block: 
         );
         host.map.storage.setVoid(position);
         host.addEntity(p);
-        // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次
-        if (!(block as MoveableWall)?.virus)
-            break;
+        // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次 // !【2023-10-07 19:24:47】因最新的「方块状态重写」「变量用途不明」等原因，废弃之
+        // if (!(block.state as MoveableWall)?.virus)
+        break;
     }
     while (++i < 0x10);
 }
@@ -1463,26 +1452,29 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_ColorSpawner: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
-    // TODO: 新位置寻址逻辑
-    let randomPoint: iPoint = host.map.storage.randomPoint;
-    let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
-    if (!host.map.isInMap_I(randomPoint) && host.map.storage.isVoid(randomPoint)) {
-        host.map.storage.setBlock(randomPoint, newBlock); // * 后续世界需要处理「方块更新事件」
+export const randomTick_ColorSpawner: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+    // 新位置寻址：随机位移
+    _temp_randomTick_ColorSpawner_blockP.copyFrom(position).inplaceMap<int>(
+        (p: int): number => p + randIntBetween(-4, 5)
+    )
+    if ( // 放置条件：在地图内&是空位
+        host.map.isInMap_I(_temp_randomTick_ColorSpawner_blockP) &&
+        host.map.storage.isVoid(_temp_randomTick_ColorSpawner_blockP)
+    ) {
+        // 生成一个新的随机「颜色方块」
+        let newBlock: Block<BSColored> = NativeBlockPrototypes.COLORED.softCopy().randomizeState();
+        // 放置
+        host.map.storage.setBlock(_temp_randomTick_ColorSpawner_blockP, newBlock); // * 后续世界需要处理「方块更新事件」
         host.addEntity(
-            new EffectBlockLight(
-                alignToGridCenter_P( // 把位置转移到中央
-                    randomPoint,
-                    _temp_randomTick_ColorSpawner
-                ),
-                newBlock.pixelColor,
-                newBlock.pixelAlpha,
+            EffectBlockLight.fromBlock(
+                _temp_randomTick_ColorSpawner_blockP,
+                newBlock,
                 false // 淡出
             )
         )
     }
 }
-const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
+const _temp_randomTick_ColorSpawner_blockP: iPoint = new iPoint();
 
 /**
  * （示例）响应世界随机刻 @ LaserTrap
@@ -1497,8 +1489,7 @@ const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_LaserTrap: randomTickEventF = (
-    host: IMatrix, block: Block, position: iPoint): void => {
+export const randomTick_LaserTrap: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
     let randomR: mRot;
     // add laser by owner=null
     let p: Laser;
@@ -1564,6 +1555,16 @@ export const randomTick_LaserTrap: randomTickEventF = (
 const _temp_randomTick_LaserTrap: iPoint = new iPoint();
 
 /**
+ * 方块随机刻映射表
+ * * 用于安装在「方块随机刻分派者」中
+ */
+export const NATIVE_BLOCK_RANDOM_TICK_MAP: Map<typeID, randomTickEventF> = MapFromObject<typeID, randomTickEventF>({
+    [NativeBlockIDs.COLOR_SPAWNER]: randomTick_ColorSpawner,
+    [NativeBlockIDs.LASER_TRAP]: randomTick_LaserTrap,
+    [NativeBlockIDs.MOVEABLE_WALL]: randomTick_MoveableWall,
+})
+
+/**
  * 从一个「发出点」计算「应有的激光长度」
  * * 原`getLaserLength`、`getLaserLength2`
  * * 逻辑：从「发出点」出发，沿着方向直线遍历（直到「最大长度」）
@@ -1606,11 +1607,12 @@ const _temp_calculateLaserLength: iPointVal = new iPoint();
  */
 export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
     // 已经打开的不要管
-    if (block instanceof BlockGate && (block as BlockGate).open) return;
+    if (block.state instanceof BSGate) {
+        if (block.state.open) return;
+        block.state.open = false;
+        // TODO: 更新显示
+    }
     // 关闭的「门」随着随机刻打开
-    let newBlock: BlockGate = block.clone() as BlockGate // ! 原方块的状态不要随意修改！
-    newBlock.open = true;
-    host.map.storage.setBlock(position, newBlock);
 }
 
 /**

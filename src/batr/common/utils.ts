@@ -360,10 +360,10 @@ export function isEqualObject(
 }
 
 /**
- * 合并一个字典到另一个字典
+ * 合并一个映射表到另一个映射表
  * 
- * @param a 要合并入的字典
- * @param b 提供键值对的字典
+ * @param a 要合并入的映射表
+ * @param b 提供键值对的映射表
  */
 export function mergeMaps<K, V>(
 	a: Map<K, V>,
@@ -372,6 +372,42 @@ export function mergeMaps<K, V>(
 	for (let [key, value] of b) {
 		a.set(key, value);
 	}
+}
+
+/**
+ * 从对象构建映射
+ * @param obj 要变成映射的对象
+ * @returns 对象变成的映射
+ */
+export function MapFromObject<K extends key, V>(obj: { [key in K]: V }): Map<K, V> {
+	return new Map<K, V>(Object.entries(obj) as [K, V][]);
+}
+
+/**
+ * 从「基础对象列表」构建「键值对映射表」
+ * 
+ * @param basis 用于构造键值对的「基础对象列表」
+ * @param kF 基础对象⇒键
+ * @param vF 基础对象⇒值
+ * @returns 一个键值对映射表
+ */
+export function MapFromGeneratorKV<B, K extends key, V>(basis: B[], kF: (b: B) => K, vF: (b: B) => V): Map<K, V> {
+	let map: Map<K, V> = new Map<K, V>();
+	for (let base of basis) {
+		map.set(kF(base), vF(base));
+	}
+	return map;
+}
+
+/**
+ * 上一个「键值对映射表」的特殊情况：基础对象=键
+ * 
+ * @param keys 所有键的列表
+ * @param vF 键⇒值
+ * @returns 构造出来的映射表
+ */
+export function MapFromGeneratorK<K extends key, V>(keys: K[], vF: (k: K) => V): Map<K, V> {
+	return MapFromGeneratorKV(keys, identity, vF);
 }
 
 export const isDefined = (obj: any): boolean => obj !== undefined;
@@ -482,7 +518,7 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> 
 }
 
 /** 可以用来索引对象值的索引类型 */
-export type key = string | number;
+export type key = string | number/*  | symbol */; // ? 【2023-10-07 21:24:37】是否要加入symbol，待定
 
 /** 可空对象 */ // ! 【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
 // export type nullable<T> = T | null;

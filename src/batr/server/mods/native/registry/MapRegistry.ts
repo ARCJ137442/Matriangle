@@ -2,27 +2,14 @@ import { randInt } from "../../../../common/exMath";
 import { iPoint } from "../../../../common/geometricTools";
 import { randomIn, randomBoolean2 } from "../../../../common/utils";
 import { uint, int } from "../../../../legacy/AS3Legacy";
-import Block, { BlockType } from "../../../api/block/Block";
+import Block from "../../../api/block/Block";
+
 import IMap from "../../../api/map/IMap";
 import IMapStorage from "../../../api/map/IMapStorage";
-import BlockBedrock from "../blocks/Bedrock";
-import BlockColorSpawner from "../blocks/ColorSpawner";
-import BlockGate from "../blocks/Gate";
-import BlockGlass from "../blocks/Glass";
-import BlockLaserTrap from "../blocks/LaserTrap";
-import BlockMetal from "../blocks/Metal";
-import BlockMoveableWall from "../blocks/MoveableWall";
-import BlockSupplyPoint from "../blocks/SupplyPoint";
-import BlockVoid from "../blocks/Void";
-import BlockWall from "../blocks/Wall";
-import BlockWater from "../blocks/Water";
-import BlockXTrapHurt from "../blocks/XTrapHurt";
-import BlockXTrapKill from "../blocks/XTrapKill";
-import BlockXTrapRotate from "../blocks/XTrapRotate";
 import { fillBlock, setBlock, drawLaserTrapDownPillar, drawLaserTrapUpPillar, addSpawnPointWithMark, fillReflectBlock, setReflectBlock, fillReflectMirrorBlock, setReflectMirrorBlock } from "../maps/MapConstructTools";
 import MapStorageSparse from "../maps/MapStorageSparse";
 import Map_V1 from "../maps/Map_V1";
-import { ALL_NATIVE_BLOCKS, NativeBlockTypes } from "./BlockTypeRegistry";
+import { ALL_NATIVE_BLOCKS, NativeBlockIDs, NativeBlockPrototypes } from "./BlockRegistry";
 
 /**
  * 定义所有世界原生（自带）的地图
@@ -35,19 +22,20 @@ export module NativeMaps {
     export const MAP_MAX_X: uint = MAP_SIZE - 1;
     export const MAP_MAX_Y: uint = MAP_SIZE - 1;
 
-    const VOID: Block = BlockVoid.INSTANCE;
-    const BEDROCK: Block = new BlockBedrock();
-    const WALL: Block = new BlockWall();
-    const WATER: Block = new BlockWater();
-    const GLASS: Block = new BlockGlass();
-    const METAL: Block = new BlockMetal();
-    const MOVEABLE_WALL: Block = new BlockMoveableWall();
-    const X_TRAP_HURT: Block = BlockXTrapHurt.INSTANCE;
-    const X_TRAP_KILL: Block = BlockXTrapKill.INSTANCE;
-    const X_TRAP_ROTATE: Block = BlockXTrapRotate.INSTANCE;
-    const COLOR_SPAWNER: Block = BlockColorSpawner.INSTANCE;
-    const LASER_TRAP: Block = BlockLaserTrap.INSTANCE;
-    const SUPPLY_POINT: Block = BlockSupplyPoint.INSTANCE;
+    const VOID: Block = NativeBlockPrototypes.VOID.softCopy();
+    const BEDROCK: Block = NativeBlockPrototypes.BEDROCK.softCopy();
+    const WALL: Block = NativeBlockPrototypes.WALL.softCopy();
+    const WATER: Block = NativeBlockPrototypes.WATER.softCopy();
+    const GLASS: Block = NativeBlockPrototypes.GLASS.softCopy();
+    const METAL: Block = NativeBlockPrototypes.METAL.softCopy();
+    const MOVEABLE_WALL: Block = NativeBlockPrototypes.MOVEABLE_WALL.softCopy();
+    const X_TRAP_HURT: Block = NativeBlockPrototypes.X_TRAP_HURT.softCopy();
+    const X_TRAP_KILL: Block = NativeBlockPrototypes.X_TRAP_KILL.softCopy();
+    const X_TRAP_ROTATE: Block = NativeBlockPrototypes.X_TRAP_ROTATE.softCopy();
+    const COLOR_SPAWNER: Block = NativeBlockPrototypes.COLOR_SPAWNER.softCopy();
+    const LASER_TRAP: Block = NativeBlockPrototypes.LASER_TRAP.softCopy();
+    const SUPPLY_POINT: Block = NativeBlockPrototypes.SUPPLY_POINT.softCopy();
+    const GATE_OPEN: Block = NativeBlockPrototypes.GATE_OPEN.softCopy()//.setState({ open: true }); // !【2023-10-07 21:55:51】现在直接用原型对象，不再使用「链式操作」动态设置键值对
 
     // 所有地图存储的常量
     const STORAGE_EMPTY: MapStorageSparse = new MapStorageSparse(2);
@@ -158,11 +146,11 @@ export module NativeMaps {
     //====Map 5====//
     STORAGE_5.generatorF = (storage: IMapStorage): IMapStorage => {
         storage.copyFrom(STORAGE_FRAME, true, false);
-        let randNum: int = 24 + randInt(47), randType: BlockType;
+        let randNum: int = 24 + randInt(47), randPrototype: Block;
         let iP: iPoint;
         while (--randNum > 0) {
             iP = storage.randomPoint;
-            if (storage.getBlockType(iP) == NativeBlockTypes.BEDROCK) {
+            if (storage.getBlockID(iP) == NativeBlockIDs.BEDROCK) {
                 storage.setVoid(iP);
             } /*
 					else if(Utils.randomBoolean()) {
@@ -174,8 +162,8 @@ export module NativeMaps {
 						}
 					}*/
             else {
-                randType = randomIn(ALL_NATIVE_BLOCKS);
-                storage.setBlock(iP, (randType as any).randomInstance(randType)); // ! 一定是Block的子类型
+                randPrototype = randomIn(ALL_NATIVE_BLOCKS);
+                storage.setBlock(iP, randPrototype.softCopy().randomizeState()); // ! 一定是Block的子类型
             }
         }
         return storage;
@@ -183,26 +171,26 @@ export module NativeMaps {
     STORAGE_5.generateNext()
     //====Map 6====//
     STORAGE_6.copyFrom(STORAGE_FRAME); {
-        setBlock(STORAGE_6, 3, 3, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 3, 20, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 20, 3, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 20, 20, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 3, 3, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 3, 20, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 20, 3, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 20, 20, NativeBlockPrototypes.COLOR_SPAWNER.copy());
 
         // 1
-        setBlock(STORAGE_6, 20, 9, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 20, 14, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 20, 9, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 20, 14, NativeBlockPrototypes.COLOR_SPAWNER.copy());
 
         // x+
-        setBlock(STORAGE_6, 3, 9, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 3, 14, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 3, 9, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 3, 14, NativeBlockPrototypes.COLOR_SPAWNER.copy());
 
         // x-
-        setBlock(STORAGE_6, 9, 20, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 14, 20, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 9, 20, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 14, 20, NativeBlockPrototypes.COLOR_SPAWNER.copy());
 
         // y+
-        setBlock(STORAGE_6, 9, 3, BlockColorSpawner.INSTANCE);
-        setBlock(STORAGE_6, 14, 3, BlockColorSpawner.INSTANCE);
+        setBlock(STORAGE_6, 9, 3, NativeBlockPrototypes.COLOR_SPAWNER.copy());
+        setBlock(STORAGE_6, 14, 3, NativeBlockPrototypes.COLOR_SPAWNER.copy());
 
         // y-
         fillBlock(STORAGE_6, 4, 20, 8, 20, GLASS);
@@ -466,8 +454,8 @@ export module NativeMaps {
         // Bedrock&Gate
         setReflectBlock(STORAGE_F, true, true, 1, 1, BEDROCK);
         fillReflectMirrorBlock(STORAGE_F, true, true, 2, 1, 8, 1, BEDROCK);
-        setReflectMirrorBlock(STORAGE_F, true, true, 1, 0, new BlockGate(true));
-        setReflectMirrorBlock(STORAGE_F, true, true, 9, 1, new BlockGate(true));
+        setReflectMirrorBlock(STORAGE_F, true, true, 1, 0, GATE_OPEN.softCopy());
+        setReflectMirrorBlock(STORAGE_F, true, true, 9, 1, GATE_OPEN.softCopy());
 
         // Traps/gate/supply
         setReflectBlock(STORAGE_F, true, true, 3, 3, X_TRAP_KILL);
@@ -482,15 +470,15 @@ export module NativeMaps {
         fillReflectMirrorBlock(STORAGE_F, true, true, 10, 1, 10, 6, WATER);
         setReflectBlock(STORAGE_F, true, true, 8, 8, COLOR_SPAWNER);
         setReflectMirrorBlock(STORAGE_F, true, true, 9, 8, LASER_TRAP);
-        setReflectMirrorBlock(STORAGE_F, true, true, 10, 7, new BlockGate(true), true);
+        setReflectMirrorBlock(STORAGE_F, true, true, 10, 7, GATE_OPEN.softCopy(), true);
         setReflectMirrorBlock(STORAGE_F, true, true, 10, 8, BEDROCK);
-        setReflectMirrorBlock(STORAGE_F, true, true, 11, 8, new BlockGate(true), true);
+        setReflectMirrorBlock(STORAGE_F, true, true, 11, 8, GATE_OPEN.softCopy(), true);
     }
     //====Map G====//
     STORAGE_G.copyFrom(STORAGE_FRAME); {
         fillReflectMirrorBlock(STORAGE_G, true, true, 3, 3, 8, 3, BEDROCK);
         setReflectMirrorBlock(STORAGE_G, true, true, 1, 1, MOVEABLE_WALL);
-        fillBlock(STORAGE_G, 4, 4, 19, 19, new BlockGate(true), false, true);
+        fillBlock(STORAGE_G, 4, 4, 19, 19, GATE_OPEN.softCopy(), false, true);
         for (i = 0; i < 4; i++)
             addSpawnPointWithMark(STORAGE_G, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
     }

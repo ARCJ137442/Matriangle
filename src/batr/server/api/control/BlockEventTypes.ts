@@ -2,6 +2,7 @@ import { iPoint } from "../../../common/geometricTools";
 import { uint } from "../../../legacy/AS3Legacy";
 import IMatrix from "../../main/IMatrix";
 import Block from "../block/Block";
+import BlockState from "../block/BlockState";
 
 
 //==== 取自「事件分派」系统，旨在「兼顾通用性」时避免循环导入 ====//
@@ -37,10 +38,11 @@ export type BlockEventPatchMap = {
 
 /**
  * 「世界随机刻」的「事件处理函数」类型
+ * TODO: 因为「方块随机刻分派者」的缘故，是否需要独立出来？或者，整个「方块事件」都可以用一个「程序」分派出去？
  */
-export type randomTickEventF = (
+export type randomTickEventF<BS extends BlockState | null = any> = (
     host: IMatrix,
-    block: Block,
+    block: Block<BS>,
     position: iPoint
 ) => void;
 
@@ -51,7 +53,6 @@ export type blockTickEventF = (
     host: IMatrix,
     block: Block,
     position: iPoint,
-    time: uint
 ) => void;
 
 export enum BlockEventTypes {

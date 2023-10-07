@@ -1,9 +1,13 @@
+/**
+ * 这个类最初是注册「原生2D地图」时使用的
+ * * 【2023-10-07 21:13:54】目前还有很多还是2D，缺乏高维化扩展
+ */
 import { iPoint } from "../../../../common/geometricTools";
 import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
-import BlockSpawnPointMark from "../blocks/SpawnPointMark";
 import IMapStorage from "../../../api/map/IMapStorage";
+import { NativeBlockPrototypes } from "../registry/BlockRegistry";
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
 const _temp_point_2d: iPoint = new iPoint(2)
@@ -16,7 +20,7 @@ const _temp_point_2d: iPoint = new iPoint(2)
  * 该函数用于函数式编程中
  */
 export function cloneBlock(block: Block): Block {
-    return block.clone();
+    return block.copy();
 }
 
 /**
@@ -34,7 +38,7 @@ export function setBlock(
     block: Block,
     clone: boolean = false
 ): void {
-    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), clone ? block.clone() : block);
+    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), clone ? block.copy() : block);
 }
 
 
@@ -306,5 +310,8 @@ export function drawLaserTrapBox(
 
 export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
     storage.addSpawnPointAt(_temp_point_2d.copyFromArgs(x, y));
-    storage.setBlock(_temp_point_2d.copyFromArgs(x, y), BlockSpawnPointMark.INSTANCE);
+    storage.setBlock(
+        _temp_point_2d.copyFromArgs(x, y),
+        NativeBlockPrototypes.SPAWN_POINT_MARK.copy() // ! 属性固定且无状态，故浅拷贝
+    );
 }

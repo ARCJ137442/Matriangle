@@ -1,6 +1,7 @@
 import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP, uniLoadJSObject, uniSaveJSON, uniSaveJSObject } from "../../../../common/JSObjectify";
 import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
+import { typeID } from "../../../api/registry/IWorldRegistry";
 import { FIXED_TPS } from "../../../main/GlobalWorldVariables";
 import Tool from "./Tool";
 
@@ -102,7 +103,7 @@ export default class Weapon extends Tool {
 
 	//============Constructor & Destructor============//
 	public constructor(
-		id: string,
+		id: typeID,
 		baseCD_S: number = 0,
 		chargeMaxTime_S: number = 0,
 		baseDamage: uint = 1,

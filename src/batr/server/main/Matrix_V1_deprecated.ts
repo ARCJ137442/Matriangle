@@ -960,7 +960,7 @@ export default class Matrix_V1 implements IMatrix {
 	/* Get Map from Rule
 	 */
 	protected getRandomMap(): IMap {
-		return this.rule.randomMapEnable.generateNew(); // ALL_MAPS[exMath.random(World.VALID_MAP_COUNT)].clone()
+		return this.rule.randomMapEnable.generateNew(); // ALL_MAPS[exMath.random(World.VALID_MAP_COUNT)].copy()
 	}
 
 	/* Change Map into the other

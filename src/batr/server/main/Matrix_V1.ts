@@ -50,11 +50,7 @@ export default class Matrix_V1 implements IMatrix {
 
 	//========🕹️控制部分：主循环========//
 	tick(): void {
-		// 方块随机刻
-		this.randomTickAt(
-			this.map.storage.randomPoint
-		)
-		// 实体刻
+		// 实体刻 // !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
 		for (const entity of this._entitySystem.entries) {
 			// 是否合法
 			// !【2023-10-05 15:30:45】因为「实体系统」可能删掉了中间的实体，所以确实有可能遍历到`undefined`（除非用GC清除冗余……但那样还不如直接跳过）
@@ -83,27 +79,6 @@ export default class Matrix_V1 implements IMatrix {
 		}
 	}
 	protected _temp_tick_entityToDeleted: Entity[] = [];
-
-	/**
-	 * 方块随机刻
-	 * @param p 随机刻轮到的位置
-	 */
-	protected randomTickAt(p: iPointRef): void {
-		// BonusBox(Supply) // TODO: 奖励箱生成逻辑
-		/* if (this.map.testBonusBoxCanPlaceAt(p, getPlayers(this))) {
-			if (this.map.storage.getBlockAttributes(p).supplyingBonus ||
-				((this.rule.bonusBoxMaxCount < 0 || this._entitySystem.bonusBoxCount < this.rule.bonusBoxMaxCount) &&
-					Utils.randomBoolean2(this.rule.bonusBoxSpawnChance))
-			) {
-				addBonusBoxInRandomTypeByRule(this, p);
-			}
-		} */
-		// Other
-		switch (this.map.storage.getBlockType(p)) {
-			// TODO: 日后在这里建立分派机制
-
-		}
-	}
 
 	//========🎛️规则部分：规则加载、规则读写========//
 

@@ -3,7 +3,6 @@ import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
 import { IEntityInGrid, IEntityOutGrid } from "../../api/entity/EntityInterfaces";
-import BlockVoid from "../native/blocks/Void";
 import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
 import Player from "../native/entities/player/Player";
@@ -14,6 +13,7 @@ import { MatrixProgram } from "../../api/control/MatrixProgram";
 import BonusBox from "../native/entities/item/BonusBox";
 import Effect from "../../api/entity/Effect";
 import Projectile from "../native/entities/projectile/Projectile";
+import { NativeBlockIDs } from "../native/registry/BlockRegistry";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -22,11 +22,11 @@ import Projectile from "../native/entities/projectile/Projectile";
 
 /**
  * 若方块为「空」，则填充空格；否则截断并补全空格
- * @param name 方块类型（类名）
+ * @param id 方块类型（类名）
  * @returns 格式化后的定长名字
  */
-export function showBlock(name: string, maxLength: uint = 7): string {
-	return showName(name == BlockVoid.name ? '' : name.slice(5, 5 + maxLength), maxLength)
+export function showBlock(id: string, maxLength: uint = 7): string {
+	return showName(id == NativeBlockIDs.VOID ? '' : id.slice(5, 5 + maxLength), maxLength)
 }
 
 export function showName(name: string, maxLength: uint = 7): string {
@@ -42,7 +42,7 @@ export function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[])
 			iP.copyFromArgs(x, y); // ! 会忽略其它地方的值
 			line.push(
 				showBlock(
-					storage.getBlock(iP).type.name
+					storage.getBlock(iP).id
 				)
 			);
 		}
@@ -131,7 +131,7 @@ export function 稀疏地图母体可视化(
 				line.push(
 					e === null ?
 						showBlock(
-							storage.getBlock(iP).type.name, string_l
+							storage.getBlock(iP).id, string_l
 						) :
 						showEntity(e, string_l)
 				);

@@ -4,8 +4,9 @@ import Block from "../../../../api/block/Block";
 import Effect from "../../../../api/entity/Effect";
 import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { uintToPercent } from "../../../../../common/utils";
-import { fPoint } from "../../../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalWorldVariables";
+import { alignToGridCenter_P } from "../../../../general/PosTransform";
 
 /**
  * 方块光效
@@ -30,16 +31,25 @@ export default class EffectBlockLight extends Effect {
 		return 1 - effect.lifePercent;
 	}
 
-	//============Static Functions============//
 	/**
 	 * 快捷方式：根据方块构造特效
-	 * @param position 位置
+	 * @param position 位置（格点）
 	 * @param block 来源的方块
 	 * @param reverse 是否倒放
 	 * @returns 一个新实例
 	 */
-	public static fromBlock(position: fPoint, block: Block, reverse: boolean = false): EffectBlockLight {
-		return new EffectBlockLight(position, block.pixelColor, block.pixelAlpha, reverse);
+	public static fromBlock(position: iPoint, block: Block, reverse: boolean = false): EffectBlockLight {
+		return new EffectBlockLight(
+			position,
+			block.pixelColor, block.pixelAlpha,
+			reverse
+		).alignGridCenter(position);
+	}
+
+	/** 快捷方式：在从整数坐标（格点）复制数据后，对齐网格中心 */
+	public alignGridCenter(position: iPoint): this {
+		alignToGridCenter_P(position, this._position)
+		return this;
 	}
 
 	//============Instance Variables============//

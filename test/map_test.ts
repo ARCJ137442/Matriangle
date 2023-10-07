@@ -4,13 +4,10 @@ import IMap from '../src/batr/server/api/map/IMap';
 import IMapLogic from '../src/batr/server/api/map/IMapLogic';
 import IMapStorage from '../src/batr/server/api/map/IMapStorage';
 import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse';
-import BlockVoid from '../src/batr/server/mods/native/blocks/Void';
 import { mRot } from '../src/batr/server/general/GlobalRot';
 import { randInt, randIntBetween, sum } from '../src/batr/common/exMath';
 import { NativeMaps } from '../src/batr/server/mods/native/registry/MapRegistry';
-import BlockWall from '../src/batr/server/mods/native/blocks/Wall';
-import BlockBedrock from '../src/batr/server/mods/native/blocks/Bedrock';
-import BlockGlass from '../src/batr/server/mods/native/blocks/Glass';
+import { NativeBlockIDs, NativeBlockPrototypes } from '../src/batr/server/mods/native/registry/BlockRegistry';
 
 let { log, info, time, timeEnd } = console;
 log(new MapStorageSparse(2))
@@ -81,11 +78,11 @@ function 地图读取测试(): void {
 
 /**
  * 若方块为「空」，则填充空格；否则截断并补全空格
- * @param name 方块类型（类名）
+ * @param id 方块id
  * @returns 格式化后的定长名字
  */
-function showBlock(name: string): string {
-    return (name == BlockVoid.name ? '' : name.slice(5, 5 + 7)).padEnd(7)
+function showBlock(id: string): string {
+    return (id == NativeBlockIDs.VOID ? '' : id.slice(5, 5 + 7)).padEnd(7)
 }
 function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
     let line: string[];
@@ -96,7 +93,7 @@ function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void 
             iP.copyFromArgs(x, y); // ! 会忽略其它地方的值
             line.push(
                 showBlock(
-                    storage.getBlock(iP).type.name
+                    storage.getBlock(iP).id
                 )
             );
         }
@@ -170,7 +167,7 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
     s3.forEachValidPositions((p: iPoint): void => {
         // 外框
         if (p.some(x => x === 0 || x === 7))
-            s3.setBlock(p, new BlockWall())
+            s3.setBlock(p, NativeBlockPrototypes.COLORED.softCopy())
         // 内空
         else
             s3.setVoid(p)
@@ -189,9 +186,9 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
     s4.forEachValidPositions((p: iPoint): void => {
         // 外框
         if (p.some(x => x === 0 || x === 3))
-            s4.setBlock(p, new BlockBedrock())
+            s4.setBlock(p, NativeBlockPrototypes.BEDROCK.softCopy())
         else if (sum(p) == 5)
-            s4.setBlock(p, new BlockGlass())
+            s4.setBlock(p, NativeBlockPrototypes.GLASS.softCopy())
         // 内空
         else
             s4.setVoid(p)

@@ -718,7 +718,7 @@ export default class Player extends Entity implements IPlayer {
 		else {
 			if (this._carriedBlock !== null && this.contains(this._carriedBlock))
 				this.removeChild(this._carriedBlock);
-			this._carriedBlock = copyBlock ? block.clone() : block;
+			this._carriedBlock = copyBlock ? block.copy() : block;
 			this._carriedBlock.x = DEFAULT_SIZE / 2;
 			this._carriedBlock.y = -DEFAULT_SIZE / 2;
 			this._carriedBlock.alpha = Player.CARRIED_BLOCK_ALPHA;

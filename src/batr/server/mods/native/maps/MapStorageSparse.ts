@@ -4,11 +4,11 @@ import { generateArray, identity, key, mapObject, randomIn } from "../../../../c
 import { mRot, rotate_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import Block, { BlockType } from "../../../api/block/Block";
-import { BLOCK_VOID } from "../blocks/Void";
 import IMapStorage from "../../../api/map/IMapStorage";
-import { NativeBlockTypeMap, NativeBlockTypes } from "../registry/BlockTypeRegistry";
 import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true, uniSaveJSObject } from "../../../../common/JSObjectify";
+import Block from "../../../api/block/Block";
+import { NativeBlockConstructorMap, NativeBlockIDs, NativeBlockPrototypes } from "../registry/BlockRegistry";
+import { typeID } from "../../../api/registry/IWorldRegistry";
 
 /**
  * 稀疏地图
@@ -78,11 +78,11 @@ export default class MapStorageSparse implements IMapStorage {
             return mapObject(
                 v,
                 identity,
-                (value: JSObject): Block => Block.fromJSObject(value, NativeBlockTypeMap)
+                (value: JSObject): Block => Block.fromJSObject(value, NativeBlockConstructorMap)
             )
         },
         loadRecursiveCriterion_false,
-        (): Block => NativeBlockTypes.VOID(),
+        (): Block => NativeBlockPrototypes.VOID.copy(), // 本身属性不变且无状态，所以直接复制
     );
 
     /**
@@ -96,7 +96,7 @@ export default class MapStorageSparse implements IMapStorage {
      * TODO: ↑因为「方块对象化」就会涉及「到底是什么类」的问题，即涉及「内部引用」的问题
      * * 💭牵一发而动全身
      */
-    protected readonly _defaultBlock: Block = BLOCK_VOID;
+    protected readonly _defaultBlock: Block = NativeBlockPrototypes.VOID.copy();
 
     /**
      * * 默认是二维
@@ -444,7 +444,7 @@ export default class MapStorageSparse implements IMapStorage {
     }
     protected static _temp_copyContent_F_deep(p: iPoint, source: IMapStorage, target: IMapStorage): void {
         if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
-            target.setBlock(p, (source.getBlock(p) as Block).clone())
+            target.setBlock(p, (source.getBlock(p) as Block).copy())
     }
     public copyContentFrom(source: IMapStorage, clearSelf: boolean = false, deep: boolean = false): IMapStorage {
         if (clearSelf) {
@@ -516,20 +516,18 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     /**
-     * * 因getBlock一定能返回方块实例，所以此处直接访问
-     * @param x x坐标
-     * @param y y坐标
-     * @returns 返回的方块类型（一定有值）
+     * * 因getBlock一定能返回方块实例，所以此处直接访问其id
+     * @param p 坐标
+     * @returns 返回的方块id（一定有值）
      */
-    public getBlockType(p: iPoint): BlockType {
-        return this.getBlock(p).type; // TODO: 具体的「.type」属性能否工作，还有待验证
+    public getBlockID(p: iPoint): typeID {
+        return this.getBlock(p).id; // TODO: 具体的「.type」属性能否工作，还有待验证
     }
 
     /**
      * 根据更新了的坐标，更新自己的「地图边界」
      * * 【20230910 10:56:53】其实在目前「地图大小固定」的情况下，这个更新很少成功
-     * @param ux 更新为「有效」的x坐标
-     * @param uy 更新为「有效」的y坐标
+     * @param p 更新为「有效」的坐标
      */
     protected updateBorder(p: iPoint): void {
         let pi: int;
@@ -557,7 +555,7 @@ export default class MapStorageSparse implements IMapStorage {
      * @param y y坐标
      */
     public isVoid(p: iPoint): boolean {
-        return this.getBlockType(p) === NativeBlockTypes.VOID; // ! 已经锁定「默认方块」就是「空」
+        return this.getBlockID(p) === NativeBlockIDs.VOID; // ! 已经锁定「默认方块」就是「空」
     }
 
     /**

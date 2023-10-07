@@ -32,8 +32,8 @@ export module NativeBlockAttributes {
 	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(0x6666ff).asBase;
 
 	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
-	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen;
 
+	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen;
 	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
 
 	export const MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;

@@ -1,10 +1,10 @@
-import { BlockType } from "../../../api/block/Block";
 import EntityType from "../../../api/entity/EntityType";
 import { mRot } from "../../../general/GlobalRot";
 import IMatrix from "../../../main/IMatrix";
 import IPlayer from "../entities/player/IPlayer";
 import Tool from "../tool/Tool";
 import IWorldRegistry, { typeID } from "../../../api/registry/IWorldRegistry";
+import Block from "../../../api/block/Block";
 
 /**
  * 统一「工具被玩家在指定『母体』内以某个方向使用」的回调函数类型
@@ -25,8 +25,8 @@ export type toolUsageF = (
  */
 export default class Registry_V1 implements IWorldRegistry {
 
-	protected _blockTypeMap: Map<typeID, BlockType> = new Map<typeID, BlockType>();
-	get blockTypeMap(): Map<typeID, BlockType> { return this._blockTypeMap; }
+	protected _blockTypeMap: Map<typeID, () => Block> = new Map<typeID, () => Block>();
+	get blockTypeMap(): Map<typeID, () => Block> { return this._blockTypeMap; }
 
 	protected _entityTypeMap: Map<typeID, EntityType> = new Map<typeID, EntityType>();
 	get entityTypeMap(): Map<typeID, EntityType> { return this._entityTypeMap; }
