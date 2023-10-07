@@ -2,8 +2,8 @@ import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP }
 import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import IPlayer from "../entities/player/IPlayer";
-import IBatrMatrix from '../../../main/IBatrMatrix';
-import { typeID } from "../registry/IBatrRegistry";
+import IMatrix from '../../../main/IMatrix';
+import { typeID } from "../../../api/registry/IWorldRegistry";
 
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类
@@ -285,7 +285,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 			else if (isUsing) // 未充能满 & 正在使用⇒继续计时
 				this._chargeTime++;
 			// 未充能满 & 不在使用 & !未充能⇒可用
-			else if (this.chargeTime > 0) return true;
+			else if (this.chargeTime > 0)
+				return true;
 		}
 		// 若先前未因「充能完毕/使用打断充能」返回true
 		return false;
@@ -302,7 +303,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @param host 调用时处在的母体
 	 * @param user 使用者（暂定为使用者）
 	 */
-	public onUseByPlayer(host: IBatrMatrix, user: IPlayer): void {
+	public onUseByPlayer(host: IMatrix, user: IPlayer): void {
 		console.log('Tool', this._id, 'is used by', user.customName, 'in', host)
 	}
 

@@ -1,5 +1,5 @@
-import { BlockType } from "../../../api/block/Block";
-import EntityType from "../../../api/entity/EntityType";
+import { BlockType } from "../block/Block";
+import EntityType from "../entity/EntityType";
 
 /**
  * 所有「使用ID进行索引的物件」ID的类型
@@ -16,7 +16,7 @@ export type typeID = string;
  * TODO: JS对象化
  * * 可能涉及的：对「工具使用映射表」的处理
  */
-export default interface IBatrRegistry {
+export default interface IWorldRegistry {
 
     /**
      * 方块类型映射表：方块id⇒方块类型

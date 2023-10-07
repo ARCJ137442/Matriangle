@@ -1,5 +1,5 @@
 import { uint } from "../../../../../../../legacy/AS3Legacy";
-import IBatrMatrix from "../../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../../main/IMatrix";
 import BonusBox from "../../../item/BonusBox";
 import IPlayer from "../../IPlayer";
 import AIController from "../AIController";
@@ -58,7 +58,7 @@ export default class AIControllerGenerator extends AIController {
     /** 存储「当前事件处理时的『自我』玩家」 */
     public _temp_currentPlayer?: IPlayer;
     /** 存储「当前事件处理时的『当前所在母体』」 */
-    public _temp_currentHost?: IBatrMatrix;
+    public _temp_currentHost?: IMatrix;
     /** 上一次受到的伤害 */
     public _temp_lastHurtByDamage?: uint;
     /** 上一次受到伤害的攻击者 */
@@ -90,49 +90,49 @@ export default class AIControllerGenerator extends AIController {
     }
 
     // 钩子函数
-    public reactAITick(self: IPlayer, host: IBatrMatrix): PlayerAction {
+    public reactAITick(self: IPlayer, host: IMatrix): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         return this.requestAction(PlayerEvent.AI_TICK);
     }
-    public reactTick(self: IPlayer, host: IBatrMatrix): PlayerAction {
+    public reactTick(self: IPlayer, host: IMatrix): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         return this.requestAction(PlayerEvent.TICK);
     }
-    public reactHurt(self: IPlayer, host: IBatrMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction {
+    public reactHurt(self: IPlayer, host: IMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         this._temp_lastHurtByDamage = damage;
         this._temp_lastHurtByAttacker = attacker;
         return this.requestAction(PlayerEvent.HURT);
     }
-    public reactDeath(self: IPlayer, host: IBatrMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction {
+    public reactDeath(self: IPlayer, host: IMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         this._temp_lastDeathDamage = damage;
         this._temp_lastDeathAttacker = attacker;
         return this.requestAction(PlayerEvent.DEATH);
     }
-    public reactKillPlayer(self: IPlayer, host: IBatrMatrix, victim: IPlayer, damage: number): PlayerAction {
+    public reactKillPlayer(self: IPlayer, host: IMatrix, victim: IPlayer, damage: number): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         this._temp_lastKillDamage = damage;
         this._temp_lastKillTarget = victim;
         return this.requestAction(PlayerEvent.KILL_PLAYER);
     }
-    public reactPickupBonusBox(self: IPlayer, host: IBatrMatrix, box: BonusBox): PlayerAction {
+    public reactPickupBonusBox(self: IPlayer, host: IMatrix, box: BonusBox): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         this._temp_lastPickupBox = box;
         return this.requestAction(PlayerEvent.PICKUP_BONUS_BOX)
     }
-    public reactRespawn(self: IPlayer, host: IBatrMatrix): PlayerAction {
+    public reactRespawn(self: IPlayer, host: IMatrix): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         return this.requestAction(PlayerEvent.RESPAWN);
     }
-    public reactMapTransform(self: IPlayer, host: IBatrMatrix): PlayerAction {
+    public reactMapTransform(self: IPlayer, host: IMatrix): PlayerAction {
         this._temp_currentPlayer = self;
         this._temp_currentHost = host;
         return this.requestAction(PlayerEvent.MAP_TRANSFORM);

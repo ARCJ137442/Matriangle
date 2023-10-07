@@ -1,5 +1,5 @@
 import { fPoint, iPoint } from "../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../main/GlobalWorldVariables";

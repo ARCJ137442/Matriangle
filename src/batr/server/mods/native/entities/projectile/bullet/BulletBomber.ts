@@ -1,11 +1,11 @@
 import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
+import IMatrix from "../../../../../main/IMatrix";
+import { toolCreateExplode } from "../../../mechmatics/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 import Bullet from "./Bullet";
 import BulletBasic from "./BulletBasic";
@@ -52,12 +52,12 @@ export default class BulletBomber extends Bullet {
 	}
 
 	//============Instance Functions============//
-	override explode(host: IBatrMatrix): void {
+	override explode(host: IMatrix): void {
 		this.setBomb(host);
 		super.explode(host); // ! 超类逻辑：移除自身
 	}
 
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		if ((this._bombTick--) == 0) {
 			this.setBomb(host);
 			this._bombTick = this._maxBombTick;
@@ -65,7 +65,7 @@ export default class BulletBomber extends Bullet {
 		super.onTick(host); // ! 超类逻辑：飞行&爆炸
 	}
 
-	protected setBomb(host: IBatrMatrix): void {
+	protected setBomb(host: IMatrix): void {
 		toolCreateExplode(
 			host, this.owner,
 			this._position, this.finalExplodeRadius,

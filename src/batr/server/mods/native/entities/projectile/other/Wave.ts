@@ -3,10 +3,10 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { fPoint } from "../../../../../../common/geometricTools";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { waveHurtPlayers } from "../../../registry/NativeMatrixMechanics";
+import IMatrix from "../../../../../main/IMatrix";
+import { waveHurtPlayers } from "../../../mechmatics/NativeMatrixMechanics";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -132,7 +132,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	}
 
 	//====Tick Function====//
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		super.onTick(host);
 		host.map.towardWithRot_FF(this._position, this._direction, this.speed); // ? 每次都要自己实现一遍？
 		// 每过一固定周期伤害玩家

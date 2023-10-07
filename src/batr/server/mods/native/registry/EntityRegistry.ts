@@ -1,5 +1,5 @@
 ﻿import { getClass, isExtend } from "../../../../common/utils";
-import { DisplayLayers } from "../../../../display/api/BatrDisplayInterfaces";
+import { DisplayLayers } from "../../../../display/api/DisplayInterfaces";
 import Effect from "../../../api/entity/Effect";
 import Entity from "../../../api/entity/Entity";
 import EntityType from "../../../api/entity/EntityType";

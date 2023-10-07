@@ -4,8 +4,8 @@ import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
 import { iPoint, intPoint } from "../../../../../common/geometricTools";
-import IBatrMatrix from "../../../../main/IBatrMatrix";
-import { DisplayLayers, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import IMatrix from "../../../../main/IMatrix";
+import { DisplayLayers, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalWorldVariables";
 import Tool from "../../tool/Tool";
@@ -13,7 +13,7 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "./IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, moveOutTestPlayer, getPlayers, playerUseTool, respawnPlayer } from "../../registry/NativeMatrixMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChange, handlePlayerLevelup, moveOutTestPlayer, getPlayers, playerUseTool, respawnPlayer } from "../../mechmatics/NativeMatrixMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
@@ -153,12 +153,12 @@ export default class Player extends Entity implements IPlayer {
 	 * 增加生命值
 	 * * 需要母体以处理「伤害」「死亡」事件
 	 */
-	public addHP(host: IBatrMatrix, value: uint, healer: IPlayer | null = null): void {
+	public addHP(host: IMatrix, value: uint, healer: IPlayer | null = null): void {
 		this.HP += value;
 		this.onHeal(host, value, healer);
 	}
 
-	public removeHP(host: IBatrMatrix, value: uint, attacker: IPlayer | null = null): void {
+	public removeHP(host: IMatrix, value: uint, attacker: IPlayer | null = null): void {
 		// 非致死⇒受伤
 		if (this.HP > value) {
 			this.HP -= value;
@@ -270,7 +270,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 设置经验值
 	 * @param host 用于在后续「生成特效」时访问的母体
 	 */
-	public setExperience(host: IBatrMatrix, value: uint): void {
+	public setExperience(host: IMatrix, value: uint): void {
 		// 大于「最大经验」⇒升级
 		while (value > this.levelupExperience) {
 			value -= this.levelupExperience;
@@ -284,7 +284,7 @@ export default class Player extends Entity implements IPlayer {
 	}
 
 	/** 增加经验值 */
-	public addExperience(host: IBatrMatrix, value: uint): void {
+	public addExperience(host: IMatrix, value: uint): void {
 		this.setExperience(host, this.experience + value);
 	}
 
@@ -388,7 +388,7 @@ export default class Player extends Entity implements IPlayer {
 
 	protected _position: iPoint = new iPoint();
 	public get position(): iPoint { return this._position }
-	public setPosition(host: IBatrMatrix, position: iPoint): void {
+	public setPosition(host: IMatrix, position: iPoint): void {
 		console.log("Entity position changed!", this, this._position, '=>', position);
 		if (position !== this._position) this._position.copyFrom(position);
 		// 处理其它事件（！串起来了） // * 原Entity中`setXY`、`setPosition`的事
@@ -398,7 +398,7 @@ export default class Player extends Entity implements IPlayer {
 	// 活跃实体 //
 	public readonly i_active: true = true;
 
-	public onTick(host: IBatrMatrix): void {
+	public onTick(host: IMatrix): void {
 		// 在重生过程中⇒先处理重生
 		if (this.isRespawning)
 			this.dealRespawn(host);
@@ -514,12 +514,12 @@ export default class Player extends Entity implements IPlayer {
 	 */
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
-	public onHeal(host: IBatrMatrix, amount: uint, healer: IPlayer | null = null): void {
+	public onHeal(host: IMatrix, amount: uint, healer: IPlayer | null = null): void {
 
 		// TODO: 通知控制器
 	}
 
-	public onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	public onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// this._hurtOverlay.playAnimation();
 		host.addEntity(
 			EffectPlayerHurt.fromPlayer(this.position, this, false/* 淡出 */)
@@ -528,7 +528,7 @@ export default class Player extends Entity implements IPlayer {
 		// TODO: 通知控制器
 	}
 
-	public onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	public onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
 		// 清除「储备生命值」 //
 		this.heal = 0;
 		// 重置
@@ -543,25 +543,25 @@ export default class Player extends Entity implements IPlayer {
 		// TODO: 通知控制器
 	}
 
-	public onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void {
+	public onKillPlayer(host: IMatrix, victim: IPlayer, damage: uint): void {
 		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1);
 		// TODO: 通知控制器
 	}
 
-	public onRespawn(host: IBatrMatrix,): void {
+	public onRespawn(host: IMatrix,): void {
 		// TODO: 通知控制器
 	}
 
-	public onMapTransform(host: IBatrMatrix,): void {
+	public onMapTransform(host: IMatrix,): void {
 		// 地图切换后，武器状态清除
 		this._tool.resetUsingState();
 		// TODO: 通知控制器
 		// TODO: 显示更新
 	}
 
-	public onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void {
+	public onPickupBonusBox(host: IMatrix, box: BonusBox): void {
 		// TODO: 通知控制器
 	}
 
@@ -575,19 +575,19 @@ export default class Player extends Entity implements IPlayer {
 	 * 
 	 * * 【2023-10-03 22:04:56】现有逻辑：用于分派「玩家移出方块」事件
 	 */
-	public preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void {
+	public preLocationUpdate(host: IMatrix, oldP: iPoint): void {
 		moveOutTestPlayer(host, this, oldP); //! 【2023-10-03 23:34:22】原先的`preHandlePlayerLocationChange`
 		// super.preLocationUpdate(oldP); // TODO: 已经忘记这里在做什么了
 		// TODO: 通知控制器
 	}
 
-	public onLocationUpdate(host: IBatrMatrix, newP: iPoint): void {
+	public onLocationUpdate(host: IMatrix, newP: iPoint): void {
 		handlePlayerLocationChange(host, this, newP);
 		// super.onLocationUpdate(newP); // TODO: 已经忘记这里在做什么了
 		// TODO: 通知控制器
 	}
 
-	public onLevelup(host: IBatrMatrix): void {
+	public onLevelup(host: IMatrix): void {
 		handlePlayerLevelup(host, this);
 		// TODO: 通知控制器
 	}
@@ -597,11 +597,11 @@ export default class Player extends Entity implements IPlayer {
 	// public get carriedBlock(): Block {return this._carriedBlock;}
 	// public get isCarriedBlock(): boolean {return this._carriedBlock !== null && this._carriedBlock.visible;}
 
-	public onPositedBlockUpdate(host: IBatrMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange);
 	}
 
-	public dealMoveInTest(host: IBatrMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	public dealMoveInTest(host: IMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
 		// 忽略（强制更新）伤害延迟⇒立即开始判定
 		if (ignoreDelay) {
 			playerMoveInTest(host, this, isLocationChange); // !原`Game.moveInTestPlayer`，现在已经提取到「原生世界机制」中
@@ -622,7 +622,7 @@ export default class Player extends Entity implements IPlayer {
 	}
 
 	protected _temp_testCanGoForward_P: iPoint = new iPoint();
-	public testCanGoForward(host: IBatrMatrix, rotatedAsRot?: number | undefined, avoidHurt?: boolean | undefined, avoidOthers?: boolean | undefined, others?: IEntityInGrid[] | undefined): boolean {
+	public testCanGoForward(host: IMatrix, rotatedAsRot?: number | undefined, avoidHurt?: boolean | undefined, avoidOthers?: boolean | undefined, others?: IEntityInGrid[] | undefined): boolean {
 		return this.testCanGoTo(host,
 			host.map.towardWithRot_II(
 				this._temp_testCanGoForward_P.copyFrom(this.position),
@@ -639,7 +639,7 @@ export default class Player extends Entity implements IPlayer {
 	 * * 链接指向母体的地图（逻辑层）
 	 */
 	public testCanGoTo(
-		host: IBatrMatrix, p: intPoint,
+		host: IMatrix, p: intPoint,
 		avoidHurt: boolean = false,
 		avoidOthers: boolean = true,
 		others: IEntityInGrid[] = [],
@@ -659,7 +659,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 处理重生
 	 * * 重生后「剩余生命值」递减
 	 */
-	public dealRespawn(host: IBatrMatrix): void {
+	public dealRespawn(host: IMatrix): void {
 		if (this._respawnTick > 0)
 			this._respawnTick--;
 		else {
@@ -693,7 +693,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 
 	 * ! 注意：因为「使用武器」需要对接母体，所以需要传入母体参数
 	*/
-	protected dealUsingTime(host: IBatrMatrix): void {
+	protected dealUsingTime(host: IMatrix): void {
 		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
 		if (!this._tool.needsCD || this._tool.dealCD(this._isUsing)) {
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
@@ -755,7 +755,7 @@ export default class Player extends Entity implements IPlayer {
 	public get controller(): PlayerController | null { return this._controller; }
 
 	// !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
-	public moveForward(host: IBatrMatrix): void {
+	public moveForward(host: IMatrix): void {
 		// 能前进⇒前进 // !原`host.movePlayer`
 		if (this.testCanGoForward(
 			host, this._direction,
@@ -774,30 +774,30 @@ export default class Player extends Entity implements IPlayer {
 		// TODO: 显示更新
 	}
 
-	public turnTo(host: IBatrMatrix, direction: number): void {
+	public turnTo(host: IMatrix, direction: number): void {
 		this._direction = direction
 		// TODO: 显示更新
 	}
 
-	public turnBack(host: IBatrMatrix): void {
+	public turnBack(host: IMatrix): void {
 		this.direction = toOpposite_M(this._direction);
 		// TODO: 显示更新
 	}
 
 	// 可选
-	public turnRelative(host: IBatrMatrix): void {
+	public turnRelative(host: IMatrix): void {
 
 	}
 
-	public startUsingTool(host: IBatrMatrix): void {
+	public startUsingTool(host: IMatrix): void {
 		this._isUsing = true;
 	}
 
-	public stopUsingTool(host: IBatrMatrix): void {
+	public stopUsingTool(host: IMatrix): void {
 		this._isUsing = false;
 	}
 
-	public directUseTool(host: IBatrMatrix): void {
+	public directUseTool(host: IMatrix): void {
 		// ! 一般来说，「直接使用工具」都是在「无冷却」的时候使用的
 		// this._tool.onUseByPlayer(host, this); // !【2023-10-05 17:17:26】现在使用注册表，因此废弃
 		playerUseTool(
@@ -810,7 +810,7 @@ export default class Player extends Entity implements IPlayer {
 		// 	this._GUI.updateCharge();
 	}
 
-	public moveToward(host: IBatrMatrix, direction: mRot): void {
+	public moveToward(host: IMatrix, direction: mRot): void {
 		// host.movePlayer(this, direction, this.moveDistance);
 		this.turnTo(host, direction); // 使用setter以便显示更新
 		this.moveForward(host);
@@ -840,7 +840,7 @@ export default class Player extends Entity implements IPlayer {
 	/**
 	 * 处理与「控制器」的关系
 	 */
-	protected dealController(host: IBatrMatrix): void {
+	protected dealController(host: IMatrix): void {
 		this._controller?.onPlayerTick(this, host)
 	}
 
@@ -854,7 +854,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 处理「缓存的玩家操作」
 	 * * 逻辑：一次执行完所有缓冲的「玩家动作」，然后清空缓冲区
 	 */
-	protected dealCachedActions(host: IBatrMatrix): void {
+	protected dealCachedActions(host: IMatrix): void {
 		if (this._actionBuffer.length === 0) return;
 		else {
 			this.runAllPlayerActions(host);
@@ -866,7 +866,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 执行玩家动作
 	 * * 参见`PlayerAction`
 	 */
-	protected runPlayerAction(host: IBatrMatrix, action: PlayerAction): void {
+	protected runPlayerAction(host: IMatrix, action: PlayerAction): void {
 		// 整数⇒处理转向相关
 		if (typeof action === 'number') {
 			// 非负⇒转向
@@ -910,7 +910,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 
 	 * ! 不会清空「动作缓冲区」
 	 */
-	protected runAllPlayerActions(host: IBatrMatrix): void {
+	protected runAllPlayerActions(host: IMatrix): void {
 		for (this._temp_runAllPlayerActions_i = 0; this._temp_runAllPlayerActions_i < this._actionBuffer.length; this._temp_runAllPlayerActions_i++) {
 			this.runPlayerAction(host, this._actionBuffer[this._temp_runAllPlayerActions_i]);
 		}

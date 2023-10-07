@@ -1,5 +1,5 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import IBatrMatrix from "../../../main/IBatrMatrix";
+import IMatrix from "../../../main/IMatrix";
 import { 实体列表可视化, 母体可视化 } from "../visualizations";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import Visualizer from "./Visualizer";
@@ -26,7 +26,7 @@ export default class MatrixVisualizer extends Visualizer {
 		/**
 		 * 保存自身与母体的链接
 		 */
-		public linkedMatrix: IBatrMatrix | null = null
+		public linkedMatrix: IMatrix | null = null
 	) {
 		super(MatrixVisualizer.LABEL);
 	}
@@ -48,7 +48,7 @@ export default class MatrixVisualizer extends Visualizer {
 	 * @param mapBlockStringLen 显示母体地图每一格的字符串长度
 	 * @param typeFlag 整数时是「地图每一格字符串长度」，字符串时回传其它特定信号
 	 */
-	public static getVisionSignal(matrix: IBatrMatrix, typeFlag: TypeFlag): string {
+	public static getVisionSignal(matrix: IMatrix, typeFlag: TypeFlag): string {
 		switch (typeFlag) {
 			case 'entities':
 				return 实体列表可视化(matrix.entities);

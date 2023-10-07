@@ -1,16 +1,16 @@
 import { fPoint, iPoint, floatPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
-import { getPlayers } from "../../../registry/NativeMatrixMechanics";
+import { getPlayers } from "../../../mechmatics/NativeMatrixMechanics";
 
 /**
  * 「子弹」是
@@ -73,7 +73,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 * 
 	 * @param host 调用它的母体
 	 */
-	public onTick(host: IBatrMatrix): void {
+	public onTick(host: IMatrix): void {
 		super.onTick(host);
 		// Move
 		// Detect
@@ -170,7 +170,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 * 
 	 * @param host 要处理爆炸的母体
 	 */
-	protected explode(host: IBatrMatrix): void {
+	protected explode(host: IMatrix): void {
 		host.removeEntity(this);
 	}
 

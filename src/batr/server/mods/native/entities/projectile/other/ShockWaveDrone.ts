@@ -3,8 +3,8 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import IMatrix from "../../../../../main/IMatrix";
 import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalWorldVariables";
 import { alignToGridCenter_P } from "../../../../../general/PosTransform";
@@ -56,7 +56,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 
 	//====Tick Function====//
 	protected _temp_entityP: fPoint = new fPoint();
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		super.onTick(host);
 		// Ticking
 		if (this._moveDuration > 0)
@@ -100,7 +100,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrMatrix): void { }
+	public onPositedBlockUpdate(host: IMatrix): void { }
 
 	//============Display Implements============//
 	public shapeInit(shape: IBatrShape): void {

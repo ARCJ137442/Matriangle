@@ -1,6 +1,6 @@
-﻿import IBatrMatrix from "./IBatrMatrix";
-import IBatrWorld from "./IBatrWorld";
-import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+﻿import IMatrix from "./IMatrix";
+import IWorld from "./IWorld";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
  * 第一代「世界主体」
@@ -11,14 +11,14 @@ import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
  * * 「总注册表」：负责与「对象化/反对象化」「类型映射表」等数据交互
  *   * 只负责「查找&返回」与「保存&加载」，不负责「具体运行」
  */
-export default class World_V1 implements IBatrWorld {
+export default class World_V1 implements IWorld {
 
 	public constructor(
-		protected _matrix: IBatrMatrix,
-		protected _registry: IBatrRegistry,
+		protected _matrix: IMatrix,
+		protected _registry: IWorldRegistry,
 	) { }
 
-	get matrix(): IBatrMatrix { return this._matrix; }
-	get registry(): IBatrRegistry { return this._registry; }
+	get matrix(): IMatrix { return this._matrix; }
+	get registry(): IWorldRegistry { return this._registry; }
 
 }

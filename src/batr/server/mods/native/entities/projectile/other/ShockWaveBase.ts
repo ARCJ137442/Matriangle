@@ -3,10 +3,10 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { fPoint, iPoint, iPointRef, iPointVal } from "../../../../../../common/geometricTools";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import { random1 } from "../../../../../../common/exMath";
 import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from "../../../../../general/GlobalRot";
 import Tool from "../../../tool/Tool";
@@ -90,7 +90,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	public get position(): iPointRef { return this._position; }
 	public set position(value: iPointRef) { this._position.copyFrom(value) }
 
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		// Charging
 		if (this._life <= 0) {
 			this.summonDrones(host);
@@ -104,14 +104,14 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrMatrix): void { }
+	public onPositedBlockUpdate(host: IMatrix): void { }
 
 	/**
 	 * 根据自身的「模式」生成「冲击波子机」
 	 * 
 	 * @param host 基于的母体
 	 */
-	public summonDrones(host: IBatrMatrix): void {
+	public summonDrones(host: IMatrix): void {
 		// Summon Drone
 		switch (this.mode) {
 			// * ALPHA模式（参见常量の注释）
@@ -153,7 +153,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	}
 
 	public summonDrone(
-		host: IBatrMatrix,
+		host: IMatrix,
 		droneMoveDirection: mRot,
 		toolDirection: mRot = this._direction
 	): void {

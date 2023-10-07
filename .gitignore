@@ -36,6 +36,9 @@ git status
 *.test.*
 tempCodeRunnerFile*
 
+# deprecated
+*.deprecated*
+
 # Executables
 *.air
 *.swf

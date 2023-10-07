@@ -4,8 +4,8 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import IMatrix from "../../../../../main/IMatrix";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -72,7 +72,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * 
 	 * @param host 母体
 	 */
-	public dealLife(host: IBatrMatrix): void {
+	public dealLife(host: IMatrix): void {
 		if (--this._life <= 0) // ! 一到0便移除，避免多余的一次世界刻处理
 			host.removeEntity(this); // TODO: 有待「实体系统」的修缮
 	}
@@ -81,12 +81,12 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * 默认的「世界刻逻辑」：处理生命周期
 	 * @param host 母体
 	 */
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		this.dealLife(host);
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
-	public onPositedBlockUpdate(host: IBatrMatrix): void { }
+	public onPositedBlockUpdate(host: IMatrix): void { }
 
 	//============Display Implements============//
 

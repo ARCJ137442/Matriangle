@@ -1,13 +1,13 @@
 ﻿import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
-import { projectileCanHurtOther, toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
+import { projectileCanHurtOther, toolCreateExplode } from "../../../mechmatics/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 
 /**
@@ -80,7 +80,7 @@ export default class BulletTracking extends Bullet {
 	 * ! 【20230915 20:12:19】重要的是：使用存取器设置属性，而非直接设定值
 	 * @param host 母体
 	 */
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		let tempRot: mRot;
 		// 没目标⇒找目标
 		if (this._target === null) {
@@ -160,7 +160,7 @@ export default class BulletTracking extends Bullet {
 	}
 
 	/** 覆盖：通知母体创建爆炸 */
-	override explode(host: IBatrMatrix): void {
+	override explode(host: IMatrix): void {
 		toolCreateExplode(
 			host, this.owner,
 			this._position, this.finalExplodeRadius,

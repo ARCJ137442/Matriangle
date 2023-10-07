@@ -4,8 +4,8 @@ import Laser from "./Laser";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import IMatrix from "../../../../../main/IMatrix";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -50,7 +50,7 @@ export default class LaserPulse extends Laser {
 	//============Instance Getter And Setter============//
 
 	//============Instance Functions============//
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		if (!this.hasDamaged) console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}

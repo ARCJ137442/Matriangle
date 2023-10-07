@@ -1,4 +1,4 @@
-import { IBatrGraphicContext } from "../../api/BatrDisplayInterfaces";
+import { IBatrGraphicContext } from "../../api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../api/GlobalDisplayVariables";
 import { NativeDecorationLabel } from "./entity/player/NativeDecorationLabels";
 

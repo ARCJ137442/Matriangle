@@ -8,9 +8,9 @@
  */
 
 import { fPoint, iPoint } from "../../../common/geometricTools";
-import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/DisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
-import IBatrMatrix from "../../main/IBatrMatrix";
+import IMatrix from "../../main/IMatrix";
 import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
@@ -55,7 +55,7 @@ export interface IEntityInGrid extends Entity {
      * 
      * @param host 调用它的母体
      */
-    onPositedBlockUpdate(host: IBatrMatrix, ...args: any[]): void;
+    onPositedBlockUpdate(host: IMatrix, ...args: any[]): void;
 }
 
 /**
@@ -157,7 +157,7 @@ export interface IEntityActive extends Entity {
      * 
      * @param host 调用它的母体
      */
-    onTick(host: IBatrMatrix): void;
+    onTick(host: IMatrix): void;
 
 }
 
@@ -215,7 +215,7 @@ export interface IEntityNeedsIO extends Entity {
      * 
      * @param host 调用它的母体
      */
-    onIO(host: IBatrMatrix, inf: CommonIO_IR): void;
+    onIO(host: IMatrix, inf: CommonIO_IR): void;
 
     /**
      * 获取实体的IO缓冲区
@@ -363,7 +363,7 @@ export interface IEntityHasHP extends Entity {
      * @param value 增加的生命值
      * @param healer 增加生命值者（治疗者）
      */
-    addHP(host: IBatrMatrix, value: uint, healer: Entity | null): void
+    addHP(host: IMatrix, value: uint, healer: Entity | null): void
 
     /**
      * 减少生命值
@@ -372,7 +372,7 @@ export interface IEntityHasHP extends Entity {
      * @param value 减少的生命值
      * @param attacker 减少生命值者（攻击者）
      */
-    removeHP(host: IBatrMatrix, value: uint, attacker: Entity | null): void
+    removeHP(host: IMatrix, value: uint, attacker: Entity | null): void
 
 }
 

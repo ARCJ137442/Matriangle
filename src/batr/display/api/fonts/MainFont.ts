@@ -8,15 +8,15 @@ export default class MainFont extends Font {
     }
 
     public get fontName(): string {
-        return "BaTr Main";
+        return "Main Font";
     }
 
     public get fontStyle(): string {
-        return "BaTr Main";
+        return "Main Font";
     }
 
     public get fontType(): string {
-        return "BaTr Main";
+        return "Main Font";
     }
 
     public enumerateFont(enumerateDeviceFonts?: boolean | undefined): string[] {

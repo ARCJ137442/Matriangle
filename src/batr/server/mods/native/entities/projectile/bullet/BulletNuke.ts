@@ -1,14 +1,14 @@
 import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
-import { toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
+import { toolCreateExplode } from "../../../mechmatics/NativeMatrixMechanics";
 
 /**
  * 「核弹」
@@ -49,7 +49,7 @@ export default class BulletNuke extends Bullet {
 
 	//============Instance Functions============//
 	/** 覆盖：通知母体创建爆炸 */
-	override explode(host: IBatrMatrix): void {
+	override explode(host: IMatrix): void {
 		toolCreateExplode(
 			host, this.owner,
 			this._position, this.finalExplodeRadius,

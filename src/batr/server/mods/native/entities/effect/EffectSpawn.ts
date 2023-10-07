@@ -1,5 +1,5 @@
 import { fPoint } from "../../../../../common/geometricTools";
-import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";

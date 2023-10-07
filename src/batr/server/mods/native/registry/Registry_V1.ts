@@ -1,17 +1,17 @@
 import { BlockType } from "../../../api/block/Block";
 import EntityType from "../../../api/entity/EntityType";
 import { mRot } from "../../../general/GlobalRot";
-import IBatrMatrix from "../../../main/IBatrMatrix";
+import IMatrix from "../../../main/IMatrix";
 import IPlayer from "../entities/player/IPlayer";
 import Tool from "../tool/Tool";
-import IBatrRegistry, { typeID } from "./IBatrRegistry";
+import IWorldRegistry, { typeID } from "../../../api/registry/IWorldRegistry";
 
 /**
  * 统一「工具被玩家在指定『母体』内以某个方向使用」的回调函数类型
  * @returns 目前不返回任何值
  */
 export type toolUsageF = (
-	host: IBatrMatrix,
+	host: IMatrix,
 	user: IPlayer,
 	tool: Tool,
 	direction: mRot,
@@ -23,7 +23,7 @@ export type toolUsageF = (
  * * 具体角色&功能，详见所实现的接口
  * TODO: 目前这里还没有实质性的内容
  */
-export default class Registry_V1 implements IBatrRegistry {
+export default class Registry_V1 implements IWorldRegistry {
 
 	protected _blockTypeMap: Map<typeID, BlockType> = new Map<typeID, BlockType>();
 	get blockTypeMap(): Map<typeID, BlockType> { return this._blockTypeMap; }

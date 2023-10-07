@@ -1,11 +1,11 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import Laser from "./Laser";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -41,7 +41,7 @@ export default class LaserTeleport extends Laser {
 	//============Instance Getter And Setter============//
 
 	//============Instance Functions============//
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		if ((this.life & 3) == 0) console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}

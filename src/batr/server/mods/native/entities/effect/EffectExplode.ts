@@ -1,6 +1,6 @@
 import { fPoint } from "../../../../../common/geometricTools";
 import { uintToPercent } from "../../../../../common/utils";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { logical2Real } from "../../../../../display/api/PosTransform";
 import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";

@@ -1,6 +1,6 @@
 import { addNReturnKey, getClass, identity, key } from "../../../common/utils";
 import { Class, uint } from "../../../legacy/AS3Legacy";
-import { IBatrDisplayable, IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
+import { IBatrDisplayable, IBatrShape } from "../../../display/api/DisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 import { IJSObjectifiable, JSObject, JSObjectifyMap, fastGenerateJSObjectifyMapProperty, loadRecursiveCriterion_false, uniLoadJSObject } from "../../../common/JSObjectify";
 

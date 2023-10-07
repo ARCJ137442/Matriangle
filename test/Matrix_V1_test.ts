@@ -5,7 +5,7 @@ import AIControllerGenerator from "../src/batr/server/mods/native/entities/playe
 import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
 import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
-import { NativeToolUsageMap, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/registry/NativeMatrixMechanics";
+import { NativeToolUsageMap, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechmatics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";

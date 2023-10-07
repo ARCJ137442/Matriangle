@@ -7,7 +7,7 @@ import Block from "../../../api/block/Block";
 import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
 import { randomTickEventF } from "../../../api/control/BlockEventTypes";
-import IBatrMatrix from "../../../main/IBatrMatrix";
+import IMatrix from "../../../main/IMatrix";
 import BlockColored from "../blocks/Colored";
 import BlockGate from "../blocks/Gate";
 import BonusBox from "../entities/item/BonusBox";
@@ -19,11 +19,11 @@ import LaserPulse from "../entities/projectile/laser/LaserPulse";
 import LaserTeleport from "../entities/projectile/laser/LaserTeleport";
 import MatrixRule_V1 from "../rule/MatrixRule_V1";
 import Tool from "../tool/Tool";
-import { MoveableWall, NativeBlockTypes } from "./BlockTypeRegistry";
-import { BonusType, NativeBonusTypes } from "./BonusRegistry";
+import { MoveableWall, NativeBlockTypes } from "../registry/BlockTypeRegistry";
+import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
 import Projectile from "../entities/projectile/Projectile";
 import Wave from "../entities/projectile/other/Wave";
-import { NativeTools } from './ToolRegistry';
+import { NativeTools } from '../registry/ToolRegistry';
 import IPlayer from "../entities/player/IPlayer";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
@@ -41,9 +41,9 @@ import EffectBlockLight from "../entities/effect/EffectBlockLight";
 import IMap from '../../../api/map/IMap';
 import Laser from "../entities/projectile/laser/Laser";
 import EffectExplode from "../entities/effect/EffectExplode";
-import Registry_V1, { toolUsageF } from "./Registry_V1";
+import Registry_V1, { toolUsageF } from "../registry/Registry_V1";
 import BulletBasic from "../entities/projectile/bullet/BulletBasic";
-import { typeID } from "./IBatrRegistry";
+import { typeID } from "../../../api/registry/IWorldRegistry";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalWorldVariables";
 import Weapon from "../tool/Weapon";
 import BulletNuke from "../entities/projectile/bullet/BulletNuke";
@@ -128,7 +128,7 @@ export function initPlayersByRule(players: IPlayer[], rule: IMatrixRule): void {
  * @param edgePercent 边缘百分比（用于「伤害随距离递减」）
  */
 export function toolCreateExplode(
-    host: IBatrMatrix, creator: IPlayer | null,
+    host: IMatrix, creator: IPlayer | null,
     p: fPointRef, finalRadius: number,
     damage: uint, extraDamageCoefficient: uint,
     canHurtSelf: boolean, canHurtEnemy: boolean, canHurtAlly: boolean,
@@ -181,7 +181,7 @@ const _temp_toolCreateExplode_playerCenterP: fPoint = new fPoint();
  * @param host 母体
  * @param wave 在其中运行的抛射体「波浪」
  */
-export function waveHurtPlayers(host: IBatrMatrix, wave: Wave): void {
+export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
     /** 引用 */
     let base: fPoint = wave.position;
     /** Wave的尺寸即为其伤害半径 */
@@ -327,7 +327,7 @@ export function isAlly(player: IPlayer, other: IPlayer): boolean {
  * @param forcedBonusType 要强制应用的类型（若非空则强制应用此类型的奖励）
  */
 export function playerPickupBonusBox(
-    host: IBatrMatrix, player: IPlayer, bonusBox: BonusBox,
+    host: IMatrix, player: IPlayer, bonusBox: BonusBox,
     forcedBonusType: BonusType = bonusBox.bonusType
 ): void {
     if (player === null)
@@ -406,7 +406,7 @@ const temp_playerPickupBonusBox_effectP: fPoint = new fPoint();
  * 玩家使用工具
  * * 【2023-10-05 17:19:47】现在直接导向注册表（若有相关规则）的「工具使用」函数中
  */
-export function playerUseTool(host: IBatrMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
+export function playerUseTool(host: IMatrix, player: IPlayer, rot: uint, chargePercent: number): void {
     (host.registry as Registry_V1)?.toolUsageMap.get(player.tool.id)?.(host, player, player.tool, rot, chargePercent);
     // 没注册的工具才报信息
     if ((host.registry as Registry_V1)?.toolUsageMap.has(player.tool.id)) { }
@@ -429,7 +429,7 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
     // * 武器：基础子弹 * //
     [
         NativeTools.TOOL_ID_BULLET_BASIC,
-        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
             // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
             host.addEntity(
                 new BulletBasic(
@@ -453,7 +453,7 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
     // * 武器：核弹 * //
     [
         NativeTools.TOOL_ID_BULLET_NUKE,
-        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
             // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
             let scalePercent: number = (0.25 + chargePercent * 0.75);
             host.addEntity(
@@ -480,7 +480,7 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
     // * 武器：轰炸机 * //
     [
         NativeTools.TOOL_ID_BULLET_BOMBER,
-        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
             // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
             let scalePercent: number = (0.25 + chargePercent * 0.75);
             host.addEntity(
@@ -509,7 +509,7 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
     // * 武器：跟踪子弹 * //
     [
         NativeTools.TOOL_ID_BULLET_TRACKING,
-        (host: IBatrMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
+        (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
             // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
             host.addEntity(
                 new BulletTracking(
@@ -650,7 +650,7 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
  * 在玩家位置改变时
  * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
  */
-export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, newP: iPointRef): void {
+export function handlePlayerLocationChange(host: IMatrix, player: IPlayer, newP: iPointRef): void {
     // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
     // 告知玩家开始处理「方块伤害」等逻辑
     player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
@@ -669,7 +669,7 @@ export function handlePlayerLocationChange(host: IBatrMatrix, player: IPlayer, n
  * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
  */
 export function playerMoveInTest(
-    host: IBatrMatrix, player: IPlayer,
+    host: IMatrix, player: IPlayer,
     isLocationChange: Boolean = false
 ): boolean {
     // 非激活&无属性⇒不检测（返回）
@@ -720,7 +720,7 @@ export function playerMoveInTest(
 /**
  * 在玩家移出方块之前
  */
-export function moveOutTestPlayer(host: IBatrMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
+export function moveOutTestPlayer(host: IMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
     if (!player.isActive) return;
     // TODO: 这里应该是要分派一个方块事件，而非把专用代码塞里头
     // let type: BlockType | null = host.map.storage.getBlockType(oldP);
@@ -875,7 +875,7 @@ export const computeTotalPlayerScore = (stats: PlayerStats): uint => ReLU_I(
 
 // 玩家钩子函数（from`World.as`） //
 
-export function handlePlayerUse(host: IBatrMatrix, player: IPlayer, rot: uint, distance: number): void {
+export function handlePlayerUse(host: IMatrix, player: IPlayer, rot: uint, distance: number): void {
 }
 
 /**
@@ -885,7 +885,7 @@ export function handlePlayerUse(host: IBatrMatrix, player: IPlayer, rot: uint, d
  * @param victim 受害者
  * @param damage 伤害
  */
-export function handlePlayerHurt(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
+export function handlePlayerHurt(host: IMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
     // 存入统计信息
     if (host.rule.getRule<boolean>(MatrixRule_V1.key_recordPlayerStats)) {
         // 受害者の统计
@@ -915,7 +915,7 @@ export function handlePlayerHurt(host: IBatrMatrix, attacker: IPlayer | null, vi
  * @param victim 受害者
  * @param damage 致死的伤害
  */
-export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
+export function handlePlayerDeath(host: IMatrix, attacker: IPlayer | null, victim: IPlayer, damage: uint): void {
     // 特效 //
     // 死亡光效
     host.addEntities(
@@ -998,7 +998,7 @@ export function handlePlayerDeath(host: IBatrMatrix, attacker: IPlayer | null, v
  * @param host 所在的母体
  * @param p 添加的坐标
  */
-export function addBonusBoxInRandomTypeByRule(host: IBatrMatrix, p: intPoint): void {
+export function addBonusBoxInRandomTypeByRule(host: IMatrix, p: intPoint): void {
     host.addEntity(
         new BonusBox(
             p,
@@ -1021,7 +1021,7 @@ export function addBonusBoxInRandomTypeByRule(host: IBatrMatrix, p: intPoint): v
  * @returns 玩家自身
  */
 export function teleportPlayerTo(
-    host: IBatrMatrix,
+    host: IMatrix,
     player: IPlayer,
     p: iPointRef,
     rotateTo: mRot = player.direction,
@@ -1049,7 +1049,7 @@ export function teleportPlayerTo(
 /**
  * 分散玩家
  */
-export function spreadPlayer(host: IBatrMatrix, player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
+export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
     // !【2023-10-04 17:12:26】现在不管玩家是否在重生
     let p: iPointRef = host.map.storage.randomPoint;
     const players: IPlayer[] = getPlayers(host);
@@ -1081,7 +1081,7 @@ export function spreadPlayer(host: IBatrMatrix, player: IPlayer, rotatePlayer: b
 /**
  * 分散所有玩家
  */
-export function spreadAllPlayer(host: IBatrMatrix): void {
+export function spreadAllPlayer(host: IMatrix): void {
     for (let player of getPlayers(host)) {
         spreadPlayer(host, player);
     }
@@ -1094,7 +1094,7 @@ export function spreadAllPlayer(host: IBatrMatrix): void {
  * @param host 所涉及的母体
  * @param player 重生的玩家
  */
-export function respawnPlayer(host: IBatrMatrix, player: IPlayer): IPlayer {
+export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
     let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy(); // 空值访问`null.copy()`会变成undefined
     // 没位置⇒直接分散玩家
     if (p === undefined) {
@@ -1138,7 +1138,7 @@ const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint();
  * @param searchR 搜索的最大曼哈顿半径（默认为16）
  */
 function findFitSpawnPoint(
-    host: IBatrMatrix, player: IPlayer,
+    host: IMatrix, player: IPlayer,
     spawnP: iPointRef, searchR: uint = 16,
 ): iPoint {
     let players: IPlayer[] = getPlayers(host);
@@ -1185,7 +1185,7 @@ function findFitSpawnPoint(
  * @param host 所在的母体
  * @returns 所有奖励箱的列表
  */
-export function getBonusBoxes(host: IBatrMatrix): BonusBox[] {
+export function getBonusBoxes(host: IMatrix): BonusBox[] {
     // 💭【2023-10-03 23:44:22】根据类型做分派，但要导入「具体类型」……
     // 📌【2023-10-03 23:46:04】约定使用特殊的「bonusBoxes」属性做「特殊化」
     if ('bonusBoxes' in host) {
@@ -1204,7 +1204,7 @@ export function getBonusBoxes(host: IBatrMatrix): BonusBox[] {
  * @param host 所在的母体
  * @returns 奖励箱数量
  */
-export function getBonusBoxCount(host: IBatrMatrix): uint {
+export function getBonusBoxCount(host: IMatrix): uint {
     if ('bonusBoxes' in host) {
         return (host as any).bonusBoxes.length;
     }
@@ -1230,7 +1230,7 @@ export function isPlayer(e: Entity): boolean {
  * @param host 所在的母体
  * @returns 所有玩家的列表
  */
-export function getPlayers(host: IBatrMatrix): IPlayer[] {
+export function getPlayers(host: IMatrix): IPlayer[] {
     if ('players' in host) {
         return (host as any).players;
     }
@@ -1247,7 +1247,7 @@ export function getPlayers(host: IBatrMatrix): IPlayer[] {
  * 
  * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
  */
-export function bonusBoxTest(host: IBatrMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
+export function bonusBoxTest(host: IMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
     for (let bonusBox of getBonusBoxes(host)) {
         if (hitTestEntity_I_Grid(bonusBox, at)) { // TODO: 【2023-10-03 23:55:46】断点
             // 玩家获得奖励
@@ -1340,7 +1340,7 @@ export function hitTestEntity_I_Grid(e: IEntityInGrid, p: iPointRef): boolean {
 /**
  * 随机安排所有玩家的队伍
  */
-export function randomizeAllPlayerTeam(host: IBatrMatrix): void {
+export function randomizeAllPlayerTeam(host: IMatrix): void {
     for (const player of getPlayers(host)) {
         randomizePlayerTeam(host, player);
     }
@@ -1351,7 +1351,7 @@ export function randomizeAllPlayerTeam(host: IBatrMatrix): void {
  * * 迁移自`GameRule_V1.randomTeam`
  * @param host 所在的母体
  */
-export function getRandomTeam(host: IBatrMatrix): PlayerTeam {
+export function getRandomTeam(host: IMatrix): PlayerTeam {
     return randomIn(host.rule.safeGetRule<PlayerTeam[]>(MatrixRule_V1.key_playerTeams));
 }
 
@@ -1363,11 +1363,11 @@ export function getRandomTeam(host: IBatrMatrix): PlayerTeam {
  * @param host 所在的母体
  * @param player 要安排队伍的玩家
  */
-export function randomizePlayerTeam(host: IBatrMatrix, player: IPlayer): void {
+export function randomizePlayerTeam(host: IMatrix, player: IPlayer): void {
     player.team = getRandomTeam(host);
 }
 
-export function handlePlayerLevelup(host: IBatrMatrix, player: IPlayer): void {
+export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
     let color: uint;
     let i: uint = 0;
     let nowE: uint = randInt(4);
@@ -1422,7 +1422,7 @@ export function handlePlayerLevelup(host: IBatrMatrix, player: IPlayer): void {
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_MoveableWall: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
+export const randomTick_MoveableWall: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
     let randomRot: uint, tPoint: fPoint;
     // add laser by owner=null
     let p: ThrownBlock;
@@ -1463,7 +1463,7 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_ColorSpawner: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
+export const randomTick_ColorSpawner: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
     // TODO: 新位置寻址逻辑
     let randomPoint: iPoint = host.map.storage.randomPoint;
     let newBlock: Block = BlockColored.randomInstance(NativeBlockTypes.COLORED);
@@ -1498,7 +1498,7 @@ const _temp_randomTick_ColorSpawner: fPoint = new fPoint();
  * @param position 被调用方块的位置
  */
 export const randomTick_LaserTrap: randomTickEventF = (
-    host: IBatrMatrix, block: Block, position: iPoint): void => {
+    host: IMatrix, block: Block, position: iPoint): void => {
     let randomR: mRot;
     // add laser by owner=null
     let p: Laser;
@@ -1573,7 +1573,7 @@ const _temp_randomTick_LaserTrap: iPoint = new iPoint();
  * @param rot 激光的方向
  * @returns 计算出来的激光长度
  */
-function calculateLaserLength(host: IBatrMatrix, rootP: iPointRef, rot: mRot): uint {
+function calculateLaserLength(host: IMatrix, rootP: iPointRef, rot: mRot): uint {
     // 当前位置移至根部
     _temp_calculateLaserLength.copyFrom(rootP);
     // 当前长度
@@ -1604,7 +1604,7 @@ const _temp_calculateLaserLength: iPointVal = new iPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_Gate: randomTickEventF = (host: IBatrMatrix, block: Block, position: iPoint): void => {
+export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
     // 已经打开的不要管
     if (block instanceof BlockGate && (block as BlockGate).open) return;
     // 关闭的「门」随着随机刻打开

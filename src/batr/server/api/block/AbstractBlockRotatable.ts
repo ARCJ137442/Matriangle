@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../display/api/DisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 import Block from "./Block";
 import { mRot } from "../../general/GlobalRot";

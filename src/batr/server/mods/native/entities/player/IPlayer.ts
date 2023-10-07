@@ -4,7 +4,7 @@ import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
-import IBatrMatrix from "../../../../main/IBatrMatrix";
+import IMatrix from "../../../../main/IMatrix";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
 import PlayerAttributes from "./attributes/PlayerAttributes";
@@ -62,9 +62,9 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * 设置经验
 	 * * 📌机制：在设置的经验超过「目前等级最大经验」时，玩家会直接升级
 	 */
-	setExperience(host: IBatrMatrix, value: uint): void;
+	setExperience(host: IMatrix, value: uint): void;
 	/** 添加经验 */
-	addExperience(host: IBatrMatrix, value: uint): void;
+	addExperience(host: IMatrix, value: uint): void;
 
 	/** 经验等级 */
 	get level(): uint;
@@ -155,13 +155,13 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * 增加生命值
 	 * * 需要母体以处理「伤害」「死亡」事件
 	 */
-	addHP(host: IBatrMatrix, value: uint, healer: IPlayer | null): void;
+	addHP(host: IMatrix, value: uint, healer: IPlayer | null): void;
 
 	/**
 	 * 减少生命值
 	 * * 需要母体以处理「伤害」「死亡」事件
 	 */
-	removeHP(host: IBatrMatrix, value: uint, attacker: IPlayer | null): void;
+	removeHP(host: IMatrix, value: uint, attacker: IPlayer | null): void;
 
 	/**
 	 * 处理「储备生命值」
@@ -197,10 +197,10 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * * 作为`position`一个特殊的setter
 	 * * 用于「坐标变更」逻辑
 	 */
-	setPosition(host: IBatrMatrix, position: iPointRef): void;
+	setPosition(host: IMatrix, position: iPointRef): void;
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IBatrMatrix): void;
+	onPositedBlockUpdate(host: IMatrix): void;
 
 	/**
 	 * 在玩家位置改变时「测试移动」
@@ -222,7 +222,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
 	dealMoveInTest(
-		host: IBatrMatrix,
+		host: IMatrix,
 		ignoreDelay?: boolean/* =false */,
 		isLocationChange?: boolean/* =false */
 	): void;
@@ -241,7 +241,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param others 避开的实体列表
 	 */
 	testCanGoTo(
-		host: IBatrMatrix, p: iPointRef,
+		host: IMatrix, p: iPointRef,
 		avoidHurt?: boolean/* = false*/,
 		avoidOthers?: boolean/* = true*/,
 		others?: IEntityInGrid[]/* =[] */,
@@ -258,7 +258,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param others 避开的实体列表
 	 */
 	testCanGoForward(
-		host: IBatrMatrix, rotatedAsRot?: uint/* = 5*/,
+		host: IMatrix, rotatedAsRot?: uint/* = 5*/,
 		avoidHurt?: boolean/* = false*/,
 		avoidOthers?: boolean/* = true*/,
 		others?: IEntityInGrid[]/* =[] */,
@@ -279,7 +279,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 *	 * 生成一个「重生」特效
 	 *   * 发送事件「重生时」
 	 */
-	dealRespawn(host: IBatrMatrix): void;
+	dealRespawn(host: IMatrix): void;
 
 	//====Functions About Tool====//
 	/**
@@ -313,13 +313,13 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * !【2023-09-27 20:19:33】现在废除了「非整数前进」，因为已经锁定玩家为「格点实体」
 	 * * 同时也废除了「不定长度前进」，限定为「只前进一格」
 	 */
-	moveForward(host: IBatrMatrix): void;
+	moveForward(host: IMatrix): void;
 
 	/**
 	 * （控制）玩家向某个方向移动（一格）
 	 * * 📌实际上相当于「转向+前进」
 	 */
-	moveToward(host: IBatrMatrix, direction: mRot): void;
+	moveToward(host: IMatrix, direction: mRot): void;
 
 	// ! 原先一些「向固定朝向旋转」的功能已停用
 
@@ -329,13 +329,13 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param host 所依附的母体
 	 * @param direction 要转向的方向
 	 */
-	turnTo(host: IBatrMatrix, direction: mRot): void;
+	turnTo(host: IMatrix, direction: mRot): void;
 
 	/**
 	 * （控制）玩家转向后方
 	 * * 为何要附上母体参数？其本身可能要触发一些钩子函数什么的
 	 */
-	turnBack(host: IBatrMatrix): void;
+	turnBack(host: IMatrix): void;
 
 	/**
 	 * （可选）（控制玩家）向指定方向旋转
@@ -348,31 +348,31 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param coaxis 旋转的「协轴」，与玩家的「当前朝向」构成整个「旋转平面」
 	 * @param 经过旋转的「任意维整数角」
 	 */
-	turnRelative?(host: IBatrMatrix, coaxis: uint, step?: int): void;
+	turnRelative?(host: IMatrix, coaxis: uint, step?: int): void;
 
 	/**
 	 * （控制玩家）开始使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	startUsingTool(host: IBatrMatrix): void;
+	startUsingTool(host: IMatrix): void;
 
 	/**
 	 * （控制玩家）停止使用工具
 	 * * 对应「开始按下『使用』键」
 	 */
-	stopUsingTool(host: IBatrMatrix): void;
+	stopUsingTool(host: IMatrix): void;
 
 	// 钩子函数 //
-	onHeal(host: IBatrMatrix, amount: uint, healer: IPlayer | null/*  = null */): void;
-	onHurt(host: IBatrMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
-	onDeath(host: IBatrMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
-	onKillPlayer(host: IBatrMatrix, victim: IPlayer, damage: uint): void;
-	onRespawn(host: IBatrMatrix,): void;
-	onMapTransform(host: IBatrMatrix,): void;
-	onPickupBonusBox(host: IBatrMatrix, box: BonusBox): void;
-	preLocationUpdate(host: IBatrMatrix, oldP: iPoint): void;
-	onLocationUpdate(host: IBatrMatrix, newP: iPoint): void;
-	onLevelup(host: IBatrMatrix): void;
+	onHeal(host: IMatrix, amount: uint, healer: IPlayer | null/*  = null */): void;
+	onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
+	onKillPlayer(host: IMatrix, victim: IPlayer, damage: uint): void;
+	onRespawn(host: IMatrix,): void;
+	onMapTransform(host: IMatrix,): void;
+	onPickupBonusBox(host: IMatrix, box: BonusBox): void;
+	preLocationUpdate(host: IMatrix, oldP: iPoint): void;
+	onLocationUpdate(host: IMatrix, newP: iPoint): void;
+	onLevelup(host: IMatrix): void;
 
 	//============Display Implements============//
 	// Color

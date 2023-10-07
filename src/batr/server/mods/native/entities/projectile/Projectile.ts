@@ -1,10 +1,10 @@
 import { halfBrightnessTo } from "../../../../../common/color";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
-import IBatrMatrix from "../../../../main/IBatrMatrix";
+import IMatrix from "../../../../main/IMatrix";
 import Tool from "../../tool/Tool";
 import Weapon from "../../tool/Weapon";
 import IPlayer from "../player/IPlayer";
@@ -136,7 +136,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * 
 	 * @param host 调用它的母体
 	 */
-	public onTick(host: IBatrMatrix): void { }
+	public onTick(host: IMatrix): void { }
 
 	// 朝向 //
 	readonly i_hasDirection: true = true;

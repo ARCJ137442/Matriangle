@@ -1,26 +1,8 @@
-﻿import { fPoint, iPoint } from "../../common/geometricTools";
-import { Class, int, uint } from "../../legacy/AS3Legacy";
-import BlockAttributes from "../api/block/BlockAttributes";
-import Block, { BlockType } from "../api/block/Block";
+﻿import { uint } from "../../legacy/AS3Legacy";
 import IMap from "../api/map/IMap";
-import IMapDisplayer from "../../display/api/map/IMapDisplayer";
 import Entity from "../api/entity/Entity";
-import EntitySystem from "../api/entity/EntitySystem";
-import BonusBox from "../mods/native/entities/item/BonusBox";
-import IPlayer from "../mods/native/entities/player/IPlayer";
-import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
-import Lightning from "../mods/native/entities/projectile/other/Lightning";
-import Projectile from "../mods/native/entities/projectile/Projectile";
-import ThrownBlock from "../mods/native/entities/projectile/other/ThrownBlock";
-import WorldRuleEvent from "../rule/WorldRuleEvent";
-import MatrixResult from "../mods/native/stat/MatrixResult";
-import Wave from "../mods/native/entities/projectile/other/Wave";
-import Tool from "../mods/native/tool/Tool";
-import { BonusType } from "../mods/native/registry/BonusRegistry";
-import Laser from "../mods/native/entities/projectile/laser/Laser";
 import IMatrixRule from "../rule/IMatrixRule";
-import { mRot } from "../general/GlobalRot";
-import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
  * 母体：承载并控制所有「世界运行」有关的事物
@@ -36,12 +18,12 @@ import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
  * * 客户端：类似Minecraft，世界只有一部分机制运行于此上（仅为流畅考虑）
  *   * 用于「呈现远程服务端运行结果」「与服务端进行交互同步」
  */
-export default interface IBatrMatrix {
+export default interface IMatrix {
 
 	/**
 	 * 持有一个「注册表引用」，用于在分派事件时查表
 	 */
-	get registry(): IBatrRegistry;
+	get registry(): IWorldRegistry;
 
 	//========🌟实体部分：实体管理、实体事件等========//
 	/**

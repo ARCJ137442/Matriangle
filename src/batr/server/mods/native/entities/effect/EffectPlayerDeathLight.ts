@@ -1,5 +1,5 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { fPoint, iPoint, xPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";

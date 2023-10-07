@@ -2,8 +2,8 @@ import { fPoint } from "../../../../../../common/geometricTools";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
-import { toolCreateExplode } from "../../../registry/NativeMatrixMechanics";
+import IMatrix from "../../../../../main/IMatrix";
+import { toolCreateExplode } from "../../../mechmatics/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 import Bullet from "./Bullet";
 
@@ -40,7 +40,7 @@ export default class BulletBasic extends Bullet {
 	}
 
 	/** 覆盖：通知母体创建爆炸 */
-	override explode(host: IBatrMatrix): void {
+	override explode(host: IMatrix): void {
 		toolCreateExplode(
 			host, this.owner,
 			this._position, this.finalExplodeRadius,

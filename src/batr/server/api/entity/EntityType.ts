@@ -1,4 +1,4 @@
-﻿import { DisplayLayers } from "../../../display/api/BatrDisplayInterfaces";
+﻿import { DisplayLayers } from "../../../display/api/DisplayInterfaces";
 import { Class, int } from "../../../legacy/AS3Legacy";
 import TypeCommon from "../template/TypeCommon";
 

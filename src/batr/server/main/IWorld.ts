@@ -1,5 +1,5 @@
-﻿import IBatrMatrix from "./IBatrMatrix";
-import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+﻿import IMatrix from "./IMatrix";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
  * TODO: 有待施工
@@ -21,12 +21,12 @@ import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
  * 正式文档：参见实现的接口
  */
 
-export default interface IBatrWorld {
+export default interface IWorld {
 
 	//========世界运作：母体========//
-	get matrix(): IBatrMatrix;
+	get matrix(): IMatrix;
 
 	//========注册机制：总注册表========//
-	get registry(): IBatrRegistry;
+	get registry(): IWorldRegistry;
 
 }

@@ -1,9 +1,9 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import Laser from "./Laser";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import { iPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import LaserBasic from "./LaserBasic";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -52,7 +52,7 @@ export default class LaserAbsorption extends Laser {
 	}
 
 	//============Instance Functions============//
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		this.scaleY += LaserAbsorption.SCALE_V * (this.scaleReverse ? -1 : 1);
 		if (this.scaleY >= 1) {
 			this.scaleReverse = true;

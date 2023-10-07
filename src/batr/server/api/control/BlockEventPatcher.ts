@@ -1,4 +1,4 @@
-﻿import IBatrMatrix from "../../main/IBatrMatrix";
+﻿import IMatrix from "../../main/IMatrix";
 import { BlockEventPatchMap, BlockEventType, TypePatchMap, BlockPatchIndex, randomTickEventF } from "./BlockEventTypes";
 
 /**
@@ -52,7 +52,7 @@ export default class BlockEventPatcher {
 	 * ? 是否频繁地「数组解构封装」会导致性能降低
 	 * ! 后续可能遇到效率瓶颈，但「先实现再重构」
 	 */
-	public dispatchEvent(host: IBatrMatrix, eventType: BlockEventType, patchIndexType: BlockPatchIndex, ...args: any[]): void {
+	public dispatchEvent(host: IMatrix, eventType: BlockEventType, patchIndexType: BlockPatchIndex, ...args: any[]): void {
 		this._blockPatchMap[eventType][patchIndexType](host, ...args);
 		// this._blockPatchMap?.[eventType]?.[patchIndexType]?.(host, ...args);
 	}

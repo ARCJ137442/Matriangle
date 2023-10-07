@@ -2,9 +2,9 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import Laser from "./Laser";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
 
@@ -43,7 +43,7 @@ export default class LaserBasic extends Laser {
 	//============Instance Functions============//
 
 	/** 覆盖：没有伤害过玩家，就触发母体计算伤害 */
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		if (!this.hasDamaged) console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}

@@ -2,16 +2,16 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import Projectile from "../Projectile";
 import { fPoint, iPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTransform";
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 import IPlayer from "../../player/IPlayer";
 import EffectBlockLight from "../../effect/EffectBlockLight";
-import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../registry/NativeMatrixMechanics";
+import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../mechmatics/NativeMatrixMechanics";
 
 /**
  * 「掷出的方块」是
@@ -113,7 +113,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 
 
 	//============World Mechanics============//
-	override onTick(host: IBatrMatrix): void {
+	override onTick(host: IMatrix): void {
 		super.onTick(host);
 		// 在地图内&可通过&没碰到玩家：继续飞行
 		if (
@@ -138,7 +138,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		}
 	}
 
-	protected onBlockHit(host: IBatrMatrix): void {
+	protected onBlockHit(host: IMatrix): void {
 		// 将坐标位置对齐到网格
 		let _temp_iPoint: iPoint = new iPoint();
 		alignToGrid_P(this._position, _temp_iPoint);

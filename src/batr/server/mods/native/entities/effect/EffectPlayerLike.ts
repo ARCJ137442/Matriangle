@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import Effect from "../../../../api/entity/Effect";
 import { IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { TPS } from "../../../../main/GlobalWorldVariables";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/BatrDisplayInterfaces";
+import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
 import { NativeDecorationLabel as NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";

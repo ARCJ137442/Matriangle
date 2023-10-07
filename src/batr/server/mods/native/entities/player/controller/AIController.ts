@@ -1,7 +1,7 @@
 import { randInt } from "../../../../../../common/exMath";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { TPS } from "../../../../../main/GlobalWorldVariables";
-import IBatrMatrix from "../../../../../main/IBatrMatrix";
+import IMatrix from "../../../../../main/IMatrix";
 import IPlayer from "../IPlayer";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./PlayerAction";
 import PlayerController from "./PlayerController";
@@ -88,7 +88,7 @@ export default abstract class AIController extends PlayerController {
      * 
      * ? 这个「AI刻」存在的意义是什么
      */
-    public onPlayerTick(player: IPlayer, host: IBatrMatrix): void {
+    public onPlayerTick(player: IPlayer, host: IMatrix): void {
         // 先处理世界刻
         this.temp_add_action[0] = this.reactTick(player, host);
         // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
@@ -109,6 +109,6 @@ export default abstract class AIController extends PlayerController {
     }
 
     /** 🆕AI控制器独有：在「每个AI刻」中响应（一般用于「更人性化执行」的动作） */
-    public abstract reactAITick(self: IPlayer, host: IBatrMatrix): PlayerAction;
+    public abstract reactAITick(self: IPlayer, host: IMatrix): PlayerAction;
 
 }

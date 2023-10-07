@@ -4,18 +4,18 @@ import Entity from "../api/entity/Entity";
 import { IEntityActive, IEntityActiveLite } from "../api/entity/EntityInterfaces";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
-import { getRandomMap } from "../mods/native/registry/NativeMatrixMechanics";
+import { getRandomMap } from "../mods/native/mechmatics/NativeMatrixMechanics";
 import MatrixRule_V1 from "../mods/native/rule/MatrixRule_V1";
 import IMatrixRule from "../rule/IMatrixRule";
-import IBatrMatrix from "./IBatrMatrix";
-import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+import IMatrix from "./IMatrix";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 import { isDefined } from "../../common/utils";
 
 /**
  * 母体的第一代实现
  * * 具体功能&作用，参考其实现的接口
  */
-export default class Matrix_V1 implements IBatrMatrix {
+export default class Matrix_V1 implements IMatrix {
 
 	//========♻️生命周期：世界构造、世界重置========//
 
@@ -26,7 +26,7 @@ export default class Matrix_V1 implements IBatrMatrix {
 	 */
 	public constructor(
 		rule: IMatrixRule,
-		registry: IBatrRegistry,
+		registry: IWorldRegistry,
 	) {
 		// 直接上载变量
 		this._rule = rule;
@@ -118,8 +118,8 @@ export default class Matrix_V1 implements IBatrMatrix {
 	}
 
 	// 注册表 //
-	protected _registry: IBatrRegistry;
-	public get registry(): IBatrRegistry { return this._registry }
+	protected _registry: IWorldRegistry;
+	public get registry(): IWorldRegistry { return this._registry }
 
 	//========🗺️地图部分：地图加载、地图变换等========//
 

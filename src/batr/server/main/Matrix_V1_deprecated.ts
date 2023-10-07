@@ -2,7 +2,7 @@
  * 这个文件是为了「先做出一个最精简版本，然后再逐渐复刻旧有机制」方法所实践的代码
  * * 后续`Matrix_V1.ts`等文件会从中逐渐迁移代码
  */
-import { IBatrShape } from "../../display/api/BatrDisplayInterfaces";
+import { IBatrShape } from "../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE, DISPLAY_SIZE, DISPLAY_GRIDS, DEFAULT_SCALE } from "../../display/api/GlobalDisplayVariables";
 import FixedI18nText from "../../display/api/i18n/FixedI18nText";
 import I18nKey from "../../display/api/i18n/I18nKey";
@@ -26,27 +26,27 @@ import IPlayer from "../mods/native/entities/player/IPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import { BonusType } from "../mods/native/registry/BonusRegistry";
-import { getPlayers } from "../mods/native/registry/NativeMatrixMechanics";
+import { getPlayers } from "../mods/native/mechmatics/NativeMatrixMechanics";
 import MatrixResult from "../mods/native/stat/MatrixResult";
 import MatrixStats from "../mods/native/stat/MatrixStats";
 import Tool from "../mods/native/tool/Tool";
 import WorldRuleEvent from "../rule/WorldRuleEvent";
 import World from "./World_deprecated.test";
 import { TICK_TIME_MS } from "./GlobalWorldVariables";
-import IBatrMatrix from "./IBatrMatrix";
-import IBatrRegistry from "../mods/native/registry/IBatrRegistry";
+import IMatrix from "./IMatrix";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
  * 母体的第一代实现
  * * 具体功能&作用，参考其实现的接口
  */
-export default class Matrix_V1 implements IBatrMatrix {
+export default class Matrix_V1 implements IMatrix {
 
 	// TODO: 🏗️事件订阅、分派机制完善
 	// protected _eventBus: Function[] = [];//EventBus;
 
-	protected _registry: IBatrRegistry;
-	get registry(): IBatrRegistry { }
+	protected _registry: IWorldRegistry;
+	get registry(): IWorldRegistry { }
 
 	//============Static Variables============//
 

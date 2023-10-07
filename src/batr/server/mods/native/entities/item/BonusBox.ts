@@ -1,13 +1,13 @@
 
 
 import { uint } from "../../../../../legacy/AS3Legacy";
-import { DisplayLayers, IBatrShape, IBatrShapeContainer } from "../../../../../display/api/BatrDisplayInterfaces";
+import { DisplayLayers, IBatrShape, IBatrShapeContainer } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
 import { iPoint, iPointRef, intPoint } from "../../../../../common/geometricTools";
 import { BonusType } from "../../registry/BonusRegistry";
-import IBatrMatrix from "../../../../main/IBatrMatrix";
+import IMatrix from "../../../../main/IMatrix";
 
 /**
  * 「奖励箱」是
@@ -61,7 +61,7 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	//============World Mechanics============//
 
 	/** 实现：如果更新后自身位置被遮挡，则通知母体移除自身 */
-	public onPositedBlockUpdate(host: IBatrMatrix): void {
+	public onPositedBlockUpdate(host: IMatrix): void {
 		if (!host.map.testCanPass_I(this._position, true, false, false, false, true)) {
 			host.removeEntity(this);
 		}
