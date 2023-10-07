@@ -108,6 +108,7 @@ ctlWeb.addConnection(p2, 'p2');
 //  地图
 // matrix.map = NativeMaps.EMPTY;
 // matrix.map = NativeMaps.FRAME;
+matrix.map = NativeMaps.MAP_G;
 
 // 第一次测试
 ((): void => {

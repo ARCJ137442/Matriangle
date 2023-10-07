@@ -60,6 +60,8 @@ export default class BlockAttributes {
 	 * -2 means it will supplying player HP and experience
 	 * int.MIN_VALUE means no damage
 	 * int.MAX_VALUE means they can kill player once a damage
+	 * 
+	 * @default 最低伤害
 	 */
 	public playerDamage: int = int$MIN_VALUE;
 

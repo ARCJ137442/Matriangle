@@ -66,7 +66,7 @@ export module NativeTools {
 		.setExtraProperty(5, 3); // Used in BATR-alpha&beta
 
 	export const TOOL_ID_BLOCK_THROWER: string = 'Block Thrower';
-	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon(TOOL_ID_BLOCK_THROWER, 0.5, 1, 200)
+	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon(TOOL_ID_BLOCK_THROWER, 0.5, 1, 150)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 10);
 

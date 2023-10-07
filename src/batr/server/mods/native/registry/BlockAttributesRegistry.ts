@@ -33,7 +33,7 @@ export module NativeBlockAttributes {
 
 	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(0x66ff66).asBase.asSupplyPoint;
 
-	export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen;
+	// export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen; // !【2023-10-08 00:15:59】暂时不使用，因为已经在Gate状态中「动态缓存」了
 	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(0x888888).asGateClose;
 
 	export const MOVEABLE_WALL: BlockAttributes = new BlockAttributes(0xBBFFBB).asSolid.asArenaBlock;

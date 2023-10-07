@@ -1301,7 +1301,7 @@ const _temp_isHitAnyEntity_F_Grid_aligned: iPointVal = new iPoint();
  * 
  * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
  */
-export function getHitEntity_I_Grid(p: iPointRef, entities: IEntityInGrid[]): IEntityInGrid | null {
+export function getHitEntity_I_Grid<E extends IEntityInGrid>(p: iPointRef, entities: E[]): E | null {
     for (const entity of entities) {
         if (entity.position.isEqual(p)) // 暂时使用「坐标是否相等」的逻辑
             return entity;
@@ -1413,34 +1413,37 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
  * @param position 被调用方块的位置
  */
 export const randomTick_MoveableWall: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
-    let randomRot: uint, tPoint: fPoint;
-    // add laser by owner=null
+    // 正式开始放置 //
+    // 坐标计算
+    let randomRot: uint;
+    randomRot = host.map.storage.randomForwardDirectionAt(position);
+    host.map.towardWithRot_II(
+        _temp_randomTick_MoveableWall.copyFrom(position),
+        randomRot, 1
+    );
+    // 生成实体
     let p: ThrownBlock;
-    let i: uint = 0;
-    do {
-        randomRot = host.map.storage.randomForwardDirectionAt(position);
-        tPoint = host.map.towardWithRot_FF(position, randomRot);
-        if (
-            host.map.isInMap_I(position) ||
-            !host.map.testCanPass_F(tPoint, false, true, false, false)
-        ) continue;
-        p = new ThrownBlock(
-            null, // 无主
-            alignToGridCenter_P(position, _temp_randomTick_MoveableWall),
-            randomRot,
-            Math.random(),
-            block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
-            NativeTools.WEAPON_BLOCK_THROWER.baseDamage,
-            NativeTools.WEAPON_BLOCK_THROWER.extraResistanceCoefficient,
-            1, // 始终完全充能
+    // * 现在不会再尝试多次了
+    if (
+        host.map.isInMap_I(_temp_randomTick_MoveableWall) &&
+        host.map.testCanPass_I(_temp_randomTick_MoveableWall, false, true, false, false)
+    )
+        host.addEntity(
+            p = new ThrownBlock(
+                null, // 无主
+                _temp_randomTick_MoveableWall, // !【2023-10-08 00:46:12】因为其坐标的特殊性，无需对齐网格中心
+                randomRot,
+                0.25 + Math.random() * 0.25, // 0.25~0.5 // * 【2023-10-08 00:33:11】别飞太快
+                block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
+                NativeTools.WEAPON_BLOCK_THROWER.baseDamage,
+                NativeTools.WEAPON_BLOCK_THROWER.extraResistanceCoefficient,
+            )
         );
-        host.map.storage.setVoid(position);
-        host.addEntity(p);
-        // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次 // !【2023-10-07 19:24:47】因最新的「方块状态重写」「变量用途不明」等原因，废弃之
-        // if (!(block.state as MoveableWall)?.virus)
-        break;
-    }
-    while (++i < 0x10);
+    else return;
+    // 清空自身位置 //
+    host.map.storage.setVoid(position);
+    // 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次 // !【2023-10-07 19:24:47】因最新的「方块状态重写」「变量用途不明」等原因，废弃之
+    // if (!(block.state as MoveableWall)?.virus)
 }
 const _temp_randomTick_MoveableWall: fPoint = new fPoint();
 
@@ -1569,8 +1572,9 @@ const _temp_randomTick_LaserTrap: iPoint = new iPoint();
 export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block<BSGate>, position: iPoint): void => {
     // 已经打开的不要管
     if (block.state instanceof BSGate) {
-        if (block.state.open) return;
-        block.state.open = true;
+        if (!block.state.open) {
+            block.state.open = true;
+        }
         // TODO: 更新显示or方块更新事件
     }
     // 关闭的「门」随着随机刻打开

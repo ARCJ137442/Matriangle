@@ -11,7 +11,7 @@ import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTr
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 import IPlayer from "../../player/IPlayer";
 import EffectBlockLight from "../../effect/EffectBlockLight";
-import { getPlayers, isHitAnyEntity_F_Grid, isHitAnyEntity_I_Grid } from "../../../mechanics/NativeMatrixMechanics";
+import { computeFinalDamage, getHitEntity_I_Grid, getPlayers, isHitAnyEntity_F_Grid } from "../../../mechanics/NativeMatrixMechanics";
 
 /**
  * 「掷出的方块」是
@@ -48,6 +48,12 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	// protected _speed: fPoint;
 	protected _speed: number;
 
+	/**
+	 * 这个「掷出的方块」有无「击中过方块/玩家」
+	 * * 避免多次「击中」
+	 */
+	protected _isHitAnything: boolean = false;
+
 	//============Constructor & Destructor============//
 	/**
 	 * 构造函数
@@ -81,13 +87,11 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		owner: IPlayer | null,
 		position: fPoint, direction: mRot, speed: number,
 		block: Block,
-		attackerDamage: uint, toolExtraDamageCoefficient: uint,
-		chargePercent: number = 1,
+		attackerDamage: uint, toolExtraDamageCoefficient: uint
 	) {
 		super(
 			owner,
-			// exMath.getDistance2(GlobalRot.towardIntX(rot, chargePercent), GlobalRot.towardIntY(rot, chargePercent)) * attackerDamage
-			uint(2 * chargePercent ** 2) * attackerDamage, // ? ↑不知道上面那个在做什么😂
+			attackerDamage, // ? ↑不知道上面那个在做什么😂
 			toolExtraDamageCoefficient,
 			direction
 		);
@@ -109,12 +113,10 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		super.destructor();
 	} */
 
-	//============Instance Getter And Setter============//
-
-
 	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
 		super.onTick(host);
+		let hitPlayer: IPlayer | null;
 		// 在地图内&可通过&没碰到玩家：继续飞行
 		if (
 			// 在地图内
@@ -123,27 +125,42 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 			host.map.testCanPass_F(
 				this.position, // ! 【2023-09-22 20:34:44】现在直接使用
 				false, true, false, false
-			) &&
+			) && // TODO: 这实际上会有「边缘点碰撞不准确」的问题……需要修复	
 			// 没碰到玩家
-			isHitAnyEntity_F_Grid(this._position, getPlayers(host))
+			!isHitAnyEntity_F_Grid(this._position, getPlayers(host))
 		) {
 			host.map.towardWithRot_FF(this._position, this._direction, this._speed);
 		}
-		else {
-			console.log('Block hit at', this._position);
-			// * 如果不是伤害到玩家，就后退（被外部阻挡的情形）
-			if (isHitAnyEntity_F_Grid(this._position, getPlayers(host)))
-				host.map.towardWithRot_FF(this._position, this._direction, -this._speed);
+		// ! 只有「从未击中过」的方块才能进入「击中」流程
+		else if (!this._isHitAnything) {
+			this._isHitAnything = true; // 锁定状态
 			this.onBlockHit(host);
 		}
 	}
 
 	protected onBlockHit(host: IMatrix): void {
-		// 将坐标位置对齐到网格
+		// 尝试伤害玩家
+		// console.warn('WIP thrownBlockHurtPlayer!', this)// host.thrownBlockHurtPlayer(this);
+		let hitPlayer: IPlayer | null = getHitEntity_I_Grid(
+			// ! 因为这只用执行一次，所以创建一个新数组也无可厚非
+			alignToGrid_P(this._position, new iPoint()),
+			getPlayers(host)
+		)
+		if (hitPlayer !== null)
+			hitPlayer.removeHP(
+				host,
+				computeFinalDamage(
+					this._attackerDamage,
+					hitPlayer.attributes.buffResistance,
+					this._extraDamageCoefficient
+				),
+				this.owner
+			);
+		// 后退，准备放置方块 // * 【2023-10-08 00:57:36】目前改动的机制：不会替换掉玩家的位置
+		host.map.towardWithRot_FF(this._position, this._direction, -this._speed);
+		// 将坐标位置对齐到网格 // ! 必须在「后退」之后
 		let _temp_iPoint: iPoint = new iPoint();
 		alignToGrid_P(this._position, _temp_iPoint);
-		// 尝试伤害玩家 // TODO: 有待迁移
-		console.warn('WIP thrownBlockHurtPlayer!', this)// host.thrownBlockHurtPlayer(this);
 		// 放置判断
 		if (host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
 			// 放置
@@ -158,7 +175,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 				false
 			),
 		)
-		// Remove
+		// 移除自身
 		host.removeEntity(this);
 	}
 

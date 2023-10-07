@@ -1,4 +1,4 @@
-import { uint } from "../../../../legacy/AS3Legacy";
+import { int, int$MIN_VALUE, uint } from "../../../../legacy/AS3Legacy";
 import { randomBoolean2 } from "../../../../common/utils";
 import BlockState from "../../../api/block/BlockState";
 import BlockAttributes from "../../../api/block/BlockAttributes";
@@ -48,15 +48,24 @@ export default class BSGate extends BlockState {
 			this._temp_fullAttr.canEnter = open;
 			// 子弹通过
 			this._temp_fullAttr.canShotIn = open;
+			// 电流抗性
 			this._temp_fullAttr.electricResistance = open ?
 				0 :
-				this._temp_fullAttr_electricResistanceClosed
-			this._temp_fullAttr.defaultPixelAlpha = (open ? 0.25 : 1) * this._temp_fullAttr_pixelAlpha
+				this._temp_fullAttr_electricResistance
+			// 玩家伤害
+			this._temp_fullAttr.playerDamage = open ?
+				int$MIN_VALUE :
+				this._temp_fullAttr_playerDamage
+			// 呈现不透明度
+			this._temp_fullAttr.defaultPixelAlpha = open ?
+				this._temp_fullAttr_pixelAlpha >> 2 : // 四分之一透明度
+				this._temp_fullAttr_pixelAlpha
 		}
 		return open;
 	}
 	protected _temp_fullAttr_pixelAlpha: uint = 0;
-	protected _temp_fullAttr_electricResistanceClosed: uint = 0;
+	protected _temp_fullAttr_playerDamage: int = -1;
+	protected _temp_fullAttr_electricResistance: uint = 0;
 
 	/**
 	 * @override 根据门的「开关」状态，修改其中的「可通过」属性
@@ -67,7 +76,8 @@ export default class BSGate extends BlockState {
 			this._temp_fullAttr = baseAttr.copy();
 			// 缓存需要临时改变的属性
 			this._temp_fullAttr_pixelAlpha = this._temp_fullAttr.defaultPixelAlpha;
-			this._temp_fullAttr_electricResistanceClosed = this._temp_fullAttr.electricResistance;
+			this._temp_fullAttr_playerDamage = this._temp_fullAttr.playerDamage;
+			this._temp_fullAttr_electricResistance = this._temp_fullAttr.electricResistance;
 			// 更新属性
 			this.updateOpen(this._open);
 		}
