@@ -2,14 +2,21 @@ import { uint } from "../../../../legacy/AS3Legacy";
 import IBatrMatrix from "../../../main/IBatrMatrix";
 import { 实体列表可视化, 母体可视化 } from "../visualizations";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
-import WorldVisualizer from "./Visualizer";
+import Visualizer from "./Visualizer";
+
+/**
+ * 返回的类型标识
+ */
+type TypeFlag = uint | string;
 
 /**
  * 「母体可视化者」是
  * * 用于传递母体的可视化信号的
  * 可视化者
+ * 
+ * TODO: 或许需要把「实体列表」独立出来，并且封装出一个可用的「服务器对象」以便复用WS服务
  */
-export default class MatrixVisualizer extends WorldVisualizer {
+export default class MatrixVisualizer extends Visualizer {
 
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = "Visualizer:Matrix";
@@ -27,24 +34,41 @@ export default class MatrixVisualizer extends WorldVisualizer {
 	// 母体可视化部分 //
 
 	/**
-	 * （静态）获取某个母体的可视化信号（文本）
-	 * @param mapBlockStringLen 显示母体地图每一格的字符串长度
+	 * 解析「类型标签」
 	 */
-	public static getVisionSignal(matrix: IBatrMatrix, mapBlockStringLen: uint = 7): string {
-		return ( // ! 注意：字符串不能使用前缀加号
-			母体可视化(matrix.map.storage, matrix.entities, mapBlockStringLen) +
-			'\n\n' +
-			实体列表可视化(matrix.entities)
-		);
+	public static parseTypeFlag(messageStr: string): TypeFlag {
+		this._tempFlag = +messageStr
+		if (isFinite(this._tempFlag)) return uint(this._tempFlag);
+		else return messageStr
+	}
+	protected static _tempFlag: TypeFlag = 0;
+
+	/**
+	 * （静态）获取某个母体的视野信号（文本）
+	 * @param mapBlockStringLen 显示母体地图每一格的字符串长度
+	 * @param typeFlag 整数时是「地图每一格字符串长度」，字符串时回传其它特定信号
+	 */
+	public static getVisionSignal(matrix: IBatrMatrix, typeFlag: TypeFlag): string {
+		switch (typeFlag) {
+			case 'entities':
+				return 实体列表可视化(matrix.entities);
+			default:
+				if (typeof typeFlag === 'number')
+					return 母体可视化(matrix.map.storage, matrix.entities, typeFlag);
+				else {
+					console.warn('无效的类型标签！');
+					return '';
+				}
+		}
 	}
 
 	/**
 	 * 获取母体可视化的信号
 	 * * 未连接母体⇒空字串
 	 */
-	public getSignal(blockWidth: uint = 7): string {
+	public getSignal(message: string): string {
 		if (this.linkedMatrix === null) return '';
-		return MatrixVisualizer.getVisionSignal(this.linkedMatrix, blockWidth);
+		return MatrixVisualizer.getVisionSignal(this.linkedMatrix, MatrixVisualizer.parseTypeFlag(message));
 	}
 
 }

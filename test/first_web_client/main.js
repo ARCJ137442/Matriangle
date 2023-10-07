@@ -14,12 +14,16 @@ let screenIntervalID;
 const calculateFPS = () => 1000 / parseFloat(screenFPS.value);
 let FPS = calculateFPS();
 const screenText = document.getElementById('screen');
+const otherInfText = document.getElementById('otherInf');
 
 function getWSLinkScreen() { return `ws://${screenAddress.value}` }
 let socketControl;
 
 // 网络
 const resetButton = document.getElementById('reset');
+const otherInfMessage = 'entities'
+
+const isEntityListSignal = (text) => text.startsWith('实体列表')
 
 // 重置网络
 function resetAllWS() {
@@ -64,6 +68,8 @@ function resetScreenWS() {
 				try {
 					// 尝试发送消息
 					sendMessage(socketScreen, blockWidth.value);
+					// 独立发送「获取实体列表」
+					sendMessage(socketScreen, otherInfMessage);
 				} catch (e) {
 					console.error('消息发送失败:', e)
 				}
@@ -72,7 +78,11 @@ function resetScreenWS() {
 		// 收到母体信号时
 		socketScreen.onmessage = (event) => {
 			// console.info('data:', event.data.toString())
-			setScreen(event.data.toString())
+			let dataS = event.data.toString();
+			if (isEntityListSignal(dataS))
+				setOtherInf(dataS)
+			else
+				setScreen(dataS)
 		}
 		// 关闭时
 		socketScreen.onclose = (event) => {
@@ -175,4 +185,9 @@ resetButton.addEventListener('click', resetAllWS)
 function setScreen(text) {
 	// console.log('signal received:', text)
 	screenText.innerText = text;
+}
+
+// 刷新其它信息（实体列表）
+function setOtherInf(text) {
+	otherInfText.innerText = text
 }

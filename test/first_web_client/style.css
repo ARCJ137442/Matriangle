@@ -4,4 +4,13 @@
 	white-space: pre;
 	/* 等宽字体 */
 	font-family: Consolas, Monaco, 'Courier New', monospace;
+	font-size: smaller;
+}
+
+/* 附加信息 */
+#otherInf {
+	/* 字体 */
+	font-family: Consolas, Monaco, 'Courier New', monospace;
+	font-size: medium;
+	font-weight: inherit;
 }

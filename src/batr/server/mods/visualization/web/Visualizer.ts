@@ -10,7 +10,7 @@ import { MatrixProgram, MatrixProgramLabel } from "../../../api/control/MatrixPr
  * * 响应式的
  * 母体程序
  */
-export default abstract class WorldVisualizer extends MatrixProgram {
+export default abstract class Visualizer extends MatrixProgram {
 
 	// 构造函数&析构函数 //
 	public constructor(
@@ -125,9 +125,8 @@ export default abstract class WorldVisualizer extends MatrixProgram {
 					);
 					// 继续往Socket添加钩子
 					socket.on('message', (messageBuffer: Buffer): void => {
-						// 不管啥消息，直接发回去
-						let blockWidth: uint = parseInt(messageBuffer.toString());
-						socket.send(this.getSignal(blockWidth));
+						// !【2023-10-07 14:45:37】现在统一把消息缓冲区转成字符串，交给内部的函数处理
+						socket.send(this.getSignal(messageBuffer.toString()));
 					});
 					socket.on('close', (code: number, reason: string): void => {
 						console.log(

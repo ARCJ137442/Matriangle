@@ -73,7 +73,7 @@ visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 添加实体
 matrix.addEntities(
 	p, p2,
-	ctl,
+	ctl, ctlWeb,
 	visualizer
 )
 // 添加奖励箱
