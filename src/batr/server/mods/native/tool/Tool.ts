@@ -237,7 +237,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	/**
 	 * 处理「冷却机制」
 	 * * 逻辑：不断递减自身「冷却时间」，直到「冷却时间」为零
-	 *   * 其后返回`isUsing`，表明「武器可以『随时使用』」
+	 *   * 其后返回true，表明「武器可以『随时使用』」
 	 *   * 否则返回false，表明武器「还没到使用的时候」
 	 * @param isUsing 判断使用者「是否在使用这个工具」（用于在「反向充能」时「打断充能」）
 	 * @returns 是否「可以使用」
@@ -249,7 +249,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		}
 		else {
 			// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑，导致「充能都没完成，就又需要等待冷却」
-			return isUsing;
+			return true;
 		}
 	}
 
@@ -266,6 +266,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @returns 是否「可以使用」
 	 */
 	public dealCharge(isUsing: boolean): boolean {
+		// * 反向充能
 		if (this._reverseCharge) {
 			if (isUsing) { // 反向充能「只要使用就直接成功」
 				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
@@ -274,13 +275,17 @@ export default class Tool implements IJSObjectifiable<Tool> {
 			else if (this._chargeTime < this._chargeMaxTime)
 				this._chargeTime++;
 		}
-		else if (isUsing) { // 正向充能只能在使用时
+		// * 正向充能
+		else {
+			// 已充能满⇒可用
 			if (this._chargeTime >= this._chargeMaxTime) {
 				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
 				return true;
 			}
-			else
+			else if (isUsing) // 未充能满 & 正在使用⇒继续计时
 				this._chargeTime++;
+			// 未充能满 & 不在使用 & !未充能⇒可用
+			else if (this.chargeTime > 0) return true;
 		}
 		// 若先前未因「充能完毕/使用打断充能」返回true
 		return false;

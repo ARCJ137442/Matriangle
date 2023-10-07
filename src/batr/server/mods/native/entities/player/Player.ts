@@ -697,7 +697,7 @@ export default class Player extends Entity implements IPlayer {
 		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
 		if (!this._tool.needsCD || this._tool.dealCD(this._isUsing)) {
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
-			// *逻辑：要么「无需充能」，要么「充能方面已允许使用」
+			// *逻辑：需要充能⇒必定能使用
 			if (!this._tool.needsCharge || this.tool.dealCharge(this._isUsing)) {
 				//重置状态
 				this._tool.resetUsingState();

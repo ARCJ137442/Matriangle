@@ -472,7 +472,7 @@ export const NativeToolUsageMap: Map<typeID, toolUsageF> = new Map([
                     computeFinalRadius(
                         BulletNuke.DEFAULT_EXPLODE_RADIUS,
                         user.attributes.buffRadius
-                    ) * (2 - scalePercent),
+                    ) * scalePercent,
                 ).initFromTool(tool)
             )
         }
