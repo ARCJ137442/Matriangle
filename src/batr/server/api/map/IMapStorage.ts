@@ -3,8 +3,9 @@ import { iPoint, iPointRef, iPointVal, intPoint } from "../../../common/geometri
 import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
-import Block, { BlockType } from "../block/Block";
+import Block from "../block/Block";
 import { IJSObjectifiable } from "../../../common/JSObjectify";
+import { typeID } from "../registry/IWorldRegistry";
 
 
 /**
@@ -180,7 +181,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockID(p: iPointRef): BlockType | null;
+	getBlockID(p: iPointRef): typeID | null;
 
 	/**
 	 * 设置地图上某位置的方块
@@ -234,17 +235,17 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	addSpawnPointAt(p: iPoint): IMapStorage;
+	addSpawnPointAt(p: iPointRef): IMapStorage;
 
 	/** 【机制需要】获取某处「是否有重生点」 */
-	hasSpawnPointAt(p: iPoint): boolean;
+	hasSpawnPointAt(p: iPointRef): boolean;
 
 	/**
 	 * 在地图上移除（删除）重生点
 	 * @param p 待移除的重生点
 	 * @returns 是否移除成功
 	*/
-	removeSpawnPoint(p: iPoint): boolean;
+	removeSpawnPoint(p: iPointRef): boolean;
 
 	/** 移除地图上的所有重生点 */
 	clearSpawnPoints(): IMapStorage;

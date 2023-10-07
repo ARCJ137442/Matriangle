@@ -427,3 +427,21 @@ export function towardX_MF(rot: mRot, radius: number = 1): number {
 export function towardY_MF(rot: mRot, radius: number = 1): number {
 	return exMath.psi(rot - 2) * radius
 }
+
+/**
+ * （整数版本）根据两个数值，判断「前者在『更正方向』（返回1）还是『更负方向』（返回0）」
+ * * 前者在「更负方向」|后者在「更正方向」⇒0
+ * * 前者在「更正方向」|后者在「更负方向」⇒1
+ */
+export function comparePosition_I(a: int, b: int): 0 | 1 {
+	return a > b ? 1 : 0
+}
+
+/**
+ * （浮点版本）根据两个数值，判断「前者在『更正方向』（返回1）还是『更负方向』（返回0）」
+ * * 前者在「更负方向」|后者在「更正方向」⇒0
+ * * 前者在「更正方向」|后者在「更负方向」⇒1
+ */
+export function comparePosition_F(a: number, b: number): 0 | 1 {
+	return a > b ? 1 : 0
+}

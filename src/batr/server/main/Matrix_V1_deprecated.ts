@@ -26,7 +26,7 @@ import IPlayer from "../mods/native/entities/player/IPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
 import { BonusType } from "../mods/native/registry/BonusRegistry";
-import { getPlayers } from "../mods/native/mechmatics/NativeMatrixMechanics";
+import { getPlayers } from "../mods/native/mechanics/NativeMatrixMechanics";
 import MatrixResult from "../mods/native/stat/MatrixResult";
 import MatrixStats from "../mods/native/stat/MatrixStats";
 import Tool from "../mods/native/tool/Tool";

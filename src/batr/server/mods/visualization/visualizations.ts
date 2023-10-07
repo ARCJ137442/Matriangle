@@ -2,7 +2,7 @@ import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTo
 import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
-import { IEntityInGrid, IEntityOutGrid } from "../../api/entity/EntityInterfaces";
+import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection } from "../../api/entity/EntityInterfaces";
 import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
 import Player from "../native/entities/player/Player";
@@ -14,6 +14,8 @@ import BonusBox from "../native/entities/item/BonusBox";
 import Effect from "../../api/entity/Effect";
 import Projectile from "../native/entities/projectile/Projectile";
 import { NativeBlockIDs } from "../native/registry/BlockRegistry";
+import BlockRandomTickDispatcher from "../native/mechanics/programs/BlockRandomTickDispatcher";
+import { nameOfRot_M } from "../../general/GlobalRot";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -21,12 +23,13 @@ import { NativeBlockIDs } from "../native/registry/BlockRegistry";
  */
 
 /**
- * 若方块为「空」，则填充空格；否则截断并补全空格
+ * 若方块为「空」，则填充空格；否则保留自身
+ * *【2023-10-07 22:20:15】由于新方块系统的产生，不再截取方块类名
  * @param id 方块类型（类名）
  * @returns 格式化后的定长名字
  */
 export function showBlock(id: string, maxLength: uint = 7): string {
-	return showName(id == NativeBlockIDs.VOID ? '' : id.slice(5, 5 + maxLength), maxLength)
+	return showName(id == NativeBlockIDs.VOID ? '' : id, maxLength)
 }
 
 export function showName(name: string, maxLength: uint = 7): string {
@@ -131,7 +134,7 @@ export function 稀疏地图母体可视化(
 				line.push(
 					e === null ?
 						showBlock(
-							storage.getBlock(iP).id, string_l
+							storage.getBlockID(iP), string_l
 						) :
 						showEntity(e, string_l)
 				);
@@ -168,7 +171,7 @@ export function 实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VA
 function 实体标签显示(e: Entity): string {
 	// 玩家
 	if (e instanceof Player)
-		return `${getClass(e)?.name}"${e.customName}"@${(e as IEntityInGrid).position
+		return `${getClass(e)?.name}"${e.customName}"${获取坐标标签(e)
 			}|${e.HPText
 			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}!${e.tool.chargeTime}/${e.tool.chargeMaxTime
 			}]`
@@ -178,17 +181,16 @@ function 实体标签显示(e: Entity): string {
 	// 特效
 	if (e instanceof Effect)
 		return `${getClass(e)?.name}|${e.life}/${e.LIFE}`
-	// 抛射体
+	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
-		// 有坐标的抛射体
-		if ((e as unknown as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
-			return `${getClass(e)?.name}@${(e as unknown as (IEntityInGrid | IEntityOutGrid)).position}`
-		else
-			return `${getClass(e)?.name}`
+		return `${getClass(e)?.name}${获取坐标标签(e)}`
 	// 母体程序
 	if (e instanceof MatrixProgram)
+		// 方块随机刻分派者
+		if (e instanceof BlockRandomTickDispatcher)
+			return `${getClass(e)?.name}[${e.label}] -> ${(e as any)?._temp_lastRandomP.toString()}`
 		// 控制器
-		if (e instanceof MatrixController)
+		else if (e instanceof MatrixController)
 			// 玩家控制器
 			if (e instanceof PlayerController)
 				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(实体标签显示).join(', ')}`
@@ -200,9 +202,17 @@ function 实体标签显示(e: Entity): string {
 		else
 			// 普通情况：仅有一个标签
 			return `${getClass(e)?.name}[${e.label}]`
-	// 其它有坐标实体
-	else if ((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined)
-		return `${getClass(e)?.name}@${(e as (IEntityInGrid | IEntityOutGrid)).position}`
-	// 其它实体
-	return `${getClass(e)?.name}`
+	// 其它实体（包括「是否有坐标」）
+	return `${getClass(e)?.name}${获取坐标标签(e)}`
+}
+
+/**  辅助函数 */
+function 获取坐标标签(e: Entity): string {
+	return (
+		((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined) ?
+			`@${(e as (IEntityInGrid | IEntityOutGrid)).position}` : ``
+	) + (
+			((e as IEntityWithDirection)?.direction !== undefined) ?
+				`^${nameOfRot_M((e as IEntityWithDirection).direction)}` : ``
+		)
 }

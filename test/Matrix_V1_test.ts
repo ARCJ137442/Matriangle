@@ -5,7 +5,7 @@ import AIControllerGenerator from "../src/batr/server/mods/native/entities/playe
 import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
 import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
-import { NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechmatics/NativeMatrixMechanics";
+import { NATIVE_BLOCK_RANDOM_TICK_MAP, NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
@@ -15,9 +15,9 @@ import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables"
 import { mergeMaps, randomIn } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
-import HTTPController from "../src/batr/server/mods/webIO/controller/HTTPController";
 import MatrixVisualizer from "../src/batr/server/mods/visualization/web/MatrixVisualizer";
 import WSController from "../src/batr/server/mods/webIO/controller/WSController";
+import BlockRandomTickDispatcher from "../src/batr/server/mods/native/mechanics/programs/BlockRandomTickDispatcher";
 
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
@@ -29,8 +29,8 @@ for (const map of NativeMaps.ALL_NATIVE_MAPS)
 for (const bt of NativeBonusTypes._ALL_AVAILABLE_TYPE)
 	rule.bonusTypePotentials.set(bt, 1)
 
-// 设置所有工具
-rule.enabledTools = NativeTools.TOOLS_AVAILABLE
+// 设置所有工具 // ! 目前限定为子弹系列
+rule.enabledTools = NativeTools.WEAPONS_BULLET
 
 const registry = new Registry_V1();
 mergeMaps(
@@ -70,8 +70,13 @@ ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
 // 可视化信号
 let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
 visualizer.launchWebSocketServer('127.0.0.1', 8080);
-// 添加实体
+// 方块随机刻分派者
+let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher(
+	NATIVE_BLOCK_RANDOM_TICK_MAP // * 使用原生の分派逻辑
+);
+// * 添加实体
 matrix.addEntities(
+	blockRTickDispatcher,
 	p, p2,
 	ctl, ctlWeb,
 	visualizer
@@ -85,11 +90,7 @@ p2.customName = 'Player二号机'
 p.lifeNotDecay = p2.lifeNotDecay = true;
 // 武器
 p.tool = NativeTools.WEAPON_BULLET_BASIC.copy();
-p2.tool = randomIn([
-	NativeTools.WEAPON_BULLET_NUKE,
-	NativeTools.WEAPON_BULLET_BOMBER,
-	NativeTools.WEAPON_BULLET_TRACKING,
-]).copy();
+p2.tool = NativeTools.WEAPON_BULLET_TRACKING.copy();
 // 初号机の控制器
 ctl.AIRunSpeed = 4; // 一秒四次行动
 p.connectController(ctl);
@@ -109,7 +110,7 @@ ctlWeb.addConnection(p2, 'p2');
 // matrix.map = NativeMaps.FRAME;
 
 // 第一次测试
-(() => {
+((): void => {
 	console.log(
 		母体可视化(
 			matrix.map.storage as MapStorageSparse,

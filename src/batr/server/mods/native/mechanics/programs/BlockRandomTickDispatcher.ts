@@ -12,17 +12,17 @@ import IMatrix from "../../../../main/IMatrix";
  * * 定时向母体获取随机坐标，并根据自身「随机刻映射表」分派「方块随机刻」的
  * 母体程序
  */
-export default class BLockRandomTickDispatcher extends MatrixProgram implements IEntityActive {
+export default class BlockRandomTickDispatcher extends MatrixProgram implements IEntityActive {
 
 	/** 标签 */
-	public static readonly LABEL: MatrixProgramLabel = 'BLockRandomTickDispatch';
+	public static readonly LABEL: MatrixProgramLabel = 'BlockRandomTickDispatch';
 
 	// 构造&析构 //
 	public constructor(
 		/** 随机刻映射表 */
 		public readonly randomTickMap: Map<typeID, randomTickEventF>
 	) {
-		super(BLockRandomTickDispatcher.LABEL);
+		super(BlockRandomTickDispatcher.LABEL);
 	}
 
 	// 活跃实体 //

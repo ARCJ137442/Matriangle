@@ -10,7 +10,7 @@ import IMatrix from "../../../../../main/IMatrix";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../player/IPlayer";
-import { getPlayers } from "../../../mechmatics/NativeMatrixMechanics";
+import { getPlayers } from "../../../mechanics/NativeMatrixMechanics";
 
 /**
  * 「子弹」是
@@ -80,15 +80,18 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		// if (host === null) return;
 		this.nowBlock = host.map.storage.getBlock(this.position);
 		// 在移动进去之前
-		if (this.lastBlock != this.nowBlock) {
+		if (this.lastBlock !== this.nowBlock) {
 			// Random rotate
 			if (this.nowBlock !== null &&
 				this.nowBlock.attributes.rotateWhenMoveIn) {
 				this.direction = host.map.storage.randomRotateDirectionAt(this._position_I, this._direction, 1);
 			}
+			// TODO: 未能触发，待解决bug
 		}
 		// 移动
 		host.map.towardWithRot_FF(this._position, this._direction, this.speed);
+		// 更新「上一个方块」
+		this.lastBlock = this.nowBlock
 		// 更新整数坐标
 		alignToGrid_P(this._position, this._position_I);
 		// 移动进去之后

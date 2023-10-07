@@ -2,12 +2,12 @@
 import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import { mRot } from "../../../../../general/GlobalRot";
+import { comparePosition_I, mRot } from "../../../../../general/GlobalRot";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import IMatrix from "../../../../../main/IMatrix";
 import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
-import { projectileCanHurtOther, toolCreateExplode } from "../../../mechmatics/NativeMatrixMechanics";
+import { projectileCanHurtOther, toolCreateExplode } from "../../../mechanics/NativeMatrixMechanics";
 import IPlayer from "../../player/IPlayer";
 
 /**
@@ -22,12 +22,12 @@ export default class BulletTracking extends Bullet {
 	//============Static Variables============//
 	public static readonly SIZE: number = logical2Real(3 / 8);
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS;
-	public static readonly DEFAULT_EXPLODE_COLOR: uint = 16776960;
-	public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.625;
+	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffff00;
+	public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.875;
 
 	//============Instance Variables============//
 	protected _target: IPlayer | null = null;
-	protected _trackingFunction: Function = this.canBeTarget; // not the criterion
+	protected _trackingFunction: (player: IPlayer) => mRot | -1 = this.getTargetRotWeak; // not the criterion
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: IPlayer[] = [];
 
@@ -69,7 +69,7 @@ export default class BulletTracking extends Bullet {
 			if (player !== null && // not null
 				(
 					this._owner === null ||
-					projectileCanHurtOther(this, player) // TODO: 以后需要改成「实例无关」方法
+					projectileCanHurtOther(this, player)
 				) // 需可使用工具伤害
 			)
 				this._cachedTargets.push(player);
@@ -94,7 +94,7 @@ export default class BulletTracking extends Bullet {
 					continue;
 				};
 				// 若「值得追踪」，则开始追踪
-				if (this.canBeTarget(player)) {
+				if (this.getTargetRotWeak(player) !== -1) {
 					this._target = player;
 					this.direction = this.getTargetRot(player);
 					this.speed = BulletTracking.DEFAULT_SPEED * this._scalePercent;
@@ -102,14 +102,12 @@ export default class BulletTracking extends Bullet {
 				}
 			}
 		}
-
 		// 如果失去了目标（玩家等待重生、不再能被工具伤害、目标「跟丢了」），重置
 		else if (this.checkTargetInvalid(this._target) || // 先检查「玩家是否合法」
-			(tempRot = this._trackingFunction(this._target)) < 0 // 再检查「是否跟丢了」
+			(tempRot = this._trackingFunction(this._target)) === -1 // 再检查「是否跟丢了」
 		) {
 			this._target = null;
 		}
-
 		// 如果目标还在，那就继续追踪目标
 		else {
 			this.direction = tempRot;
@@ -127,35 +125,53 @@ export default class BulletTracking extends Bullet {
 	}
 
 	/**
-	 * 决定是否要触发「玩家追踪」
+	 * 在追踪过程中，获取「追踪到玩家需要采取的朝向」的「弱化版本」
+	 * * 实际上只需要在n维空间中共(n-1)维超平面（二维是线，三维是面）就可追踪
+	 * * 只有在「坐标相等」时响应
+	 * * 有一个响应⇒返回该轴向对应方位
 	 *
-	 * ! 【20230915 20:53:40】现在由于适配任意维空间的需要，此函数被确定为「开启跟踪的条件」
+	 * !现在因为「需要统一函数类型」
 	 * @param player 所追踪的玩家
-	 * @returns 该玩家是否值得开启追踪
+	 * @returns 若值得追踪，需要追踪的「绝对距离最大值」方向
 	 */
-	protected canBeTarget(player: IPlayer): boolean {
+	protected getTargetRotWeak(player: IPlayer): mRot | -1 {
 		// * 遍历得到第一个坐标值相等的轴向（例：三维中x轴坐标相同，于是在yOz平面开始跟踪）
+		let max_i: uint = 0, temp_distance: uint, max_distance: uint = 0, isAnyLine: boolean = false;
 		for (let i: uint = 0; i < player.position.nDim; i++) {
-			if (this._position_I[i] == player.position[i]) {
-				return true;
+			if (this._position_I[i] === player.position[i]) {
+				isAnyLine = true;
+				// 因为是弱化版本，所以只考虑「绝对距离最大」的轴向
+				// ! 这时候距离都为零了，还需要往哪儿移动？？
+			}
+			else if ((temp_distance = this._position_I.getAbsDistanceAt(player.position, i)) > max_distance) {
+				max_i = i;
+				max_distance = temp_distance;
 			}
 		}
-		return false;
+		// 如果共任意超平面，返回「绝对距离最大值」的逼近方法
+		if (isAnyLine) {
+			return (max_i << 1) + comparePosition_I(
+				this._position_I[max_i],  // 自己在更正方向，就往负方向走
+				player.position[max_i] // 自己在更负方向，就往正方向走
+			);
+		}
+		// 否则无果
+		return -1;
 	}
-
 	/**
 	 * 在追踪过程中，获取「追踪到玩家需要采取的朝向」
+	 * * 追踪逻辑：先直线走完「绝对距离最大」的方向，然后逐渐变小
+	 * 
 	 * @param player 被追踪的玩家
-	 * @returns 「绝对距离最小」维度的索引
+	 * @returns 「绝对距离最大」维度的索引
 	 */
 	protected getTargetRot(player: IPlayer): int {
-		// 先获取一个最小索引，代表「绝对距离最小」的轴向
-		let iMinAbsDistance: uint = this._position_I.indexOfAbsMinDistance(player.position);
+		// 先获取一个最小索引，代表「绝对距离最大」的轴向
+		let iMaxAbsDistance: uint = this._position_I.indexOfAbsMaxDistance(player.position);
 		// 然后根据轴向生成「任意维整数角」
-		return (iMinAbsDistance << 1) + (
-			this.position[iMinAbsDistance] > player.position[iMinAbsDistance] ?
-				1 : // 自己在更正方向，就往负方向走
-				0 // 自己在更负方向，就往正方向走
+		return (iMaxAbsDistance << 1) + comparePosition_I(
+			this._position_I[iMaxAbsDistance],  // 自己在更正方向，就往负方向走
+			player.position[iMaxAbsDistance] // 自己在更负方向，就往正方向走
 		);
 	}
 

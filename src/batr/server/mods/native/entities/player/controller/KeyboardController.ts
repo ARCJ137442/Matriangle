@@ -2,7 +2,7 @@ import KeyListener from "../../../../../../common/KeyListener";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { MatrixController } from "../../../../../api/control/MatrixControl";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
-import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../mechmatics/NativeMatrixMechanics";
+import { DEFAULT_PLAYER_CONTROL_KEYS, NativeControlKeyConfig } from "../../../mechanics/NativeMatrixMechanics";
 import IPlayer from "../IPlayer";
 
 /**

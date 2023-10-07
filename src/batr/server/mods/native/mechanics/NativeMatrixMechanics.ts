@@ -1,6 +1,6 @@
 import { ReLU_I, intMax, intMin, randInt, randIntBetween } from "../../../../common/exMath";
 import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquareSurface } from "../../../../common/geometricTools";
-import { randomWithout, randomIn, clearArray, randomInWeightMap, MapFromObject } from "../../../../common/utils";
+import { randomWithout, randomIn, clearArray, randomInWeightMap, MapFromObject, randomBoolean } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
@@ -146,10 +146,11 @@ export function toolCreateExplode(
             player.position,
             _temp_toolCreateExplode_playerCenterP
         )
-        // 使用「平方比例」计算百分比
+        // 计算距离百分比
         distanceP = p.getDistance(
             _temp_toolCreateExplode_playerCenterP
-        ) / (finalRadius * finalRadius);
+        ) / finalRadius;
+        // 只有在距离内才算
         if (distanceP <= 1) {
             // Operate damage by percent
             if (edgePercent < 1)
@@ -1183,7 +1184,7 @@ export function getBonusBoxes(host: IMatrix): BonusBox[] {
     // 否则用最笨的方法
     else {
         return host.entities.filter(
-            (e) => e instanceof BonusBox
+            (e): boolean => e instanceof BonusBox
         ) as BonusBox[];
     }
 }
@@ -1402,7 +1403,7 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
 /**
  * * 事件处理函数API：可访问世界实例，参与调用世界API（生成实体、放置其它方块等）
  * 
- * （示例）响应世界随机刻 @ MoveableWall
+ * （示例）响应方块随机刻 @ MoveableWall
  * * 机制：「可移动的墙」在收到一个随机刻时，开始朝周围可以移动的方向进行移动
  * * 原`moveableWallMove`
  * 
@@ -1444,8 +1445,8 @@ export const randomTick_MoveableWall: randomTickEventF<null> = (host: IMatrix, b
 const _temp_randomTick_MoveableWall: fPoint = new fPoint();
 
 /**
- * （示例）响应世界随机刻 @ ColorSpawner
- * * 机制：当「颜色生成器」收到一个随机刻时，随机在「周围曼哈顿距离≤2处」生成一个随机颜色的「颜色块」
+ * （示例）响应方块随机刻 @ ColorSpawner
+ * * 机制：当「颜色生成器」收到一个随机刻时，有1/4机率随机在「周围曼哈顿距离≤2处」生成一个随机颜色的「颜色块」（生成过程不一定成功）
  * * 原`colorSpawnerSpawnBlock`
  * 
  * @param host 调用此函数的母体
@@ -1453,9 +1454,11 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param position 被调用方块的位置
  */
 export const randomTick_ColorSpawner: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+    // 概率筛选
+    if (randomBoolean(3, 1)) return;
     // 新位置寻址：随机位移
     _temp_randomTick_ColorSpawner_blockP.copyFrom(position).inplaceMap<int>(
-        (p: int): number => p + randIntBetween(-4, 5)
+        (p: int): number => p + randIntBetween(-2, 3)
     )
     if ( // 放置条件：在地图内&是空位
         host.map.isInMap_I(_temp_randomTick_ColorSpawner_blockP) &&
@@ -1477,7 +1480,7 @@ export const randomTick_ColorSpawner: randomTickEventF<null> = (host: IMatrix, b
 const _temp_randomTick_ColorSpawner_blockP: iPoint = new iPoint();
 
 /**
- * （示例）响应世界随机刻 @ LaserTrap
+ * （示例）响应方块随机刻 @ LaserTrap
  * * 机制：当「激光陷阱」收到一个随机刻时，随机向周围可发射激光的方向发射随机种类的「无主激光」
  * * 原`laserTrapShootLaser`
  * 
@@ -1498,6 +1501,7 @@ export const randomTick_LaserTrap: randomTickEventF<null> = (host: IMatrix, bloc
     for (let i: uint = 0; i < 0x10; ++i) {
         // 随机生成方向&位置
         randomR = host.map.storage.randomForwardDirectionAt(position);
+        _temp_randomTick_LaserTrap.copyFrom(position); // !要挪过来
         host.map.towardWithRot_II(
             _temp_randomTick_LaserTrap,
             randomR, 1
@@ -1555,6 +1559,39 @@ export const randomTick_LaserTrap: randomTickEventF<null> = (host: IMatrix, bloc
 const _temp_randomTick_LaserTrap: iPoint = new iPoint();
 
 /**
+ * （示例）响应方块随机刻 @ Gate
+ * * 机制：当「门」收到一个随机刻且是关闭时，切换其开关状态
+ * 
+ * @param host 调用此函数的母体
+ * @param block 被调用的方块
+ * @param position 被调用方块的位置
+ */
+export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block<BSGate>, position: iPoint): void => {
+    // 已经打开的不要管
+    if (block.state instanceof BSGate) {
+        if (block.state.open) return;
+        block.state.open = true;
+        // TODO: 更新显示or方块更新事件
+    }
+    // 关闭的「门」随着随机刻打开
+}
+
+/**
+ * 响应方块随机刻 @ SupplyPoint
+ * * 机制：当「支援点」收到一个随机刻时，有1/8概率生成一个奖励箱
+ * 
+ * @param host 调用此函数的母体
+ * @param block 被调用的方块
+ * @param position 被调用方块的位置
+ */
+export const randomTick_SupplyPoint: randomTickEventF = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+    // *过程：八分之一概率⇒未有奖励箱在其上⇒生成奖励箱
+    if (randomBoolean(1, 7) && isHitAnyEntity_I_Grid(position, getBonusBoxes(host))) {
+        addBonusBoxInRandomTypeByRule(host, position);
+    }
+}
+
+/**
  * 方块随机刻映射表
  * * 用于安装在「方块随机刻分派者」中
  */
@@ -1562,6 +1599,7 @@ export const NATIVE_BLOCK_RANDOM_TICK_MAP: Map<typeID, randomTickEventF> = MapFr
     [NativeBlockIDs.COLOR_SPAWNER]: randomTick_ColorSpawner,
     [NativeBlockIDs.LASER_TRAP]: randomTick_LaserTrap,
     [NativeBlockIDs.MOVEABLE_WALL]: randomTick_MoveableWall,
+    [NativeBlockIDs.GATE]: randomTick_Gate,
 })
 
 /**
@@ -1596,24 +1634,6 @@ function calculateLaserLength(host: IMatrix, rootP: iPointRef, rot: mRot): uint 
     return l;
 }
 const _temp_calculateLaserLength: iPointVal = new iPoint();
-
-/**
- * （示例）响应世界随机刻 @ Gate
- * * 机制：当「门」收到一个随机刻且是关闭时，切换其开关状态
- * 
- * @param host 调用此函数的母体
- * @param block 被调用的方块
- * @param position 被调用方块的位置
- */
-export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block, position: iPoint): void => {
-    // 已经打开的不要管
-    if (block.state instanceof BSGate) {
-        if (block.state.open) return;
-        block.state.open = false;
-        // TODO: 更新显示
-    }
-    // 关闭的「门」随着随机刻打开
-}
 
 /**
  * 判断「玩家(发射的抛射物/使用的武器)是否能伤害另一位玩家」

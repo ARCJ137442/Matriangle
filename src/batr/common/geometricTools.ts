@@ -280,7 +280,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	/**
 	 * （原`getLineTargetDistance`）获取与另一个点「各方向『绝对距离取最小值』的第一个索引」
 	 * 
-	 * ! 不会检查两个数组的长度（点の维度）
+	 * ! 不会检查两个数组的长度（点の维度），仅遍历「目标点」各分量
 	 * 
 	 * * 在有「绝对距离相等」的情况时，会优先保留前者
 	 * 
@@ -295,6 +295,29 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 			if (minDistance === undefined || (minDistance as T) > tempDistance) {
 				result = i
 				minDistance = tempDistance
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 获取与另一个点「各方向『绝对距离取最大值』的第一个索引」
+	 * 
+	 * ! 不会检查两个数组的长度（点の维度），仅遍历「目标点」各分量
+	 * 
+	 * * 在有「绝对距离相等」的情况时，会优先保留前者
+	 * 
+	 * @param start 寻找的起始索引
+	 */
+	public indexOfAbsMaxDistance(point: xPoint<T>, start: uint = 0): uint {
+		let result: uint = 0;
+		let maxDistance: T | undefined = undefined;
+		let tempDistance: T | undefined = undefined;
+		for (let i = start; i < point.length; i++) {
+			tempDistance = this.getAbsDistanceAt(point, i);
+			if (maxDistance === undefined || (maxDistance as T) < tempDistance) {
+				result = i
+				maxDistance = tempDistance
 			}
 		}
 		return result;

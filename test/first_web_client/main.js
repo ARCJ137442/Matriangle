@@ -48,6 +48,19 @@ function resetControlWS() {
 		}
 	}
 }
+/** 重连的倒计时ID（避免多个timeout刷请求） */
+let reconnectScreenTimeoutID = { value: undefined };
+/**
+ * 不冲突地设定timeout
+ * @param {{value:number|undefined}} id 
+ */
+const softSetTimeout = (id, callback, delay, ...args) => {
+	return (
+		id.value === undefined ?
+			id.value = setTimeout((...args) => { callback(...args); id.value = undefined }, delay, ...args) :
+			undefined
+	)
+}
 // 重置屏显
 function resetScreenWS() {
 	socketScreen?.close()
@@ -88,14 +101,14 @@ function resetScreenWS() {
 		socketScreen.onclose = (event) => {
 			console.info('屏显WS已关闭:', event);
 			// 不用关闭时钟，直接等待重连
-			console.info('五秒后尝试重新连接。。。')
-			setTimeout(resetScreenWS, 5000)
+			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 5000))
+				console.info('五秒后尝试重新连接。。。')
 		}
 		// 报错时
 		socketScreen.onerror = (event) => {
 			console.warn('屏显WS出错:', event)
-			console.info('三秒后尝试重新连接。。。')
-			setTimeout(resetScreenWS, 3000)
+			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 3000))
+				console.info('三秒后尝试重新连接。。。')
 		}
 	}
 }

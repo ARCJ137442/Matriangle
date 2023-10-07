@@ -28,8 +28,8 @@ export module NativeTools {
 		.setDroneProperty(0);
 
 	export const TOOL_ID_BULLET_BOMBER: string = 'Sub Bomber';
-	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon(TOOL_ID_BULLET_BOMBER, 1, 1, 10, true)
-		.setExtraProperty(2, 1)
+	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon(TOOL_ID_BULLET_BOMBER, 1, 1, 5, true)
+		.setExtraProperty(2, 2)
 		.setDroneProperty(0);
 
 	export const TOOL_ID_BULLET_TRACKING: string = 'Tracking Bullet';
