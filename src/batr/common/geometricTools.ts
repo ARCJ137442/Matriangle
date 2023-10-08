@@ -132,6 +132,9 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * @returns 返回自身，与另一点相等
 	 */
 	public copyFrom(point: xPoint<T>): xPoint<T> {
+		// 先把长度对齐
+		this.length = point.length;
+		// 然后逐一设置值
 		for (let i = 0; i < point.length; i++) {
 			this[i] = point[i];
 		}
