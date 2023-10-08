@@ -1,4 +1,4 @@
-﻿import { int, uint, int$MAX_VALUE, int$MIN_VALUE, uint$MAX_VALUE, uint$MIN_VALUE, Class } from '../legacy/AS3Legacy'
+﻿import { int, uint, uint$MAX_VALUE, Class } from '../legacy/AS3Legacy'
 import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
 import * as exMath from './exMath';
 
@@ -428,12 +428,26 @@ export function isComplexInstance(v: any): boolean {
 	return !isPrimitiveInstance(v);
 }
 
+/**
+ * 像「字典」一样「用字符串查询值」的对象
+ */
 export interface dictionaryLikeObject {
 	[key: string]: any;
 }
 
+/**
+ * 合并两个对象的键值对
+ * * 使用`hasOwnProperty`判断对象「有哪些键」
+ * * 键重复⇒新的覆盖旧的
+ * 
+ * ! 浅拷贝：只会合并一层引用
+ * 
+ * @param from 合并的数据来源（对象）
+ * @param to 要合并到的对象
+ * @returns 合并后的数据对象
+ */
 export function combineObject(from: any, to: any): any {
-	for (let i in from) {
+	for (const i in from) {
 		if (from.hasOwnProperty(i)) {
 			to[i] = from[i];
 		}

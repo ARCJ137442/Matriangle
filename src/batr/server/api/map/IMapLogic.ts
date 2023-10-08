@@ -1,12 +1,9 @@
 import { fPoint, fPointRef, iPoint, iPointRef } from "../../../common/geometricTools";
 import { mRot } from "../../general/GlobalRot";
-import { uint, int } from "../../../legacy/AS3Legacy";
-import Entity from "../entity/Entity";
-import Player from "../../mods/native/entities/player/Player";
+import { int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";
 import IMapStorage from "./IMapStorage";
 import { IEntityInGrid, IEntityOutGrid } from "../entity/EntityInterfaces";
-import IPlayer from "../../mods/native/entities/player/IPlayer";
 
 
 /**

@@ -26,14 +26,14 @@ const otherInfMessage = 'entities'
 const isEntityListSignal = (text) => text.startsWith('实体列表')
 
 // 重置网络
-function resetAllWS() {
+function resetAllWS(force = true/* 默认为真，留给侦听器直接调用 */) {
 	// 控制
-	resetControlWS();
+	resetControlWS(force);
 	// 屏显
-	resetScreenWS();
+	resetScreenWS(force);
 }
 // 重置控制
-function resetControlWS() {
+function resetControlWS(force = false) {
 	socketControl?.close()
 	socketControl = new WebSocket(getWSLinkControl())
 	if (socketControl) {
@@ -62,7 +62,9 @@ const softSetTimeout = (id, callback, delay, ...args) => {
 	)
 }
 // 重置屏显
-function resetScreenWS() {
+function resetScreenWS(force = false/* 默认为假，留给「自动重连」调用 */) {
+	// 非强制&还在开⇒不要重置
+	if (!force && socketScreen.readyState === WebSocket.OPEN) return;
 	socketScreen?.close()
 	socketScreen = new WebSocket(getWSLinkScreen())
 	if (socketScreen) {
@@ -113,7 +115,7 @@ function resetScreenWS() {
 	}
 }
 // 重置⇒刷新配置
-resetAllWS();
+resetAllWS(true);
 
 // 控制器 //
 

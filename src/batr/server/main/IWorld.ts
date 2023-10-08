@@ -2,10 +2,14 @@
 import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
- * TODO: 有待施工
+ * TODO: 有待理清架构
  * 1. 抽象出一个带说明、包含「事件处理」的「世界接口」
- * 2. 让世界实现这个接口
+ * 2. 让「世界」实现这个接口
  * 
+ * ?【2023-10-08 16:51:21】目前「母体」似乎更多将「注册表」包含在内，而「世界」似乎干不了什么
+ * * 当前想法：处理一些「母体之外的事」
+ * 
+ * 📄原始想法：
  * ```
  * 世界只需要提供一个通用的API
  * 负责最基本的加载（方块内容、实体内容、地图内容）
@@ -17,8 +21,6 @@ import IWorldRegistry from "../api/registry/IWorldRegistry";
  * 机制（内容）与运作（形式）分离
  * 这样就可以最大化其中的通用性……
  * ```
- * 
- * 正式文档：参见实现的接口
  */
 
 export default interface IWorld {

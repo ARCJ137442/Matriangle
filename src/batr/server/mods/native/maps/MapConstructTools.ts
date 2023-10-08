@@ -18,9 +18,11 @@ const _temp_point_2d: iPoint = new iPoint(2)
 
 /**
  * 该函数用于函数式编程中
+ * * 会使用「软拷贝」复制方块状态
  */
-export function cloneBlock(block: Block): Block {
-    return block.copy();
+export function copyBlock(block: Block): Block {
+    return block.softCopy(); // !【2023-10-08 21:03:36】现在应该是「深拷贝」而非原先的「浅拷贝」了
+    // * 记录：查错「玩家进门被秒杀」的情况半天
 }
 
 /**
@@ -68,7 +70,7 @@ export function fillBlock(
     // * 函数式编程：决定是「原样」还是「拷贝」
     let blockF: (block: Block) => Block = (
         clone ?
-            cloneBlock :
+            copyBlock :
             identity<Block>
     );
 
@@ -112,7 +114,7 @@ export function setReflectBlock(
 ): void {
     let blockF: (block: Block) => Block = (
         clone ?
-            cloneBlock :
+            copyBlock :
             identity<Block>
     );
     storage.setBlock(_temp_point_2d.copyFromArgs(x, y), blockF(block));
@@ -309,9 +311,10 @@ export function drawLaserTrapBox(
 }
 
 export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
-    storage.addSpawnPointAt(_temp_point_2d.copyFromArgs(x, y));
+    _temp_point_2d.copyFromArgs(x, y);
+    storage.addSpawnPointAt(_temp_point_2d);
     storage.setBlock(
-        _temp_point_2d.copyFromArgs(x, y),
+        _temp_point_2d,
         NativeBlockPrototypes.SPAWN_POINT_MARK.copy() // ! 属性固定且无状态，故浅拷贝
     );
 }

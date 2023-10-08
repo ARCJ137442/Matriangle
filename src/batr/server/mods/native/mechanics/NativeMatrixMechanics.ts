@@ -6,10 +6,8 @@ import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../.
 import Block from "../../../api/block/Block";
 import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
-import { randomTickEventF } from "../../../api/control/BlockEventTypes";
 import IMatrix from "../../../main/IMatrix";
 import BSColored from "../blocks/BSColored";
-import BlockGate from "../blocks/BSGate";
 import BonusBox from "../entities/item/BonusBox";
 import PlayerTeam from "../entities/player/team/PlayerTeam";
 import ThrownBlock from "../entities/projectile/other/ThrownBlock";
@@ -45,11 +43,12 @@ import Registry_V1, { toolUsageF } from "../registry/Registry_V1";
 import BulletBasic from "../entities/projectile/bullet/BulletBasic";
 import { typeID } from "../../../api/registry/IWorldRegistry";
 import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalWorldVariables";
-import Weapon from "../tool/Weapon";
 import BulletNuke from "../entities/projectile/bullet/BulletNuke";
 import BulletTracking from "../entities/projectile/bullet/BulletTracking";
 import BulletBomber from "../entities/projectile/bullet/BulletBomber";
 import BSGate from "../blocks/BSGate";
+import { BlockEventMap } from "../../../api/block/BlockEventTypes";
+import { NativeBlockEventType, NativeBlockTypeEventMap } from "../registry/BlockEventRegistry";
 
 
 /**
@@ -637,15 +636,37 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
 } */
 
 /**
- * 在玩家位置改变时
- * * TODO: 理清整个「位置改变」的思路——代码一片片的摸不着头脑
+ * 在玩家位置改变**前**触发的「世界逻辑」
+ * 
+ * ! 此时玩家位置尚未改变
+ * 
+ * @param oldP 玩家移动之前的位置（一般是玩家当前位置）
+*/
+export function handlePlayerLocationChange(host: IMatrix, player: IPlayer, oldP: iPointRef): void {
+    // * 通过注册表分派事件
+    let blockID: typeID | undefined = host.map.storage.getBlockID(oldP)
+    if (blockID !== undefined && host.registry.blockEventRegistry.hasRegistered(blockID))
+        (host.registry.blockEventRegistry.getEventMapAt(blockID) as NativeBlockTypeEventMap
+        )?.[NativeBlockEventType.PLAYER_MOVE_OUT]?.(host, oldP, player)
+}
+
+/**
+ * 在玩家位置改变**后**触发的「世界逻辑」
+ * 
+ * ! 此时玩家位置已经改变
+ * @param newP 玩家移动之后的位置（一般是玩家当前位置）
  */
-export function handlePlayerLocationChange(host: IMatrix, player: IPlayer, newP: iPointRef): void {
-    // TODO: 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
-    // 告知玩家开始处理「方块伤害」等逻辑
-    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
+export function handlePlayerLocationChanged(host: IMatrix, player: IPlayer, newP: iPointRef): void {
+    // ! 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
+    // * 通过注册表分派事件
+    let blockID: typeID | undefined = host.map.storage.getBlockID(newP)
+    if (blockID !== undefined && host.registry.blockEventRegistry.hasRegistered(blockID))
+        (host.registry.blockEventRegistry.getEventMapAt(blockID) as NativeBlockTypeEventMap
+        )?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player)
     // 测试「是否拾取到奖励箱」
     bonusBoxTest(host, player, newP);
+    // 告知玩家开始处理「方块伤害」等逻辑
+    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
 }
 
 /**
@@ -705,22 +726,6 @@ export function playerMoveInTest(
         returnBoo = true;
     }
     return returnBoo;
-}
-
-/**
- * 在玩家移出方块之前
- */
-export function moveOutTestPlayer(host: IMatrix, player: IPlayer, oldP: iPointRef = player.position): void {
-    if (!player.isActive) return;
-    // TODO: 这里应该是要分派一个方块事件，而非把专用代码塞里头
-    // let type: BlockType | null = host.map.storage.getBlockType(oldP);
-    // let attr: BlockAttributes | null = host.map.storage.getBlockAttributes(oldP);
-    let block: Block | null = host.map.storage.getBlock(oldP);
-    // 一个逻辑：「打开的门」在玩家移走（后）关闭
-    if (block instanceof BlockGate) {
-        (block as BlockGate).open = false;
-        // ? 直接修改方块属性是否靠谱？利不利于世界响应（特别是显示端）
-    }
 }
 
 /**
@@ -919,26 +924,20 @@ export function handlePlayerDeath(host: IMatrix, attacker: IPlayer | null, victi
         )
     );
 
-    // victim.visible = false; // !【2023-10-03 21:09:59】交给「显示端」
-
     // 取消激活 // !【2023-10-05 19:51:35】不能取消激活：玩家需要实体刻来计算「重生刻」（不然又徒增专用代码）
     // victim.isActive = false;
-    // 工具使用状态重置
-    victim.tool.resetUsingState();
 
-    // victim.gui.visible = false; // TODO: 显示更新
-
-    // 重生 //
-    // 重置重生时间
-    // 保存死亡点，在后续生成奖励箱时使用
+    // 保存死亡点，在后续生成奖励箱时使用 //
     let deadP: iPoint = victim.position.copy();
-    // 移动受害者到指定地方
+    // 移动受害者到指定地方 //
     victim.setPosition(
         host,
-        host.rule.safeGetRule<iPoint>(MatrixRule_V1.key_deadPlayerMoveTo)
+        host.rule.safeGetRule<iPoint>(MatrixRule_V1.key_deadPlayerMoveTo),
+        false // !【2023-10-08 20:33:36】目前并不需要触发钩子，因为此时玩家已经处于「死亡」状态
     );
     // TODO: 统一设置位置？
-    // 死后在当前位置生成奖励箱
+
+    // 死后在当前位置生成奖励箱 //
     if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_bonusBoxSpawnAfterPlayerDeath) &&
         (
             host.rule.safeGetRule<uint>(MatrixRule_V1.key_bonusBoxMaxCount) < 0 ||
@@ -948,33 +947,6 @@ export function handlePlayerDeath(host: IMatrix, attacker: IPlayer | null, victi
     ) {
         addBonusBoxInRandomTypeByRule(host, deadP);
     }
-
-    // Store Stats
-    if (host.rule.safeGetRule<boolean>(MatrixRule_V1.key_recordPlayerStats)) {
-        // 总体死亡数据
-        victim.stats.deathCount++;
-        // 总体死亡
-        victim.stats.deathByPlayer++;
-        victim.stats.addDeathByPlayerCount(attacker);
-        // 击杀者非空
-        if (attacker !== null) {
-            // 自杀
-            if (victim === attacker)
-                victim.stats.suicideCount++;
-            // 击杀者
-            attacker.stats.killCount++;
-            attacker.stats.addKillPlayerCount(victim);
-            // 友方
-            if (isAlly(attacker, victim)) {
-                attacker.stats.killAllyCount++;
-                victim.stats.deathByAllyCount++;
-            }
-        }
-    }
-
-    // 触发击杀者的「击杀玩家」事件
-    if (attacker !== null)
-        attacker.onKillPlayer(host, victim, damage);
 
     // 检测「世界结束」 // TODO: 通用化
     // host.testWorldEnd();
@@ -1019,7 +991,7 @@ export function teleportPlayerTo(
 ): IPlayer {
     player.isActive = false;
     // !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-    player.setPosition(host, p);
+    player.setPosition(host, p, true); // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
     player.direction = rotateTo;
     // 在被传送的时候可能捡到奖励箱
     bonusBoxTest(host, player, p);
@@ -1098,10 +1070,10 @@ export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
             player,
             findFitSpawnPoint(host, player, p), // !就是这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
             host.map.storage.randomForwardDirectionAt(p),
-            false
+            false // 无需特效
         ) // 无需重新确定重生地
     // 加特效
-    let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
+    let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央，只需要生成一个数组
     host.addEntities(
         new EffectSpawn(fp), // 重生效果
         EffectPlayerDeathLight.fromPlayer(p, player, true), // 重生时动画反向
@@ -1227,7 +1199,7 @@ export function getPlayers(host: IMatrix): IPlayer[] {
     // 否则原样筛选
     else {
         return host.entities.filter(
-            (e) => isPlayer(e)
+            (e): boolean => isPlayer(e)
         ) as IPlayer[];
     }
 }
@@ -1357,6 +1329,12 @@ export function randomizePlayerTeam(host: IMatrix, player: IPlayer): void {
     player.team = getRandomTeam(host);
 }
 
+/**
+ * 当玩家升级时（等级增加之后）
+ * 
+ * @param host 升级的玩家所在的「世界母体」
+ * @param player 升级的玩家
+ */
 export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
     let color: uint;
     let i: uint = 0;
@@ -1412,7 +1390,7 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_MoveableWall: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+export function randomTick_MoveableWall(host: IMatrix, position: iPoint, block: Block<null>): void {
     // 正式开始放置 //
     // 坐标计算
     let randomRot: uint;
@@ -1456,7 +1434,7 @@ const _temp_randomTick_MoveableWall: fPoint = new fPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_ColorSpawner: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+export function randomTick_ColorSpawner(host: IMatrix, position: iPoint, block: Block<null>): void {
     // 概率筛选
     if (randomBoolean(3, 1)) return;
     // 新位置寻址：随机位移
@@ -1495,7 +1473,7 @@ const _temp_randomTick_ColorSpawner_blockP: iPoint = new iPoint();
  * @param block 被调用的方块
  * @param position 被调用方块的位置
  */
-export const randomTick_LaserTrap: randomTickEventF<null> = (host: IMatrix, block: Block<null>, position: iPoint): void => {
+export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Block<null>): void {
     let randomR: mRot;
     // add laser by owner=null
     let p: Laser;
@@ -1561,50 +1539,59 @@ export const randomTick_LaserTrap: randomTickEventF<null> = (host: IMatrix, bloc
 /** 用于「激光生成的位置」 */
 const _temp_randomTick_LaserTrap: iPoint = new iPoint();
 
+// !【2023-10-08 18:15:02】
+
+// !【2023-10-08 17:40:30】
 /**
- * （示例）响应方块随机刻 @ Gate
- * * 机制：当「门」收到一个随机刻且是关闭时，切换其开关状态
- * 
- * @param host 调用此函数的母体
- * @param block 被调用的方块
- * @param position 被调用方块的位置
+ * 原生的「方块事件」映射表
+ * * 原「方块随机刻映射表」并入作其中的`RANDOM_TICK`事件（`NATIVE_BLOCK_RANDOM_TICK_MAP`）
+ * * 原`moveOutTestPlayer`并入作其中的`PLAYER_MOVE_OUT`事件
  */
-export const randomTick_Gate: randomTickEventF = (host: IMatrix, block: Block<BSGate>, position: iPoint): void => {
-    // 已经打开的不要管
-    if (block.state instanceof BSGate) {
-        if (!block.state.open) {
-            block.state.open = true;
+export const NATIVE_BLOCK_EVENT_MAP: BlockEventMap = {
+    // * 门
+    [NativeBlockIDs.GATE]: {
+        // * 打开时：在玩家移出前关闭（不会伤害到玩家，因为玩家只进行「移动入方块检测」）
+        [NativeBlockEventType.PLAYER_MOVE_OUT]: (host: IMatrix, position: iPoint, p: IPlayer): void => {
+            let block: Block | null = host.map.storage.getBlock(position);
+            if (block !== null && block.state instanceof BSGate) {
+                (block.state as BSGate).open = false;
+                // ? 直接修改方块属性是否靠谱？利不利于世界响应（特别是显示端）
+            }
+        },
+        // * 关闭时：在随机刻后打开（切换其开关状态）
+        [NativeBlockEventType.RANDOM_TICK]: (host: IMatrix, position: iPoint, block: Block<BSGate>): void => {
+            if (block.state instanceof BSGate) {
+                // 关闭的「门」随着随机刻打开
+                if (!block.state.open) {
+                    block.state.open = true;
+                }
+                // TODO: 更新显示or方块更新事件
+            }
+        },
+    },
+    // * 颜色生成器（外置）
+    [NativeBlockIDs.COLOR_SPAWNER]: {
+        [NativeBlockEventType.RANDOM_TICK]: randomTick_ColorSpawner,
+    },
+    // * 激光陷阱（外置）
+    [NativeBlockIDs.LASER_TRAP]: {
+        [NativeBlockEventType.RANDOM_TICK]: randomTick_LaserTrap,
+    },
+    // * 可移动墙（外置）
+    [NativeBlockIDs.MOVEABLE_WALL]: {
+        [NativeBlockEventType.RANDOM_TICK]: randomTick_MoveableWall,
+    },
+    // * 支援点
+    [NativeBlockIDs.SUPPLY_POINT]: {
+        // * 机制：收到一个随机刻时，有1/8概率生成一个奖励箱
+        [NativeBlockEventType.RANDOM_TICK]: (host: IMatrix, position: iPoint, block: Block<null>): void => {
+            // *过程：八分之一概率⇒未有奖励箱在其上⇒生成奖励箱
+            if (randomBoolean(1, 7) && isHitAnyEntity_I_Grid(position, getBonusBoxes(host))) {
+                addBonusBoxInRandomTypeByRule(host, position);
+            }
         }
-        // TODO: 更新显示or方块更新事件
-    }
-    // 关闭的「门」随着随机刻打开
+    },
 }
-
-/**
- * 响应方块随机刻 @ SupplyPoint
- * * 机制：当「支援点」收到一个随机刻时，有1/8概率生成一个奖励箱
- * 
- * @param host 调用此函数的母体
- * @param block 被调用的方块
- * @param position 被调用方块的位置
- */
-export const randomTick_SupplyPoint: randomTickEventF = (host: IMatrix, block: Block<null>, position: iPoint): void => {
-    // *过程：八分之一概率⇒未有奖励箱在其上⇒生成奖励箱
-    if (randomBoolean(1, 7) && isHitAnyEntity_I_Grid(position, getBonusBoxes(host))) {
-        addBonusBoxInRandomTypeByRule(host, position);
-    }
-}
-
-/**
- * 方块随机刻映射表
- * * 用于安装在「方块随机刻分派者」中
- */
-export const NATIVE_BLOCK_RANDOM_TICK_MAP: Map<typeID, randomTickEventF> = MapFromObject<typeID, randomTickEventF>({
-    [NativeBlockIDs.COLOR_SPAWNER]: randomTick_ColorSpawner,
-    [NativeBlockIDs.LASER_TRAP]: randomTick_LaserTrap,
-    [NativeBlockIDs.MOVEABLE_WALL]: randomTick_MoveableWall,
-    [NativeBlockIDs.GATE]: randomTick_Gate,
-})
 
 /**
  * 从一个「发出点」计算「应有的激光长度」

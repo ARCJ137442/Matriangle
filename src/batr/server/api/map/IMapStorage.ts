@@ -175,13 +175,13 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	getBlockAttributes(p: iPointRef): BlockAttributes | null;
 
 	/**
-	 * 获取地图上某位置的方块类型
-	 * ! 迁移TS后，返回的是方块实例所对应的类（构造函数）
-	 * * 可能返回空值null
+	 * 获取地图上某位置的方块id
+	 * * 现在返回一个基础类型的id
+	 * * 可能返回空值`undefined`
 	 * @param x x坐标
 	 * @param y y坐标
 	 */
-	getBlockID(p: iPointRef): typeID | null;
+	getBlockID(p: iPointRef): typeID | undefined;
 
 	/**
 	 * 设置地图上某位置的方块

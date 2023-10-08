@@ -3,7 +3,7 @@ import PlayerStats from "../../stat/PlayerStats";
 import IPlayerProfile from "./profile/IPlayerProfile";
 import PlayerTeam from "./team/PlayerTeam";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
-import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityHasStats, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
+import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../main/IMatrix";
 import { mRot } from "../../../../general/GlobalRot";
 import Tool from "../../tool/Tool";
@@ -44,7 +44,7 @@ TODO: 【2023-09-23 00:20:12】现在工作焦点：
  * * 可以被「玩家控制器」控制的
  * 实体
  */
-export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasStats, IEntityHasHPAndHeal, IEntityHasHPAndLives, IMatrixControlReceiver {
+export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasHPAndHeal, IEntityHasHPAndLives, IMatrixControlReceiver {
 
 	/**
 	 * 用于替代`instanceof`
@@ -196,8 +196,14 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * 特别的「设置坐标」函数
 	 * * 作为`position`一个特殊的setter
 	 * * 用于「坐标变更」逻辑
+	 * 
+	 * @param needHook 是否需要触发「移出」「移入」的钩子
+	 * 
+	 * !【2023-10-08 19:59:25】不建议「先变更位置，然后移动到相同位置」的做法
+	 * * 这样会导致玩家「在移动前后的位置」相同，进而影响「方块事件」的判定
+	 * * 已知会导致的bug：「玩家移开后『门』关闭，受到窒息伤害」
 	 */
-	setPosition(host: IMatrix, position: iPointRef): void;
+	setPosition(host: IMatrix, position: iPointRef, needHook: boolean): void;
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
 	onPositedBlockUpdate(host: IMatrix): void;
@@ -229,6 +235,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 
 	/**
 	 * 用于判断「玩家是否可当前位置移动到另一位置」
+	 * * 原`Game.testPlayerCanPass`
 	 * * 【2023-10-04 18:07:01】不会考虑「移动前坐标」
 	 * 
 	 * TODO: 日后细化「实体类型」的时候，还会分「有碰撞箱」与「无碰撞箱」来具体决定
@@ -363,15 +370,105 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	stopUsingTool(host: IMatrix): void;
 
 	// 钩子函数 //
+	/**
+	 * 事件：（被玩家）治疗，即「生命值增加」
+	 * * 在「生命值已发生变化，但尚未发送给母体处理」时调用
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param amount 生命值提升的数量
+	 * @param healer 治疗者（可空）
+	 */
 	onHeal(host: IMatrix, amount: uint, healer: IPlayer | null/*  = null */): void;
+
+	/**
+	 * 事件：（被玩家）伤害，即「生命值减少（但未减为零）」
+	 * * 在「生命值已发生变化，但尚未发送给母体处理」时调用
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param damage 伤害值
+	 * @param attacker 攻击者（可空）
+	 */
 	onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
+
+	/**
+	 * 事件：（被玩家）击杀，即「生命值减少为零」
+	 * * 在「生命值已发生变化，但尚未发送给母体处理」时调用
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param damage 伤害值
+	 * @param attacker 击杀者（可空）
+	 */
 	onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null/*  = null */): void;
-	onKillPlayer(host: IMatrix, victim: IPlayer, damage: uint): void;
-	onRespawn(host: IMatrix,): void;
-	onMapTransform(host: IMatrix,): void;
+
+	/**
+	 * 事件：击杀其它（玩家）
+	 * * 在「生命值已发生变化，，但尚未发送给母体处理」时调用
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param victim 受害者
+	 * @param damage 伤害值
+	 */
+	onKillOther(host: IMatrix, victim: IPlayer, damage: uint): void;
+
+	/**
+	 * 事件：重生
+	 * * 在「母体处理完『重生』逻辑，自身血量等状态恢复」后调用
+	 * * 调用来源：母体
+	 * 
+	 * @param host 发生在的「世界母体」
+	 */
+	onRespawn(host: IMatrix): void;
+
+	/**
+	 * 事件：外部地图变换
+	 * * 在「外界地图发生变换，自身武器状态等发生改变」后调用
+	 * * 调用来源：母体
+	 * 
+	 * ?【2023-10-08 17:28:15】这个后续也许需要随着「地图变换程序建立」而移出接口
+	 * 
+	 * @param host 发生在的「世界母体」
+	 */
+	onMapTransform(host: IMatrix): void;
+
+	/**
+	 * 事件：捡到奖励箱
+	 * * 在「奖励箱拾取后消失，自身已获得加成」后调用
+	 * * 调用来源：母体
+	 * 
+	 * ?【2023-10-08 17:28:15】这个后续也许需要随着「地图变换程序建立」而移出接口
+	 * 
+	 * @param host 发生在的「世界母体」
+	 */
 	onPickupBonusBox(host: IMatrix, box: BonusBox): void;
-	preLocationUpdate(host: IMatrix, oldP: iPoint): void;
-	onLocationUpdate(host: IMatrix, newP: iPoint): void;
+
+	/**
+	 * 事件：移动前
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param oldP 旧坐标（一般为自身坐标）
+	 */
+	onLocationChange(host: IMatrix, oldP: iPoint): void;
+
+	/**
+	 * 事件：移动后
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 * @param oldP 旧坐标（一般为自身坐标）
+	 */
+	onLocationChanged(host: IMatrix, newP: iPoint): void;
+
+	/**
+	 * 事件：升级
+	 * * 调用来源：玩家
+	 * 
+	 * @param host 发生在的「世界母体」
+	 */
 	onLevelup(host: IMatrix): void;
 
 	//============Display Implements============//

@@ -14,7 +14,6 @@ import IMatrix from "../../main/IMatrix";
 import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
-import PlayerStats from "../../mods/native/stat/PlayerStats";
 
 /**
  * 「格点实体」是
@@ -284,23 +283,7 @@ export interface IEntityFixedLived extends Entity {
 
 }
 
-/**
- * 「具统计实体」是
- * * 需要（在实体侧）存储「世界统计信息」以被世界使用的
- * * 需要在运行时「读取数据」的
- * 实体
- * 
- * 典例：
- * * 玩家
- */
-export interface IEntityHasStats extends Entity {
-
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_hasStats: true;
-
-    get stats(): PlayerStats; // TODO: 这里只是个占位符，后续会专门规定一个基类去实现这些东西
-
-}
+// !【2023-10-08 18:06:20】现已删除「具统计实体」的声明，因为这与「玩家」高度绑定
 
 /**
  * 「有生命实体」是

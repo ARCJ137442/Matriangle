@@ -48,6 +48,8 @@ export default class BSGate extends BlockState {
 			this._temp_fullAttr.canEnter = open;
 			// 子弹通过
 			this._temp_fullAttr.canShotIn = open;
+			// 透明（激光通过）
+			this._temp_fullAttr.transparent = open;
 			// 电流抗性
 			this._temp_fullAttr.electricResistance = open ?
 				0 :
@@ -79,7 +81,7 @@ export default class BSGate extends BlockState {
 			this._temp_fullAttr_playerDamage = this._temp_fullAttr.playerDamage;
 			this._temp_fullAttr_electricResistance = this._temp_fullAttr.electricResistance;
 			// 更新属性
-			this.updateOpen(this._open);
+			this.updateOpen(this._open); // !【2023-10-08 21:00:18】就是应该只有在「状态改变」时更新，除此之外应该不用更新
 		}
 		// 使用自身缓存的属性 // ! 绝对由状态完全决定，无需存储到JS对象中
 		return this._temp_fullAttr

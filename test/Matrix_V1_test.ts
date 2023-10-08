@@ -5,20 +5,23 @@ import AIControllerGenerator from "../src/batr/server/mods/native/entities/playe
 import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
 import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
-import { NATIVE_BLOCK_RANDOM_TICK_MAP, NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
+import { NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
 import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
 import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/visualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
-import { mergeMaps, randomIn } from "../src/batr/common/utils";
+import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import MatrixVisualizer from "../src/batr/server/mods/visualization/web/MatrixVisualizer";
 import WSController from "../src/batr/server/mods/webIO/controller/WSController";
 import BlockRandomTickDispatcher from "../src/batr/server/mods/native/mechanics/programs/BlockRandomTickDispatcher";
+import { NATIVE_BLOCK_EVENT_MAP } from './../src/batr/server/mods/native/mechanics/NativeMatrixMechanics';
+import BlockEventRegistry from "../src/batr/server/api/block/BlockEventRegistry";
 
+// 规则 //
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
 
@@ -32,21 +35,25 @@ for (const bt of NativeBonusTypes._ALL_AVAILABLE_TYPE)
 // 设置所有工具 // ! 目前限定为子弹系列
 rule.enabledTools = NativeTools.WEAPONS_BULLET
 
-const registry = new Registry_V1();
+// 注册表 //
+const registry = new Registry_V1(
+	new Map(),
+	new BlockEventRegistry(NATIVE_BLOCK_EVENT_MAP), // *【2023-10-08 17:51:25】使用原生的「方块事件列表」
+);
 mergeMaps(
 	registry.toolUsageMap,
 	NATIVE_TOOL_USAGE_MAP
 )
 
+// 母体 //
 const matrix = new Matrix_V1(
 	rule,
 	registry
 )
-console.log(matrix);
-
+// console.log(matrix);
 matrix.initByRule();
 
-// 创建玩家
+// 玩家
 let p: IPlayer = new Player(
 	matrix.map.storage.randomPoint,
 	0, true,
@@ -71,9 +78,7 @@ ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
 let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
 visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 方块随机刻分派者
-let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher(
-	NATIVE_BLOCK_RANDOM_TICK_MAP // * 使用原生の分派逻辑
-);
+let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher();
 // * 添加实体
 matrix.addEntities(
 	blockRTickDispatcher,

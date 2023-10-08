@@ -265,7 +265,7 @@ export default class BlockAttributes {
 		this.loadAsSolid();
 		this.unbreakableInArenaMap = true;
 		// No Damage on preMoveOut,still developing
-		this.playerDamage = -int$MIN_VALUE;
+		// this.playerDamage = -int$MIN_VALUE; // !【2023-10-08 20:16:54】弃用这段无用代码，它直接导致玩家被秒杀
 		return this;
 	}
 

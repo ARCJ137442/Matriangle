@@ -478,7 +478,7 @@ export module NativeMaps {
     STORAGE_G.copyFrom(STORAGE_FRAME); {
         fillReflectMirrorBlock(STORAGE_G, true, true, 3, 3, 8, 3, BEDROCK);
         setReflectMirrorBlock(STORAGE_G, true, true, 1, 1, MOVEABLE_WALL);
-        fillBlock(STORAGE_G, 4, 4, 19, 19, GATE_OPEN.softCopy(), false, true);
+        fillBlock(STORAGE_G, 4, 4, 19, 19, GATE_OPEN, false, true);
         for (i = 0; i < 4; i++)
             addSpawnPointWithMark(STORAGE_G, 2 + (i >> 1) * 19, 2 + (i & 1) * 19);
     }
