@@ -10,7 +10,7 @@ import BonusBox from "../../entities/item/BonusBox";
 import IPlayer from "../../entities/player/IPlayer";
 import Projectile from "../../entities/projectile/Projectile";
 import MatrixRule_V1 from "../../rule/MatrixRule_V1";
-import { changeMap, isPlayer, spreadPlayer } from "../NativeMatrixMechanics";
+import { changeMap, getRandomMap, isPlayer, spreadPlayer } from "../NativeMatrixMechanics";
 
 /**
  * 「地图切换者」是
@@ -62,11 +62,7 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 		// 先判断母体是否有相应的规则
 		if (host.rule.hasRule(MatrixRule_V1.key_mapRandomPotentials)) {
 			// 随机地图
-			newMap = randomInWeightMap<IMap>(
-				host.rule.safeGetRule<Map<IMap, number>>(
-					MatrixRule_V1.key_mapRandomPotentials
-				)
-			).copy(true); // !【2023-10-08 22:31:40】现在对地图进行深拷贝
+			newMap = getRandomMap(host.rule).copy(true); // !【2023-10-08 22:31:40】现在对地图进行深拷贝
 		}
 		else {
 			console.error('并未在母体中找到相应的「地图随机规则」！')
@@ -103,7 +99,7 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 				if (entityActives.has(entity))
 					entity.isActive = entityActives.get(entity) as boolean;
 				// 分散并告知玩家 // ! 必须是「执行该函数时母体中的玩家」，因为有可能在执行到这里之前玩家发生变动（杜绝「被删除但还是被遍历到」的情况）
-				if (isPlayer(entity)) {
+				if (isPlayer(entity) && !(entity as IPlayer).isRespawning/* 必须不在重生过程中 */) {
 					spreadPlayer(host, entity as IPlayer, true, true);
 					(entity as IPlayer).onMapTransform(host);
 				}

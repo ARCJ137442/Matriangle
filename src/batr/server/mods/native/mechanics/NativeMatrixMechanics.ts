@@ -1850,6 +1850,12 @@ export function randomToolEnable(rule: IMatrixRule): Tool {
     ).copy();
 }
 
+/**
+ * 基于规则获取随机地图
+ * 
+ * @param rule 需要从中获取地图的规则
+ * @returns 规则中的一个随机地图（原型引用）
+ */
 export function getRandomMap(rule: IMatrixRule): IMap {
     return randomInWeightMap(
         rule.safeGetRule<Map<IMap, number>>(

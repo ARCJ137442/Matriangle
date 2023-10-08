@@ -3,12 +3,12 @@ import Entity from "../api/entity/Entity";
 import { IEntityActive, IEntityActiveLite } from "../api/entity/EntityInterfaces";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
-import { getRandomMap } from "../mods/native/mechanics/NativeMatrixMechanics";
 import MatrixRule_V1 from "../mods/native/rule/MatrixRule_V1";
 import IMatrixRule from "../rule/IMatrixRule";
 import IMatrix from "./IMatrix";
 import IWorldRegistry from "../api/registry/IWorldRegistry";
 import { isDefined } from "../../common/utils";
+import { getRandomMap } from "../mods/native/mechanics/NativeMatrixMechanics";
 
 /**
  * 母体的第一代实现
