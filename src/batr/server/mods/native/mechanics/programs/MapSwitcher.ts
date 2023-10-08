@@ -10,7 +10,7 @@ import BonusBox from "../../entities/item/BonusBox";
 import IPlayer from "../../entities/player/IPlayer";
 import Projectile from "../../entities/projectile/Projectile";
 import MatrixRule_V1 from "../../rule/MatrixRule_V1";
-import { changeMap, getRandomMap, isPlayer, spreadPlayer } from "../NativeMatrixMechanics";
+import { changeMap, getRandomMap, isPlayer, projectEntity, spreadPlayer } from "../NativeMatrixMechanics";
 
 /**
  * 「地图切换者」是
@@ -102,10 +102,11 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 				if (isPlayer(entity) && !(entity as IPlayer).isRespawning/* 必须不在重生过程中 */) {
 					spreadPlayer(host, entity as IPlayer, true, true);
 					(entity as IPlayer).onMapTransform(host);
-				}
-				// 否则：不做任何事情，保留状态 // * 可能是后续又新增了实体
+				} // 否则：不做任何事情，保留状态 // * 可能是后续又新增了实体
+				// 若有坐标⇒尝试投影坐标
+				projectEntity(host.map/* 地图也有可能在中途被改变 */, entity);
 			}
-			// 清空字典状态
+			// 清空映射
 			entityActives.clear();
 		})
 		// TODO: 母体统计系统（参见`MatrixStats.ts`）

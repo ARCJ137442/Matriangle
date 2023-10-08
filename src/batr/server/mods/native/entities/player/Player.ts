@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import PlayerStats from "../../stat/PlayerStats";
 import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
-import { iPoint, iPointRef, intPoint } from "../../../../../common/geometricTools";
+import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import IMatrix from "../../../../main/IMatrix";
 import { DisplayLayers, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
@@ -396,7 +396,7 @@ export default class Player extends Entity implements IPlayer {
 		// 位置更改前
 		if (needHook) this.onLocationChange(host, this._position)
 		// 更改位置
-		if (position.isEqual(this._position))
+		if (position === this._position)
 			console.trace('不建议「先变更位置」，再`setPosition`的「先斩后奏」方法')
 		this._position.copyFrom(position);
 		// 位置更改后
@@ -887,7 +887,7 @@ export default class Player extends Entity implements IPlayer {
 	protected dealCachedActions(host: IMatrix): void {
 		if (this._actionBuffer.length === 0) return;
 		else {
-			this.runAllPlayerActions(host);
+			this.runAllActions(host);
 			this.clearActionBuffer();
 		}
 	}
@@ -896,7 +896,7 @@ export default class Player extends Entity implements IPlayer {
 	 * 执行玩家动作
 	 * * 参见`PlayerAction`
 	 */
-	protected runPlayerAction(host: IMatrix, action: PlayerAction): void {
+	protected runAction(host: IMatrix, action: PlayerAction): void {
 		// 整数⇒处理转向相关
 		if (typeof action === 'number') {
 			// 非负⇒转向
@@ -940,12 +940,12 @@ export default class Player extends Entity implements IPlayer {
 	 * 
 	 * ! 不会清空「动作缓冲区」
 	 */
-	protected runAllPlayerActions(host: IMatrix): void {
-		for (this._temp_runAllPlayerActions_i = 0; this._temp_runAllPlayerActions_i < this._actionBuffer.length; this._temp_runAllPlayerActions_i++) {
-			this.runPlayerAction(host, this._actionBuffer[this._temp_runAllPlayerActions_i]);
+	protected runAllActions(host: IMatrix): void {
+		for (this._temp_runAllActions_i = 0; this._temp_runAllActions_i < this._actionBuffer.length; this._temp_runAllActions_i++) {
+			this.runAction(host, this._actionBuffer[this._temp_runAllActions_i]);
 		}
 	}
-	protected _temp_runAllPlayerActions_i: uint = 0;
+	protected _temp_runAllActions_i: uint = 0;
 
 	/**
 	 * 清除所有的玩家动作

@@ -87,11 +87,11 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 				this.direction = host.map.storage.randomRotateDirectionAt(this._position_I, this._direction, 1);
 			}
 			// TODO: 未能触发，待解决bug
+			// 更新「上一个方块」
+			this.lastBlock = this.nowBlock
 		}
 		// 移动
 		host.map.towardWithRot_FF(this._position, this._direction, this.speed);
-		// 更新「上一个方块」
-		this.lastBlock = this.nowBlock
 		// 更新整数坐标
 		alignToGrid_P(this._position, this._position_I);
 		// 移动进去之后

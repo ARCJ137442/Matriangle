@@ -2,7 +2,7 @@ import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTo
 import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
-import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection } from "../../api/entity/EntityInterfaces";
+import { IEntityHasPosition, IEntityInGrid, IEntityOutGrid, IEntityWithDirection } from "../../api/entity/EntityInterfaces";
 import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
 import Player from "../native/entities/player/Player";
@@ -16,9 +16,11 @@ import Projectile from "../native/entities/projectile/Projectile";
 import { NativeBlockIDs } from "../native/registry/BlockRegistry";
 import BlockRandomTickDispatcher from "../native/mechanics/programs/BlockRandomTickDispatcher";
 import { nameOfRot_M } from "../../general/GlobalRot";
+import MapSwitcher from "../native/mechanics/programs/MapSwitcher";
 
 /**
  * 一个用于可视化母体的可视化函数库
+ * * 所有呈现都基于纯文本，即「ASCII艺术」
  * * 【2023-10-06 17:48:33】原先用于测试，现在提升为一个附属模组
  */
 
@@ -67,7 +69,7 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 export function 地图可视化_高维(storage: MapStorageSparse): void {
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
-	console.log(zwMax, zwMin)
+	// console.log(zwMax, zwMin)
 	traverseNDSquare(
 		zwMin, zwMax, (zw: iPoint): void => {
 			console.info(`切片 [:, :, ${zw.join(', ')}] = `)
@@ -92,6 +94,30 @@ export function 母体可视化(
 	throw new Error('不支持该地图存储结构的母体可视化');
 }
 
+function 可视化单点(
+	storage: IMapStorage,
+	p: iPoint,
+	entitiesPositioned: IEntityHasPosition[],
+	string_l: uint = 7, // 限制字长
+): string {
+	let e: Entity | null = null;
+	for (const ent of entitiesPositioned) {
+		if (alignToGrid_P(ent.position, _temp_母体可视化_entityIPoint).isEqual(p)) {
+			e = ent;
+			break;
+		}
+	}
+	// 打印
+	return (
+		e === null ?
+			showBlock(
+				String(storage.getBlockID(p)),
+				string_l
+			) :
+			showEntity(e, string_l)
+	);
+}
+
 export function 稀疏地图母体可视化(
 	storage: MapStorageSparse,
 	entities: Entity[],
@@ -100,53 +126,53 @@ export function 稀疏地图母体可视化(
 	// 返回值
 	let result: string = '';
 	// 格点实体
-	const entitiesPositioned: (IEntityInGrid | IEntityOutGrid)[] = entities.filter(
+	const entitiesPositioned: IEntityHasPosition[] = entities.filter(
 		(entity: Entity): boolean => (
 			(entity as IEntityInGrid)?.i_inGrid ||
 			(entity as IEntityOutGrid)?.i_outGrid
 		)
-	) as (IEntityInGrid | IEntityOutGrid)[];
-	let e: (IEntityInGrid | IEntityOutGrid) | null;
+	) as IEntityHasPosition[];
+	let e: IEntityHasPosition | null;
 	// 正式开始
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
-	// 
-	let tvf = (zw: iPoint): void => {
+
+	let 可视化单线 = (iP: iPoint, line: string[], ...otherPos_I: int[]): string => {
+		for (let x = storage.borderMin[0]; x <= storage.borderMax[0]; x++) {
+			// 每一个点
+			iP.copyFromArgs(x, ...otherPos_I); // ! 会忽略其它地方的值
+			line.push(
+				可视化单点(storage, iP, entitiesPositioned, string_l)
+			)
+		}
+		return '|' + line.join(' ') + '|' + '\n';
+	}
+	let 可视化单面 = (zw: iPoint): void => {
 		// 每一个切片
 		result += (`切片 [:, :, ${zw.join(', ')}] = `) + '\n';
-		let line: string[];
+		let line: string[] = [];
 		let iP: iPoint = new iPoint(0, 0, ...zw);
 		for (let y = storage.borderMin[1]; y <= storage.borderMax[1]; y++) {
-			line = [];
-			for (let x = storage.borderMin[0]; x <= storage.borderMax[0]; x++) {
-				// 每一个点
-				iP.copyFromArgs(x, y); // ! 会忽略其它地方的值
-				// e = getHitEntity_I_Grid(iP, entitiesInGrid)
-				// 获取实体
-				e = null
-				for (const ent of entitiesPositioned) {
-					if (alignToGrid_P(ent.position, _temp_母体可视化_entityIPoint).isEqual(iP)) {
-						e = ent;
-						break;
-					}
-				}
-				// 打印
-				line.push(
-					e === null ?
-						showBlock(
-							storage.getBlockID(iP), string_l
-						) :
-						showEntity(e, string_l)
-				);
-			}
-			result += '|' + line.join(' ') + '|' + '\n';
+			line.length = 0;
+			result += 可视化单线(iP, line, y);
 		}
 	}
-	// 高维情况
-	if (storage.numDimension > 2) traverseNDSquare(
-		zwMin, zwMax, tvf
-	);
-	else tvf(new iPoint())
+	// 处理各个维度的情况
+	switch (storage.numDimension) {
+		case 0:
+			result = 可视化单点(storage, new iPoint(), entitiesPositioned, string_l)
+			break;
+		case 1:
+			result = 可视化单线(new iPoint(), []);
+			break;
+		case 2:
+			可视化单面(new iPoint());
+			break;
+		// 其它高维情况
+		default:
+			traverseNDSquare(zwMin, zwMax, 可视化单面);
+			break;
+	}
 	return result;
 }
 
@@ -180,7 +206,7 @@ function 实体标签显示(e: Entity): string {
 		return `${getClass(e)?.name}"${e.bonusType}"@${e.position}`
 	// 特效
 	if (e instanceof Effect)
-		return `${getClass(e)?.name}|${e.life}/${e.LIFE}`
+		return `${getClass(e)?.name}@${e.position}|${e.life}/${e.LIFE}`
 	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
 		return `${getClass(e)?.name}${获取坐标标签(e)}`
@@ -189,6 +215,9 @@ function 实体标签显示(e: Entity): string {
 		// 方块随机刻分派者
 		if (e instanceof BlockRandomTickDispatcher)
 			return `${getClass(e)?.name}[${e.label}] -> ${(e as any)?._temp_lastRandomP.toString()}`
+		// 地图切换者
+		else if (e instanceof MapSwitcher)
+			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}	#`
 		// 控制器
 		else if (e instanceof MatrixController)
 			// 玩家控制器
@@ -209,8 +238,8 @@ function 实体标签显示(e: Entity): string {
 /**  辅助函数 */
 function 获取坐标标签(e: Entity): string {
 	return (
-		((e as (IEntityInGrid | IEntityOutGrid))?.position !== undefined) ?
-			`@${(e as (IEntityInGrid | IEntityOutGrid)).position}` : ``
+		((e as IEntityHasPosition)?.position !== undefined) ?
+			`@${(e as IEntityHasPosition).position}` : ``
 	) + (
 			((e as IEntityWithDirection)?.direction !== undefined) ?
 				`^${nameOfRot_M((e as IEntityWithDirection).direction)}` : ``

@@ -45,6 +45,8 @@ export default interface IMatrix {
 	 * （新）管理实体
 	 * * 但一般上是「转交给相应的『实体系统』处理」
 	 * 
+	 * !【2023-10-09 01:34:14】建议在添加实体时，先把实体的坐标进行投影
+	 * 
 	 * @returns 是否添加成功
 	 */
 	addEntity(entity: Entity): boolean;

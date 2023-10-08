@@ -27,7 +27,7 @@ import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import IMatrixRule from "../../../rule/IMatrixRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
+import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../stat/PlayerStats";
 import EffectPlayerDeathLight from "../entities/effect/EffectPlayerDeathLight";
 import EffectPlayerDeathFadeout from "../entities/effect/EffectPlayerDeathFadeout";
@@ -123,6 +123,44 @@ export function changeMap(host: IMatrix, map: IMap, generateNew: boolean): void 
     host.map = map;
     map.storage.generateNext();
     // TODO: 显示更新
+}
+
+/**
+ * 投影实体的坐标到某地图中
+ * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
+ * 
+ * ! 【2023-10-08 23:59:54】只会修改实体坐标（数组），不会触发任何其它代码
+ * * 如：不会触发玩家「移动」的钩子函数
+ * 
+ * @param entity 要投影的实体
+ * @param map 要投影到的地图
+ */
+export function projectEntity(map: IMap, entity: Entity): void {
+    // 有坐标⇒投影坐标
+    if ((entity as IEntityInGrid)?.i_inGrid) {
+        map.projectPosition_I((entity as IEntityInGrid).position)
+    }
+    else if ((entity as IEntityOutGrid)?.i_outGrid) {
+        map.projectPosition_F((entity as IEntityOutGrid).position)
+    }
+    // 有方向⇒投影方向
+    if ((entity as IEntityWithDirection)?.i_hasDirection) {
+        map.projectDirection((entity as IEntityWithDirection).direction)
+    }
+}
+
+/**
+ * 投影所有实体的坐标
+ * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
+ * 
+ * ! 【2023-10-08 23:59:54】只会修改实体坐标（数组），不会触发任何其它代码
+ * * 如：不会触发玩家「移动」的钩子函数
+ * 
+ */
+export function projectEntities(map: IMap, entities: Entity[]): void {
+    entities.forEach(
+        (e: Entity): void => projectEntity(map, e)
+    )
 }
 
 //================⚙️实体管理================//
@@ -223,48 +261,48 @@ export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
     // Set Variables
     let attacker: IPlayer | null = laser.owner;
     let damage: uint = laser.damage;
-
+ 
     let length: uint = laser.length;
-
+ 
     let rot: uint = laser.rot;
-
+ 
     let teleport: boolean = laser instanceof LaserTeleport;
-
+ 
     let absorption: boolean = laser instanceof LaserAbsorption;
-
+ 
     let pulse: boolean = laser instanceof LaserPulse;
-
+ 
     // Pos
     let baseX: int = PosTransform.alignToGrid(laser.entityX);
-
+ 
     let baseY: int = PosTransform.alignToGrid(laser.entityY);
-
+ 
     let vx: int = GlobalRot.towardXInt(rot, 1);
-
+ 
     let vy: int = GlobalRot.towardYInt(rot, 1);
-
+ 
     let cx: int = baseX, cy: int = baseY, players: IPlayer[];
-
+ 
     // let nextBlockAtt:BlockAttributes
     // Damage
     laser.hasDamaged = true;
-
+ 
     let finalDamage: uint;
     for (let i: uint = 0; i < length; i++) {
         // nextBlockAtt=host.getBlockAttributes(cx+vx,cy+vy);
         players = host.getHitPlayers(cx, cy);
-
+ 
         for (let victim of players) {
             if (victim === null)
                 continue;
-
+ 
             // Operate
             finalDamage = attacker === null ? damage : victim.computeFinalDamage(attacker, laser.ownerTool, damage);
             // Effects
             if (attacker === null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
                 // Damage
                 victim.removeHP(finalDamage, attacker);
-
+ 
                 // Absorption
                 if (attacker !== null && !attacker.isRespawning && absorption)
                     attacker.heal += damage;
@@ -549,23 +587,23 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
  * TODO: 代码太多太大太集中，需要迁移！重构！💢
  */
 /* 
-
+ 
 public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
     // Set Variables
     let p: Projectile = null;
-
+ 
     let centerX: number = PosTransform.alignToEntity(PosTransform.alignToGrid(x));
-
+ 
     let centerY: number = PosTransform.alignToEntity(PosTransform.alignToGrid(y));
-
+ 
     let frontBlock: Block;
-
+ 
     let laserLength: number = this.rule.maxLaserLength;
-
+ 
     if (Tool.isIncludeIn(tool, Tool._LASERS) &&
         !this._rule.allowLaserThroughAllBlock) {
         laserLength = this.getLaserLength2(x, y, toolRot);
-
+ 
         // -projectilesSpawnDistance
     }
     // Debug: console.log('playerUseTool:','X=',player.getX(),spawnX,'Y:',player.getY(),y)
@@ -573,39 +611,39 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
     switch (tool) {
         case Tool.BULLET:
             p = new BulletBasic(this, x, y, player);
-
+ 
             break;
         case Tool.NUKE:
             p = new BulletNuke(this, x, y, player, chargePercent);
-
+ 
             break;
         case Tool.SUB_BOMBER:
             p = new SubBomber(this, x, y, player, chargePercent);
-
+ 
             break;
         case Tool.TRACKING_BULLET:
             p = new BulletTracking(this, x, y, player, chargePercent);
-
+ 
             break;
         case Tool.LASER:
             p = new LaserBasic(this, x, y, player, laserLength, chargePercent);
-
+ 
             break;
         case Tool.PULSE_LASER:
             p = new LaserPulse(this, x, y, player, laserLength, chargePercent);
-
+ 
             break;
         case Tool.TELEPORT_LASER:
             p = new LaserTeleport(this, x, y, player, laserLength);
-
+ 
             break;
         case Tool.ABSORPTION_LASER:
             p = new LaserAbsorption(this, x, y, player, laserLength);
-
+ 
             break;
         case Tool.WAVE:
             p = new Wave(this, x, y, player, chargePercent);
-
+ 
             break;
         case Tool.BLOCK_THROWER:
             let carryX: int = this.lockPosInMap(PosTransform.alignToGrid(centerX), true);
@@ -631,7 +669,7 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
             }
             break;
         case Tool.MELEE:
-
+ 
             break;
         case Tool.LIGHTNING:
             p = new Lightning(this, centerX, centerY, toolRot, player, player.computeFinalLightningEnergy(100) * (0.25 + chargePercent * 0.75));

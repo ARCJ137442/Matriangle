@@ -1,6 +1,6 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import IMatrix from "../../../main/IMatrix";
-import { 实体列表可视化, 母体可视化 } from "../visualizations";
+import { 实体列表可视化, 母体可视化 } from "../textVisualizations";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import Visualizer from "./Visualizer";
 

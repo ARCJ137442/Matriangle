@@ -8,7 +8,7 @@ import IMatrixRule from "../rule/IMatrixRule";
 import IMatrix from "./IMatrix";
 import IWorldRegistry from "../api/registry/IWorldRegistry";
 import { isDefined } from "../../common/utils";
-import { getRandomMap } from "../mods/native/mechanics/NativeMatrixMechanics";
+import { getRandomMap, projectEntity } from "../mods/native/mechanics/NativeMatrixMechanics";
 
 /**
  * 母体的第一代实现
@@ -128,19 +128,22 @@ export default class Matrix_V1 implements IMatrix {
 		return this._entitySystem.entries.filter(isDefined) as Entity[];
 	}
 
-	// 实现：委托到「实体系统」
+	/** @implements 实现：委托到「实体系统」 */
 	addEntity(entity: Entity): boolean {
+		// 预先投影
+		projectEntity(this.map, entity)
+		// 委托添加
 		this._entitySystem.add(entity)
 		return true;
 	}
 
-	// 实现：委托到「实体系统」
+	/** @implements 实现：委托到「实体系统」 */
 	addEntities(...entities: Entity[]): void {
 		for (const entity of entities)
 			this._entitySystem.add(entity);
 	}
 
-	// 实现：委托到「实体系统」
+	/** @implements 实现：委托到「实体系统」 */
 	removeEntity(entity: Entity): boolean {
 		// 现在直接缓存，并返回true
 		this._temp_tick_entityToDeleted.push(entity);

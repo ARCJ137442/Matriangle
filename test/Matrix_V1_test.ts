@@ -5,12 +5,12 @@ import AIControllerGenerator from "../src/batr/server/mods/native/entities/playe
 import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
 import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
-import { NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
+import { NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, projectEntities, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
 import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
-import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/visualizations";
+import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
 import { mergeMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
@@ -18,16 +18,18 @@ import { iPoint } from "../src/batr/common/geometricTools";
 import MatrixVisualizer from "../src/batr/server/mods/visualization/web/MatrixVisualizer";
 import WSController from "../src/batr/server/mods/webIO/controller/WSController";
 import BlockRandomTickDispatcher from "../src/batr/server/mods/native/mechanics/programs/BlockRandomTickDispatcher";
-import { NATIVE_BLOCK_EVENT_MAP } from './../src/batr/server/mods/native/mechanics/NativeMatrixMechanics';
+import { NATIVE_BLOCK_EVENT_MAP } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
 import BlockEventRegistry from "../src/batr/server/api/block/BlockEventRegistry";
 import MapSwitcher from "../src/batr/server/mods/native/mechanics/programs/MapSwitcher";
+import { MULTI_DIM_TEST_MAPS } from './multiDimMaps';
 
 // 规则 //
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
 
 // 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-for (const map of NativeMaps.ALL_NATIVE_MAPS)
+const MAPS = MULTI_DIM_TEST_MAPS;
+for (const map of MAPS)
 	rule.mapRandomPotentials.set(map, 1)
 // 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
 for (const bt of NativeBonusTypes._ALL_AVAILABLE_TYPE)
@@ -81,7 +83,7 @@ visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 方块随机刻分派者
 let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher();
 // 地图切换者
-let mapSwitcher = new MapSwitcher(TPS * 3); // 测试期：三秒切换一次
+let mapSwitcher = new MapSwitcher(TPS * 15); // 稳定期：十五秒切换一次
 // * 添加实体
 matrix.addEntities(
 	blockRTickDispatcher,
@@ -90,6 +92,8 @@ matrix.addEntities(
 	visualizer,
 	mapSwitcher
 )
+// ! 必要的坐标投影
+projectEntities(matrix.map, matrix.entities);
 // 添加奖励箱
 addBonusBoxInRandomTypeByRule(matrix, new iPoint(1, 2))
 // 名字
@@ -151,7 +155,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 // 预先测试：避免「异步报错无法溯源」的问题
-// for (let i: uint = 0; i < TPS * 10000; i++) matrix.tick();
+// for (let i: uint = 0; i < TPS * 1000; i++) matrix.tick();
 
 function 迭代(num: uint, visualize: boolean = true): void {
 	// TPS次迭代

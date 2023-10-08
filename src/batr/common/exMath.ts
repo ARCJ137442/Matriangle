@@ -162,12 +162,16 @@ export function ReLU_I(n: int): int {
 /**
  * 取余运算
  * * 与「模运算」不同的是：模运算会保留负数，而取余运算会将结果限制在[0,modNum)之间
+ * 
+ * !【2023-10-09 01:20:44】目前出现了「浮点相加不精确导致范围溢出」的问题，所以不能贸然使用加法
+ * * 宁愿最后结果有偏差，也不要溢出
+ * * 一般来说是「加一次就到范围内」的了
  */
 export function reminder_F(num: number, modNum: number): number {
 	return (
-		(_temp_reminder_F = num % modNum) < 0 ?
-			_temp_reminder_F + modNum :// 取模之后，绝对值不会超过modNum
-			_temp_reminder_F
+		num < 0 ?
+			reminder_F(num + modNum, modNum) :
+			num % modNum
 	);
 }
 let _temp_reminder_F: number;

@@ -7,13 +7,45 @@
  * 
  */
 
-import { fPoint, iPoint } from "../../../common/geometricTools";
+import { fPoint, iPoint, xPoint } from "../../../common/geometricTools";
 import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/DisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import IMatrix from "../../main/IMatrix";
 import { mRot } from "../../general/GlobalRot";
 import { CommonIO_IR } from "../io/CommonIO";
 import Entity from "./Entity";
+
+/**
+ * 「有坐标实体」是
+ * * 具有坐标的
+ * 实体
+ * 
+ * ! 使用了TS「接口继承类」的思想，强制要求实现者「继承实体基类，或至少实现其所有方法」
+ * 
+ * 典例：
+ * * 格点实体
+ * * 非格点实体
+ */
+export interface IEntityHasPosition<P extends xPoint<any> = xPoint<any>> extends Entity {
+
+    /**
+     * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
+     * * 后续可在「接口编译时被删去」后使用`entity?.isInGrid`（或更精确地，`entity?.isInGrid === true`）判断
+     */
+    // readonly i_hasPosition: true; // !【2023-10-09 00:06:53】暂时不要求，以免大范围重构
+
+    // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
+    /** 获取实体的坐标（引用） */
+    get position(): P;
+    /**
+     * 设置实体的坐标（引用）
+     * * 作为统一的「设置坐标」入口
+     * * 用于在设置坐标前后更新
+     * 
+     * !【2023-10-05 22:02:36】鉴于「需要`host`」问题，不再强制要求
+     */
+    // set position(value: P);
+}
 
 /**
  * 「格点实体」是
@@ -28,7 +60,7 @@ import Entity from "./Entity";
  * * 玩家
  * * 奖励箱
  */
-export interface IEntityInGrid extends Entity {
+export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
 
     /**
      * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
@@ -66,7 +98,7 @@ export interface IEntityInGrid extends Entity {
  * 典例：
  * * 抛射体
  */
-export interface IEntityOutGrid extends Entity {
+export interface IEntityOutGrid extends IEntityHasPosition<fPoint> {
 
     /**
      * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题

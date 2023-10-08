@@ -132,18 +132,31 @@ function getControlMessage(event, isDown) {
 
 function getActionFromEvent(keyboardEvent, isDown) {
 	switch (keyboardEvent.code) {
+		// X
 		case 'KeyA':
 		case 'ArrowLeft':
 			return isDown ? -2 : undefined; // 只有按下时才响应
 		case 'KeyD':
 		case 'ArrowRight':
 			return isDown ? -1 : undefined; // 只有按下时才响应
+		// Y
 		case 'KeyW':
 		case 'ArrowUp':
 			return isDown ? -4 : undefined; // 只有按下时才响应
 		case 'KeyS':
 		case 'ArrowDown':
 			return isDown ? -3 : undefined; // 只有按下时才响应
+		// Z
+		case 'KeyQ':
+			return isDown ? -6 : undefined; // 只有按下时才响应
+		case 'KeyE':
+			return isDown ? -5 : undefined; // 只有按下时才响应
+		// W
+		case 'KeyZ':
+			return isDown ? -8 : undefined; // 只有按下时才响应
+		case 'KeyC':
+			return isDown ? -7 : undefined; // 只有按下时才响应
+		// 用
 		case 'Space':
 			return isDown ? 'startUsing' : 'stopUsing';
 	}

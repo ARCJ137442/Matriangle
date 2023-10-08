@@ -225,4 +225,28 @@ export default interface IMapLogic { // !【逻辑结构无需单独可对象化
 	 */
 	isBlockBreakable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean
 
+	/**
+	 * 将一个来自外界的「浮点坐标信息」投影到地图内
+	 * * 应用：在维数不同的地图间切换时，将一些实体的坐标一一迁移到新地图中
+	 * 
+	 * ! 原地操作：会改变传入的坐标
+	 */
+	projectPosition_F(position: fPointRef): fPointRef;
+
+	/**
+	 * 将一个来自外界的「整数坐标信息」投影到地图内
+	 * * 应用：在维数不同的地图间切换时，将所有玩家的坐标一一迁移到新地图中
+	 * 
+	 * ! 原地操作：会改变传入的坐标
+	 */
+	projectPosition_I(position: iPointRef): iPointRef;
+
+	/**
+	 * 将一个来自外界的「方向角度信息」投影到地图内（任意维整数角）
+	 * * 应用：在维数不同的地图间切换时，将玩家的方向纠正入地图内
+	 * 
+	 * ! 非原地操作：不会改变传入的参数
+	 */
+	projectDirection(direction: mRot): mRot;
+
 }

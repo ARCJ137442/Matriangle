@@ -146,6 +146,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * * 原理：遍历分量，逐一赋值（类似`copyFrom`方法）
 	 */
 	public copyFromArgs(...args: T[]): xPoint<T> {
+		// !【2023-10-09 01:27:43】暂时不限制维数，这样可能会导致长度不稳定
 		for (let i = 0; i < args.length; i++) {
 			this[i] = args[i];
 		}
@@ -747,5 +748,26 @@ export function modPoint_FI(p: fPointRef, modP: iPointRef): fPointRef {
 	for (let i: uint = 0; i < p.length; ++i) {
 		p[i] %= modP[i];
 	}
+	return p;
+}
+
+/**
+ * 直投影
+ * * 逻辑：多余维度⇒去除，缺少维度⇒补数
+ * * 用于不同维度之间点的坐标转换
+ * 
+ * ! 原地操作：会改变传入的坐标点
+ * 
+ * @param p 需要被投影的点
+ * @param targetNDim 要投影到的目标维度
+ * @param padValue 缺少维度时填充的值
+ */
+export function straightProjection<T>(p: xPoint<T>, targetNDim: uint, padValue: T): xPoint<T> {
+	// 目标维度 > 点维度：填充
+	for (let i: uint = p.length; i < targetNDim; ++i)
+		p[i] = padValue;
+	// 目标维度 < 点维度：舍弃
+	p.length = targetNDim;
+	// 返回
 	return p;
 }
