@@ -401,7 +401,7 @@ export default class MapStorageSparse implements IMapStorage {
     /**
      * 会直接克隆出一个与自身相同类型、相同属性的对象
      */
-    public clone(deep: boolean = false): IMapStorage {
+    public copy(deep: boolean = false): IMapStorage {
         // 复制构造函数参数
         let nStorage: MapStorageSparse = new MapStorageSparse(this._nDim);
         // 复制其它信息

@@ -1,15 +1,12 @@
 import IMap from "../../../api/map/IMap";
 import IMapStorage from "../../../api/map/IMapStorage";
-import IMapLogic from "../../../api/map/IMapLogic";
 import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_true } from "../../../../common/JSObjectify";
-import { fPoint, fPointRef, iPoint, iPointRef, modPoint_FI } from "../../../../common/geometricTools";
+import { fPointRef, iPoint, iPointRef } from "../../../../common/geometricTools";
 import { identity, key } from "../../../../common/utils";
 import { int, int$MAX_VALUE, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import Entity from "../../../api/entity/Entity";
-import { mRot, mRot2axis, towardX_MF } from "../../../general/GlobalRot";
+import { mRot, mRot2axis } from "../../../general/GlobalRot";
 import { alignToGrid_P } from "../../../general/PosTransform";
-import Player from "../entities/player/Player";
 import { IEntityInGrid, IEntityOutGrid } from "../../../api/entity/EntityInterfaces";
 import IPlayer from "../entities/player/IPlayer";
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
@@ -82,6 +79,15 @@ export default class Map_V1 implements IMap {
 
 	public destructor(): void {
 		// this.storage.clearBlock(); // ! 存储结构可能共用，不能陪葬
+	}
+
+	copy(deep: boolean): IMap {
+		return new Map_V1(
+			this._name,
+			this._storage.copy(deep),
+			this._size,
+			this._isArena
+		)
 	}
 
 	//============World Mechanics: 原「逻辑层」的机制============//

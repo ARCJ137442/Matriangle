@@ -171,7 +171,7 @@ export default class Player extends Entity implements IPlayer {
 		else {
 			this.HP = 0;
 			// 触发钩子
-			this.onDeath(host, this.HP, attacker);
+			this.onDeath(host, value, attacker);
 		}
 	}
 
@@ -625,7 +625,7 @@ export default class Player extends Entity implements IPlayer {
 		// TODO: 通知控制器
 	}
 
-	//====Functions About Worldplay====//
+	//====Functions About World====//
 
 	// get carriedBlock(): Block {return this._carriedBlock;}
 	// get isCarriedBlock(): boolean {return this._carriedBlock !== null && this._carriedBlock.visible;}

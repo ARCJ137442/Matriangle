@@ -178,7 +178,7 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	dealHeal(): void;
 
-	//====Functions About Worldplay====//
+	//====Functions About World====//
 
 	/*
 	! ↓【2023-09-23 16:52:31】这两段代码现将拿到「工具」中，不再在这里使用

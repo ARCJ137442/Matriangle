@@ -133,7 +133,7 @@ export module NativeMaps {
     }
     //====Map 3====//
     STORAGE_3.copyFrom(STORAGE_FRAME); {
-        for (iy = 3; iy <= MAP_MAX_Y; iy += 4) {
+        for (iy = 3; iy < MAP_MAX_Y; iy += 4) {
             fillBlock(STORAGE_3, 3, iy, 20, iy + 1, WATER);
         }
     }

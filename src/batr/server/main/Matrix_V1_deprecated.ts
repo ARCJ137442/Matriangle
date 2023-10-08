@@ -2,39 +2,37 @@
  * 这个文件是为了「先做出一个最精简版本，然后再逐渐复刻旧有机制」方法所实践的代码
  * * 后续`Matrix_V1.ts`等文件会从中逐渐迁移代码
  */
+
 import { IBatrShape } from "../../display/api/DisplayInterfaces";
-import { DEFAULT_SIZE, DISPLAY_SIZE, DISPLAY_GRIDS, DEFAULT_SCALE } from "../../display/api/GlobalDisplayVariables";
+import { DISPLAY_SIZE, DISPLAY_GRIDS, DEFAULT_SCALE, DEFAULT_SIZE } from "../../display/api/GlobalDisplayVariables";
 import FixedI18nText from "../../display/api/i18n/FixedI18nText";
 import I18nKey from "../../display/api/i18n/I18nKey";
 import I18nText from "../../display/api/i18n/I18nText";
 import I18ns from "../../display/api/i18n/I18ns";
 import IMapDisplayer from "../../display/api/map/IMapDisplayer";
-import Background from "../../display/main/Background";
-import BatrSubject from "../../display/main/BatrSubject";
-import I18nsChangeEvent from "../../display/menu/event/I18nsChangeEvent";
-import Menu from "../../display/menu/main/Menu";
+import I18nsChangeEvent from "../../display/menu.deprecated/event/I18nsChangeEvent";
+import Menu from "../../display/menu.deprecated/main/Menu";
 import { int, uint } from "../../legacy/AS3Legacy";
 import { Sprite, DisplayObject } from "../../legacy/flash/display";
 import { getTimer } from "../../legacy/flash/utils";
-import Block, { BlockType } from "../api/block/Block";
+import Block from "../api/block/Block";
 import BlockAttributes from "../api/block/BlockAttributes";
 import Entity from "../api/entity/Entity";
 import EntitySystem from "../api/entity/EntitySystem";
 import IMap from "../api/map/IMap";
+import IWorldRegistry from "../api/registry/IWorldRegistry";
 import BonusBox from "../mods/native/entities/item/BonusBox";
 import IPlayer from "../mods/native/entities/player/IPlayer";
 import Player from "../mods/native/entities/player/Player";
 import PlayerTeam from "../mods/native/entities/player/team/PlayerTeam";
-import { BonusType } from "../mods/native/registry/BonusRegistry";
 import { getPlayers } from "../mods/native/mechanics/NativeMatrixMechanics";
+import { BonusType } from "../mods/native/registry/BonusRegistry";
 import MatrixResult from "../mods/native/stat/MatrixResult";
 import MatrixStats from "../mods/native/stat/MatrixStats";
 import Tool from "../mods/native/tool/Tool";
 import WorldRuleEvent from "../rule/WorldRuleEvent";
-import World from "./World_deprecated.test";
 import { TICK_TIME_MS } from "./GlobalWorldVariables";
 import IMatrix from "./IMatrix";
-import IWorldRegistry from "../api/registry/IWorldRegistry";
 
 /**
  * 母体的第一代实现

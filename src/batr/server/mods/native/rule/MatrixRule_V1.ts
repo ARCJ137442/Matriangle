@@ -133,7 +133,7 @@ export default class MatrixRule_V1 implements IMatrixRule {
 		) this._allowPlayerChangeTeam = value;
 	}
 
-	//====WorldPlay====//
+	//====World====//
 	protected static readonly d_defaultHP: uint = 100;
 	public static readonly key_defaultHP: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,

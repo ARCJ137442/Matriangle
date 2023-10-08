@@ -17,6 +17,12 @@ export default interface IMap extends IMapLogic, IJSObjectifiable<IMap> {
 	/** 获取地图的「存储结构」 */
 	get storage(): IMapStorage;
 
+	/**
+	 * 拷贝地图
+	 * @param deep 是否为「深拷贝」
+	 */
+	copy(deep: boolean): IMap;
+
 	/** 析构函数 */
 	destructor(): void;
 

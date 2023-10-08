@@ -175,7 +175,7 @@ export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
 	// 拆解成顺序数组
 	let elements: T[] = [];
 	let weights: number[] = [];
-	weightMap.forEach((value, key) => {
+	weightMap.forEach((value, key): void => {
 		elements.push(key);
 		weights.push(value);
 	})

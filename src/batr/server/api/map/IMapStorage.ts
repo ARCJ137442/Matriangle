@@ -107,7 +107,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * 复制地图本身
 	 * @param deep 是否为深拷贝，即「复制所有其内的方块对象，而非仅复制引用」
 	 */
-	clone(deep?: boolean/* = true*/): IMapStorage;
+	copy(deep?: boolean/* = true*/): IMapStorage;
 
 	/**
 	 * 继承「JS对象化」接口，强制要求「复刻一个白板对象」

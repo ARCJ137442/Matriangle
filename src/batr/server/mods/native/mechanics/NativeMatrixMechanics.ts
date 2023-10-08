@@ -110,6 +110,21 @@ export function initPlayersByRule(players: IPlayer[], rule: IMatrixRule): void {
     // TODO: 后续还有至少是「生命条数」没有初始化的……留给在「创建玩家」时做（只有那时候才能分辨「哪个是人类，哪个是AI」）
 }
 
+/**
+ * 切换一个母体的地图
+ * * 迁移自AS3版本`Game.changeMap`
+ * 
+ * ! 不会拷贝原先的地图
+ * 
+ * @param host 要更改地图的「游戏母体」
+ * @param generateNew 是否告知地图「生成新一代」（用于一些「依靠代码随机生成」的地图）
+ */
+export function changeMap(host: IMatrix, map: IMap, generateNew: boolean): void {
+    host.map = map;
+    map.storage.generateNext();
+    // TODO: 显示更新
+}
+
 //================⚙️实体管理================//
 
 // 实体调用的工具函数：各类抛射体伤害玩家的逻辑…… //
@@ -1181,6 +1196,7 @@ export function getBonusBoxCount(host: IMatrix): uint {
 
 /**
  * （🚩专用代码迁移）用于在「只有接口」的情况下判断「是否为玩家」
+ * * 性质：使得`isPlayer === true`的，必然`instanceof IPlayer`
  */
 export function isPlayer(e: Entity): boolean {
     return (e as IPlayer)?.i_isPlayer // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效

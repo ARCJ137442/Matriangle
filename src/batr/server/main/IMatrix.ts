@@ -59,6 +59,13 @@ export default interface IMatrix {
 	 */
 	removeEntity(entity: Entity): boolean;
 
+	/**
+	 * 🆕在「实体循环」后插入一段「最终代码」
+	 * * 原理：插入之后的闭包函数，母体在「遍历全部实体的『游戏刻』」后自动执行并丢弃
+	 * * 应用：「地图切换机制」中用于防止「切换之后还需要遍历实体」的情况
+	 */
+	insertFinalExecution(exe: () => void): void;
+
 	//========🗺️地图部分：地图加载、地图变换等========//
 	/**
 	 * 世界中所有加载的地图
@@ -77,8 +84,11 @@ export default interface IMatrix {
 	 * ? 是否要把这个「当前地图」暴露出去？
 	 * * 📌或许这个也应该被封装好，不要让外界过多访问？
 	 * * 💭另一个取舍之处：地图接口中太多的函数需要「传递性实现」了，这样还不如复合一个地图/直接继承「地图」。。。
+	 * 
+	 * !【2023-10-08 21:49:30】现在开放了setter，因为需要在外部设置地图
 	 */
 	get map(): IMap;
+	set map(value: IMap);
 	// get mapIndex(): uint; // !【2023-10-02 23:26:35】现在讨论「索引」无意义
 	// get mapWidth(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
 	// get mapHeight(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
@@ -210,7 +220,7 @@ export default interface IMatrix {
 	dealKeyDownWithPlayers(code: uint, isKeyDown: boolean): void;
 	onStageResize(E: Event): void;
 
-	//====Functions About Worldplay====//
+	//====Functions About World====//
 	/**
 	 * TODO: 这些函数计划被实现为Mod的「工具函数」
 	 * * 实现方法：在最前面附带母体以让函数完全独立于任何一个类

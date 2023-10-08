@@ -20,6 +20,7 @@ import WSController from "../src/batr/server/mods/webIO/controller/WSController"
 import BlockRandomTickDispatcher from "../src/batr/server/mods/native/mechanics/programs/BlockRandomTickDispatcher";
 import { NATIVE_BLOCK_EVENT_MAP } from './../src/batr/server/mods/native/mechanics/NativeMatrixMechanics';
 import BlockEventRegistry from "../src/batr/server/api/block/BlockEventRegistry";
+import MapSwitcher from "../src/batr/server/mods/native/mechanics/programs/MapSwitcher";
 
 // 规则 //
 const rule = new MatrixRule_V1();
@@ -79,12 +80,15 @@ let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
 visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 方块随机刻分派者
 let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher();
+// 地图切换者
+let mapSwitcher = new MapSwitcher(TPS * 3); // 测试期：三秒切换一次
 // * 添加实体
 matrix.addEntities(
 	blockRTickDispatcher,
 	p, p2,
 	ctl, ctlWeb,
-	visualizer
+	visualizer,
+	mapSwitcher
 )
 // 添加奖励箱
 addBonusBoxInRandomTypeByRule(matrix, new iPoint(1, 2))
@@ -113,7 +117,7 @@ ctlWeb.addConnection(p2, 'p2');
 //  地图
 // matrix.map = NativeMaps.EMPTY;
 // matrix.map = NativeMaps.FRAME;
-matrix.map = NativeMaps.MAP_G;
+// matrix.map = NativeMaps.MAP_G;
 
 // 第一次测试
 ((): void => {
