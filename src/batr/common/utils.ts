@@ -361,17 +361,40 @@ export function isEqualObject(
 
 /**
  * 合并一个映射表到另一个映射表
+ * * 映射覆盖规则：后者覆盖前者
  * 
  * @param a 要合并入的映射表
  * @param b 提供键值对的映射表
+ * @param 合并后的映射表
  */
 export function mergeMaps<K, V>(
 	a: Map<K, V>,
 	b: Map<K, V>
-): void {
-	for (let [key, value] of b) {
+): Map<K, V> {
+	for (const [key, value] of b) {
 		a.set(key, value);
 	}
+	return a;
+}
+
+/**
+ * 合并多个映射表到一个映射表
+ * * 映射覆盖规则：后者覆盖前者
+ * 
+ * @param a 要合并入的映射表
+ * @param b 提供键值对的所有映射表
+ * @param 合并后的映射表
+ */
+export function mergeMultiMaps<K, V>(
+	a: Map<K, V>,
+	...bs: Map<K, V>[]
+): Map<K, V> {
+	for (const b of bs) {
+		for (const [key, value] of b) {
+			a.set(key, value);
+		}
+	}
+	return a;
 }
 
 /**

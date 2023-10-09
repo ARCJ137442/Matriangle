@@ -1,14 +1,14 @@
-import { randInt, randIntBetween, randModWithout, randomBetween } from "../../../../common/exMath";
+import { randInt, randIntBetween, randModWithout } from "../../../../common/exMath";
 import { iPoint, iPointRef, iPointVal } from "../../../../common/geometricTools";
 import { generateArray, identity, key, mapObject, randomIn } from "../../../../common/utils";
 import { mRot, rotate_M } from "../../../general/GlobalRot";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import IMapStorage from "../../../api/map/IMapStorage";
+import IMapStorage, { BlockConstructorMap } from "../../../api/map/IMapStorage";
 import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true, uniSaveJSObject } from "../../../../common/JSObjectify";
 import Block from "../../../api/block/Block";
-import { NativeBlockConstructorMap, NativeBlockIDs, NativeBlockPrototypes } from "../registry/BlockRegistry";
 import { typeID } from "../../../api/registry/IWorldRegistry";
+import { NativeBlockPrototypes, NATIVE_BLOCK_CONSTRUCTOR_MAP, NativeBlockIDs } from "../../batr/registry/NativeBlockRegistry";
 
 /**
  * 稀疏地图
@@ -78,12 +78,16 @@ export default class MapStorageSparse implements IMapStorage {
             return mapObject(
                 v,
                 identity,
-                (value: JSObject): Block => Block.fromJSObject(value, NativeBlockConstructorMap)
+                (value: JSObject): Block => { //Block.fromJSObject(value, this.blockConstructorMap)
+                    throw new Error('TODO: 【2023-10-09 20:34:21】这里需要在箭头函数中传回「自身」方能引用到「随自身映射变化而变化」的映射表。。。')
+                }
             )
         },
         loadRecursiveCriterion_false,
         (): Block => NativeBlockPrototypes.VOID.copy(), // 本身属性不变且无状态，所以直接复制
     );
+    // TODO: 这个「方块白板构造函数映射」不能定死，需要从自身或外部导入
+    public blockConstructorMap: BlockConstructorMap = NATIVE_BLOCK_CONSTRUCTOR_MAP;
 
     /**
      * 用于在「没有存储键」时返回的默认值

@@ -1,5 +1,5 @@
-import EffectTeleport from "../../../../server/mods/native/entities/effect/EffectTeleport";
-import { BonusType, NativeBonusTypes } from "../../../../server/mods/native/registry/BonusRegistry";
+import EffectTeleport from "../../../../server/mods/batr/entity/effect/EffectTeleport";
+import { BonusType, NativeBonusTypes } from "../../../../server/mods/batr/registry/BonusRegistry";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { IBatrDisplayable, IBatrGraphicContext, IBatrShape } from "../../../api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";

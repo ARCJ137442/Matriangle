@@ -2,10 +2,11 @@ import EntityType from "../../../api/entity/EntityType";
 import { mRot } from "../../../general/GlobalRot";
 import IMatrix from "../../../main/IMatrix";
 import IPlayer from "../entities/player/IPlayer";
-import Tool from "../tool/Tool";
+import Tool from "../../batr/tool/Tool";
 import IWorldRegistry, { typeID } from "../../../api/registry/IWorldRegistry";
 import Block from "../../../api/block/Block";
 import BlockEventRegistry from "../../../api/block/BlockEventRegistry";
+import { BlockConstructorMap } from "../../../api/map/IMapStorage";
 
 /**
  * 统一「工具被玩家在指定『母体』内以某个方向使用」的回调函数类型
@@ -28,23 +29,23 @@ export default class Registry_V1 implements IWorldRegistry {
 
 	// 构造&析构 //
 	public constructor(
-		blockTypeMap: Map<typeID, () => Block> = new Map<typeID, () => Block>(),
+		blockConstructorMap: BlockConstructorMap = new Map<typeID, () => Block>(),
 		blockEventRegistry: BlockEventRegistry = new BlockEventRegistry(),
 		entityTypeMap: Map<typeID, EntityType> = new Map<typeID, EntityType>(),
 	) {
-		this.blockTypeMap = blockTypeMap;
+		this.blockConstructorMap = blockConstructorMap;
 		this.blockEventRegistry = blockEventRegistry;
 		this.entityTypeMap = entityTypeMap;
 	}
 
 	public destructor(): void {
-		this.blockTypeMap.clear();
+		this.blockConstructorMap.clear();
 		this.blockEventRegistry.destructor();
 		this.entityTypeMap.clear();
 	}
 
 	//========🧊方块========//
-	readonly blockTypeMap: Map<typeID, () => Block>;
+	readonly blockConstructorMap: BlockConstructorMap;
 	readonly blockEventRegistry: BlockEventRegistry;
 
 	//========🕹️实体========//

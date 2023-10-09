@@ -5,6 +5,7 @@ import IMatrix from "../../../../../main/IMatrix";
 import IPlayer from "../IPlayer";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./PlayerAction";
 import PlayerController from "./PlayerController";
+import { NativePlayerEvent, NativePlayerEventOptions } from "./PlayerEvent";
 
 /**
  * 「AI控制器」
@@ -80,7 +81,8 @@ export default abstract class AIController extends PlayerController {
         }
     }
 
-    protected temp_add_action: PlayerAction[] = [];
+    protected _temp_add_action: PlayerAction[] = [];
+    protected _action_buffer: PlayerAction[] = [];
     /**
      * 实现：计算AI刻，并分派钩子
      * 
@@ -90,25 +92,33 @@ export default abstract class AIController extends PlayerController {
      */
     public onPlayerTick(player: IPlayer, host: IMatrix): void {
         // 先处理世界刻
-        this.temp_add_action[0] = this.reactTick(player, host);
-        // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
-        if (this.temp_add_action[0] !== EnumPlayerAction.NULL) this.dispatchEvent(
-            ADD_ACTION,
-            this.temp_add_action // ! 复用以避免创建大量数组
+        this.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.TICK>(
+            NativePlayerEvent.TICK,
+            player, host,
+            undefined
         )
-        // 然后处理AI刻
+        // 然后（定时）处理AI刻
         if (this.dealAITick()) {
-            // 1: 获取AI刻行为
-            this.temp_add_action[0] = this.reactAITick(player, host);
-            // 2: 事件非空⇒向事件订阅者（玩家）分派「添加动作」的事件
-            if (this.temp_add_action[0] !== EnumPlayerAction.NULL) this.dispatchEvent(
-                ADD_ACTION,
-                this.temp_add_action // ! 复用以避免创建大量数组
+            // 直接送去「反应」，预期在其中向「动作缓冲区」添加行为
+            this.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.AI_TICK>(
+                NativePlayerEvent.AI_TICK,
+                player, host,
+                undefined
             )
         }
+        // 发送所有在「反应」时添加的玩家行为，然后清空
+        for (let i = 0; i < this._action_buffer.length; i++) {
+            if (this._action_buffer[i] !== EnumPlayerAction.NULL) {
+                // 生成「参数数组」
+                this._temp_add_action[0] = this._action_buffer[i];
+                // 分派
+                this.dispatchEvent(
+                    ADD_ACTION,
+                    this._temp_add_action // ! 复用以避免创建大量数组
+                )
+            }
+        }
+        this._action_buffer.length = 0;
     }
-
-    /** 🆕AI控制器独有：在「每个AI刻」中响应（一般用于「更人性化执行」的动作） */
-    public abstract reactAITick(self: IPlayer, host: IMatrix): PlayerAction;
 
 }

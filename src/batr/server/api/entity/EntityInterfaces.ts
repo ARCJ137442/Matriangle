@@ -28,10 +28,7 @@ import Entity from "./Entity";
  */
 export interface IEntityHasPosition<P extends xPoint<any> = xPoint<any>> extends Entity {
 
-    /**
-     * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
-     * * 后续可在「接口编译时被删去」后使用`entity?.isInGrid`（或更精确地，`entity?.isInGrid === true`）判断
-     */
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
     // readonly i_hasPosition: true; // !【2023-10-09 00:06:53】暂时不要求，以免大范围重构
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
@@ -45,6 +42,13 @@ export interface IEntityHasPosition<P extends xPoint<any> = xPoint<any>> extends
      * !【2023-10-05 22:02:36】鉴于「需要`host`」问题，不再强制要求
      */
     // set position(value: P);
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_hasPosition(e: Entity): e is IEntityHasPosition {
+    return (e as IEntityHasPosition)?.position !== undefined;
 }
 
 /**
@@ -62,11 +66,8 @@ export interface IEntityHasPosition<P extends xPoint<any> = xPoint<any>> extends
  */
 export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
 
-    /**
-     * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
-     * * 后续可在「接口编译时被删去」后使用`entity?.isInGrid`（或更精确地，`entity?.isInGrid === true`）判断
-     */
-    readonly i_inGrid: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_inGrid: true;
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的整数坐标（引用） */
@@ -90,6 +91,13 @@ export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
 }
 
 /**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_inGrid(e: Entity): e is IEntityInGrid {
+    return (e as IEntityInGrid)?.onPositedBlockUpdate !== undefined;
+}
+
+/**
  * 「非格点实体」是
  * * 对坐标存储需要浮点数精度的
  * * 需要与方块坐标进行“特意对齐”的
@@ -100,11 +108,8 @@ export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
  */
 export interface IEntityOutGrid extends IEntityHasPosition<fPoint> {
 
-    /**
-     * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
-     * * 参见`IEntityInGrid`
-     */
-    readonly i_outGrid: true;
+    // !【2023-10-09 21:35:53】现在因为「难以和『格点实体』区分」而重新启用该值
+    readonly i_outGrid: Exclude<unknown, undefined>; // 使用`Exclude`断言「不是undefined」
 
     // ! 【20230915 15:50:04】现在因「强制公开」的原因，不强制内部变量了
     /** 获取实体的浮点坐标（引用） */
@@ -115,6 +120,13 @@ export interface IEntityOutGrid extends IEntityHasPosition<fPoint> {
      */
     // set position(value: fPoint);
 
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_outGrid(e: Entity): e is IEntityOutGrid {
+    return (e as IEntityOutGrid)?.i_outGrid !== undefined;
 }
 
 /**
@@ -130,14 +142,18 @@ export interface IEntityOutGrid extends IEntityHasPosition<fPoint> {
  * * 抛射体
  */
 export interface IEntityWithDirection extends Entity {
-    /**
-     * 留存一个（公开）的实例变量，用于解决TS「无法在运行时判断是否实现接口」的问题
-     * * 参见`IEntityInGrid`
-     */
-    readonly i_hasDirection: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_hasDirection: true;
 
     get direction(): mRot;
     set direction(value: mRot);
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_hasDirection(e: Entity): e is IEntityWithDirection {
+    return (e as IEntityWithDirection)?.direction !== undefined;
 }
 
 /**
@@ -176,8 +192,8 @@ export interface IEntityDisplayableContainer extends Entity, IBatrDisplayableCon
  */
 export interface IEntityActive extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_active: true;
+    // !【2023-10-09 21:35:53】现在因为「难以和『轻量级活跃实体』区分」而重新启用该值
+    readonly i_active: Exclude<unknown, undefined>;
 
     /**
      * 响应世界刻
@@ -193,6 +209,13 @@ export interface IEntityActive extends Entity {
 }
 
 /**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_active(e: Entity): e is IEntityActive {
+    return (e as IEntityActive)?.i_active !== undefined;
+}
+
+/**
  * 「轻量级活跃实体」是指
  * * 每世界刻都会被触发钩子的
  * * **不**影响世界逻辑的
@@ -204,8 +227,8 @@ export interface IEntityActive extends Entity {
  */
 export interface IEntityActiveLite extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_activeLite: true;
+    // !【2023-10-09 21:35:53】现在因为「难以和『活跃实体』区分」而重新启用该值
+    readonly i_activeLite: Exclude<unknown, undefined>; // 排除undefined即可
 
     /**
      * 响应世界刻
@@ -218,6 +241,13 @@ export interface IEntityActiveLite extends Entity {
      */
     onTick(remove: (entity: Entity) => void): void;
 
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_activeLite(e: Entity): e is IEntityActiveLite {
+    return (e as IEntityActiveLite)?.i_activeLite !== undefined;
 }
 
 /**
@@ -234,8 +264,8 @@ export interface IEntityActiveLite extends Entity {
  */
 export interface IEntityNeedsIO extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_needsIO: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_needsIO: true;
 
     /**
      * 响应世界IO
@@ -264,6 +294,13 @@ export interface IEntityNeedsIO extends Entity {
 }
 
 /**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_needsIO(e: Entity): e is IEntityNeedsIO {
+    return (e as IEntityNeedsIO)?.onIO !== undefined;
+}
+
+/**
  * 「短周期实体」是
  * * 生命周期相对短的（生成到消耗的时间很短）
  * * 删除不会对世界运行造成太显著影响的
@@ -275,10 +312,17 @@ export interface IEntityNeedsIO extends Entity {
  */
 export interface IEntityShortLived extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
     readonly i_shortLive: true;
 
     // ? 暂时没想好有什么要「特别支持」的方法，因为这本身与「特效」不完全相同
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_shortLive(e: Entity): e is IEntityShortLived {
+    return (e as IEntityShortLived)?.i_shortLive !== undefined;
 }
 
 /**
@@ -294,8 +338,8 @@ export interface IEntityShortLived extends Entity {
  */
 export interface IEntityFixedLived extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_fixedLive: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_fixedLive: true;
 
     /**
      * 「存活总时长」
@@ -315,6 +359,13 @@ export interface IEntityFixedLived extends Entity {
 
 }
 
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_fixedLive(e: Entity): e is IEntityFixedLived {
+    return (e as IEntityFixedLived)?.LIFE !== undefined;
+}
+
 // !【2023-10-08 18:06:20】现已删除「具统计实体」的声明，因为这与「玩家」高度绑定
 
 /**
@@ -328,8 +379,8 @@ export interface IEntityFixedLived extends Entity {
  */
 export interface IEntityHasHP extends Entity {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_hasHP: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_hasHP: true;
 
     /**
      * 当前生命值
@@ -392,6 +443,13 @@ export interface IEntityHasHP extends Entity {
 }
 
 /**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_hasHP(e: Entity): e is IEntityHasHP {
+    return (e as IEntityHasHP)?.addHP !== undefined;
+}
+
+/**
  * 「有储备生命值实体」是
  * * 有一个「储备生命值」的
  *   * 可以在「生命值未满」时（以一定速度）补充到生命值中
@@ -399,8 +457,8 @@ export interface IEntityHasHP extends Entity {
  */
 export interface IEntityHasHPAndHeal extends IEntityHasHP {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_hasHPAndHeal: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_hasHPAndHeal: true;
 
     /** 
      * 「额外备用生命」
@@ -412,6 +470,13 @@ export interface IEntityHasHPAndHeal extends IEntityHasHP {
 }
 
 /**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_hasHPAndHeal(e: Entity): e is IEntityHasHPAndHeal {
+    return (e as IEntityHasHPAndHeal)?.heal !== undefined;
+}
+
+/**
  * 「可重生实体」是
  * * 有自然数个数的「剩余生命数」的
  * * 在死亡后可以通过「重生」恢复生命值并「重新进入世界主场」的
@@ -419,8 +484,8 @@ export interface IEntityHasHPAndHeal extends IEntityHasHP {
  */
 export interface IEntityHasHPAndLives extends IEntityHasHP {
 
-    // * 留存「接口约定的变量」，判断「实例是否实现接口」
-    readonly i_hasHPAndLives: true;
+    // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
+    // readonly i_hasHPAndLives: true;
 
     /**
      * 剩余生命数
@@ -450,4 +515,11 @@ export interface IEntityHasHPAndLives extends IEntityHasHP {
      */
     get isNoLives(): boolean;
 
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ */
+export function i_hasHPAndLives(e: Entity): e is IEntityHasHPAndLives {
+    return (e as IEntityHasHPAndLives)?.lifeNotDecay !== undefined;
 }

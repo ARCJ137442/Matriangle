@@ -25,7 +25,7 @@ export default interface IWorldRegistry {
      * 
      * !【2023-10-07 18:27:11】现在因为「方块数据结构」的改变（属性-状态 结构）而改为「无参白板构造函数」
      */
-    get blockTypeMap(): Map<typeID, () => Block>;
+    get blockConstructorMap(): Map<typeID, () => Block>;
 
     /**
      * 方块事件注册表

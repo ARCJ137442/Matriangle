@@ -1,6 +1,6 @@
 import { uint, int, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import AIPlayer from "../../../../../server/mods/native/entities/player/AIPlayer";
-import Player from "../../../../../server/mods/native/entities/player/Player";
+import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
 
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//
@@ -27,8 +27,8 @@ export default class PlayerEffectOverlay extends Shape {
 
 	//============Instance Functions============//
 	protected drawShape(decorationLabel: string = null): void {
-		let realRadiusX: number = Player.SIZE / 2; // -LINE_SIZE
-		let realRadiusY: number = Player.SIZE / 2;
+		let realRadiusX: number = PlayerBatr.SIZE / 2; // -LINE_SIZE
+		let realRadiusY: number = PlayerBatr.SIZE / 2;
 		shape.graphics.clear();
 		// graphics.lineStyle(LINE_SIZE,this._lineColor);
 		shape.graphics.beginFill(this._color);

@@ -1,6 +1,6 @@
 ﻿import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../api/GlobalDisplayVariables";
-import Player from "../../../../../server/mods/native/entities/player/Player";
+import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
 import { IBatrGraphicContext, IBatrShape, IBatrShapeContainer } from '../../../../api/DisplayInterfaces';
 import { logical2Real, real2Logical } from "../../../../api/PosTransform";
 

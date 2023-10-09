@@ -7,6 +7,10 @@ import Block from "../block/Block";
 import { IJSObjectifiable } from "../../../common/JSObjectify";
 import { typeID } from "../registry/IWorldRegistry";
 
+/**
+ * 通用类型：用于「ID⇒零参构造函数」的映射表
+ */
+export type BlockConstructorMap = Map<typeID, () => Block>;
 
 /**
  * 定义地图的「存储层」，定义地图的「存储结构」
@@ -113,6 +117,11 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * 继承「JS对象化」接口，强制要求「复刻一个白板对象」
 	 */
 	cloneBlank(): IMapStorage;
+
+	/**
+	 * 对应「JS对象化」时使用的「ID⇒类型白板对象」映射表
+	 */
+	get blockConstructorMap(): BlockConstructorMap;
 
 	/**
 	 * 从另一个地图中复制所有内容

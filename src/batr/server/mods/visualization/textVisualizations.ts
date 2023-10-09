@@ -2,21 +2,21 @@ import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTo
 import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
-import { IEntityHasPosition, IEntityInGrid, IEntityOutGrid, IEntityWithDirection } from "../../api/entity/EntityInterfaces";
+import { IEntityHasPosition, IEntityInGrid, IEntityOutGrid, IEntityWithDirection, i_hasDirection, i_hasPosition, i_inGrid, i_outGrid } from "../../api/entity/EntityInterfaces";
 import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
-import Player from "../native/entities/player/Player";
+import PlayerBatr from "../batr/entity/player/PlayerBatr";
 import IMapStorage from "../../api/map/IMapStorage";
 import { MatrixController } from "../../api/control/MatrixControl";
 import PlayerController from "../native/entities/player/controller/PlayerController";
 import { MatrixProgram } from "../../api/control/MatrixProgram";
-import BonusBox from "../native/entities/item/BonusBox";
+import BonusBox from "../batr/entity/item/BonusBox";
 import Effect from "../../api/entity/Effect";
-import Projectile from "../native/entities/projectile/Projectile";
-import { NativeBlockIDs } from "../native/registry/BlockRegistry";
-import BlockRandomTickDispatcher from "../native/mechanics/programs/BlockRandomTickDispatcher";
+import Projectile from "../batr/entity/projectile/Projectile";
+import BlockRandomTickDispatcher from "../batr/mechanics/programs/BlockRandomTickDispatcher";
 import { nameOfRot_M } from "../../general/GlobalRot";
-import MapSwitcher from "../native/mechanics/programs/MapSwitcher";
+import MapSwitcher from "../batr/mechanics/programs/MapSwitcher";
+import { NativeBlockIDs } from "../batr/registry/NativeBlockRegistry";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -128,8 +128,8 @@ export function 稀疏地图母体可视化(
 	// 格点实体
 	const entitiesPositioned: IEntityHasPosition[] = entities.filter(
 		(entity: Entity): boolean => (
-			(entity as IEntityInGrid)?.i_inGrid ||
-			(entity as IEntityOutGrid)?.i_outGrid
+			i_inGrid(entity) ||
+			i_outGrid(entity)
 		)
 	) as IEntityHasPosition[];
 	let e: IEntityHasPosition | null;
@@ -196,7 +196,7 @@ export function 实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VA
 
 function 实体标签显示(e: Entity): string {
 	// 玩家
-	if (e instanceof Player)
+	if (e instanceof PlayerBatr)
 		return `${getClass(e)?.name}"${e.customName}"${获取坐标标签(e)
 			}|${e.HPText
 			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}!${e.tool.chargeTime}/${e.tool.chargeMaxTime
@@ -238,11 +238,11 @@ function 实体标签显示(e: Entity): string {
 /**  辅助函数 */
 function 获取坐标标签(e: Entity): string {
 	return (
-		((e as IEntityHasPosition)?.position !== undefined) ?
-			`@${位置可视化(e as IEntityHasPosition)}` : ``
+		(i_hasPosition(e)) ?
+			`@${位置可视化(e)}` : ``
 	) + (
-			((e as IEntityWithDirection)?.direction !== undefined) ?
-				`^${nameOfRot_M((e as IEntityWithDirection).direction)}` : ``
+			(i_hasDirection(e)) ?
+				`^${nameOfRot_M(e.direction)}` : ``
 		)
 }
 

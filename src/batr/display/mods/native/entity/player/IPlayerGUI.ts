@@ -1,4 +1,4 @@
-﻿import Player from "../../../../../server/mods/native/entities/player/Player";
+﻿import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
 import { IBatrShape } from '../../../../api/DisplayInterfaces';
 import IPlayer from "../../../../../server/mods/native/entities/player/IPlayer";
 

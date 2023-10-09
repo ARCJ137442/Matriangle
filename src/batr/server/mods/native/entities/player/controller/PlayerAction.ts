@@ -89,30 +89,14 @@ export function getPlayerActionFromTurn(direction: mRot): PlayerAction {
 }
 
 /**
- * 总体的「玩家行动」类型
- * * 用于处理带有「无限空间」参数的情况
+ * 总体的「玩家行为」类型
+ * * 字符串对应「无参行为」
+ * * 数值用于表征「参数取值无限多」的「有参行为」
+ *   * 目前对应：
+ *     * 非负数n⇒转向「任意维整数角」n
+ *     * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
  *   * 例如「转向」「移动」
- * * 目前对应：
- *   * 非负数n⇒转向「任意维整数角」n
- *   * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
+ * 
+ * ?【2023-10-09 18:20:51】目前这样利用基础类型是否过于随意，不利于后续加入「有参行为」？
  */
-export type PlayerAction = EnumPlayerAction | int;
-
-/**
- * 原「requestActionOn」系列事件
- * * 现在用于从「玩家」到「控制器」的事件分派
- */
-export enum PlayerEvent {
-	NULL = '', // !【2023-10-02 08:09:40】空事件，不必响应
-	INIT = 'init', // !【2023-10-02 08:09:40】用于跳过第一个「无用yield」
-	TICK = 'Tick',
-	AI_TICK = 'AITick', // 这个是AI独有 // TODO: 暂时还不明确是否要移除/合并
-	CAUSE_DAMAGE = 'CauseDamage',
-	HURT = 'Hurt',
-	KILL = 'Kill',
-	DEATH = 'Death',
-	KILL_PLAYER = 'KillPlayer',
-	RESPAWN = 'Respawn',
-	MAP_TRANSFORM = 'MapTransform',
-	PICKUP_BONUS_BOX = 'PickupBonusBox',
-}
+export type PlayerAction = string | int;

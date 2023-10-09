@@ -1,51 +1,59 @@
 import { int, uint } from "../src/batr/legacy/AS3Legacy";
 import IPlayer from "../src/batr/server/mods/native/entities/player/IPlayer";
-import Player from "../src/batr/server/mods/native/entities/player/Player";
-import AIControllerGenerator from "../src/batr/server/mods/native/entities/player/controller/ai/AIControllerGenerator";
-import { NativeAIPrograms } from "../src/batr/server/mods/native/entities/player/controller/ai/NativeAIPrograms";
+import PlayerBatr from "../src/batr/server/mods/batr/entity/player/PlayerBatr";
+import AIControllerGenerator from "../src/batr/server/mods/batr/entity/player/ai/AIControllerGenerator";
+import { NativeAIPrograms } from "../src/batr/server/mods/batr/entity/player/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
-import { NativeMaps } from "../src/batr/server/mods/native/registry/MapRegistry";
-import { NATIVE_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, projectEntities, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
+import { NativeMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
+import { NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, projectEntities, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/batr/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
-import { NativeTools } from "../src/batr/server/mods/native/registry/ToolRegistry";
+import { NativeTools as BatrTools } from "../src/batr/server/mods/batr/registry/ToolRegistry";
 import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
-import Matrix_V1 from "../src/batr/server/main/Matrix_V1";
+import Matrix_V1 from "../src/batr/server/mods/native/main/Matrix_V1";
 import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
-import { mergeMaps } from "../src/batr/common/utils";
-import { NativeBonusTypes } from "../src/batr/server/mods/native/registry/BonusRegistry";
+import { mergeMaps, mergeMultiMaps } from "../src/batr/common/utils";
+import { NativeBonusTypes as BatrBonusTypes } from "../src/batr/server/mods/batr/registry/BonusRegistry";
 import { iPoint } from "../src/batr/common/geometricTools";
 import MatrixVisualizer from "../src/batr/server/mods/visualization/web/MatrixVisualizer";
 import WSController from "../src/batr/server/mods/webIO/controller/WSController";
-import BlockRandomTickDispatcher from "../src/batr/server/mods/native/mechanics/programs/BlockRandomTickDispatcher";
-import { NATIVE_BLOCK_EVENT_MAP } from "../src/batr/server/mods/native/mechanics/NativeMatrixMechanics";
+import BlockRandomTickDispatcher from "../src/batr/server/mods/batr/mechanics/programs/BlockRandomTickDispatcher";
+import { BATR_BLOCK_EVENT_MAP } from "../src/batr/server/mods/batr/mechanics/NativeMatrixMechanics";
 import BlockEventRegistry from "../src/batr/server/api/block/BlockEventRegistry";
-import MapSwitcher from "../src/batr/server/mods/native/mechanics/programs/MapSwitcher";
+import MapSwitcher from "../src/batr/server/mods/batr/mechanics/programs/MapSwitcher";
 import { MULTI_DIM_TEST_MAPS } from './multiDimMaps';
+import IPlayerBatr from "../src/batr/server/mods/batr/entity/player/IPlayerBatr";
+import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/NativeBlockRegistry";
+import { BATR_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/BlockRegistry";
 
 // 规则 //
 const rule = new MatrixRule_V1();
 loadAsBackgroundRule(rule);
 
 // 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-const MAPS = MULTI_DIM_TEST_MAPS;
+const MAPS = MULTI_DIM_TEST_MAPS; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
 for (const map of MAPS)
 	rule.mapRandomPotentials.set(map, 1)
 // 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-for (const bt of NativeBonusTypes._ALL_AVAILABLE_TYPE)
+for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE)
 	rule.bonusTypePotentials.set(bt, 1)
 
 // 设置所有工具 // ! 目前限定为子弹系列
-rule.enabledTools = NativeTools.WEAPONS_BULLET
+rule.enabledTools = BatrTools.WEAPONS_BULLET
 
 // 注册表 //
 const registry = new Registry_V1(
-	new Map(),
-	new BlockEventRegistry(NATIVE_BLOCK_EVENT_MAP), // *【2023-10-08 17:51:25】使用原生的「方块事件列表」
+	// * 生成最终「方块构造器映射表」：多个mod的映射表合并
+	mergeMultiMaps(
+		new Map(),
+		NATIVE_BLOCK_CONSTRUCTOR_MAP,
+		BATR_BLOCK_CONSTRUCTOR_MAP
+	),
+	new BlockEventRegistry(BATR_BLOCK_EVENT_MAP), // *【2023-10-08 17:51:25】使用原生的「方块事件列表」
 );
 mergeMaps(
 	registry.toolUsageMap,
-	NATIVE_TOOL_USAGE_MAP
+	BATR_TOOL_USAGE_MAP
 )
 
 // 母体 //
@@ -57,13 +65,13 @@ const matrix = new Matrix_V1(
 matrix.initByRule();
 
 // 玩家
-let p: IPlayer = new Player(
+let p: IPlayerBatr = new PlayerBatr(
 	matrix.map.storage.randomPoint,
 	0, true,
 	getRandomTeam(matrix),
 	randomToolEnable(matrix.rule)
 );
-let p2: IPlayer = new Player(
+let p2: IPlayerBatr = new PlayerBatr(
 	new iPoint(1, 1),
 	0, true,
 	getRandomTeam(matrix),
@@ -102,8 +110,8 @@ p2.customName = 'Player二号机'
 // 生命数不减少
 p.lifeNotDecay = p2.lifeNotDecay = true;
 // 武器
-p.tool = NativeTools.WEAPON_BULLET_BASIC.copy();
-p2.tool = NativeTools.WEAPON_BULLET_TRACKING.copy();
+p.tool = BatrTools.WEAPON_BULLET_BASIC.copy();
+p2.tool = BatrTools.WEAPON_BULLET_TRACKING.copy();
 // 初号机の控制器
 ctl.AIRunSpeed = 4; // 一秒四次行动
 p.connectController(ctl);

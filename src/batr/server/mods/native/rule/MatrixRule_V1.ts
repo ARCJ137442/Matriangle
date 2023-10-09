@@ -1,12 +1,12 @@
 ﻿import { uint, int } from "../../../../legacy/AS3Legacy";
 import IMap from "../../../api/map/IMap";
-import PlayerTeam from "../entities/player/team/PlayerTeam";
+import PlayerTeam from "../../batr/entity/player/team/PlayerTeam";
 // import WorldRuleEvent from "../../../api/rule/WorldRuleEvent"; // TODO: 待事件系统移植后
 import { TPS } from "../../../main/GlobalWorldVariables";
 import IMatrixRule from "../../../rule/IMatrixRule";
 import { clearArray, identity, key, randomIn } from "../../../../common/utils";
-import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
-import Tool from "../tool/Tool";
+import { BonusType, NativeBonusTypes } from "../../batr/registry/BonusRegistry";
+import Tool from "../../batr/tool/Tool";
 import { randomInWeightMap } from "../../../../common/utils";
 import { iPoint } from "../../../../common/geometricTools";
 import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, mapLoadJSObject, mapSaveJSObject, uniLoadJSObject, uniSaveJSObject } from "../../../../common/JSObjectify";

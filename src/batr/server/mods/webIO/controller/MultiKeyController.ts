@@ -1,9 +1,10 @@
 import { int } from "../../../../legacy/AS3Legacy";
 import IMatrix from "../../../main/IMatrix";
-import BonusBox from "../../native/entities/item/BonusBox";
+import BonusBox from "../../batr/entity/item/BonusBox";
 import IPlayer from "../../native/entities/player/IPlayer";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "../../native/entities/player/controller/PlayerAction";
 import PlayerController from "../../native/entities/player/controller/PlayerController";
+import { NativePlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
 
 /**
  * 「多键控制器」
@@ -93,14 +94,6 @@ export default abstract class MultiKeyController extends PlayerController {
 		}
 	}
 
-	// ! 对于「玩家上报的触发」：全空回应
-	public onPlayerTick(player: IPlayer, host: IMatrix): void { }
-	public reactTick(self: IPlayer, host: IMatrix): PlayerAction { return EnumPlayerAction.NULL }
-	public reactHurt(self: IPlayer, host: IMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction { return EnumPlayerAction.NULL }
-	public reactDeath(self: IPlayer, host: IMatrix, damage: number, attacker?: IPlayer | undefined): PlayerAction { return EnumPlayerAction.NULL }
-	public reactKillPlayer(self: IPlayer, host: IMatrix, victim: IPlayer, damage: number): PlayerAction { return EnumPlayerAction.NULL }
-	public reactPickupBonusBox(self: IPlayer, host: IMatrix, box: BonusBox): PlayerAction { return EnumPlayerAction.NULL }
-	public reactRespawn(self: IPlayer, host: IMatrix): PlayerAction { return EnumPlayerAction.NULL }
-	public reactMapTransform(self: IPlayer, host: IMatrix): PlayerAction { return EnumPlayerAction.NULL }
-
+	/** @implements 不响应「玩家上报的触发」 */
+	public reactPlayerEvent<OptionMap extends NativePlayerEventOptions, T extends keyof OptionMap>(eventType: T, self: IPlayer, host: IMatrix, otherInf: OptionMap[T]): void { }
 }

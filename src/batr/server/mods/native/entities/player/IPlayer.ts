@@ -1,92 +1,32 @@
 import { int, uint } from "../../../../../legacy/AS3Legacy";
-import PlayerStats from "../../stat/PlayerStats";
-import IPlayerProfile from "./profile/IPlayerProfile";
-import PlayerTeam from "./team/PlayerTeam";
+import PlayerStats from "../../../batr/entity/player/stat/PlayerStats";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../main/IMatrix";
 import { mRot } from "../../../../general/GlobalRot";
-import Tool from "../../tool/Tool";
-import PlayerAttributes from "./attributes/PlayerAttributes";
-import BonusBox from "../item/BonusBox";
+import PlayerAttributes from "../../../batr/entity/player/attributes/PlayerAttributes";
+import BonusBox from "../../../batr/entity/item/BonusBox";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import PlayerController from "./controller/PlayerController";
 import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
-
-/* 
-TODO: 【2023-09-23 00:20:12】现在工作焦点：
- * 抽象出一个「玩家接口」
- * 在「架空玩家实际类实现」后，测试抛射体
- * 重构「玩家」「AI玩家」，将这两者的区别细化为「控制器」「显示模板」不同
-   * 控制：一个是键鼠控制（人类），一个是基于时钟的自动程序控制（AI）……
-	 * 这样较容易支持其它方式（如使用HTTP/WebSocket请求控制）
-	 * 📌在重写「AI控制器」时，用上先前学的「行为树」模型（虽然原型还没调试通）
-	 * 如果有机会的话，尝试使用「装饰器」
-   * 显示：一个用「渐变无缝填充」的算法（人类），一个用「纯色镂空填充」的方法（AI）
- * 由此开始写「外部IO模块」（可能只会先留一个抽象接口）
-   * 🎯给所有类型的「玩家」一个通用的「行为控制系统」（而非所谓「AI专属」）
-   * 💭这个所谓「外部IO」或许仍然需要从世界中分派，或者受世界的控制
-   * 参考案例：有如电脑「管理外设，但不限制外设的输入输出」一样
- * 并且，再对接「玩家统计」模块……
- * 📌原则：尽可能向Julia这样的「数据集中，方法分派」范式靠拢——不要在其中塞太多「世界机制」方法
-   * 适度独立出去
- */
+import Entity from "../../../../api/entity/Entity";
 
 /**
- * 抽象的「玩家」是
+ * 「玩家」是
  * * 作为「格点实体」的
  * * 有朝向的
  * * 可被显示的
- * * 能被某个「控制器」控制，并缓存外部IO接口的
  * * 拥有统计信息的
- * * 拥有「经验」「加成」机制的
- * * 可以使用「工具」的
+ * * 拥有「加成」机制的
  * * 可以被「玩家控制器」控制的
  * 实体
  */
-export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasHPAndHeal, IEntityHasHPAndLives, IMatrixControlReceiver {
+export default interface IPlayer extends IEntityInGrid, IEntityActive, IEntityDisplayable, IEntityWithDirection, IEntityHasHPAndHeal, IEntityHasHPAndLives, IMatrixControlReceiver {
 
 	/**
 	 * 用于替代`instanceof`
 	 */
 	readonly i_isPlayer: true;
-
-	/**
-	 * 玩家的「经验值」
-	 * * 目前在世界机制上的应用仅在于「升级时的加成」以及「玩家表现的平均化、单一化测量」
-	 * 
-	 * !【2023-10-05 22:40:44】现在因为需要「升级の特效」，所以不再开放setter
-	 */
-	get experience(): uint;
-	/**
-	 * 设置经验
-	 * * 📌机制：在设置的经验超过「目前等级最大经验」时，玩家会直接升级
-	 */
-	setExperience(host: IMatrix, value: uint): void;
-	/** 添加经验 */
-	addExperience(host: IMatrix, value: uint): void;
-
-	/** 经验等级 */
-	get level(): uint;
-	set level(value: uint);
-
-	/** 玩家升级所需经验（目前等级最大经验） */
-	get levelupExperience(): uint;
-
-	/**
-	 * 玩家「当前所持有经验」与「目前等级最大经验」的百分比
-	 * * 范围：[0, 1]（1也会达到，因为只有在「超过」时才升级）
-	 * * 应用：目前只有「经验条显示」
-	 */
-	get experiencePercent(): number
-
-	//====Buff====//
-
-	/**
-	 * 玩家的所有属性（原「Buff系统」）
-	 * * 包括「伤害提升」「冷却减免」「抗性提升」「范围提升」
-	*/
-	get attributes(): PlayerAttributes;
 
 	/**
 	 * 获取玩家的「控制器」
@@ -105,42 +45,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 		 */
 	disconnectController(): void
 
-	/**
-	 * 存取玩家队伍
-	 * * 在「设置队伍」时（请求）更新显示（UI、图形）
-	 * 
-	 * ! 【2023-09-23 11:25:58】不再请求更新所有抛射体的颜色
-	 * * 💭或许可以通过「发射时玩家队伍ID缓存至抛射体以便后续伤害判断」解决由此导致的「显示与预期不一致」问题
-	 */
-	get team(): PlayerTeam;
-	set team(value: PlayerTeam);
-
-	/**
-	 * 获取玩家的统计信息
-	 * 
-	 * TODO: 后续支持「自定义统计字段」
-	 */
-	get stats(): PlayerStats;
-
-	/**
-	 * 存取玩家「当前所持有工具」
-	 * * 📌只留存引用
-	 * 
-	 * ! 在设置时会重置：
-	 * * 现在参数附着在工具上，所以不需要再考量了
-	 * // * 使用冷却
-	 * // * 充能状态&百分比
-	 * 
-	 * ! 现在有关「使用冷却」「充能状态」的代码已独立到「工具」对象中
-	 * 
-	 * ? 工具彻底「独立化」：每个玩家使用的「工具」都将是一个「独立的对象」而非「全局引用形式」？
-	 * * 这样可用于彻底将「使用冷却」「充能状态」独立出来
-	 * * 基于工具的类-对象系统
-	 * * 在世界分派工具（武器）时，使用「复制原型」而非「引用持有」的方机制
-	 */
-	get tool(): Tool;
-	set tool(value: Tool);
-
 	/** 玩家的「自定义名称」（不受「国际化文本」影响） */
 	get customName(): string;
 	set customName(value: string);
@@ -153,12 +57,14 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	//====Functions About HP====//
 	/**
 	 * 增加生命值
+	 * * +限定条件：只能与玩家/空对象互动
 	 * * 需要母体以处理「伤害」「死亡」事件
 	 */
 	addHP(host: IMatrix, value: uint, healer: IPlayer | null): void;
 
 	/**
 	 * 减少生命值
+	 * * +限定条件：只能与玩家/空对象互动
 	 * * 需要母体以处理「伤害」「死亡」事件
 	 */
 	removeHP(host: IMatrix, value: uint, attacker: IPlayer | null): void;
@@ -181,16 +87,9 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	//====Functions About World====//
 
 	/*
-	! ↓【2023-09-23 16:52:31】这两段代码现将拿到「工具」中，不再在这里使用
+	! ↓【2023-09-23 16:52:31】`carriedBlock`、`isCarriedBlock`将拿到「工具」中，不再在这里使用
 	* 会在「方块投掷器」中使用，然后在显示的时候调用
 	*/
-	// get carriedBlock(): Block {
-	// 	return this._carriedBlock;
-	// }
-
-	// get isCarriedBlock(): boolean {
-	// 	return this._carriedBlock !== null && this._carriedBlock.visible;
-	// }
 
 	/**
 	 * 特别的「设置坐标」函数
@@ -288,26 +187,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	dealRespawn(host: IMatrix): void;
 
-	//====Functions About Tool====//
-	/**
-	 * 当持有的工具改变时
-	 * 
-	 * !【2023-09-23 17:45:32】弃用：现在几乎无需处理逻辑
-	 * * 一切基本已由「赋给新工具时」处理完毕（新工具的CD和充能状态都已「重置」）
-	 * * 对于「二阶武器」（如「冲击波」），也已在「奖励箱设置工具」时处理好
-	 *   * 直接装填玩家当前武器，并赋值给玩家
-	 * 
-	 * @param oldT 旧工具
-	 * @param newT 新工具
-	 */
-	onToolChange?(oldT: Tool, newT: Tool): void;
-
-	/**
-	 * 缓存玩家「正在使用工具」的状态
-	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
-	 */
-	get isUsing(): boolean;
-
 	//====Control Functions====//
 	/**
 	 * * 下面是一些用于「从IO中读取并执行」的「基本操作集合」
@@ -356,18 +235,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 * @param 经过旋转的「任意维整数角」
 	 */
 	turnRelative?(host: IMatrix, coaxis: uint, step?: int): void;
-
-	/**
-	 * （控制玩家）开始使用工具
-	 * * 对应「开始按下『使用』键」
-	 */
-	startUsingTool(host: IMatrix): void;
-
-	/**
-	 * （控制玩家）停止使用工具
-	 * * 对应「开始按下『使用』键」
-	 */
-	stopUsingTool(host: IMatrix): void;
 
 	// 钩子函数 //
 	/**
@@ -463,14 +330,6 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	onLocationChanged(host: IMatrix, newP: iPoint): void;
 
-	/**
-	 * 事件：升级
-	 * * 调用来源：玩家
-	 * 
-	 * @param host 发生在的「世界母体」
-	 */
-	onLevelup(host: IMatrix): void;
-
 	//============Display Implements============//
 	// Color
 	/** 获取（缓存的）十六进制线条颜色 */
@@ -487,4 +346,14 @@ export default interface IPlayer extends IPlayerProfile, IEntityInGrid, IEntityA
 	 */
 	decorationLabel: NativeDecorationLabel;
 
+}
+
+/**
+ * （🚩专用代码迁移）用于在「只有接口」的情况下判断「是否为玩家」
+ * * 性质：使得`isPlayer === true`的，必然`instanceof IPlayer`
+ * * 推导依据：使用「类型谓词」（返回值中的「is」关键字），告知推导器「返回的是一个『类型判别』」
+ * * 参考资料：https://www.jianshu.com/p/57df3cb66d3d
+ */
+export function isPlayer(e: Entity): e is IPlayer {
+	return (e as IPlayer)?.i_isPlayer === true // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
 }

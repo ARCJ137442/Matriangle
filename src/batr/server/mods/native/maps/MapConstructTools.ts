@@ -7,7 +7,7 @@ import { identity } from "../../../../common/utils";
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
 import IMapStorage from "../../../api/map/IMapStorage";
-import { NativeBlockPrototypes } from "../registry/BlockRegistry";
+import { BatrBlockPrototypes } from "../../batr/registry/BlockRegistry";
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
 const _temp_point_2d: iPoint = new iPoint(2)
@@ -315,6 +315,6 @@ export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): voi
     storage.addSpawnPointAt(_temp_point_2d);
     storage.setBlock(
         _temp_point_2d,
-        NativeBlockPrototypes.SPAWN_POINT_MARK.copy() // ! 属性固定且无状态，故浅拷贝
+        BatrBlockPrototypes.SPAWN_POINT_MARK.copy() // ! 属性固定且无状态，故浅拷贝
     );
 }
