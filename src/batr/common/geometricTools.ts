@@ -1,6 +1,7 @@
 import { int, uint } from '../legacy/AS3Legacy'
 import { IJSObjectifiable, JSObject, JSObjectifyMap } from './JSObjectify'
 import { intAbs } from './exMath'
+import { isInvalidNumber } from './utils';
 
 /**
  * 所有类型点的基类
@@ -437,7 +438,16 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 		return false
 	}
 
+	/**
+	 * 检查是否有非法值，如
+	 * * `undefined`（常见于「长度开辟未设置值」）
+	 * * `NaN`（常见于「未开辟长度就运算」）
+	 */
+	public checkInvalid(): boolean {
+		return this.some(isInvalidNumber)
+	}
 }
+
 
 /**
  * 经过特殊定制的整数点支持

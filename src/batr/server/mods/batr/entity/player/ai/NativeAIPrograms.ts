@@ -1,11 +1,11 @@
 import { randInt } from "../../../../../../common/exMath";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { EnumPlayerAction, PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
-import { NativePlayerEvent } from "../../../../native/entities/player/controller/PlayerEvent";
 import { PlayerEvent } from "../../../../native/entities/player/controller/PlayerEvent";
 import AIControllerGenerator, { AIActionGenerator } from "./AIControllerGenerator";
 import { getPlayerActionFromTurn } from '../../../../native/entities/player/controller/PlayerAction';
 import { i_hasTool } from "../IPlayerHasTool";
+import { AIPlayerEvent } from "../../../../native/entities/player/controller/AIController";
 
 /**
  * AI的「微行为」
@@ -132,14 +132,12 @@ export module NativeAIPrograms {
         // 「行为生成器」总循环 //
         while (true) {
             // 屏蔽其它事件 //
-            if (event !== NativePlayerEvent.AI_TICK) {
-                event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新e变量
+            if (event !== AIPlayerEvent.AI_TICK) {
+                event = yield EnumPlayerAction.NULL; // !【2023-10-02 20:38:23】必须重新赋值，以刷新event变量
                 continue;
             }
             // console.log("[LOG] AIProgram_Dummy: event = ", event);
-            // 检查未定义值，不应该的情况就报错 // !【2023-10-05 00:41:11】必须在事件发生之后，变量才有相应的值
-            if (controller._temp_currentPlayer === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentPlayer is undefined");
-            if (controller._temp_currentHost === undefined) throw new Error("AIProgram_Dummy: controller._temp_currentHost is undefined");
+            // !【2023-10-09 22:53:28】现在「非空检查」留到子程序中，母程序不再需要
             // 第一层反应：优先保持使用工具
             reaction = aUsing.next(event).value;
             // 非空⇒产出，空⇒下一个行为

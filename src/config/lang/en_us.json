@@ -100,10 +100,10 @@
         "metal": "Metal"
     },
     "entity": {
-        "bullet_basic": "Bullet Basic",
-        "bullet_nuke": "Bullet Nuke",
-        "sub_bomber": "Sub Bomber",
-        "bullet_tracking": "Bullet Tracking",
+        "bullet_basic": "Basic Bullet",
+        "bullet_nuke": "Nuke Bullet",
+        "bullet_bomber": "Bomber Bullet",
+        "bullet_tracking": "Tracking Bullet",
         "laser_basic": "Laser Basic",
         "laser_pulse": "Laser Pulse",
         "laser_teleport": "Laser Teleport",
@@ -125,9 +125,9 @@
         "block_light": "Block Light"
     },
     "tool": {
-        "bullet": "Bullet",
-        "nuke": "Nuke",
-        "sub_bomber": "Sub Bomber",
+        "bullet": "Basic Bullet",
+        "nuke": "Nuke Bullet",
+        "bullet_bomber": "Bomber Bullet",
         "bullet_tracking": "Tracking Bullet",
         "laser_basic": "Laser",
         "laser_pulse": "Pulse Laser",

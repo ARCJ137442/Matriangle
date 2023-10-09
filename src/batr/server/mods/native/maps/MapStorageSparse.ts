@@ -24,7 +24,8 @@ export default class MapStorageSparse implements IMapStorage {
 
     public static pointToIndex(p: iPointRef): string {
         // ! （开发用）空值报错
-        if (p.some((v): boolean => v === undefined || isNaN(v))) throw new Error(`MapStorageSparse.pointToIndex: 参数错误 @ ${p.toString()} [${p.x}, ${p.y}, ...]`);
+        if (p.checkInvalid())
+            throw new Error(`MapStorageSparse.pointToIndex: 参数错误 @ ${p.toString()} [${p.x}, ${p.y}, ...]`);
         return p.join('_');
     }
 

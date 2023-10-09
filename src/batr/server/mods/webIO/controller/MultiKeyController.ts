@@ -1,10 +1,9 @@
 import { int } from "../../../../legacy/AS3Legacy";
 import IMatrix from "../../../main/IMatrix";
-import BonusBox from "../../batr/entity/item/BonusBox";
 import IPlayer from "../../native/entities/player/IPlayer";
-import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "../../native/entities/player/controller/PlayerAction";
+import { ADD_ACTION } from "../../native/entities/player/controller/PlayerAction";
 import PlayerController from "../../native/entities/player/controller/PlayerController";
-import { NativePlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
+import { PlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
 
 /**
  * 「多键控制器」
@@ -95,5 +94,5 @@ export default abstract class MultiKeyController extends PlayerController {
 	}
 
 	/** @implements 不响应「玩家上报的触发」 */
-	public reactPlayerEvent<OptionMap extends NativePlayerEventOptions, T extends keyof OptionMap>(eventType: T, self: IPlayer, host: IMatrix, otherInf: OptionMap[T]): void { }
+	public reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(eventType: T, self: IPlayer, host: IMatrix, otherInf: OptionMap[T]): void { }
 }

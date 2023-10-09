@@ -102,7 +102,7 @@
     "entity": {
         "bullet_basic": "基础子弹",
         "bullet_nuke": "核弹",
-        "sub_bomber": "子轰炸机",
+        "bullet_bomber": "子轰炸机",
         "bullet_tracking": "跟踪子弹",
         "laser_basic": "基础激光",
         "laser_pulse": "脉冲激光",
@@ -127,7 +127,7 @@
     "tool": {
         "bullet": "子弹",
         "nuke": "核弹",
-        "sub_bomber": "子轰炸机",
+        "bullet_bomber": "子轰炸机",
         "bullet_tracking": "跟踪子弹",
         "laser_basic": "基础激光",
         "laser_pulse": "脉冲激光",

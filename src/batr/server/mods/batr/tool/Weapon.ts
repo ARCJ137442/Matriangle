@@ -29,7 +29,7 @@ export default class Weapon extends Tool {
 
 	// TODO: 有待迁移——或许要作为「自身属性」？
 	public static isAvailableDroneNotUse(weapon: Weapon): boolean {
-		// return isDroneTool(weapon) || weapon == Tool.BLOCK_THROWER || weapon == Tool.MELEE || weapon == Tool.SUB_BOMBER;
+		// return isDroneTool(weapon) || weapon == Tool.BLOCK_THROWER || weapon == Tool.MELEE || weapon == Tool.BULLET_BOMBER;
 		return false
 	}
 

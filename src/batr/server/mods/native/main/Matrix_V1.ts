@@ -123,7 +123,7 @@ export default class Matrix_V1 implements IMatrix {
 	//========🌟实体部分：实体管理、实体事件等========//
 
 	/** 实体系统（内部变量） */
-	protected _entitySystem: EntitySystem = new EntitySystem();
+	protected _entitySystem: EntitySystem = new EntitySystem(true);
 	get entities(): Entity[] {
 		return this._entitySystem.entries.filter(isDefined) as Entity[];
 	}

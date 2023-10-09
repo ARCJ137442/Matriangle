@@ -5,7 +5,23 @@ import IMatrix from "../../../../../main/IMatrix";
 import IPlayer from "../IPlayer";
 import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "./PlayerAction";
 import PlayerController from "./PlayerController";
-import { NativePlayerEvent, NativePlayerEventOptions } from "./PlayerEvent";
+import { NativePlayerEvent, NativePlayerEventOptions, PlayerEventOptions } from "./PlayerEvent";
+
+/**
+ * 用于表示新增的「AI事件」
+ */
+export enum AIPlayerEvent {
+    /** 用于在「AI控制器」中跳过第一个「无用yield」 */
+    INIT = 'init',
+
+    /** 🆕AI控制器独有：在「每个AI刻」中响应（一般用于「更人性化执行」的动作） */
+    AI_TICK = 'AITick', // TODO: 暂时还不明确是否要移除/合并
+}
+
+export interface AIPlayerEventOptions extends PlayerEventOptions {
+    [AIPlayerEvent.INIT]: undefined;
+    [AIPlayerEvent.AI_TICK]: undefined;
+}
 
 /**
  * 「AI控制器」
@@ -84,29 +100,20 @@ export default abstract class AIController extends PlayerController {
     protected _temp_add_action: PlayerAction[] = [];
     protected _action_buffer: PlayerAction[] = [];
     /**
-     * 实现：计算AI刻，并分派钩子
-     * 
-     * ! 注意：并非对应的「钩子函数」——它会计算AI刻并执行
-     * 
-     * ? 这个「AI刻」存在的意义是什么
+     * 现在统一响应事件：计算AI刻，并分派钩子
+     * * 原`onPlayerTick`已废弃
      */
-    public onPlayerTick(player: IPlayer, host: IMatrix): void {
-        // 先处理世界刻
-        this.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.TICK>(
-            NativePlayerEvent.TICK,
-            player, host,
-            undefined
-        )
-        // 然后（定时）处理AI刻
-        if (this.dealAITick()) {
+    reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(eventType: T, self: IPlayer, host: IMatrix, otherInf: OptionMap[T]): void {
+        // 定时分派自己的「AI刻」事件（必须以「世界刻」为前提）
+        if (eventType === NativePlayerEvent.TICK && this.dealAITick()) {
             // 直接送去「反应」，预期在其中向「动作缓冲区」添加行为
-            this.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.AI_TICK>(
-                NativePlayerEvent.AI_TICK,
-                player, host,
+            this.reactPlayerEvent<NativePlayerEventOptions, AIPlayerEvent.AI_TICK>(
+                AIPlayerEvent.AI_TICK,
+                self, host,
                 undefined
             )
         }
-        // 发送所有在「反应」时添加的玩家行为，然后清空
+        // 若非「已激活」「不再重生」：发送所有在「反应」时添加的玩家行为，然后清空
         for (let i = 0; i < this._action_buffer.length; i++) {
             if (this._action_buffer[i] !== EnumPlayerAction.NULL) {
                 // 生成「参数数组」

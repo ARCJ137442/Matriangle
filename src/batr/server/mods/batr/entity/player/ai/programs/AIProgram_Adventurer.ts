@@ -50,7 +50,7 @@ export default class AIProgram_Adventurer implements IAIProgram {
 		switch (tool) {
 			case Tool.BULLET:
 			case Tool.NUKE:
-			case Tool.SUB_BOMBER:
+			case Tool.BULLET_BOMBER:
 			case Tool.TRACKING_BULLET:
 			case Tool.BLOCK_THROWER:
 			case Tool.MELEE:

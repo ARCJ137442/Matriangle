@@ -1,9 +1,9 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import IMatrix from "../../../../../main/IMatrix";
 import BonusBox from "../../item/BonusBox";
-import AIController from "../../../../native/entities/player/controller/AIController";
-import { PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
-import { NativePlayerEvent, NativePlayerEventOptions, PlayerEvent } from "../../../../native/entities/player/controller/PlayerEvent";
+import AIController, { AIPlayerEvent } from "../../../../native/entities/player/controller/AIController";
+import { EnumPlayerAction, PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
+import { NativePlayerEvent, NativePlayerEventOptions, PlayerEvent, PlayerEventOptions } from "../../../../native/entities/player/controller/PlayerEvent";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 import { BatrPlayerEvent, BatrPlayerEventOptions } from "../BatrPlayerEvent";
 
@@ -53,7 +53,7 @@ export default class AIControllerGenerator extends AIController {
     ) {
         super(label)
         this._actionGenerator = actionGeneratorF(this);
-        this._actionGenerator.next(NativePlayerEvent.INIT); // ! 跳过第一个「无用生成」
+        this._actionGenerator.next(AIPlayerEvent.INIT); // ! 跳过第一个「无用生成」
     }
 
     // 一些AI用的公开实例变量（在使用前是undefined，但这绝对不会在调用后发生）
@@ -83,21 +83,21 @@ export default class AIControllerGenerator extends AIController {
      * * 其它「要传入的参数」已经内置到「控制器实例属性」中了，只需要读取即可
      *   * 但这要尽可能避免读取「未涉及的、作为参数的实例属性」
      */
-    protected requestAction(event: PlayerEvent): PlayerAction {
-        this._lastYieldedAction = this._actionGenerator.next(
-            event
-        ).value;
+    protected requestAction(event: PlayerEvent, self: IPlayer, host: IMatrix): PlayerAction {
+        // 否则⇒继续
+        this._lastYieldedAction = this._actionGenerator.next(event).value;
         if (this._lastYieldedAction === undefined) throw new Error("生成器未正常执行");
         return this._lastYieldedAction;
     }
 
     // 钩子函数
-    public reactPlayerEvent<OptionMap extends NativePlayerEventOptions, T extends keyof OptionMap>(
+    public reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(
         eventType: T,
         self: IPlayer, host: IMatrix,
         otherInf: OptionMap[T],
         // ...otherInf: OptionMap[T] // !【2023-10-09 20:08:16】使用「元组类型+可变长参数」的方法不可行：即便在`OptionMap`中的值类型全是数组，它也「rest 参数必须是数组类型。ts(2370)」不认
     ): void {
+        super.reactPlayerEvent(eventType, self, host, otherInf);
         // *【2023-10-09 20:40:52】现在把所有事件统一起来
         // 公共参数
         this._temp_currentPlayer = self;
@@ -105,7 +105,8 @@ export default class AIControllerGenerator extends AIController {
         // 外加参数
         switch (eventType) {
             // 没有额外参数
-            case NativePlayerEvent.AI_TICK:
+            case AIPlayerEvent.INIT:
+            case AIPlayerEvent.AI_TICK:
             case BatrPlayerEvent.MAP_TRANSFORM:
             case NativePlayerEvent.TICK:
             case NativePlayerEvent.RESPAWN:
@@ -134,7 +135,7 @@ export default class AIControllerGenerator extends AIController {
         }
         // * 统一「反应」
         this._action_buffer.push(
-            this.requestAction(eventType as PlayerEvent)
+            this.requestAction(eventType as PlayerEvent, self, host)
         )
     }
 

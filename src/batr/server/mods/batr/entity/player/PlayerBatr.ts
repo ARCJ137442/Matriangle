@@ -565,8 +565,16 @@ export default class PlayerBatr extends Entity implements IPlayerBatr {
 		// 重置「工具使用状态」 //
 		this.tool.resetUsingState();
 
-		// 触发击杀者的「击杀玩家」事件 //
-		if (attacker !== null)
+		// 通知控制器 // !【2023-10-10 00:22:13】必须在「母体处理」（坐标移动）之前通知控制器，否则可能会有「非法坐标」报错
+		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.DEATH>(
+			NativePlayerEvent.DEATH,
+			this, host, {
+			attacker: attacker,
+			damage: damage
+		});
+
+		// 触发击杀者的「击杀玩家」事件 // !【2023-10-10 00:45:52】必须在「设置重生」之前
+		if (attacker !== null && !attacker.isRespawning/* 不能在重生 */)
 			attacker.onKillOther(host, this, damage);
 
 		// 处理「重生」「生命数」 //
@@ -580,14 +588,6 @@ export default class PlayerBatr extends Entity implements IPlayerBatr {
 
 		// 通知母体处理 //
 		handlePlayerDeath(host, attacker, this, damage);
-
-		// 通知控制器
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.DEATH>(
-			NativePlayerEvent.DEATH,
-			this, host, {
-			attacker: attacker,
-			damage: damage
-		});
 
 		// TODO: 显示更新 //
 		// this.visible = false; // !【2023-10-03 21:09:59】交给「显示端」

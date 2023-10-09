@@ -1,10 +1,8 @@
 import { int, uint } from "../src/batr/legacy/AS3Legacy";
-import IPlayer from "../src/batr/server/mods/native/entities/player/IPlayer";
 import PlayerBatr from "../src/batr/server/mods/batr/entity/player/PlayerBatr";
 import AIControllerGenerator from "../src/batr/server/mods/batr/entity/player/ai/AIControllerGenerator";
 import { NativeAIPrograms } from "../src/batr/server/mods/batr/entity/player/ai/NativeAIPrograms";
 import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSparse";
-import { NativeMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
 import { NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, projectEntities, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/batr/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools as BatrTools } from "../src/batr/server/mods/batr/registry/ToolRegistry";
@@ -164,6 +162,8 @@ function sleep(ms: number): Promise<void> {
 
 // 预先测试：避免「异步报错无法溯源」的问题
 // for (let i: uint = 0; i < TPS * 1000; i++) matrix.tick();
+// 全速测试
+// while (true) matrix.tick();
 
 function 迭代(num: uint, visualize: boolean = true): void {
 	// TPS次迭代

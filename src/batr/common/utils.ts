@@ -433,9 +433,10 @@ export function MapFromGeneratorK<K extends key, V>(keys: K[], vF: (k: K) => V):
 	return MapFromGeneratorKV(keys, identity, vF);
 }
 
-export const isDefined = (obj: any): boolean => obj !== undefined;
+export const isDefined = (obj: unknown): boolean => obj !== undefined;
+export const isInvalidNumber = (num: unknown): boolean => num === undefined || isNaN(num as number);
 
-export function isPrimitiveInstance(v: any): boolean {
+export function isPrimitiveInstance(v: unknown): boolean {
 	return (
 		v === undefined ||
 		v === null ||

@@ -22,22 +22,24 @@ export default class CommonSystem<T> {
 	 */
 	protected _entries: T[];
 
-	/**
-	 * 控制是否复用UUID
-	 * * 若启用，则添加元素时，会搜索整个数组并寻找UUID
-	 * * 一般在「需要避免数组过长」的地方使用
-	 *   * 比如「抛射体」「特效」这类「生命周期短」的元素
-	 */
-	public reuseUUID: boolean = false;
-
 	//============Constructor & Destructor============//
 	/**
 	 * 构造函数
 	 * * 会复制传入的元素列表作为自身列表
 	 * 
+	 * @param reuseUUID 是否复用UUID
 	 * @param entries 最初的元素列表
 	 */
-	public constructor(...entries: T[]) {
+	public constructor(
+		/**
+		 * 控制是否复用UUID
+		 * * 若启用，则添加元素时，会搜索整个数组并寻找UUID
+		 * * 一般在「需要避免数组过长」的地方使用
+		 *   * 比如「抛射体」「特效」这类「生命周期短」的元素
+		 */
+		public reuseUUID: boolean = false,
+		...entries: T[]
+	) {
 		this._entries = [...entries];
 	}
 

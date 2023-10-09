@@ -168,34 +168,40 @@ export default class Map_V1 implements IMap {
 
 	/** @implements 实现：在当前维限制 */
 	towardWithRot_FF(p: fPointRef, rot: mRot, step: number = 1.0): fPointRef {
-		// 非法朝向纠偏 // *💭比「自动投影」性能更佳
+		// 非法朝向纠偏（与位置无关）
 		rot = this.projectDirection(rot);
+		// * 维数不同⇒自动投影
+		if (p.length !== this.storage.numDimension)
+			this.projectPosition_F(p);
 		// 正式开始计算
 		let axis = mRot2axis(rot);
 		p[axis] += (rot & 1) === 0 ? step : -step;
 		// 直接在当前维限制就行了
 		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
 			p[axis] = reminder_F(p[axis], this._size[axis]);
-		if (!this.isInMap_F(p)) throw new Error(`towardWithRot_FF: point ${p} out of map ${this.storage.size}`);
+		if (!this.isInMap_F(p)) throw new Error(`towardWithRot_FF: point ${p} at ${axis} out of map ${this.storage.size}`);
 		return p;
 	}
 
 	/** @implements 实现：再复刻一遍 */
 	towardWithRot_II(p: iPointRef, rot: mRot, step: int = 1): iPointRef {
-		// 非法朝向纠偏 // *💭比「自动投影」性能更佳
+		// 非法朝向纠偏（与位置无关）
 		rot = this.projectDirection(rot);
+		// * 维数不同⇒自动投影
+		if (p.length !== this.storage.numDimension)
+			this.projectPosition_I(p);
 		// 正式开始计算
 		let axis = mRot2axis(rot);
 		p[axis] += (rot & 1) === 0 ? step : -step;
 		// 直接在当前维限制就行了
 		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
 			p[axis] = reminder_I(p[axis], this._size[axis]);
-		if (!this.isInMap_I(p)) throw new Error(`towardWithRot_II: point ${p} out of map ${this.storage.size}`);
+		if (!this.isInMap_I(p)) throw new Error(`towardWithRot_II: point ${p} at ${axis} out of map ${this.storage.size}`);
 		return p;
 	}
 
 	// protected _temp_testCanPass_F: fPoint = new fPoint()
-	protected _temp_testCanPass_I: iPoint = new iPoint()
+	protected _temp_testCanPass_PI: iPoint = new iPoint();
 	// 断言：永远在地图内
 	testCanPass_F(
 		p: fPointRef,
@@ -208,7 +214,7 @@ export default class Map_V1 implements IMap {
 	): boolean {
 		return this.testCanPass_I(
 			alignToGrid_P(
-				p, this._temp_testCanPass_I // ! 使用缓存
+				p, this._temp_testCanPass_PI // ! 使用缓存
 			),
 			asPlayer, asBullet, asLaser,
 			avoidHurting, avoidOthers, others

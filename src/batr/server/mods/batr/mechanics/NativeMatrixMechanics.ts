@@ -659,7 +659,7 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
             p = new BulletNuke(this, x, y, player, chargePercent);
  
             break;
-        case Tool.SUB_BOMBER:
+        case Tool.BULLET_BOMBER:
             p = new SubBomber(this, x, y, player, chargePercent);
  
             break;
