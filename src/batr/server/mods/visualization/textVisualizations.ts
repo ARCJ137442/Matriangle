@@ -203,10 +203,10 @@ function 实体标签显示(e: Entity): string {
 			}]`
 	// 奖励箱
 	if (e instanceof BonusBox)
-		return `${getClass(e)?.name}"${e.bonusType}"@${e.position}`
+		return `${getClass(e)?.name}"${e.bonusType}"@${位置可视化(e)}`
 	// 特效
 	if (e instanceof Effect)
-		return `${getClass(e)?.name}@${e.position}|${e.life}/${e.LIFE}`
+		return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}`
 	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
 		return `${getClass(e)?.name}${获取坐标标签(e)}`
@@ -217,7 +217,7 @@ function 实体标签显示(e: Entity): string {
 			return `${getClass(e)?.name}[${e.label}] -> ${(e as any)?._temp_lastRandomP.toString()}`
 		// 地图切换者
 		else if (e instanceof MapSwitcher)
-			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}	#`
+			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`
 		// 控制器
 		else if (e instanceof MatrixController)
 			// 玩家控制器
@@ -239,9 +239,12 @@ function 实体标签显示(e: Entity): string {
 function 获取坐标标签(e: Entity): string {
 	return (
 		((e as IEntityHasPosition)?.position !== undefined) ?
-			`@${(e as IEntityHasPosition).position}` : ``
+			`@${位置可视化(e as IEntityHasPosition)}` : ``
 	) + (
 			((e as IEntityWithDirection)?.direction !== undefined) ?
 				`^${nameOfRot_M((e as IEntityWithDirection).direction)}` : ``
 		)
 }
+
+const number可视化 = (n: number): string => Number.isInteger(n) ? n.toString() : n.toFixed(2)
+const 位置可视化 = (e: IEntityHasPosition): string => e.position.map(number可视化).join(',')

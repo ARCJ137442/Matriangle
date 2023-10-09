@@ -24,7 +24,7 @@ export interface IBatrDisplayable {
      * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
-    shapeInit(shape: IBatrShape, ...params: any[]): void;
+    shapeInit(shape: IBatrShape, ...params: unknown[]): void;
 
     /**
      * The same as `shapeInit`, but it will be called by object refreshing 

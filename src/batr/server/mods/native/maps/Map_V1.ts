@@ -310,7 +310,7 @@ export default class Map_V1 implements IMap {
 
 	/** @implements 实现：少维保留，多维⇒第一个维度 */
 	projectDirection(direction: mRot): mRot {
-		return mRot2axis(direction) > this.storage.numDimension ?
+		return mRot2axis(direction) >= this.storage.numDimension ?
 			direction & 1 : // ? 这是否也需调用API
 			direction
 	}

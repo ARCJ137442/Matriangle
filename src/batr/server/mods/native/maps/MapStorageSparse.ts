@@ -261,7 +261,7 @@ export default class MapStorageSparse implements IMapStorage {
 
     //============Interface============//
 
-    public generateNext(...args: any[]): IMapStorage {
+    public generateNext(...args: unknown[]): IMapStorage {
         return this.generatorF(this, ...args);
     }
 
@@ -371,7 +371,7 @@ export default class MapStorageSparse implements IMapStorage {
      * @param f 用于遍历回调的函数
      * @param args 用于附加的参数 // ? 是否需要把类型整得更精确些？
      */
-    public forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: any[]): IMapStorage {
+    public forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: unknown[]): IMapStorage {
         // 临时变量
         let i: uint = 0;
         // 检查：如果是空地图，就直接退出

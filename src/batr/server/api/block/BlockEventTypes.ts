@@ -29,4 +29,4 @@ export interface BlockTypeEventMap {
 }
 
 /** 事件处理函数的通用类型 */
-export type BlockEventHandler = (host: IMatrix, position: iPoint, ...args: any[]) => void;
+export type BlockEventHandler = (host: IMatrix, position: iPoint, ...args: any[]) => void; // !【2023-10-09 15:35:11】不能使用unknown，不然无法支持「自定义附加参数」

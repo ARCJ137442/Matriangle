@@ -82,6 +82,9 @@ export function alignToGridCenter(xi: number): number {
  * @returns 对齐网格后的「整数点」
  */
 export function alignToGridCenter_P(p: iPointRef, destination: fPointRef): fPointRef {
+    // * 先在维数上对齐：必须确保对齐后的点正确
+    destination.length = p.length;
+    // 然后逐一转换
     for (let i = 0; i < p.length; i++) {
         // * 先转换成浮点数
         destination[i] = alignToGridCenter(float(p[i]))
@@ -103,6 +106,9 @@ export function alignToGridCenter_P(p: iPointRef, destination: fPointRef): fPoin
  * @returns 对齐网格后的「目标点」
  */
 export function alignToGrid_P(p: fPointRef, destination: iPointRef): iPointRef {
+    // * 先在维数上对齐：必须确保对齐后的点正确
+    destination.length = p.length;
+    // 然后逐一转换
     for (let i = 0; i < p.length; i++) {
         destination[i] = alignToGrid(p[i])
     }

@@ -199,9 +199,9 @@ export function toolCreateExplode(
             _temp_toolCreateExplode_playerCenterP
         )
         // 计算距离百分比
-        distanceP = p.getDistance(
+        distanceP = p.getDistanceSquare(
             _temp_toolCreateExplode_playerCenterP
-        ) / finalRadius;
+        ) / (finalRadius * finalRadius);
         // 只有在距离内才算
         if (distanceP <= 1) {
             // Operate damage by percent
@@ -1492,7 +1492,7 @@ export function randomTick_ColorSpawner(host: IMatrix, position: iPoint, block: 
     // 概率筛选
     if (randomBoolean(3, 1)) return;
     // 新位置寻址：随机位移
-    _temp_randomTick_ColorSpawner_blockP.copyFrom(position).inplaceMap<int>(
+    _temp_randomTick_ColorSpawner_blockP.copyFrom(position).inplaceMap(
         (p: int): number => p + randIntBetween(-2, 3)
     )
     if ( // 放置条件：在地图内&是空位

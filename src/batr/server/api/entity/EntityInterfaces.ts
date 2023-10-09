@@ -86,7 +86,7 @@ export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
      * 
      * @param host 调用它的母体
      */
-    onPositedBlockUpdate(host: IMatrix, ...args: any[]): void;
+    onPositedBlockUpdate(host: IMatrix, ...args: unknown[]): void;
 }
 
 /**

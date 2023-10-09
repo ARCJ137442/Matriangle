@@ -9,7 +9,7 @@ export type EventType = string;
 
 export interface IEvent {
     get type(): EventType;
-    get data(): any;
+    get data(): unknown;
     // get timestamp(): number;
 }
 

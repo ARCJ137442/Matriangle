@@ -86,6 +86,6 @@ export interface ISelfModifyingGenerator<Type> {
 	 * * 「自身对象」使用内部的`this`访问
 	 * @param args 外部参数（可在具体实现中限定更多）
 	 */
-	generateNext(...args: any[]): Type;
+	generateNext(...args: unknown[]): Type;
 
 }

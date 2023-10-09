@@ -8,7 +8,7 @@ import { intAbs } from './exMath'
  * * 在索引访问的基础上提供使用特定名称的几何方法
  * * 可选的「留给后续重载优化」的方法
  */
-export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPoint<T>> {
+export abstract class xPoint<T extends number = number> extends Array<T> implements IJSObjectifiable<xPoint<T>> {
 
 	// JS对象化 //
 	/** 实现：{自身类名: 原始值（数组）} */
@@ -19,7 +19,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 
 	/** 实现：读取与自身类名相同的值 */
 	public loadFromJSObject(source: JSObject): xPoint<T> {
-		let value: any = source[this.constructor.name];
+		let value: unknown = source[this.constructor.name];
 		if (Array.isArray(value))
 			value.forEach(
 				(item, index: number): void => {
@@ -33,7 +33,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	/**
 	 * 根据指定的类型检验数组中的值
 	 */
-	public checkType(value: any): boolean { return false };
+	public checkType(value: unknown): boolean { return false };
 
 	/**
 	 * 【2023-09-24 14:46:08】假实现：调用⇒返回空
@@ -102,8 +102,9 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * * 例如：`new xPoint<T>(长度).generateFrom(f)`
 	 */
 	public generate(f: (i: int) => T, length: uint = this.length): xPoint<T> {
-		for (let i = 0; i < length; i++)
+		for (let i = 0; i < length; i++) {
 			this[i] = f(i)
+		}
 		return this;
 	}
 
@@ -112,10 +113,11 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).inplace(f)`
 	 */
-	public inplaceMap<T2>(f: (t: T2) => T, source: xPoint<T2> | null = null): xPoint<T> {
-		source = source ?? (this as any);
-		for (let i = 0; i < this.length; i++)
-			this[i] = f((source as xPoint<T2>)[i])
+	public inplaceMap(f: (t: T) => T, source: xPoint<T> | null = null): xPoint<T> {
+		source = source ?? this;
+		for (let i = 0; i < this.length; i++) {
+			this[i] = f(source[i]);
+		}
 		return this;
 	}
 
@@ -159,6 +161,15 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * 
 	 * ! 会修改自身
 	 * 
+	 * 📌【2023-10-09 15:30:01】目前的性能测试中，`a=a+x` `a+=x`无明显性能差异：
+	 * ```
+	 * =+: 6.167s
+	 * +=: 6.185s
+	 * =+: 6.106s
+	 * +=: 6.092s
+	 * ```
+	 * ! 为了可读性，目前还是使用`any`
+	 * 
 	 * @returns 返回自身
 	 */
 	public addFrom(point: xPoint<T>): xPoint<T> {
@@ -193,7 +204,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 */
 	public minusFrom(point: xPoint<T>): xPoint<T> {
 		for (let i = 0; i < point.length; i++) {
-			(this[i] as any) -= point[i] as any;
+			(this[i] as any) -= point[i];
 		}
 		return this;
 	}
@@ -205,33 +216,48 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	public invert(): xPoint<T> { return this.reverse() as xPoint<T> }
 
 	/**
+	 * 获取两个坐标在某个分量上的距离
+	 * 
+	 * ! 【2023-10-09 15:20:14】现在因为`T`已经是数字类型，所以自然支持
+	 */
+	public getDistanceAt(point: xPoint<T>, axis: uint): T {
+		return (this[axis] - point[axis]) as T;
+	}
+
+	/**
 	 * （抽象）获取欧氏距离
 	 * * 原理：所有距离的方均根
-	 * 
-	 * ! 使用`as any`断言T支持减法
 	 */
-	public getDistance(point: xPoint<T>): T {
-		let tempDistance: T = ((this[0] as any) - (point[0] as any)) as T;
-		let distanceSquare: T = ((tempDistance as any) * (tempDistance as any)) as any;
+	public getDistance(point: xPoint<T>): number {
+		return Math.sqrt(this.getDistanceSquare(point))
+	}
+
+	/**
+	 * （抽象）获取欧氏距离的平方
+	 * * 原理：所有距离的平方总和
+	 * 
+	 * ! 【2023-10-09 15:20:14】现在因为`T`已经是数字类型，所以自然支持
+	 */
+	public getDistanceSquare(point: xPoint<T>): T {
+		let tempDistance: T = this.getDistanceAt(point, 0);
+		let distanceSquare: T = (tempDistance * tempDistance) as T;
 		for (let i: uint = 1; i < point.length; i++) {
-			tempDistance = ((this[i] as any) - (point[i] as any)) as T
-			distanceSquare += ((tempDistance as any) * (tempDistance as any)) as any
+			tempDistance = this.getDistanceAt(point, i);
+			distanceSquare = distanceSquare + (tempDistance * tempDistance) as T;
 		}
-		return Math.sqrt(distanceSquare as any) as T
+		return distanceSquare;
 	}
 
 	/**
 	 * 获取曼哈顿距离
 	 * * 原理：所有「绝对距离」之和
 	 * 
-	 * ! 技术上使用`as any`断言「+」能在类型T之间使用
-	 * 
 	 * @param point 计算的目标点
 	 */
 	public getManhattanDistance(point: xPoint<T>): T {
-		let tempDistance: T = this[0]
+		let tempDistance: T = this[0];
 		for (let i: uint = 1; i < point.length; i++) {
-			tempDistance += this.getAbsDistanceAt(point, i) as any;
+			tempDistance = tempDistance + this.getAbsDistanceAt(point, i) as T;
 		}
 		return tempDistance;
 	}
@@ -243,7 +269,7 @@ export abstract class xPoint<T> extends Array<T> implements IJSObjectifiable<xPo
 	 * @param i 指定的索引
 	 */
 	public getAbsDistanceAt(point: xPoint<T>, i: uint): T {
-		return Math.abs(this[i] as any - (point[i] as any)) as T;
+		return Math.abs(this[i] - point[i]) as T;
 	}
 
 	/**
@@ -428,7 +454,7 @@ export class intPoint extends xPoint<int> {
 	}
 
 	/** 实现：检测是否为整数 */
-	public checkType(value: any): boolean {
+	public checkType(value: number): boolean {
 		return Number.isInteger(value)
 	}
 }
@@ -440,7 +466,7 @@ export class intPoint extends xPoint<int> {
 export class floatPoint extends xPoint<number> {
 
 	/** 实现：检测是否为数值 */
-	public checkType(value: any): boolean {
+	public checkType(value: number): boolean {
 		return typeof value === 'number'
 	}
 
@@ -491,7 +517,7 @@ const _temp_forEachPoint: iPointVal = new iPoint();
 export function traverseNDSquare(
 	pMin: iPointRef, pMax: iPointRef,
 	f: (p: iPointRef, ...args: any[]) => void,
-	...args: any[]
+	...args: unknown[]
 ): void {
 	// 通过数组长度获取维数
 	const nDim: uint = pMax.length;
@@ -530,7 +556,7 @@ const _temp_forEachPointFrame_Meta: iPointVal = new iPoint();
 export function traverseNDSquare_Meta(
 	pMin: iPointRef, pMax: iPointRef,
 	f: (p: iPointRef, ...args: any[]) => void,
-	...args: any[]
+	...args: unknown[]
 ): void {
 	// 缓存常量
 	let p: iPointRef = _temp_forEachPointFrame_Meta;
@@ -589,7 +615,7 @@ const _temp_forEachPointFrame: iPointVal = new iPoint();
 export function traverseNDSquareFrame(
 	pMin: iPointRef, pMax: iPointRef,
 	f: (p: iPointRef, ...args: any[]) => void,
-	...args: any[]
+	...args: unknown[]
 ): void {
 	// 通过数组长度获取维数
 	const nDim: uint = pMax.length;
@@ -653,7 +679,7 @@ const _temp_forEachPointSurface: iPointVal = new iPoint();
 export function traverseNDSquareSurface(
 	pMin: iPointRef, pMax: iPointRef,
 	f: (p: iPointRef, ...args: any[]) => void,
-	...args: any[]
+	...args: unknown[]
 ): void {
 	const p: iPointRef = _temp_forEachPointSurface;
 	eval(traverseNDSquareSurface_Code(
@@ -762,7 +788,7 @@ export function modPoint_FI(p: fPointRef, modP: iPointRef): fPointRef {
  * @param targetNDim 要投影到的目标维度
  * @param padValue 缺少维度时填充的值
  */
-export function straightProjection<T>(p: xPoint<T>, targetNDim: uint, padValue: T): xPoint<T> {
+export function straightProjection<T extends number>(p: xPoint<T>, targetNDim: uint, padValue: T): xPoint<T> {
 	// 目标维度 > 点维度：填充
 	for (let i: uint = p.length; i < targetNDim; ++i)
 		p[i] = padValue;

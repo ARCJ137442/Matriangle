@@ -1,5 +1,4 @@
 import { KeyCode } from "../../../common/keyCodes";
-import { uint } from "../../../legacy/AS3Legacy";
 import { CommonIO, CommonIO_IR } from "./CommonIO";
 
 /**

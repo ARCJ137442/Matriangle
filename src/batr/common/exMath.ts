@@ -295,7 +295,7 @@ export function removeEmptyInArray(arr: (number | null)[]): void {
 	}
 }
 
-export function removeEmptyIn(...lists: any[]): void {
+export function removeEmptyIn(...lists: unknown[]): void {
 	for (let i of lists) {
 		if (i instanceof Array)
 			removeEmptyInArray(i);

@@ -27,7 +27,7 @@ export interface IMatrixControlReceiver {
      * @param type 接收的事件类型
      * @param args 其它附加参数
      */
-    onReceive(type: MatrixEventType, ...args: any[]): void;
+    onReceive(type: MatrixEventType, ...args: unknown[]): void;
 
 }
 

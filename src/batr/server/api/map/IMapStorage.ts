@@ -101,7 +101,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
 	 * @param args ：用于在回调后附加的其它参数
 	 */
-	forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: any[]): IMapStorage;
+	forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: unknown[]): IMapStorage;
 
 	/**
 	 * 复制地图本身

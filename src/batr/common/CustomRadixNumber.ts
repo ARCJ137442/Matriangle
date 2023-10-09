@@ -34,11 +34,11 @@ export default class CustomRadixNumber {
 		CustomRadixNumber._instances.push(instance);
 	}
 
-	public static registerMechanism(charSet: string, key: any = null): void {
-		CustomRadixNumber.registerInstance(new CustomRadixNumber(charSet, key));
+	public static registerMechanism(charSet: string, dotStr: string, key: unknown = null): void {
+		CustomRadixNumber.registerInstance(new CustomRadixNumber(charSet, dotStr, key));
 	}
 
-	public static getInstanceByKey(key: any, fromIndex: uint = 0, strictEqual: boolean = false): CustomRadixNumber | null {
+	public static getInstanceByKey(key: unknown, fromIndex: uint = 0, strictEqual: boolean = false): CustomRadixNumber | null {
 		for (let instance of CustomRadixNumber._instances) {
 			if (instance._key === key || !strictEqual && instance._key == key) {
 				if (CustomRadixNumber._instances.indexOf(instance) >= fromIndex) {
@@ -79,7 +79,7 @@ export default class CustomRadixNumber {
 	}
 
 	//============Constructor & Destructor============//
-	public constructor(charSet: string = CustomRadixNumber.DEFAULT_CHAR_SET, dotChar: string = CustomRadixNumber.DEFAULT_DOT_CHAR, key: any = null) {
+	public constructor(charSet: string = CustomRadixNumber.DEFAULT_CHAR_SET, dotChar: string = CustomRadixNumber.DEFAULT_DOT_CHAR, key: unknown = null) {
 		// Test
 		if (CustomRadixNumber.isEmptyString(charSet)) {
 			throw new Error(CustomRadixNumber.CHAR_SET_ERROR_MESSAGE);
@@ -95,7 +95,7 @@ export default class CustomRadixNumber {
 	//============Instance Variables============//
 	protected _charSet: string;
 	protected _dotChar: string;
-	protected _key: any;
+	protected _key: unknown;
 
 	//============Instance Getter And Setter============//
 	/**
@@ -113,7 +113,7 @@ export default class CustomRadixNumber {
 		)
 	}
 
-	public get key(): any {
+	public get key(): unknown {
 		return this._key;
 	}
 

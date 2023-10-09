@@ -10,7 +10,7 @@ export abstract class Event extends Object {
 
     // public constructor(type: string, bubbles?: boolean, cancelable?: boolean);
     public abstract clone(): Event;
-    public abstract formatToString(className: string, ...args: any[]): string;
+    public abstract formatToString(className: string, ...args: unknown[]): string;
     public abstract isDefaultPrevented(): boolean;
     public abstract preventDefault(): void;
     public abstract stopImmediatePropagation(): void;

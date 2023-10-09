@@ -98,7 +98,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     // 可显示 //
     public readonly i_displayable: true = true;
 
-    public abstract shapeInit(shape: IBatrShape, ...params: any[]): void;
+    public abstract shapeInit(shape: IBatrShape, ...params: unknown[]): void;
     public abstract shapeRefresh(shape: IBatrShape): void;
     /** */
     public shapeDestruct(shape: IBatrShape): void {

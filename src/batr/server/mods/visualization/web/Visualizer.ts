@@ -25,7 +25,7 @@ export default abstract class Visualizer extends MatrixProgram {
 	 * 获取可视化信号
 	 * @abstract 抽象方法，需要等子类自行实现
 	 */
-	public abstract getSignal(...args: any[]): string;
+	public abstract getSignal(...args: unknown[]): string;
 
 	// 服务器部分 //
 
