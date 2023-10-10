@@ -1,5 +1,5 @@
 ﻿import { uint } from "../../../../legacy/AS3Legacy";
-import MatrixRule_V1 from "../../native/rule/MatrixRule_V1";
+import MatrixRuleBatr from "../../native/rule/MatrixRuleBatr";
 
 /**
  * 母体の统计
@@ -12,7 +12,7 @@ export default class MatrixStats {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _rule: MatrixRule_V1;
+	protected _rule: MatrixRuleBatr;
 	// protected _players: PlayerStats[] = new Array<PlayerStats>();
 	// public get players(): PlayerStats[] { return this._players; }
 
@@ -20,7 +20,7 @@ export default class MatrixStats {
 	protected _bonusGenerateCount: uint = 0;
 
 	//============Constructor============//
-	public constructor(rule: MatrixRule_V1) {
+	public constructor(rule: MatrixRuleBatr) {
 		this._rule = rule;
 		/* if (players !== null)
 			this.loadPlayers(players); */
@@ -39,11 +39,11 @@ export default class MatrixStats {
 	}
 
 	//============Instance Getter And Setter============//
-	public get rule(): MatrixRule_V1 {
+	public get rule(): MatrixRuleBatr {
 		return this._rule;
 	}
 
-	public set rule(value: MatrixRule_V1) {
+	public set rule(value: MatrixRuleBatr) {
 		this._rule = value;
 	}
 

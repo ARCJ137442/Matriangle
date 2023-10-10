@@ -9,7 +9,7 @@ import IMatrix from "../../../../main/IMatrix";
 import BonusBox from "../../entity/item/BonusBox";
 import IPlayer, { isPlayer } from "../../../native/entities/player/IPlayer";
 import Projectile from "../../entity/projectile/Projectile";
-import MatrixRule_V1 from "../../../native/rule/MatrixRule_V1";
+import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
 import { changeMap, getRandomMap, projectEntity, spreadPlayer } from "../NativeMatrixMechanics";
 
 /**
@@ -60,7 +60,7 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 		// 获取新的地图 //
 		let newMap: IMap;
 		// 先判断母体是否有相应的规则
-		if (host.rule.hasRule(MatrixRule_V1.key_mapRandomPotentials)) {
+		if (host.rule.hasRule(MatrixRuleBatr.key_mapRandomPotentials)) {
 			// 随机地图
 			newMap = getRandomMap(host.rule).copy(true); // !【2023-10-08 22:31:40】现在对地图进行深拷贝
 		}

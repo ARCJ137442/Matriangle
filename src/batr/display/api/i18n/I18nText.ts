@@ -2,7 +2,7 @@ import BonusType from "../server/registry/BonusRegistry";
 import EntityType from "../server/registry/EntityRegistry";
 import Tool from "../server/registry/Tool";
 import GameModeType from "../../../server/rule/WorldModeType";
-import MatrixRule_V1 from "../../../server/mods/native/rule/MatrixRule_V1";
+import MatrixRuleBatr from "../../../server/mods/native/rule/MatrixRuleBatr";
 import { uint } from "../../../legacy/AS3Legacy";
 import ForcedI18nText from "./ForcedI18nText";
 import I18nKey from "./I18nKey";
@@ -68,7 +68,7 @@ export default class I18nText {
 		return result;
 	}
 
-	public static getTextsByRuleTools(rule: MatrixRule_V1, translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByRuleTools(rule: MatrixRuleBatr, translations: I18ns, isDescription: boolean): I18nText[] {
 		let result: I18nText[] = new Array<I18nText>();
 		for (let i: uint = 0; i < rule.enabledToolCount; i++) {
 			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enabledTools[i], isDescription)));

@@ -21,7 +21,7 @@ import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "../../../native/enti
 import { NativePlayerEvent } from "../../../native/entities/player/controller/PlayerEvent";
 import { NativePlayerEventOptions } from "../../../native/entities/player/controller/PlayerEvent";
 import EffectPlayerHurt from "../effect/EffectPlayerHurt";
-import MatrixRule_V1 from "../../../native/rule/MatrixRule_V1";
+import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
 import PlayerController from "../../../native/entities/player/controller/PlayerController";
 import IPlayerBatr from "./IPlayerBatr";
 import { BatrPlayerEvent, BatrPlayerEventOptions } from "./BatrPlayerEvent";
@@ -579,7 +579,7 @@ export default class PlayerBatr extends Entity implements IPlayerBatr {
 
 		// 处理「重生」「生命数」 //
 		// 重置「重生刻」
-		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRule_V1.key_defaultRespawnTime);
+		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRuleBatr.key_defaultRespawnTime);
 		// 检测「生命耗尽」 // !【2023-10-05 18:21:43】死了就是死了：生命值耗尽⇒通知世界移除自身
 		if (!this.lifeNotDecay && this._lives <= 0) {// ! 生命数是在重生的时候递减的
 			console.log(`${this.customName} 生命耗尽，通知母体移除自身`);

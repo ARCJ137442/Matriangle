@@ -6,7 +6,7 @@ import MapStorageSparse from "../src/batr/server/mods/native/maps/MapStorageSpar
 import { NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP, addBonusBoxInRandomTypeByRule, getRandomTeam, loadAsBackgroundRule, projectEntities, randomToolEnable, respawnPlayer } from "../src/batr/server/mods/batr/mechanics/NativeMatrixMechanics";
 import Registry_V1 from "../src/batr/server/mods/native/registry/Registry_V1";
 import { NativeTools as BatrTools } from "../src/batr/server/mods/batr/registry/ToolRegistry";
-import MatrixRule_V1 from "../src/batr/server/mods/native/rule/MatrixRule_V1";
+import MatrixRuleBatr from "../src/batr/server/mods/native/rule/MatrixRuleBatr";
 import Matrix_V1 from "../src/batr/server/mods/native/main/Matrix_V1";
 import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
@@ -25,7 +25,7 @@ import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/regis
 import { BATR_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/BlockRegistry";
 
 // 规则 //
-const rule = new MatrixRule_V1();
+const rule = new MatrixRuleBatr();
 loadAsBackgroundRule(rule);
 
 // 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！

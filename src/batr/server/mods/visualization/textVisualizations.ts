@@ -17,6 +17,7 @@ import BlockRandomTickDispatcher from "../batr/mechanics/programs/BlockRandomTic
 import { nameOfRot_M } from "../../general/GlobalRot";
 import MapSwitcher from "../batr/mechanics/programs/MapSwitcher";
 import { NativeBlockIDs } from "../batr/registry/NativeBlockRegistry";
+import EffectExplode from "../batr/entity/effect/EffectExplode";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -206,7 +207,11 @@ function 实体标签显示(e: Entity): string {
 		return `${getClass(e)?.name}"${e.bonusType}"@${位置可视化(e)}`
 	// 特效
 	if (e instanceof Effect)
-		return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}`
+		// 爆炸特效
+		if (e instanceof EffectExplode)
+			return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}(r=${e.radius})`
+		else
+			return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}`
 	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
 		return `${getClass(e)?.name}${获取坐标标签(e)}`

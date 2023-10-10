@@ -3,7 +3,7 @@ import Entity from "../../../api/entity/Entity";
 import { IEntityActive, IEntityActiveLite } from "../../../api/entity/EntityInterfaces";
 import EntitySystem from "../../../api/entity/EntitySystem";
 import IMap from "../../../api/map/IMap";
-import MatrixRule_V1 from "../rule/MatrixRule_V1";
+import MatrixRuleBatr from "../rule/MatrixRuleBatr";
 import IMatrixRule from "../../../rule/IMatrixRule";
 import IMatrix from "../../../main/IMatrix";
 import IWorldRegistry from "../../../api/registry/IWorldRegistry";
@@ -118,7 +118,7 @@ export default class Matrix_V1 implements IMatrix {
 	get map(): IMap { return this._currentMap }
 	set map(value: IMap) { this._currentMap = value }
 
-	get mapTransformPeriod(): uint { return this._rule.safeGetRule<uint>(MatrixRule_V1.key_mapTransformTime) }
+	get mapTransformPeriod(): uint { return this._rule.safeGetRule<uint>(MatrixRuleBatr.key_mapTransformTime) }
 
 	//========🌟实体部分：实体管理、实体事件等========//
 
