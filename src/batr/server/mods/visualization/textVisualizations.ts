@@ -219,7 +219,7 @@ function 实体标签显示(e: Entity): string {
 	if (e instanceof MatrixProgram)
 		// 方块随机刻分派者
 		if (e instanceof BlockRandomTickDispatcher)
-			return `${getClass(e)?.name}[${e.label}] -> ${(e as any)?._temp_lastRandomP.toString()}`
+			return `${getClass(e)?.name}[${e.label}]}`
 		// 地图切换者
 		else if (e instanceof MapSwitcher)
 			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`

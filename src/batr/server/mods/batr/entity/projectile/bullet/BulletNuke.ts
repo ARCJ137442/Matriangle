@@ -36,7 +36,7 @@ export default class BulletNuke extends Bullet {
 		position: fPoint, direction: mRot,
 		attackerDamage: uint, extraDamageCoefficient: uint,
 		speed: number,
-		finalExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS
+		finalExplodeRadius: number
 	) {
 		super(
 			owner,

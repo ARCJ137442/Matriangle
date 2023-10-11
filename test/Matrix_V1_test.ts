@@ -23,6 +23,7 @@ import { MULTI_DIM_TEST_MAPS } from './multiDimMaps';
 import IPlayerBatr from "../src/batr/server/mods/batr/entity/player/IPlayerBatr";
 import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/NativeBlockRegistry";
 import { BATR_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/BlockRegistry";
+import BonusBoxGenerator from "../src/batr/server/mods/batr/mechanics/programs/BonusBoxGenerator";
 
 // 规则 //
 const rule = new MatrixRuleBatr();
@@ -87,12 +88,17 @@ ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
 let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
 visualizer.launchWebSocketServer('127.0.0.1', 8080);
 // 方块随机刻分派者
-let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher();
+let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher()
+	.syncRandomDensity(matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity));
+// 奖励箱生成者
+let bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(matrix.rule)
+	.syncRandomDensity(matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity));
 // 地图切换者
 let mapSwitcher = new MapSwitcher(TPS * 15); // 稳定期：十五秒切换一次
 // * 添加实体
 matrix.addEntities(
 	blockRTickDispatcher,
+	bonusBoxGenerator,
 	p, p2,
 	ctl, ctlWeb,
 	visualizer,

@@ -3,7 +3,6 @@ import IMap from "../../../api/map/IMap";
 import PlayerTeam from "../../batr/entity/player/team/PlayerTeam";
 // import WorldRuleEvent from "../../../api/rule/WorldRuleEvent"; // TODO: 待事件系统移植后
 import { TPS } from "../../../main/GlobalWorldVariables";
-import IMatrixRule from "../../../rule/IMatrixRule";
 import { clearArray, identity, key } from "../../../../common/utils";
 import { BonusType } from "../../batr/registry/BonusRegistry";
 import Tool from "../../batr/tool/Tool";
@@ -307,7 +306,6 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 
 	//====Bonus====//
 
-	/** negative number means infinity */
 	protected static readonly d_bonusBoxMaxCount: int = 8;
 	public static readonly key_bonusBoxMaxCount: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
@@ -317,6 +315,10 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	protected _bonusBoxMaxCount: int = MatrixRuleBatr.d_bonusBoxMaxCount;
 	/**
 	 * 世界环境中允许（奖励箱生成器）生成的「最大奖励箱数量」
+	 * * 负数⇒无限生成
+	 * 
+	 * !【2023-10-11 21:27:31】这些属性会在「加载阶段」被存入「奖励箱生成器」中
+	 * * 若有「即刻改变」的需要，建议在更新规则时考虑与对应的实体进行「属性同步」
 	 */
 	public get bonusBoxMaxCount(): int { return this._bonusBoxMaxCount; }
 	public set bonusBoxMaxCount(value: int) {
@@ -337,6 +339,9 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	protected _bonusBoxSpawnChance: number = MatrixRuleBatr.d_bonusBoxSpawnChance;
 	/**
 	 * 世界环境中在每个游戏刻尝试生成奖励箱的几率
+	 * 
+	 * !【2023-10-11 21:27:31】这些属性会在「加载阶段」被存入「奖励箱生成器」中
+	 * * 若有「即刻改变」的需要，建议在更新规则时考虑与对应的实体进行「属性同步」
 	 */
 	public get bonusBoxSpawnChance(): number { return this._bonusBoxSpawnChance; }
 	public set bonusBoxSpawnChance(value: number) {
@@ -374,6 +379,9 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	/**
 	 * 奖励类型→权重
 	 * * 只在「世界加载」阶段被注册使用。不会在这里注入一丝默认值
+	 * 
+	 * !【2023-10-11 21:27:31】这些属性会在「加载阶段」被存入「奖励箱生成器」中
+	 * * 若有「即刻改变」的需要，建议在更新规则时考虑与对应的实体进行「属性同步」
 	 */
 	public get bonusTypePotentials(): Map<BonusType, number> { return this._bonusTypePotentials; }
 	public set bonusTypePotentials(value: Map<BonusType, number>) {
@@ -498,10 +506,6 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		) this._initialMap = value;
 	}
 
-	/**
-	 * The time of the map transform loop.
-	 * stranded by second.
-	 */
 	protected static readonly d_mapTransformTime: uint = 60;
 	public static readonly key_mapTransformTime: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
@@ -509,6 +513,10 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		MatrixRuleBatr.d_mapTransformTime,
 	);
 	protected _mapTransformTime: uint = MatrixRuleBatr.d_mapTransformTime;
+	/**
+	 * The time of the map transform loop.
+	 * stranded by second.
+	 */
 	public get mapTransformTime(): uint { return this._mapTransformTime; }
 	public set mapTransformTime(value: uint) {
 		if (
@@ -519,6 +527,30 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		) this._mapTransformTime = value;
 	}
 
+	public static readonly d_blockRandomTickDensity: uint = 576;
+	public static readonly key_blockRandomTickDensity: key = fastAddJSObjectifyMapProperty_dashP(
+		this.OBJECTIFY_MAP,
+		'blockRandomTickDensity',
+		MatrixRuleBatr.d_blockRandomTickDensity,
+	);
+	protected _blockRandomTickDensity: uint = MatrixRuleBatr.d_blockRandomTickDensity;
+	/**
+	 * 母体中「方块随机刻」的密度
+	 * * 单位：n个/576个方块
+	 *   * 此中之「576」来自AS3版本的默认地图尺寸
+	 * 
+	 * @default 每个游戏刻在每个方块上触发一个「方块随机刻」
+	 */
+	public get blockRandomTickDensity(): uint { return this._blockRandomTickDensity; }
+	public set blockRandomTickDensity(value: uint) {
+		if (
+			MatrixRuleBatr.preUpdateVariable(
+				this, MatrixRuleBatr.key_blockRandomTickDensity,
+				this._blockRandomTickDensity, value
+			)
+		) this._blockRandomTickDensity = value;
+	}
+
 	//====Tools====//
 	protected static readonly d_enabledTools: Tool[] = [];
 	public static readonly key_enabledTools: key = fastAddJSObjectifyMapProperty_dashP(
@@ -527,6 +559,9 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		MatrixRuleBatr.d_enabledTools,
 	);
 	protected _enabledTools: Tool[] = MatrixRuleBatr.d_enabledTools;
+	/**
+	 * 所有启用的工具（原型对象）
+	 */
 	public get enabledTools(): Tool[] { return this._enabledTools; }
 	public set enabledTools(value: Tool[]) {
 		if (

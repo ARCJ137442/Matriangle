@@ -192,7 +192,9 @@ export interface IEntityDisplayableContainer extends Entity, IBatrDisplayableCon
  */
 export interface IEntityActive extends Entity {
 
-    // !【2023-10-09 21:35:53】现在因为「难以和『轻量级活跃实体』区分」而重新启用该值
+    /**
+     * !【2023-10-09 21:35:53】现在因为「难以和『轻量级活跃实体』区分」而重新启用该值
+     */
     readonly i_active: Exclude<unknown, undefined>;
 
     /**

@@ -759,10 +759,10 @@ export default class PlayerBatr extends Entity implements IPlayerBatr {
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
 			// *逻辑：需要充能⇒必定能使用
 			if (!this._tool.needsCharge || this.tool.dealCharge(this._isUsing)) {
-				//重置状态
-				this._tool.resetUsingState();
 				// 使用工具
 				this.directUseTool(host);
+				// 使用之后再重置
+				this._tool.resetUsingState();
 				// this._GUI.updateCharge(); // TODO: 显示更新
 			}
 		}
