@@ -67,9 +67,9 @@ export default class BulletBomber extends Bullet {
 
 	protected setBomb(host: IMatrix): void {
 		toolCreateExplode(
-			host, this.owner,
+			host, this._owner,
 			this._position, this.finalExplodeRadius,
-			this._attackerDamage, this.extraDamageCoefficient,
+			this._attackerDamage, this._extraResistanceCoefficient,
 			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
 			BulletBomber.DEFAULT_EXPLODE_COLOR,
 			1 // 边缘百分比

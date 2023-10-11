@@ -163,7 +163,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 			droneMoveDirection,
 			toolDirection,
 			this._tool,
-			this._attackerDamage, this._extraDamageCoefficient,
+			this._attackerDamage, this._extraResistanceCoefficient,
 			this._toolChargePercent
 		);
 		host.addEntities(drone);

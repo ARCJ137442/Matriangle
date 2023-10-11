@@ -74,7 +74,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	//============Constructor & Destructor============//
 	public constructor(
 		color: uint = 0x000000,
-		id: string = color.toString(16),
+		id: string = `0x${color.toString(16)}`,
 		name: string = `#${id}`,
 	) {
 		this._id = id;

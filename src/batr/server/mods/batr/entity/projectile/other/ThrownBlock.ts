@@ -153,7 +153,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 				computeFinalDamage(
 					this._attackerDamage,
 					(hitPlayer as IPlayerHasAttributes)?.attributes.buffResistance ?? 0,
-					this._extraDamageCoefficient
+					this._extraResistanceCoefficient
 				),
 				this.owner
 			);

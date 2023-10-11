@@ -27,7 +27,7 @@ import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import IMatrixRule from "../../../rule/IMatrixRule";
 import BlockAttributes from "../../../api/block/BlockAttributes";
-import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection, i_hasDirection, i_inGrid } from "../../../api/entity/EntityInterfaces";
+import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection, i_hasDirection, i_inGrid, i_outGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../entity/player/stat/PlayerStats";
 import EffectPlayerDeathLight from "../entity/effect/EffectPlayerDeathLight";
 import EffectPlayerDeathFadeout from "../entity/effect/EffectPlayerDeathFadeout";
@@ -146,10 +146,14 @@ export function changeMap(host: IMatrix, map: IMap, generateNew: boolean): void 
 export function projectEntity(map: IMap, entity: Entity): void {
     // 有坐标⇒投影坐标
     if (i_inGrid(entity)) {
-        map.projectPosition_I((entity as IEntityInGrid).position)
+        // !【2023-10-11 23:50:15】零维规避：只有一维以上的坐标会被投影（用于规避「重生时玩家被投影到原点」的问题）
+        if (entity.position.length > 0)
+            map.projectPosition_I(entity.position)
     }
-    else if ((entity as IEntityOutGrid)?.i_outGrid) {
-        map.projectPosition_F((entity as IEntityOutGrid).position)
+    else if (i_outGrid(entity)) {
+        // !【2023-10-11 23:50:15】零维规避：只有一维以上的坐标会被投影（用于规避「重生时玩家被投影到原点」的问题）
+        if (entity.position.length > 0)
+            map.projectPosition_F(entity.position)
     }
     // 有方向⇒投影方向
     if (i_hasDirection(entity)) {
@@ -191,7 +195,7 @@ export function projectEntities(map: IMap, entities: Entity[]): void {
 export function toolCreateExplode(
     host: IMatrix, creator: IPlayer | null,
     p: fPointRef, finalRadius: number,
-    damage: uint, extraDamageCoefficient: uint,
+    damage: uint, extraResistanceCoefficient: uint,
     canHurtSelf: boolean, canHurtEnemy: boolean, canHurtAlly: boolean,
     color: uint, edgePercent: number = 1): void {
     // 生成特效
@@ -228,7 +232,7 @@ export function toolCreateExplode(
                     computeFinalDamage(
                         uint(damage),
                         (player as IPlayerHasAttributes)?.attributes.buffResistance ?? 0,
-                        extraDamageCoefficient
+                        extraResistanceCoefficient
                     ),
                     creator
                 );
@@ -540,7 +544,10 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
                     BulletBasic.DEFAULT_EXPLODE_RADIUS,
                     (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
                 )
-            ).initFromTool(tool)
+            ).initFromToolNAttributes(
+                tool,
+                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
+            )
         )
     },
     // * 武器：核弹 * //
@@ -564,7 +571,10 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
                     BulletNuke.DEFAULT_EXPLODE_RADIUS,
                     (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
                 ) * scalePercent,
-            ).initFromTool(tool)
+            ).initFromToolNAttributes(
+                tool,
+                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
+            )
         )
     },
     // * 武器：轰炸机 * //
@@ -590,7 +600,10 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
                 ),
                 // * 充能越充分，爆炸频率越高
                 uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)),
-            ).initFromTool(tool)
+            ).initFromToolNAttributes(
+                tool,
+                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
+            )
         )
     },
     // * 武器：跟踪子弹 * //
@@ -618,7 +631,10 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
                 1 + chargePercent * 0.5,
                 // * 完全充能⇒大于1
                 chargePercent >= 1
-            ).initFromTool(tool)
+            ).initFromToolNAttributes(
+                tool,
+                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
+            )
         )
     },
 })
@@ -1195,6 +1211,16 @@ export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boole
 export function spreadAllPlayer(host: IMatrix): void {
     for (let player of getPlayers(host)) {
         spreadPlayer(host, player);
+    }
+}
+
+/**
+ * 重生所有玩家
+ * @param host 所涉及的母体
+ */
+export function respawnAllPlayer(host: IMatrix): void {
+    for (let player of getPlayers(host)) {
+        respawnPlayer(host, player);
     }
 }
 

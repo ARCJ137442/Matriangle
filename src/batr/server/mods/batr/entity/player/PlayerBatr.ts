@@ -13,7 +13,7 @@ import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
 import IPlayer from "../../../native/entities/player/IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChanged, handlePlayerLevelup, getPlayers, playerUseTool, respawnPlayer, handlePlayerLocationChange, isAlly } from "../../mechanics/NativeMatrixMechanics";
+import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChanged, handlePlayerLevelup, getPlayers, playerUseTool, respawnPlayer, handlePlayerLocationChange, isAlly, computeFinalCD } from "../../mechanics/NativeMatrixMechanics";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
 import { intMin } from "../../../../../common/exMath";
 import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
@@ -762,7 +762,13 @@ export default class PlayerBatr extends Entity implements IPlayerBatr {
 				// 使用工具
 				this.directUseTool(host);
 				// 使用之后再重置
-				this._tool.resetUsingState();
+				this._tool.resetUsingState(
+					// * 现在加入「冷却减免」参数
+					computeFinalCD(
+						this._tool.baseCD,
+						this.attributes.buffCD,
+					)
+				);
 				// this._GUI.updateCharge(); // TODO: 显示更新
 			}
 		}

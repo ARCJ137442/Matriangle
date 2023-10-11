@@ -27,12 +27,13 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	public static readonly EXPERIENCE_COLOR: uint = 0xcc88ff;
 
 	public static readonly BUFF_RANDOM_COLOR: uint = 0x7f7f7f;
+	/** 伤害加成：红buff */
 	public static readonly BUFF_DAMAGE_COLOR: uint = 0xff6666;
-
+	/** 冷却减免⇒蓝buff */
 	public static readonly BUFF_CD_COLOR: uint = 0x6666ff;
-
+	/** 抗性提升：绿buff */
 	public static readonly BUFF_RESISTANCE_COLOR: uint = 0x66ff66;
-
+	/** 范围提升：黄buff */
 	public static readonly BUFF_RADIUS_COLOR: uint = 0xffff66;
 
 	// Team

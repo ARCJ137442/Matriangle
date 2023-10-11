@@ -199,9 +199,9 @@ function 实体标签显示(e: Entity): string {
 	// 玩家
 	if (e instanceof PlayerBatr)
 		return `${getClass(e)?.name}"${e.customName}"${获取坐标标签(e)
-			}|${e.HPText
-			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}!${e.tool.chargeTime}/${e.tool.chargeMaxTime
-			}]`
+			}|${e.HPText // 生命
+			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
+			}]|#${e.team.name}:${e.team.id}#`
 	// 奖励箱
 	if (e instanceof BonusBox)
 		return `${getClass(e)?.name}"${e.bonusType}"@${位置可视化(e)}`
@@ -219,7 +219,7 @@ function 实体标签显示(e: Entity): string {
 	if (e instanceof MatrixProgram)
 		// 方块随机刻分派者
 		if (e instanceof BlockRandomTickDispatcher)
-			return `${getClass(e)?.name}[${e.label}]}`
+			return `${getClass(e)?.name}[${e.label}]`
 		// 地图切换者
 		else if (e instanceof MapSwitcher)
 			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`

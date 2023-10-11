@@ -178,9 +178,9 @@ export default class BulletTracking extends Bullet {
 	/** 覆盖：通知母体创建爆炸 */
 	override explode(host: IMatrix): void {
 		toolCreateExplode(
-			host, this.owner,
+			host, this._owner,
 			this._position, this.finalExplodeRadius,
-			this._attackerDamage, this.extraDamageCoefficient,
+			this._attackerDamage, this._extraResistanceCoefficient,
 			this.canHurtSelf, this.canHurtEnemy, this.canHurtAlly,
 			BulletTracking.DEFAULT_EXPLODE_COLOR,
 			1 // 边缘百分比

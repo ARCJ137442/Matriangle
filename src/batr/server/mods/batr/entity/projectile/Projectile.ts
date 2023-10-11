@@ -9,6 +9,7 @@ import Tool from "../../tool/Tool";
 import Weapon from "../../tool/Weapon";
 import IPlayer from "../../../native/entities/player/IPlayer";
 import IPlayerHasTeam from "../player/IPlayerHasTeam";
+import { computeAttackerDamage } from "../../mechanics/NativeMatrixMechanics";
 
 /**
  * 「抛射体」是
@@ -64,9 +65,9 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 * * 初衷：使「攻击者」与「被伤害者」在「伤害计算」上彻底解耦
 	 *   * 源自「不再持有『发射抛射体』所用工具的引用」
 	 */
-	protected _extraDamageCoefficient: uint;
+	protected _extraResistanceCoefficient: uint;
 	/** 只读：获取「在计算『被攻击者伤害』时的『抗性减免系数』」 */
-	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
+	public get extraResistanceCoefficient(): uint { return this._extraResistanceCoefficient; }
 
 
 	/**
@@ -92,19 +93,25 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	}
 
 	/**
-	 * 链式操作：从武器处快速配置
+	 * 链式操作：从武器与「玩家属性」处快速配置
 	 * * 「可伤害玩家」类型
-	 * * 伤害&伤害加成
+	 * * 攻击者伤害
+	 * * 武器伤害系数
 	 */
-	public initFromTool(
-		tool: Tool
+	public initFromToolNAttributes(
+		tool: Tool,
+		buffDamage: uint,
 	): this {
 		if (tool instanceof Weapon) {
 			this.canHurtEnemy = tool.canHurtEnemy;
 			this.canHurtSelf = tool.canHurtSelf;
 			this.canHurtAlly = tool.canHurtAlly;
-			this._attackerDamage = tool.baseDamage;
-			this._extraDamageCoefficient = tool.extraDamageCoefficient;
+			this._attackerDamage = computeAttackerDamage(
+				tool.baseDamage,
+				buffDamage,
+				tool.extraDamageCoefficient,
+			);
+			this._extraResistanceCoefficient = tool.extraResistanceCoefficient;
 		}
 		return this;
 	}
@@ -118,7 +125,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 		super();
 		this._owner = owner;
 		this._attackerDamage = attackerDamage;
-		this._extraDamageCoefficient = extraDamageCoefficient;
+		this._extraResistanceCoefficient = extraDamageCoefficient;
 		this._direction = direction;
 	}
 

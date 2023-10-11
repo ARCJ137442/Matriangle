@@ -211,10 +211,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	}
 
 	/**
-	 * 重置CD：变为最大值
+	 * 重置CD：变为指定的冷却值
+	 * @default 默认是「基础冷却」
+	 * *【2023-10-11 23:26:01】留出了自定义空间，留给玩家一方的「冷却减免」
 	 */
-	public resetCD(): void {
-		this._usingCD = this._baseCD;
+	public resetCD(fixedCD: uint = this._baseCD): void {
+		this._usingCD = fixedCD;
 	}
 
 	/**
@@ -229,8 +231,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * * CD
 	 * * 充能状态
 	 */
-	public resetUsingState(): void {
-		this.resetCD();
+	public resetUsingState(fixedCD: uint = this._baseCD): void {
+		this.resetCD(fixedCD);
 		this.resetCharge();
 	}
 
