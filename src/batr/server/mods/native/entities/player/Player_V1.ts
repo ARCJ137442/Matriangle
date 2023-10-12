@@ -1,6 +1,6 @@
 import { intMin } from '../../../../../common/exMath';
 import { iPoint, iPointRef, intPoint } from '../../../../../common/geometricTools';
-import { IShape as IShape } from '../../../../../display/api/DisplayInterfaces';
+import { DisplayLayers, IShape as IShape } from '../../../../../display/api/DisplayInterfaces';
 import { NativeDecorationLabel } from '../../../../../display/mods/native/entity/player/DecorationLabels';
 import { int, uint } from '../../../../../legacy/AS3Legacy';
 import Entity from '../../../../api/entity/Entity';
@@ -8,16 +8,17 @@ import { IEntityInGrid } from '../../../../api/entity/EntityInterfaces';
 import { toOpposite_M, mRot } from '../../../../general/GlobalRot';
 import { FIXED_TPS, TPS } from '../../../../main/GlobalWorldVariables';
 import IMatrix from '../../../../main/IMatrix';
-import { getPlayers, playerMoveInTest } from '../../../batr/mechanics/NativeMatrixMechanics';
+import { getPlayers, playerMoveInTest, respawnPlayer } from '../../../batr/mechanics/NativeMatrixMechanics';
 import IPlayer from './IPlayer';
 import { PlayerAction, EnumPlayerAction, ADD_ACTION } from './controller/PlayerAction';
 import PlayerController from './controller/PlayerController';
+import { NativePlayerEventOptions, NativePlayerEvent } from './controller/PlayerEvent';
 
 /**
  * 玩家第一版
  * * 作为{@link IPlayer}的最小实现
  */
-export default abstract class Player_V1 extends Entity implements IPlayer {
+export default class Player_V1 extends Entity implements IPlayer {
 
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
@@ -75,7 +76,19 @@ export default abstract class Player_V1 extends Entity implements IPlayer {
 	// 🕹️控制 //
 
 	/** @implements 活跃实体 */
-	i_active: true = true;
+	readonly i_active: true = true;
+	onTick(host: IMatrix): void {
+		// 在重生过程中⇒先处理重生
+		if (this.isRespawning)
+			this.dealRespawn(host);
+		// 然后再处理其它
+		else {
+			this.dealCachedActions(host);
+			this.dealController(host);
+			this.dealMoveInTest(host, false, false);
+			this.dealHeal();
+		}
+	}
 
 	// !【2023-09-23 16:53:17】把涉及「玩家基本操作」的部分留下（作为接口），把涉及「具体按键」的部分外迁
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中
@@ -126,10 +139,28 @@ export default abstract class Player_V1 extends Entity implements IPlayer {
 	}
 
 	/**
+	 * 控制器の主要职责：管理玩家的「基本操作」「行为缓冲区」，与外界操作（控制器等）进行联络
+	 * * 目前一个玩家对应一个「控制器」
+	 */
+
+	/**
 	 * 控制这个玩家的世界控制器
 	 */
 	protected _controller: PlayerController | null = null;
 	get controller(): PlayerController | null { return this._controller; }
+
+	/**
+	 * 处理与「控制器」的关系
+	 */
+	protected dealController(host: IMatrix): void {
+		// *【2023-10-09 21:19:27】现在也使用「事件分派」而非「特定名称函数」通知控制器了
+		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.TICK>(
+			NativePlayerEvent.TICK,
+			this,
+			host,
+			undefined
+		)
+	}
 
 	/**
 	 * 连接到一个控制器
@@ -418,6 +449,35 @@ export default abstract class Player_V1 extends Entity implements IPlayer {
 			this._lives = lives;
 		}
 	}
+	/**
+	 * 处理「重生」
+	 * * 功能：实现玩家在「死后重生」的等待时间
+	 * * 重生后「剩余生命值」递减
+	 * 
+	 * 逻辑：
+	 * * 「重生延时」递减
+	 * * 到一定程度后⇒处理「重生」
+	 *   * 重置到「未开始计时」状态
+	 *   * 自身「剩余生命数」递减
+	 *   * 调用世界机制代码，设置玩家在世界内的状态
+	 *	 * 寻找并设置坐标在「合适的重生点」
+	 *	 * 生成一个「重生」特效
+	 *   * 发送事件「重生时」
+	 */
+	protected dealRespawn(host: IMatrix): void {
+		if (this._respawnTick > 0)
+			this._respawnTick--;
+		else {
+			this._respawnTick = -1;
+			if (!this._lifeNotDecay && this._lives > 0)
+				this._lives--;
+			// 自身回满血
+			this._HP = this._maxHP; // ! 无需显示更新
+			// 触发母体响应：帮助安排位置、添加特效等
+			respawnPlayer(host, this);
+			this.onRespawn(host);
+		}
+	}
 
 	// 📍位置 //
 
@@ -513,21 +573,18 @@ export default abstract class Player_V1 extends Entity implements IPlayer {
 	}
 
 	// 📌钩子 //
-	// ! 一律使用抽象方法，交给继承者处理
-	abstract onHeal(host: IMatrix, amount: number, healer: IPlayer | null): void;
-	abstract onHurt(host: IMatrix, damage: number, attacker: IPlayer | null): void;
-	abstract onDeath(host: IMatrix, damage: number, attacker: IPlayer | null): void;
-	abstract onKillOther(host: IMatrix, victim: IPlayer, damage: number): void;
-	abstract onRespawn(host: IMatrix): void;
-	abstract onMapTransform(host: IMatrix): void;
-	abstract onLocationChange(host: IMatrix, oldP: intPoint): void;
-	abstract onLocationChanged(host: IMatrix, newP: intPoint): void;
-	abstract onTick(host: IMatrix): void;
-	abstract onPositedBlockUpdate(host: IMatrix): void;
+	public onHeal(host: IMatrix, amount: number, healer: IPlayer | null): void { }
+	public onHurt(host: IMatrix, damage: number, attacker: IPlayer | null): void { }
+	public onDeath(host: IMatrix, damage: number, attacker: IPlayer | null): void { }
+	public onKillOther(host: IMatrix, victim: IPlayer, damage: number): void { }
+	public onRespawn(host: IMatrix): void { }
+	public onLocationChange(host: IMatrix, oldP: intPoint): void { }
+	public onLocationChanged(host: IMatrix, newP: intPoint): void { }
+	public onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void { }
 
 	// 🎨显示 //
 
-	i_displayable: true = true;
+	readonly i_displayable: true = true;
 
 	/** 线条颜色 */
 	protected _lineColor: uint = 0x888888;
@@ -538,10 +595,13 @@ export default abstract class Player_V1 extends Entity implements IPlayer {
 	/** 用于判断「装饰类型」的标记 */
 	decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY;
 
-	abstract shapeInit(shape: IShape, ...params: unknown[]): void;
-	abstract shapeRefresh(shape: IShape): void;
-	abstract shapeDestruct(shape: IShape): void;
-	abstract get zIndex(): number;
-	abstract set zIndex(value: number);
+	shapeInit(shape: IShape, ...params: unknown[]): void { }
+	shapeRefresh(shape: IShape): void { }
+	shapeDestruct(shape: IShape): void { }
+
+	/** 堆叠覆盖层级：默认是「玩家」层级 */
+	protected _zIndex: uint = DisplayLayers.PLAYER;
+	get zIndex(): uint { return this._zIndex }
+	set zIndex(value: uint) { this._zIndex = value }
 
 }

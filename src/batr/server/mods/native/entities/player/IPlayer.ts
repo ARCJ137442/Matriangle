@@ -144,7 +144,7 @@ export default interface IPlayer extends IEntityInGrid, IEntityActive, IEntityDi
 	setPosition(host: IMatrix, position: iPointRef, needHook: boolean): void;
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IMatrix): void;
+	onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void;
 
 	/**
 	 * 用于判断「玩家是否可当前位置移动到另一位置」

@@ -1,28 +1,22 @@
-import { int, uint } from "../../../../../legacy/AS3Legacy";
+import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import PlayerStats from "./stat/PlayerStats";
-import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
-import { iPoint, iPointRef } from "../../../../../common/geometricTools";
+import { iPoint } from "../../../../../common/geometricTools";
 import IMatrix from "../../../../main/IMatrix";
-import { DisplayLayers, IShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
-import { FIXED_TPS, TPS } from "../../../../main/GlobalWorldVariables";
 import Tool from "../../tool/Tool";
-import { mRot, toOpposite_M } from "../../../../general/GlobalRot";
+import { mRot } from "../../../../general/GlobalRot";
 import IPlayer from "../../../native/entities/player/IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
-import { playerMoveInTest, playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChanged, handlePlayerLevelup, getPlayers, playerUseTool, respawnPlayer, handlePlayerLocationChange, isAlly, computeFinalCD } from "../../mechanics/NativeMatrixMechanics";
-import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
-import { intMin } from "../../../../../common/exMath";
-import { IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
-import { ADD_ACTION, EnumPlayerAction, PlayerAction } from "../../../native/entities/player/controller/PlayerAction";
+import { playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChanged, handlePlayerLevelup, playerUseTool, respawnPlayer, handlePlayerLocationChange, computeFinalCD } from "../../mechanics/NativeMatrixMechanics";
+import { EnumPlayerAction, PlayerAction } from "../../../native/entities/player/controller/PlayerAction";
 import { NativePlayerEvent } from "../../../native/entities/player/controller/PlayerEvent";
 import { NativePlayerEventOptions } from "../../../native/entities/player/controller/PlayerEvent";
 import EffectPlayerHurt from "../effect/EffectPlayerHurt";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
-import PlayerController from "../../../native/entities/player/controller/PlayerController";
 import IPlayerBatr from "./IPlayerBatr";
 import { BatrPlayerEvent, BatrPlayerEventOptions } from "./BatrPlayerEvent";
 import Player_V1 from "../../../native/entities/player/Player_V1";
@@ -38,7 +32,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 
 	// **独有属性** //
 
-	i_batrPlayer: true = true;
+	public readonly i_batrPlayer: true = true;
 
 	// 队伍 //
 
@@ -60,6 +54,13 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	// 工具 //
+
+	/**
+	 * 缓存玩家「正在使用工具」的状态
+	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
+	 */
+	protected _isUsing: boolean = false;
+	get isUsing(): boolean { return this._isUsing; }
 
 	/** 玩家所持有的工具 */
 	protected _tool: Tool; // 默认可以是「空工具」
@@ -199,20 +200,11 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	// 活跃实体 //
-	readonly i_active: true = true;
-
-	onTick(host: IMatrix): void {
-		// 在重生过程中⇒先处理重生
-		if (this.isRespawning)
-			this.dealRespawn(host);
-		// 然后再处理其它
-		else {
-			this.dealCachedActions(host);
-			this.dealController(host);
+	override onTick(host: IMatrix): void {
+		super.onTick(host);
+		if (!this.isRespawning)
+			// 唯一特殊需要的
 			this.dealUsingTime(host);
-			this.dealMoveInTest(host, false, false);
-			this.dealHeal();
-		}
 	}
 
 	// 有统计 //
@@ -239,15 +231,10 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	// /** 用于实现玩家的GUI显示 */ // TODO: 留给日后显示？实际上就是个「通知更新」的翻版？存疑。。。
 	// get guiShape(): IPlayerGUI { return this._GUI };
 
-	readonly i_displayable: true = true;
-
-	/** 堆叠覆盖层级：默认是「玩家」层级 */
-	protected _zIndex: uint = DisplayLayers.PLAYER;
-	get zIndex(): uint { return this._zIndex }
-	set zIndex(value: uint) { this._zIndex = value }
-
 	// TODO: 这个有些过于涉及显示实现了，到底要不要尾大不掉地放在这儿？本身跟逻辑毫无关系的代码，为什么还要有这样的冗余。。。
-	shapeInit(shape: IShape): void {
+	override shapeInit(shape: IShape): void {
+		super.shapeInit(shape);
+
 		let realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
 		let realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
 		shape.graphics.clear();
@@ -279,12 +266,14 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	/** TODO: 待实现的「更新」函数 */
-	shapeRefresh(shape: IShape): void {
+	override shapeRefresh(shape: IShape): void {
+		super.shapeRefresh(shape);
 		throw new Error("Method not implemented.");
 	}
 
 	/** TODO: 待实现的「析构」函数 */
-	shapeDestruct(shape: IShape): void {
+	override shapeDestruct(shape: IShape): void {
+		super.shapeDestruct(shape);
 		throw new Error("Method not implemented.");
 	}
 
@@ -303,7 +292,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	 */
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
-	onHeal(host: IMatrix, amount: uint, healer: IPlayer | null = null): void {
+	override onHeal(host: IMatrix, amount: uint, healer: IPlayer | null = null): void {
+		super.onHeal(host, amount, healer)
 		// 通知控制器
 		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.HEAL>(
 			NativePlayerEvent.HEAL,
@@ -316,7 +306,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	/**
 	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
-	onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	override onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+		super.onHurt(host, damage, attacker);
 		// this._hurtOverlay.playAnimation();
 		host.addEntity(
 			EffectPlayerHurt.fromPlayer(this.position, this, false/* 淡出 */)
@@ -335,7 +326,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	/**
 	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
-	onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	override onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+		super.onDeath(host, damage, attacker)
 		// 清除「储备生命值」 //
 		this.heal = 0;
 
@@ -371,7 +363,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// this.gui.visible = false;
 	}
 
-	onKillOther(host: IMatrix, victim: IPlayer, damage: uint): void {
+	override onKillOther(host: IMatrix, victim: IPlayer, damage: uint): void {
+		super.onKillOther(host, victim, damage)
 		// 击杀玩家，经验++
 		if (victim != this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1);
@@ -385,7 +378,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		});
 	}
 
-	onRespawn(host: IMatrix,): void {
+	override onRespawn(host: IMatrix): void {
+		super.onRespawn(host)
 		// 通知控制器
 		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.RESPAWN>(
 			NativePlayerEvent.RESPAWN,
@@ -393,7 +387,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		);
 	}
 
-	onMapTransform(host: IMatrix,): void {
+	public onMapTransform(host: IMatrix): void {
 		// 地图切换后，武器状态清除
 		this._tool.resetUsingState();
 
@@ -406,7 +400,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// TODO: 显示更新
 	}
 
-	onPickupBonusBox(host: IMatrix, box: BonusBox): void {
+	public onPickupBonusBox(host: IMatrix, box: BonusBox): void {
 		// 通知控制器
 		this._controller?.reactPlayerEvent<BatrPlayerEventOptions, BatrPlayerEvent.PICKUP_BONUS_BOX>(
 			BatrPlayerEvent.PICKUP_BONUS_BOX,
@@ -415,14 +409,16 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		);
 	}
 
-	onLocationChange(host: IMatrix, oldP: iPoint): void {
+	override onLocationChange(host: IMatrix, oldP: iPoint): void {
+		super.onLocationChange(host, oldP)
 		// moveOutTestPlayer(host, this, oldP); // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中 //! 【2023-10-03 23:34:22】原先的`preHandlePlayerLocationChange`
 		handlePlayerLocationChange(host, this, this.position); // !【2023-10-08 17:17:26】原先的`moveOutTestPlayer`
 
 		// 通知控制器
 	}
 
-	onLocationChanged(host: IMatrix, newP: iPoint): void {
+	override onLocationChanged(host: IMatrix, newP: iPoint): void {
+		super.onLocationChanged(host, newP)
 		handlePlayerLocationChanged(host, this, newP); // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中
 		// 方块事件处理完后，开始处理「方块伤害」等逻辑
 		this.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
@@ -430,13 +426,14 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// 通知控制器
 	}
 
-	onLevelup(host: IMatrix): void {
+	public onLevelup(host: IMatrix): void {
 		handlePlayerLevelup(host, this);
 
 		// 通知控制器
 	}
 
-	onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	override onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void {
+		super.onPositedBlockUpdate(host, ignoreDelay, isLocationChange)
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange);
 	}
 
@@ -452,37 +449,6 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	// get isCarriedBlock(): boolean {return this._carriedBlock !== null && this._carriedBlock.visible;}
 
 	// !【2023-09-30 13:21:34】`Game.testFullPlayerCanPass`移动到此，并被移除
-
-	//====Functions About Respawn====//
-	/**
-	 * 处理「重生」
-	 * * 功能：实现玩家在「死后重生」的等待时间
-	 * * 重生后「剩余生命值」递减
-	 * 
-	 * 逻辑：
-	 * * 「重生延时」递减
-	 * * 到一定程度后⇒处理「重生」
-	 *   * 重置到「未开始计时」状态
-	 *   * 自身「剩余生命数」递减
-	 *   * 调用世界机制代码，设置玩家在世界内的状态
-	 *	 * 寻找并设置坐标在「合适的重生点」
-	 *	 * 生成一个「重生」特效
-	 *   * 发送事件「重生时」
-	 */
-	protected dealRespawn(host: IMatrix): void {
-		if (this._respawnTick > 0)
-			this._respawnTick--;
-		else {
-			this._respawnTick = -1;
-			if (!this._lifeNotDecay && this._lives > 0)
-				this._lives--;
-			// 自身回满血
-			this._HP = this._maxHP; // ! 无需显示更新
-			// 触发母体响应：帮助安排位置、添加特效等
-			respawnPlayer(host, this);
-			this.onRespawn(host);
-		}
-	}
 
 	//====Functions About Tool====//
 	onToolChange(oldT: Tool, newT: Tool): void {
@@ -568,33 +534,6 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// // 工具使用后⇒通知GUI更新
 		// if (this.toolNeedsCharge) // TODO: 待显示模块完善
 		// 	this._GUI.updateCharge();
-	}
-
-	/**
-	 * 主要职责：管理玩家的「基本操作」「行为缓冲区」，与外界操作（控制器等）进行联络
-	 * * 目前一个玩家对应一个「控制器」
-	 */
-
-	/**
-	 * 缓存玩家「正在使用工具」的状态
-	 * * 目的：保证玩家是「正常通过『冷却&充能』的方式使用工具」的
-	 */
-	protected _isUsing: boolean = false;
-	get isUsing(): boolean { return this._isUsing; }
-
-	/**
-	 * 处理与「控制器」的关系
-	 */
-	protected dealController(host: IMatrix): void {
-		if (this._controller !== undefined) {
-			// *【2023-10-09 21:19:27】现在也使用「事件分派」而非「特定名称函数」通知控制器了
-			this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.TICK>(
-				NativePlayerEvent.TICK,
-				this,
-				host,
-				undefined
-			)
-		}
 	}
 
 	/**
