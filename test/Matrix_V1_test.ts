@@ -18,7 +18,7 @@ import WSController from "../src/batr/server/mods/webIO/controller/WSController"
 import BlockRandomTickDispatcher from "../src/batr/server/mods/batr/mechanics/programs/BlockRandomTickDispatcher";
 import { BATR_BLOCK_EVENT_MAP } from "../src/batr/server/mods/batr/mechanics/NativeMatrixMechanics";
 import BlockEventRegistry from "../src/batr/server/api/block/BlockEventRegistry";
-import MapSwitcher from "../src/batr/server/mods/batr/mechanics/programs/MapSwitcher";
+import MapSwitcherRandom from "../src/batr/server/mods/batr/mechanics/programs/MapSwitcherRandom";
 import { MULTI_DIM_TEST_MAPS } from './multiDimMaps';
 import IPlayerBatr from "../src/batr/server/mods/batr/entity/player/IPlayerBatr";
 import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from "../src/batr/server/mods/batr/registry/NativeBlockRegistry";
@@ -27,6 +27,10 @@ import BonusBoxGenerator from "../src/batr/server/mods/batr/mechanics/programs/B
 import IMatrix from "../src/batr/server/main/IMatrix";
 import IMatrixRule from "../src/batr/server/rule/IMatrixRule";
 import IWorldRegistry from "../src/batr/server/api/registry/IWorldRegistry";
+import { BatrDefaultMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
+import IMap from "../src/batr/server/api/map/IMap";
+import { stackMaps } from './stackedMaps';
+import Map_V1 from "../src/batr/server/mods/native/maps/Map_V1";
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -34,7 +38,15 @@ function initMatrixRule(): IMatrixRule {
 	loadAsBackgroundRule(rule);
 
 	// 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-	const MAPS = MULTI_DIM_TEST_MAPS; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
+	// const MAPS = [...MULTI_DIM_TEST_MAPS, ...BatrDefaultMaps._ALL_MAPS]; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
+	const MAPS = [
+		new Map_V1(
+			'stacked',
+			stackMaps(BatrDefaultMaps._ALL_MAPS.map(
+				(map: IMap) => map.storage as MapStorageSparse)
+			)
+		)
+	]; // 【2023-10-12 13:01:50】目前是「堆叠地图」测试
 	for (const map of MAPS)
 		rule.mapRandomPotentials.set(map, 1)
 	// 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
@@ -128,13 +140,13 @@ function setupMechanicPrograms(host: IMatrix): void {
 	let bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(matrix.rule)
 		.syncRandomDensity(matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity));
 	// 地图切换者
-	let mapSwitcher = new MapSwitcher(TPS * 15); // 稳定期：十五秒切换一次
+	let mapSwitcherRandom = new MapSwitcherRandom(TPS * 15); // 稳定期：十五秒切换一次
 
 	// *添加实体
 	host.addEntities(
 		blockRTickDispatcher,
 		bonusBoxGenerator,
-		mapSwitcher,
+		mapSwitcherRandom,
 	);
 }
 /** （总领）配置实体 */

@@ -6,8 +6,8 @@ import IMapStorage from '../src/batr/server/api/map/IMapStorage';
 import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse';
 import { mRot } from '../src/batr/server/general/GlobalRot';
 import { randInt, randIntBetween, sum } from '../src/batr/common/exMath';
-import { NativeMaps } from '../src/batr/server/mods/batr/registry/MapRegistry';
-import { BatrBlockIDs, BatrBlockPrototypes } from '../src/batr/server/mods/batr/registry/BlockRegistry';
+import { BatrDefaultMaps } from '../src/batr/server/mods/batr/registry/MapRegistry';
+import { BatrBlockPrototypes } from '../src/batr/server/mods/batr/registry/BlockRegistry';
 import { 地图可视化 } from '../src/batr/server/mods/visualization/textVisualizations';
 
 let { log, info, time, timeEnd } = console;
@@ -25,7 +25,7 @@ function show(name: string, obj: any = null): void {
 }
 
 function 地图读取测试(): void {
-    let m: IMap = NativeMaps.MAP_B
+    let m: IMap = BatrDefaultMaps.MAP_B
     let ml: IMapLogic = m, ms: IMapStorage = m.storage
 
     assert_equal(ml.getBlockPlayerDamage(new iPoint(19, 4)), -1)
@@ -77,7 +77,7 @@ function 地图读取测试(): void {
     timeEnd("point_cached")
 })(0, 100);
 
-for (const map of NativeMaps.ALL_NATIVE_MAPS) {
+for (const map of BatrDefaultMaps._ALL_MAPS) {
     log(`<========MAP "${map.name}"========>`)
     地图可视化(map.storage as MapStorageSparse);
     log()
@@ -93,7 +93,7 @@ for (const map of NativeMaps.ALL_NATIVE_MAPS) {
         log(`Random Spawn Point @`, storage.randomSpawnPoint)
         criteria = (rsp.some((x: int): boolean => x === 0 || x === 23))
     }
-})(NativeMaps.MAP_H.storage as MapStorageSparse, 10000);
+})(BatrDefaultMaps.MAP_H.storage as MapStorageSparse, 10000);
 
 (function 随机朝向测试(map: IMap, nRandom: uint): void {
     log('map:', map)
@@ -118,7 +118,7 @@ for (const map of NativeMaps.ALL_NATIVE_MAPS) {
         log(`Random toward-F [${pf.join(', ')}] --(${rot}, ${step_f})->`, map.towardWithRot_FF(pf, rot, step_f))
     }
 
-})(NativeMaps.FRAME, 100);
+})(BatrDefaultMaps.FRAME, 100);
 
 /**
  * 像Julia遍历张量一样可视化一个地图

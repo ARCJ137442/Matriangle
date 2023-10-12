@@ -2,7 +2,7 @@ import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTo
 import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
-import { IEntityHasPosition, IEntityInGrid, IEntityOutGrid, IEntityWithDirection, i_hasDirection, i_hasPosition, i_inGrid, i_outGrid } from "../../api/entity/EntityInterfaces";
+import { IEntityHasPosition, i_fixedLive, i_hasDirection, i_hasPosition, i_inGrid, i_outGrid } from "../../api/entity/EntityInterfaces";
 import MapStorageSparse from "../native/maps/MapStorageSparse";
 import { alignToGrid_P } from "../../general/PosTransform";
 import PlayerBatr from "../batr/entity/player/PlayerBatr";
@@ -15,9 +15,9 @@ import Effect from "../../api/entity/Effect";
 import Projectile from "../batr/entity/projectile/Projectile";
 import BlockRandomTickDispatcher from "../batr/mechanics/programs/BlockRandomTickDispatcher";
 import { nameOfRot_M } from "../../general/GlobalRot";
-import MapSwitcher from "../batr/mechanics/programs/MapSwitcher";
 import { NativeBlockIDs } from "../batr/registry/NativeBlockRegistry";
 import EffectExplode from "../batr/entity/effect/EffectExplode";
+import MapSwitcherRandom from "../batr/mechanics/programs/MapSwitcherRandom";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -209,19 +209,19 @@ function 实体标签显示(e: Entity): string {
 	if (e instanceof Effect)
 		// 爆炸特效
 		if (e instanceof EffectExplode)
-			return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}(r=${e.radius})`
+			return `${getClass(e)?.name}@${位置可视化(e)}${获取生命周期标签(e)}(r=${e.radius})`
 		else
-			return `${getClass(e)?.name}@${位置可视化(e)}|${e.life}/${e.LIFE}`
+			return `${getClass(e)?.name}@${位置可视化(e)}${获取生命周期标签(e)}`
 	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
-		return `${getClass(e)?.name}${获取坐标标签(e)}`
+		return `${getClass(e)?.name}${获取坐标标签(e)}${获取生命周期标签(e)}`
 	// 母体程序
 	if (e instanceof MatrixProgram)
 		// 方块随机刻分派者
 		if (e instanceof BlockRandomTickDispatcher)
 			return `${getClass(e)?.name}[${e.label}]`
 		// 地图切换者
-		else if (e instanceof MapSwitcher)
+		else if (e instanceof MapSwitcherRandom)
 			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`
 		// 控制器
 		else if (e instanceof MatrixController)
@@ -249,6 +249,14 @@ function 获取坐标标签(e: Entity): string {
 			(i_hasDirection(e)) ?
 				`^${nameOfRot_M(e.direction)}` : ``
 		)
+}
+
+/**  辅助函数 */
+function 获取生命周期标签(e: Entity): string {
+	return (
+		(i_fixedLive(e)) ?
+			`|${e.life}/${e.LIFE}` : ``
+	)
 }
 
 const number可视化 = (n: number): string => Number.isInteger(n) ? n.toString() : n.toFixed(2)

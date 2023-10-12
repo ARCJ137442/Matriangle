@@ -14,17 +14,24 @@ export type uint = number;
  * 
  * Seeing the result in REPL:
  * ```
-   > class C {}
-   undefined
-   > C
-   [class C]
-   > typeof C
-  'function'
-   > C instanceof Function
-   true
-   ```
+ *  > class C {}
+ *  undefined
+ *  > C
+ *  [class C]
+ *  > typeof C
+ * 'function'
+ *  > C instanceof Function
+ *  true
+ *  ```
  */
-export type Class = Function;
+export type Class = Function
+/**
+ * 扩展而来的「具体类」
+ * * 拥有构造函数签名
+ */
+export type ConcreteClass<T = unknown, Args extends any[] = any[]> = {
+  new(...args: Args): T;
+}
 
 // {int/uint}.{MAX/MIN}_VALUE
 export const int$MAX_VALUE: int = 0x7fffffff // 1<<31 will overflow

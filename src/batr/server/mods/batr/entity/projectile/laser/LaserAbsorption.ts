@@ -56,7 +56,7 @@ export default class LaserAbsorption extends Laser {
 		this.scaleY += LaserAbsorption.SCALE_V * (this.scaleReverse ? -1 : 1);
 		if (this.scaleY >= 1) {
 			this.scaleReverse = true;
-			console.warn('laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
+			console.warn('LaserAbsorption: laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
 		}
 		else if (this.scaleY <= -1)
 			this.scaleReverse = false;

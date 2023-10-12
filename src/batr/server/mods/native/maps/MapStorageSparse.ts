@@ -21,7 +21,6 @@ import { NativeBlockPrototypes, NATIVE_BLOCK_CONSTRUCTOR_MAP, NativeBlockIDs } f
 export default class MapStorageSparse implements IMapStorage {
 
     //============Static Utils============//
-
     public static pointToIndex(p: iPointRef): string {
         // ! （开发用）空值报错
         if (p.checkInvalid())

@@ -2,7 +2,7 @@ import { ReLU_I, intMax, intMin, randInt, randIntBetween } from "../../../../com
 import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquareSurface } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray, randomInWeightMap, MapFromObject, randomBoolean } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
-import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE } from "../../../../legacy/AS3Legacy";
+import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE, Class, ConcreteClass } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
 import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
@@ -42,7 +42,7 @@ import EffectExplode from "../entity/effect/EffectExplode";
 import Registry_V1, { toolUsageF } from "../../native/registry/Registry_V1";
 import BulletBasic from "../entity/projectile/bullet/BulletBasic";
 import { typeID } from "../../../api/registry/IWorldRegistry";
-import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalWorldVariables";
+import { PROJECTILES_SPAWN_DISTANCE, TPS } from "../../../main/GlobalWorldVariables";
 import BulletNuke from "../entity/projectile/bullet/BulletNuke";
 import BulletTracking from "../entity/projectile/bullet/BulletTracking";
 import BulletBomber from "../entity/projectile/bullet/BulletBomber";
@@ -56,6 +56,7 @@ import IPlayerHasAttributes, { i_hasAttributes } from "../entity/player/IPlayerH
 import IPlayerHasTeam, { i_hasTeam } from "../entity/player/IPlayerHasTeam";
 import IPlayerHasStats, { i_hasStats } from "../entity/player/IPlayerHasStats";
 import { NativeBlockPrototypes } from "../registry/NativeBlockRegistry";
+import Bullet from "../entity/projectile/bullet/Bullet";
 
 
 /**
@@ -269,6 +270,7 @@ export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
     host: IBatrMatrix, creator: IPlayer | null,
     laser: LaserBasic,
     damage: uint,
+    specialProcessCallback:(host:IBatrMatrix, victim:IPlayer) => vod
 ): void {
     // Set Variables
     let attacker: IPlayer | null = laser.owner;
@@ -518,6 +520,57 @@ export function playerUseTool(host: IMatrix, player: IPlayerHasTool, rot: uint, 
         )
 }
 
+interface BulletConstructor extends ConcreteClass<Bullet> {
+    new(
+        owner: IPlayer | null,
+        position: fPoint, direction: mRot,
+        attackerDamage: uint, extraDamageCoefficient: uint,
+        speed: number,
+        finalExplodeRadius: number,
+        ...otherArgs: any[]
+    ): Bullet;
+
+    /** 需要的两个静态（类）属性 */
+    DEFAULT_SPEED: number;
+
+    DEFAULT_EXPLODE_RADIUS: number;
+}
+
+/**
+ * 集成所有「生成子弹」的逻辑
+ */
+function generateBullet(
+    constructor: BulletConstructor,
+    host: IMatrix, user: IPlayer, tool: Tool, direction: mRot,
+    defaultSpeed: number = constructor.DEFAULT_SPEED,
+    defaultExplodeRadius: number = constructor.DEFAULT_EXPLODE_RADIUS,
+    ...otherArgs: unknown[]
+): void {
+    host.addEntity(
+        new constructor(
+            user,
+            host.map.towardWithRot_FF(
+                alignToGridCenter_P(user.position, _temp_toolUsage_PF),
+                direction,
+                PROJECTILES_SPAWN_DISTANCE
+            ),
+            direction,
+            0, 0, // 后续从工具处初始化
+            defaultSpeed, // ?【2023-10-05 17:39:49】是不是参数位置有问题
+            computeFinalRadius(
+                defaultExplodeRadius,
+                (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
+            ),
+            ...otherArgs
+        ).initFromToolNAttributes(
+            tool,
+            (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
+        ).initLife(
+            host.rule.getRule<uint>(MatrixRuleBatr.key_bulletMaxLife)
+        )
+    );
+}
+
 const _temp_toolUsage_PF: fPoint = new fPoint();
 /**
  * 一个原生的「武器使用」映射表
@@ -528,116 +581,55 @@ const _temp_toolUsage_PF: fPoint = new fPoint();
 export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<typeID, toolUsageF>({
     // * 武器：普通子弹 * //
     [NativeTools.TOOL_ID_BULLET_BASIC]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-        host.addEntity(
-            new BulletBasic(
-                user,
-                host.map.towardWithRot_FF(
-                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                    direction,
-                    PROJECTILES_SPAWN_DISTANCE
-                ),
-                direction,
-                0, 0, // 后续从工具处初始化
-                BulletBasic.DEFAULT_SPEED, // ?【2023-10-05 17:39:49】是不是参数位置有问题
-                computeFinalRadius(
-                    BulletBasic.DEFAULT_EXPLODE_RADIUS,
-                    (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
-                )
-            ).initFromToolNAttributes(
-                tool,
-                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
-            )
-        )
+        generateBullet(
+            BulletBasic,
+            host, user, tool, direction
+        );
     },
     // * 武器：核弹 * //
     [NativeTools.TOOL_ID_BULLET_NUKE]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
         let scalePercent: number = (0.25 + chargePercent * 0.75);
-        host.addEntity(
-            new BulletNuke(
-                user,
-                host.map.towardWithRot_FF(
-                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                    direction,
-                    PROJECTILES_SPAWN_DISTANCE
-                ),
-                direction,
-                0, 0, // 后续从工具处初始化
-                // * 充能越充分，速度越慢
-                BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
-                // * 充能越充分，爆炸范围越大
-                computeFinalRadius(
-                    BulletNuke.DEFAULT_EXPLODE_RADIUS,
-                    (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
-                ) * scalePercent,
-            ).initFromToolNAttributes(
-                tool,
-                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
-            )
-        )
+        generateBullet(
+            BulletNuke,
+            host, user, tool, direction,
+            // * 充能越充分，速度越慢
+            BulletNuke.DEFAULT_SPEED * (2 - scalePercent),
+            // * 充能越充分，爆炸范围越大
+            BulletNuke.DEFAULT_EXPLODE_RADIUS * scalePercent,
+        );
     },
     // * 武器：轰炸机 * //
     [NativeTools.TOOL_ID_BULLET_BOMBER]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
         let scalePercent: number = (0.25 + chargePercent * 0.75);
-        host.addEntity(
-            new BulletBomber(
-                user,
-                host.map.towardWithRot_FF(
-                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                    direction,
-                    PROJECTILES_SPAWN_DISTANCE
-                ),
-                direction,
-                0, 0, // 后续从工具处初始化
-                // * 充能越充分，速度越慢
-                BulletBomber.DEFAULT_SPEED,
-                // * 充能越充分，爆炸范围越大
-                computeFinalRadius(
-                    BulletBomber.DEFAULT_EXPLODE_RADIUS,
-                    (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
-                ),
-                // * 充能越充分，爆炸频率越高
-                uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)),
-            ).initFromToolNAttributes(
-                tool,
-                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
-            )
-        )
+        generateBullet(
+            BulletBomber,
+            host, user, tool, direction,
+            // * 充能越充分，速度越慢
+            BulletBomber.DEFAULT_SPEED,
+            // * 充能越充分，爆炸范围越大
+            BulletBomber.DEFAULT_EXPLODE_RADIUS,
+            // * 充能越充分，爆炸频率越高
+            uint(BulletBomber.MAX_BOMB_TICK * (1.5 - scalePercent)), // !特殊参数：`maxBombTick`
+        );
     },
     // * 武器：跟踪子弹 * //
     [NativeTools.TOOL_ID_BULLET_TRACKING]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        // ?【2023-10-07 13:35:59】💭是否要简化一些流程呢？
-        host.addEntity(
-            new BulletTracking(
-                user,
-                host.map.towardWithRot_FF(
-                    alignToGridCenter_P(user.position, _temp_toolUsage_PF),
-                    direction,
-                    PROJECTILES_SPAWN_DISTANCE
-                ),
-                direction,
-                0, 0, // 后续从工具处初始化
-                // * 充能越充分，速度越慢
-                BulletTracking.DEFAULT_SPEED,
-                // * 充能越充分，爆炸范围越大
-                computeFinalRadius(
-                    BulletTracking.DEFAULT_EXPLODE_RADIUS,
-                    (user as IPlayerHasAttributes)?.attributes.buffRadius ?? 0
-                ),
-                getPlayers(host),
-                // * 充能越充分，追踪时速度越快
-                1 + chargePercent * 0.5,
-                // * 完全充能⇒大于1
-                chargePercent >= 1
-            ).initFromToolNAttributes(
-                tool,
-                (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0
-            )
-        )
+        generateBullet(
+            BulletTracking,
+            host, user, tool, direction,
+            // 默认速度
+            BulletTracking.DEFAULT_SPEED,
+            // 默认爆炸半径
+            BulletTracking.DEFAULT_EXPLODE_RADIUS,
+            // 所追踪的玩家
+            getPlayers(host),
+            // * 充能越充分，追踪时速度越快
+            1 + chargePercent * 0.5,
+            // * 完全充能⇒大于1
+            chargePercent >= 1
+        );
     },
-})
+});
 
 
 /**
@@ -1675,6 +1667,7 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
                     p = new LaserTeleport(
                         null, position, randomR,
                         NativeTools.WEAPON_LASER_TELEPORT.baseDamage,
+                        NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
                         laserLength
                     );
                     break;
@@ -1682,6 +1675,7 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
                     p = new LaserAbsorption(
                         null, position, randomR,
                         NativeTools.WEAPON_LASER_ABSORPTION.baseDamage,
+                        NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
                         laserLength
                     );
                     break;
@@ -1689,6 +1683,7 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
                     p = new LaserPulse(
                         null, position, randomR,
                         NativeTools.WEAPON_LASER_PULSE.baseDamage,
+                        NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
                         randInt(2), // 0|1
                         laserLength,
                     );
@@ -1697,13 +1692,13 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
                     p = new LaserBasic(
                         null, position, randomR,
                         NativeTools.WEAPON_LASER_BASIC.baseDamage,
+                        NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
                         1.0,
                         laserLength,
                     );
                     break;
             }
             host.addEntity(p);
-            // host.projectileContainer.addChild(p);
             console.log('laser at' + '(', p.position, '),' + p.life, p.length, p.owner);
             break;
         }

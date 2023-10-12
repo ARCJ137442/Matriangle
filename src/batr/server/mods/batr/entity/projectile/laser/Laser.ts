@@ -38,7 +38,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		this._position.copyFrom(position);
 		this._length = length;
 		this._LIFE = LIFE;
-		this._life = this.LIFE * chargePercent;
+		this._life = LIFE * chargePercent;
 	}
 
 	// 固定生命周期 //

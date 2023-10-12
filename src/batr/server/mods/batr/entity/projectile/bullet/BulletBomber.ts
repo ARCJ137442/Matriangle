@@ -38,7 +38,7 @@ export default class BulletBomber extends Bullet {
 		attackerDamage: uint, extraDamageCoefficient: uint,
 		speed: number,
 		finalExplodeRadius: number,
-		maxBombTick: uint
+		maxBombTick: uint,
 	) {
 		super(
 			owner,

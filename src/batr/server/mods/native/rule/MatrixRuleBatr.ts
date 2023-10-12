@@ -611,6 +611,9 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		MatrixRuleBatr.d_maxLaserLength,
 	);
 	protected _maxLaserLength: uint = MatrixRuleBatr.d_maxLaserLength;
+	/**
+	 * 决定世界中生成的激光的「默认长度」
+	 */
 	public get maxLaserLength(): uint { return this._maxLaserLength; }
 	public set maxLaserLength(value: uint) {
 		if (
@@ -619,6 +622,30 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 				this._maxLaserLength, value
 			)
 		) this._maxLaserLength = value;
+	}
+
+	protected static readonly d_bulletMaxLife: uint = 3200;
+	public static readonly key_bulletMaxLife: key = fastAddJSObjectifyMapProperty_dashP(
+		this.OBJECTIFY_MAP,
+		'bulletMaxLife',
+		MatrixRuleBatr.d_bulletMaxLife,
+	);
+	protected _bulletMaxLife: uint = MatrixRuleBatr.d_bulletMaxLife;
+	/**
+	 * 决定世界中生成的子弹的「默认生命周期」
+	 * * 单位：世界刻（100世界刻=1秒）
+	 * * 默认值：32秒
+	 * * 作用：子弹会在生成后最长「默认生命周期」个世界刻后自行消失
+	 *   * 【2023-10-12 16:16:23】添加缘由：避免「不断在有限无界的地图中循环」而产生大量子弹，进而导致卡顿
+	 */
+	public get bulletMaxLife(): uint { return this._bulletMaxLife; }
+	public set bulletMaxLife(value: uint) {
+		if (
+			MatrixRuleBatr.preUpdateVariable(
+				this, MatrixRuleBatr.key_bulletMaxLife,
+				this._bulletMaxLife, value
+			)
+		) this._bulletMaxLife = value;
 	}
 
 	protected static readonly d_allowLaserThroughAllBlock: boolean = false;

@@ -4,7 +4,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
-import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
+import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
 import { alignToGrid_P } from "../../../../../general/PosTransform";
 import IMatrix from "../../../../../main/IMatrix";
 import Projectile from "../Projectile";
@@ -18,7 +18,7 @@ import { getPlayers } from "../../../mechanics/NativeMatrixMechanics";
  * * 在撞上方块后产生效果（一般是爆炸）的
  * 抛射体
  */
-export default abstract class Bullet extends Projectile implements IEntityOutGrid {
+export default abstract class Bullet extends Projectile implements IEntityOutGrid, IEntityFixedLived {
 
 	/** 子弹飞行的速度（每个世界刻） */
 	public speed: number;
@@ -29,6 +29,16 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	public lastBlock: Block | null = null;
 	/** 现在所在的方块类型 */
 	public nowBlock: Block | null = null;
+
+	// 固定生命周期 //
+	public readonly i_shortLive: true = true;
+	/**
+	 * 一个最简单的「固定生命周期」值
+	 */
+	public static readonly LIFE: uint = 3200;
+	public LIFE: uint = 3200;
+	public life: uint = this.LIFE;
+	public get lifePercent(): number { return this.life / this.LIFE }
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -46,6 +56,16 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		// this.finalExplodeRadius = (owner === null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = finalExplodeRadius;
 		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「世界逻辑」对象中访问，而非「放在玩家的类里」任由其与世界耦合
+	}
+
+	/**
+	 * 根据外界设置，初始化生命周期
+	 */
+	public initLife(LIFE: uint | undefined): this {
+		// 若外界没传入（实际上就是「没有规则」的状态），就使用默认生命周期
+		if (LIFE !== undefined)
+			this.life = this.LIFE = LIFE;
+		return this;
 	}
 
 	//============Interface Methods============//
@@ -75,9 +95,13 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 */
 	public onTick(host: IMatrix): void {
 		super.onTick(host);
-		// Move
-		// Detect
-		// if (host === null) return;
+		// 生命周期更新
+		if (--this.life <= 0) {
+			// 直接爆炸
+			this.explode(host);
+			return;
+		}
+		// 方块碰撞检测
 		this.nowBlock = host.map.storage.getBlock(this.position);
 		// 在移动进去之前
 		if (this.lastBlock !== this.nowBlock) {

@@ -19,34 +19,10 @@ import { changeMap, getRandomMap, projectEntity, spreadPlayer } from "../NativeM
  * * 作为AS3版本「地图变换机制」继任者的
  * 母体程序
  */
-export default class MapSwitcher extends MatrixProgram implements IEntityActive {
+export default abstract class MapSwitcher extends MatrixProgram {
 
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'MapSwitch';
-
-	// 构造&析构 //
-	public constructor(switchInterval: uint) {
-		super(MapSwitcher.LABEL);
-		this._mapSwitchTick = this.mapSwitchInterval = switchInterval;
-	}
-
-	// 内部时钟 //
-	protected _mapSwitchTick: uint;
-	/**
-	 * 地图「定期切换」的周期间隔时长
-	 */
-	public mapSwitchInterval: uint;
-
-	// 活跃实体 //
-	public readonly i_active: true = true;
-
-	// *实现：定期切换地图
-	onTick(host: IMatrix): void {
-		if (--this._mapSwitchTick <= 0) {
-			this._mapSwitchTick = this.mapSwitchInterval;
-			this.changeMap(host);
-		}
-	}
 
 	/**
 	 * The Main PURPOSE: 切换地图
@@ -56,18 +32,7 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 	 * 
 	 * @param host 需要「切换地图」的母体
 	 */
-	protected changeMap(host: IMatrix): void {
-		// 获取新的地图 //
-		let newMap: IMap;
-		// 先判断母体是否有相应的规则
-		if (host.rule.hasRule(MatrixRuleBatr.key_mapRandomPotentials)) {
-			// 随机地图
-			newMap = getRandomMap(host.rule).copy(true); // !【2023-10-08 22:31:40】现在对地图进行深拷贝
-		}
-		else {
-			console.error('并未在母体中找到相应的「地图随机规则」！')
-			return;
-		}
+	protected changeMap(host: IMatrix, newMap: IMap): void {
 		// 实体预备 //
 		let entities: Entity[] = host.entities;
 		let players: IPlayer[] = [];
@@ -112,5 +77,3 @@ export default class MapSwitcher extends MatrixProgram implements IEntityActive 
 		// TODO: 母体统计系统（参见`MatrixStats.ts`）
 	}
 }
-
-// !【2023-10-08 18:18:09】「世界随机刻」的「事件处理函数」类型 已并入 统一的「方块事件机制」

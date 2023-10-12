@@ -16,7 +16,7 @@ import { NativeBlockPrototypes } from "./NativeBlockRegistry";
  * 定义所有世界原生（自带）的地图
  * ? 或许后续会独立出来作为「外置地图包」实现
  */
-export module NativeMaps {
+export module BatrDefaultMaps {
 
     // 地图的一般预设：大小、方块等
     export const MAP_SIZE: uint = 24;
@@ -82,7 +82,7 @@ export module NativeMaps {
     export const MAP_G: Map_V1 = new Map_V1('G', STORAGE_G, _AS3_CONSERVED_MAP_SIZE, true);
     export const MAP_H: Map_V1 = new Map_V1('H', STORAGE_H, _AS3_CONSERVED_MAP_SIZE, true);
 
-    export const ALL_NATIVE_MAPS: IMap[] = [
+    export const _ALL_MAPS: IMap[] = [
         EMPTY,
         FRAME,
         MAP_1,

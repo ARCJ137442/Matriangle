@@ -68,7 +68,7 @@ export default class Map_V1 implements IMap {
 	public constructor(
 		name: string,
 		storage: IMapStorage,
-		size: iPointRef | undefined,
+		size: iPointRef | undefined = new iPoint(...storage.size),
 		isArena: boolean = false
 	) {
 		this._name = name;
