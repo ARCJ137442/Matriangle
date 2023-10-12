@@ -4,6 +4,7 @@ import IPlayer from "../../native/entities/player/IPlayer";
 import { ADD_ACTION } from "../../native/entities/player/controller/PlayerAction";
 import PlayerController from "../../native/entities/player/controller/PlayerController";
 import { PlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
+import KeyboardController from './../../native/entities/player/controller/KeyboardController';
 
 /**
  * 「多键控制器」是
@@ -11,6 +12,8 @@ import { PlayerEventOptions } from "../../native/entities/player/controller/Play
  * * 使用「控制密钥」机制，以实现「一个服务器运行，指挥多个玩家」（需要在query中提供）的
  *   * 「控制密钥」相同的玩家会被同时分派相同的动作
  * 玩家控制器
+ * 
+ * TODO: 📌承继{@link KeyboardController}键盘控制器，还原其中的键控逻辑
  */
 export default abstract class MultiKeyController extends PlayerController {
 

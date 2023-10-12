@@ -172,7 +172,7 @@ export default class Map_V1 implements IMap {
 		rot = this.projectDirection(rot);
 		// * 维数不同⇒自动投影
 		if (p.length !== this.storage.numDimension)
-			this.projectPosition_F(p);
+			this.projectPosition_F(p); // TODO: 不知为何还是会有运行至此的，有待debug
 		// 正式开始计算
 		let axis = mRot2axis(rot);
 		p[axis] += (rot & 1) === 0 ? step : -step;

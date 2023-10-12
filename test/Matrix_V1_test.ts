@@ -8,7 +8,7 @@ import WorldRegistry_V1 from "../src/batr/server/mods/native/registry/Registry_V
 import { NativeTools as BatrTools } from "../src/batr/server/mods/batr/registry/ToolRegistry";
 import MatrixRuleBatr from "../src/batr/server/mods/native/rule/MatrixRuleBatr";
 import Matrix_V1 from "../src/batr/server/mods/native/main/Matrix_V1";
-import { listE列举实体, matrixV母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
+import { SPSACV单点稀疏地图所有视角截面可视化, listE列举实体, matrixV母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
 import { mergeMaps, mergeMultiMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes as BatrBonusTypes } from "../src/batr/server/mods/batr/registry/BonusRegistry";
@@ -45,7 +45,7 @@ function initMatrixRule(): IMatrixRule {
 		new Map_V1(
 			'stacked',
 			stackMaps(BatrDefaultMaps._ALL_MAPS.map(
-				(map: IMap) => map.storage as MapStorageSparse)
+				(map: IMap): MapStorageSparse => map.storage as MapStorageSparse)
 			)
 		)
 	]; // 【2023-10-12 13:01:50】目前是「堆叠地图」测试

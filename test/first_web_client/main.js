@@ -9,7 +9,7 @@ let socketScreen;
 // 屏显
 const screenAddress = document.getElementById('screenAddress');
 const screenFPS = document.getElementById('screenFPS');
-const blockWidth = document.getElementById('blockWidth');
+const displayCode = document.getElementById('displayCode');
 let screenIntervalID;
 const calculateFPS = () => 1000 / parseFloat(screenFPS.value);
 let FPS = calculateFPS();
@@ -25,14 +25,22 @@ const otherInfMessage = 'entities'
 
 const isEntityListSignal = (text) => text.startsWith('实体列表')
 
-// 重置网络
+/**
+ * 重置网络
+ * 
+ * @param {boolean} force 是否强制
+ */
 function resetAllWS(force = true/* 默认为真，留给侦听器直接调用 */) {
 	// 控制
 	resetControlWS(force);
 	// 屏显
 	resetScreenWS(force);
 }
-// 重置控制
+/**
+ * 重置控制
+ * 
+ * @param {boolean} force 是否强制
+ */
 function resetControlWS(force = false) {
 	socketControl?.close()
 	socketControl = new WebSocket(getWSLinkControl())
@@ -61,7 +69,11 @@ const softSetTimeout = (id, callback, delay, ...args) => {
 			undefined
 	)
 }
-// 重置屏显
+/**
+ * 重置屏显
+ * 
+ * @param {boolean} force 是否强制
+ */
 function resetScreenWS(force = false/* 默认为假，留给「自动重连」调用 */) {
 	// 非强制&还在开⇒不要重置
 	if (!force && socketScreen.readyState === WebSocket.OPEN) return;
@@ -82,7 +94,11 @@ function resetScreenWS(force = false/* 默认为假，留给「自动重连」�
 				// console.info('signal sent:', socketScreen, 'matrix')
 				try {
 					// 尝试发送消息
-					sendMessage(socketScreen, blockWidth.value);
+					/* if (displayCode.value[0] === ' ')
+						// 前导空格⇒以所操控玩家为中心，进行「所有截面展示」
+						sendMessage(socketScreen, `player${displayCode.value.slice(1)}@${}`)
+					else */
+					sendMessage(socketScreen, displayCode.value);
 					// 独立发送「获取实体列表」
 					sendMessage(socketScreen, otherInfMessage);
 				} catch (e) {
@@ -120,8 +136,14 @@ resetAllWS(true);
 // 控制器 //
 
 const pressed = {}
+/**
+ * 根据键位获取「动作信息」
+ * 
+ * @param {KeyboardEvent} event 键盘事件
+ * @param {boolean} isDown 是否按下
+ * @returns WS信息
+ */
 function getControlMessage(event, isDown) {
-	// TODO: 根据键位获取动作
 	if (!(event.code in pressed)) console.log(event);
 	pressed[event.code] = event;
 	let action = getActionFromEvent(event, isDown);
@@ -130,6 +152,15 @@ function getControlMessage(event, isDown) {
 	return `${controlKey.value}|${action}`
 }
 
+/**
+ * 根据键盘事件返回「玩家行动」
+ * 
+ * TODO: 这些代码计划内迁入TS中，变成原先AS3那样可配置的一部分
+ * 
+ * @param {KeyboardEvent} keyboardEvent 键盘事件
+ * @param {boolean} isDown 是否按下
+ * @returns 对应的「玩家行动」值
+ */
 function getActionFromEvent(keyboardEvent, isDown) {
 	switch (keyboardEvent.code) {
 		// X
@@ -162,6 +193,10 @@ function getActionFromEvent(keyboardEvent, isDown) {
 	}
 }
 
+/**
+ * 键盘按下
+ * @param {KeyboardEvent} event 键盘事件
+ */
 function onKeyDown(event) {
 	// 产生消息
 	let message = getControlMessage(event, true);
@@ -178,7 +213,10 @@ function onKeyDown(event) {
 	// 发送请求
 	sendMessage(socketControl, message);
 }
-
+/**
+ * 键盘释放
+ * @param {KeyboardEvent} event 键盘事件
+ */
 function onKeyUp(event) {
 	// 产生消息
 	let message = getControlMessage(event, false);
@@ -196,7 +234,12 @@ function onKeyUp(event) {
 	sendMessage(socketControl, message);
 }
 
-// 只在状态为「打开」时发送消息
+/**
+ * 向WS发送消息
+ * 
+ * * 只在状态为「打开」时发送消息
+ * @param {KeyboardEvent} event 键盘事件
+ */
 function sendMessage(socket, message) {
 	if (socket instanceof WebSocket && socket.readyState === WebSocket.OPEN)
 		socket.send(message)
@@ -208,14 +251,21 @@ resetButton.addEventListener('click', resetAllWS)
 
 // 显示器 //
 
-// 刷新画面
-
+/**
+ * 刷新画面
+ * 
+ * @param {Element} text 文本元素
+ */
 function setScreen(text) {
 	// console.log('signal received:', text)
 	screenText.innerText = text;
 }
 
-// 刷新其它信息（实体列表）
+/**
+ * 刷新其它信息（实体列表）
+ * 
+ * @param {Element} text 文本元素
+ */
 function setOtherInf(text) {
 	otherInfText.innerText = text
 }

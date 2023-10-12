@@ -346,7 +346,7 @@ export default class MapStorageSparse implements IMapStorage {
         return this.borderDown - this.borderUp;
     }
 
-    public getMapSizeAt(dim: uint): uint {
+    public getSizeAt(dim: uint): uint {
         return this._borderMax[dim] - this._borderMin[dim];
     }
 

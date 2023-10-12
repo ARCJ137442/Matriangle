@@ -1,4 +1,4 @@
-import { iPoint, iPointVal, traverseNDSquare } from "../../../common/geometricTools";
+import { iPoint, iPointRef, iPointVal, traverseNDSquare } from "../../../common/geometricTools";
 import { getClass } from "../../../common/utils";
 import { int, uint, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 import Entity from "../../api/entity/Entity";
@@ -14,10 +14,11 @@ import BonusBox from "../batr/entity/item/BonusBox";
 import Effect from "../../api/entity/Effect";
 import Projectile from "../batr/entity/projectile/Projectile";
 import BlockRandomTickDispatcher from "../batr/mechanics/programs/BlockRandomTickDispatcher";
-import { nameOfRot_M } from "../../general/GlobalRot";
+import { nameOfAxis_M, nameOfRot_M } from "../../general/GlobalRot";
 import { NativeBlockIDs } from "../batr/registry/NativeBlockRegistry";
 import EffectExplode from "../batr/entity/effect/EffectExplode";
 import MapSwitcherRandom from "../batr/mechanics/programs/MapSwitcherRandom";
+import IMatrix from "../../main/IMatrix";
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -127,13 +128,7 @@ export function sparseMapMV稀疏地图母体可视化(
 	// 返回值
 	let result: string = '';
 	// 格点实体
-	const entitiesPositioned: IEntityHasPosition[] = entities.filter(
-		(entity: Entity): boolean => (
-			i_inGrid(entity) ||
-			i_outGrid(entity)
-		)
-	) as IEntityHasPosition[];
-	let e: IEntityHasPosition | null;
+	const entitiesPositioned: IEntityHasPosition[] = entities.filter(i_hasPosition);
 	// 正式开始
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
@@ -251,7 +246,7 @@ function getPT获取坐标标签(e: Entity): string {
 		)
 }
 
-/**  辅助函数 */
+/** 辅助函数 */
 function getLT获取生命周期标签(e: Entity): string {
 	return (
 		(i_fixedLive(e)) ?
@@ -261,3 +256,160 @@ function getLT获取生命周期标签(e: Entity): string {
 
 const number可视化 = (n: number): string => Number.isInteger(n) ? n.toString() : n.toFixed(2)
 const PV位置可视化 = (e: IEntityHasPosition): string => e.position.map(number可视化).join(',')
+
+// 截面可视化 //
+
+/**
+ * 截面可视化
+ * 
+ * @param storage 地图存储结构
+ * @param entitiesPositioned 所有有坐标实体
+ * @param axis_x 作为呈现上x轴的轴向
+ * @param axis_y 作为呈现上y轴的轴向
+ * @param axis_x_max 呈现x轴最大值
+ * @param axis_y_max 呈现y轴最大值
+ * @param axis_x_min 呈现x轴最小值
+ * @param axis_y_min 呈现y轴最小值
+ * @param keeps 其它维的坐标（呈现轴上随意设置）
+ * @param string_l 每一格统一的字符串长度
+ * 
+ * @returns 地图（连带实体）在特定轴向显示的画面
+ */
+export function getCutVisualization(
+	storage: IMapStorage,
+	entitiesPositioned: IEntityHasPosition[],
+	axis_x: uint, axis_y: uint,
+	axis_x_max: uint, axis_y_max: uint,
+	axis_x_min: uint, axis_y_min: uint,
+	keeps: iPointRef,
+	string_l: uint = 6,
+): string {
+	let result: string = '';
+
+	_temp_getCutVisualization.copyFrom(keeps);
+
+	const line: string[] = [];
+	for (let y = axis_y_min; y <= axis_y_max; y++) {
+		for (let x = axis_x_min; x <= axis_x_max; x++) {
+			_temp_getCutVisualization[axis_x] = x;
+			_temp_getCutVisualization[axis_y] = y;
+			line.push(vPoint可视化单点(
+				storage,
+				_temp_getCutVisualization,
+				entitiesPositioned,
+				string_l,
+			));
+		}
+		result += '|' + line.join(' ') + '|\n';
+		line.length = 0;
+	}
+	return result;
+}
+const _temp_getCutVisualization: iPointVal = new iPoint();
+
+/**
+ * 特别针对稀疏地图，直接使用其边界决定四个边界参数
+ * @param storage 地图存储结构
+ * @param entitiesPositioned 所有有坐标实体
+ * @param axis_x 作为呈现上x轴的轴向
+ * @param axis_y 作为呈现上y轴的轴向
+ * @param keeps 其它维的坐标（呈现轴上随意设置）
+ * @param string_l 每一格统一的字符串长度
+ * 
+ * @returns 地图（连带实体）在特定轴向显示的画面
+ */
+export function cutSV稀疏地图截面可视化(
+	storage: MapStorageSparse,
+	entitiesPositioned: IEntityHasPosition[],
+	axis_x: uint, axis_y: uint,
+	keeps: iPointRef,
+	string_l: uint = 7,
+): string {
+	return getCutVisualization(
+		storage,
+		entitiesPositioned,
+		axis_x, axis_y,
+		storage.borderMax[axis_x], storage.borderMax[axis_y],
+		storage.borderMin[axis_x], storage.borderMin[axis_y],
+		keeps,
+		string_l,
+	)
+}
+
+/**
+ * 对于单个中心点，在所有可能轴向组合上的「截面可视化」
+ * 
+ * @param storage 稀疏地图存储结构
+ * @param entitiesPositioned 所有有坐标实体
+ * @param center 呈现的中心（所谓「其它维坐标」）
+ * @param string_l 每一格统一的字符串长度
+ * 
+ * @returns 地图（连带实体）在所有轴向显示的画面
+ */
+export function SPSACV单点稀疏地图所有视角截面可视化(
+	storage: MapStorageSparse,
+	entitiesPositioned: IEntityHasPosition[],
+	center: iPointRef,
+	string_l: uint = 7,
+): string {
+	let result: string = `[Slices@(${center.toString()})]\n`;
+
+	const nDim = storage.numDimension;
+	for (let axis_x: uint = 0; axis_x < nDim; ++axis_x)
+		// xy不重样
+		for (let axis_y: uint = axis_x + 1; axis_y < nDim; ++axis_y) {
+			// 直接生成一个截面
+			result +=
+				`Slice ${nameOfAxis_M(axis_x)}${nameOfAxis_M(axis_y)}(${storage.getSizeAt(axis_x)}x${storage.getSizeAt(axis_y)}):\n` +
+				cutSV稀疏地图截面可视化(
+					storage,
+					entitiesPositioned,
+					axis_x, axis_y,
+					center,
+					string_l,
+				); // ! ↑这里已经带了一个换行符
+		}
+
+	return result;
+}
+
+/**
+ * 大一统的「母体可视化」
+ * * 现在返回字符串
+ */
+export function SPMAVCV单点母体所有视角截面可视化(
+	matrix: IMatrix,
+	center: iPointRef,
+	string_l: uint = 7, // 限制字长
+): string {
+	// 分派「地图存储结构」的类型
+	if (matrix.map.storage instanceof MapStorageSparse)
+		return SPSACV单点稀疏地图所有视角截面可视化(
+			matrix.map.storage,
+			matrix.entities.filter(i_hasPosition),
+			center,
+			string_l,
+		);
+	throw new Error('不支持该地图存储结构的母体可视化');
+}
+
+/**
+ * 字符串处理：行拼接
+ * 
+ * @example
+ * |x y|
+ * |z w|
+ * +
+ * |a b|
+ * |c d|
+ * =
+ * |x y| |a b|
+ * |z w| |c d|
+ */
+export function rowJoin(rowsA: string[], rowsB: string[], separator: string = ''): string {
+	let result: string = '';
+	for (let i: uint = 0; i < rowsA.length; i++) {
+		result += rowsA[i] + separator + rowsB[i] + '\n';
+	}
+	return result;
+}

@@ -30,7 +30,7 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * * 对二维地图而言：0=x, 1=y
 	 * @param dim 地图尺寸的具体维度
 	 */
-	getMapSizeAt(dim: uint): uint;
+	getSizeAt(dim: uint): uint;
 
 	/**
 	 * 获取地图在所有轴向的尺寸
