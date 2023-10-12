@@ -18,7 +18,7 @@ import { getTimer } from "../../../../legacy/flash/utils";
 import Block from "../../../api/block/Block";
 import BlockAttributes from "../../../api/block/BlockAttributes";
 import Entity from "../../../api/entity/Entity";
-import EntitySystem from "../../../api/entity/EntitySystem";
+import EntitySystem from "./EntitySystem";
 import IMap from "../../../api/map/IMap";
 import IWorldRegistry from "../../../api/registry/IWorldRegistry";
 import BonusBox from "../../batr/entity/item/BonusBox";
