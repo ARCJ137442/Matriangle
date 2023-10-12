@@ -1,5 +1,5 @@
 import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
@@ -64,13 +64,13 @@ export default class BulletNuke extends Bullet {
 
 	//============Display Implements============//
 	/** 先绘制基本轮廓，再绘制特殊标记 */
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		this.drawNukeMark(shape.graphics);
 		shape.scaleX = shape.scaleY = BulletNuke.SIZE / BulletBasic.SIZE;
 	}
 
-	protected drawNukeMark(graphics: IBatrGraphicContext): void {
+	protected drawNukeMark(graphics: IGraphicContext): void {
 		graphics.beginFill(this.ownerLineColor);
 		graphics.drawCircle(0, 0, BulletBasic.SIZE * 0.125);
 		graphics.endFill();

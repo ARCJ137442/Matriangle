@@ -1,5 +1,5 @@
 import { fPoint, iPoint } from "../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { FIXED_TPS } from "../../../../main/GlobalWorldVariables";
@@ -41,7 +41,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		super(position, rot, color, decorationLabel, reverse, life);
 	}
 
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics)

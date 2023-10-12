@@ -1,5 +1,5 @@
 import { fPoint } from "../../../common/geometricTools";
-import { IBatrShape } from "../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../display/api/DisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import Entity from "./Entity";
 import { IEntityActiveLite, IEntityDisplayable, IEntityFixedLived, IEntityOutGrid, IEntityShortLived } from "./EntityInterfaces";
@@ -98,10 +98,10 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     // 可显示 //
     public readonly i_displayable: true = true;
 
-    public abstract shapeInit(shape: IBatrShape, ...params: unknown[]): void;
-    public abstract shapeRefresh(shape: IBatrShape): void;
+    public abstract shapeInit(shape: IShape, ...params: unknown[]): void;
+    public abstract shapeRefresh(shape: IShape): void;
     /** */
-    public shapeDestruct(shape: IBatrShape): void {
+    public shapeDestruct(shape: IShape): void {
         shape.graphics.clear()
     }
 

@@ -1,5 +1,5 @@
 import { fPoint } from "../../../../../common/geometricTools";
-import { IBatrShape, IBatrShapeContainer } from "../../../../../display/api/DisplayInterfaces";
+import { IShape, IShapeContainer } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
@@ -42,7 +42,7 @@ export default class EffectSpawn extends Effect2BlockContainer {	//============S
 	// }
 
 	//============Instance Functions============//
-	override shapeInit(shape: IBatrShapeContainer, block1: IBatrShape, block2: IBatrShape): void {
+	override shapeInit(shape: IShapeContainer, block1: IShape, block2: IShape): void {
 		super.shapeInit(shape, block1, block2);
 		this.drawBlocks(
 			EffectSpawn.DEFAULT_COLOR, EffectSpawn.SIZE,
@@ -78,7 +78,7 @@ export default class EffectSpawn extends Effect2BlockContainer {	//============S
 	}
 
 	/** 实现：根据「动画阶段」更新状态 */
-	public shapeRefresh(shape: IBatrShapeContainer): void {
+	public shapeRefresh(shape: IShapeContainer): void {
 		switch (this._animationStage) {
 			// 第一阶段：逐渐变大
 			case 0:
@@ -86,8 +86,8 @@ export default class EffectSpawn extends Effect2BlockContainer {	//============S
 				break;
 			// 第二阶段：两方块交错旋转90°
 			case 1:
-				(this._block1 as IBatrShape).rot = -(this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) * EffectSpawn.ROTATE_ANGLE;
-				(this._block2 as IBatrShape).rot = 45 + (this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) * EffectSpawn.ROTATE_ANGLE;
+				(this._block1 as IShape).rot = -(this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) * EffectSpawn.ROTATE_ANGLE;
+				(this._block2 as IShape).rot = 45 + (this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) * EffectSpawn.ROTATE_ANGLE;
 				break;
 			// 第三阶段：缩小消失
 			case 2:

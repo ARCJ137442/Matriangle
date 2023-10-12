@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Laser from "./Laser";
 import IMatrix from "../../../../../main/IMatrix";
 import { iPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import LaserBasic from "./LaserBasic";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -64,7 +64,7 @@ export default class LaserAbsorption extends Laser {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		// Left
 		this.drawOwnerLine(
 			shape.graphics,
@@ -91,7 +91,7 @@ export default class LaserAbsorption extends Laser {
 		super.shapeInit(shape); // ! 超类逻辑：处理形状初始化
 	}
 
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.scaleY = this.scaleY; // ! 同步纵轴缩放
 	}
 }

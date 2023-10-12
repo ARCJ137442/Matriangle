@@ -1,4 +1,4 @@
-import { IBatrShape } from "../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { NativeBlockAttributes } from "../registry/BlockAttributesRegistry";
@@ -22,7 +22,7 @@ export class BlockShapeFunctions {
 	protected static readonly COLOR_KILL: uint = 0xff0000;
 	protected static readonly COLOR_ROTATE: uint = 0x0000ff;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		// Back
 		shape.graphics.beginFill(this._color, AbstractBlockXTrap.ALPHA_BACK);
@@ -46,7 +46,7 @@ export class BlockShapeFunctions {
 
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		// Line
 		shape.graphics.beginFill(BlockColorSpawner.LINE_COLOR);
@@ -79,7 +79,7 @@ export class BlockShapeFunctions {
 	protected static readonly ALPHA_FRAME: number = 0.6;
 	protected static readonly ALPHA_FILL: number = 0.2;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		// Line
 		shape.graphics.beginFill(this._color, BlockGlass.ALPHA_FRAME);
@@ -102,7 +102,7 @@ export class BlockShapeFunctions {
 	public static readonly FILL_COLOR: uint = 0xbbbbbb;
 	public static readonly CENTER_COLOR: uint = 0x666666;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		if (this._open) {
 			// Line
@@ -129,7 +129,7 @@ export class BlockShapeFunctions {
 
 	// Colored
 
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		shape.graphics.beginFill(this._color);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
 		shape.graphics.endFill();
@@ -145,7 +145,7 @@ export class BlockShapeFunctions {
 	//========Display Implements========//
 	public static readonly LINE_SIZE: uint = DEFAULT_SIZE / 50;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		// Line
 		shape.graphics.beginFill(this._lineColor);
@@ -182,7 +182,7 @@ export class BlockShapeFunctions {
 	public static readonly CENTER_COLOR: uint = BlockColorSpawner.CENTER_COLOR;
 
 	public static readonly LINE_SIZE: uint = BSBiColored.LINE_SIZE;
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// Line
 		shape.graphics.beginFill(BlockLaserTrap.LINE_COLOR);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
@@ -227,7 +227,7 @@ export class BlockShapeFunctions {
 		shape.graphics.endFill();
 	}
 
-	protected drawRhombus(shape: IBatrShape, cX: number, cY: number, radius: number): void {
+	protected drawRhombus(shape: IShape, cX: number, cY: number, radius: number): void {
 		shape.graphics.moveTo(cX - radius, cY);
 		shape.graphics.lineTo(cX, cY + radius);
 		shape.graphics.lineTo(cX + radius, cY);
@@ -244,7 +244,7 @@ export class BlockShapeFunctions {
 	//============Display Implements============//
 	public static readonly LINE_SIZE: uint = DEFAULT_SIZE / 20;
 
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// Line
 		shape.graphics.beginFill(this._lineColor);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
@@ -264,7 +264,7 @@ export class BlockShapeFunctions {
 	public static readonly FILL_COLOR: uint = 0xbbccbb;
 
 	public static readonly LINE_SIZE: uint = Wall.LINE_SIZE;
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// Line
 		shape.graphics.beginFill(this._lineColor);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
@@ -286,7 +286,7 @@ export class BlockShapeFunctions {
 	public static readonly BASE_ALPHA: number = 0.5;
 
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 32;
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// Base
 		shape.graphics.beginFill(BlockSpawnPointMark.LINE_COLOR, BlockSpawnPointMark.BASE_ALPHA);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
@@ -330,7 +330,7 @@ export class BlockShapeFunctions {
 		shape.graphics.endFill();*/
 	}
 
-	protected drawSpawnMark(shape: IBatrShape, cX: number, cY: number, radius: number): void {
+	protected drawSpawnMark(shape: IShape, cX: number, cY: number, radius: number): void {
 		shape.graphics.drawRect(cX - radius, cY - radius, radius * 2, radius * 2);
 		shape.graphics.moveTo(cX - radius, cY);
 		shape.graphics.lineTo(cX, cY + radius);
@@ -350,7 +350,7 @@ export class BlockShapeFunctions {
 
 	public static readonly LINE_SIZE: number = BlockSupplyPoint.GRID_SIZE / 32;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		// Base
 		shape.graphics.beginFill(BlockSupplyPoint.LINE_COLOR, BlockSupplyPoint.BASE_ALPHA);
@@ -379,7 +379,7 @@ export class BlockShapeFunctions {
 		return BlockWater.ALPHA;
 	}
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		shape.graphics.beginFill(this._color, BlockWater.ALPHA);
 		shape.graphics.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);

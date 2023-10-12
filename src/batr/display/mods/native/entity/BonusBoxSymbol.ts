@@ -1,14 +1,14 @@
 import EffectTeleport from "../../../../server/mods/batr/entity/effect/EffectTeleport";
 import { BonusType, NativeBonusTypes } from "../../../../server/mods/batr/registry/BonusRegistry";
 import { uint } from "../../../../legacy/AS3Legacy";
-import { IBatrDisplayable, IBatrGraphicContext, IBatrShape } from "../../../api/DisplayInterfaces";
+import { IDisplayable, IGraphicContext, IShape } from "../../../api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../api/GlobalDisplayVariables";
 
 /**
  * 奖励箱图形
  * * 用于根据类型统一管理各类奖励箱上的标识
  */
-export default class BonusBoxSymbol implements IBatrDisplayable {
+export default class BonusBoxSymbol implements IDisplayable {
 	//============Static Variables============//
 	// General
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
@@ -76,18 +76,18 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	public readonly i_displayable: true = true;
 
 	/** 实现：绘制图形 */
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		this.drawSymbol(shape.graphics);
 	}
 
 	/** 实现：刷新=重绘 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		this.shapeDestruct(shape);
 		this.shapeInit(shape);
 	}
 
 	/** 实现：清空绘图内容 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 
@@ -97,7 +97,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	public set zIndex(value: number) { this._zIndex = value; }
 
 	/** 工具函数：绘制图形 */
-	public drawSymbol(graphics: IBatrGraphicContext): void {
+	public drawSymbol(graphics: IGraphicContext): void {
 		switch (this._type) {
 			// HHL(HP,Heal&Life)
 			case NativeBonusTypes.ADD_HP:
@@ -150,7 +150,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	}
 
 	//====HHL====//
-	protected drawHPSymbol(graphics: IBatrGraphicContext): void {
+	protected drawHPSymbol(graphics: IGraphicContext): void {
 		// V
 		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
@@ -161,7 +161,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 		graphics.endFill();
 	}
 
-	protected drawHealSymbol(graphics: IBatrGraphicContext): void {
+	protected drawHealSymbol(graphics: IGraphicContext): void {
 		// V
 		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE / 2, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 3);
@@ -170,7 +170,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 		graphics.endFill();
 	}
 
-	protected drawLifeSymbol(graphics: IBatrGraphicContext): void {
+	protected drawLifeSymbol(graphics: IGraphicContext): void {
 		// L
 		graphics.beginFill(BonusBoxSymbol.HP_COLOR);
 		graphics.drawRect(-BonusBoxSymbol.GRID_SIZE * 1.5, -BonusBoxSymbol.GRID_SIZE * 1.5, BonusBoxSymbol.GRID_SIZE, BonusBoxSymbol.GRID_SIZE * 2);
@@ -181,14 +181,14 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	}
 
 	//====Tool====//
-	protected drawToolSymbol(graphics: IBatrGraphicContext): void {
+	protected drawToolSymbol(graphics: IGraphicContext): void {
 		// Circle
 		graphics.lineStyle(BonusBoxSymbol.TOOL_LINE_SIZE, BonusBoxSymbol.TOOL_COLOR);
 		graphics.drawCircle(0, 0, BonusBoxSymbol.GRID_SIZE);
 	}
 
 	//====Attributes====//
-	protected drawAttributesSymbol(graphics: IBatrGraphicContext, color: uint): void {
+	protected drawAttributesSymbol(graphics: IGraphicContext, color: uint): void {
 		// Colored Rectangle
 		/*graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
 		graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
@@ -215,7 +215,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	}
 
 	//====Team====//
-	protected drawTeamSymbol(graphics: IBatrGraphicContext, color: uint): void {
+	protected drawTeamSymbol(graphics: IGraphicContext, color: uint): void {
 		graphics.lineStyle(BonusBoxSymbol.TEAM_LINE_SIZE, color);
 		graphics.moveTo(-BonusBoxSymbol.GRID_SIZE, -BonusBoxSymbol.GRID_SIZE);
 		graphics.lineTo(BonusBoxSymbol.GRID_SIZE, 0);
@@ -224,7 +224,7 @@ export default class BonusBoxSymbol implements IBatrDisplayable {
 	}
 
 	//====Other====//
-	protected drawRandomTeleportSymbol(graphics: IBatrGraphicContext): void {
+	protected drawRandomTeleportSymbol(graphics: IGraphicContext): void {
 		// Teleport Effect
 		// 1
 		graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA);

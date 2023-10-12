@@ -1,5 +1,5 @@
 ﻿import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
-import { IBatrShape } from '../../../../api/DisplayInterfaces';
+import { IShape } from '../../../../api/DisplayInterfaces';
 import IPlayer from "../../../../../server/mods/native/entities/player/IPlayer";
 
 /**
@@ -7,7 +7,7 @@ import IPlayer from "../../../../../server/mods/native/entities/player/IPlayer";
  * * 跟随玩家显示
  * * 展示玩家的各类信息：位置、名称、生命值、冷却、充能……
  */
-export default interface IPlayerGUI extends IBatrShape {
+export default interface IPlayerGUI extends IShape {
 	//============Constructor & Destructor============//
 	/** 构造函数：获取一个玩家的链接 */
 	new(owner: IPlayer): void;

@@ -1,7 +1,7 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Effect from "../../../../api/entity/Effect";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { fPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalWorldVariables";
 
@@ -35,12 +35,12 @@ export default class EffectPlayerLevelup extends Effect {	//============Static V
 	 * 
 	 * ! 【2023-09-17 0:25:38】现在「向上移动」仅作用于显示端，逻辑端不会移动
 	 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.alpha = this.lifePercent;
 		shape.y -= EffectPlayerLevelup.GRID_SIZE / 4 * (1 - this.lifePercent);
 	}
 
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// 设置颜色
 		shape.graphics.lineStyle(EffectPlayerLevelup.LINE_SIZE, this._color, EffectPlayerLevelup.LINE_ALPHA);
 		shape.graphics.beginFill(this._color, EffectPlayerLevelup.FILL_ALPHA);

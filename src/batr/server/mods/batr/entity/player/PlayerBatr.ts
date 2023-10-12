@@ -5,7 +5,7 @@ import Entity from "../../../../api/entity/Entity";
 import BonusBox from "../item/BonusBox";
 import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import IMatrix from "../../../../main/IMatrix";
-import { DisplayLayers, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { DisplayLayers, IShape } from "../../../../../display/api/DisplayInterfaces";
 import PlayerAttributes from "./attributes/PlayerAttributes";
 import { FIXED_TPS, TPS } from "../../../../main/GlobalWorldVariables";
 import Tool from "../../tool/Tool";
@@ -247,7 +247,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	set zIndex(value: uint) { this._zIndex = value }
 
 	// TODO: 这个有些过于涉及显示实现了，到底要不要尾大不掉地放在这儿？本身跟逻辑毫无关系的代码，为什么还要有这样的冗余。。。
-	shapeInit(shape: IBatrShape): void {
+	shapeInit(shape: IShape): void {
 		let realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
 		let realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
 		shape.graphics.clear();
@@ -279,12 +279,12 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	/** TODO: 待实现的「更新」函数 */
-	shapeRefresh(shape: IBatrShape): void {
+	shapeRefresh(shape: IShape): void {
 		throw new Error("Method not implemented.");
 	}
 
 	/** TODO: 待实现的「析构」函数 */
-	shapeDestruct(shape: IBatrShape): void {
+	shapeDestruct(shape: IShape): void {
 		throw new Error("Method not implemented.");
 	}
 

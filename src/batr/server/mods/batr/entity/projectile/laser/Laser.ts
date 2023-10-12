@@ -4,7 +4,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { iPoint, intPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape } from "../../../../../../display/api/DisplayInterfaces";
 import IMatrix from "../../../../../main/IMatrix";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
@@ -94,7 +94,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
 	 * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
 	 */
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		shape.scaleX = this._length
 	}
 	/** 
@@ -103,13 +103,13 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * ? 是否需要重绘图形，以便（每次显示更新时）响应玩家颜色
 	 * * 可能的性能开销
 	 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		// this.shapeDestruct(shape);
 		// this.shapeInit(shape);
 		shape.scaleX = this._length
 	}
 	/** 析构：清空图形上下文 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 
@@ -122,7 +122,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * @param alpha 绘制的不透明度
 	 */
 	protected drawLine(
-		graphics: IBatrGraphicContext,
+		graphics: IGraphicContext,
 		y1: number, y2: number,
 		color: uint = 0xffffff,
 		alpha: number = 1
@@ -138,7 +138,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	}
 
 	protected drawOwnerLine(
-		graphics: IBatrGraphicContext,
+		graphics: IGraphicContext,
 		y1: number, y2: number,
 		alpha: number = 1
 	): void {

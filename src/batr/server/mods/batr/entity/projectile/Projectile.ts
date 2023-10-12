@@ -1,5 +1,5 @@
 import { halfBrightnessTo } from "../../../../../common/color";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityActive, IEntityDisplayable, IEntityShortLived, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
@@ -169,9 +169,9 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	public get zIndex(): uint { return this._zIndex; }
 	public set zIndex(value: uint) { this._zIndex = value; }
 
-	public abstract shapeInit(shape: IBatrShape, ...params: unknown[]): void
-	public abstract shapeRefresh(shape: IBatrShape): void
-	public abstract shapeDestruct(shape: IBatrShape): void
+	public abstract shapeInit(shape: IShape, ...params: unknown[]): void
+	public abstract shapeRefresh(shape: IShape): void
+	public abstract shapeDestruct(shape: IShape): void
 
 	/**
 	 * （显示端）获取所有者（玩家）的填充颜色

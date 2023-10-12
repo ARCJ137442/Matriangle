@@ -1,5 +1,5 @@
 import { uint } from "../../../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { fPoint, iPoint, xPoint } from "../../../../../common/geometricTools";
 import EffectPlayerLike from "./EffectPlayerLike";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
@@ -53,7 +53,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 
 	//============Instance Functions============//
 	/** 实现：绘制玩家轮廓 */
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值
@@ -64,7 +64,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 	}
 
 	/** 覆盖：尺寸放大/缩小 */
-	override shapeRefresh(shape: IBatrShape): void {
+	override shapeRefresh(shape: IShape): void {
 		super.shapeRefresh(shape);
 		// ! ↓因为前面已经通过「是否倒放」设置了`shape.alpha`，而这里直接使用该值，以避免再次判断「是否倒放」
 		shape.scaleX = shape.scaleY = (

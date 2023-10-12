@@ -5,7 +5,7 @@ import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
 import IMatrix from "../../../../../main/IMatrix";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 
@@ -61,7 +61,7 @@ export default class LaserPulse extends Laser {
 	 * 实现：
 	 * @param shape 绘制的目标
 	 */
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		for (let i: uint = 0; i < 2; i++) { // 0,1
 			this.drawOwnerLine(
 				shape.graphics,
@@ -76,7 +76,7 @@ export default class LaserPulse extends Laser {
 	/**
 	 * 覆盖：根据自身「y尺寸」调整纵向缩放
 	 */
-	override shapeRefresh(shape: IBatrShape): void {
+	override shapeRefresh(shape: IShape): void {
 		super.shapeRefresh(shape);
 		if (this.isPull) {
 			shape.scaleY = 1 + this.life / LaserPulse.LIFE;

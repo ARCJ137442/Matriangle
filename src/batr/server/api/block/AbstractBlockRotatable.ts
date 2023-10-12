@@ -1,5 +1,5 @@
 import { uint } from "../../../legacy/AS3Legacy";
-import { IBatrShape } from "../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../display/api/DisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 import Block from "./Block";
 import { mRot } from "../../general/GlobalRot";
@@ -30,7 +30,7 @@ export default abstract class AbstractBlockRotatable extends Block {
 
 	//========Display Implements========//
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		shape.rot = this._direction;
 	}

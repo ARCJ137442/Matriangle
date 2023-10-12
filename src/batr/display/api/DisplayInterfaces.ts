@@ -8,7 +8,7 @@ import { IChildContainer } from '../../common/abstractInterfaces';
  * * it will manipulate an shape that corresponds itself
  * * 它将操作一个与自己对应的显示对象
  */
-export interface IBatrDisplayable {
+export interface IDisplayable {
 
     /**
      * 用于识别「是否实现接口」的标识符
@@ -24,7 +24,7 @@ export interface IBatrDisplayable {
      * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
-    shapeInit(shape: IBatrShape, ...params: unknown[]): void;
+    shapeInit(shape: IShape, ...params: unknown[]): void;
 
     /**
      * The same as `shapeInit`, but it will be called by object refreshing 
@@ -35,7 +35,7 @@ export interface IBatrDisplayable {
      * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
-    shapeRefresh(shape: IBatrShape): void;
+    shapeRefresh(shape: IShape): void;
 
     /**
      * The destructor of shape, it will be called by object rerendering 
@@ -46,7 +46,7 @@ export interface IBatrDisplayable {
      * 
      * @param shape the display object corresponds `Shape` in Flash.
      */
-    shapeDestruct(shape: IBatrShape): void;
+    shapeDestruct(shape: IShape): void;
 
     /**
      * 控制对象显示时的「堆叠覆盖层级」
@@ -64,10 +64,10 @@ export interface IBatrDisplayable {
 }
 
 /**
- * 同IBatrDisplayable，但操作的是一个「图形容器」
+ * 同IDisplayable，但操作的是一个「图形容器」
  * * 它将操作一个与自己对应的显示对象
  */
-export interface IBatrDisplayableContainer extends IBatrDisplayable {
+export interface IDisplayableContainer extends IDisplayable {
 
     /**
      * 用于识别「是否实现接口」的标识符
@@ -78,13 +78,13 @@ export interface IBatrDisplayableContainer extends IBatrDisplayable {
     readonly i_displayableContainer: true;
 
     /** 现在要求是「容器」了 */
-    shapeInit(shape: IBatrShapeContainer, ...children: IBatrDisplayable[]): void;
+    shapeInit(shape: IShapeContainer, ...children: IDisplayable[]): void;
 
     /** 现在要求是「容器」了 */
-    shapeRefresh(shape: IBatrShapeContainer): void;
+    shapeRefresh(shape: IShapeContainer): void;
 
     /** 现在要求是「容器」了 */
-    shapeDestruct(shape: IBatrShapeContainer): void;
+    shapeDestruct(shape: IShapeContainer): void;
 }
 
 /**
@@ -95,9 +95,9 @@ export interface IBatrDisplayableContainer extends IBatrDisplayable {
  * * 它抽象了原来与flash强耦合的功能，
  * so that the logic can control the front-end rendering and separate from the concrete implementation of the display.
  * * 使逻辑端可以控制显示端的呈现，并与「具体显示平台实现」分离。
- *   * 如：逻辑端只需要调用这个文件里接口有的方法，不需要管这个IBaTrShape到底是用H5还是QT实现的
+ *   * 如：逻辑端只需要调用这个文件里接口有的方法，不需要管这个IShape到底是用H5还是QT实现的
  */
-export interface IBatrShape extends IBatrDisplayable {
+export interface IShape extends IDisplayable {
 
     /**
      * 决定图形x轴上的「缩放尺寸」
@@ -117,7 +117,7 @@ export interface IBatrShape extends IBatrDisplayable {
      * migrate from Flash's Graphics object, then implements with another interface
      * 从Flash的Graphics对象迁移过来，并使用另一个接口实现
      */
-    get graphics(): IBatrGraphicContext;
+    get graphics(): IGraphicContext;
 
     /**
      * 图形「是否可见」
@@ -159,14 +159,14 @@ export interface IBatrShape extends IBatrDisplayable {
  * * 目前使用数组作为容器存放子元素的「容器」，故其索引为自然数
  */
 
-export interface IBatrShapeContainer extends IBatrShape, IChildContainer<IBatrShape, uint> { }
+export interface IShapeContainer extends IShape, IChildContainer<IShape, uint> { }
 
 /**
  * The migrated interface from `flash.display.Graphics`
  * 迁移自Flash的Graphics类
  * * Reference: https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/Graphics.html
  */
-export interface IBatrGraphicContext {
+export interface IGraphicContext {
     clear(): void;
 
     beginFill(color: uint, alpha?: number/*=1.0*/): void;
@@ -181,7 +181,7 @@ export interface IBatrGraphicContext {
     ): void;
     endFill(): void;
 
-    copyFrom(sourceGraphics: IBatrGraphicContext): void
+    copyFrom(sourceGraphics: IGraphicContext): void
 
     drawRect(x: number, y: number, width: number, height: number): void
     drawRoundRect(x: number, y: number, width: number, height: number, ellipseWidth: number, ellipseHeight?: number/* = NaN*/): void

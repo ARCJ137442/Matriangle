@@ -10,6 +10,7 @@
     "editor.insertSpaces": false,
     "conventionalCommits.scopes": [
         "IO/Web",
-        "可视化"
+        "可视化",
+        "显示端"
     ]
 }

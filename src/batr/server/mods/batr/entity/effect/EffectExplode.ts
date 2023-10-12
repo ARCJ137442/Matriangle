@@ -1,6 +1,6 @@
 import { fPoint } from "../../../../../common/geometricTools";
 import { uintToPercent } from "../../../../../common/utils";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { logical2Real } from "../../../../../display/api/PosTransform";
 import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
@@ -44,7 +44,7 @@ export default class EffectExplode extends Effect {
 	/** 默认线条粗细 */
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25;
 
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		shape.graphics.clear();
 		shape.graphics.lineStyle(EffectExplode.LINE_SIZE, this.color, uintToPercent(EffectExplode.LINE_ALPHA));
 		shape.graphics.beginFill(this.color, uintToPercent(EffectExplode.FILL_ALPHA));
@@ -53,7 +53,7 @@ export default class EffectExplode extends Effect {
 	}
 
 	/** 实现：透明度跟随生命周期百分比 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.alpha = this.lifePercent
 	}
 

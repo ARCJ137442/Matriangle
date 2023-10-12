@@ -2,7 +2,7 @@ import { uint, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Block from "../../../../api/block/Block";
 import Effect from "../../../../api/entity/Effect";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { uintToPercent } from "../../../../../common/utils";
 import { fPoint, iPoint } from "../../../../../common/geometricTools";
 import { TPS } from "../../../../main/GlobalWorldVariables";
@@ -91,7 +91,7 @@ export default class EffectBlockLight extends Effect {
 	}
 
 	//============Display Implements============//
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		let realRadiusX: number = EffectBlockLight.SIZE / 2;
 		let realRadiusY: number = EffectBlockLight.SIZE / 2;
 		shape.graphics.beginFill(this._color, uintToPercent(this._alpha));
@@ -108,7 +108,7 @@ export default class EffectBlockLight extends Effect {
 		shape.graphics.endFill();
 	}
 
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.alpha = this._alphaFunction(this);
 		shape.scaleX = shape.scaleY = EffectBlockLight.MIN_SCALE + (EffectBlockLight.MAX_SCALE - EffectBlockLight.MIN_SCALE) * (1 - shape.alpha);
 	}

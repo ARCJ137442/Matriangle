@@ -1,5 +1,5 @@
 import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -80,13 +80,13 @@ export default class BulletBomber extends Bullet {
 	public static readonly SIZE: number = 0.4 * DEFAULT_SIZE;
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00;
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		this.drawBomberSign(shape.graphics);
 		shape.scaleX = shape.scaleY = BulletBomber.SIZE / BulletBasic.SIZE;
 	}
 
-	protected drawBomberSign(graphics: IBatrGraphicContext): void {
+	protected drawBomberSign(graphics: IGraphicContext): void {
 		let realRadius: number = BulletBasic.SIZE * 0.15;
 		graphics.beginFill(this.ownerLineColor);
 		graphics.moveTo(-realRadius, -realRadius);

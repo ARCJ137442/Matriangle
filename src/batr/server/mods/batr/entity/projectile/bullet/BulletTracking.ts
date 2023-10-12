@@ -1,5 +1,5 @@
 ﻿import { fPoint } from "../../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { comparePosition_I, mRot } from "../../../../../general/GlobalRot";
@@ -190,13 +190,13 @@ export default class BulletTracking extends Bullet {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 		this.drawTrackingSign(shape.graphics);
 		shape.scaleX = shape.scaleY = BulletTracking.SIZE / BulletBasic.SIZE;
 	}
 
-	protected drawTrackingSign(graphics: IBatrGraphicContext): void {
+	protected drawTrackingSign(graphics: IGraphicContext): void {
 		graphics.beginFill(this.ownerLineColor);
 		let radius: number = BulletTracking.SIZE * 0.125;
 		graphics.moveTo(-radius, -radius);

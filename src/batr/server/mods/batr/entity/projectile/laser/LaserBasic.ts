@@ -2,7 +2,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import Laser from "./Laser";
 import IMatrix from "../../../../../main/IMatrix";
 import { mRot } from "../../../../../general/GlobalRot";
@@ -50,7 +50,7 @@ export default class LaserBasic extends Laser {
 
 	//============Display Implements============//
 	/** 覆盖：先绘制，再拉伸 */
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		// 先绘制
 		for (let i: uint = 0; i < 3; i++) { // 0,1,2
 			this.drawOwnerLine(
@@ -69,7 +69,7 @@ export default class LaserBasic extends Laser {
 	 * 
 	 * ? 无需重绘图形：无需考虑玩家颜色
 	 */
-	override shapeRefresh(shape: IBatrShape): void {
+	override shapeRefresh(shape: IShape): void {
 		super.shapeRefresh(shape);
 		shape.scaleY = this.lifePercent;
 	}

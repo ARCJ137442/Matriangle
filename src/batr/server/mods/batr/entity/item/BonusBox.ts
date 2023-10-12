@@ -1,7 +1,7 @@
 
 
 import { uint } from "../../../../../legacy/AS3Legacy";
-import { DisplayLayers, IBatrShape, IBatrShapeContainer } from "../../../../../display/api/DisplayInterfaces";
+import { DisplayLayers, IShape, IShapeContainer } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import Entity from "../../../../api/entity/Entity";
 import { IEntityDisplayableContainer, IEntityInGrid } from "../../../../api/entity/EntityInterfaces";
@@ -74,7 +74,7 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	/** 边缘的空白 */
 	public static readonly BORDER_SPACE: number = (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
 
-	public shapeInit(shape: IBatrShapeContainer, symbol: IBatrShape): void {
+	public shapeInit(shape: IShapeContainer, symbol: IShape): void {
 		// 绘制盒子
 		this.drawBox(shape);
 		// 初始化符号
@@ -84,11 +84,11 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 		shape.addChild(symbol); // 添加子元素 */
 	}
 
-	public shapeRefresh(shape: IBatrShapeContainer): void {
+	public shapeRefresh(shape: IShapeContainer): void {
 		// ? 待定
 	}
 
-	public shapeDestruct(shape: IBatrShapeContainer): void {
+	public shapeDestruct(shape: IShapeContainer): void {
 		// 遍历（唯一的一个）子元素
 		for (let symbol of shape.children) {
 			symbol.graphics.clear()
@@ -102,7 +102,7 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 		// this.shapeRefresh(this.shape); // TODO: 请求更新
 	}
 
-	protected drawBox(shape: IBatrShape): void {
+	protected drawBox(shape: IShape): void {
 		// Define
 		// let radius:Number=DEFAULT_SIZE/2;
 		// Line

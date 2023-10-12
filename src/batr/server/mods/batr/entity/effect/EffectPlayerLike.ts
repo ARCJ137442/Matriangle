@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables"
 import Effect from "../../../../api/entity/Effect";
 import { IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import { TPS } from "../../../../main/GlobalWorldVariables";
-import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape } from "../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
@@ -99,7 +99,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	 * @param size 尺寸（绘图的长宽）
 	 */
 	public static moveToPlayerShape(
-		graphics: IBatrGraphicContext,
+		graphics: IGraphicContext,
 		sizeX: number = EffectPlayerLike.SIZE,
 		sizeY: number = EffectPlayerLike.SIZE,
 	): void {
@@ -112,13 +112,13 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 		// graphics.endFill();
 	}
 
-	protected drawDecoration(shape: IBatrShape): void {
+	protected drawDecoration(shape: IShape): void {
 		if (this._decorationLabel !== null)
 			drawShapeDecoration(shape.graphics, this._decorationLabel);
 	}
 
 	/** 实现接口：更新不透明度 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.alpha = this._alphaFunction(this);
 	}
 }

@@ -1,5 +1,5 @@
 import { fPoint } from "../../../../../common/geometricTools";
-import { IBatrGraphicContext, IBatrShape, IBatrShapeContainer } from "../../../../../display/api/DisplayInterfaces";
+import { IGraphicContext, IShape, IShapeContainer } from "../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../display/api/GlobalDisplayVariables";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import Effect from "../../../../api/entity/Effect";
@@ -29,14 +29,14 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 	/** 指示特效在显示大小最大时的尺寸（倍数） */
 	protected maxScale: number;
 	/** 子元素：方块1（横），保留引用以便快速更新 */
-	protected _block1: IBatrShape | null = null;
+	protected _block1: IShape | null = null;
 	/** 子元素：方块2（纵），保留引用以便快速更新 */
-	protected _block2: IBatrShape | null = null;
+	protected _block2: IShape | null = null;
 	/** 标明这个对象需要一个「图形容器」 */
 	public readonly i_displayableContainer: true = true;
 
 	/** 实现：要求两个「普通图形」对象作为其子元素 */
-	public shapeInit(shape: IBatrShapeContainer, block1: IBatrShape, block2: IBatrShape): void {
+	public shapeInit(shape: IShapeContainer, block1: IShape, block2: IShape): void {
 		// this.drawBlocks(Effect2BlockContainer.DEFAULT_COLOR, Effect2BlockContainer.SIZE);
 		this._block1 = block1;
 		this._block2 = block2;
@@ -44,10 +44,10 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 	}
 
 	/** 抽象 */
-	public abstract shapeRefresh(shape: IBatrShapeContainer): void;
+	public abstract shapeRefresh(shape: IShapeContainer): void;
 
 	/**	实现：移除子图形 */
-	public shapeDestruct(shape: IBatrShapeContainer): void {
+	public shapeDestruct(shape: IShapeContainer): void {
 		// 尺寸同步
 		shape.scaleX = shape.scaleY = 0; // 尺寸清零
 		// block1
@@ -62,7 +62,7 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 		}
 	}
 
-	protected addChildren(shapeContainer: IBatrShapeContainer): void {
+	protected addChildren(shapeContainer: IShapeContainer): void {
 		if (this._block1 !== null) shapeContainer.addChild(this._block1);
 		if (this._block2 !== null) shapeContainer.addChild(this._block2);
 	}
@@ -89,7 +89,7 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 
 	/** 绘制单个方形 */
 	protected drawBlock(
-		graphics: IBatrGraphicContext,
+		graphics: IGraphicContext,
 		color: uint, size: uint,
 		lineSize: number, lineAlpha: number, fillAlpha: number
 	): void {

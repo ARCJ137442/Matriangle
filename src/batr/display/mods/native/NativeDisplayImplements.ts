@@ -1,4 +1,4 @@
-import { IBatrGraphicContext } from "../../api/DisplayInterfaces";
+import { IGraphicContext } from "../../api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../api/GlobalDisplayVariables";
 import { NativeDecorationLabel } from "./entity/player/DecorationLabels";
 
@@ -11,7 +11,7 @@ import { NativeDecorationLabel } from "./entity/player/DecorationLabels";
  * @param radius 装饰半径
  */
 export function drawShapeDecoration(
-    graphics: IBatrGraphicContext,
+    graphics: IGraphicContext,
     decorationLabel: NativeDecorationLabel,
     radius: number = DEFAULT_SIZE / 10
 ): void {

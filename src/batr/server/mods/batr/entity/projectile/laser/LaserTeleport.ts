@@ -5,7 +5,7 @@ import IMatrix from "../../../../../main/IMatrix";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { iPoint } from "../../../../../../common/geometricTools";
 import LaserBasic from "./LaserBasic";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 
@@ -47,7 +47,7 @@ export default class LaserTeleport extends Laser {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		// Middle
 		this.drawOwnerLine(
 			shape.graphics,
@@ -68,7 +68,7 @@ export default class LaserTeleport extends Laser {
 		super.shapeInit(shape);
 	}
 
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.alpha = (this.life & 3) < 2 ? 0.75 : 1;
 		if (this.life < 1 / 4 * LaserTeleport.LIFE)
 			shape.scaleY = (1 / 4 * LaserTeleport.LIFE - this.life) / (1 / 4 * LaserTeleport.LIFE);

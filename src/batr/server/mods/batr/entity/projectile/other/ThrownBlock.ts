@@ -2,7 +2,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import Projectile from "../Projectile";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import IMatrix from "../../../../../main/IMatrix";
 import { IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
@@ -187,7 +187,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	 * ! 【2023-09-22 22:27:00】现在其显示直接复用相应方块的显示
 	 * * 坐标系统也一并对齐（采用「左上角布局」）
 	 */
-	public shapeInit(blockShape: IBatrShape): void {
+	public shapeInit(blockShape: IShape): void {
 		// 内部方块的显示
 		return this._carriedBlock?.shapeInit(blockShape)
 		/* if (this._carriedBlock !== null) {
@@ -202,10 +202,10 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	 * 💭一般情况下不会再更新了
 	 * * 除非「位置」
 	 */
-	public shapeRefresh(shape: IBatrShape): void { }
+	public shapeRefresh(shape: IShape): void { }
 
 	/** 实现：清除图形 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }

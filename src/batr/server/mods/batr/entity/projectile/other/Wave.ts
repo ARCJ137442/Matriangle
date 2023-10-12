@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/EntityInterfaces";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { fPoint } from "../../../../../../common/geometricTools";
 import IMatrix from "../../../../../main/IMatrix";
 import { waveHurtPlayers } from "../../../mechanics/NativeMatrixMechanics";
@@ -104,7 +104,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	 * * 使用三次贝塞尔曲线绘制月牙形状
 	 * @param shape 目标图形
 	 */
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		let realRadius: number = Wave.SIZE / 2;
 
 		shape.graphics.beginFill(this.ownerColor, Wave.ALPHA);
@@ -123,11 +123,11 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	}
 
 	/** 实现：除了尺寸变大，基本没有什么要刷新的 */ // TODO: 【2023-09-20 23:45:06】除了坐标？这个还需要处理一下，可能需要在显示端的图形那边进行「一对一绑定」
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.scaleX = shape.scaleY = this._nowScale;
 	}
 
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

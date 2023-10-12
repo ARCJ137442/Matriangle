@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import IMatrix from "../../../../../main/IMatrix";
 import { IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
 import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from "../../../../../main/GlobalWorldVariables";
@@ -103,7 +103,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	public onPositedBlockUpdate(host: IMatrix): void { }
 
 	//============Display Implements============//
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		shape.graphics.beginFill(this.ownerColor, 0.5);
 		shape.graphics.drawRect(
 			-ShockWaveDrone.BLOCK_RADIUS, -ShockWaveDrone.BLOCK_RADIUS,
@@ -117,10 +117,10 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	}
 
 	/** 刷新：无 */
-	public shapeRefresh(shape: IBatrShape): void { }
+	public shapeRefresh(shape: IShape): void { }
 
 	/** 实现：清除绘图 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear();
 	}
 }

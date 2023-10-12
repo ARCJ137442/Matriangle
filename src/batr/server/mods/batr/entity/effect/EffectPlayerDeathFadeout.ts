@@ -1,5 +1,5 @@
 import { fPoint, iPoint } from "../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../display/api/DisplayInterfaces";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { TPS } from "../../../../main/GlobalWorldVariables";
@@ -40,7 +40,7 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {	//=====
 	}
 
 	//============Display Implements============//
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA);
 		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值

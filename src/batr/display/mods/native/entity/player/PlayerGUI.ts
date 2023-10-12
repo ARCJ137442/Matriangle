@@ -1,14 +1,14 @@
 ﻿import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../api/GlobalDisplayVariables";
 import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
-import { IBatrGraphicContext, IBatrShape, IBatrShapeContainer } from '../../../../api/DisplayInterfaces';
+import { IGraphicContext, IShape, IShapeContainer } from '../../../../api/DisplayInterfaces';
 import { logical2Real, real2Logical } from "../../../../api/PosTransform";
 
 /**
  * It's A GUI Attach to Player(x=0,y=0)
  * TODO: 【2023-09-27 21:45:44】面向显示，以后再慢慢实现
  */
-export default class PlayerGUI implements IBatrShapeContainer {
+export default class PlayerGUI implements IShapeContainer {
 	//============Static Variables============//
 	// Display Color
 	public static readonly HP_COLOR: uint = 0xff0000;
@@ -57,15 +57,15 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	protected _nameTagFormat: TextFormat = new TextFormat();
 
 	// Graphics
-	protected _pointerTriangle: IBatrShape = new Shape();
-	protected _HPBarHP: IBatrShape = new Shape();
-	protected _HPBarFrame: IBatrShape = new Shape();
-	protected _chargeBarCharge: IBatrShape = new Shape();
-	protected _chargeBarFrame: IBatrShape = new Shape();
-	protected _CDBarCD: IBatrShape = new Shape();
-	protected _CDBarFrame: IBatrShape = new Shape();
-	protected _experienceBarExperience: IBatrShape = new Shape();
-	protected _experienceBarFrame: IBatrShape = new Shape();
+	protected _pointerTriangle: IShape = new Shape();
+	protected _HPBarHP: IShape = new Shape();
+	protected _HPBarFrame: IShape = new Shape();
+	protected _chargeBarCharge: IShape = new Shape();
+	protected _chargeBarFrame: IShape = new Shape();
+	protected _CDBarCD: IShape = new Shape();
+	protected _CDBarFrame: IShape = new Shape();
+	protected _experienceBarExperience: IShape = new Shape();
+	protected _experienceBarFrame: IShape = new Shape();
 
 	protected _HPBarText: TextField = new TextField();
 	protected _nameTagText: TextField = new TextField();
@@ -117,7 +117,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	set scaleY(value: number) {
 		throw new Error("Method not implemented.");
 	}
-	get graphics(): IBatrGraphicContext {
+	get graphics(): IGraphicContext {
 		throw new Error("Method not implemented.");
 	}
 	get isVisible(): boolean {
@@ -152,10 +152,10 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	}
 
 	public readonly i_displayable: true = true;
-	shapeRefresh(shape: IBatrShape): void {
+	shapeRefresh(shape: IShape): void {
 		throw new Error("Method not implemented.");
 	}
-	shapeDestruct(shape: IBatrShape): void {
+	shapeDestruct(shape: IShape): void {
 		throw new Error("Method not implemented.");
 	}
 	get zIndex(): number {
@@ -164,31 +164,31 @@ export default class PlayerGUI implements IBatrShapeContainer {
 	set zIndex(value: number) {
 		throw new Error("Method not implemented.");
 	}
-	get children(): IBatrShape[] {
+	get children(): IShape[] {
 		throw new Error("Method not implemented.");
 	}
 	get numChildren(): number {
 		throw new Error("Method not implemented.");
 	}
-	getChildAt(index: number): IBatrShape {
+	getChildAt(index: number): IShape {
 		throw new Error("Method not implemented.");
 	}
-	indexOfChild(child: IBatrShape): number | void {
+	indexOfChild(child: IShape): number | void {
 		throw new Error("Method not implemented.");
 	}
-	firstChildBy(criteria: (child: IBatrShape) => boolean): void | IBatrShape {
+	firstChildBy(criteria: (child: IShape) => boolean): void | IShape {
 		throw new Error("Method not implemented.");
 	}
-	addChild(child: IBatrShape): void {
+	addChild(child: IShape): void {
 		throw new Error("Method not implemented.");
 	}
 	addChildAt(index: number): void {
 		throw new Error("Method not implemented.");
 	}
-	removeChildBy(criteria: (child: IBatrShape) => boolean): void {
+	removeChildBy(criteria: (child: IShape) => boolean): void {
 		throw new Error("Method not implemented.");
 	}
-	removeChild(child: IBatrShape): void {
+	removeChild(child: IShape): void {
 		throw new Error("Method not implemented.");
 	}
 	removeChildAt(index: number): void {
@@ -370,7 +370,7 @@ export default class PlayerGUI implements IBatrShapeContainer {
 		this._experienceBarFrame.y = this._experienceBarExperience.y = -0.6 * DEFAULT_SIZE;
 	}
 
-	protected drawPointerTriangle(graphics: IBatrGraphicContext): void {
+	protected drawPointerTriangle(graphics: IGraphicContext): void {
 		let realRadiusX: number = 0.1875 * DEFAULT_SIZE;
 		let realRadiusY: number = 0.1875 * DEFAULT_SIZE;
 		graphics.clear();

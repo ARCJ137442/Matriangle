@@ -5,7 +5,7 @@ import BlockAttributes from "../../../../../api/block/BlockAttributes";
 import Projectile from "../Projectile";
 import { IEntityFixedLived, IEntityInGrid } from '../../../../../api/entity/EntityInterfaces';
 import { TPS } from "../../../../../main/GlobalWorldVariables";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import IMatrix from '../../../../../main/IMatrix';
 import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
 import { intAbs, intMin } from "../../../../../../common/exMath";
@@ -233,7 +233,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 * ? 第一次更新，第一个世界刻……联动耦合地太紧了
 	 * * 第一次计算完成之后就应该绘制（且只绘制一次图）
 	 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		// 更新不透明度
 		shape.alpha = this._life / Lightning.LIFE;
 		// 尝试绘制闪电
@@ -242,15 +242,15 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		this._isDrawComplete = this.isCalculated;
 	}
 
-	override shapeInit(shape: IBatrShape): void {
+	override shapeInit(shape: IShape): void {
 		// ! 这时候可能路径还没计算好，所以不能绘制……
 	}
 
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear();
 	}
 
-	protected drawLightning(shape: IBatrShape): void {
+	protected drawLightning(shape: IShape): void {
 		if (this._wayPoints.length < 1) return;
 		// These points uses local grid,for example the initial point instanceof (0,0)
 		let point: iPoint = this._wayPoints[0], pointH: iPoint = this._wayPoints[0];

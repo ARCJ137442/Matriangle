@@ -8,7 +8,7 @@
  */
 
 import { fPoint, iPoint, xPoint } from "../../../common/geometricTools";
-import { IBatrDisplayable, IBatrDisplayableContainer } from "../../../display/api/DisplayInterfaces";
+import { IDisplayable, IDisplayableContainer } from "../../../display/api/DisplayInterfaces";
 import { uint } from "../../../legacy/AS3Legacy";
 import IMatrix from "../../main/IMatrix";
 import { mRot } from "../../general/GlobalRot";
@@ -165,7 +165,7 @@ export function i_hasDirection(e: Entity): e is IEntityWithDirection {
  * 典例：
  * * 几乎一切原生实体
  */
-export interface IEntityDisplayable extends Entity, IBatrDisplayable { }
+export interface IEntityDisplayable extends Entity, IDisplayable { }
 
 /**
  * 「容器可显示实体」是
@@ -176,7 +176,7 @@ export interface IEntityDisplayable extends Entity, IBatrDisplayable { }
  * * 特效/重生
  * * 特效/传送
  */
-export interface IEntityDisplayableContainer extends Entity, IBatrDisplayableContainer { }
+export interface IEntityDisplayableContainer extends Entity, IDisplayableContainer { }
 
 /**
  * 「活跃实体」是指

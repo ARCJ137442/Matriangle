@@ -1,6 +1,6 @@
 import { addNReturnKey, identity, key } from "../../../common/utils";
 import { uint } from "../../../legacy/AS3Legacy";
-import { IBatrDisplayable, IBatrShape } from "../../../display/api/DisplayInterfaces";
+import { IDisplayable, IShape } from "../../../display/api/DisplayInterfaces";
 import BlockAttributes from "./BlockAttributes";
 import { IJSObjectifiable, JSObject, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastGenerateJSObjectifyMapProperty, loadRecursiveCriterion_false, loadRecursiveCriterion_true, uniLoadJSObject } from "../../../common/JSObjectify";
 import { typeID } from "../registry/IWorldRegistry";
@@ -13,7 +13,7 @@ import BlockState from "./BlockState";
  * 
  * TODO: 【2023-09-24 18:42:16】这玩意儿也要参与序列化吗？
  */
-export default class Block<BS extends BlockState | null = BlockState | null> implements IBatrDisplayable, IJSObjectifiable<Block<BS>> {
+export default class Block<BS extends BlockState | null = BlockState | null> implements IDisplayable, IJSObjectifiable<Block<BS>> {
 
 	// JS对象 //
 
@@ -197,16 +197,16 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 	public readonly i_displayable: true = true;
 
 	/** 初始化：无 */
-	public shapeInit(shape: IBatrShape): void { }
+	public shapeInit(shape: IShape): void { }
 
 	/** 默认实现：重绘图形 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		this.shapeDestruct(shape);
 		this.shapeInit(shape);
 	}
 
 	/** 默认实现：删除绘图数据 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear();
 	}
 }

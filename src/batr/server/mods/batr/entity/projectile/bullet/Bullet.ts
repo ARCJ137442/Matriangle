@@ -1,5 +1,5 @@
 import { fPoint, iPoint, floatPoint } from "../../../../../../common/geometricTools";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariables";
 import { logical2Real } from "../../../../../../display/api/PosTransform";
 import { uint } from "../../../../../../legacy/AS3Legacy";
@@ -156,7 +156,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 * 
 	 * @param shape 初始化要绘制到的图形
 	 */
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		let realRadiusX: number = Bullet.SIZE / 2;
 		let realRadiusY: number = Bullet.SIZE / 2;
 
@@ -182,11 +182,11 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		shape.graphics.endFill();
 	}
 
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 
 	}
 
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear();
 	}
 

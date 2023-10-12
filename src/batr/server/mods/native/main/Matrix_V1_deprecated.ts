@@ -3,7 +3,7 @@
  * * 后续`Matrix_V1.ts`等文件会从中逐渐迁移代码
  */
 
-import { IBatrShape } from "../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../display/api/DisplayInterfaces";
 import { DISPLAY_SIZE, DISPLAY_GRIDS, DEFAULT_SCALE, DEFAULT_SIZE } from "../../../../display/api/GlobalDisplayVariables";
 import FixedI18nText from "../../../../display/api/i18n/FixedI18nText";
 import I18nKey from "../../../../display/api/i18n/I18nKey";
@@ -67,7 +67,7 @@ export default class Matrix_V1 implements IMatrix {
 	 * 
 	 * TODO: 后续专门提取出「显示对接模块」用于对接代码
 	 */
-	protected static readonly _displayLayer_Map: IBatrShape[][] = [];
+	protected static readonly _displayLayer_Map: IShape[][] = [];
 
 	/* public static readonly WORLD_PLAYING_TIME_TEXT_FORMAT: TextFormat = new TextFormat(
 		new MainFont().fontName,

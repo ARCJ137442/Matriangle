@@ -3,7 +3,7 @@ import { DEFAULT_SIZE } from "../../../../../../display/api/GlobalDisplayVariabl
 import Projectile from "../Projectile";
 import ShockWaveDrone from "./ShockWaveDrone";
 import { IEntityFixedLived, IEntityInGrid } from "../../../../../api/entity/EntityInterfaces";
-import { IBatrShape } from "../../../../../../display/api/DisplayInterfaces";
+import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import { fPoint, iPoint, iPointRef, iPointVal } from "../../../../../../common/geometricTools";
 import IMatrix from "../../../../../main/IMatrix";
@@ -173,7 +173,7 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	//============Display Implements============//
 
 	/** 实现：大方形盖掉小方形 */
-	public shapeInit(shape: IBatrShape): void {
+	public shapeInit(shape: IShape): void {
 		shape.graphics.beginFill(this.ownerColor);
 		shape.graphics.drawRect(-ShockWaveBase.BLOCK_RADIUS, -ShockWaveBase.BLOCK_RADIUS, ShockWaveBase.BLOCK_RADIUS * 2, ShockWaveBase.BLOCK_RADIUS * 2);
 		shape.graphics.drawRect(-ShockWaveBase.BLOCK_RADIUS / 2, -ShockWaveBase.BLOCK_RADIUS / 2, ShockWaveBase.BLOCK_RADIUS, ShockWaveBase.BLOCK_RADIUS);
@@ -181,13 +181,13 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 	}
 
 	/** 实现：更新尺寸和不透明度 */
-	public shapeRefresh(shape: IBatrShape): void {
+	public shapeRefresh(shape: IShape): void {
 		shape.scaleX = shape.scaleY = 1 - this.lifePercent;
 		shape.alpha = 0.5 + this.lifePercent / 2;
 	}
 
 	/** 实现：清除绘图 */
-	public shapeDestruct(shape: IBatrShape): void {
+	public shapeDestruct(shape: IShape): void {
 		shape.graphics.clear();
 	}
 
