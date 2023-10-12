@@ -8,7 +8,7 @@ import { mRot } from '../src/batr/server/general/GlobalRot';
 import { randInt, randIntBetween, sum } from '../src/batr/common/exMath';
 import { BatrDefaultMaps } from '../src/batr/server/mods/batr/registry/MapRegistry';
 import { BatrBlockPrototypes } from '../src/batr/server/mods/batr/registry/BlockRegistry';
-import { 地图可视化 } from '../src/batr/server/mods/visualization/textVisualizations';
+import { mapV地图可视化 } from '../src/batr/server/mods/visualization/textVisualizations';
 
 let { log, info, time, timeEnd } = console;
 log(new MapStorageSparse(2))
@@ -79,7 +79,7 @@ function 地图读取测试(): void {
 
 for (const map of BatrDefaultMaps._ALL_MAPS) {
     log(`<========MAP "${map.name}"========>`)
-    地图可视化(map.storage as MapStorageSparse);
+    mapV地图可视化(map.storage as MapStorageSparse);
     log()
 }
 
@@ -130,7 +130,7 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
     traverseNDSquare(
         zwMin, zwMax, (zw: iPoint): void => {
             console.info(`切片 [:, :, ${zw.join(', ')}] = `)
-            地图可视化(storage, ...zw);
+            mapV地图可视化(storage, ...zw);
         }
     );
 }

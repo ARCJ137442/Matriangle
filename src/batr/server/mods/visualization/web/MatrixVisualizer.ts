@@ -1,6 +1,6 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import IMatrix from "../../../main/IMatrix";
-import { 实体列表可视化, 母体可视化 } from "../textVisualizations";
+import { entityLV实体列表可视化, matrixV母体可视化 } from "../textVisualizations";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import Visualizer from "./Visualizer";
 
@@ -51,10 +51,10 @@ export default class MatrixVisualizer extends Visualizer {
 	public static getVisionSignal(matrix: IMatrix, typeFlag: TypeFlag): string {
 		switch (typeFlag) {
 			case 'entities':
-				return 实体列表可视化(matrix.entities);
+				return entityLV实体列表可视化(matrix.entities);
 			default:
 				if (typeof typeFlag === 'number')
-					return 母体可视化(matrix.map.storage, matrix.entities, typeFlag);
+					return matrixV母体可视化(matrix.map.storage, matrix.entities, typeFlag);
 				else {
 					console.warn('无效的类型标签！');
 					return '';
@@ -66,7 +66,7 @@ export default class MatrixVisualizer extends Visualizer {
 	 * 获取母体可视化的信号
 	 * * 未连接母体⇒空字串
 	 */
-	public getSignal(message: string): string {
+	getSignal(message: string): string {
 		if (this.linkedMatrix === null) return '';
 		return MatrixVisualizer.getVisionSignal(this.linkedMatrix, MatrixVisualizer.parseTypeFlag(message));
 	}

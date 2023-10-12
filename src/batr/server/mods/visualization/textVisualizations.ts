@@ -39,7 +39,7 @@ export function showName(name: string, maxLength: uint = 7): string {
 	return name.slice(0, maxLength).padEnd(maxLength, ' ')
 }
 
-export function 地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
+export function mapV地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
 	let line: string[];
 	let iP: iPoint = new iPoint(0, 0, ...otherPos_I);
 	for (let y = storage.borderMin[1]; y <= storage.borderMax[1]; y++) {
@@ -67,14 +67,14 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 /**
  * 像Julia遍历张量一样可视化一个地图
  */
-export function 地图可视化_高维(storage: MapStorageSparse): void {
+export function mapVH地图可视化_高维(storage: MapStorageSparse): void {
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
 	// console.log(zwMax, zwMin)
 	traverseNDSquare(
 		zwMin, zwMax, (zw: iPoint): void => {
 			console.info(`切片 [:, :, ${zw.join(', ')}] = `)
-			地图可视化(storage, ...zw);
+			mapV地图可视化(storage, ...zw);
 		}
 	);
 }
@@ -84,18 +84,18 @@ const _temp_母体可视化_entityIPoint: iPointVal = new iPoint();
  * 大一统的「母体可视化」
  * * 现在返回字符串
  */
-export function 母体可视化(
+export function matrixV母体可视化(
 	storage: IMapStorage,
 	entities: Entity[],
 	string_l: uint = 7, // 限制字长
 ): string {
 	// 分派「地图存储结构」的类型
 	if (storage instanceof MapStorageSparse)
-		return 稀疏地图母体可视化(storage, entities, string_l);
+		return sparseMapMV稀疏地图母体可视化(storage, entities, string_l);
 	throw new Error('不支持该地图存储结构的母体可视化');
 }
 
-function 可视化单点(
+function vPoint可视化单点(
 	storage: IMapStorage,
 	p: iPoint,
 	entitiesPositioned: IEntityHasPosition[],
@@ -119,7 +119,7 @@ function 可视化单点(
 	);
 }
 
-export function 稀疏地图母体可视化(
+export function sparseMapMV稀疏地图母体可视化(
 	storage: MapStorageSparse,
 	entities: Entity[],
 	string_l: uint = 7, // 限制字长
@@ -138,83 +138,83 @@ export function 稀疏地图母体可视化(
 	let zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2));
 	let zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2));
 
-	let 可视化单线 = (iP: iPoint, line: string[], ...otherPos_I: int[]): string => {
+	let vLine可视化单线 = (iP: iPoint, line: string[], ...otherPos_I: int[]): string => {
 		for (let x = storage.borderMin[0]; x <= storage.borderMax[0]; x++) {
 			// 每一个点
 			iP.copyFromArgs(x, ...otherPos_I); // ! 会忽略其它地方的值
 			line.push(
-				可视化单点(storage, iP, entitiesPositioned, string_l)
+				vPoint可视化单点(storage, iP, entitiesPositioned, string_l)
 			)
 		}
 		return '|' + line.join(' ') + '|' + '\n';
 	}
-	let 可视化单面 = (zw: iPoint): void => {
+	let vPlane可视化单面 = (zw: iPoint): void => {
 		// 每一个切片
 		result += (`切片 [:, :, ${zw.join(', ')}] = `) + '\n';
 		let line: string[] = [];
 		let iP: iPoint = new iPoint(0, 0, ...zw);
 		for (let y = storage.borderMin[1]; y <= storage.borderMax[1]; y++) {
 			line.length = 0;
-			result += 可视化单线(iP, line, y);
+			result += vLine可视化单线(iP, line, y);
 		}
 	}
 	// 处理各个维度的情况
 	switch (storage.numDimension) {
 		case 0:
-			result = 可视化单点(storage, new iPoint(), entitiesPositioned, string_l)
+			result = vPoint可视化单点(storage, new iPoint(), entitiesPositioned, string_l)
 			break;
 		case 1:
-			result = 可视化单线(new iPoint(), []);
+			result = vLine可视化单线(new iPoint(), []);
 			break;
 		case 2:
-			可视化单面(new iPoint());
+			vPlane可视化单面(new iPoint());
 			break;
 		// 其它高维情况
 		default:
-			traverseNDSquare(zwMin, zwMax, 可视化单面);
+			traverseNDSquare(zwMin, zwMax, vPlane可视化单面);
 			break;
 	}
 	return result;
 }
 
-export function 列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE): void {
+export function listE列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE): void {
 	console.info(`实体列表(${es.length})：`);
 	for (const e of es) {
-		console.log(实体标签显示(e), e)
+		console.log(entityTS实体标签显示(e), e)
 		if (--maxCount < 0) break;
 	}
 }
 
-export function 实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VALUE): string {
+export function entityLV实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VALUE): string {
 	let result: string = '';
 	result += `实体列表(${es.length})：\n`;
 	for (const e of es) {
-		result += 实体标签显示(e) + '\n'
+		result += entityTS实体标签显示(e) + '\n'
 		if (--maxCount < 0) break;
 	}
 	return result;
 }
 
-function 实体标签显示(e: Entity): string {
+function entityTS实体标签显示(e: Entity): string {
 	// 玩家
 	if (e instanceof PlayerBatr)
-		return `${getClass(e)?.name}"${e.customName}"${获取坐标标签(e)
+		return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)
 			}|${e.HPText // 生命
 			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
 			}]|#${e.team.name}:${e.team.id}#`
 	// 奖励箱
 	if (e instanceof BonusBox)
-		return `${getClass(e)?.name}"${e.bonusType}"@${位置可视化(e)}`
+		return `${getClass(e)?.name}"${e.bonusType}"@${PV位置可视化(e)}`
 	// 特效
 	if (e instanceof Effect)
 		// 爆炸特效
 		if (e instanceof EffectExplode)
-			return `${getClass(e)?.name}@${位置可视化(e)}${获取生命周期标签(e)}(r=${e.radius})`
+			return `${getClass(e)?.name}@${PV位置可视化(e)}${getLT获取生命周期标签(e)}(r=${e.radius})`
 		else
-			return `${getClass(e)?.name}@${位置可视化(e)}${获取生命周期标签(e)}`
+			return `${getClass(e)?.name}@${PV位置可视化(e)}${getLT获取生命周期标签(e)}`
 	// 抛射体（不管有无坐标）
 	if (e instanceof Projectile)
-		return `${getClass(e)?.name}${获取坐标标签(e)}${获取生命周期标签(e)}`
+		return `${getClass(e)?.name}${getPT获取坐标标签(e)}${getLT获取生命周期标签(e)}`
 	// 母体程序
 	if (e instanceof MatrixProgram)
 		// 方块随机刻分派者
@@ -227,24 +227,24 @@ function 实体标签显示(e: Entity): string {
 		else if (e instanceof MatrixController)
 			// 玩家控制器
 			if (e instanceof PlayerController)
-				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(实体标签显示).join(', ')}`
+				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(entityTS实体标签显示).join(', ')}`
 			// 其它
 			else
 				return `${getClass(e)?.name}[${e.label}] -> ${//
-					e.subscribers.map(x => (x instanceof Entity) ? 实体标签显示(e) : e?.toString()).join(', ')
+					e.subscribers.map(x => (x instanceof Entity) ? entityTS实体标签显示(e) : e?.toString()).join(', ')
 					}`
 		else
 			// 普通情况：仅有一个标签
 			return `${getClass(e)?.name}[${e.label}]`
 	// 其它实体（包括「是否有坐标」）
-	return `${getClass(e)?.name}${获取坐标标签(e)}`
+	return `${getClass(e)?.name}${getPT获取坐标标签(e)}`
 }
 
 /**  辅助函数 */
-function 获取坐标标签(e: Entity): string {
+function getPT获取坐标标签(e: Entity): string {
 	return (
 		(i_hasPosition(e)) ?
-			`@${位置可视化(e)}` : ``
+			`@${PV位置可视化(e)}` : ``
 	) + (
 			(i_hasDirection(e)) ?
 				`^${nameOfRot_M(e.direction)}` : ``
@@ -252,7 +252,7 @@ function 获取坐标标签(e: Entity): string {
 }
 
 /**  辅助函数 */
-function 获取生命周期标签(e: Entity): string {
+function getLT获取生命周期标签(e: Entity): string {
 	return (
 		(i_fixedLive(e)) ?
 			`|${e.life}/${e.LIFE}` : ``
@@ -260,4 +260,4 @@ function 获取生命周期标签(e: Entity): string {
 }
 
 const number可视化 = (n: number): string => Number.isInteger(n) ? n.toString() : n.toFixed(2)
-const 位置可视化 = (e: IEntityHasPosition): string => e.position.map(number可视化).join(',')
+const PV位置可视化 = (e: IEntityHasPosition): string => e.position.map(number可视化).join(',')

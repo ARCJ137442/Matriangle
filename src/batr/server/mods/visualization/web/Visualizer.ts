@@ -25,7 +25,7 @@ export default abstract class Visualizer extends MatrixProgram {
 	 * 获取可视化信号
 	 * @abstract 抽象方法，需要等子类自行实现
 	 */
-	public abstract getSignal(...args: unknown[]): string;
+	public abstract getSignal(message: string): string;
 
 	// 服务器部分 //
 
@@ -63,7 +63,10 @@ export default abstract class Visualizer extends MatrixProgram {
 
 	/**
 	 * 启动HTTP服务器
-	 * * 似乎缺少一个「是否启动成功」的标签信息
+	 * * 以所收到请求的URL（{@link IncomingMessage.url}）为消息
+	 *   * 无消息⇒空字串
+	 * 
+	 * ? 似乎缺少一个「是否启动成功」的标签信息
 	 */
 	public launchHTTPServer(ip: string, port: uint): void {
 		this._hostname = ip;
@@ -71,9 +74,9 @@ export default abstract class Visualizer extends MatrixProgram {
 		// 创建服务器，并开始侦听
 		try {
 			this._server = createServer((req: IncomingMessage, res: ServerResponse): void => {
-				// 直接以「母体信号」响应请求
 				res.writeHead(200, { 'Content-Type': 'text/plain' });
-				res.end(this.getSignal());
+				// 尝试从URL中解析
+				res.end(this.getSignal(req.url?.slice(1)/* 截取掉开头的「/」 */ ?? ''));
 			});
 			this._server.listen(
 				this._port, this._hostname,

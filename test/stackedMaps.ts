@@ -2,7 +2,7 @@ import { iPoint, iPointRef, iPointVal } from '../src/batr/common/geometricTools'
 import { uint } from '../src/batr/legacy/AS3Legacy';
 import Block from '../src/batr/server/api/block/Block';
 import MapStorageSparse from './../src/batr/server/mods/native/maps/MapStorageSparse';
-import { 地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations'
+import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations'
 import { BatrDefaultMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
 import IMap from '../src/batr/server/api/map/IMap';
 
@@ -84,7 +84,7 @@ export function stackMaps(
 }
 
 console.log(
-	地图可视化_高维(
+	mapVH地图可视化_高维(
 		stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap) => map.storage as MapStorageSparse))
 	)
 )

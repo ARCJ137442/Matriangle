@@ -8,7 +8,7 @@ import WorldRegistry_V1 from "../src/batr/server/mods/native/registry/Registry_V
 import { NativeTools as BatrTools } from "../src/batr/server/mods/batr/registry/ToolRegistry";
 import MatrixRuleBatr from "../src/batr/server/mods/native/rule/MatrixRuleBatr";
 import Matrix_V1 from "../src/batr/server/mods/native/main/Matrix_V1";
-import { 列举实体, 母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
+import { listE列举实体, matrixV母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import { TICK_TIME_MS, TPS } from "../src/batr/server/main/GlobalWorldVariables";
 import { mergeMaps, mergeMultiMaps } from "../src/batr/common/utils";
 import { NativeBonusTypes as BatrBonusTypes } from "../src/batr/server/mods/batr/registry/BonusRegistry";
@@ -185,7 +185,7 @@ projectEntities(matrix.map, matrix.entities);
 // 第一次测试
 ((): void => {
 	console.log(
-		母体可视化(
+		matrixV母体可视化(
 			matrix.map.storage as MapStorageSparse,
 			matrix.entities
 		)
@@ -197,13 +197,13 @@ projectEntities(matrix.map, matrix.entities);
 	}
 
 	console.log(
-		母体可视化(
+		matrixV母体可视化(
 			matrix.map.storage as MapStorageSparse,
 			matrix.entities
 		)
 	);
 
-	列举实体(matrix.entities)
+	listE列举实体(matrix.entities)
 });
 
 // 持续测试
@@ -226,13 +226,13 @@ function 迭代(num: uint, visualize: boolean = true): void {
 	if (visualize) {
 		// 可视化
 		console.log(
-			母体可视化(
+			matrixV母体可视化(
 				matrix.map.storage as MapStorageSparse,
 				matrix.entities,
 				6
 			),
 		);
-		列举实体(matrix.entities, 5); // !【2023-10-05 17:51:21】实体一多就麻烦
+		listE列举实体(matrix.entities, 5); // !【2023-10-05 17:51:21】实体一多就麻烦
 	}
 }
 

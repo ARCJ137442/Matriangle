@@ -3,7 +3,7 @@ import { uint } from '../src/batr/legacy/AS3Legacy';
 import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse';
 import IMap from './../src/batr/server/api/map/IMap';
 import Map_V1 from './../src/batr/server/mods/native/maps/Map_V1';
-import { 稀疏地图母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
+import { sparseMapMV稀疏地图母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import Block from '../src/batr/server/api/block/Block';
 import { NativeBlockPrototypes } from '../src/batr/server/mods/batr/registry/NativeBlockRegistry';
 
@@ -44,7 +44,7 @@ for (let i: uint = DIM_MIN; i <= DIM_MAX; i++) {
 	);
 	// 注册
 	MULTI_DIM_TEST_MAPS.push(map)
-	console.log(稀疏地图母体可视化(mss, []))
+	console.log(sparseMapMV稀疏地图母体可视化(mss, []))
 }
 // console.log(MULTI_DIM_TEST_MAPS)
 // console.log('It is done.')
