@@ -9,7 +9,7 @@ import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
 import AIProgram_Adventurer from "./AIProgram_Adventurer";
-import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/DecorationLabels";
 
 /**
  * Advanced Advancer.

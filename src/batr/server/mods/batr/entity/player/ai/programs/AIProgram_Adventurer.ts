@@ -10,7 +10,7 @@ import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";
 import IAIProgram from "../IAIProgram";
-import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/DecorationLabels";
 
 /**
  * Moving uses A*(A Star) algorithm.

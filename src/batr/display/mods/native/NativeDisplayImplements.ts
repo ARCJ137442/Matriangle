@@ -1,6 +1,6 @@
 import { IBatrGraphicContext } from "../../api/DisplayInterfaces";
 import { DEFAULT_SIZE } from "../../api/GlobalDisplayVariables";
-import { NativeDecorationLabel } from "./entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "./entity/player/DecorationLabels";
 
 /**
  * （移植自AIPlayer）用于在主图形上显示「附加装饰」

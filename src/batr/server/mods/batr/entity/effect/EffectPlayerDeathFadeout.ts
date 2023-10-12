@@ -1,6 +1,6 @@
 import { fPoint, iPoint } from "../../../../../common/geometricTools";
 import { IBatrShape } from "../../../../../display/api/DisplayInterfaces";
-import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
 import { uint } from "../../../../../legacy/AS3Legacy";
 import { TPS } from "../../../../main/GlobalWorldVariables";
 import IPlayer from "../../../native/entities/player/IPlayer";

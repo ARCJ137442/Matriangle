@@ -11,6 +11,7 @@ import IPlayer, { isPlayer } from "../../../native/entities/player/IPlayer";
 import Projectile from "../../entity/projectile/Projectile";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
 import { changeMap, getRandomMap, projectEntity, spreadPlayer } from "../NativeMatrixMechanics";
+import { i_batrPlayer } from "../../entity/player/IPlayerBatr";
 
 /**
  * 「地图切换者」是
@@ -64,9 +65,10 @@ export default abstract class MapSwitcher extends MatrixProgram {
 				if (entityActives.has(entity))
 					entity.isActive = entityActives.get(entity) as boolean;
 				// 分散并告知玩家 // ! 必须是「执行该函数时母体中的玩家」，因为有可能在执行到这里之前玩家发生变动（杜绝「被删除但还是被遍历到」的情况）
-				if (isPlayer(entity) && !(entity as IPlayer).isRespawning/* 必须不在重生过程中 */) {
-					spreadPlayer(host, entity as IPlayer, true, true);
-					(entity as IPlayer).onMapTransform(host);
+				if (isPlayer(entity) && entity.isRespawning/* 必须不在重生过程中 */) {
+					spreadPlayer(host, entity, true, true);
+					if (i_batrPlayer(entity))
+						(entity).onMapTransform(host);
 				} // 否则：不做任何事情，保留状态 // * 可能是后续又新增了实体
 				// 若有坐标⇒尝试投影坐标
 				projectEntity(host.map/* 地图也有可能在中途被改变 */, entity);

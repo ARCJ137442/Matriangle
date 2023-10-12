@@ -1,5 +1,5 @@
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
-import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "../../../../../../../display/mods/native/entity/player/DecorationLabels";
 import BonusBox from "../../item/BonusBox";
 import AIPlayer from "../../player/AIPlayer";
 import Player from "../../player/Player";

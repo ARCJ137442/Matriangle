@@ -51,7 +51,7 @@ import { BlockEventMap } from "../../../api/block/BlockEventTypes";
 import { NativeBlockEventType, NativeBlockTypeEventMap } from "../registry/BlockEventRegistry";
 import IPlayerHasTool, { i_hasTool } from "../entity/player/IPlayerHasTool";
 import { i_hasExperience } from "../entity/player/IPlayerHasExperience";
-import IPlayerBatr from "../entity/player/IPlayerBatr";
+import IPlayerBatr, { i_batrPlayer } from "../entity/player/IPlayerBatr";
 import IPlayerHasAttributes, { i_hasAttributes } from "../entity/player/IPlayerHasAttributes";
 import IPlayerHasTeam, { i_hasTeam } from "../entity/player/IPlayerHasTeam";
 import IPlayerHasStats, { i_hasStats } from "../entity/player/IPlayerHasStats";
@@ -767,9 +767,8 @@ export function handlePlayerLocationChanged(host: IMatrix, player: IPlayer, newP
         (host.registry.blockEventRegistry.getEventMapAt(blockID) as NativeBlockTypeEventMap
         )?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player)
     // 测试「是否拾取到奖励箱」
-    bonusBoxTest(host, player, newP);
-    // 告知玩家开始处理「方块伤害」等逻辑
-    player.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
+    if (i_batrPlayer(player))
+        bonusBoxTest(host, player, newP);
 }
 
 /**
@@ -1150,7 +1149,8 @@ export function teleportPlayerTo(
     player.setPosition(host, p, true); // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
     player.direction = rotateTo;
     // 在被传送的时候可能捡到奖励箱
-    bonusBoxTest(host, player, p);
+    if (i_batrPlayer(player))
+        bonusBoxTest(host, player, p);
     // 被传送后添加特效
     if (isTeleport) {
         let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
@@ -1371,7 +1371,7 @@ export function getPlayers(host: IMatrix): IPlayer[] {
  * 
  * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
  */
-export function bonusBoxTest(host: IMatrix, player: IPlayer, at: iPointRef = player.position): boolean {
+export function bonusBoxTest(host: IMatrix, player: IPlayerBatr, at: iPointRef = player.position): boolean {
     for (let bonusBox of getBonusBoxes(host)) {
         if (hitTestEntity_I_Grid(bonusBox, at)) { // TODO: 【2023-10-03 23:55:46】断点
             // 玩家获得奖励

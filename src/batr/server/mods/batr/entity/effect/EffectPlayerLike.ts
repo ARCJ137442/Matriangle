@@ -6,7 +6,7 @@ import { TPS } from "../../../../main/GlobalWorldVariables";
 import { IBatrGraphicContext, IBatrShape } from "../../../../../display/api/DisplayInterfaces";
 import { mRot } from "../../../../general/GlobalRot";
 import { fPoint } from "../../../../../common/geometricTools";
-import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/NativeDecorationLabels";
+import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
 import { drawShapeDecoration } from "../../../../../display/mods/native/NativeDisplayImplements";
 import { alignToGridCenter_P } from "../../../../general/PosTransform";
 
