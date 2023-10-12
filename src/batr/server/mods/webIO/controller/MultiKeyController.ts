@@ -6,10 +6,11 @@ import PlayerController from "../../native/entities/player/controller/PlayerCont
 import { PlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
 
 /**
- * 「多键控制器」
+ * 「多键控制器」是
  * * 不响应任何玩家发来的事件，但需要玩家订阅该控制器
- * * 使用「控制密钥」机制，以实现「一个服务器运行，指挥多个玩家」（需要在query中提供）
+ * * 使用「控制密钥」机制，以实现「一个服务器运行，指挥多个玩家」（需要在query中提供）的
  *   * 「控制密钥」相同的玩家会被同时分派相同的动作
+ * 玩家控制器
  */
 export default abstract class MultiKeyController extends PlayerController {
 

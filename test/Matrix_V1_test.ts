@@ -31,6 +31,8 @@ import { BatrDefaultMaps } from "../src/batr/server/mods/batr/registry/MapRegist
 import IMap from "../src/batr/server/api/map/IMap";
 import { stackMaps } from './stackedMaps';
 import Map_V1 from "../src/batr/server/mods/native/maps/Map_V1";
+import WebMessageRouter from "../src/batr/server/mods/webIO/WebMessageRouter";
+import WebController from "../src/batr/server/mods/webIO/controller/WebController";
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -77,6 +79,9 @@ function initWorldRegistry(): IWorldRegistry {
 	return registry;
 }
 
+/** 消息路由器 */
+const router: WebMessageRouter = new WebMessageRouter();
+
 /** 配置玩家 */
 function setupPlayers(host: IMatrix): void {
 	// 玩家
@@ -92,13 +97,7 @@ function setupPlayers(host: IMatrix): void {
 		getRandomTeam(matrix),
 		randomToolEnable(matrix.rule)
 	);
-	// 控制器
-	let ctl: AIControllerGenerator = new AIControllerGenerator(
-		'first',
-		NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
-	);
-	// let ctlWeb: HTTPController = new HTTPController();
-	let ctlWeb: WSController = new WSController();
+
 	// 名字
 	p.customName = 'Player初号机'
 	p2.customName = 'Player二号机'
@@ -108,11 +107,21 @@ function setupPlayers(host: IMatrix): void {
 	p.tool = BatrTools.WEAPON_BULLET_BASIC.copy();
 	p2.tool = BatrTools.WEAPON_BULLET_TRACKING.copy();
 	// 初号机の控制器
+	let ctl: AIControllerGenerator = new AIControllerGenerator(
+		'first',
+		NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
+	);
 	ctl.AIRunSpeed = 4; // 一秒四次行动
 	p.connectController(ctl);
 	// 二号机の控制器
+	// let ctlWeb: HTTPController = new HTTPController();
+	let ctlWeb: WebController = new WebController();
 	ctlWeb.addConnection(p2, 'p2');
-	ctlWeb.launchServer('127.0.0.1', 3002) // 启动服务器
+	ctlWeb.linkToRouter(
+		router,
+		'ws',
+		'127.0.0.1', 3002
+	) // 连接到消息路由器
 
 	// *添加实体
 	host.addEntities(
@@ -126,7 +135,11 @@ function setupPlayers(host: IMatrix): void {
 function setupVisualization(host: IMatrix): void {
 	// 可视化信号
 	let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
-	visualizer.launchWebSocketServer('127.0.0.1', 8080);
+	// 连接
+	visualizer.linkToRouter(
+		router,
+		'ws', '127.0.0.1', 8080
+	);
 
 	// *添加实体
 	host.addEntities(visualizer);
