@@ -8,7 +8,7 @@ import IMapStorage, { BlockConstructorMap } from "../../../api/map/IMapStorage";
 import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dash2, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_false, loadRecursiveCriterion_true, uniSaveJSObject } from "../../../../common/JSObjectify";
 import Block from "../../../api/block/Block";
 import { typeID } from "../../../api/registry/IWorldRegistry";
-import { NativeBlockPrototypes, NATIVE_BLOCK_CONSTRUCTOR_MAP, NativeBlockIDs } from "../../batr/registry/NativeBlockRegistry";
+import { NativeBlockPrototypes, NATIVE_BLOCK_CONSTRUCTOR_MAP, NativeBlockIDs } from "../registry/NativeBlockRegistry";
 
 /**
  * 稀疏地图

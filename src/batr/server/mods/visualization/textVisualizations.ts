@@ -15,7 +15,7 @@ import Effect from "../../api/entity/Effect";
 import Projectile from "../batr/entity/projectile/Projectile";
 import BlockRandomTickDispatcher from "../batr/mechanics/programs/BlockRandomTickDispatcher";
 import { nameOfAxis_M, nameOfRot_M } from "../../general/GlobalRot";
-import { NativeBlockIDs } from "../batr/registry/NativeBlockRegistry";
+import { NativeBlockIDs } from "../native/registry/NativeBlockRegistry";
 import EffectExplode from "../batr/entity/effect/EffectExplode";
 import MapSwitcherRandom from "../batr/mechanics/programs/MapSwitcherRandom";
 import IMatrix from "../../main/IMatrix";

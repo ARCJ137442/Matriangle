@@ -1,8 +1,8 @@
 import { ReLU_I, intMax, intMin, randInt, randIntBetween } from "../../../../common/exMath";
-import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal, fPointVal, traverseNDSquareSurface } from "../../../../common/geometricTools";
+import { iPoint, fPoint, iPointRef, fPointRef, intPoint, iPointVal } from "../../../../common/geometricTools";
 import { randomWithout, randomIn, clearArray, randomInWeightMap, MapFromObject, randomBoolean } from "../../../../common/utils";
 import BonusBoxSymbol from "../../../../display/mods/native/entity/BonusBoxSymbol";
-import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE, Class, ConcreteClass } from "../../../../legacy/AS3Legacy";
+import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE, ConcreteClass } from "../../../../legacy/AS3Legacy";
 import Block from "../../../api/block/Block";
 import { mRot, mRot2axis, mRot2increment } from "../../../general/GlobalRot";
 import { alignToGridCenter_P, alignToGrid_P } from "../../../general/PosTransform";
@@ -22,19 +22,15 @@ import { BonusType, NativeBonusTypes } from "../registry/BonusRegistry";
 import Projectile from "../entity/projectile/Projectile";
 import Wave from "../entity/projectile/other/Wave";
 import { NativeTools } from '../registry/ToolRegistry';
-import IPlayer, { isPlayer } from "../../native/entities/player/IPlayer";
+import IPlayer from "../../native/entities/player/IPlayer";
 import { KeyCode, keyCodes } from "../../../../common/keyCodes";
 import { HSVtoHEX } from "../../../../common/color";
 import IMatrixRule from "../../../rule/IMatrixRule";
-import BlockAttributes from "../../../api/block/BlockAttributes";
-import { IEntityInGrid, IEntityOutGrid, IEntityWithDirection, i_hasDirection, i_inGrid, i_outGrid } from "../../../api/entity/EntityInterfaces";
+import { IEntityInGrid } from "../../../api/entity/EntityInterfaces";
 import PlayerStats from "../entity/player/stat/PlayerStats";
 import EffectPlayerDeathLight from "../entity/effect/EffectPlayerDeathLight";
 import EffectPlayerDeathFadeout from "../entity/effect/EffectPlayerDeathFadeout";
-import Entity from "../../../api/entity/Entity";
 import EffectPlayerLevelup from "../entity/effect/EffectPlayerLevelup";
-import EffectTeleport from "../entity/effect/EffectTeleport";
-import EffectSpawn from "../entity/effect/EffectSpawn";
 import EffectBlockLight from "../entity/effect/EffectBlockLight";
 import IMap from '../../../api/map/IMap';
 import Laser from "../entity/projectile/laser/Laser";
@@ -42,7 +38,7 @@ import EffectExplode from "../entity/effect/EffectExplode";
 import Registry_V1, { toolUsageF } from "../../native/registry/Registry_V1";
 import BulletBasic from "../entity/projectile/bullet/BulletBasic";
 import { typeID } from "../../../api/registry/IWorldRegistry";
-import { PROJECTILES_SPAWN_DISTANCE, TPS } from "../../../main/GlobalWorldVariables";
+import { PROJECTILES_SPAWN_DISTANCE } from "../../../main/GlobalWorldVariables";
 import BulletNuke from "../entity/projectile/bullet/BulletNuke";
 import BulletTracking from "../entity/projectile/bullet/BulletTracking";
 import BulletBomber from "../entity/projectile/bullet/BulletBomber";
@@ -55,9 +51,10 @@ import IPlayerBatr, { i_batrPlayer } from "../entity/player/IPlayerBatr";
 import IPlayerHasAttributes, { i_hasAttributes } from "../entity/player/IPlayerHasAttributes";
 import IPlayerHasTeam, { i_hasTeam } from "../entity/player/IPlayerHasTeam";
 import IPlayerHasStats, { i_hasStats } from "../entity/player/IPlayerHasStats";
-import { NativeBlockPrototypes } from "../registry/NativeBlockRegistry";
+import { NativeBlockPrototypes } from "../../native/registry/NativeBlockRegistry";
 import Bullet from "../entity/projectile/bullet/Bullet";
-
+import { getPlayers } from "../../native/mechanics/NativeMatrixMechanics";
+import { spreadPlayer } from "../../native/mechanics/NativeMatrixMechanics";
 
 /**
  * 所有世界的「原生逻辑」
@@ -65,6 +62,7 @@ import Bullet from "../entity/projectile/bullet/Bullet";
  * * 用这样一个「事件注册」类承担所有的导入，让「方块」「实体」等类实现轻量化
  * 
  * TODO: 是否「显示事件」也要这样「外包到『事件注册表』中」去？
+ * 
  * TODO: 【2023-10-09 21:15:12】亟需拆分出「Batr逻辑」和「原生逻辑」
  */
 
@@ -117,63 +115,6 @@ export function initPlayersByRule(players: IPlayerBatr[], rule: IMatrixRule): vo
         );
     }
     // TODO: 后续还有至少是「生命条数」没有初始化的……留给在「创建玩家」时做（只有那时候才能分辨「哪个是人类，哪个是AI」）
-}
-
-/**
- * 切换一个母体的地图
- * * 迁移自AS3版本`Game.changeMap`
- * 
- * ! 不会拷贝原先的地图
- * 
- * @param host 要更改地图的「游戏母体」
- * @param generateNew 是否告知地图「生成新一代」（用于一些「依靠代码随机生成」的地图）
- */
-export function changeMap(host: IMatrix, map: IMap, generateNew: boolean): void {
-    host.map = map;
-    map.storage.generateNext();
-    // TODO: 显示更新
-}
-
-/**
- * 投影实体的坐标到某地图中
- * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
- * 
- * ! 【2023-10-08 23:59:54】只会修改实体坐标（数组），不会触发任何其它代码
- * * 如：不会触发玩家「移动」的钩子函数
- * 
- * @param entity 要投影的实体
- * @param map 要投影到的地图
- */
-export function projectEntity(map: IMap, entity: Entity): void {
-    // 有坐标⇒投影坐标
-    if (i_inGrid(entity)) {
-        // !【2023-10-11 23:50:15】零维规避：只有一维以上的坐标会被投影（用于规避「重生时玩家被投影到原点」的问题）
-        if (entity.position.length > 0)
-            map.projectPosition_I(entity.position)
-    }
-    else if (i_outGrid(entity)) {
-        // !【2023-10-11 23:50:15】零维规避：只有一维以上的坐标会被投影（用于规避「重生时玩家被投影到原点」的问题）
-        if (entity.position.length > 0)
-            map.projectPosition_F(entity.position)
-    }
-    // 有方向⇒投影方向
-    if (i_hasDirection(entity)) {
-        map.projectDirection((entity as IEntityWithDirection).direction)
-    }
-}
-
-/**
- * 投影所有实体的坐标
- * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
- * 
- * ! 【2023-10-08 23:59:54】只会修改实体坐标（数组），不会触发任何其它代码
- * * 如：不会触发玩家「移动」的钩子函数
- * 
- */
-export function projectEntities(map: IMap, entities: Entity[]): void {
-    entities.forEach(
-        (e: Entity): void => projectEntity(map, e)
-    )
 }
 
 //================⚙️实体管理================//
@@ -275,26 +216,18 @@ export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
     // Set Variables
     let attacker: IPlayer | null = laser.owner;
     let damage: uint = laser.damage;
- 
+	
     let length: uint = laser.length;
- 
     let rot: uint = laser.rot;
- 
     let teleport: boolean = laser instanceof LaserTeleport;
- 
     let absorption: boolean = laser instanceof LaserAbsorption;
- 
     let pulse: boolean = laser instanceof LaserPulse;
  
     // Pos
     let baseX: int = PosTransform.alignToGrid(laser.entityX);
- 
     let baseY: int = PosTransform.alignToGrid(laser.entityY);
- 
     let vx: int = GlobalRot.towardXInt(rot, 1);
- 
     let vy: int = GlobalRot.towardYInt(rot, 1);
- 
     let cx: int = baseX, cy: int = baseY, players: IPlayer[];
  
     // let nextBlockAtt:BlockAttributes
@@ -406,8 +339,6 @@ export function playerPickupBonusBox(
     host: IMatrix, player: IPlayer, bonusBox: BonusBox,
     forcedBonusType: BonusType = bonusBox.bonusType
 ): void {
-    if (player === null)
-        return;
     // Deactivate
     bonusBox.isActive = false;
     // Effect
@@ -772,65 +703,6 @@ export function handlePlayerLocationChanged(host: IMatrix, player: IPlayer, newP
 }
 
 /**
- * 当每个玩家「移动到某个方块」时，在移动后的测试
- * * 测试位置即为玩家「当前位置」（移动后！）
- * * 有副作用：用于处理「伤害玩家的方块」
- * 
- * @param host 检测所在的母体
- * @param player 被检测的玩家
- * @param isLocationChange 是否是「位置变更」所需要的（false用于「陷阱检测」）
- * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
- */
-export function playerMoveInTest(
-    host: IMatrix, player: IPlayer,
-    isLocationChange: Boolean = false
-): boolean {
-    // 非激活&无属性⇒不检测（返回）
-    if (!player.isActive) return false;
-    let attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(player.position);
-    if (attributes === null) return false;
-
-    let returnBoo: boolean = false;
-    // 开始计算
-    let finalPlayerDamage: int = computeFinalBlockDamage(
-        player.maxHP,
-        host.rule.safeGetRule<int>(MatrixRuleBatr.key_playerAsphyxiaDamage),
-        attributes.playerDamage
-    );
-    // int$MIN_VALUE⇒无伤害&无治疗
-    if (finalPlayerDamage !== int$MIN_VALUE) {
-        // 负数⇒治疗
-        if (finalPlayerDamage < 0) {
-            if (!isLocationChange)
-                player.isFullHP ?
-                    player.heal -= finalPlayerDamage/* 注意：这里是负数 */ : // 满生命值⇒加「储备生命值」
-                    player.addHP(host, -finalPlayerDamage, null); // 否则直接加生命值
-        }
-        // 正数⇒伤害
-        else player.removeHP(
-            host,
-            finalPlayerDamage,
-            null,
-        );
-        returnBoo = true;
-    }
-    // 附加的「旋转」效果
-    if (attributes.rotateWhenMoveIn) {
-        // 玩家向随机方向旋转
-        player.turnTo(
-            host,
-            host.map.storage.randomRotateDirectionAt(
-                player.position,
-                player.direction,
-                1
-            )
-        );
-        returnBoo = true;
-    }
-    return returnBoo;
-}
-
-/**
  * 综合「玩家最大生命值」「规则的『窒息伤害』」「方块的『玩家伤害』」计算「最终方块伤害」
  * * 返回负数以包括「治疗」的情况
  * 
@@ -1125,187 +997,6 @@ export function addBonusBoxInRandomTypeByRule(host: IMatrix, p: intPoint): void 
 }
 
 /**
- * 传送玩家到指定位置
- * * 先取消玩家激活
- * * 不考虑「是否可通过」
- * * 可选的「传送特效」
- * 
- * @param host 所在的母体
- * @param player 被传送的玩家
- * @param p 传送目的地
- * @param rotateTo 玩家传送后要被旋转到的方向（默认为玩家自身方向）
- * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
- * @returns 玩家自身
- */
-export function teleportPlayerTo(
-    host: IMatrix,
-    player: IPlayer,
-    p: iPointRef,
-    rotateTo: mRot = player.direction,
-    isTeleport: boolean = false
-): IPlayer {
-    player.isActive = false;
-    // !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-    player.setPosition(host, p, true); // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
-    player.direction = rotateTo;
-    // 在被传送的时候可能捡到奖励箱
-    if (i_batrPlayer(player))
-        bonusBoxTest(host, player, p);
-    // 被传送后添加特效
-    if (isTeleport) {
-        let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
-        host.addEntity(
-            new EffectTeleport(fp)
-        )
-        // 只有在「有特效」的情况下算作「被传送」
-        if (i_hasStats(player))
-            (player as IPlayerHasStats).stats.beTeleportCount++;
-    }
-    player.isActive = true;
-    return player;
-}
-
-/**
- * 分散玩家
- */
-export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
-    // !【2023-10-04 17:12:26】现在不管玩家是否在重生
-    let p: iPointRef = host.map.storage.randomPoint;
-    const players: IPlayer[] = getPlayers(host);
-    // 尝试最多256次
-    for (let i: uint = 0; i < 0xff; i++) {
-        // 找到一个合法位置⇒停
-        if (player.testCanGoTo(host, p, true, true, players)) {
-            break;
-        }
-        // 没找到⇒继续
-        p = host.map.storage.randomPoint; // 复制一个引用
-    }
-    // 传送玩家
-    teleportPlayerTo(
-        host,
-        player,
-        p, // 传引用
-        ( // 是否要改变玩家朝向
-            rotatePlayer ?
-                host.map.storage.randomForwardDirectionAt(p) :
-                player.direction
-        ),
-        createEffect
-    );
-    // Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
-    return player;
-}
-
-/**
- * 分散所有玩家
- */
-export function spreadAllPlayer(host: IMatrix): void {
-    for (let player of getPlayers(host)) {
-        spreadPlayer(host, player);
-    }
-}
-
-/**
- * 重生所有玩家
- * @param host 所涉及的母体
- */
-export function respawnAllPlayer(host: IMatrix): void {
-    for (let player of getPlayers(host)) {
-        respawnPlayer(host, player);
-    }
-}
-
-/**
- * 在一个重生点处「重生」玩家
- * * 逻辑：寻找随机重生点⇒移动玩家⇒设置随机特效
- * 
- * @param host 所涉及的母体
- * @param player 重生的玩家
- */
-export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
-    let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy(); // 空值访问`null.copy()`会变成undefined
-    // 没位置⇒直接分散玩家
-    if (p === undefined) {
-        spreadPlayer(host, player, true, false);
-        p = player.position; // 重新确定重生地
-    }
-    // 有位置⇒直接重生在此/进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
-    else
-        teleportPlayerTo(
-            host,
-            player,
-            findFitSpawnPoint(host, player, p), // !就是这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
-            host.map.storage.randomForwardDirectionAt(p),
-            false // 无需特效
-        ) // 无需重新确定重生地
-    // 加特效
-    let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央，只需要生成一个数组
-    host.addEntities(
-        new EffectSpawn(fp), // 重生效果
-        EffectPlayerDeathLight.fromPlayer(p, player, true), // 重生时动画反向
-    )
-    // Return
-    // Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
-    return player;
-}
-
-const _temp_findFitSpawnPoint_pMax: iPoint = new iPoint();
-const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint();
-/**
- * 在一个重生点附近寻找可用的重生位置
- * * 重生点处可用就直接在重生点处，否则向外寻找
- * * 若实在找不到，就强制在重生点处重生
- * * 符合「可重生」的条件：地图内&可通过
- * 
- * ! 目前的bug：（来自于`traverseNDSquareSurface`）不会检查对角线上的位置
- * 
- * ! 会改变点spawnP的位置，以作为「最终重生点」
- * 
- * ? 【2023-10-04 18:11:09】实际上应该有一个「从重生点开始，从内向外遍历」的算法
- * 
- * @param searchR 搜索的最大曼哈顿半径（默认为16）
- */
-function findFitSpawnPoint(
-    host: IMatrix, player: IPlayer,
-    spawnP: iPointRef, searchR: uint = 16,
-): iPoint {
-    let players: IPlayer[] = getPlayers(host);
-    // 尝试直接在重生点处重生
-    if (host.map.storage.isInMap(spawnP) &&
-        player.testCanGoTo(host, spawnP, true, true, players))
-        return spawnP
-    // 重生点处条件不满足⇒开始在周围寻找
-    let isFound: boolean = false;
-    // 直接遍历
-    _temp_findFitSpawnPoint_pMax.copyFrom(spawnP);
-    _temp_findFitSpawnPoint_pMin.copyFrom(spawnP);
-    // 一层层向外遍历
-    for (let r: uint = 1; r <= searchR; r++) {
-        traverseNDSquareSurface(
-            _temp_findFitSpawnPoint_pMin,
-            _temp_findFitSpawnPoint_pMax,
-            (p: iPointRef): void => {
-                // 判断の条件：
-                if (!isFound &&
-                    host.map.storage.isInMap(p) &&
-                    player.testCanGoTo(host, p, true, true, players)
-                ) {
-                    spawnP.copyFrom(p);
-                    isFound = true;
-                }
-            }
-        );
-        // 找到就直接返回
-        if (isFound) break;
-        // 没找到⇒坐标递增，继续
-        _temp_findFitSpawnPoint_pMax.addFromSingle(1);
-        _temp_findFitSpawnPoint_pMin.addFromSingle(-1);
-    }
-    return spawnP;
-}
-
-/**
  * （🚩专用代码迁移）用于获取一个母体内所有的奖励箱
  * * 特殊高效分派逻辑：使用「约定属性」`bonusBoxes`（可以是getter）
  * 
@@ -1343,26 +1034,6 @@ export function getBonusBoxCount(host: IMatrix): uint {
         for (const e of host.entities)
             if (e instanceof BonusBox) c++;
         return c;
-    }
-}
-
-// !【2023-10-09 19:26:02】`isPlayer`现已迁移至`IPlayer`类中
-
-/**
- * 用于在「通用化」后继续「专用化」，获取所有玩家的列表
- * 
- * @param host 所在的母体
- * @returns 所有玩家的列表
- */
-export function getPlayers(host: IMatrix): IPlayer[] {
-    if ('players' in host) {
-        return (host as any).players;
-    }
-    // 否则原样筛选
-    else {
-        return host.entities.filter(
-            isPlayer
-        ) as IPlayer[];
     }
 }
 

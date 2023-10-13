@@ -10,7 +10,9 @@ import BonusBox from "../../entity/item/BonusBox";
 import IPlayer, { isPlayer } from "../../../native/entities/player/IPlayer";
 import Projectile from "../../entity/projectile/Projectile";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
-import { changeMap, getRandomMap, projectEntity, spreadPlayer } from "../NativeMatrixMechanics";
+import { getRandomMap } from "../BatrMatrixMechanics";
+import { changeMap, projectEntity } from "../../../native/mechanics/NativeMatrixMechanics";
+import { spreadPlayer } from "../../../native/mechanics/NativeMatrixMechanics";
 import { i_batrPlayer } from "../../entity/player/IPlayerBatr";
 
 /**

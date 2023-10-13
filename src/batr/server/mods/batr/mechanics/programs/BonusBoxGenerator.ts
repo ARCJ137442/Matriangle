@@ -8,7 +8,8 @@ import IMatrixRule from "../../../../rule/IMatrixRule";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
 import { NativeBlockEventType, NativeBlockTypeEventMap } from "../../registry/BlockEventRegistry";
 import { BonusType } from "../../registry/BonusRegistry";
-import { addBonusBoxInRandomTypeByRule, bonusBoxTest, getBonusBoxCount, getPlayers } from "../NativeMatrixMechanics";
+import { addBonusBoxInRandomTypeByRule, bonusBoxTest, getBonusBoxCount } from "../BatrMatrixMechanics";
+import { getPlayers } from "../../../native/mechanics/NativeMatrixMechanics";
 import BlockRandomTickDispatcher from "./BlockRandomTickDispatcher";
 
 /**

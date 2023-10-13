@@ -6,7 +6,7 @@ import { IEntityFixedLived, IEntityOutGrid } from "../../../../../api/entity/Ent
 import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { fPoint } from "../../../../../../common/geometricTools";
 import IMatrix from "../../../../../main/IMatrix";
-import { waveHurtPlayers } from "../../../mechanics/NativeMatrixMechanics";
+import { waveHurtPlayers } from "../../../mechanics/BatrMatrixMechanics";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 

@@ -10,7 +10,7 @@ import { fillBlock, setBlock, drawLaserTrapDownPillar, drawLaserTrapUpPillar, ad
 import MapStorageSparse from "../../native/maps/MapStorageSparse";
 import Map_V1 from "../../native/maps/Map_V1";
 import { ALL_BATR_BLOCKS, BatrBlockIDs, BatrBlockPrototypes } from "./BlockRegistry";
-import { NativeBlockPrototypes } from "./NativeBlockRegistry";
+import { NativeBlockPrototypes } from "../../native/registry/NativeBlockRegistry";
 
 /**
  * 定义所有世界原生（自带）的地图

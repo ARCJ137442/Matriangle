@@ -8,7 +8,7 @@ import BulletBasic from "./BulletBasic";
 import Bullet from "./Bullet";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
-import { toolCreateExplode } from "../../../mechanics/NativeMatrixMechanics";
+import { toolCreateExplode } from "../../../mechanics/BatrMatrixMechanics";
 
 /**
  * 「核弹」

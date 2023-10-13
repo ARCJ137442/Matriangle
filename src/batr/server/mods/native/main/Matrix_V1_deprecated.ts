@@ -25,7 +25,7 @@ import BonusBox from "../../batr/entity/item/BonusBox";
 import IPlayer from "../entities/player/IPlayer";
 import PlayerBatr from "../../batr/entity/player/PlayerBatr";
 import PlayerTeam from "../../batr/entity/player/team/PlayerTeam";
-import { getPlayers } from "../../batr/mechanics/NativeMatrixMechanics";
+import { getPlayers } from "../mechanics/NativeMatrixMechanics";
 import { BonusType } from "../../batr/registry/BonusRegistry";
 import MatrixResult from "../../batr/stat/MatrixResult";
 import MatrixStats from "../../batr/stat/MatrixStats";

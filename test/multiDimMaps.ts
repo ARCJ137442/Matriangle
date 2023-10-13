@@ -5,7 +5,7 @@ import IMap from './../src/batr/server/api/map/IMap';
 import Map_V1 from './../src/batr/server/mods/native/maps/Map_V1';
 import { sparseMapMV稀疏地图母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
 import Block from '../src/batr/server/api/block/Block';
-import { NativeBlockPrototypes } from '../src/batr/server/mods/batr/registry/NativeBlockRegistry';
+import { NativeBlockPrototypes } from '../src/batr/server/mods/native/registry/NativeBlockRegistry';
 
 /**
  * 用于测试「一个母体，异维地图」

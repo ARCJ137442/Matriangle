@@ -10,7 +10,7 @@ import { alignToGrid_P } from "../../../general/PosTransform";
 import { IEntityInGrid, IEntityOutGrid } from "../../../api/entity/EntityInterfaces";
 import IPlayer from "../entities/player/IPlayer";
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces';
-import { isHitAnyEntity_I_Grid } from "../../batr/mechanics/NativeMatrixMechanics";
+import { isHitAnyEntity_I_Grid } from "../../batr/mechanics/BatrMatrixMechanics";
 import { reminder_F, reminder_I } from './../../../../common/exMath';
 
 /**

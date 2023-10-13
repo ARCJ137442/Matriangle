@@ -9,7 +9,7 @@ import Tool from "../../tool/Tool";
 import Weapon from "../../tool/Weapon";
 import IPlayer from "../../../native/entities/player/IPlayer";
 import IPlayerHasTeam from "../player/IPlayerHasTeam";
-import { computeAttackerDamage } from "../../mechanics/NativeMatrixMechanics";
+import { computeAttackerDamage } from "../../mechanics/BatrMatrixMechanics";
 
 /**
  * 「抛射体」是

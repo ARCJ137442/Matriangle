@@ -11,6 +11,7 @@
     "conventionalCommits.scopes": [
         "IO/Web",
         "可视化",
-        "显示端"
+        "显示端",
+        "世界机制"
     ]
 }

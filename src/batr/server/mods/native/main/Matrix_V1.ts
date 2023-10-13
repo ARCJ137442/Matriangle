@@ -8,7 +8,8 @@ import IMatrixRule from "../../../rule/IMatrixRule";
 import IMatrix from "../../../main/IMatrix";
 import IWorldRegistry from "../../../api/registry/IWorldRegistry";
 import { isDefined } from "../../../../common/utils";
-import { getRandomMap, projectEntity } from "../../batr/mechanics/NativeMatrixMechanics";
+import { getRandomMap } from "../../batr/mechanics/BatrMatrixMechanics";
+import { projectEntity } from "../mechanics/NativeMatrixMechanics";
 
 /**
  * 母体的第一代实现

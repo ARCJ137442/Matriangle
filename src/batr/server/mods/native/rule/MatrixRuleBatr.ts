@@ -1,7 +1,6 @@
 ﻿import { uint, int } from "../../../../legacy/AS3Legacy";
 import IMap from "../../../api/map/IMap";
 import PlayerTeam from "../../batr/entity/player/team/PlayerTeam";
-// import WorldRuleEvent from "../../../api/rule/WorldRuleEvent"; // TODO: 待事件系统移植后
 import { TPS } from "../../../main/GlobalWorldVariables";
 import { clearArray, identity, key } from "../../../../common/utils";
 import { BonusType } from "../../batr/registry/BonusRegistry";

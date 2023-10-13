@@ -10,7 +10,7 @@ import IMatrix from "../../../../../main/IMatrix";
 import Projectile from "../Projectile";
 import { mRot } from "../../../../../general/GlobalRot";
 import IPlayer from "../../../../native/entities/player/IPlayer";
-import { getPlayers } from "../../../mechanics/NativeMatrixMechanics";
+import { getPlayers } from "../../../../native/mechanics/NativeMatrixMechanics";
 
 /**
  * 「子弹」是

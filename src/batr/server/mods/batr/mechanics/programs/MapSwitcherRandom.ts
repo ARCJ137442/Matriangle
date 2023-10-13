@@ -4,7 +4,7 @@ import { IEntityActive } from "../../../../api/entity/EntityInterfaces";
 import IMap from "../../../../api/map/IMap";
 import IMatrix from "../../../../main/IMatrix";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
-import { getRandomMap } from "../NativeMatrixMechanics";
+import { getRandomMap } from "../BatrMatrixMechanics";
 import MapSwitcher from "./MapSwitcher";
 
 /**

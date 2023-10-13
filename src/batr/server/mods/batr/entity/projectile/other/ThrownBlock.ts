@@ -11,7 +11,8 @@ import { alignToGridCenter_P, alignToGrid_P } from "../../../../../general/PosTr
 import { NativeBlockAttributes } from "../../../registry/BlockAttributesRegistry";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 import EffectBlockLight from "../../effect/EffectBlockLight";
-import { computeFinalDamage, getHitEntity_I_Grid, getPlayers, isHitAnyEntity_F_Grid } from "../../../mechanics/NativeMatrixMechanics";
+import { computeFinalDamage, getHitEntity_I_Grid, isHitAnyEntity_F_Grid } from "../../../mechanics/BatrMatrixMechanics";
+import { getPlayers } from "../../../../native/mechanics/NativeMatrixMechanics";
 import IPlayerHasAttributes from "../../player/IPlayerHasAttributes";
 
 /**

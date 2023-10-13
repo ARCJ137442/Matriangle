@@ -9,7 +9,8 @@ import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import IMatrix from '../../../../../main/IMatrix';
 import { mRot, toOpposite_M } from "../../../../../general/GlobalRot";
 import { intAbs, intMin } from "../../../../../../common/exMath";
-import { getHitEntity_I_Grid, getPlayers, isHitAnyEntity_I_Grid, playerCanHurtOther } from "../../../mechanics/NativeMatrixMechanics";
+import { getHitEntity_I_Grid, isHitAnyEntity_I_Grid, playerCanHurtOther } from "../../../mechanics/BatrMatrixMechanics";
+import { getPlayers } from "../../../../native/mechanics/NativeMatrixMechanics";
 import { clearArray } from "../../../../../../common/utils";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 

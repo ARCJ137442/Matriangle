@@ -3,7 +3,6 @@ import { iPoint, iPointRef } from "../../../../../common/geometricTools";
 import { IEntityActive, IEntityDisplayable, IEntityHasHPAndHeal, IEntityHasHPAndLives, IEntityInGrid, IEntityWithDirection } from "../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../main/IMatrix";
 import { mRot } from "../../../../general/GlobalRot";
-import BonusBox from "../../../batr/entity/item/BonusBox";
 import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
 import PlayerController from "./controller/PlayerController";
 import { IMatrixControlReceiver } from "../../../../api/control/MatrixControl";
