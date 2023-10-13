@@ -6,6 +6,6 @@ export abstract class Font extends Object {
 
     public abstract enumerateFont(enumerateDeviceFonts?: boolean): Array<string>;
     public abstract hasGlyphs(str: string): boolean;
-    public abstract registerFont(font: any): void;
+    public abstract registerFont(font: unknown): void;
 
 }

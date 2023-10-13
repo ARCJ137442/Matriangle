@@ -25,7 +25,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	// 判断「是玩家」标签
-	public readonly i_isPlayer: true = true;
+	public readonly i_isPlayer = true as const;
 
 	//============Constructor & Destructor============//
 	/**
@@ -53,7 +53,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 		// 有方向实体 & 格点实体 //
 		this._position.copyFrom(position);
-		this._direction = direction
+		this._direction = direction;
 
 		// 可显示实体 //
 		this._fillColor = fillColor;
@@ -78,7 +78,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 	// 🕹️控制 //
 
 	/** @implements 活跃实体 */
-	readonly i_active: true = true;
+	readonly i_active = true as const;
 	onTick(host: IMatrix): void {
 		// 在重生过程中⇒先处理重生
 		if (this.isRespawning)
@@ -113,14 +113,14 @@ export default class Player_V1 extends Entity implements IPlayer {
 					1
 				),
 				true
-			)
+			);
 		// !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
 		// TODO: 显示更新
 	}
 	protected _temp_moveForward: iPoint = new iPoint();
 
 	turnTo(host: IMatrix, direction: number): void {
-		this._direction = direction
+		this._direction = direction;
 		// TODO: 显示更新
 	}
 
@@ -161,7 +161,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 			this,
 			host,
 			undefined
-		)
+		);
 	}
 
 	/**
@@ -269,7 +269,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 			// 增加待执行的行为
 			case ADD_ACTION:
 				if (action === undefined) throw new Error('未指定要缓存的行为！');
-				this._actionBuffer.push(action as PlayerAction);
+				this._actionBuffer.push(action);
 				break;
 		}
 	}
@@ -279,12 +279,12 @@ export default class Player_V1 extends Entity implements IPlayer {
 	public static readonly DEFAULT_MAX_HP: int = 100;
 	public static readonly DEFAULT_HP: int = Player_V1.DEFAULT_MAX_HP;
 
-	readonly i_hasHP: true = true;
-	readonly i_hasHPAndHeal: true = true;
-	readonly i_hasHPAndLives: true = true;
+	readonly i_hasHP = true as const;
+	readonly i_hasHPAndHeal = true as const;
+	readonly i_hasHPAndLives = true as const;
 
 	/** 玩家内部生命值 */
-	protected _HP: uint = Player_V1.DEFAULT_HP
+	protected _HP: uint = Player_V1.DEFAULT_HP;
 	/**
 	 * 玩家生命值
 	 * 
@@ -293,7 +293,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 */
 	get HP(): uint { return this._HP; }
 	set HP(value: uint) {
-		if (value == this._HP) return;
+		if (value === this._HP) return;
 		this._HP = intMin(value, this._maxHP);
 		// *【2023-09-28 20:32:49】更新还是要更新的
 		// if (this._GUI !== null)
@@ -301,11 +301,11 @@ export default class Player_V1 extends Entity implements IPlayer {
 	}
 
 	/** 玩家内部最大生命值 */
-	protected _maxHP: uint = Player_V1.DEFAULT_MAX_HP
+	protected _maxHP: uint = Player_V1.DEFAULT_MAX_HP;
 	/** 玩家生命值 */ // * 设置时无需过母体，故无需只读
 	get maxHP(): uint { return this._maxHP; }
 	set maxHP(value: uint) {
-		if (value == this._maxHP)
+		if (value === this._maxHP)
 			return;
 		this._maxHP = value;
 		if (value < this._HP)
@@ -318,7 +318,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 	/** 玩家储备生命值 */ // * 设置时无需过母体，故无需只读
 	get heal(): uint { return this._heal; }
 	set heal(value: uint) {
-		if (value == this._heal) return;
+		if (value === this._heal) return;
 		this._heal = value;
 		// this._GUI.updateHP(); // TODO: 显示更新
 	}
@@ -362,9 +362,9 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 	// 生命值文本
 	get HPText(): string {
-		let HPText: string = `${this._HP}/${this._maxHP}`;
-		let healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
-		let lifeText: string = this._lifeNotDecay ? '' : `[${this._lives}]`;
+		const HPText: string = `${this._HP}/${this._maxHP}`;
+		const healText: string = this._heal === 0 ? '' : `<${this._heal}>`;
+		const lifeText: string = this._lifeNotDecay ? '' : `[${this._lives}]`;
 		return HPText + healText + lifeText;
 	}
 
@@ -489,21 +489,21 @@ export default class Player_V1 extends Entity implements IPlayer {
 	set direction(value: mRot) { this._direction = value; }
 
 	// 格点实体
-	// readonly i_inGrid: true = true;
+	// readonly i_inGrid = true as const;
 
 	protected _position: iPoint = new iPoint();
-	get position(): iPoint { return this._position }
+	get position(): iPoint { return this._position; }
 	setPosition(host: IMatrix, position: iPoint, needHook: boolean): void {
 		// * 原Entity中`setXY`、`setPosition`的事 * //
 		// !【2023-10-08 17:13:08】在涉及「设置内部状态」的地方，统一调用钩子函数，不处理涉及母体的逻辑
 		// 位置更改前
-		if (needHook) this.onLocationChange(host, this._position)
+		if (needHook) this.onLocationChange(host, this._position);
 		// 更改位置
 		if (position === this._position)
-			console.trace('不建议「先变更位置」，再`setPosition`的「先斩后奏」方法')
+			console.trace('不建议「先变更位置」，再`setPosition`的「先斩后奏」方法');
 		this._position.copyFrom(position);
 		// 位置更改后
-		if (needHook) this.onLocationChanged(host, this._position)
+		if (needHook) this.onLocationChanged(host, this._position);
 	}
 	public static readonly MAX_DAMAGE_DELAY: uint = 0.5 * FIXED_TPS;
 
@@ -571,7 +571,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 			true, false, false,
 			avoidHurt,
 			avoidOthers, others,
-		)
+		);
 	}
 
 	// 📌钩子 //
@@ -586,7 +586,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 	// 🎨显示 //
 
-	readonly i_displayable: true = true;
+	readonly i_displayable = true as const;
 
 	/** 线条颜色 */
 	protected _lineColor: uint = 0x888888;
@@ -603,7 +603,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 	/** 堆叠覆盖层级：默认是「玩家」层级 */
 	protected _zIndex: uint = DisplayLayers.PLAYER;
-	get zIndex(): uint { return this._zIndex }
-	set zIndex(value: uint) { this._zIndex = value }
+	get zIndex(): uint { return this._zIndex; }
+	set zIndex(value: uint) { this._zIndex = value; }
 
 }

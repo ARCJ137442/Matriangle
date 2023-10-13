@@ -25,7 +25,7 @@ export default class EffectPlayerLevelup extends Effect {	//============Static V
 		LIFE: uint = EffectPlayerLevelup.LIFE
 	) {
 		super(position, LIFE);
-		this._color = color
+		this._color = color;
 	}
 
 	//============Display Implements============//

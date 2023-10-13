@@ -31,14 +31,14 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	public nowBlock: Block | null = null;
 
 	// 固定生命周期 //
-	public readonly i_shortLive: true = true;
+	public readonly i_shortLive = true as const;
 	/**
 	 * 一个最简单的「固定生命周期」值
 	 */
 	public static readonly LIFE: uint = 3200;
 	public LIFE: uint = 3200;
 	public life: uint = this.LIFE;
-	public get lifePercent(): number { return this.life / this.LIFE }
+	public get lifePercent(): number { return this.life / this.LIFE; }
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -51,7 +51,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	) {
 		super(owner, attackerDamage, extraDamageCoefficient, direction);
 		this.speed = speed;
-		this._position.copyFrom(position)
+		this._position.copyFrom(position);
 
 		// this.finalExplodeRadius = (owner === null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = finalExplodeRadius;
@@ -70,22 +70,22 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 
 	//============Interface Methods============//
 	// 坐标 //
-	public readonly i_outGrid: true = true;
+	public readonly i_outGrid = true as const;
 
 	/** 内部定义的坐标 */
 	protected readonly _position: fPoint = new fPoint();
 	/** （缓存用）现在所在的网格位置（整数点） */
-	protected readonly _position_I: iPoint = new iPoint()
+	protected readonly _position_I: iPoint = new iPoint();
 	/**
 	 * 外部读写坐标
 	 * 
 	 * ! 注意：写入坐标时，自身「坐标对象」引用不会改变
 	 */
-	get position(): floatPoint { return this._position }
-	set position(value: floatPoint) { this._position.copyFrom(value) }
+	get position(): floatPoint { return this._position; }
+	set position(value: floatPoint) { this._position.copyFrom(value); }
 
 	// 活跃 //
-	readonly i_active: true = true;
+	readonly i_active = true as const;
 
 	/**
 	 * 世界刻更新函数
@@ -112,7 +112,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 			}
 			// TODO: 未能触发，待解决bug
 			// 更新「上一个方块」
-			this.lastBlock = this.nowBlock
+			this.lastBlock = this.nowBlock;
 		}
 		// 移动
 		host.map.towardWithRot_FF(this._position, this._direction, this.speed);
@@ -140,7 +140,7 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80;
 	public static readonly SIZE: number = logical2Real(3 / 8);
 
-	readonly i_displayable: true = true;
+	readonly i_displayable = true as const;
 	/** （二维）显示覆盖优先级 */
 	protected _zIndex: uint = 0;
 	/**
@@ -157,8 +157,8 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 	 * @param shape 初始化要绘制到的图形
 	 */
 	public shapeInit(shape: IShape): void {
-		let realRadiusX: number = Bullet.SIZE / 2;
-		let realRadiusY: number = Bullet.SIZE / 2;
+		const realRadiusX: number = Bullet.SIZE / 2;
+		const realRadiusY: number = Bullet.SIZE / 2;
 
 		shape.graphics.lineStyle(Bullet.LINE_SIZE, this.ownerLineColor);
 		shape.graphics.beginFill(this.ownerColor);

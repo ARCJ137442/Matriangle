@@ -44,7 +44,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public shapeInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color);
-		EffectPlayerLike.moveToPlayerShape(shape.graphics)
+		EffectPlayerLike.moveToPlayerShape(shape.graphics);
 		// 然后绘制标记
 		this.drawDecoration(shape);
 		// 停止绘制

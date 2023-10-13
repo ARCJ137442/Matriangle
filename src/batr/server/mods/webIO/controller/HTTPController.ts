@@ -1,6 +1,6 @@
 import { uint } from "../../../../legacy/AS3Legacy";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
-import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http'
+import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http';
 import { ParsedUrlQuery, parse } from "node:querystring";
 import MultiKeyController from "./MultiKeyController";
 
@@ -48,16 +48,16 @@ export default class HTTPController extends MultiKeyController {
 	 * * 0.0.0.0
 	 */
 	protected _hostname: string = 'localhost';
-	public get hostname(): string { return this._hostname }
+	public get hostname(): string { return this._hostname; }
 
 	/**
 	 * 端口
 	 */
 	protected _port: uint = 8080;
-	public get port(): uint { return this._port }
+	public get port(): uint { return this._port; }
 
 	/** （衍生）获取本机服务地址 */
-	public get serverAddress(): string { return `http://${this._hostname}:${this._port}` }
+	public get serverAddress(): string { return `http://${this._hostname}:${this._port}`; }
 
 	/**
 	 * 存储当前HTTP服务器
@@ -111,18 +111,18 @@ export default class HTTPController extends MultiKeyController {
 	 */
 	protected onRequest(req: IncomingMessage, res: ServerResponse): void {
 		// 解析请求
-		let queries: ParsedUrlQuery = parse(
+		const queries: ParsedUrlQuery = parse(
 			req.url?.slice( // 截取出「?`a = 1 & b=2`...」
 				req.url.indexOf('?') + 1
 			) ?? ''
-		)
-		let controlKey: string | string[] | undefined = queries?.[HTTPController.KEY_CONTROL_KEY];
-		let action: string | string[] | undefined = queries?.[HTTPController.KEY_ACTION];
+		);
+		const controlKey: string | string[] | undefined = queries?.[HTTPController.KEY_CONTROL_KEY];
+		const action: string | string[] | undefined = queries?.[HTTPController.KEY_ACTION];
 		let responseText: string = `No response of ${req.url}\n`;
 		// 根据请求分派操作 // ! 目前只有「控制密钥」与「分派动作」均为字符串时才分派
 		if (typeof controlKey === 'string' && typeof action === 'string') {
 			this.dispatchByControlKey(controlKey, action);
-			responseText = `Action { ${controlKey}: ${action} } dispatched.\n`
+			responseText = `Action { ${controlKey}: ${action} } dispatched.\n`;
 		}
 		// 响应请求
 		res.writeHead(200, { 'Content-Type': 'text/plain' });

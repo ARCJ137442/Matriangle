@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { randInt, randIntBetween, randModWithout } from "../../../../common/exMath";
 import { iPoint, iPointRef, iPointVal } from "../../../../common/geometricTools";
 import { generateArray, identity, key, mapObject, randomIn } from "../../../../common/utils";
@@ -9,6 +11,18 @@ import { JSObject, JSObjectValue, JSObjectifyMap, fastAddJSObjectifyMapProperty_
 import Block from "../../../api/block/Block";
 import { typeID } from "../../../api/registry/IWorldRegistry";
 import { NativeBlockPrototypes, NATIVE_BLOCK_CONSTRUCTOR_MAP, NativeBlockIDs } from "../registry/NativeBlockRegistry";
+
+/** 现在由于使用ESLint，直接抽象到最外面当函数库 */
+function _temp_copyContent_F(p: iPointRef, source: IMapStorage, target: IMapStorage): void {
+    if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
+        target.setBlock(p, source.getBlock(p) as Block);
+}
+
+/** 现在由于使用ESLint，直接抽象到最外面当函数库 */
+function _temp_copyContent_F_deep(p: iPointRef, source: IMapStorage, target: IMapStorage): void {
+    if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
+        target.setBlock(p, (source.getBlock(p) as Block).copy());
+}
 
 /**
  * 稀疏地图
@@ -35,8 +49,8 @@ export default class MapStorageSparse implements IMapStorage {
      * @param cachedTo 需要被缓存的对象，若没提供自动创建
      * @returns 返回的**新**点
      */
-    public static indexToPoint(str: string, cachedTo: iPointRef | iPointVal = new iPoint()): iPointRef | iPointVal {
-        let s: string[] = str.split('_');
+    public static indexToPoint(str: string, cachedTo: iPointRef = new iPoint()): iPointRef {
+        const s: string[] = str.split('_');
         return cachedTo.copyFromArgs(...s.map(int));
     }
 
@@ -72,16 +86,16 @@ export default class MapStorageSparse implements IMapStorage {
                 v,
                 identity,
                 (value: Block): JSObject => uniSaveJSObject(value)
-            )
+            );
         },
-        (v: JSObjectValue): any => {
+        (v: JSObjectValue): unknown => {
             return mapObject(
                 v,
                 identity,
                 (value: JSObject): Block => { //Block.fromJSObject(value, this.blockConstructorMap)
-                    throw new Error('TODO: 【2023-10-09 20:34:21】这里需要在箭头函数中传回「自身」方能引用到「随自身映射变化而变化」的映射表。。。')
+                    throw new Error('TODO: 【2023-10-09 20:34:21】这里需要在箭头函数中传回「自身」方能引用到「随自身映射变化而变化」的映射表。。。');
                 }
-            )
+            );
         },
         loadRecursiveCriterion_false,
         (): Block => NativeBlockPrototypes.VOID.copy(), // 本身属性不变且无状态，所以直接复制
@@ -106,23 +120,23 @@ export default class MapStorageSparse implements IMapStorage {
      * * 默认是二维
      */
     protected _nDim: uint;
-    public get numDimension(): uint { return this._nDim }
+    public get numDimension(): uint { return this._nDim; }
     public static readonly key_nDim: key = fastAddJSObjectifyMapProperty_dashP(
         this.OBJECTIFY_MAP,
         'nDim', 'number',
-    )
+    );
 
     /**
      * * 一系列为了明确概念的存取器方法
      */
-    protected get borderRight(): int { return this._borderMax[0] };
-    protected set borderRight(v: int) { this._borderMax[0] = v };
-    protected get borderLeft(): int { return this._borderMin[0] };
-    protected set borderLeft(v: int) { this._borderMin[0] = v };
-    protected get borderDown(): int { return this._borderMax[1] };
-    protected set borderDown(v: int) { this._borderMax[1] = v };
-    protected get borderUp(): int { return this._borderMin[1] };
-    protected set borderUp(v: int) { this._borderMin[1] = v };
+    protected get borderRight(): int { return this._borderMax[0]; }
+    protected set borderRight(v: int) { this._borderMax[0] = v; }
+    protected get borderLeft(): int { return this._borderMin[0]; }
+    protected set borderLeft(v: int) { this._borderMin[0] = v; }
+    protected get borderDown(): int { return this._borderMax[1]; }
+    protected set borderDown(v: int) { this._borderMax[1] = v; }
+    protected get borderUp(): int { return this._borderMin[1]; }
+    protected set borderUp(v: int) { this._borderMin[1] = v; }
     /**
      * 用于构建「随机结构生成」的「生成器函数」
      * 
@@ -130,7 +144,7 @@ export default class MapStorageSparse implements IMapStorage {
      * 
      * TODO: 对象化要把这个抛掉吗？函数对对象化而言简直是个灾难（暂不参与对象化）
      */
-    public generatorF: (x: IMapStorage, ...args: any[]) => IMapStorage = identity<IMapStorage>;
+    public generatorF: (x: IMapStorage, ...args: unknown[]) => IMapStorage = identity<IMapStorage>;
 
     /**
      * 保存的「维度边界」坐标，始终是方形的
@@ -138,7 +152,7 @@ export default class MapStorageSparse implements IMapStorage {
      * * 轴向顺序：x,y,z,w…
      */
     protected readonly _borderMax: iPointVal;
-    public get borderMax(): iPointRef { return this._borderMax }
+    public get borderMax(): iPointRef { return this._borderMax; }
     public static readonly key_borderMax: key = fastAddJSObjectifyMapProperty_dash(
         this.OBJECTIFY_MAP,
         'borderMax', iPoint,
@@ -148,7 +162,7 @@ export default class MapStorageSparse implements IMapStorage {
     );
 
     protected readonly _borderMin: iPointVal;
-    public get borderMin(): iPointRef { return this._borderMin }
+    public get borderMin(): iPointRef { return this._borderMin; }
     public static readonly key_borderMin: key = fastAddJSObjectifyMapProperty_dash(
         this.OBJECTIFY_MAP,
         'borderMin', iPoint,
@@ -164,13 +178,14 @@ export default class MapStorageSparse implements IMapStorage {
         'allDirection', Array,
         identity, (jso: JSObjectValue): mRot[] => {
             if (!Array.isArray(jso)) throw new Error(`${jso}不是数组！`);
-            let result: mRot[] = [];
+            const result: mRot[] = [];
             for (let i: uint = 0; i < jso.length; ++i) {
                 // !【2023-09-24 21:12:00】这个`number`日后很有可能导致迁移困难
-                if (typeof jso[i] !== 'number') throw new Error(`${jso}索引${i}处的${jso[i]}不是「任意维整数角」！`)
-                result[i] = jso[i]
+                if (typeof jso[i] !== 'number')
+                    throw new Error(`${jso}索引${i}处的${jso[i]}不是「任意维整数角」！`);
+                result[i] = jso[i];
             }
-            return result
+            return result;
         },
         loadRecursiveCriterion_false,
     );
@@ -190,15 +205,15 @@ export default class MapStorageSparse implements IMapStorage {
      */
     public constructor(numDimension: uint) {
         // 初始化维数
-        this._nDim = numDimension
+        this._nDim = numDimension;
         // 初始化「所有朝向」
-        this._allDirection = generateArray(this.numDimension << 1, identity)
+        this._allDirection = generateArray(this.numDimension << 1, identity);
         // ! 特别初始化「边界长度」（因为它不是个临时变量）
         this._borderMax = new iPoint(this._nDim);
         this._borderMin = new iPoint(this._nDim);
     }
 
-    protected _temp_size: iPointVal = new iPoint() // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
+    protected _temp_size: iPointVal = new iPoint(); // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
     /**
      * 实现：max-min，矢量相减
      * * 【2023-09-17 1:11:38】注意：减去之后还得批量+1
@@ -225,7 +240,7 @@ export default class MapStorageSparse implements IMapStorage {
      * @returns 随机一个坐标方向（mRot「多位朝向」）
      */
     public randomForwardDirectionAt(p: iPointRef): mRot {
-        return randInt(this._nDim << 1)
+        return randInt(this._nDim << 1);
     }
 
     /**
@@ -237,7 +252,7 @@ export default class MapStorageSparse implements IMapStorage {
      * ? 暂时没算入接口，因为这函数暂时没被其它地方用到
      */
     public randomWithoutForwardDirectionAt(p: iPointRef, rot: mRot): mRot {
-        return (rot + randInt((this._nDim << 1) - 1)) % this._nDim
+        return (rot + randInt((this._nDim << 1) - 1)) % this._nDim;
     }
 
     /**
@@ -255,7 +270,7 @@ export default class MapStorageSparse implements IMapStorage {
             rot,
             randModWithout(rot >> 1, this._nDim), // 等概率取一个随机轴向
             step
-        )
+        );
     }
 
     /**
@@ -272,8 +287,8 @@ export default class MapStorageSparse implements IMapStorage {
     public isInMap(p: iPointRef): boolean {
         for (let i: uint = 0; i < this._nDim; ++i)
             if (this._borderMin[i] > p[i] || this._borderMax[i] < p[i])
-                return false
-        return true
+                return false;
+        return true;
     }
 
     /**
@@ -300,20 +315,20 @@ export default class MapStorageSparse implements IMapStorage {
     // ! 实现：会复制——因为这里的点不能保证「不是临时的」
     public addSpawnPointAt(p: iPointRef): IMapStorage {
         if (!this.hasSpawnPointAt(p))
-            this._spawnPoints.push(p.copy())
+            this._spawnPoints.push(p.copy());
         return this;
     }
 
     public hasSpawnPointAt(p: iPointRef): boolean {
-        for (let point of this._spawnPoints)
+        for (const point of this._spawnPoints)
             if (point.isEqual(p))
                 return true;
-        return false
+        return false;
     }
 
     public indexSpawnPointOf(p: iPointRef): uint | -1 {
         for (let index: uint = 0; index < this._spawnPoints.length; index++) {
-            let point: iPointRef = this._spawnPoints[index];
+            const point: iPointRef = this._spawnPoints[index];
             if (point.isEqual(p))
                 return index;
         }
@@ -323,10 +338,10 @@ export default class MapStorageSparse implements IMapStorage {
     public removeSpawnPoint(p: iPointRef): boolean {
         let point: iPointRef;
         for (let index: uint = 0; index < this._spawnPoints.length; index++) {
-            point = this._spawnPoints[index]
+            point = this._spawnPoints[index];
             if (point.isEqual(p)) {
-                this._spawnPoints.splice(index, 1)
-                return true
+                this._spawnPoints.splice(index, 1);
+                return true;
             }
         }
         return false;
@@ -358,9 +373,9 @@ export default class MapStorageSparse implements IMapStorage {
     public get randomPoint(): iPointRef {
         // return this._temp_randomPoint.generate(this._randomPGenerateF, this._nDim);
         for (let i: uint = 0; i < this._nDim; ++i) {
-            this._temp_randomPoint[i] = randIntBetween(this._borderMin[i], this._borderMax[i] + 1)
+            this._temp_randomPoint[i] = randIntBetween(this._borderMin[i], this._borderMax[i] + 1);
         }
-        return this._temp_randomPoint
+        return this._temp_randomPoint;
     }
 
     // 使用缓存
@@ -390,7 +405,7 @@ export default class MapStorageSparse implements IMapStorage {
         // 不断遍历，直到「最高位进位」后返回
         for (i = 0; i < this._nDim;) {
             // 执行当前点：调用回调函数
-            f(this._temp_forEachPoint, ...args)
+            f(this._temp_forEachPoint, ...args);
             // 迭代到下一个点：不断循环尝试进位
             // 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
             for (i = 0; i < this._nDim && ++this._temp_forEachPoint[i] > this._borderMax[i]; ++i) {
@@ -407,7 +422,7 @@ export default class MapStorageSparse implements IMapStorage {
      */
     public copy(deep: boolean = false): IMapStorage {
         // 复制构造函数参数
-        let nStorage: MapStorageSparse = new MapStorageSparse(this._nDim);
+        const nStorage: MapStorageSparse = new MapStorageSparse(this._nDim);
         // 复制其它信息
         nStorage.copyFrom(this, false, deep);
         // 返回
@@ -442,14 +457,6 @@ export default class MapStorageSparse implements IMapStorage {
         return this;
     }
 
-    protected static _temp_copyContent_F(p: iPointRef, source: IMapStorage, target: IMapStorage): void {
-        if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
-            target.setBlock(p, source.getBlock(p) as Block)
-    }
-    protected static _temp_copyContent_F_deep(p: iPointRef, source: IMapStorage, target: IMapStorage): void {
-        if (source.getBlock(p) !== null) // ! 不能省略：地图格式可能不只有此一种
-            target.setBlock(p, (source.getBlock(p) as Block).copy())
-    }
     public copyContentFrom(source: IMapStorage, clearSelf: boolean = false, deep: boolean = false): IMapStorage {
         if (clearSelf) {
             this.clearBlocks();
@@ -458,19 +465,19 @@ export default class MapStorageSparse implements IMapStorage {
         // 复制重生点
         for (const sP of source.spawnPoints) {
             if (deep)
-                this.addSpawnPointAt(sP)
+                this.addSpawnPointAt(sP);
             else this._spawnPoints.push(sP);
         }
         // * 函数式编程：决定是「原样」还是「拷贝」
-        let blockF: (p: iPointRef, source: IMapStorage, target: IMapStorage) => void = (
+        const blockF: (p: iPointRef, source: IMapStorage, target: IMapStorage) => void = (
             deep ?
-                MapStorageSparse._temp_copyContent_F_deep :
-                MapStorageSparse._temp_copyContent_F
+                _temp_copyContent_F_deep :
+                _temp_copyContent_F
         );
         source.forEachValidPositions(
             blockF, // * 现在是抽象出俩静态函数
             source, this
-        )
+        );
         return this;
     }
 
@@ -536,11 +543,11 @@ export default class MapStorageSparse implements IMapStorage {
     protected updateBorder(p: iPointRef): void {
         let pi: int;
         for (let i: int = 0; i < this._nDim; i++) {
-            pi = p[i]
+            pi = p[i];
             if (pi > this._borderMax[i] || this._borderMax[i] == undefined) // 现在需要检查是否为空
-                this._borderMax[i] = pi
+                this._borderMax[i] = pi;
             if (pi < this._borderMin[i] || this._borderMin[i] == undefined) // 现在需要检查是否为空
-                this._borderMin[i] = pi
+                this._borderMin[i] = pi;
         }
     }
 
@@ -576,7 +583,7 @@ export default class MapStorageSparse implements IMapStorage {
     }
 
     public clearBlocks(deleteBlock?: boolean | undefined): IMapStorage {
-        let deleteF: (p: iPointRef, target: IMapStorage) => void = (
+        const deleteF: (p: iPointRef, target: IMapStorage) => void = (
             deleteBlock ?
                 (p: iPointRef, target: IMapStorage): void => {
                     target.getBlock(p)?.destructor();
@@ -585,10 +592,10 @@ export default class MapStorageSparse implements IMapStorage {
                 (p: iPointRef, target: IMapStorage): void => {
                     target.setVoid(p);
                 }
-        )
+        );
         return this.forEachValidPositions(
             deleteF, this
-        )
+        );
     }
 
     //============Display Implements============//

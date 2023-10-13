@@ -1,5 +1,5 @@
 import { createServer, Server as HTTPServer, IncomingMessage, ServerResponse } from 'node:http';
-import { Server as WebSocketServer, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
+import { Server as WebSocketServer, WebSocket } from "ws"; // 需要使用`npm i --save-dev ws @types/ws`安装
 import { uint } from "../../../legacy/AS3Legacy";
 import { MatrixProgram, MatrixProgramLabel } from "../../api/control/MatrixProgram";
 import { MessageCallback, IMessageRouter } from './MessageInterfaces';
@@ -18,7 +18,7 @@ export type NativeWebServiceType = 'http' | 'ws';
  * @returns 主机地址:端口
  */
 function getAddress(hostName: string, port: uint): string {
-	return `${hostName}:${port}`
+	return `${hostName}:${port}`;
 }
 
 /**
@@ -63,7 +63,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	public registerService(service: IService, launchedCallback?: () => void): boolean {
 		// 先判断是否有，如果有则阻止
 		if (this._services.has(service.address)) {
-			console.warn(`[WebMessageRouter] 服务地址「${service.address}」已被注册，无法重复注册！`)
+			console.warn(`[WebMessageRouter] 服务地址「${service.address}」已被注册，无法重复注册！`);
 			return false;
 		}
 		// 注册并启动
@@ -153,12 +153,12 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	): boolean {
 		switch (type) {
 			case 'http':
-				return this.registerHTTPService(host, port, messageCallback, launchedCallback)
+				return this.registerHTTPService(host, port, messageCallback, launchedCallback);
 			case 'ws':
-				return this.registerWebSocketService(host, port, messageCallback, launchedCallback)
-			default:
-				console.error(`未知的服务类型：${type}`)
-				return false;
+				return this.registerWebSocketService(host, port, messageCallback, launchedCallback);
+			/* default:
+				console.error(`未知的服务类型：${type}`);
+				return false; */
 		}
 	}
 
@@ -176,9 +176,9 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		host: string, port: uint,
 		callback?: () => void,
 	): boolean {
-		let key: string = `${type}:${getAddress(host, port)}`;
+		const key: string = `${type}:${getAddress(host, port)}`;
 		if (this._services.has(key))
-			return this.unregisterService(this._services.get(key) as IService, callback)
+			return this.unregisterService(this._services.get(key) as IService, callback);
 		return false;
 	}
 
@@ -193,7 +193,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		return this.registerServiceWithType(
 			type, host, port,
 			messageCallback, launchedCallback
-		)
+		);
 	}
 	/** @implements 实现：复刻一遍先前的参数 */
 	unregisterMessageService(
@@ -204,7 +204,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		return this.unregisterServiceWithType(
 			type, host, port,
 			callback
-		)
+		);
 	}
 
 }
@@ -293,7 +293,7 @@ class HTTPService extends Service {
 			this._server = createServer((req: IncomingMessage, res: ServerResponse): void => {
 				res.writeHead(200, { 'Content-Type': 'text/plain' });
 				/** 有可能回调没有回复 */
-				let reply: string | undefined = this.messageCallback(
+				const reply: string | undefined = this.messageCallback(
 					// 尝试从URL中解析
 					req.url?.slice(1)/* 截取掉开头的「/」 */ ?? ''
 				);
@@ -315,9 +315,8 @@ class HTTPService extends Service {
 			);
 			// 报错
 			this._server.on('error', (e: Error): void => {
-				console.error(`${this.address}：服务器运行出错！`, e)
+				console.error(`${this.address}：服务器运行出错！`, e);
 			});
-			this._server.address
 		}
 		catch (e) {
 			console.error(`HTTP服务器${this.host}:${this.port}启动失败！`, e);
@@ -384,7 +383,7 @@ class WebSocketService extends Service {
 					socket.on('message', (messageBuffer: Buffer): void => {
 						// !【2023-10-07 14:45:37】现在统一把消息缓冲区转成字符串，交给内部的函数处理
 						/** 有可能不回复 */
-						let reply: string | undefined = this.messageCallback(
+						const reply: string | undefined = this.messageCallback(
 							messageBuffer.toString('utf-8') // !【2023-10-12 20:39:19】统一使用UTF-8字符集
 						);
 						// 条件回传
@@ -408,7 +407,7 @@ class WebSocketService extends Service {
 							`${this.address}：与${socket.url}的WebSocket连接发生错误！`,
 							error
 						);
-					})
+					});
 				},
 			);
 		}

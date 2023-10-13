@@ -1,4 +1,5 @@
-﻿import { uint, int } from "../../../../legacy/AS3Legacy";
+﻿/* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { uint, int } from "../../../../legacy/AS3Legacy";
 import IMap from "../../../api/map/IMap";
 import PlayerTeam from "../../batr/entity/player/team/PlayerTeam";
 import { TPS } from "../../../main/GlobalWorldVariables";
@@ -26,9 +27,9 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	 * * 实例属性：_规则名
 	 * * getter&setter
 	 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
 	/** @override 现在导向自身类的静态常量 */
-	override get objectifyMap(): JSObjectifyMap { return MatrixRuleBatr.OBJECTIFY_MAP }
+	override get objectifyMap(): JSObjectifyMap { return MatrixRuleBatr.OBJECTIFY_MAP; }
 
 	//========Rules========//
 
@@ -94,7 +95,7 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		(arr: JSObjectValue): PlayerTeam[] => {
 			if (!Array.isArray(arr)) {
 				console.error(`玩家队伍参数「${arr}」不是数组！`);
-				return []
+				return [];
 			}
 			// 函数内对每个「玩家队伍的JS对象」都进行转换
 			return arr.map(
@@ -106,7 +107,7 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 							value
 						)
 				)
-			)
+			);
 		},
 		loadRecursiveCriterion_false // ! 【2023-09-24 11:44:41】现在直接设置就行了，因为里边数据都已预处理完成
 	);
@@ -256,7 +257,7 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	public get deadPlayerMoveTo(): iPoint { return this._deadPlayerMoveTo; }
 	public set deadPlayerMoveTo(value: iPoint) {
 		if (this._deadPlayerMoveTo.isEqual(value)) return;
-		this.onVariableUpdate(MatrixRuleBatr.key_deadPlayerMoveTo, this._deadPlayerMoveTo.copy(), value)
+		this.onVariableUpdate(MatrixRuleBatr.key_deadPlayerMoveTo, this._deadPlayerMoveTo.copy(), value);
 		this._deadPlayerMoveTo.copyFrom(value);
 	}
 
@@ -367,14 +368,14 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 			if (v instanceof Map) return v;
 			return mapLoadJSObject(
 				v as JSObject,
-				(bonusType: any, weight: any): [BonusType, number] => [
+				(bonusType: unknown, weight: unknown): [BonusType, number] => [
 					String(bonusType), Number(weight)
 				]
-			)
+			);
 		},
 		loadRecursiveCriterion_true
 	);
-	protected _bonusTypePotentials: Map<BonusType, number> = MatrixRuleBatr.d_bonusTypePotentials
+	protected _bonusTypePotentials: Map<BonusType, number> = MatrixRuleBatr.d_bonusTypePotentials;
 	/**
 	 * 奖励类型→权重
 	 * * 只在「世界加载」阶段被注册使用。不会在这里注入一丝默认值
@@ -384,7 +385,7 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	 */
 	public get bonusTypePotentials(): Map<BonusType, number> { return this._bonusTypePotentials; }
 	public set bonusTypePotentials(value: Map<BonusType, number>) {
-		this._bonusTypePotentials = value
+		this._bonusTypePotentials = value;
 	}
 
 	protected static readonly d_bonusBoxSpawnAfterPlayerDeath: boolean = true;
@@ -460,14 +461,14 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 			if (v instanceof Map) return v;
 			return mapLoadJSObject(
 				v as JSObject,
-				(mapJSO: JSObject, weight: any): [IMap, number] => [
+				(mapJSO: JSObject, weight: unknown): [IMap, number] => [
 					uniLoadJSObject(
 						Map_V1.getBlank(MapStorageSparse.getBlank()), // !【2023-09-24 15:31:16】目前还是使用Map_V1作存取媒介……需要一个统一的格式？
 						mapJSO
 					),
-					weight
+					Number(weight)
 				]
-			)
+			);
 		},
 		loadRecursiveCriterion_false
 	);
@@ -706,10 +707,10 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 	public static readonly ALL_RULE_KEYS: key[] = Object.getOwnPropertyNames(this.OBJECTIFY_MAP).map(
 		// * 映射到在JS对象中呈现的键
 		(key: string): key => this.OBJECTIFY_MAP[key].JSObject_key
-	)
+	);
 	/** @override 覆盖：导向自身静态常量 */
 	override get allKeys(): key[] {
-		return MatrixRuleBatr.ALL_RULE_KEYS
+		return MatrixRuleBatr.ALL_RULE_KEYS;
 	}
 
 	//========Preview========//
@@ -739,7 +740,7 @@ export default class MatrixRuleBatr extends MatrixRule_V1 {
 		// this.copyFrom(WorldRule_V1.TEMPLATE);
 	}
 
-	public onVariableUpdate(key: key, oldValue: any, newValue: any): void {
+	public onVariableUpdate(key: key, oldValue: unknown, newValue: unknown): void {
 		super.onVariableUpdate(key, oldValue, newValue);
 		// TODO: 等待事件机制完善
 		// this.dispatchEvent(

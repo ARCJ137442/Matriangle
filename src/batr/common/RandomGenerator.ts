@@ -1,4 +1,4 @@
-﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
+﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy';
 
 /**
  * 使用「多项式线性同余法」的随机数生成器
@@ -22,8 +22,8 @@ export default class RandomGenerator {
 		let result: number = 0;
 		// calculate polynomial uses Using Qin Jiushao algorithm
 		for (let i: uint = 0; i < coefficients.length; i++) {
-			result *= x
-			result += coefficients[i]
+			result *= x;
+			result += coefficients[i];
 		}
 		return result;
 	}
@@ -60,7 +60,7 @@ export default class RandomGenerator {
 	}
 
 	public set seed(value: number) {
-		let reGenerate: boolean = (value != this.seed);
+		const reGenerate: boolean = (value !== this.seed);
 		this._randomList[0] = value;
 		if (reGenerate)
 			this.dealReset();
@@ -71,7 +71,7 @@ export default class RandomGenerator {
 	}
 
 	public set mode(value: number) {
-		let reGenerate: boolean = (value != this.mode);
+		const reGenerate: boolean = (value !== this.mode);
 		this._mode = value;
 		if (reGenerate)
 			this.dealReset();
@@ -82,7 +82,7 @@ export default class RandomGenerator {
 	}
 
 	public set buffer(value: number[]) {
-		let reGenerate: boolean = !RandomGenerator.isEqualNumVec(this.buffer, value);
+		const reGenerate: boolean = !RandomGenerator.isEqualNumVec(this.buffer, value);
 		this._buffer = value;
 		if (reGenerate)
 			this.dealReset();
@@ -104,7 +104,7 @@ export default class RandomGenerator {
 
 	public get cycle(): uint {
 		for (let i: uint = 0; i < this._randomList.length; i++) {
-			let li: uint = this._randomList.lastIndexOf(this._randomList[i], i);
+			const li: uint = this._randomList.lastIndexOf(this._randomList[i], i);
 			if (li > i)
 				return li - i;
 		}
@@ -148,7 +148,7 @@ export default class RandomGenerator {
 	}
 
 	public getRandom(count: uint = 1): number[] {
-		let arr: number[] = [];
+		const arr: number[] = [];
 		for (let i: uint = 0; i < count; i++) {
 			this.generateNext();
 			arr.push(this.lastNum);
@@ -176,7 +176,7 @@ export default class RandomGenerator {
 	}
 
 	protected dealReset(): void {
-		let tempCount: uint = this.numCount - 1;
+		const tempCount: uint = this.numCount - 1;
 		this.reset();
 		this.generateNext(tempCount);
 	}

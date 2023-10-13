@@ -109,7 +109,7 @@ export abstract class MatrixController extends MatrixProgram {
      * 分派事件
      * * 事件参数作为数组传入，但会被平铺到钩子函数中（作为「位置参数」以便于编写）
      */
-    public dispatchEvent(event: MatrixEventType, args: any[]): void {
+    public dispatchEvent(event: MatrixEventType, args: unknown[]): void {
         for (const subscriber of this.subscribers) {
             subscriber.onReceive(event, ...args);
         }

@@ -33,12 +33,12 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	public speed: number = Wave.DEFAULT_SPEED;
 
 	// 固定生命周期 //
-	public readonly i_fixedLive: true = true;
+	public readonly i_fixedLive = true as const;
 
 	protected _life: uint = Wave.LIFE;
 	public get life(): uint { return this._life; }
 	public get LIFE(): uint { return Wave.LIFE; }
-	public get lifePercent(): number { return this._life / Wave.LIFE }
+	public get lifePercent(): number { return this._life / Wave.LIFE; }
 
 	/**
 	 * 记录当前达到的尺寸
@@ -49,7 +49,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	public set nowScale(value: number) { this._nowScale = value; }
 
 	// 非格点实体 //
-	public readonly i_outGrid: true = true;
+	public readonly i_outGrid = true as const;
 
 	/** 记录自身位置 */
 	protected _position: fPoint = new fPoint();
@@ -77,7 +77,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		finalRadius: number,
 	) {
 		/** 从最小到最大 */
-		let tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent;
+		const tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent;
 		super(
 			owner,
 			attackerDamage * (tempScale / Wave.MAX_SCALE),
@@ -105,7 +105,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	 * @param shape 目标图形
 	 */
 	override shapeInit(shape: IShape): void {
-		let realRadius: number = Wave.SIZE / 2;
+		const realRadius: number = Wave.SIZE / 2;
 
 		shape.graphics.beginFill(this.ownerColor, Wave.ALPHA);
 		// Final:At last use three bezier curve
@@ -128,7 +128,7 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 	}
 
 	public shapeDestruct(shape: IShape): void {
-		shape.graphics.clear()
+		shape.graphics.clear();
 	}
 
 	//====Tick Function====//

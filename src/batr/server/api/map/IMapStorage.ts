@@ -1,5 +1,5 @@
 import { ISelfModifyingGenerator } from "../../../common/abstractInterfaces";
-import { iPoint, iPointRef, iPointVal, intPoint } from "../../../common/geometricTools";
+import { iPointRef, iPointVal } from "../../../common/geometricTools";
 import { mRot } from "../../general/GlobalRot";
 import { uint, int } from "../../../legacy/AS3Legacy";
 import BlockAttributes from "../block/BlockAttributes";

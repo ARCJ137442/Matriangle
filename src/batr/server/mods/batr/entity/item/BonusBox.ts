@@ -52,11 +52,11 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	}
 
 	// 格点实体 //
-	// public readonly i_inGrid: true = true;
+	// public readonly i_inGrid = true as const;
 
 	public readonly _position: iPoint = new iPoint();
-	public get position(): intPoint { return this._position }
-	public set position(value: intPoint) { this._position.copyFrom(value) }
+	public get position(): intPoint { return this._position; }
+	public set position(value: intPoint) { this._position.copyFrom(value); }
 
 	//============World Mechanics============//
 
@@ -68,11 +68,11 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	}
 
 	//============Display Implements============//
-	public readonly i_displayable: true = true;
-	public readonly i_displayableContainer: true = true;
+	public readonly i_displayable = true as const;
+	public readonly i_displayableContainer = true as const;
 
 	/** 边缘的空白 */
-	public static readonly BORDER_SPACE: number = (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
+	public static readonly BORDER_SPACE: number = (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2;
 
 	public shapeInit(shape: IShapeContainer, symbol: IShape): void {
 		// 绘制盒子
@@ -90,13 +90,13 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 
 	public shapeDestruct(shape: IShapeContainer): void {
 		// 遍历（唯一的一个）子元素
-		for (let symbol of shape.children) {
-			symbol.graphics.clear()
+		for (const symbol of shape.children) {
+			symbol.graphics.clear();
 		}
 	}
 
 	protected _zIndex: uint = DisplayLayers.BONUS_BOX;
-	get zIndex(): uint { return this._zIndex }
+	get zIndex(): uint { return this._zIndex; }
 	set zIndex(value: uint) {
 		this._zIndex = value;
 		// this.shapeRefresh(this.shape); // TODO: 请求更新

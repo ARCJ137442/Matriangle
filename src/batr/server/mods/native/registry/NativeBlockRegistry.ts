@@ -14,13 +14,13 @@ import { BlockConstructorMap } from "../../../api/map/IMapStorage";
  */
 export module NativeBlockPrototypes {
 
-	export const VOID: Block<null> = new Block('Void', NativeBlockAttributes.VOID, null)
+	export const VOID: Block<null> = new Block('Void', NativeBlockAttributes.VOID, null);
 
 	/**
 	 * 带颜色方块
 	 * !【2023-10-09 20:16:59】保留这个「带颜色方块」，用作更通用的用途
 	 */
-	export const COLORED: Block<BSColored> = new Block('Colored', NativeBlockAttributes.COLORED_BLOCK, new BSColored(0x000000)) // 默认的黑色方块
+	export const COLORED: Block<BSColored> = new Block('Colored', NativeBlockAttributes.COLORED_BLOCK, new BSColored(0x000000)); // 默认的黑色方块
 
 }
 
@@ -31,9 +31,9 @@ export module NativeBlockPrototypes {
  */
 export module NativeBlockIDs {
 
-	export const VOID: typeID = NativeBlockPrototypes.VOID.id
+	export const VOID: typeID = NativeBlockPrototypes.VOID.id;
 
-	export const COLORED: typeID = NativeBlockPrototypes.COLORED.id
+	export const COLORED: typeID = NativeBlockPrototypes.COLORED.id;
 }
 
 /**
@@ -42,7 +42,7 @@ export module NativeBlockIDs {
 export const ALL_NATIVE_BLOCKS: Block[] = [
 	NativeBlockPrototypes.VOID,
 	NativeBlockPrototypes.COLORED,
-]
+];
 
 /**
  * 用于「ID⇒零参构造函数」的映射表
@@ -53,4 +53,4 @@ export const NATIVE_BLOCK_CONSTRUCTOR_MAP: BlockConstructorMap = MapFromGenerato
 	ALL_NATIVE_BLOCKS,
 	(block: Block): typeID => block.id,
 	(block: Block): (() => Block) => ((): Block => block.copy()),
-)
+);

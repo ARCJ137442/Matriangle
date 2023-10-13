@@ -1,5 +1,5 @@
 import { float } from "../../common/exMath";
-import { iPoint, fPoint, iPointRef, fPointRef } from "../../common/geometricTools";
+import { iPointRef, fPointRef } from "../../common/geometricTools";
 import { int } from "../../legacy/AS3Legacy";
 
 // /**
@@ -87,7 +87,7 @@ export function alignToGridCenter_P(p: iPointRef, destination: fPointRef): fPoin
     // 然后逐一转换
     for (let i = 0; i < p.length; i++) {
         // * 先转换成浮点数
-        destination[i] = alignToGridCenter(float(p[i]))
+        destination[i] = alignToGridCenter(float(p[i]));
     }
     return destination;
 }
@@ -110,7 +110,7 @@ export function alignToGrid_P(p: fPointRef, destination: iPointRef): iPointRef {
     destination.length = p.length;
     // 然后逐一转换
     for (let i = 0; i < p.length; i++) {
-        destination[i] = alignToGrid(p[i])
+        destination[i] = alignToGrid(p[i]);
     }
     return destination;
 }

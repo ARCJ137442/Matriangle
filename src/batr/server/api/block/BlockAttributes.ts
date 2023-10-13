@@ -1,15 +1,6 @@
-import { isExtend } from "../../../common/utils";
-import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE, Class } from "../../../legacy/AS3Legacy";
-import Block from "./Block";
+import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE } from "../../../legacy/AS3Legacy";
 
 export default class BlockAttributes {
-
-	//============Static Functions============//
-	public static fromType(type: Class): BlockAttributes {
-		if (isExtend(type, Block))
-			return (type as any).DEFAULT_ATTRIBUTES; // * ensured `type extends Block`
-		throw new Error("Unknown BlockType");
-	}
 
 	//============Instance Variables============//
 	//==Attributes==//
@@ -97,13 +88,15 @@ export default class BlockAttributes {
 	}
 
 	public copy(): BlockAttributes {
-		let tempAttributes: BlockAttributes = new BlockAttributes();
+		const tempAttributes: BlockAttributes = new BlockAttributes();
 		/**
 		 * !【2023-09-29 11:18:16】现在使用for-in遍历所有键值对进行复制
 		 */
-		for (let key in this) {
+		for (const key in this) {
 			// ! 注意：必须是「独有属性」，否则会复制getter
+			// eslint-disable-next-line no-prototype-builtins
 			if (this.hasOwnProperty(key)) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 				(tempAttributes as any)[key] = this[key];
 			}
 		}

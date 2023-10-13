@@ -1,14 +1,12 @@
-import { iPoint, iPointRef } from "../../../../../common/geometricTools";
+import { iPointRef } from "../../../../../common/geometricTools";
 import { uint } from "../../../../../legacy/AS3Legacy";
-import Block from "../../../../api/block/Block";
-import { MatrixProgram, MatrixProgramLabel } from "../../../../api/control/MatrixProgram";
+import { MatrixProgramLabel } from "../../../../api/control/MatrixProgram";
 import { IEntityActive } from "../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../main/IMatrix";
 import IMatrixRule from "../../../../rule/IMatrixRule";
 import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
-import { NativeBlockEventType, NativeBlockTypeEventMap } from "../../registry/BlockEventRegistry";
 import { BonusType } from "../../registry/BonusRegistry";
-import { addBonusBoxInRandomTypeByRule, bonusBoxTest, getBonusBoxCount } from "../BatrMatrixMechanics";
+import { addBonusBoxInRandomTypeByRule, getBonusBoxCount } from "../BatrMatrixMechanics";
 import { getPlayers } from "../../../native/mechanics/NativeMatrixMechanics";
 import BlockRandomTickDispatcher from "./BlockRandomTickDispatcher";
 
@@ -57,7 +55,7 @@ export default class BonusBoxGenerator extends BlockRandomTickDispatcher impleme
 			rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBoxMaxCount),
 			rule.safeGetRule<number>(MatrixRuleBatr.key_bonusBoxSpawnChance),
 			rule.safeGetRule<Map<BonusType, number>>(MatrixRuleBatr.key_bonusTypePotentials),
-		)
+		);
 	}
 
 	/**

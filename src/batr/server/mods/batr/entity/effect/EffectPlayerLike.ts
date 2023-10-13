@@ -35,7 +35,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	 * * 【2023-10-06 20:18:52】目前只在「特效从玩家坐标处创建创建」时使用
 	 */
 	public static alignToCenter(e: EffectPlayerLike): EffectPlayerLike {
-		alignToGridCenter_P(e._position, e._position)
+		alignToGridCenter_P(e._position, e._position);
 		return e;
 	}
 
@@ -62,13 +62,13 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 		this._decorationLabel = decorationLabel;
 		this._alphaFunction = (
 			reverse ?
-				EffectPlayerLike.reversedAlpha :
-				EffectPlayerLike.defaultAlpha
+				EffectPlayerLike.reversedAlpha.bind(this) :
+				EffectPlayerLike.defaultAlpha.bind(this)
 		);
 	}
 
 	// 有方向 //
-	protected _direction: mRot
+	protected _direction: mRot;
 	public get direction(): mRot { return this._direction; }
 	public set direction(value: mRot) {
 		this._direction = value;
@@ -78,7 +78,7 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	//============Display Implements============//
 	/** （静态函数指针）控制特效透明度（淡出） */
 	public static defaultAlpha(effect: EffectPlayerLike): number {
-		return effect.lifePercent
+		return effect.lifePercent;
 	}
 
 	/** （静态函数指针）控制特效透明度（淡入） */
@@ -103,8 +103,8 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 		sizeX: number = EffectPlayerLike.SIZE,
 		sizeY: number = EffectPlayerLike.SIZE,
 	): void {
-		let realRadiusX: number = sizeX / 2;
-		let realRadiusY: number = sizeY / 2;
+		const realRadiusX: number = sizeX / 2;
+		const realRadiusY: number = sizeY / 2;
 		graphics.moveTo(-realRadiusX, -realRadiusY);
 		graphics.lineTo(realRadiusX, 0);
 		graphics.lineTo(-realRadiusX, realRadiusY);

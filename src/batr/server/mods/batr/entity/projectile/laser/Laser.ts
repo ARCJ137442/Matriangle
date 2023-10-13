@@ -22,7 +22,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	/** 激光的长度 */
 	public _length: uint;
 	/** 对外只读的「激光长度」 */
-	public get length(): number { return this._length }
+	public get length(): number { return this._length; }
 	/** 先前是否已对实体造成伤害 */
 	public hasDamaged: boolean = false;
 
@@ -42,19 +42,19 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	}
 
 	// 固定生命周期 //
-	public readonly i_fixedLive: true = true;
+	public readonly i_fixedLive = true as const;
 
 	/** 总存在时间 */
 	protected _life: uint;
 	protected _LIFE: uint;
-	public get life(): uint { return this._life }
-	public get LIFE(): uint { return this._LIFE }
+	public get life(): uint { return this._life; }
+	public get LIFE(): uint { return this._LIFE; }
 	public get lifePercent(): number {
 		return this._life / this._LIFE;
 	}
 
 	// 格点 //
-	// public readonly i_inGrid: true = true;
+	// public readonly i_inGrid = true as const;
 	/** 
 	 * 存储激光的格点位置
 	 * * 坐标即为「激光根部」，又称「起始点」
@@ -95,7 +95,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
 	 */
 	public shapeInit(shape: IShape): void {
-		shape.scaleX = this._length
+		shape.scaleX = this._length;
 	}
 	/** 
 	 * 刷新：（暂时只）更新激光长度
@@ -106,11 +106,11 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	public shapeRefresh(shape: IShape): void {
 		// this.shapeDestruct(shape);
 		// this.shapeInit(shape);
-		shape.scaleX = this._length
+		shape.scaleX = this._length;
 	}
 	/** 析构：清空图形上下文 */
 	public shapeDestruct(shape: IShape): void {
-		shape.graphics.clear()
+		shape.graphics.clear();
 	}
 
 	/**
@@ -127,7 +127,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		color: uint = 0xffffff,
 		alpha: number = 1
 	): void {
-		let yStart: number = Math.min(y1, y2);
+		const yStart: number = Math.min(y1, y2);
 		graphics.beginFill(color, alpha);
 		graphics.drawRect(
 			0, yStart,
@@ -142,7 +142,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		y1: number, y2: number,
 		alpha: number = 1
 	): void {
-		let yStart: number = Math.min(y1, y2);
+		const yStart: number = Math.min(y1, y2);
 		graphics.beginFill(this.ownerColor, alpha);
 		graphics.drawRect(
 			0, yStart,

@@ -1,3 +1,5 @@
+import { getClass } from "../../../common/utils";
+
 /**
  * @author ARCJ137442
  * @class 一切「世界内实体」的抽象基类，拥有「激活」属性
@@ -19,8 +21,13 @@ export default abstract class Entity {
 	 * 
 	 * ! 注意：与「活跃实体」的概念不同
 	 */
-	public get isActive(): boolean { return this._isActive }
-	public set isActive(value: boolean) { this._isActive = value }
+	public get isActive(): boolean { return this._isActive; }
+	public set isActive(value: boolean) { this._isActive = value; }
+
+	// 对接JS API //
+	public toString(): string {
+		return `[Entity ${getClass(this)?.name} isActive=${this._isActive}]`
+	}
 
 	//============Constructor & Destructor============//
 	public constructor() {

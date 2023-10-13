@@ -55,6 +55,7 @@ import { NativeBlockPrototypes } from "../../native/registry/NativeBlockRegistry
 import Bullet from "../entity/projectile/bullet/Bullet";
 import { getPlayers } from "../../native/mechanics/NativeMatrixMechanics";
 import { spreadPlayer } from "../../native/mechanics/NativeMatrixMechanics";
+import Entity from "../../../api/entity/Entity";
 
 /**
  * 所有世界的「原生逻辑」
@@ -89,7 +90,7 @@ export function initPlayersByRule(players: IPlayerBatr[], rule: IMatrixRule): vo
             break;
         // 完全随机
         case 'c-random':
-            defaultTool = '' // ! 设置为空串，到时好比对（💭用函数式搞一个闭包也不是不行，但这会拖慢其它模式的初始化速度）
+            defaultTool = ''; // ! 设置为空串，到时好比对（💭用函数式搞一个闭包也不是不行，但这会拖慢其它模式的初始化速度）
             break;
         // 固定武器：没啥事做
         default:
@@ -146,12 +147,12 @@ export function toolCreateExplode(
     );
     // 遍历伤害玩家
     let distanceP: number;
-    for (let player of getPlayers(host)) {
+    for (const player of getPlayers(host)) {
         // 玩家坐标视作网格中心：对齐
         alignToGridCenter_P(
             player.position,
             _temp_toolCreateExplode_playerCenterP
-        )
+        );
         // 计算距离百分比
         distanceP = p.getDistanceSquare(
             _temp_toolCreateExplode_playerCenterP
@@ -191,11 +192,11 @@ const _temp_toolCreateExplode_playerCenterP: fPoint = new fPoint();
  */
 export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
     /** 引用 */
-    let base: fPoint = wave.position;
+    const base: fPoint = wave.position;
     /** Wave的尺寸即为其伤害半径 */
-    let radius: number = wave.nowScale;
+    const radius: number = wave.nowScale;
     // 开始遍历所有玩家
-    for (let victim of getPlayers(host)) { // TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
+    for (const victim of getPlayers(host)) { // TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
         // FinalDamage
         if (projectileCanHurtOther(wave, victim)) {
             if (base.getDistance(victim.position) <= radius) {
@@ -414,7 +415,7 @@ export function playerPickupBonusBox(
         case NativeBonusTypes.RANDOM_CHANGE_TEAM:
             // 仅「有队伍机制」
             if (i_hasTeam(player))
-                randomizePlayerTeam(host, player as IPlayerHasTeam);
+                randomizePlayerTeam(host, player);
             break;
         // 其它
         case NativeBonusTypes.RANDOM_TELEPORT:
@@ -442,13 +443,13 @@ const temp_playerPickupBonusBox_effectP: fPoint = new fPoint();
 export function playerUseTool(host: IMatrix, player: IPlayerHasTool, rot: uint, chargePercent: number): void {
     (host.registry as Registry_V1)?.toolUsageMap.get(player.tool.id)?.(host, player, player.tool, rot, chargePercent);
     // 没注册的工具才报信息
-    if ((host.registry as Registry_V1)?.toolUsageMap.has(player.tool.id)) { }
+    if ((host.registry as Registry_V1)?.toolUsageMap.has(player.tool.id)) { /* empty */ }
     else
         console.warn('WIP@directUseTool',
             player.tool,
             player, player.direction,
             player.tool.chargingPercent
-        )
+        );
 }
 
 interface BulletConstructor extends ConcreteClass<Bullet> {
@@ -519,7 +520,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
     },
     // * 武器：核弹 * //
     [NativeTools.TOOL_ID_BULLET_NUKE]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        let scalePercent: number = (0.25 + chargePercent * 0.75);
+        const scalePercent: number = (0.25 + chargePercent * 0.75);
         generateBullet(
             BulletNuke,
             host, user, tool, direction,
@@ -531,7 +532,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
     },
     // * 武器：轰炸机 * //
     [NativeTools.TOOL_ID_BULLET_BOMBER]: (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number): void => {
-        let scalePercent: number = (0.25 + chargePercent * 0.75);
+        const scalePercent: number = (0.25 + chargePercent * 0.75);
         generateBullet(
             BulletBomber,
             host, user, tool, direction,
@@ -678,10 +679,10 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
 */
 export function handlePlayerLocationChange(host: IMatrix, player: IPlayer, oldP: iPointRef): void {
     // * 通过注册表分派事件
-    let blockID: typeID | undefined = host.map.storage.getBlockID(oldP)
+    const blockID: typeID | undefined = host.map.storage.getBlockID(oldP);
     if (blockID !== undefined && host.registry.blockEventRegistry.hasRegistered(blockID))
         (host.registry.blockEventRegistry.getEventMapAt(blockID) as NativeBlockTypeEventMap
-        )?.[NativeBlockEventType.PLAYER_MOVE_OUT]?.(host, oldP, player)
+        )?.[NativeBlockEventType.PLAYER_MOVE_OUT]?.(host, oldP, player);
 }
 
 /**
@@ -693,10 +694,10 @@ export function handlePlayerLocationChange(host: IMatrix, player: IPlayer, oldP:
 export function handlePlayerLocationChanged(host: IMatrix, player: IPlayer, newP: iPointRef): void {
     // ! 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
     // * 通过注册表分派事件
-    let blockID: typeID | undefined = host.map.storage.getBlockID(newP)
+    const blockID: typeID | undefined = host.map.storage.getBlockID(newP);
     if (blockID !== undefined && host.registry.blockEventRegistry.hasRegistered(blockID))
         (host.registry.blockEventRegistry.getEventMapAt(blockID) as NativeBlockTypeEventMap
-        )?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player)
+        )?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player);
     // 测试「是否拾取到奖励箱」
     if (i_batrPlayer(player))
         bonusBoxTest(host, player, newP);
@@ -752,7 +753,7 @@ export const computeAttackerDamage = (
     baseDamage: uint,
     buffDamage: uint,
     extraDamageCoefficient: uint,
-): uint => baseDamage + buffDamage * extraDamageCoefficient
+): uint => baseDamage + buffDamage * extraDamageCoefficient;
 
 /**
  * 根据（已得到攻击者「攻击伤害」加成的）「攻击者伤害」与「玩家抗性」「抗性系数」计算「最终伤害」（整数）
@@ -802,7 +803,7 @@ export const computeFinalCD = (
 export const computeFinalRadius = (
     baseRadius: number,
     buffRadius: uint,
-): number => baseRadius * (1 + Math.min(buffRadius / 16, 3))
+): number => baseRadius * (1 + Math.min(buffRadius / 16, 3));
 
 /**
  * 计算（用于「闪电」武器的）最终闪电能量
@@ -820,7 +821,7 @@ export const computeFinalLightningEnergy = (
     buffDamage: uint, buffRadius: uint,
 ): uint => (
     baseEnergy * intMin(1 + buffDamage / 20 + buffRadius / 10, 10)
-)
+);
 
 /**
  * 计算玩家的「总世界分数」
@@ -854,10 +855,10 @@ export function handlePlayerHurt(host: IMatrix, attacker: IPlayer | null, victim
     if (host.rule.getRule<boolean>(MatrixRuleBatr.key_recordPlayerStats)) {
         // 攻击者の统计
         if (attacker !== null && i_hasStats(attacker))
-            addHurtStats_attacker(attacker, victim, damage)
+            addHurtStats_attacker(attacker, victim, damage);
         // 受害者の统计
         if (victim !== null && i_hasStats(victim))
-            addHurtStats_victim(attacker, victim, damage)
+            addHurtStats_victim(attacker, victim, damage);
     }
 }
 
@@ -912,7 +913,7 @@ export function handlePlayerDeath(host: IMatrix, attacker: IPlayer | null, victi
     // victim.isActive = false;
 
     // 保存死亡点，在后续生成奖励箱时使用 //
-    let deadP: iPoint = victim.position.copy();
+    const deadP: iPoint = victim.position.copy();
 
     // 移动受害者到指定地方 //
     victim.setPosition(
@@ -937,10 +938,10 @@ export function handlePlayerDeath(host: IMatrix, attacker: IPlayer | null, victi
     if (host.rule.getRule<boolean>(MatrixRuleBatr.key_recordPlayerStats)) {
         // 攻击者の统计
         if (attacker !== null && i_hasStats(attacker))
-            addDeathStats_attacker(attacker, victim, damage)
+            addDeathStats_attacker(attacker, victim, damage);
         // 受害者の统计
         if (victim !== null && i_hasStats(victim))
-            addDeathStats_victim(attacker, victim, damage)
+            addDeathStats_victim(attacker, victim, damage);
     }
 
     // 检测「世界结束」 // TODO: 通用化
@@ -996,6 +997,9 @@ export function addBonusBoxInRandomTypeByRule(host: IMatrix, p: intPoint): void 
     );
 }
 
+/** 判断实体是否为奖励箱 */
+const isBonusBox = (e: Entity): boolean => e instanceof BonusBox;
+
 /**
  * （🚩专用代码迁移）用于获取一个母体内所有的奖励箱
  * * 特殊高效分派逻辑：使用「约定属性」`bonusBoxes`（可以是getter）
@@ -1008,14 +1012,19 @@ export function addBonusBoxInRandomTypeByRule(host: IMatrix, p: intPoint): void 
 export function getBonusBoxes(host: IMatrix): BonusBox[] {
     // 💭【2023-10-03 23:44:22】根据类型做分派，但要导入「具体类型」……
     // 📌【2023-10-03 23:46:04】约定使用特殊的「bonusBoxes」属性做「特殊化」
-    if ('bonusBoxes' in host) {
-        return (host as any).bonusBoxes;
+    if (
+        // 有键
+        'bonusBoxes' in host &&
+        // 类型检查
+        Array.isArray(host.bonusBoxes)
+        // 内容检查
+        && (host.bonusBoxes.length === 0 || host.bonusBoxes.every(isBonusBox))
+    ) {
+        return host.bonusBoxes as BonusBox[];
     }
     // 否则用最笨的方法
     else {
-        return host.entities.filter(
-            (e): boolean => e instanceof BonusBox
-        ) as BonusBox[];
+        return host.entities.filter(isBonusBox) as BonusBox[];
     }
 }
 
@@ -1025,8 +1034,8 @@ export function getBonusBoxes(host: IMatrix): BonusBox[] {
  * @returns 奖励箱数量
  */
 export function getBonusBoxCount(host: IMatrix): uint {
-    if ('bonusBoxes' in host) {
-        return (host as any).bonusBoxes.length;
+    if ('bonusBoxes' in host && Array.isArray(host.bonusBoxes)) {
+        return host.bonusBoxes.length;
     }
     // 否则用最笨的方法
     else {
@@ -1043,7 +1052,7 @@ export function getBonusBoxCount(host: IMatrix): uint {
  * ? 💭母体需要额外「专门化」去获取一个「所有奖励箱」吗？？？
  */
 export function bonusBoxTest(host: IMatrix, player: IPlayerBatr, at: iPointRef = player.position): boolean {
-    for (let bonusBox of getBonusBoxes(host)) {
+    for (const bonusBox of getBonusBoxes(host)) {
         if (hitTestEntity_I_Grid(bonusBox, at)) { // TODO: 【2023-10-03 23:55:46】断点
             // 玩家获得奖励
             playerPickupBonusBox(host, player, bonusBox);
@@ -1138,7 +1147,7 @@ export function hitTestEntity_I_Grid(e: IEntityInGrid, p: iPointRef): boolean {
 export function randomizeAllPlayerTeam(host: IMatrix): void {
     for (const player of getPlayers(host)) {
         if (i_hasTeam(player))
-            randomizePlayerTeam(host, player as IPlayerHasTeam);
+            randomizePlayerTeam(host, player);
     }
 }
 
@@ -1175,32 +1184,32 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
         let color: uint;
         let i: uint = 0;
         let nowE: uint = randInt(4);
-        let effP: fPoint = new fPoint();
+        const effP: fPoint = new fPoint();
         const N: uint = 3;
         while (i < N) {
             switch (nowE) {
                 case 1:
                     color = BonusBoxSymbol.BUFF_CD_COLOR;
-                    (player as IPlayerHasAttributes).attributes.buffCD += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
+                    (player).attributes.buffCD += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
                     break;
                 case 2:
                     color = BonusBoxSymbol.BUFF_RESISTANCE_COLOR;
-                    (player as IPlayerHasAttributes).attributes.buffResistance += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
+                    (player).attributes.buffResistance += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
                     break;
                 case 3:
                     color = BonusBoxSymbol.BUFF_RADIUS_COLOR;
-                    (player as IPlayerHasAttributes).attributes.buffRadius += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
+                    (player).attributes.buffRadius += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
                     break;
                 default:
                     color = BonusBoxSymbol.BUFF_DAMAGE_COLOR;
-                    (player as IPlayerHasAttributes).attributes.buffDamage += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
+                    (player).attributes.buffDamage += host.rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBuffAdditionAmount);
             }
             nowE = (nowE + 1) & 3;
             i++;
             // 特效
             effP.copyFrom(player.position);
             for (let j: uint = 0; j < N; j++) { // 获取一个不重复、但又在角落的位置（高维化）
-                effP[j] += player.position[j] + ((i >> j) & 1)
+                effP[j] += player.position[j] + ((i >> j) & 1);
             }
             host.addEntity(
                 new EffectPlayerLevelup(
@@ -1229,21 +1238,19 @@ export function handlePlayerLevelup(host: IMatrix, player: IPlayer): void {
 export function randomTick_MoveableWall(host: IMatrix, position: iPoint, block: Block<null>): void {
     // 正式开始放置 //
     // 坐标计算
-    let randomRot: uint;
-    randomRot = host.map.storage.randomForwardDirectionAt(position);
+    const randomRot: uint = host.map.storage.randomForwardDirectionAt(position);
     host.map.towardWithRot_II(
         _temp_randomTick_MoveableWall.copyFrom(position),
         randomRot, 1
     );
-    // 生成实体
-    let p: ThrownBlock;
     // * 现在不会再尝试多次了
     if (
         host.map.isInMap_I(_temp_randomTick_MoveableWall) &&
         host.map.testCanPass_I(_temp_randomTick_MoveableWall, false, true, false, false)
     )
         host.addEntity(
-            p = new ThrownBlock(
+            // 生成实体
+            new ThrownBlock(
                 null, // 无主
                 _temp_randomTick_MoveableWall, // !【2023-10-08 00:46:12】因为其坐标的特殊性，无需对齐网格中心
                 randomRot,
@@ -1276,13 +1283,13 @@ export function randomTick_ColorSpawner(host: IMatrix, position: iPoint, block: 
     // 新位置寻址：随机位移
     _temp_randomTick_ColorSpawner_blockP.copyFrom(position).inplaceMap(
         (p: int): number => p + randIntBetween(-2, 3)
-    )
+    );
     if ( // 放置条件：在地图内&是空位
         host.map.isInMap_I(_temp_randomTick_ColorSpawner_blockP) &&
         host.map.storage.isVoid(_temp_randomTick_ColorSpawner_blockP)
     ) {
         // 生成一个新的随机「颜色方块」
-        let newBlock: Block<BSColored> = NativeBlockPrototypes.COLORED.softCopy().randomizeState();
+        const newBlock: Block<BSColored> = NativeBlockPrototypes.COLORED.softCopy().randomizeState();
         // 放置
         host.map.storage.setBlock(_temp_randomTick_ColorSpawner_blockP, newBlock); // * 后续世界需要处理「方块更新事件」
         host.addEntity(
@@ -1291,7 +1298,7 @@ export function randomTick_ColorSpawner(host: IMatrix, position: iPoint, block: 
                 newBlock,
                 false // 淡出
             )
-        )
+        );
     }
 }
 const _temp_randomTick_ColorSpawner_blockP: iPoint = new iPoint();
@@ -1391,9 +1398,9 @@ export const BATR_BLOCK_EVENT_MAP: BlockEventMap = {
     [BatrBlockIDs.GATE]: {
         // * 打开时：在玩家移出前关闭（不会伤害到玩家，因为玩家只进行「移动入方块检测」）
         [NativeBlockEventType.PLAYER_MOVE_OUT]: (host: IMatrix, position: iPoint, p: IPlayer): void => {
-            let block: Block | null = host.map.storage.getBlock(position);
+            const block: Block | null = host.map.storage.getBlock(position);
             if (block !== null && block.state instanceof BSGate) {
-                (block.state as BSGate).open = false;
+                (block.state).open = false;
                 // ? 直接修改方块属性是否靠谱？利不利于世界响应（特别是显示端）
             }
         },
@@ -1430,7 +1437,7 @@ export const BATR_BLOCK_EVENT_MAP: BlockEventMap = {
             }
         }
     },
-}
+};
 
 /**
  * 从一个「发出点」计算「应有的激光长度」
@@ -1448,8 +1455,8 @@ function calculateLaserLength(host: IMatrix, rootP: iPointRef, rot: mRot): uint 
     // 当前长度
     let l: uint = 0;
     // 当前轴向&增量
-    let axis = mRot2axis(rot), inc = mRot2increment(rot);
-    let maxL: uint = host.rule.safeGetRule<uint>(MatrixRuleBatr.key_maxLaserLength)
+    const axis = mRot2axis(rot), inc = mRot2increment(rot);
+    const maxL: uint = host.rule.safeGetRule<uint>(MatrixRuleBatr.key_maxLaserLength);
     while (
         host.map.testCanPass_I(
             _temp_calculateLaserLength,
@@ -1606,7 +1613,7 @@ export const DEFAULT_PLAYER_CONTROL_KEYS: NativeControlKeyConfigs = {
         ],
         use: keyCodes.NUMPAD_ADD, // 用
     },
-}
+};
 
 // 世界规则相关 //
 
@@ -1689,7 +1696,7 @@ export function getRandomMap(rule: IMatrixRule): IMap {
 }
 
 /** 缓存的「新映射」变量 */
-let _temp_filterBonusType: Map<BonusType, number> = new Map<BonusType, number>();
+const _temp_filterBonusType: Map<BonusType, number> = new Map<BonusType, number>();
 /**
  * 根据规则过滤奖励类型
  * 
@@ -1711,7 +1718,7 @@ function filterBonusType(rule: IMatrixRule, m: Map<BonusType, number>): Map<Bonu
         ) return;
         // 添加
         _temp_filterBonusType.set(type, weight);
-    })
+    });
     // 返回
     return _temp_filterBonusType;
 }

@@ -1,8 +1,3 @@
-import I18nText from "../../../../display/api/i18n/I18nText";
-import { int } from "../../../../legacy/AS3Legacy";
-import World from "../../native/main/World_V1";
-import MatrixStats from "./MatrixStats";
-import PlayerStats from "../entity/player/stat/PlayerStats";
 
 /**
  * !【2023-10-06 23:00:29】这段以前有关「世界结局」的代码，即将迁移

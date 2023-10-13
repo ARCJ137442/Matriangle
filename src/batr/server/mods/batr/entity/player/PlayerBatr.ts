@@ -12,7 +12,6 @@ import IPlayer from "../../../native/entities/player/IPlayer";
 import { halfBrightnessTo, turnBrightnessTo } from "../../../../../common/color";
 import PlayerTeam from "./team/PlayerTeam";
 import { playerLevelUpExperience, handlePlayerHurt, handlePlayerDeath, handlePlayerLocationChanged, handlePlayerLevelup, playerUseTool, handlePlayerLocationChange, computeFinalCD } from "../../mechanics/BatrMatrixMechanics";
-import { respawnPlayer } from "../../../native/mechanics/NativeMatrixMechanics";
 import { EnumPlayerAction, PlayerAction } from "../../../native/entities/player/controller/PlayerAction";
 import { NativePlayerEvent } from "../../../native/entities/player/controller/PlayerEvent";
 import { NativePlayerEventOptions } from "../../../native/entities/player/controller/PlayerEvent";
@@ -33,7 +32,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 
 	// **独有属性** //
 
-	public readonly i_batrPlayer: true = true;
+	public readonly i_batrPlayer = true as const;
 
 	// 队伍 //
 
@@ -45,7 +44,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	get teamColor(): uint { return this.team.color; }
 	get team(): PlayerTeam { return this._team; }
 	set team(value: PlayerTeam) {
-		if (value == this._team)
+		if (value === this._team)
 			return;
 		this._team = value;
 		// TODO: 更新自身图形
@@ -131,9 +130,9 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	// 属性（加成） //
 
 	/** 玩家的所有属性 */
-	protected _attributes: PlayerAttributes = new PlayerAttributes()
+	protected _attributes: PlayerAttributes = new PlayerAttributes();
 	/** 玩家的所有属性 */
-	get attributes(): PlayerAttributes { return this._attributes }
+	get attributes(): PlayerAttributes { return this._attributes; }
 
 	//============Constructor & Destructor============//
 	/**
@@ -209,10 +208,10 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	// 有统计 //
-	readonly i_hasStats: true = true;
+	readonly i_hasStats = true as const;
 
 	protected _stats: PlayerStats;
-	get stats(): PlayerStats { return this._stats }
+	get stats(): PlayerStats { return this._stats; }
 
 	// 可显示实体 // TODO: 【2023-09-28 18:22:42】这是不是要移出去。。。
 
@@ -236,8 +235,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	override shapeInit(shape: IShape): void {
 		super.shapeInit(shape);
 
-		let realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
-		let realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
+		const realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
+		const realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2;
 		shape.graphics.clear();
 		shape.graphics.lineStyle(PlayerBatr.LINE_SIZE, this._lineColor);
 		shape.graphics.beginFill(this._fillColor, 1.0);
@@ -294,7 +293,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
 	override onHeal(host: IMatrix, amount: uint, healer: IPlayer | null = null): void {
-		super.onHeal(host, amount, healer)
+		super.onHeal(host, amount, healer);
 		// 通知控制器
 		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.HEAL>(
 			NativePlayerEvent.HEAL,
@@ -328,7 +327,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
 	override onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
-		super.onDeath(host, damage, attacker)
+		super.onDeath(host, damage, attacker);
 		// 清除「储备生命值」 //
 		this.heal = 0;
 
@@ -365,9 +364,9 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onKillOther(host: IMatrix, victim: IPlayer, damage: uint): void {
-		super.onKillOther(host, victim, damage)
+		super.onKillOther(host, victim, damage);
 		// 击杀玩家，经验++
-		if (victim != this && !this.isRespawning)
+		if (victim !== this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1);
 
 		// 通知控制器
@@ -380,7 +379,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onRespawn(host: IMatrix): void {
-		super.onRespawn(host)
+		super.onRespawn(host);
 		// 通知控制器
 		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.RESPAWN>(
 			NativePlayerEvent.RESPAWN,
@@ -411,7 +410,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onLocationChange(host: IMatrix, oldP: iPoint): void {
-		super.onLocationChange(host, oldP)
+		super.onLocationChange(host, oldP);
 		// moveOutTestPlayer(host, this, oldP); // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中 //! 【2023-10-03 23:34:22】原先的`preHandlePlayerLocationChange`
 		handlePlayerLocationChange(host, this, this.position); // !【2023-10-08 17:17:26】原先的`moveOutTestPlayer`
 
@@ -419,7 +418,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onLocationChanged(host: IMatrix, newP: iPoint): void {
-		super.onLocationChanged(host, newP)
+		super.onLocationChanged(host, newP);
 		handlePlayerLocationChanged(host, this, newP); // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中
 		// 方块事件处理完后，开始处理「方块伤害」等逻辑
 		this.dealMoveInTest(host, true, true); // ! `dealMoveInTestOnLocationChange`只是别名而已
@@ -434,7 +433,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void {
-		super.onPositedBlockUpdate(host, ignoreDelay, isLocationChange)
+		super.onPositedBlockUpdate(host, ignoreDelay, isLocationChange);
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange);
 	}
 

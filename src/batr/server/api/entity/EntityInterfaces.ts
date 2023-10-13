@@ -26,7 +26,7 @@ import Entity from "./Entity";
  * * 格点实体
  * * 非格点实体
  */
-export interface IEntityHasPosition<P extends xPoint<any> = xPoint<any>> extends Entity {
+export interface IEntityHasPosition<P extends xPoint = xPoint> extends Entity {
 
     // !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
     // readonly i_hasPosition: true; // !【2023-10-09 00:06:53】暂时不要求，以免大范围重构

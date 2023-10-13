@@ -8,8 +8,8 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	// JS对象 //
 
 	/** JS对象化映射表 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
-	public get objectifyMap(): JSObjectifyMap { return PlayerTeam.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+	public get objectifyMap(): JSObjectifyMap { return PlayerTeam.OBJECTIFY_MAP; }
 
 	/**
 	 * 用于「区分敌我」的唯一识别标识
@@ -19,7 +19,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
 		'id', 'string',
-	)
+	);
 
 	/**
 	 * 队伍的内部/显示名称
@@ -29,7 +29,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
 		'name', 'string',
-	)
+	);
 
 	/**
 	 * 队伍在显示时的颜色
@@ -39,7 +39,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public static readonly key_color: key = fastAddJSObjectifyMapProperty_dashP(
 		this.OBJECTIFY_MAP,
 		'color', 'number',
-	)
+	);
 
 	/**
 	 * 判断其是否「非敌方」
@@ -63,7 +63,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	 */
 	public static isTeamEqual(t1: PlayerTeam, t2: PlayerTeam): boolean {
 		// let k: keyof PlayerTeam
-		for (let k in this.OBJECTIFY_MAP) {
+		for (const k in this.OBJECTIFY_MAP) {
 			// 只要有一个不全等，就判断不相等
 			if (t1[k as keyof PlayerTeam] !== t2[k as keyof PlayerTeam])
 				return false;

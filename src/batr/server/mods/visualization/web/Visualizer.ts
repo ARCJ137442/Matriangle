@@ -1,6 +1,4 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { createServer, Server as HTTPServer, IncomingMessage, ServerResponse } from 'node:http';
-import { Server as WSServer, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
 import { MatrixProgram, MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import WebMessageRouter from "../../webIO/WebMessageRouter";
 import { NativeWebServiceType } from "../../webIO/WebMessageRouter";
@@ -53,7 +51,7 @@ export default abstract class Visualizer extends MatrixProgram {
 			(): void => {
 				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`);
 			}
-		)
+		);
 	}
 
 }

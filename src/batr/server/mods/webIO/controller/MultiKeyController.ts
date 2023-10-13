@@ -4,6 +4,7 @@ import IPlayer from "../../native/entities/player/IPlayer";
 import { ADD_ACTION } from "../../native/entities/player/controller/PlayerAction";
 import PlayerController from "../../native/entities/player/controller/PlayerController";
 import { PlayerEventOptions } from "../../native/entities/player/controller/PlayerEvent";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import KeyboardController from './../../native/entities/player/controller/KeyboardController';
 
 /**
@@ -86,8 +87,8 @@ export default abstract class MultiKeyController extends PlayerController {
 	 */
 	protected dispatchByControlKey(controlKey: string, actionStr: string): void {
 		// 解析整数行动
-		let a: int | number = parseInt(actionStr);
-		let action: int | string = isFinite(a) ? a : actionStr;
+		const a: int = parseInt(actionStr);
+		const action: int | string = isFinite(a) ? a : actionStr;
 		// 开始遍历执行
 		for (const player of this.subscribers) {
 			if (this._playerKeyMap.get(player) === controlKey) {

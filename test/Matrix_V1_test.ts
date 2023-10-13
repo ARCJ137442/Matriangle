@@ -50,10 +50,10 @@ function initMatrixRule(): IMatrixRule {
 		)
 	]; // 【2023-10-12 13:01:50】目前是「堆叠地图」测试
 	for (const map of MAPS)
-		rule.mapRandomPotentials.set(map, 1)
+		rule.mapRandomPotentials.set(map, 1);
 	// 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
 	for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE)
-		rule.bonusTypePotentials.set(bt, 1)
+		rule.bonusTypePotentials.set(bt, 1);
 
 	// 设置所有工具 // ! 目前限定为子弹系列
 	rule.enabledTools = BatrTools.WEAPONS_BULLET;
@@ -85,13 +85,13 @@ const router: WebMessageRouter = new WebMessageRouter();
 /** 配置玩家 */
 function setupPlayers(host: IMatrix): void {
 	// 玩家
-	let p: IPlayerBatr = new PlayerBatr(
+	const p: IPlayerBatr = new PlayerBatr(
 		matrix.map.storage.randomPoint,
 		0, true,
 		getRandomTeam(matrix),
 		randomToolEnable(matrix.rule)
 	);
-	let p2: IPlayerBatr = new PlayerBatr(
+	const p2: IPlayerBatr = new PlayerBatr(
 		new iPoint(1, 1),
 		0, true,
 		getRandomTeam(matrix),
@@ -99,15 +99,15 @@ function setupPlayers(host: IMatrix): void {
 	);
 
 	// 名字
-	p.customName = 'Player初号机'
-	p2.customName = 'Player二号机'
+	p.customName = 'Player初号机';
+	p2.customName = 'Player二号机';
 	// 生命数不减少
 	p.lifeNotDecay = p2.lifeNotDecay = true;
 	// 武器
 	p.tool = BatrTools.WEAPON_BULLET_BASIC.copy();
 	p2.tool = BatrTools.WEAPON_BULLET_TRACKING.copy();
 	// 初号机の控制器
-	let ctl: AIControllerGenerator = new AIControllerGenerator(
+	const ctl: AIControllerGenerator = new AIControllerGenerator(
 		'first',
 		NativeAIPrograms.AIProgram_Dummy, // 传入函数而非其执行值
 	);
@@ -115,13 +115,13 @@ function setupPlayers(host: IMatrix): void {
 	p.connectController(ctl);
 	// 二号机の控制器
 	// let ctlWeb: HTTPController = new HTTPController();
-	let ctlWeb: WebController = new WebController();
+	const ctlWeb: WebController = new WebController();
 	ctlWeb.addConnection(p2, 'p2');
 	ctlWeb.linkToRouter(
 		router,
 		'ws',
 		'127.0.0.1', 3002
-	) // 连接到消息路由器
+	); // 连接到消息路由器
 
 	// *添加实体
 	host.addEntities(
@@ -134,7 +134,7 @@ function setupPlayers(host: IMatrix): void {
 /** 配置可视化 */
 function setupVisualization(host: IMatrix): void {
 	// 可视化信号
-	let visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
+	const visualizer: MatrixVisualizer = new MatrixVisualizer(matrix);
 	// 连接
 	visualizer.linkToRouter(
 		router,
@@ -147,13 +147,13 @@ function setupVisualization(host: IMatrix): void {
 /** 配置机制程序 */
 function setupMechanicPrograms(host: IMatrix): void {
 	// 方块随机刻分派者
-	let blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher()
+	const blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher()
 		.syncRandomDensity(matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity));
 	// 奖励箱生成者
-	let bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(matrix.rule)
+	const bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(matrix.rule)
 		.syncRandomDensity(matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity));
 	// 地图切换者
-	let mapSwitcherRandom = new MapSwitcherRandom(TPS * 15); // 稳定期：十五秒切换一次
+	const mapSwitcherRandom = new MapSwitcherRandom(TPS * 15); // 稳定期：十五秒切换一次
 
 	// *添加实体
 	host.addEntities(
@@ -216,7 +216,7 @@ projectEntities(matrix.map, matrix.entities);
 		)
 	);
 
-	listE列举实体(matrix.entities)
+	listE列举实体(matrix.entities);
 });
 
 // 持续测试
@@ -251,13 +251,13 @@ function 迭代(num: uint, visualize: boolean = true): void {
 
 async function 持续测试(i: int = 0, tick_time_ms: uint = 1000) {
 	/** 迭代次数，是一个常量 */
-	let numIter: uint = TPS * tick_time_ms / 1000;
+	const numIter: uint = TPS * tick_time_ms / 1000;
 	for (let t = i; t !== 0; t--) {
 		迭代(numIter, false/* 现在不再需要可视化 */);
 		// 延时
 		await sleep(tick_time_ms);
 	}
-};
+}
 
 持续测试(-1, TICK_TIME_MS);
 

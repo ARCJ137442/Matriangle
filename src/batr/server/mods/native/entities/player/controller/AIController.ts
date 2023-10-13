@@ -52,7 +52,7 @@ export default abstract class AIController extends PlayerController {
     }
 
     public set AIRunSpeed(speed: number) {
-        if (speed == this.AIRunSpeed)
+        if (speed === this.AIRunSpeed)
             return;
 
         if (isNaN(speed))
@@ -111,7 +111,7 @@ export default abstract class AIController extends PlayerController {
                 AIPlayerEvent.AI_TICK,
                 self, host,
                 undefined
-            )
+            );
         }
         // 若非「已激活」「不再重生」：发送所有在「反应」时添加的玩家行为，然后清空
         for (let i = 0; i < this._action_buffer.length; i++) {
@@ -122,7 +122,7 @@ export default abstract class AIController extends PlayerController {
                 this.dispatchEvent(
                     ADD_ACTION,
                     this._temp_add_action // ! 复用以避免创建大量数组
-                )
+                );
             }
         }
         this._action_buffer.length = 0;

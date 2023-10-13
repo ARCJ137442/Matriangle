@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 一个轻量级「JS对象化」库，用于各类对象到JS对象（再到JSON）的序列化
  */
@@ -138,7 +143,7 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
 ): JSObject {
     // 有专门的「对象化」方法⇒优先使用
     if (this_?.saveToJSObject !== undefined)
-        this_.saveToJSObject(target)
+        this_.saveToJSObject(target);
     // 否则⇒遍历「对象化映射表」中所有的键
     else for (const propertyKey in objectifyMap) {
         // 获取值&预处理
@@ -157,12 +162,12 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
                 property, // 从当前属性值开始
                 {}, // 必从一全新对象开始
                 property.objectifyMap, // 使用属性值自己的「JS对象化映射表」
-            )
+            );
         }
         else {
             if (!verifyJSObjectValue(property)) {
-                console.error(target, property)
-                throw new Error(`尝试设置一个非法的JS对象值${property}`)
+                console.error(target, property);
+                throw new Error(`尝试设置一个非法的JS对象值${property}`);
             }
             // 基础类型：直接设置
             target[JSObjectKey] = property;
@@ -170,8 +175,8 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
     }
     // 返回前检查：如果检查失败，则报错
     if (!verifyJSObject(target)) {
-        console.error(this_, target)
-        throw new Error(target.toString() + "不是JS对象")
+        console.error(this_, target);
+        throw new Error(target.toString() + "不是JS对象");
     }
     // 返回以作管道操作
     return target;
@@ -201,14 +206,14 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
 ): T {
     // 有专门的「对象化」方法⇒优先使用
     if (this_?.loadFromJSObject !== undefined)
-        this_.loadFromJSObject(source)
+        this_.loadFromJSObject(source);
     // 否则⇒遍历「对象化映射表」中所有的键
     else for (const propertyKey in objectifyMap) {
         // 映射键
         const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key;
         // 没属性⇒警告，跳过循环
         if (!(JSObjectKey in source)) {
-            console.error('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
+            console.error('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据');
             continue;
         }
         // 获取（原始）值
@@ -269,10 +274,11 @@ export function mapSaveJSObject<K, V>(
     flag: string = 'Map',
     parent: any = {}
 ): JSObject { // [flag: string]: Array<[any, any]>
-    parent[flag] = Array.from(map).map((kv: [K, V]): [any, any] => {
-        return callbackKV(kv[0], kv[1]);
-    })
-    return parent;
+    parent[flag] = Array.from(map).map(
+        (kv: [K, V]): [any, any] => {
+            return callbackKV(kv[0], kv[1]);
+        });
+    return parent as JSObject;
 }
 
 /**
@@ -294,11 +300,14 @@ export function mapLoadJSObject<K, V>(
     flag: string = 'Map',
     parent: Map<K, V> = new Map<K, V>()
 ): Map<K, V> {
-    if (obj[flag] == undefined) throw new Error('JSON2map: 没有找到标志为「' + flag + '」的键');
-    (obj[flag] as any).forEach((kv: [any, any]): void => {
-        parent.set(...callbackKV(kv[0], kv[1]))
-    })
-    return parent
+    if (obj[flag] == undefined)
+        throw new Error(`JSON2map: 没有找到标志为「${flag}」的键`);
+    else if (!(obj[flag] instanceof Map))
+        throw new Error(`JSON2map: 标志为「${flag}」的键的值不是映射`);
+    (obj[flag] as unknown as Map<any, any>).forEach((kv: [any, any]): void => {
+        parent.set(...callbackKV(kv[0], kv[1]));
+    });
+    return parent;
 }
 
 // 与JSON联动 //
@@ -308,7 +317,7 @@ export function uniSaveJSON<T extends IJSObjectifiable<T>>(
 ): string {
     return JSON.stringify(
         uniSaveJSObject(this_, {}, objectifyMap)
-    )
+    );
 }
 
 /**
@@ -328,7 +337,7 @@ export function uniLoadJSON<T extends IJSObjectifiable<T>>(
         this_,
         JSON.parse(JSONString),
         objectifyMap
-    )
+    );
 }
 
 /**
@@ -343,7 +352,7 @@ export function verifyJSObject(jso: any): boolean {
             !verifyJSObjectValue(jso[key])
         ) return false;
     }
-    return true
+    return true;
 }
 
 /**
@@ -391,14 +400,14 @@ export function verifyJSObjectValue(value: any): boolean {
                 ) &&
                 verifyJSObject(value)
             ) return true;
-            console.error(value, '不是JS对象')
+            console.error(value, '不是JS对象');
             console.log(
                 value,
                 verifyJSObject(value),
                 Object.getPrototypeOf(value),
                 Object.getPrototypeOf(value) === Object.prototype,
                 Object.getPrototypeOf(value) === Array.prototype
-            )
+            );
             return false;
         default:
             return false;
@@ -409,9 +418,9 @@ export function verifyJSObjectValue(value: any): boolean {
 // 一些增进易用性的工具函数 //
 
 /** 判断「是否继续递归加载」恒真 */
-export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true
+export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true;
 /** 判断「是否继续递归加载」恒假 */
-export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: JSObjectValue): false => false
+export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: JSObjectValue): false => false;
 
 /**
  * 根据位置参数快速构造一个「JS对象化映射属性表」
@@ -419,7 +428,7 @@ export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: J
  * * 参数含义参考`JSObjectifyMapProperty`
  * 
  * @param JSObject_key 映射到JS对象上的键
- * @param propertyType 用于判断的类型（string⇒`typeof===`;Class⇒`instanceof`）
+ * @param propertyType 用于判断的类型（string⇒`typeof=== `;Class⇒` instanceof `）
  * @param propertyConverterS 预存储：在向JS对象存储原始值前，预处理其值。如：对数组内所有元素再次应用（可自定义的）转换
  * @param propertyConverterL 预加载：在「读取原始值」后，对「原始数据」进行一定转换以应用到最终目标加载上的函数（有需求直接转换并赋值，如Map类型）
  * @param loadRecursiveCriterion 在加载时「确定『可能要递归加载』」后，以原始值更细致地判断「是否要『进一步递归加载』」
@@ -440,7 +449,7 @@ export function fastGenerateJSObjectifyMapProperty<T>(
         propertyConverterL: propertyConverterL,
         loadRecursiveCriterion: loadRecursiveCriterion,
         blankConstructor: blankConstructor,
-    }
+    };
 }
 
 /**
@@ -471,8 +480,8 @@ export function fastAddJSObjectifyMapProperty_dash<T>(
             loadRecursiveCriterion,
             blankConstructor,
         )
-    )
-    return property_key
+    );
+    return property_key;
 }
 
 /**
@@ -484,7 +493,7 @@ export function fastAddJSObjectifyMapProperty_dash<T>(
  * 
  * ! 注意：返回的是「不加下划线」的属性名
  */
-export function fastAddJSObjectifyMapProperty_dash2<T>(
+export function fastAddJSObjectifyMapProperty_dash2(
     objectiveMap: JSObjectifyMap,
     property_key: key,
     propertyInstance: any,
@@ -514,7 +523,7 @@ export function fastAddJSObjectifyMapProperty_dash2<T>(
  * 
  * ! 注意：返回的是「不加下划线」的属性名
  */
-export function fastAddJSObjectifyMapProperty_dashP<T>(
+export function fastAddJSObjectifyMapProperty_dashP(
     objectiveMap: JSObjectifyMap,
     property_key: key,
     propertyInstance: any,

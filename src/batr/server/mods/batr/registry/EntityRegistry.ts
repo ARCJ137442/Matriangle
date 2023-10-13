@@ -140,5 +140,5 @@ export function getEntityType(entity: Entity, types: EntityType[] = NativeEntity
 			return entityType;
 		}
 	}
-	throw new Error(`未找到${entity}在${types}对应的实体类型`)
+	throw new Error(`未找到${entity.toString()}在${types.toString()}对应的实体类型`);
 }

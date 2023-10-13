@@ -12,11 +12,5 @@
     },
     "include": [
         "src",
-        "src/batr.ts",
-        "test/geometricTools.test.ts",
-        "test/lang.test.ts",
-        "test/map_test.ts",
-        "src/batr/server/mods/visualization/textVisualizations.ts",
-        "test/Matrix_V1_test.ts"
     ],
 }

@@ -42,7 +42,7 @@ export enum EnumPlayerAction {
 	 * 转向后方
 	 * * 「向后移动」可以表示为二者的复合
 	 */
-	TURN_BACK = 'moveForward',
+	TURN_BACK = 'turnBack',
 
 	/**
 	 * 开始使用（工具）

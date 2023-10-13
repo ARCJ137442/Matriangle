@@ -14,9 +14,9 @@ import IPlayerProfile from "./IPlayerProfile";
 export default class PlayerProfile implements IPlayerProfile, IJSObjectifiable<PlayerProfile> {
 
 	copyFromPlayer(p: IPlayer): this {
-		this._customName = p.customName
-		this._experience = (p as IPlayerHasExperience)?.experience ?? 0
-		this._level = (p as IPlayerHasExperience)?.level ?? 0
+		this._customName = p.customName;
+		this._experience = (p as IPlayerHasExperience)?.experience ?? 0;
+		this._level = (p as IPlayerHasExperience)?.level ?? 0;
 		this._teamColor = (p as IPlayerHasTeam)?.team.color ?? 0;
 		this._teamID = (p as IPlayerHasTeam)?.team.id ?? 0;
 		return this;
@@ -25,15 +25,15 @@ export default class PlayerProfile implements IPlayerProfile, IJSObjectifiable<P
 	public static getBlank(): PlayerProfile {
 		return new PlayerProfile(
 			'blank', 0, 0, 0, 'blank'
-		)
+		);
 	}
 
 	// JS对象 //
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
-	get objectifyMap(): JSObjectifyMap { return PlayerProfile.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+	get objectifyMap(): JSObjectifyMap { return PlayerProfile.OBJECTIFY_MAP; }
 	cloneBlank(): PlayerProfile {
 		return PlayerProfile.getBlank();
-	};
+	}
 
 	protected _customName: string;
 	get customName(): string { return this._customName; }

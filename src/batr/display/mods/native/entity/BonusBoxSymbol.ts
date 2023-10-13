@@ -14,7 +14,7 @@ export default class BonusBoxSymbol implements IDisplayable {
 	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 5;
 
 	// HHL
-	public static readonly HP_COLOR: uint = 0xff0000//PlayerGUI.HP_COLOR;
+	public static readonly HP_COLOR: uint = 0xff0000;//PlayerGUI.HP_COLOR;
 
 	// Tool
 	public static readonly TOOL_COLOR: uint = 0x555555;
@@ -73,7 +73,7 @@ export default class BonusBoxSymbol implements IDisplayable {
 
 
 	//============Display Implements============//
-	public readonly i_displayable: true = true;
+	public readonly i_displayable = true as const;
 
 	/** 实现：绘制图形 */
 	public shapeInit(shape: IShape): void {
@@ -88,7 +88,7 @@ export default class BonusBoxSymbol implements IDisplayable {
 
 	/** 实现：清空绘图内容 */
 	public shapeDestruct(shape: IShape): void {
-		shape.graphics.clear()
+		shape.graphics.clear();
 	}
 
 	/** 因为这个是嵌套在奖励箱中实现的，所以「显示堆叠层级」不是很重要 */

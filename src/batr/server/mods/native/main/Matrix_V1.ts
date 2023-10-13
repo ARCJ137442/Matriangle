@@ -1,6 +1,5 @@
 ﻿import { uint } from "../../../../legacy/AS3Legacy";
 import Entity from "../../../api/entity/Entity";
-import { IEntityActive, IEntityActiveLite } from "../../../api/entity/EntityInterfaces";
 import EntitySystem from "./EntitySystem";
 import IMap from "../../../api/map/IMap";
 import MatrixRuleBatr from "../rule/MatrixRuleBatr";
@@ -51,7 +50,7 @@ export default class Matrix_V1 implements IMatrix {
 	//========🎛️规则部分：规则加载、规则读写========//
 	// 规则 //
 	protected _rule: IMatrixRule;
-	get rule(): IMatrixRule { return this._rule }
+	get rule(): IMatrixRule { return this._rule; }
 
 	initByRule(): boolean {
 		// TODO: 【2023-10-04 23:33:51】仍在开发中
@@ -61,14 +60,14 @@ export default class Matrix_V1 implements IMatrix {
 
 	// 注册表 //
 	protected _registry: IWorldRegistry;
-	get registry(): IWorldRegistry { return this._registry }
+	get registry(): IWorldRegistry { return this._registry; }
 
 	//========🗺️地图部分：地图加载、地图变换等========//
 	protected _currentMap: IMap;
-	get map(): IMap { return this._currentMap }
-	set map(value: IMap) { this._currentMap = value }
+	get map(): IMap { return this._currentMap; }
+	set map(value: IMap) { this._currentMap = value; }
 
-	get mapTransformPeriod(): uint { return this._rule.safeGetRule<uint>(MatrixRuleBatr.key_mapTransformTime) }
+	get mapTransformPeriod(): uint { return this._rule.safeGetRule<uint>(MatrixRuleBatr.key_mapTransformTime); }
 
 	//========🌟实体部分：实体管理、实体事件等========//
 	/** 实体系统（内部变量） */
@@ -80,9 +79,9 @@ export default class Matrix_V1 implements IMatrix {
 	/** @implements 实现：委托到「实体系统」 */
 	addEntity(entity: Entity): boolean {
 		// 预先投影
-		projectEntity(this.map, entity)
+		projectEntity(this.map, entity);
 		// 委托添加
-		this._entitySystem.add(entity)
+		this._entitySystem.add(entity);
 		return true;
 	}
 

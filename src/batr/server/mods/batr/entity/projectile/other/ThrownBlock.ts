@@ -1,7 +1,7 @@
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import Block from "../../../../../api/block/Block";
 import Projectile from "../Projectile";
-import { fPoint, iPoint, iPointRef } from "../../../../../../common/geometricTools";
+import { fPoint, iPoint } from "../../../../../../common/geometricTools";
 import { IShape } from "../../../../../../display/api/DisplayInterfaces";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
 import IMatrix from "../../../../../main/IMatrix";
@@ -27,7 +27,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 
 	//============Instance Variables============//
 
-	public readonly i_outGrid: true = true;
+	public readonly i_outGrid = true as const;
 
 	/**
 	 * 存储浮点位置（在方块之间移动）
@@ -103,7 +103,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		this._position.copyFrom(position);
 		// this.speed.copyFrom(speed); // ! 【2023-09-22 20:23:52】现在不再存储「速度」这个变量，而是在世界刻中直接使用方向进行即时计算
 		this._speed = speed;
-		this._direction = direction
+		this._direction = direction;
 		// ? ↑这里的设置仍然有「通用性」的牺牲：这使得「抛出的方块」无法沿任意方向移动
 		// this.shapeInit(shape: IBatrShape);
 	}
@@ -118,7 +118,6 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
 		super.onTick(host);
-		let hitPlayer: IPlayer | null;
 		// 在地图内&可通过&没碰到玩家：继续飞行
 		if (
 			// 在地图内
@@ -143,11 +142,11 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	protected onBlockHit(host: IMatrix): void {
 		// 尝试伤害玩家
 		// console.warn('WIP thrownBlockHurtPlayer!', this)// host.thrownBlockHurtPlayer(this);
-		let hitPlayer: IPlayer | null = getHitEntity_I_Grid(
+		const hitPlayer: IPlayer | null = getHitEntity_I_Grid(
 			// ! 因为这只用执行一次，所以创建一个新数组也无可厚非
 			alignToGrid_P(this._position, new iPoint()),
 			getPlayers(host)
-		)
+		);
 		if (hitPlayer !== null)
 			hitPlayer.removeHP(
 				host,
@@ -161,7 +160,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 		// 后退，准备放置方块 // * 【2023-10-08 00:57:36】目前改动的机制：不会替换掉玩家的位置
 		host.map.towardWithRot_FF(this._position, this._direction, -this._speed);
 		// 将坐标位置对齐到网格 // ! 必须在「后退」之后
-		let _temp_iPoint: iPoint = new iPoint();
+		const _temp_iPoint: iPoint = new iPoint();
 		alignToGrid_P(this._position, _temp_iPoint);
 		// 放置判断
 		if (host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
@@ -176,7 +175,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 				this._carriedBlock,
 				false
 			),
-		)
+		);
 		// 移除自身
 		host.removeEntity(this);
 	}
@@ -190,7 +189,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 	 */
 	public shapeInit(blockShape: IShape): void {
 		// 内部方块的显示
-		return this._carriedBlock?.shapeInit(blockShape)
+		return this._carriedBlock?.shapeInit(blockShape);
 		/* if (this._carriedBlock !== null) {
 			// ↓ 现在采用了新坐标系统
 			// this._carriedBlock.x = -this._carriedBlock.width / 2;
@@ -207,6 +206,6 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {	
 
 	/** 实现：清除图形 */
 	public shapeDestruct(shape: IShape): void {
-		shape.graphics.clear()
+		shape.graphics.clear();
 	}
 }

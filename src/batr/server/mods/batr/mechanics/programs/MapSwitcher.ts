@@ -1,16 +1,11 @@
-import { randomInWeightMap } from "../../../../../common/utils";
-import { uint } from "../../../../../legacy/AS3Legacy";
 import { MatrixProgram, MatrixProgramLabel } from "../../../../api/control/MatrixProgram";
 import Effect from "../../../../api/entity/Effect";
 import Entity from "../../../../api/entity/Entity";
-import { IEntityActive } from "../../../../api/entity/EntityInterfaces";
 import IMap from "../../../../api/map/IMap";
 import IMatrix from "../../../../main/IMatrix";
 import BonusBox from "../../entity/item/BonusBox";
 import IPlayer, { isPlayer } from "../../../native/entities/player/IPlayer";
 import Projectile from "../../entity/projectile/Projectile";
-import MatrixRuleBatr from "../../../native/rule/MatrixRuleBatr";
-import { getRandomMap } from "../BatrMatrixMechanics";
 import { changeMap, projectEntity } from "../../../native/mechanics/NativeMatrixMechanics";
 import { spreadPlayer } from "../../../native/mechanics/NativeMatrixMechanics";
 import { i_batrPlayer } from "../../entity/player/IPlayerBatr";
@@ -37,10 +32,10 @@ export default abstract class MapSwitcher extends MatrixProgram {
 	 */
 	protected changeMap(host: IMatrix, newMap: IMap): void {
 		// 实体预备 //
-		let entities: Entity[] = host.entities;
-		let players: IPlayer[] = [];
+		const entities: Entity[] = host.entities;
+		const players: IPlayer[] = [];
 		// 新建一个映射，缓存所有实体的激活状态 // * 避免「变换前未激活的实体，变换后异常被激活」
-		let entityActives: Map<Entity, boolean> = new Map();
+		const entityActives: Map<Entity, boolean> = new Map();
 		// 处理旧实体
 		for (const entity of entities) {
 			// 清除所有抛射体、奖励箱和特效
@@ -52,7 +47,7 @@ export default abstract class MapSwitcher extends MatrixProgram {
 				host.removeEntity(entity);
 			// 记录玩家
 			else if (isPlayer(entity))
-				players.push(entity as IPlayer)
+				players.push(entity);
 			// 冻结实体：取消实体激活
 			entityActives.set(entity, entity.isActive);
 			entity.isActive = false;
@@ -77,7 +72,7 @@ export default abstract class MapSwitcher extends MatrixProgram {
 			}
 			// 清空映射
 			entityActives.clear();
-		})
+		});
 		// TODO: 母体统计系统（参见`MatrixStats.ts`）
 	}
 }

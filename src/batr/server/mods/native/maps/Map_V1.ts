@@ -1,7 +1,7 @@
 import IMap from "../../../api/map/IMap";
 import IMapStorage from "../../../api/map/IMapStorage";
 import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dash, fastAddJSObjectifyMapProperty_dashP, loadRecursiveCriterion_true } from "../../../../common/JSObjectify";
-import { fPointRef, iPoint, iPointRef, intPoint, straightProjection } from "../../../../common/geometricTools";
+import { fPointRef, iPoint, iPointRef, straightProjection } from "../../../../common/geometricTools";
 import { identity, key } from "../../../../common/utils";
 import { int, int$MAX_VALUE, uint } from "../../../../legacy/AS3Legacy";
 import BlockAttributes from "../../../api/block/BlockAttributes";
@@ -24,18 +24,18 @@ export default class Map_V1 implements IMap {
 
 	static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
 
-	get objectifyMap(): JSObjectifyMap { return Map_V1.OBJECTIFY_MAP }
+	get objectifyMap(): JSObjectifyMap { return Map_V1.OBJECTIFY_MAP; }
 
 	/** 存储层 */
 	protected _storage: IMapStorage;
-	get storage(): IMapStorage { return this._storage }
+	get storage(): IMapStorage { return this._storage; }
 	static readonly key_storage: key = fastAddJSObjectifyMapProperty_dash(
 		Map_V1.OBJECTIFY_MAP,
 		'storage', undefined, /* 接口留通配符`undefined` */
 		identity, identity,
 		loadRecursiveCriterion_true, /* 复合对象总需要对象化 */
-		(this_: any): IMapStorage => (this_ as Map_V1)._storage.cloneBlank()
-	)
+		(this_: unknown): IMapStorage => (this_ as Map_V1)._storage.cloneBlank()
+	);
 
 	/** 地图名称 */
 	protected _name: string;
@@ -43,7 +43,7 @@ export default class Map_V1 implements IMap {
 	static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
 		Map_V1.OBJECTIFY_MAP,
 		'name', 'string',
-	)
+	);
 
 	/** 
 	 * TODO: 所谓「竞技场」还有待进一步明确语义
@@ -61,7 +61,7 @@ export default class Map_V1 implements IMap {
 		return new Map_V1(
 			'blank', storage,
 			undefined
-		)
+		);
 	}
 
 	//============Constructor & Destructor============//
@@ -87,7 +87,7 @@ export default class Map_V1 implements IMap {
 			this._storage.copy(deep),
 			this._size,
 			this._isArena
-		)
+		);
 	}
 
 	//============World Mechanics: 原「逻辑层」的机制============//
@@ -105,7 +105,7 @@ export default class Map_V1 implements IMap {
 		identity, identity,
 		loadRecursiveCriterion_true,
 		(): iPoint => new iPoint(),
-	) // ? copy的时候怎么办呢
+	); // ? copy的时候怎么办呢
 	/** ⚠️注意：setter只复制元素 */
 	get size(): iPoint { return this._size; }
 	set size(v: iPoint) { this._size.copyFrom(v); }
@@ -136,14 +136,14 @@ export default class Map_V1 implements IMap {
 
 	// 对接世界逻辑
 	getBlockPlayerDamage(p: iPointRef, defaultValue: int = 0): int {
-		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
+		const blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
 		if (blockAtt !== null)
 			return blockAtt.playerDamage;
 		return defaultValue;
 	}
 
 	isKillZone(p: iPointRef, defaultValue: boolean = false): boolean {
-		let blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
+		const blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p);
 		if (blockAtt !== null)
 			return blockAtt.playerDamage == int$MAX_VALUE;
 		return defaultValue;
@@ -152,7 +152,7 @@ export default class Map_V1 implements IMap {
 	// TODO: 更多待迁移
 
 	// * 实现：取整→变到地图中
-	protected _temp_isInMap_P: iPoint = new iPoint()
+	protected _temp_isInMap_P: iPoint = new iPoint();
 	isInMap_F(p: fPointRef): boolean {
 		return this.isInMap_I(
 			alignToGrid_P(
@@ -174,12 +174,12 @@ export default class Map_V1 implements IMap {
 		if (p.length !== this.storage.numDimension)
 			this.projectPosition_F(p); // TODO: 不知为何还是会有运行至此的，有待debug
 		// 正式开始计算
-		let axis = mRot2axis(rot);
+		const axis = mRot2axis(rot);
 		p[axis] += (rot & 1) === 0 ? step : -step;
 		// 直接在当前维限制就行了
 		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
 			p[axis] = reminder_F(p[axis], this._size[axis]);
-		if (!this.isInMap_F(p)) throw new Error(`towardWithRot_FF: point ${p} at ${axis} out of map ${this.storage.size}`);
+		if (!this.isInMap_F(p)) throw new Error(`towardWithRot_FF: point ${p.toString()} at ${axis} out of map ${this.storage.size.toString()}`);
 		return p;
 	}
 
@@ -191,12 +191,12 @@ export default class Map_V1 implements IMap {
 		if (p.length !== this.storage.numDimension)
 			this.projectPosition_I(p);
 		// 正式开始计算
-		let axis = mRot2axis(rot);
+		const axis = mRot2axis(rot);
 		p[axis] += (rot & 1) === 0 ? step : -step;
 		// 直接在当前维限制就行了
 		if (p[axis] < 0 || p[axis] >= this._size[axis]) // !【2023-10-05 16:12:28】注意：「尺寸」所在的位置不是「可达位置」！
 			p[axis] = reminder_I(p[axis], this._size[axis]);
-		if (!this.isInMap_I(p)) throw new Error(`towardWithRot_II: point ${p} at ${axis} out of map ${this.storage.size}`);
+		if (!this.isInMap_I(p)) throw new Error(`towardWithRot_II: point ${p.toString()} at ${axis} out of map ${this.storage.size.toString()}`);
 		return p;
 	}
 
@@ -218,7 +218,7 @@ export default class Map_V1 implements IMap {
 			),
 			asPlayer, asBullet, asLaser,
 			avoidHurting, avoidOthers, others
-		)
+		);
 	}
 
 	// * 原理：根据属性逐步判断（断言：永远在地图内）
@@ -232,7 +232,7 @@ export default class Map_V1 implements IMap {
 		others: IEntityInGrid[] = [],
 	): boolean {
 		// if(isOutOfMap(gridX,gridY)) return true
-		let attributes: BlockAttributes | null = this.storage.getBlockAttributes(p);
+		const attributes: BlockAttributes | null = this.storage.getBlockAttributes(p);
 		return !(
 			attributes === null || // ! 默认行为：不可通过（【20230913 20:04:42】有助于找出bug）
 			(avoidHurting && attributes.playerDamage > -1) || // 避免伤害
@@ -243,7 +243,7 @@ export default class Map_V1 implements IMap {
 		);
 	}
 
-	protected _temp_testFrontCanPass_P: iPoint = new iPoint()
+	protected _temp_testFrontCanPass_P: iPoint = new iPoint();
 	testFrontCanPass_FF(
 		entity: IEntityOutGrid & IEntityWithDirection, distance: number,
 		asPlayer: boolean,
@@ -282,42 +282,42 @@ export default class Map_V1 implements IMap {
 
 	/** 实现：暂时使用「竞技场地图」判断 // TODO: @implements 继续完善「方块硬度」等逻辑 */
 	isBlockCarriable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean {
-		let blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+		const blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound;
 		return (
 			blockAttributes.isCarriable &&
 			!( // 竞技场地图「特别判断」
 				this._isArena &&
 				blockAttributes.unbreakableInArenaMap
 			)
-		)
+		);
 	}
 
 	/** @implements 实现：暂时使用「竞技场地图」判断 */
 	isBlockBreakable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean {
-		let blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+		const blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound;
 		return (
 			blockAttributes.isBreakable &&
 			!( // 竞技场地图「特别判断」
 				this.isArenaMap &&
 				blockAttributes.unbreakableInArenaMap
 			)
-		)
+		);
 	}
 
 	/** @implements 实现：使用「直投影」，多维舍去，少维补零 */
 	projectPosition_F(position: fPointRef): fPointRef {
-		return straightProjection(position, this.storage.numDimension, 0)
+		return straightProjection(position, this.storage.numDimension, 0);
 	}
 
 	/** @implements 实现：使用「直投影」，多维舍去，少维补零 */
 	projectPosition_I(position: iPointRef): iPointRef {
-		return straightProjection(position, this.storage.numDimension, 0)
+		return straightProjection(position, this.storage.numDimension, 0);
 	}
 
 	/** @implements 实现：少维保留，多维⇒第一个维度 */
 	projectDirection(direction: mRot): mRot {
 		return mRot2axis(direction) >= this.storage.numDimension ?
 			direction & 1 : // ? 这是否也需调用API
-			direction
+			direction;
 	}
 }

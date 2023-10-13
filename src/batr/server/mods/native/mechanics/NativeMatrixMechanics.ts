@@ -1,20 +1,20 @@
-import { iPointRef, fPointVal, fPoint, iPointVal, iPoint, traverseNDSquareSurface } from "../../../../common/geometricTools"
-import { int, int$MIN_VALUE, uint } from "../../../../legacy/AS3Legacy"
-import BlockAttributes from "../../../api/block/BlockAttributes"
-import Entity from "../../../api/entity/Entity"
-import { i_inGrid, i_outGrid, i_hasDirection, IEntityWithDirection } from "../../../api/entity/EntityInterfaces"
-import IMap from "../../../api/map/IMap"
-import { mRot } from "../../../general/GlobalRot"
-import { alignToGridCenter_P } from "../../../general/PosTransform"
-import IMatrix from "../../../main/IMatrix"
-import EffectPlayerDeathLight from "../../batr/entity/effect/EffectPlayerDeathLight"
-import EffectSpawn from "../../batr/entity/effect/EffectSpawn"
-import EffectTeleport from "../../batr/entity/effect/EffectTeleport"
-import { i_batrPlayer } from "../../batr/entity/player/IPlayerBatr"
-import IPlayerHasStats, { i_hasStats } from "../../batr/entity/player/IPlayerHasStats"
-import { computeFinalBlockDamage, bonusBoxTest } from "../../batr/mechanics/BatrMatrixMechanics"
-import IPlayer, { isPlayer } from "../entities/player/IPlayer"
-import MatrixRuleBatr from "../rule/MatrixRuleBatr"
+import { iPointRef, fPointVal, fPoint, iPointVal, iPoint, traverseNDSquareSurface } from "../../../../common/geometricTools";
+import { int, int$MIN_VALUE, uint } from "../../../../legacy/AS3Legacy";
+import BlockAttributes from "../../../api/block/BlockAttributes";
+import Entity from "../../../api/entity/Entity";
+import { i_inGrid, i_outGrid, i_hasDirection } from "../../../api/entity/EntityInterfaces";
+import IMap from "../../../api/map/IMap";
+import { mRot } from "../../../general/GlobalRot";
+import { alignToGridCenter_P } from "../../../general/PosTransform";
+import IMatrix from "../../../main/IMatrix";
+import EffectPlayerDeathLight from "../../batr/entity/effect/EffectPlayerDeathLight";
+import EffectSpawn from "../../batr/entity/effect/EffectSpawn";
+import EffectTeleport from "../../batr/entity/effect/EffectTeleport";
+import { i_batrPlayer } from "../../batr/entity/player/IPlayerBatr";
+import { i_hasStats } from "../../batr/entity/player/IPlayerHasStats";
+import { computeFinalBlockDamage, bonusBoxTest } from "../../batr/mechanics/BatrMatrixMechanics";
+import IPlayer, { isPlayer } from "../entities/player/IPlayer";
+import MatrixRuleBatr from "../rule/MatrixRuleBatr";
 
 /**
  * 所有世界的「原生逻辑」
@@ -52,14 +52,14 @@ import MatrixRuleBatr from "../rule/MatrixRuleBatr"
  */
 export function getPlayers(host: IMatrix): IPlayer[] {
     if ('players' in host) {
-        return (host as any).players
+        return host['players'] as IPlayer[];
     }
 
     // 否则原样筛选
     else {
         return host.entities.filter(
             isPlayer
-        ) as IPlayer[]
+        );
     }
 }
 
@@ -75,7 +75,7 @@ export function getPlayers(host: IMatrix): IPlayer[] {
  */
 export function playerMoveInTest(
     host: IMatrix, player: IPlayer,
-    isLocationChange: Boolean = false
+    isLocationChange: boolean = false
 ): boolean {
     // 非激活&无属性⇒不检测（返回）
     if (!player.isActive) return false;
@@ -88,7 +88,7 @@ export function playerMoveInTest(
         player.maxHP,
         host.rule.safeGetRule<int>(MatrixRuleBatr.key_playerAsphyxiaDamage),
         attributes.playerDamage
-    )
+    );
     // int$MIN_VALUE⇒无伤害&无治疗
     if (finalPlayerDamage !== int$MIN_VALUE) {
         // 负数⇒治疗
@@ -96,7 +96,7 @@ export function playerMoveInTest(
             if (!isLocationChange)
                 player.isFullHP ?
                     player.heal -= finalPlayerDamage /* 注意：这里是负数 */ : // 满生命值⇒加「储备生命值」
-                    player.addHP(host, -finalPlayerDamage, null) // 否则直接加生命值
+                    player.addHP(host, -finalPlayerDamage, null); // 否则直接加生命值
         }
 
         // 正数⇒伤害
@@ -104,8 +104,8 @@ export function playerMoveInTest(
             host,
             finalPlayerDamage,
             null
-        )
-        returnBoo = true
+        );
+        returnBoo = true;
     }
     // 附加的「旋转」效果
     if (attributes.rotateWhenMoveIn) {
@@ -117,10 +117,10 @@ export function playerMoveInTest(
                 player.direction,
                 1
             )
-        )
-        returnBoo = true
+        );
+        returnBoo = true;
     }
-    return returnBoo
+    return returnBoo;
 }
 
 /**
@@ -143,25 +143,25 @@ export function teleportPlayerTo(
     rotateTo: mRot = player.direction,
     isTeleport: boolean = false
 ): IPlayer {
-    player.isActive = false
+    player.isActive = false;
     // !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-    player.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
-    player.direction = rotateTo
+    player.setPosition(host, p, true); // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
+    player.direction = rotateTo;
     // 在被传送的时候可能捡到奖励箱
     if (i_batrPlayer(player))
-        bonusBoxTest(host, player, p)
+        bonusBoxTest(host, player, p);
     // 被传送后添加特效
     if (isTeleport) {
-        const fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
+        const fp: fPointVal = alignToGridCenter_P(p, new fPoint()); // 对齐网格中央
         host.addEntity(
             new EffectTeleport(fp)
-        )
+        );
         // 只有在「有特效」的情况下算作「被传送」
         if (i_hasStats(player))
-            (player as IPlayerHasStats).stats.beTeleportCount++
+            (player).stats.beTeleportCount++;
     }
-    player.isActive = true
-    return player
+    player.isActive = true;
+    return player;
 }
 
 /**
@@ -169,16 +169,16 @@ export function teleportPlayerTo(
  */
 export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boolean = true, createEffect: boolean = true): IPlayer {
     // !【2023-10-04 17:12:26】现在不管玩家是否在重生
-    let p: iPointRef = host.map.storage.randomPoint
-    const players: IPlayer[] = getPlayers(host)
+    let p: iPointRef = host.map.storage.randomPoint;
+    const players: IPlayer[] = getPlayers(host);
     // 尝试最多256次
     for (let i: uint = 0; i < 255; i++) {
         // 找到一个合法位置⇒停
         if (player.testCanGoTo(host, p, true, true, players)) {
-            break
+            break;
         }
         // 没找到⇒继续
-        p = host.map.storage.randomPoint // 复制一个引用
+        p = host.map.storage.randomPoint; // 复制一个引用
     }
     // 传送玩家
     teleportPlayerTo(
@@ -191,9 +191,9 @@ export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boole
                 player.direction
         ),
         createEffect
-    )
+    );
     // Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
-    return player
+    return player;
 }
 
 /**
@@ -201,7 +201,7 @@ export function spreadPlayer(host: IMatrix, player: IPlayer, rotatePlayer: boole
  */
 export function spreadAllPlayer(host: IMatrix): void {
     for (const player of getPlayers(host)) {
-        spreadPlayer(host, player)
+        spreadPlayer(host, player);
     }
 }
 
@@ -211,7 +211,7 @@ export function spreadAllPlayer(host: IMatrix): void {
  */
 export function respawnAllPlayer(host: IMatrix): void {
     for (const player of getPlayers(host)) {
-        respawnPlayer(host, player)
+        respawnPlayer(host, player);
     }
 }
 
@@ -223,12 +223,12 @@ export function respawnAllPlayer(host: IMatrix): void {
  * @param player 重生的玩家
  */
 export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
-    let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy() // 空值访问`null.copy()`会变成undefined
+    let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy(); // 空值访问`null.copy()`会变成undefined
 
     // 没位置⇒直接分散玩家
     if (p === undefined) {
-        spreadPlayer(host, player, true, false)
-        p = player.position // 重新确定重生地
+        spreadPlayer(host, player, true, false);
+        p = player.position; // 重新确定重生地
     }
 
     // 有位置⇒直接重生在此/进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
@@ -239,21 +239,21 @@ export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
             findFitSpawnPoint(host, player, p), // !就是这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
             host.map.storage.randomForwardDirectionAt(p),
             false // 无需特效
-        ) // 无需重新确定重生地
+        ); // 无需重新确定重生地
 
     // 加特效
-    let fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央，只需要生成一个数组
+    const fp: fPointVal = alignToGridCenter_P(p, new fPoint()); // 对齐网格中央，只需要生成一个数组
     host.addEntities(
         new EffectSpawn(fp), // 重生效果
         EffectPlayerDeathLight.fromPlayer(p, player, true)
-    )
+    );
     // Return
     // Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
-    return player
+    return player;
 }
 
-const _temp_findFitSpawnPoint_pMax: iPoint = new iPoint()
-const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint()
+const _temp_findFitSpawnPoint_pMax: iPoint = new iPoint();
+const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint();
 /**
  * 在一个重生点附近寻找可用的重生位置
  * * 重生点处可用就直接在重生点处，否则向外寻找
@@ -272,16 +272,16 @@ function findFitSpawnPoint(
     host: IMatrix, player: IPlayer,
     spawnP: iPointRef, searchR: uint = 16
 ): iPoint {
-    let players: IPlayer[] = getPlayers(host)
+    const players: IPlayer[] = getPlayers(host);
     // 尝试直接在重生点处重生
     if (host.map.storage.isInMap(spawnP) &&
         player.testCanGoTo(host, spawnP, true, true, players))
-        return spawnP
+        return spawnP;
     // 重生点处条件不满足⇒开始在周围寻找
-    let isFound: boolean = false
+    let isFound: boolean = false;
     // 直接遍历
-    _temp_findFitSpawnPoint_pMax.copyFrom(spawnP)
-    _temp_findFitSpawnPoint_pMin.copyFrom(spawnP)
+    _temp_findFitSpawnPoint_pMax.copyFrom(spawnP);
+    _temp_findFitSpawnPoint_pMin.copyFrom(spawnP);
     // 一层层向外遍历
     for (let r: uint = 1; r <= searchR; r++) {
         traverseNDSquareSurface(
@@ -292,18 +292,18 @@ function findFitSpawnPoint(
                 if (!isFound &&
                     host.map.storage.isInMap(p) &&
                     player.testCanGoTo(host, p, true, true, players)) {
-                    spawnP.copyFrom(p)
-                    isFound = true
+                    spawnP.copyFrom(p);
+                    isFound = true;
                 }
             }
-        )
+        );
         // 找到就直接返回
-        if (isFound) break
+        if (isFound) break;
         // 没找到⇒坐标递增，继续
-        _temp_findFitSpawnPoint_pMax.addFromSingle(1)
-        _temp_findFitSpawnPoint_pMin.addFromSingle(-1)
+        _temp_findFitSpawnPoint_pMax.addFromSingle(1);
+        _temp_findFitSpawnPoint_pMin.addFromSingle(-1);
     }
-    return spawnP
+    return spawnP;
 }
 /**
  * 切换一个母体的地图
@@ -345,7 +345,7 @@ export function projectEntity(map: IMap, entity: Entity): void {
     }
     // 有方向⇒投影方向
     if (i_hasDirection(entity)) {
-        map.projectDirection((entity as IEntityWithDirection).direction);
+        map.projectDirection((entity).direction);
     }
 }
 /**

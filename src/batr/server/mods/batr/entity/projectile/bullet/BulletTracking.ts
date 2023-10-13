@@ -27,7 +27,7 @@ export default class BulletTracking extends Bullet {
 
 	//============Instance Variables============//
 	protected _target: IPlayer | null = null;
-	protected _trackingFunction: (player: IPlayer) => mRot | -1 = this.getTargetRotWeak; // not the criterion
+	protected _trackingFunction: (player: IPlayer) => mRot | -1 = this.getTargetRotWeak.bind(this); // not the criterion
 	protected _scalePercent: number = 1;
 	protected _cachedTargets: IPlayer[] = [];
 
@@ -54,7 +54,7 @@ export default class BulletTracking extends Bullet {
 		this._scalePercent = initialScalePercent;
 		// 目标追踪函数
 		if (smartTrackingMode)
-			this._trackingFunction = this.getTargetRot;
+			this._trackingFunction = this.getTargetRot.bind(this);
 		// 缓存「潜在目标」
 		this.cacheTargetsIn(playersInWorld);
 	}
@@ -65,7 +65,7 @@ export default class BulletTracking extends Bullet {
 	 * * 因其短周期性&访问高频性，直接缓存一个数组，以缩小搜索范围
 	 */
 	protected cacheTargetsIn(players: IPlayer[]): void {
-		for (let player of players) {
+		for (const player of players) {
 			if (player !== null && // not null
 				(
 					this._owner === null ||
@@ -92,7 +92,7 @@ export default class BulletTracking extends Bullet {
 				if (this.checkTargetInvalid(player)) {
 					this._cachedTargets.splice(i, 1);
 					continue;
-				};
+				}
 				// 若「值得追踪」，则开始追踪
 				if (this.getTargetRotWeak(player) !== -1) {
 					this._target = player;
@@ -158,6 +158,7 @@ export default class BulletTracking extends Bullet {
 		// 否则无果
 		return -1;
 	}
+
 	/**
 	 * 在追踪过程中，获取「追踪到玩家需要采取的朝向」
 	 * * 追踪逻辑：先直线走完「绝对距离最大」的方向，然后逐渐变小
@@ -167,7 +168,7 @@ export default class BulletTracking extends Bullet {
 	 */
 	protected getTargetRot(player: IPlayer): int {
 		// 先获取一个最小索引，代表「绝对距离最大」的轴向
-		let iMaxAbsDistance: uint = this._position_I.indexOfAbsMaxDistance(player.position);
+		const iMaxAbsDistance: uint = this._position_I.indexOfAbsMaxDistance(player.position);
 		// 然后根据轴向生成「任意维整数角」
 		return (iMaxAbsDistance << 1) + comparePosition_I(
 			this._position_I[iMaxAbsDistance],  // 自己在更正方向，就往负方向走
@@ -198,7 +199,7 @@ export default class BulletTracking extends Bullet {
 
 	protected drawTrackingSign(graphics: IGraphicContext): void {
 		graphics.beginFill(this.ownerLineColor);
-		let radius: number = BulletTracking.SIZE * 0.125;
+		const radius: number = BulletTracking.SIZE * 0.125;
 		graphics.moveTo(-radius, -radius);
 		graphics.lineTo(radius, 0);
 		graphics.lineTo(-radius, radius);

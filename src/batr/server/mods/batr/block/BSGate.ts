@@ -36,7 +36,7 @@ export default class BSGate extends BlockState {
 
 	//============World Mechanics============//
 	protected _open: boolean;
-	public get open(): boolean { return this._open }
+	public get open(): boolean { return this._open; }
 	public set open(open: boolean) { this._open = this.updateOpen(open); }
 
 	/**
@@ -53,15 +53,15 @@ export default class BSGate extends BlockState {
 			// 电流抗性
 			this._temp_fullAttr.electricResistance = open ?
 				0 :
-				this._temp_fullAttr_electricResistance
+				this._temp_fullAttr_electricResistance;
 			// 玩家伤害
 			this._temp_fullAttr.playerDamage = open ?
 				int$MIN_VALUE :
-				this._temp_fullAttr_playerDamage
+				this._temp_fullAttr_playerDamage;
 			// 呈现不透明度
 			this._temp_fullAttr.defaultPixelAlpha = open ?
 				this._temp_fullAttr_pixelAlpha >> 2 : // 四分之一透明度
-				this._temp_fullAttr_pixelAlpha
+				this._temp_fullAttr_pixelAlpha;
 		}
 		return open;
 	}
@@ -84,7 +84,7 @@ export default class BSGate extends BlockState {
 			this.updateOpen(this._open); // !【2023-10-08 21:00:18】就是应该只有在「状态改变」时更新，除此之外应该不用更新
 		}
 		// 使用自身缓存的属性 // ! 绝对由状态完全决定，无需存储到JS对象中
-		return this._temp_fullAttr
+		return this._temp_fullAttr;
 	}
 	protected _temp_fullAttr?: BlockAttributes;
 

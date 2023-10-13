@@ -51,7 +51,7 @@ export default class LaserPulse extends Laser {
 
 	//============Instance Functions============//
 	override onTick(host: IMatrix): void {
-		if (!this.hasDamaged) console.warn('LaserPulse: laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
+		if (!this.hasDamaged) console.warn('LaserPulse: laserHurtPlayers(host, this) WIP!');//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}
 

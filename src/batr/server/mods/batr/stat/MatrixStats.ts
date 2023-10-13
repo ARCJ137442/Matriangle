@@ -28,7 +28,7 @@ export default class MatrixStats {
 
 	// Unfinished
 	public clone(): MatrixStats {
-		return new MatrixStats(this._rule)/* .setPlayers(this._players); */
+		return new MatrixStats(this._rule);/* .setPlayers(this._players); */
 	}
 
 	//============Destructor============//

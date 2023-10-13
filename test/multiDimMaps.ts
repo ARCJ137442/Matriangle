@@ -4,7 +4,6 @@ import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSpar
 import IMap from './../src/batr/server/api/map/IMap';
 import Map_V1 from './../src/batr/server/mods/native/maps/Map_V1';
 import { sparseMapMV稀疏地图母体可视化 } from "../src/batr/server/mods/visualization/textVisualizations";
-import Block from '../src/batr/server/api/block/Block';
 import { NativeBlockPrototypes } from '../src/batr/server/mods/native/registry/NativeBlockRegistry';
 
 /**
@@ -21,7 +20,7 @@ const DIM_MAXs: iPoint = new iPoint();
 let map: Map_V1, mss: MapStorageSparse;
 for (let i: uint = DIM_MIN; i <= DIM_MAX; i++) {
 	// 尺寸
-	let a: uint = uint(Math.ceil((20 * i) ** (1 / i))) - 1 // 边长 = 维数✓20*维数（向上取整），20 7 4 3
+	const a: uint = uint(Math.ceil((20 * i) ** (1 / i))) - 1 // 边长 = 维数✓20*维数（向上取整），20 7 4 3
 	DIM_MAXs.length = DIM_MINs.length = i;
 	DIM_MINs.fill(0); DIM_MAXs.fill(a);
 	if (DIM_MAXs.checkInvalid() || DIM_MINs.checkInvalid())

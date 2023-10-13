@@ -26,10 +26,10 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 	protected _moveDuration: uint = 0;
 
 	// 格点实体 //
-	// public readonly i_inGrid: true = true;
+	// public readonly i_inGrid = true as const;
 	protected _position: iPoint = new iPoint();
-	public get position(): iPointRef { return this._position }
-	public set position(value: iPointRef) { this._position.copyFrom(value) }
+	public get position(): iPointRef { return this._position; }
+	public set position(value: iPointRef) { this._position.copyFrom(value); }
 
 	//============Constructor & Destructor============//
 	public constructor(
@@ -81,7 +81,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 					alignToGridCenter_P(this._position, this._temp_entityP),
 					this._direction,
 					PROJECTILES_SPAWN_DISTANCE,
-				)
+				);
 				// 模拟使用 // ! 【2023-09-23 11:16:04】不限于「武器」！
 				/* playerUseTool(
 					this.owner,
@@ -94,7 +94,7 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 					this._tool,
 					this._temp_entityP,
 					this._toolDirection,
-					this._weaponChargePercent, PROJECTILES_SPAWN_DISTANCE)
+					this._weaponChargePercent, PROJECTILES_SPAWN_DISTANCE);
 			}
 		}
 	}

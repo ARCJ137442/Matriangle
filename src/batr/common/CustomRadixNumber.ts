@@ -7,7 +7,7 @@
  * */
 
 //============Import Something============//
-import { uint } from '../legacy/AS3Legacy'
+import { uint } from '../legacy/AS3Legacy';
 
 //============Class Start============//
 export default class CustomRadixNumber {
@@ -39,7 +39,7 @@ export default class CustomRadixNumber {
 	}
 
 	public static getInstanceByKey(key: unknown, fromIndex: uint = 0, strictEqual: boolean = false): CustomRadixNumber | null {
-		for (let instance of CustomRadixNumber._instances) {
+		for (const instance of CustomRadixNumber._instances) {
 			if (instance._key === key || !strictEqual && instance._key == key) {
 				if (CustomRadixNumber._instances.indexOf(instance) >= fromIndex) {
 					return instance;
@@ -110,7 +110,7 @@ export default class CustomRadixNumber {
 		return (
 			CustomRadixNumber.isEmptyString(this._charSet) ?
 				null : this._charSet
-		)
+		);
 	}
 
 	public get key(): unknown {
@@ -127,12 +127,12 @@ export default class CustomRadixNumber {
 	 * 	toNumberFloat(customNumber:string):uint
 	 * */
 	public getWeightFromChar(char: string): uint {
-		let weight: uint = this._charSet.indexOf(char);
+		const weight: uint = this._charSet.indexOf(char);
 		return weight >= 0 ? weight : 0;
 	}
 
 	public getCharFromWeight(weight: uint): string {
-		let char: string = this._charSet.charAt(weight);
+		const char: string = this._charSet.charAt(weight);
 		return char;
 	}
 
@@ -142,7 +142,7 @@ export default class CustomRadixNumber {
 			return this.getCharFromWeight(0);
 		// Set
 		let returnString: string = '';
-		let radix: uint = this.radix;
+		const radix: uint = this.radix;
 		let tempNum: uint = Math.floor(n);
 		let tempNum2: uint = 0;
 		// Operation
@@ -162,7 +162,7 @@ export default class CustomRadixNumber {
 			return 0;
 		// Set
 		let returnNumber: uint = 0;
-		let radix: uint = this.radix;
+		const radix: uint = this.radix;
 		let tempNum: uint = 0;
 		// Operation
 		for (let i: uint = customNumber.length - 1; i >= 0; i--) {
@@ -185,8 +185,8 @@ export default class CustomRadixNumber {
 			return this.getCharFromWeight(0);
 		// Set
 		let returnString: string = '';
-		let radix: uint = this.radix;
-		let integer: uint = uint(number); // number
+		const radix: uint = this.radix;
+		const integer: uint = uint(number); // number
 		let float: number = number - integer; // float
 		let tempNum3: number = 0;
 		let i: number;
@@ -204,7 +204,7 @@ export default class CustomRadixNumber {
 				returnString += this.getCharFromWeight(tempNum3);
 			}
 			for (i = returnString.length - 1; i >= 0; i--) {
-				if (returnString.charAt(i) == this.getCharFromWeight(0)) {
+				if (returnString.charAt(i) === this.getCharFromWeight(0)) {
 					returnString = returnString.slice(0, returnString.length - 1);
 				}
 				else
@@ -221,10 +221,10 @@ export default class CustomRadixNumber {
 			return 0;
 		// Set
 		let returnNumber: number = 0;
-		let radix: number = this.radix;
-		let customNumberParts: Array<string> = customNumber.split(this._dotChar);
-		let cNumInt: string = String(customNumberParts[0] == undefined ? '' : customNumberParts[0]);
-		let cNumFloat: string = String(customNumberParts[1] == undefined ? '' : customNumberParts[1]);
+		const radix: number = this.radix;
+		const customNumberParts: Array<string> = customNumber.split(this._dotChar);
+		const cNumInt: string = String(customNumberParts[0] == undefined ? '' : customNumberParts[0]);
+		const cNumFloat: string = String(customNumberParts[1] == undefined ? '' : customNumberParts[1]);
 		// Operation
 		// number
 		if (!CustomRadixNumber.isEmptyString(cNumInt))

@@ -1,0 +1,6 @@
+# 参考文档：https://prettier.io/docs/en/install#set-up-your-editor #
+
+# 忽略HTML
+*.html
+test
+

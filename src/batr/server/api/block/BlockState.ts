@@ -51,9 +51,10 @@ export default abstract class BlockState implements IJSObjectifiable<BlockState>
 	 * 通过链式操作设置自身
 	 * * ✅使用「数组访问」格式设置值，仍然能触发`setter`
 	 */
-	public setState(options: { [k: key]: any }): this {
+	public setState(options: { [k: key]: unknown }): this {
 		for (const k in options) {
 			// * AnyScript：直接使用数组访问设置值
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 			(this as any)[k] = options[k];
 		}
 		return this;
@@ -78,7 +79,7 @@ export default abstract class BlockState implements IJSObjectifiable<BlockState>
 	 * @param attributes 用于参考的「基础属性」
 	 */
 	public calculatePixelColor(attributes: BlockAttributes): uint {
-		return attributes.defaultPixelColor
+		return attributes.defaultPixelColor;
 	}
 
 	/**
@@ -86,7 +87,7 @@ export default abstract class BlockState implements IJSObjectifiable<BlockState>
 	 * @param attributes 用于参考的「基础属性」
 	 */
 	public calculatePixelAlpha(attributes: BlockAttributes): uint {
-		return attributes.defaultPixelAlpha
+		return attributes.defaultPixelAlpha;
 	}
 
 }

@@ -148,7 +148,7 @@ export function rotate_M(rot: mRot, coAxis: uint, step: int): mRot {
 		default: return rot; // 原朝向
 		case 1: return coAxis << 1; // 协面轴+
 		case 2: return toOpposite_M(rot); // 反方向
-		case 3: return (coAxis << 1) + 1 //协面轴-
+		case 3: return (coAxis << 1) + 1; //协面轴-
 	}
 }
 
@@ -198,7 +198,7 @@ export function rotateInPlane_M(rot: mRot, rotStart: mRot, rotEnd: mRot, step: i
 					);
 				// 若与「终止角」还是不在一个轴⇒返回其自身
 				default:
-					return rot
+					return rot;
 			}
 	}
 }
@@ -212,7 +212,7 @@ export function rotateInPlane_M(rot: mRot, rotStart: mRot, rotEnd: mRot, step: i
  * @returns 这个「任意维整数角」是否在「两个轴向构成的平面」内
  */
 export function isRotInPlane_M(rot: mRot, axis1: uint, axis2: uint): boolean {
-	return ((rot >> 1) === axis1) || ((rot >> 1) === axis2)
+	return ((rot >> 1) === axis1) || ((rot >> 1) === axis2);
 }
 
 /** 内置的「轴向名」 */
@@ -224,7 +224,7 @@ const NATIVE_N_DIM_AXISES: string = 'xyzw';
  * @returns 轴向名
  */
 export function nameOfAxis_M(axis: uint): string {
-	return NATIVE_N_DIM_AXISES[axis] ?? `x${axis + 1}`
+	return NATIVE_N_DIM_AXISES[axis] ?? `x${axis + 1}`;
 }
 /**
  * 用于显示角度名：轴向+正负
@@ -232,7 +232,7 @@ export function nameOfAxis_M(axis: uint): string {
  * @returns 这个角度的名字
  */
 export function nameOfRot_M(rot: mRot): string {
-	return nameOfAxis_M(rot >> 1) + '+-'[rot & 1]
+	return nameOfAxis_M(rot >> 1) + '+-'[rot & 1];
 }
 
 export function lockRot_F(rot: fRot): fRot {
@@ -302,7 +302,7 @@ export function localToGlobal(currentRot: fRot, containerRot: fRot): fRot {
  * @returns 前进的增量x
  */
 export function towardX_II(rot: iRot, radius: int): int {
-	return exMath.chi(rot) * radius //
+	return exMath.chi(rot) * radius; //
 }
 
 /**
@@ -315,7 +315,7 @@ export function towardX_II(rot: iRot, radius: int): int {
  * @returns 前进的增量y
  */
 export function towardY_II(rot: iRot, radius: int): int {
-	return exMath.chi(rot + 1) * radius //
+	return exMath.chi(rot + 1) * radius; //
 }
 
 /**
@@ -328,7 +328,7 @@ export function towardY_II(rot: iRot, radius: int): int {
  * @returns 前进的增量x
  */
 export function towardX_IF(rot: iRot, radius: number): number {
-	return exMath.chi(rot) * radius
+	return exMath.chi(rot) * radius;
 }
 
 /**
@@ -341,7 +341,7 @@ export function towardX_IF(rot: iRot, radius: number): number {
  * @returns 前进的增量y
  */
 export function towardY_IF(rot: iRot, radius: number): number {
-	return exMath.chi(rot + 1) * radius
+	return exMath.chi(rot + 1) * radius;
 }
 
 /**
@@ -353,7 +353,7 @@ export function towardY_IF(rot: iRot, radius: number): number {
  * @returns 前进的增量x
  */
 export function towardX_FF(rot: fRot, radius: number): number {
-	return Math.cos(Math.PI / 2 * rot) * radius
+	return Math.cos(Math.PI / 2 * rot) * radius;
 }
 
 /**
@@ -365,7 +365,7 @@ export function towardX_FF(rot: fRot, radius: number): number {
  * @returns 前进的增量x
  */
 export function towardY_FF(rot: fRot, radius: number): number {
-	return Math.cos(Math.PI / 2 * rot) * radius
+	return Math.cos(Math.PI / 2 * rot) * radius;
 	// return exMath.redirectNum(radius * Math.cos(exMath.angleToArc(toRealRot(rot))), 10000); // ! 原先的逻辑是保留四位小数
 }
 
@@ -381,7 +381,7 @@ export function towardY_FF(rot: fRot, radius: number): number {
  * @param radius 整数半径
  */
 export function towardX_MI(rot: mRot, radius: int = 1): int {
-	return exMath.psi(rot) * radius
+	return exMath.psi(rot) * radius;
 }
 
 /**
@@ -394,7 +394,7 @@ export function towardX_MI(rot: mRot, radius: int = 1): int {
  * @param radius 整数半径
  */
 export function towardY_MI(rot: mRot, radius: int = 1): int {
-	return exMath.psi(rot - 2) * radius
+	return exMath.psi(rot - 2) * radius;
 }
 
 /**
@@ -410,22 +410,22 @@ export function towardY_MI(rot: mRot, radius: int = 1): int {
  * @returns 包括所有维度返回值的点
  */
 export function toward_MI(rot: mRot, dim: uint, radius: int = 1): iPoint {
-	let p: iPoint = new iPoint();
+	const p: iPoint = new iPoint();
 	for (let i = 0; i < dim; i++) {
 		p.push(
 			exMath.psi(rot - (i << 1)) *
 			radius
-		)
+		);
 	}
 	return p;
 }
 
 export function towardX_MF(rot: mRot, radius: number = 1): number {
-	return exMath.psi(rot) * radius
+	return exMath.psi(rot) * radius;
 }
 
 export function towardY_MF(rot: mRot, radius: number = 1): number {
-	return exMath.psi(rot - 2) * radius
+	return exMath.psi(rot - 2) * radius;
 }
 
 /**
@@ -434,7 +434,7 @@ export function towardY_MF(rot: mRot, radius: number = 1): number {
  * * 前者在「更正方向」|后者在「更负方向」⇒1
  */
 export function comparePosition_I(a: int, b: int): 0 | 1 {
-	return a > b ? 1 : 0
+	return a > b ? 1 : 0;
 }
 
 /**
@@ -443,5 +443,5 @@ export function comparePosition_I(a: int, b: int): 0 | 1 {
  * * 前者在「更正方向」|后者在「更负方向」⇒1
  */
 export function comparePosition_F(a: number, b: number): 0 | 1 {
-	return a > b ? 1 : 0
+	return a > b ? 1 : 0;
 }

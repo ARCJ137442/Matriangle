@@ -1,6 +1,5 @@
 ﻿import { uint } from "../../../../../legacy/AS3Legacy";
 import { DEFAULT_SIZE } from "../../../../api/GlobalDisplayVariables";
-import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
 import { IGraphicContext, IShape, IShapeContainer } from '../../../../api/DisplayInterfaces';
 import { logical2Real, real2Logical } from "../../../../api/PosTransform";
 
@@ -151,7 +150,7 @@ export default class PlayerGUI implements IShapeContainer {
 		throw new Error("Method not implemented.");
 	}
 
-	public readonly i_displayable: true = true;
+	public readonly i_displayable = true as const;
 	shapeRefresh(shape: IShape): void {
 		throw new Error("Method not implemented.");
 	}
@@ -220,14 +219,14 @@ export default class PlayerGUI implements IShapeContainer {
 	/** 以「逻辑坐标」设置自身「显示坐标」 */ // ? 是否其实只是一个「单向过程」？
 	public set logicalX(value: number) {
 		// 相等⇒不更新
-		if (value == this.logicalX) return;
+		if (value === this.logicalX) return;
 		this.x = logical2Real(value);
 	}
 
 	/** 以「逻辑坐标」设置自身「显示坐标」 */ // ? 是否其实只是一个「单向过程」？
 	public set logicalY(value: number) {
 		// 相等⇒不更新
-		if (value == this.logicalY) return;
+		if (value === this.logicalY) return;
 		this.y = logical2Real(value);
 	}
 
@@ -371,8 +370,8 @@ export default class PlayerGUI implements IShapeContainer {
 	}
 
 	protected drawPointerTriangle(graphics: IGraphicContext): void {
-		let realRadiusX: number = 0.1875 * DEFAULT_SIZE;
-		let realRadiusY: number = 0.1875 * DEFAULT_SIZE;
+		const realRadiusX: number = 0.1875 * DEFAULT_SIZE;
+		const realRadiusY: number = 0.1875 * DEFAULT_SIZE;
 		graphics.clear();
 		graphics.beginFill(this._owner.fillColor);
 		graphics.moveTo(-realRadiusX, -realRadiusY);

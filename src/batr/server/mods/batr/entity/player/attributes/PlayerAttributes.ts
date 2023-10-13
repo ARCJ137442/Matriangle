@@ -1,4 +1,4 @@
-import { IJSObjectifiable, JSObject, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP, uniSaveJSON, uniSaveJSObject } from "../../../../../../common/JSObjectify";
+import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from "../../../../../../common/JSObjectify";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 
 /**
@@ -9,8 +9,8 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 export default class PlayerAttributes implements IJSObjectifiable<PlayerAttributes> {
 
     // JS对象 //
-    public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
-    public get objectifyMap(): JSObjectifyMap { return PlayerAttributes.OBJECTIFY_MAP }
+    public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+    public get objectifyMap(): JSObjectifyMap { return PlayerAttributes.OBJECTIFY_MAP; }
     public cloneBlank = (): PlayerAttributes => PlayerAttributes.getBlank();
     public static getBlank = (): PlayerAttributes => new PlayerAttributes();
 
@@ -26,7 +26,7 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
     public static readonly key_buffDamage = fastAddJSObjectifyMapProperty_dashP(
         PlayerAttributes.OBJECTIFY_MAP,
         'buffDamage', 0
-    )
+    );
 
     protected _buffCD: uint;
     /**
@@ -39,7 +39,7 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
     public static readonly key_buffCD = fastAddJSObjectifyMapProperty_dashP(
         PlayerAttributes.OBJECTIFY_MAP,
         'buffCD', 0
-    )
+    );
 
     protected _buffResistance: uint;
     /**
@@ -52,7 +52,7 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
     public static readonly key_buffResistance = fastAddJSObjectifyMapProperty_dashP(
         PlayerAttributes.OBJECTIFY_MAP,
         'buffResistance', 0
-    )
+    );
 
     protected _buffRadius: uint;
     /**
@@ -65,7 +65,7 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
     public static readonly key_buffRadius = fastAddJSObjectifyMapProperty_dashP(
         PlayerAttributes.OBJECTIFY_MAP,
         'buffRadius', 0
-    )
+    );
 
     // 构造方法 //
     public constructor(

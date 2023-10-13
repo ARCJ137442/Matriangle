@@ -53,12 +53,12 @@ export default class I18ns {
 		if (!I18ns.isInited)
 			I18ns.cInit();
 
-		let returnT: I18ns = new I18ns();
+		const returnT: I18ns = new I18ns();
 
 		if (str.length < 1 || str === null)
 			return returnT;
 		let str1: string[], k: string, v: string;
-		for (let value of str) {
+		for (const value of str) {
 			str1 = String(value).split(':');
 
 			k = str1[0];
@@ -124,18 +124,18 @@ export default class I18ns {
 	}
 
 	public get translationKeys(): string[] {
-		let rV: string[] = new Array<String>();
+		const rV: string[] = new Array<string>();
 
-		for (let index in this._dictionary) {
+		for (const index in this._dictionary) {
 			rV.push(String(index));
 		}
 		return rV;
 	}
 
 	public get translationValues(): string[] {
-		let rV: string[] = new Array<String>();
+		const rV: string[] = new Array<string>();
 
-		for (let value of this._dictionary) {
+		for (const value of this._dictionary) {
 			rV.push(String(value));
 		}
 		return rV;
@@ -151,7 +151,7 @@ export default class I18ns {
 	}
 
 	protected defaultGet(key: string): string {
-		let value: string = String(this._dictionary[key]);
+		const value: string = String(this._dictionary[key]);
 		if (value == 'undefined' || value == 'null' || value == '')
 			return getDefaultI18n.getDefaultI18n(key);
 		return value;
@@ -174,7 +174,7 @@ export default class I18ns {
 	public toString(): string {
 		let rS: string = '';
 
-		for (let index in this._dictionary) {
+		for (const index in this._dictionary) {
 			rS += String(index) + ':' + String(this._dictionary[index]) + ';';
 		}
 		return rS;

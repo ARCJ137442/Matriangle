@@ -1,8 +1,7 @@
 import { iPoint, iPointRef, iPointVal } from '../src/batr/common/geometricTools';
 import { uint } from '../src/batr/legacy/AS3Legacy';
-import Block from '../src/batr/server/api/block/Block';
 import MapStorageSparse from './../src/batr/server/mods/native/maps/MapStorageSparse';
-import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations'
+import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations';
 import { BatrDefaultMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
 import IMap from '../src/batr/server/api/map/IMap';
 
@@ -18,9 +17,9 @@ export function stackMaps(
 	deep: boolean = false
 ): MapStorageSparse {
 	// 先检查除了「待堆叠轴向」外的尺寸
-	let otherAxisSizes: uint[] = [];
+	const otherAxisSizes: uint[] = [];
 	let nDim: uint = 0;
-	let pileAxisSizes: Map<MapStorageSparse, uint | -1> = new Map();
+	const pileAxisSizes: Map<MapStorageSparse, uint | -1> = new Map();
 	/** 是否是在一个新维度上堆叠 */
 	let isInNewAxis: boolean = false;
 	for (const map of maps) {
@@ -28,18 +27,18 @@ export function stackMaps(
 		if (nDim === 0)
 			nDim = map.numDimension;
 		else if (map.numDimension !== nDim)
-			throw new Error('维数不一致！')
+			throw new Error('维数不一致！');
 		// 除了「堆叠维度」外的其它尺寸校对
 		const lSize = map.size.length;
 		for (let i = 0; i < lSize; i++) {
 			// 计入「堆叠维数尺寸」
 			if (i === pileAxis)
-				pileAxisSizes.set(map, map.size[i])
+				pileAxisSizes.set(map, map.size[i]);
 			// 逐一比对
 			else {
 				otherAxisSizes[i] ??= map.size[i];
 				if (otherAxisSizes[i] !== map.size[i])
-					throw new Error('尺寸不一致！')
+					throw new Error('尺寸不一致！');
 			}
 		}
 		// 若「待堆叠尺寸」没有⇒1
@@ -49,7 +48,7 @@ export function stackMaps(
 		}
 	}
 	/** 待返回的新地图 */
-	const nMap: MapStorageSparse = new MapStorageSparse(isInNewAxis ? nDim + 1 : nDim)
+	const nMap: MapStorageSparse = new MapStorageSparse(isInNewAxis ? nDim + 1 : nDim);
 	// 开始合并
 	const copyPointer: iPointVal = new iPoint();
 	let pilePointer: uint = 0; // 堆叠从零开始
@@ -67,14 +66,14 @@ export function stackMaps(
 				nMap.setBlock(
 					copyPointer,
 					deep ?
-						(map.getBlock(p) as Block).copy() :
-						(map.getBlock(p) as Block).softCopy()
+						(map.getBlock(p)).copy() :
+						(map.getBlock(p)).softCopy()
 				);
 		});
 		// 复制重生点
 		for (const sP of map.spawnPoints) {
 			if (deep)
-				nMap.addSpawnPointAt(sP)
+				nMap.addSpawnPointAt(sP);
 			else nMap.spawnPoints.push(sP);
 		}
 		// 最后向「上」递增
@@ -87,4 +86,4 @@ console.log(
 	mapVH地图可视化_高维(
 		stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap) => map.storage as MapStorageSparse))
 	)
-)
+);

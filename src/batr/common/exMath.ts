@@ -1,4 +1,4 @@
-﻿import { int, uint } from '../legacy/AS3Legacy'
+﻿import { int, uint } from '../legacy/AS3Legacy';
 
 //==============Variables==============//
 const PRIME_LIST: Array<uint> = new Array<uint>(2, 3); // only `2` will pass the method about parameter 'length'
@@ -111,7 +111,7 @@ export const χ = chi4;
  */
 // const a = [1, -1]
 export function psiN(rot: int): int {
-	return (rot >> 1 == 0) ? 0 : (~(rot & 1) << 1) + 3
+	return (rot >> 1 == 0) ? 0 : (~(rot & 1) << 1) + 3;
 	// return Number(a[rot]) // ? 据说用这个也有挺好的性能
 }
 export const psi = psiN;
@@ -123,7 +123,7 @@ export const ψ = psiN;
  * @return	0,1 or -1.
  */
 export function sgn(x: number): int {
-	return x == 0 ? 0 : (x > 0 ? 1 : -1)
+	return x == 0 ? 0 : (x > 0 ? 1 : -1);
 }
 
 //==Int Function==//
@@ -174,7 +174,6 @@ export function reminder_F(num: number, modNum: number): number {
 			num % modNum
 	);
 }
-let _temp_reminder_F: number;
 
 /**
  * 取余运算
@@ -250,8 +249,8 @@ export function isBetween(
 	withL: boolean = false,
 	withM: boolean = false
 ): boolean {
-	let m: number = Math.max(n1, n2);
-	let l: number = Math.min(n1, n2);
+	const m: number = Math.max(n1, n2);
+	const l: number = Math.min(n1, n2);
 	if (withL && withM)
 		return x >= l && x <= m;
 	else if (withL)
@@ -271,7 +270,7 @@ export function arcToAngle(value: number): number {
 
 export function sum(a: number[]): number {
 	let sum: number = 0;
-	for (let i of a) {
+	for (const i of a) {
 		if (!isNaN(i))
 			sum += i;
 	}
@@ -280,7 +279,7 @@ export function sum(a: number[]): number {
 
 export function average(a: number[]): number {
 	let sum: number = 0;
-	for (let i of a) {
+	for (const i of a) {
 		if (!isNaN(i)) {
 			sum += i;
 		}
@@ -295,10 +294,10 @@ export function removeEmptyInArray(arr: (number | null)[]): void {
 	}
 }
 
-export function removeEmptyIn(...lists: unknown[]): void {
-	for (let i of lists) {
+export function removeEmptyInArrays(...lists: unknown[]): void {
+	for (const i of lists) {
 		if (i instanceof Array)
-			removeEmptyInArray(i);
+			removeEmptyInArray(i as Array<never>);
 	}
 }
 
@@ -327,6 +326,6 @@ export function numberBetween(x: number, num1: number = Number.NEGATIVE_INFINITY
  * @param x 待转换的整数/浮点数
  * @returns 转换成的「数值上相等」的浮点数
  */
-export function float(x: int | number): number {
+export function float(x: int): number {
 	return x + 0.0;
 }

@@ -10,7 +10,7 @@ import IMapStorage from "../../../api/map/IMapStorage";
 import { BatrBlockPrototypes } from "../../batr/registry/BlockRegistry";
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
-const _temp_point_2d: iPoint = new iPoint(2)
+const _temp_point_2d: iPoint = new iPoint(2);
 
 /**
  * ! 目前这些「世界内置地图」还是一种「迁移自BaTr Gamma」的情况，仍然是以二维为主
@@ -64,11 +64,11 @@ export function fillBlock(
     outline: boolean = false,
     clone: boolean = false,
 ): void {
-    let xl: int = Math.min(x1, x2), xm: int = Math.max(x1, x2);
-    let yl: int = Math.min(y1, y2), ym: int = Math.max(y1, y2);
+    const xl: int = Math.min(x1, x2), xm: int = Math.max(x1, x2);
+    const yl: int = Math.min(y1, y2), ym: int = Math.max(y1, y2);
     let xi: int, yi: int;
     // * 函数式编程：决定是「原样」还是「拷贝」
-    let blockF: (block: Block) => Block = (
+    const blockF: (block: Block) => Block = (
         clone ?
             copyBlock :
             identity<Block>
@@ -76,12 +76,12 @@ export function fillBlock(
 
     // 外框
     for (xi = xl; xi <= xm; xi++) {
-        storage.setBlock(_temp_point_2d.copyFromArgs(xi, yl), blockF(block))
-        storage.setBlock(_temp_point_2d.copyFromArgs(xi, ym), blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xi, yl), blockF(block));
+        storage.setBlock(_temp_point_2d.copyFromArgs(xi, ym), blockF(block));
     }
     for (yi = yl; yi <= ym; yi++) {
-        storage.setBlock(_temp_point_2d.copyFromArgs(xl, yi), blockF(block))
-        storage.setBlock(_temp_point_2d.copyFromArgs(xm, yi), blockF(block))
+        storage.setBlock(_temp_point_2d.copyFromArgs(xl, yi), blockF(block));
+        storage.setBlock(_temp_point_2d.copyFromArgs(xm, yi), blockF(block));
     }
 
     // 内部
@@ -112,7 +112,7 @@ export function setReflectBlock(
     clone: boolean = false,
     lx: int = 23, ly: int = 23,
 ): void {
-    let blockF: (block: Block) => Block = (
+    const blockF: (block: Block) => Block = (
         clone ?
             copyBlock :
             identity<Block>

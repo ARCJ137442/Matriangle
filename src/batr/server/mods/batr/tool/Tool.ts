@@ -31,16 +31,16 @@ import { typeID } from "../../../api/registry/IWorldRegistry";
 export default class Tool implements IJSObjectifiable<Tool> {
 
 	/** （国际化文本）翻译时的共同父键 */
-	public static get label(): string { return 'tool' }
+	public static get label(): string { return 'tool'; }
 
 	// JS对象 //
 
 	/** 存储「JS对象化映射表」 */
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
-	public get objectifyMap(): JSObjectifyMap { return Tool.OBJECTIFY_MAP }
+	public get objectifyMap(): JSObjectifyMap { return Tool.OBJECTIFY_MAP; }
 
 	/** 模板构造函数 */
-	public static getBlank(): Tool { return new Tool('undefined', 0, 0, false) };
+	public static getBlank(): Tool { return new Tool('undefined', 0, 0, false); }
 
 	/**
 	 * 存储「工具id」
@@ -49,11 +49,11 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * !【2023-09-24 21:18:28】日后的「国际化文本支持」将基于id，而非在这里整什么「国际化文本」
 	 */
 	protected _id: typeID;
-	public get id(): typeID { return this._id }
+	public get id(): typeID { return this._id; }
 	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'id', 'string',
-	)
+	);
 
 	//============Constructor & Destructor============//
 	/**
@@ -94,13 +94,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	*/
-	get usingCD(): uint { return this._usingCD }
-	set usingCD(value: uint) { this._usingCD = value }
+	get usingCD(): uint { return this._usingCD; }
+	set usingCD(value: uint) { this._usingCD = value; }
 	protected _usingCD: uint;
 	public static readonly key_usingCD: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'usingCD', uint(1),
-	)
+	);
 
 	/**
 	 * 工具使用基础冷却
@@ -109,13 +109,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	*/
-	get baseCD(): uint { return this._baseCD }
-	set baseCD(value: uint) { this._baseCD = value }
+	get baseCD(): uint { return this._baseCD; }
+	set baseCD(value: uint) { this._baseCD = value; }
 	protected _baseCD: uint;
 	public static readonly key_baseCD: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'baseCD', uint(1),
-	)
+	);
 
 	/**
 	 * 工具充能状态（时间）
@@ -125,13 +125,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	 */
-	get chargeTime(): uint { return this._chargeTime }
-	set chargeTime(value: uint) { this._chargeTime = value }
+	get chargeTime(): uint { return this._chargeTime; }
+	set chargeTime(value: uint) { this._chargeTime = value; }
 	protected _chargeTime: uint;
 	public static readonly key_chargeTime: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'chargeTime', uint(1),
-	)
+	);
 
 	/**
 	 * 工具最大充能时间
@@ -140,13 +140,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * ! 在设置时（使用者需）更新：
 	 * * GUI状态
 	 */
-	get chargeMaxTime(): uint { return this._chargeMaxTime }
-	set chargeMaxTime(value: uint) { this._chargeMaxTime = value }
+	get chargeMaxTime(): uint { return this._chargeMaxTime; }
+	set chargeMaxTime(value: uint) { this._chargeMaxTime = value; }
 	protected _chargeMaxTime: uint;
 	public static readonly key_chargeMaxTime: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'chargeMaxTime', uint(1),
-	)
+	);
 
 	/**
 	 * 工具是否「反向充能」
@@ -155,13 +155,13 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 *   * 无需完全充能即可使用，但充能百分比会非满
 	 * * 应用：未充能即可发射的激光；「脉冲激光」中「未完全充能」「完全充能」的两种不同状态
 	 */
-	get reverseCharge(): boolean { return this._reverseCharge }
-	set reverseCharge(value: boolean) { this._reverseCharge = value }
+	get reverseCharge(): boolean { return this._reverseCharge; }
+	set reverseCharge(value: boolean) { this._reverseCharge = value; }
 	protected _reverseCharge: boolean;
 	public static readonly key_reverseCharge: key = fastAddJSObjectifyMapProperty_dashP(
 		Tool.OBJECTIFY_MAP,
 		'reverseCharge', false,
-	)
+	);
 
 	/**
 	 * （衍生）工具是否需要「冷却时间」
@@ -169,7 +169,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * 
 	 * ? 目前似乎没啥用，因为还没有工具不用CD。。。
 	 */
-	get needsCD(): boolean { return this._baseCD > 0 }
+	get needsCD(): boolean { return this._baseCD > 0; }
 
 	/**
 	 * （衍生）工具的「冷却百分比」
@@ -181,14 +181,14 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * * 现在系统将根据此设置在「分派武器时」自动设置CD
 	 * * 原先的`toolMaxCD`已启用
 	 */
-	get CDPercent(): number { return this._usingCD / this._baseCD }
+	get CDPercent(): number { return this._usingCD / this._baseCD; }
 
 	/**
 	 * （衍生）工具是否需要充能
 	 * * 返回「工具最大充能时间」是否>0
 	 * * 应用：GUI显示（在「无需充能」时不显示充能条）
 	 */
-	get needsCharge(): boolean { return this._chargeMaxTime > 0 }
+	get needsCharge(): boolean { return this._chargeMaxTime > 0; }
 
 	/**
 	 * （衍生）工具是否正在充能
@@ -306,7 +306,7 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @param user 使用者（暂定为使用者）
 	 */
 	public onUseByPlayer(host: IMatrix, user: IPlayer): void {
-		console.log('Tool', this._id, 'is used by', user.customName, 'in', host)
+		console.log('Tool', this._id, 'is used by', user.customName, 'in', host);
 	}
 
 }

@@ -3,7 +3,7 @@ const controlAddress = document.getElementById('controlAddress');
 const controlKey = document.getElementById('controlKey');
 const controlMessage = document.getElementById('controlMessage');
 
-function getWSLinkControl() { return `ws://${controlAddress.value}` }
+function getWSLinkControl() { return `ws://${controlAddress.value}`; }
 let socketScreen;
 
 // 屏显
@@ -16,14 +16,14 @@ let FPS = calculateFPS();
 const screenText = document.getElementById('screen');
 const otherInfText = document.getElementById('otherInf');
 
-function getWSLinkScreen() { return `ws://${screenAddress.value}` }
+function getWSLinkScreen() { return `ws://${screenAddress.value}`; }
 let socketControl;
 
 // 网络
 const resetButton = document.getElementById('reset');
-const otherInfMessage = 'entities'
+const otherInfMessage = 'entities';
 
-const isEntityListSignal = (text) => text.startsWith('实体列表')
+const isEntityListSignal = (text) => text.startsWith('实体列表');
 
 /**
  * 重置网络
@@ -42,22 +42,22 @@ function resetAllWS(force = true/* 默认为真，留给侦听器直接调用 */
  * @param {boolean} force 是否强制
  */
 function resetControlWS(force = false) {
-	socketControl?.close()
-	socketControl = new WebSocket(getWSLinkControl())
+	socketControl?.close();
+	socketControl = new WebSocket(getWSLinkControl());
 	if (socketControl) {
 		socketControl.onopen = (event) => {
-			console.info('控制WS连接成功！', event)
-		}
+			console.info('控制WS连接成功！', event);
+		};
 		socketControl.onclose = (event) => {
-			console.info('控制WS已断线！', event)
-		}
+			console.info('控制WS已断线！', event);
+		};
 		socketControl.onerror = (event) => {
-			console.warn('控制WS出错！', event)
-		}
+			console.warn('控制WS出错！', event);
+		};
 	}
 }
 /** 重连的倒计时ID（避免多个timeout刷请求） */
-let reconnectScreenTimeoutID = { value: undefined };
+const reconnectScreenTimeoutID = { value: undefined };
 /**
  * 不冲突地设定timeout
  * @param {{value:number|undefined}} id 
@@ -65,10 +65,10 @@ let reconnectScreenTimeoutID = { value: undefined };
 const softSetTimeout = (id, callback, delay, ...args) => {
 	return (
 		id.value === undefined ?
-			id.value = setTimeout((...args) => { callback(...args); id.value = undefined }, delay, ...args) :
+			id.value = setTimeout((...args) => { callback(...args); id.value = undefined; }, delay, ...args) :
 			undefined
-	)
-}
+	);
+};
 /**
  * 重置屏显
  * 
@@ -77,8 +77,8 @@ const softSetTimeout = (id, callback, delay, ...args) => {
 function resetScreenWS(force = false/* 默认为假，留给「自动重连」调用 */) {
 	// 非强制&还在开⇒不要重置
 	if (!force && socketScreen.readyState === WebSocket.OPEN) return;
-	socketScreen?.close()
-	socketScreen = new WebSocket(getWSLinkScreen())
+	socketScreen?.close();
+	socketScreen = new WebSocket(getWSLinkScreen());
 	if (socketScreen) {
 		// 收发消息
 		socketScreen.onopen = (event) => {
@@ -87,7 +87,7 @@ function resetScreenWS(force = false/* 默认为假，留给「自动重连」�
 			// 连接成功⇒设置屏显时钟
 			FPS = calculateFPS();
 			if (screenIntervalID) {
-				clearInterval(screenIntervalID)
+				clearInterval(screenIntervalID);
 				screenIntervalID = undefined;
 			}
 			screenIntervalID = setInterval(() => {
@@ -102,32 +102,32 @@ function resetScreenWS(force = false/* 默认为假，留给「自动重连」�
 					// 独立发送「获取实体列表」
 					sendMessage(socketScreen, otherInfMessage);
 				} catch (e) {
-					console.error('消息发送失败:', e)
+					console.error('消息发送失败:', e);
 				}
-			}, calculateFPS())
-		}
+			}, calculateFPS());
+		};
 		// 收到母体信号时
 		socketScreen.onmessage = (event) => {
 			// console.info('data:', event.data.toString())
-			let dataS = event.data.toString();
+			const dataS = event.data.toString();
 			if (isEntityListSignal(dataS))
-				setOtherInf(dataS)
+				setOtherInf(dataS);
 			else
-				setScreen(dataS)
-		}
+				setScreen(dataS);
+		};
 		// 关闭时
 		socketScreen.onclose = (event) => {
 			console.info('屏显WS已关闭:', event);
 			// 不用关闭时钟，直接等待重连
 			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 5000))
-				console.info('五秒后尝试重新连接。。。')
-		}
+				console.info('五秒后尝试重新连接。。。');
+		};
 		// 报错时
 		socketScreen.onerror = (event) => {
-			console.warn('屏显WS出错:', event)
+			console.warn('屏显WS出错:', event);
 			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 3000))
-				console.info('三秒后尝试重新连接。。。')
-		}
+				console.info('三秒后尝试重新连接。。。');
+		};
 	}
 }
 // 重置⇒刷新配置
@@ -135,7 +135,7 @@ resetAllWS(true);
 
 // 控制器 //
 
-const pressed = {}
+const pressed = {};
 /**
  * 根据键位获取「动作信息」
  * 
@@ -146,10 +146,10 @@ const pressed = {}
 function getControlMessage(event, isDown) {
 	if (!(event.code in pressed)) console.log(event);
 	pressed[event.code] = event;
-	let action = getActionFromEvent(event, isDown);
+	const action = getActionFromEvent(event, isDown);
 	if (action === undefined) return undefined;
 	// 生成套接字消息
-	return `${controlKey.value}|${action}`
+	return `${controlKey.value}|${action}`;
 }
 
 /**
@@ -199,15 +199,15 @@ function getActionFromEvent(keyboardEvent, isDown) {
  */
 function onKeyDown(event) {
 	// 产生消息
-	let message = getControlMessage(event, true);
+	const message = getControlMessage(event, true);
 	if (message === undefined) return;
-	if (controlMessage) controlMessage.innerText = `↓ message = ${message}`
+	if (controlMessage) controlMessage.innerText = `↓ message = ${message}`;
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault();
 	// 断线⇒尝试重连
 	if (!socketControl || socketControl.readyState === WebSocket.CLOSED) {
-		console.warn('控制WS断线。尝试重新连接。。。')
-		resetControlWS()
+		console.warn('控制WS断线。尝试重新连接。。。');
+		resetControlWS();
 		return;
 	}
 	// 发送请求
@@ -219,15 +219,15 @@ function onKeyDown(event) {
  */
 function onKeyUp(event) {
 	// 产生消息
-	let message = getControlMessage(event, false);
+	const message = getControlMessage(event, false);
 	if (message === undefined) return;
-	if (controlMessage) controlMessage.innerText = `↑ message = ${message}`
+	if (controlMessage) controlMessage.innerText = `↑ message = ${message}`;
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault();
 	// 断线⇒尝试重连
 	if (!socketControl || socketControl.readyState === WebSocket.CLOSED) {
-		console.warn('控制WS断线。尝试重新连接。。。')
-		resetControlWS()
+		console.warn('控制WS断线。尝试重新连接。。。');
+		resetControlWS();
 		return;
 	}
 	// 发送请求
@@ -242,12 +242,12 @@ function onKeyUp(event) {
  */
 function sendMessage(socket, message) {
 	if (socket instanceof WebSocket && socket.readyState === WebSocket.OPEN)
-		socket.send(message)
+		socket.send(message);
 }
 
-window.addEventListener('keydown', onKeyDown)
-window.addEventListener('keyup', onKeyUp)
-resetButton.addEventListener('click', resetAllWS)
+window.addEventListener('keydown', onKeyDown);
+window.addEventListener('keyup', onKeyUp);
+resetButton.addEventListener('click', resetAllWS);
 
 // 显示器 //
 
@@ -267,5 +267,5 @@ function setScreen(text) {
  * @param {Element} text 文本元素
  */
 function setOtherInf(text) {
-	otherInfText.innerText = text
+	otherInfText.innerText = text;
 }

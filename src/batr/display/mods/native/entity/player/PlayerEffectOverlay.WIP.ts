@@ -1,6 +1,8 @@
 import { uint, int, uint$MAX_VALUE } from "../../../../../legacy/AS3Legacy";
-import AIPlayer from "../../../../../server/mods/native/entities/player/AIPlayer";
+import { Shape } from "../../../../../legacy/flash/display";
+import { FIXED_TPS } from "../../../../../server/main/GlobalWorldVariables";
 import PlayerBatr from "../../../../../server/mods/batr/entity/player/PlayerBatr";
+import IPlayer from "../../../../../server/mods/native/entities/player/IPlayer";
 
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//

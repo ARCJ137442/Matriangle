@@ -36,17 +36,17 @@ export function RGBtoHEX2(RGB: Array<uint>): uint {
 	if (RGB === null ||
 		RGB.length != 3)
 		return defaultHEX;
-	return RGBtoHEX(RGB[0] as uint,
-		RGB[1] as uint,
-		RGB[2] as uint);
+	return RGBtoHEX(RGB[0] ,
+		RGB[1] ,
+		RGB[2] );
 }
 
 //====HEX >> RGB====//
 export function HEXtoRGB(I: uint): Array<uint> {
-	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
-	let Re: uint = snapRGB((I >> 16));
-	let Gr: uint = snapRGB((I & 0x00ff00) >> 8);
-	let Bl: uint = snapRGB(I & 0x0000ff);
+	const returnVec: Array<uint> = new Array<uint>(); // fixed length 3
+	const Re: uint = snapRGB((I >> 16));
+	const Gr: uint = snapRGB((I & 0x00ff00) >> 8);
+	const Bl: uint = snapRGB(I & 0x0000ff);
 	returnVec[0] = Re;
 	returnVec[1] = Gr;
 	returnVec[2] = Bl;
@@ -57,15 +57,15 @@ export function HEXtoRGB(I: uint): Array<uint> {
 export function RGBtoHSV(R: uint, G: uint, B: uint): Array<uint> {
 	// Define Variables
 	// Lash Color To 0~100
-	let Re: uint = snapRGB(R) / 2.55;
-	let Gr: uint = snapRGB(G) / 2.55;
-	let Bl: uint = snapRGB(B) / 2.55;
+	const Re: uint = snapRGB(R) / 2.55;
+	const Gr: uint = snapRGB(G) / 2.55;
+	const Bl: uint = snapRGB(B) / 2.55;
 	// Get Report
-	let max: uint = Math.max(Re, Gr, Bl);
-	let min: uint = Math.min(Re, Gr, Bl);
-	let maxin: uint = max - min;
+	const max: uint = Math.max(Re, Gr, Bl);
+	const min: uint = Math.min(Re, Gr, Bl);
+	const maxin: uint = max - min;
 	let H: uint = 0, S: uint = 0, V: uint = 0;
-	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
+	const returnVec: Array<uint> = new Array<uint>(); // fixed length 3
 	// Set Hue
 	if (maxin == 0)
 		H = NaN;
@@ -97,9 +97,9 @@ export function RGBtoHSV2(RGB: Array<uint>): Array<uint> {
 	if (RGB === null ||
 		RGB.length != 3)
 		return defaultHSV;
-	let R: uint = RGB[0];
-	let G: uint = RGB[1];
-	let B: uint = RGB[2];
+	const R: uint = RGB[0];
+	const G: uint = RGB[1];
+	const B: uint = RGB[2];
 	return RGBtoHSV(R, G, B);
 }
 
@@ -107,20 +107,20 @@ export function RGBtoHSV2(RGB: Array<uint>): Array<uint> {
 export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
 	// Define Variables
 	let r: uint, g: uint, b: uint;
-	let returnVec: Array<uint> = new Array<uint>(); // fixed length 3
+	const returnVec: Array<uint> = new Array<uint>(); // fixed length 3
 	// Get Report
-	let hu: uint = snapH(H);
-	let sa: uint = snapS(S);
-	let va: uint = snapV(V);
+	const hu: uint = snapH(H);
+	const sa: uint = snapS(S);
+	const va: uint = snapV(V);
 	if (isNaN(hu))
 		r = g = b = va / 100;
 	else {
-		let i: uint = Math.floor(hu / 60);
-		let f: uint = hu / 60 - i;
-		let h: uint = va / 100;
-		let p: uint = h * (1 - sa / 100);
-		let q: uint = h * (1 - f * sa / 100);
-		let t: uint = h * (1 - (1 - f) * sa / 100);
+		const i: uint = Math.floor(hu / 60);
+		const f: uint = hu / 60 - i;
+		const h: uint = va / 100;
+		const p: uint = h * (1 - sa / 100);
+		const q: uint = h * (1 - f * sa / 100);
+		const t: uint = h * (1 - (1 - f) * sa / 100);
 		switch (i) {
 			case 0:
 				r = h;
@@ -153,7 +153,7 @@ export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
 				b = q;
 				break;
 			default:
-				throw '没有足够的颜色匹配！'
+				throw '没有足够的颜色匹配！';
 		}
 	}
 	r *= 255;
@@ -170,9 +170,9 @@ export function HSVtoRGB2(HSV: Array<uint>): Array<uint> {
 	if (HSV === null ||
 		HSV.length != 3)
 		return defaultRGB;
-	let H: uint = HSV[0];
-	let S: uint = HSV[1];
-	let V: uint = HSV[2];
+	const H: uint = HSV[0];
+	const S: uint = HSV[1];
+	const V: uint = HSV[2];
 	return HSVtoRGB(H, S, V);
 }
 

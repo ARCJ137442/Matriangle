@@ -1,4 +1,4 @@
-import MainFont from "./fonts/MainFont";
+import MainFont from "./fonts.deprecated/MainFont";
 import { uint } from "../../legacy/AS3Legacy";
 import { Font } from "../../legacy/flash/text";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 import { uint } from '../legacy/AS3Legacy';
 
 export type KeyCode = uint;

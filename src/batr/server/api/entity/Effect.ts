@@ -40,7 +40,7 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     }
 
     // 轻量级活跃 //
-    public readonly i_activeLite: true = true;
+    public readonly i_activeLite = true as const;
 
     /** 
      * 超类方法：处理生命时长
@@ -56,10 +56,10 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     }
 
     // 短周期 //
-    public readonly i_shortLive: true = true;
+    public readonly i_shortLive = true as const;
 
     // 固定周期 //
-    public readonly i_fixedLive: true = true;
+    public readonly i_fixedLive = true as const;
 
     /**
      * 当前的剩余生命时长
@@ -70,15 +70,15 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     /** 外部只读的剩余生命时长 */
     public get life(): uint { return this._life; }
 
-    public get lifePercent(): number { return this._life / this.LIFE }
+    public get lifePercent(): number { return this._life / this.LIFE; }
 
     // 非格点 //
-    public readonly i_outGrid: true = true;
+    public readonly i_outGrid = true as const;
 
     /** 特效作为「非格点实体」的位置 */
     protected _position: fPoint = new fPoint();
-    public get position(): fPoint { return this._position }
-    public set position(value: fPoint) { this._position.copyFrom(value) }
+    public get position(): fPoint { return this._position; }
+    public set position(value: fPoint) { this._position.copyFrom(value); }
 
     //============Display Implements============//
 
@@ -89,20 +89,20 @@ export default abstract class Effect extends Entity implements IEntityDisplayabl
     /**
      * 读写对象的「显示层级」
     */
-    public get zIndex(): uint { return this._zIndex }
+    public get zIndex(): uint { return this._zIndex; }
     public set zIndex(value: uint) {
-        this._zIndex = value
+        this._zIndex = value;
         // TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
     }
 
     // 可显示 //
-    public readonly i_displayable: true = true;
+    public readonly i_displayable = true as const;
 
     public abstract shapeInit(shape: IShape, ...params: unknown[]): void;
     public abstract shapeRefresh(shape: IShape): void;
     /** */
     public shapeDestruct(shape: IShape): void {
-        shape.graphics.clear()
+        shape.graphics.clear();
     }
 
 }

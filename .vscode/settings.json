@@ -5,6 +5,8 @@
         "coaxis",
         "fscommand",
         "Matriangle",
+        "SPMAVCV",
+        "SPSACV",
         "Unrotatable"
     ],
     "editor.insertSpaces": false,

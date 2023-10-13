@@ -280,5 +280,5 @@ export default interface IPlayer extends IEntityInGrid, IEntityActive, IEntityDi
  * * 参考资料：https://www.jianshu.com/p/57df3cb66d3d
  */
 export function isPlayer(e: Entity): e is IPlayer {
-	return (e as IPlayer)?.i_isPlayer === true // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
+	return (e as IPlayer)?.i_isPlayer === true; // !【2023-10-04 11:42:51】不能用`hasOwnProperty`，这会在子类中失效
 }

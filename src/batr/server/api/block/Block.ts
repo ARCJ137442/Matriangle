@@ -19,8 +19,8 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 
 	/** JS对象化映射表 */
 	// TODO: 【2023-09-24 18:43:55】有待建设。一个方法是借助BlockType等对象存储「id」借以映射到类，再往各个类塞入「模板函数」（累）
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
-	get objectifyMap(): JSObjectifyMap { return Block.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+	get objectifyMap(): JSObjectifyMap { return Block.OBJECTIFY_MAP; }
 
 	/**
 	 * 🔬ID：用于在「对象化」前后识别出「是哪一个类」
@@ -36,19 +36,19 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 			identity, identity,
 			loadRecursiveCriterion_false,
 		)
-	)
+	);
 
 	/**
 	 * 存储「方块状态」
 	 */
 	protected _state: BS;
-	public get state(): BS { return this._state }
+	public get state(): BS { return this._state; }
 	public static readonly key_state: key = fastAddJSObjectifyMapProperty_dash(
 		this.OBJECTIFY_MAP,
 		'_state', BlockState,
 		identity, identity,
 		loadRecursiveCriterion_true, // 一定要递归加载
-	)
+	);
 
 	/**
 	 * 实现「复制白板」：深拷贝各参数
@@ -74,7 +74,7 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 	public get attributes(): BlockAttributes {
 		return this._state === null ?
 			this._baseAttributes :
-			this._state.getFullAttributes(this._baseAttributes)
+			this._state.getFullAttributes(this._baseAttributes);
 	}
 	// TODO: 还缺一个「属性对象化」逻辑
 
@@ -84,12 +84,13 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 	 */
 	public static fromJSObject(jso: JSObject, typeMap: Map<typeID, () => Block>): Block {
 		if (jso?.id === undefined) throw new Error('方块类型不存在！');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 		const blankConstructor: (() => Block) | undefined = typeMap.get((jso as any).id);
-		if (blankConstructor === undefined) throw new Error(`方块类型${jso.id}不存在！`);
+		if (blankConstructor === undefined) throw new Error(`方块类型${jso.id?.toString()}不存在！`);
 		return uniLoadJSObject(
 			blankConstructor(), // 用「白板构造函数」来获取「白板对象」
 			jso
-		)
+		);
 	}
 
 	//============Constructor & Destructor============//
@@ -121,8 +122,8 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 			this.id,
 			this._baseAttributes,
 			this._state
-		)
-	};
+		);
+	}
 
 	/**
 	 * 软拷贝
@@ -137,7 +138,7 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 			this._baseAttributes,
 			(this._state === null ? null : this._state.copy()) as BS,
 		);
-	};
+	}
 
 	/**
 	 * 深拷贝
@@ -152,7 +153,7 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 			this._baseAttributes.copy(),
 			(this._state === null ? null : this._state.copy()) as BS,
 		);
-	};
+	}
 
 	/**
 	 * 随机化状态
@@ -166,16 +167,16 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 	 * 通过链式操作设置自身
 	 * * ✅使用「数组访问」格式设置值，仍然能触发`setter`
 	 */
-	public setState(options: { [k: key]: any }): this {
+	public setState(options: { [k: key]: unknown }): this {
 		this.state?.setState(options);
 		return this;
 	}
 
 	//============Display Implements============// ? 日后可能不再留在这里
 	protected _zIndex: uint = 0;
-	get zIndex(): uint { return this._zIndex }
+	get zIndex(): uint { return this._zIndex; }
 	set zIndex(value: uint) {
-		this._zIndex = value
+		this._zIndex = value;
 		// TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
 	}
 
@@ -194,7 +195,7 @@ export default class Block<BS extends BlockState | null = BlockState | null> imp
 	}
 
 	/** 可显示 */
-	public readonly i_displayable: true = true;
+	public readonly i_displayable = true as const;
 
 	/** 初始化：无 */
 	public shapeInit(shape: IShape): void { }

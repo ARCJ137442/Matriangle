@@ -33,24 +33,24 @@ export default class ChemicalElement {
 			'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr',
 			'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn',
 			'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
-		)
+		);
 		// End
 		ChemicalElement._allowCreate = false;
 		return true;
 	}
 
 	protected static addElement(symbol: string): void {
-		let element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, symbol);
+		const element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, symbol);
 		ChemicalElement.ELEMENTS.push(element);
 	}
 
 	protected static addElements(...symbols: string[]): void {
 		for (let i: uint = 0; i < symbols.length; i++)
-			this.addElement(symbols[i])
+			this.addElement(symbols[i]);
 	}
 
 	public static getElementFromSample(symbol: string): (ChemicalElement | null) {
-		for (let element of ChemicalElement.ELEMENTS) {
+		for (const element of ChemicalElement.ELEMENTS) {
 			if (element.symbol == symbol)
 				return element;
 		}

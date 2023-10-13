@@ -40,7 +40,7 @@ export default class BlockEventRegistry {
 		// 之前没有对ID注册过⇒开辟新对象
 		this._blockPatchMap[id] ??= {};
 		// 已注册⇒直接合并
-		combineObject(patch, this._blockPatchMap[id])
+		combineObject(patch, this._blockPatchMap[id]);
 		return this._blockPatchMap[id];
 	}
 
@@ -89,7 +89,7 @@ export default class BlockEventRegistry {
 			delete this._blockPatchMap[id];
 		else
 			// 已提供⇒逐个删除
-			for (const eventType in eventTypes)
+			for (const eventType of eventTypes)
 				delete this._blockPatchMap[id][eventType];
 	}
 }

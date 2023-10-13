@@ -136,7 +136,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 
 	//============Interface Methods============//
 	// 活跃 //
-	readonly i_active: true = true;
+	readonly i_active = true as const;
 
 	/**
 	 * 世界刻更新函数
@@ -158,7 +158,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	set direction(value: mRot) { this._direction = value; }
 
 	// 显示 //
-	readonly i_displayable: true = true;
+	readonly i_displayable = true as const;
 	/** （二维）显示覆盖优先级 */
 	protected _zIndex: uint = 0;
 	/**
@@ -179,7 +179,7 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	 */
 	public get ownerColor(): uint {
 		// return this._owner?.fillColor ?? 0;
-		return (this._owner as IPlayerHasTeam)?.team.color ?? 0 // ! 现在这里是获取玩家的队伍颜色
+		return (this._owner as IPlayerHasTeam)?.team.color ?? 0; // ! 现在这里是获取玩家的队伍颜色
 	}
 
 	/**
@@ -188,10 +188,10 @@ export default abstract class Projectile extends Entity implements IEntityActive
 	*/
 	public get ownerLineColor(): uint {
 		// return this._owner?.lineColor ?? 0;
-		return halfBrightnessTo(this.ownerColor) // ! 直接使用位运算，动态计算「线条颜色」（深色，亮度一半）
+		return halfBrightnessTo(this.ownerColor); // ! 直接使用位运算，动态计算「线条颜色」（深色，亮度一半）
 	}
 
 	// 短周期 //
-	readonly i_shortLive: true = true;
+	readonly i_shortLive = true as const;
 
 }

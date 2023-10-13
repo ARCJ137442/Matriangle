@@ -33,7 +33,7 @@ export default class MapSwitcherRandom extends MapSwitcher implements IEntityAct
 	public mapSwitchInterval: uint;
 
 	// 活跃实体 //
-	public readonly i_active: true = true;
+	public readonly i_active = true as const;
 
 	// *实现：定期切换地图
 	onTick(host: IMatrix): void {

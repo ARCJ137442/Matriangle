@@ -44,7 +44,7 @@ export default class LaserBasic extends Laser {
 
 	/** 覆盖：没有伤害过玩家，就触发母体计算伤害 */
 	override onTick(host: IMatrix): void {
-		if (!this.hasDamaged) console.warn('LaserBasic: laserHurtPlayers(host, this) WIP!')//laserHurtPlayers(host, this);
+		if (!this.hasDamaged) console.warn('LaserBasic: laserHurtPlayers(host, this) WIP!');//laserHurtPlayers(host, this);
 		super.onTick(host); // ! 超类逻辑：处理生命周期
 	}
 

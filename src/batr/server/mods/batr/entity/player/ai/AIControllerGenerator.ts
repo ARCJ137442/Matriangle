@@ -2,7 +2,7 @@ import { uint } from "../../../../../../legacy/AS3Legacy";
 import IMatrix from "../../../../../main/IMatrix";
 import BonusBox from "../../item/BonusBox";
 import AIController, { AIPlayerEvent } from "../../../../native/entities/player/controller/AIController";
-import { EnumPlayerAction, PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
+import { PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
 import { NativePlayerEvent, NativePlayerEventOptions, PlayerEvent, PlayerEventOptions } from "../../../../native/entities/player/controller/PlayerEvent";
 import IPlayer from "../../../../native/entities/player/IPlayer";
 import { BatrPlayerEvent, BatrPlayerEventOptions } from "../BatrPlayerEvent";
@@ -51,7 +51,7 @@ export default class AIControllerGenerator extends AIController {
         label: string,
         actionGeneratorF: AIActionGeneratorF,
     ) {
-        super(label)
+        super(label);
         this._actionGenerator = actionGeneratorF(this);
         this._actionGenerator.next(AIPlayerEvent.INIT); // ! 跳过第一个「无用生成」
     }
@@ -110,7 +110,7 @@ export default class AIControllerGenerator extends AIController {
             case BatrPlayerEvent.MAP_TRANSFORM:
             case NativePlayerEvent.TICK:
             case NativePlayerEvent.RESPAWN:
-                break
+                break;
             case NativePlayerEvent.HURT:
                 // `otherInf.damage;`似乎就是没法推导出来💢
                 this._temp_lastHurtByDamage = (otherInf as NativePlayerEventOptions[NativePlayerEvent.HURT]).damage;
@@ -136,7 +136,7 @@ export default class AIControllerGenerator extends AIController {
         // * 统一「反应」
         this._action_buffer.push(
             this.requestAction(eventType as PlayerEvent, self, host)
-        )
+        );
     }
 
 }

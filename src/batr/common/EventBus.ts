@@ -75,7 +75,7 @@ export class EventBus_V1<eventT> implements IEventBus<eventT> {
     public on(type: EventType, listener: eventCallback<eventT>): void {
         // 没有的时候才新增侦听器
         if (!this._eventMap.has(type))
-            this._eventMap.set(type, new Set<eventCallback<eventT>>())
+            this._eventMap.set(type, new Set<eventCallback<eventT>>());
         // 确保是有集合的⇒去重留给自身
         this._eventMap.get(type)?.add(listener);
     }

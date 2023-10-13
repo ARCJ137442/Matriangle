@@ -145,10 +145,10 @@ export module NativeTools {
 	export const TOOLS_ALL: Tool[] = [
 		TOOL_NULL, // ! 包括空值
 		...WEAPONS_ALL
-	]
+	];
 
 	/** 用于在世界加载时注入「可分配工具」（原型） */
 	export const TOOLS_AVAILABLE: Tool[] = [
 		...WEAPONS_AVAILABLE
-	]
+	];
 }

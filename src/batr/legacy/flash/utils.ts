@@ -1,8 +1,8 @@
 import { uint } from '../AS3Legacy';
 
 export declare class ByteArray {
-    writeObject(object: any): void;
+    writeObject(object: unknown): void;
     position: uint;
     readObject(): object;
 }
-export declare function getTimer(): any
+export declare function getTimer(): unknown

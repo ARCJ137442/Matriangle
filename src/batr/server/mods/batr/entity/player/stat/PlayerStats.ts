@@ -142,7 +142,7 @@ class Stat_PlayerCount extends Map<IPlayer | null, uint> {
 	 * @param player 获取的玩家
 	 * @returns 这个玩家对应的值
 	 */
-	public getPlayerValue(player: IPlayer | null | null): uint {
+	public getPlayerValue(player: IPlayer | null  ): uint {
 		return uint(this.get(player));
 	}
 
@@ -152,7 +152,7 @@ class Stat_PlayerCount extends Map<IPlayer | null, uint> {
 	 * @param value 设置的值
 	 * @returns 自身
 	 */
-	public setPlayerValue(player: IPlayer | null | null, value: uint): Stat_PlayerCount {
+	public setPlayerValue(player: IPlayer | null  , value: uint): Stat_PlayerCount {
 		this.set(player, value);
 		return this;
 	}

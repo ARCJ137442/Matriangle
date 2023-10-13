@@ -1,6 +1,10 @@
-﻿import IMatrixRule from "../../../rule/IMatrixRule";
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable no-prototype-builtins */
+import IMatrixRule from "../../../rule/IMatrixRule";
 import { key } from "../../../../common/utils";
-import { JSObjectifyMap, uniLoadJSObject, uniSaveJSObject } from "../../../../common/JSObjectify";
+import { JSObjectifyMap } from "../../../../common/JSObjectify";
 
 /**
  * 第一代「规则」
@@ -20,8 +24,8 @@ export default class MatrixRule_V1 implements IMatrixRule {
 	 * * 特别是「继承它的子类又不知扩展了哪些属性」的情况下
 	 * * 这样的情况不利于后续「JS对象化存储」的可扩展性
 	 */
-	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
-	get objectifyMap(): JSObjectifyMap { return MatrixRule_V1.OBJECTIFY_MAP }
+	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
+	get objectifyMap(): JSObjectifyMap { return MatrixRule_V1.OBJECTIFY_MAP; }
 
 	/**
 	 * 用于构造「白板对象」
@@ -42,11 +46,11 @@ export default class MatrixRule_V1 implements IMatrixRule {
 	public static readonly ALL_RULE_KEYS: key[] = Object.getOwnPropertyNames(this.OBJECTIFY_MAP).map(
 		// * 映射到在JS对象中呈现的键
 		(key: string): key => this.OBJECTIFY_MAP[key].JSObject_key
-	)
+	);
 
 	/** @implements 实现：暂时使用「静态常量」 */
 	get allKeys(): key[] {
-		return MatrixRule_V1.ALL_RULE_KEYS
+		return MatrixRule_V1.ALL_RULE_KEYS;
 	}
 
 	/** @implements 实现：直接访问内部变量 */
@@ -81,7 +85,7 @@ export default class MatrixRule_V1 implements IMatrixRule {
 	protected static preUpdateVariable<T>(rule: MatrixRule_V1, k: key, oldV: T, newV: T): boolean {
 		if (oldV == newV) return false;
 		rule.onVariableUpdate(k, oldV, newV);
-		return true
+		return true;
 	}
 
 	public onVariableUpdate(key: key, oldValue: any, newValue: any): void {

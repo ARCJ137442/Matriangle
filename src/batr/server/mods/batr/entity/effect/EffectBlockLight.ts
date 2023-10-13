@@ -24,7 +24,7 @@ export default class EffectBlockLight extends Effect {
 	public static readonly MIN_SCALE: number = 1;
 
 	public static defaultAlpha(effect: EffectBlockLight): number {
-		return effect.lifePercent
+		return effect.lifePercent;
 	}
 
 	public static reversedAlpha(effect: EffectBlockLight): number {
@@ -48,7 +48,7 @@ export default class EffectBlockLight extends Effect {
 
 	/** 快捷方式：在从整数坐标（格点）复制数据后，对齐网格中心 */
 	public alignGridCenter(position: iPoint): this {
-		alignToGridCenter_P(position, this._position)
+		alignToGridCenter_P(position, this._position);
 		return this;
 	}
 
@@ -85,15 +85,15 @@ export default class EffectBlockLight extends Effect {
 		this._alpha = alpha;
 		this._alphaFunction = (
 			reverse ?
-				EffectBlockLight.reversedAlpha :
-				EffectBlockLight.defaultAlpha
+				EffectBlockLight.reversedAlpha.bind(this) :
+				EffectBlockLight.defaultAlpha.bind(this)
 		);
 	}
 
 	//============Display Implements============//
 	public shapeInit(shape: IShape): void {
-		let realRadiusX: number = EffectBlockLight.SIZE / 2;
-		let realRadiusY: number = EffectBlockLight.SIZE / 2;
+		const realRadiusX: number = EffectBlockLight.SIZE / 2;
+		const realRadiusY: number = EffectBlockLight.SIZE / 2;
 		shape.graphics.beginFill(this._color, uintToPercent(this._alpha));
 		shape.graphics.drawRect(
 			-realRadiusX, -realRadiusY,

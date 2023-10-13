@@ -1,6 +1,7 @@
-import { int, uint } from '../legacy/AS3Legacy'
-import { IJSObjectifiable, JSObject, JSObjectifyMap } from './JSObjectify'
-import { intAbs } from './exMath'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { int, uint } from '../legacy/AS3Legacy';
+import { IJSObjectifiable, JSObject, JSObjectifyMap } from './JSObjectify';
+import { intAbs } from './exMath';
 import { isInvalidNumber } from './utils';
 
 /**
@@ -20,12 +21,13 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 
 	/** 实现：读取与自身类名相同的值 */
 	public loadFromJSObject(source: JSObject): xPoint<T> {
-		let value: unknown = source[this.constructor.name];
+		const value: unknown = source[this.constructor.name];
 		if (Array.isArray(value))
 			value.forEach(
-				(item, index: number): void => {
+				(item: any, index: number): void => {
 					if (this.checkType(item))
-						this[index] = item
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						this[index] = item;
 				}
 			);
 		return this;
@@ -34,7 +36,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	/**
 	 * 根据指定的类型检验数组中的值
 	 */
-	public checkType(value: unknown): boolean { return false };
+	public checkType(value: unknown): boolean { return false; }
 
 	/**
 	 * 【2023-09-24 14:46:08】假实现：调用⇒返回空
@@ -44,24 +46,24 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * * 💭「动态添加属性」的弊端：可以是可以，但这样不如直接存储数组来得方便
 	 * 
 	 */
-	public get objectifyMap(): JSObjectifyMap { return {} }
+	public get objectifyMap(): JSObjectifyMap { return {}; }
 
 	/** 这是个可扩展的映射表 */
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {};
 
 	//================Position Getter/Setter================//
-	public get nDimensions(): int { return this.length }
-	public get nDim(): int { return this.length }
+	public get nDimensions(): int { return this.length; }
+	public get nDim(): int { return this.length; }
 
 	// 各个维度的坐标快捷方式
-	public get x(): T { return this[0] }
-	public set x(value: T) { this[0] = value }
-	public get y(): T { return this[1] }
-	public set y(value: T) { this[1] = value }
-	public get z(): T { return this[2] }
-	public set z(value: T) { this[2] = value }
-	public get w(): T { return this[3] }
-	public set w(value: T) { this[3] = value }
+	public get x(): T { return this[0]; }
+	public set x(value: T) { this[0] = value; }
+	public get y(): T { return this[1]; }
+	public set y(value: T) { this[1] = value; }
+	public get z(): T { return this[2]; }
+	public set z(value: T) { this[2] = value; }
+	public get w(): T { return this[3]; }
+	public set w(value: T) { this[3] = value; }
 
 	//================Util Functions================//
 
@@ -69,7 +71,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	public get hasUndefined(): boolean {
 		for (let i = 0; i < this.length; i++)
 			if (this[i] === undefined) return true;
-		return false
+		return false;
 	}
 
 	/**
@@ -81,7 +83,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	public get invalid(): boolean {
 		for (let i = 0; i < this.length; i++)
 			if (this[i] === undefined || isNaN(this[i] as number)) return true;
-		return false
+		return false;
 	}
 
 	/**
@@ -95,7 +97,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * 
 	 * @returns 返回一个自身的拷贝，仍然是自身类型
 	 */
-	public copy(): xPoint<T> { return this.slice() as xPoint<T> }
+	public copy(): xPoint<T> { return this.slice() as xPoint<T>; }
 
 	/**
 	 * 使用特定的「生成函数」填充一系列值
@@ -104,7 +106,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 */
 	public generate(f: (i: int) => T, length: uint = this.length): xPoint<T> {
 		for (let i = 0; i < length; i++) {
-			this[i] = f(i)
+			this[i] = f(i);
 		}
 		return this;
 	}
@@ -214,7 +216,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * 修改自身，返回「反转后的坐标」
 	 * * 二维情况下是"x-y反转"，其它情况同数组反转
 	 */
-	public invert(): xPoint<T> { return this.reverse() as xPoint<T> }
+	public invert(): xPoint<T> { return this.reverse() as xPoint<T>; }
 
 	/**
 	 * 获取两个坐标在某个分量上的距离
@@ -230,7 +232,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * * 原理：所有距离的方均根
 	 */
 	public getDistance(point: xPoint<T>): number {
-		return Math.sqrt(this.getDistanceSquare(point))
+		return Math.sqrt(this.getDistanceSquare(point));
 	}
 
 	/**
@@ -279,7 +281,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * @param point 用于对比的点
 	 */
 	public getAbsDistanceX(point: xPoint<T>): T {
-		return this.getAbsDistanceAt(point, 0)
+		return this.getAbsDistanceAt(point, 0);
 	}
 
 	/**
@@ -288,7 +290,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * @param point 用于对比的点
 	 */
 	public getAbsDistanceY(point: xPoint<T>): T {
-		return this.getAbsDistanceAt(point, 1)
+		return this.getAbsDistanceAt(point, 1);
 	}
 
 	/**
@@ -301,8 +303,8 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 		let tempDistance: T | undefined = undefined;
 		for (let i = start; i < point.length; i++) {
 			tempDistance = this.getAbsDistanceAt(point, i);
-			if (minDistance === undefined || (minDistance as T) > tempDistance) {
-				minDistance = tempDistance
+			if (minDistance === undefined || (minDistance) > tempDistance) {
+				minDistance = tempDistance;
 			}
 		}
 		return minDistance as T;
@@ -323,9 +325,9 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 		let tempDistance: T | undefined = undefined;
 		for (let i = start; i < point.length; i++) {
 			tempDistance = this.getAbsDistanceAt(point, i);
-			if (minDistance === undefined || (minDistance as T) > tempDistance) {
-				result = i
-				minDistance = tempDistance
+			if (minDistance === undefined || (minDistance) > tempDistance) {
+				result = i;
+				minDistance = tempDistance;
 			}
 		}
 		return result;
@@ -346,9 +348,9 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 		let tempDistance: T | undefined = undefined;
 		for (let i = start; i < point.length; i++) {
 			tempDistance = this.getAbsDistanceAt(point, i);
-			if (maxDistance === undefined || (maxDistance as T) < tempDistance) {
-				result = i
-				maxDistance = tempDistance
+			if (maxDistance === undefined || (maxDistance) < tempDistance) {
+				result = i;
+				maxDistance = tempDistance;
 			}
 		}
 		return result;
@@ -387,14 +389,14 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 		// 获得「最小绝对距离」
 		for (i = start; i < target.length; i++) {
 			tempT = this.getAbsDistanceAt(target, i);
-			if (minDistance === undefined || (minDistance as T) > tempT) {
-				index = i
-				minDistance = tempT
+			if (minDistance === undefined || (minDistance) > tempT) {
+				index = i;
+				minDistance = tempT;
 			}
 		}
 		// ! 注意：这里假定for循环至少执行了一次（不是零维的）
 		// * 运算后，index即「最小值索引」
-		this[index] = target[index] // * 只抹除在「最短距离」处的距离
+		this[index] = target[index]; // * 只抹除在「最短距离」处的距离
 		return this;
 	}
 
@@ -419,9 +421,9 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 */
 	public isEqual(p: xPoint<T>): boolean {
 		for (let i: uint = 0; i < p.length; i++) {
-			if (this[i] !== p[i]) return false
+			if (this[i] !== p[i]) return false;
 		}
-		return true
+		return true;
 	}
 
 	/**
@@ -433,9 +435,9 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 */
 	public isAnyAxisEqual(p: xPoint<T>): boolean {
 		for (let i: uint = 0; i < p.length; i++) {
-			if (this[i] === p[i]) return true
+			if (this[i] === p[i]) return true;
 		}
-		return false
+		return false;
 	}
 
 	/**
@@ -444,7 +446,7 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * * `NaN`（常见于「未开辟长度就运算」）
 	 */
 	public checkInvalid(): boolean {
-		return this.some(isInvalidNumber)
+		return this.some(isInvalidNumber);
 	}
 }
 
@@ -460,12 +462,12 @@ export class intPoint extends xPoint<int> {
 	 * @returns 绝对距离
 	 */
 	override getAbsDistanceAt(point: intPoint, i: uint): int {
-		return intAbs(this[i] - point[i])
+		return intAbs(this[i] - point[i]);
 	}
 
 	/** 实现：检测是否为整数 */
 	public checkType(value: number): boolean {
-		return Number.isInteger(value)
+		return Number.isInteger(value);
 	}
 }
 
@@ -477,7 +479,7 @@ export class floatPoint extends xPoint<number> {
 
 	/** 实现：检测是否为数值 */
 	public checkType(value: number): boolean {
-		return typeof value === 'number'
+		return typeof value === 'number';
 	}
 
 }
@@ -538,7 +540,7 @@ export function traverseNDSquare(
 	// 不断遍历，直到「最高位进位」后返回
 	while (i < nDim) {
 		// 执行当前点：调用回调函数
-		f(_temp_forEachPoint, ...args)
+		f(_temp_forEachPoint, ...args);
 		// 迭代到下一个点：不断循环尝试进位
 		// 先让第i轴递增，然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
 		for (i = 0; i < nDim && ++_temp_forEachPoint[i] > pMax[i]; ++i) {
@@ -549,7 +551,7 @@ export function traverseNDSquare(
 	}
 }
 
-const _temp_forEachPointFrame_Meta: iPointVal = new iPoint();
+// const _temp_forEachPointFrame_Meta: iPointVal = new iPoint();
 /**
  * 循环遍历任意维超方形内部，但是「元编程」
  * * 由先前「地图遍历」算法迁移而来
@@ -568,13 +570,11 @@ export function traverseNDSquare_Meta(
 	f: (p: iPointRef, ...args: any[]) => void,
 	...args: unknown[]
 ): void {
-	// 缓存常量
-	let p: iPointRef = _temp_forEachPointFrame_Meta;
 	// 直接执行代码
 	return eval(traverseNDSquare_Meta_Code(
 		pMin, pMax,
 		'f(p, ...args);'
-	))
+	)) as void;
 }
 function traverseNDSquare_Meta_Code(
 	pMin: iPointRef, pMax: iPointRef,
@@ -589,7 +589,7 @@ function traverseNDSquare_Meta_Code(
 		// * 边界直接当常量嵌入；原先的遍历作为每一个数组下标
 		code = `for(p[${i}] = ${pMin[i]}; p[${i}] <= ${pMax[i]}; ++p[${i}]) {
 			${code}
-		};`
+		};`;
 	}
 	// 返回代码
 	return code;
@@ -639,7 +639,7 @@ export function traverseNDSquareFrame(
 	while (iLocked < nDim) {
 		while (i < nDim) {
 			// 执行当前点：调用回调函数
-			f(_temp_forEachPointFrame, ...args)
+			f(_temp_forEachPointFrame, ...args);
 			// 迭代到下一个点：不断循环尝试进位
 			// 先让第i轴递增（或「锁定性递增」），然后把这个值和最大值比较：若比最大值大，证明越界，需要进位，否则进入下一次递增
 			i = 0;
@@ -654,7 +654,7 @@ export function traverseNDSquareFrame(
 				// 旧位清零
 				_temp_forEachPointFrame[i] = pMin[i];
 				// 如果清零的是最高位（即最高位进位了），证明遍历结束，退出循环，否则继续迭代
-				++i
+				++i;
 			}
 		}
 		iLocked++;
@@ -691,20 +691,22 @@ export function traverseNDSquareSurface(
 	f: (p: iPointRef, ...args: any[]) => void,
 	...args: unknown[]
 ): void {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const p: iPointRef = _temp_forEachPointSurface;
+	// * ↑实际上在eval中用到了
 	eval(traverseNDSquareSurface_Code(
 		pMin, pMax,
 		'f(p, ...args)'
-	))
+	));
 }
 function traverseNDSquareSurface_Code(
 	pMin: iPointRef, pMax: iPointRef,
 	f_code: string
 ): string {
 	const nDim = pMax.length;
-	let code: string = ''
+	let code: string = '';
 
-	let temp_code: string
+	let temp_code: string;
 	for (let iLocked: uint = 0; iLocked < nDim; ++iLocked) {
 		// 从函数执行本身开始
 		temp_code = f_code;
@@ -714,7 +716,7 @@ function traverseNDSquareSurface_Code(
 			temp_code = `
 			for(p[${i}] = ${pMin[i] + 1}; p[${i}] < ${pMax[i]}; ++p[${i}]) {
 				${temp_code}
-			}`
+			}`;
 		}
 		// 扩展代码，在iLocked的前后做文章
 		temp_code = `
@@ -722,18 +724,18 @@ function traverseNDSquareSurface_Code(
 		${temp_code}
 		p[${iLocked}] = ${pMax[iLocked]};
 		${temp_code}
-		`
+		`;
 		// iLocked之后
 		for (i = iLocked + 1; i < nDim; ++i) {
 			temp_code = `
 			for(p[${i}] = ${pMin[i] + 1}; p[${i}] < ${pMax[i]}; ++p[${i}]) {
 				${temp_code}
-			}`
+			}`;
 		}
 		// 并入代码之中
 		code += temp_code;
 	}
-	return code
+	return code;
 }
 
 /**
@@ -743,11 +745,11 @@ function traverseNDSquareSurface_Code(
  * @param p 待检验的点
  * @returns 是否严格为「整数点」
  */
-export const verifyIntPoint = (p: iPointRef): boolean => p.every(Number.isInteger)
+export const verifyIntPoint = (p: iPointRef): boolean => p.every(Number.isInteger);
 /** 上一个函数的有报错版本 */
 export function verifyIntPointStrict(p: iPointRef): iPointRef {
-	if (p.every(Number.isInteger)) return p
-	else throw new Error(`点${p}不是整数点`)
+	if (p.every(Number.isInteger)) return p;
+	else throw new Error(`点${p.toString()}不是整数点`);
 }
 
 /**

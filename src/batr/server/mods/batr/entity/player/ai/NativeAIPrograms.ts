@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { randInt } from "../../../../../../common/exMath";
 import { uint } from "../../../../../../legacy/AS3Legacy";
 import { EnumPlayerAction, PlayerAction } from "../../../../native/entities/player/controller/PlayerAction";
@@ -120,11 +121,11 @@ export module NativeAIPrograms {
      */
     export function* AIProgram_Dummy(controller: AIControllerGenerator): AIActionGenerator {
         // 初始化所有子行为
-        let rWalk: AIActionGenerator = MicroAIBehaviors.roboticWalk(
+        const rWalk: AIActionGenerator = MicroAIBehaviors.roboticWalk(
             controller,
             4 + randInt(16) // 这是个硬编码
         );
-        let aUsing: AIActionGenerator = MicroAIBehaviors.keepAlwaysUsingTool(controller);
+        const aUsing: AIActionGenerator = MicroAIBehaviors.keepAlwaysUsingTool(controller);
 
         // 第一个「没有外界输入」的事件 //
         let event: PlayerEvent = yield EnumPlayerAction.NULL;

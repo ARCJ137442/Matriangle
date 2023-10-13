@@ -1,4 +1,4 @@
-import KeyListener from "../../../../../../common/KeyListener";
+import KeyListener from "../../../../../../common/KeyListener.deprecated";
 import { uint, int } from "../../../../../../legacy/AS3Legacy";
 import { MatrixController } from "../../../../../api/control/MatrixControl";
 import { FIXED_TPS } from "../../../../../main/GlobalWorldVariables";
@@ -16,7 +16,7 @@ export default class KeyboardController extends MatrixController {
     /** 控制器所控制的玩家 */
     protected _owner: IPlayer;
     /** 控制器的按键配置 */
-    protected _keyConfig: NativeControlKeyConfig = DEFAULT_PLAYER_CONTROL_KEYS[0] // 0=占位符
+    protected _keyConfig: NativeControlKeyConfig = DEFAULT_PLAYER_CONTROL_KEYS[0]; // 0=占位符
 
     //====Control Variables====//
     // ControlDelay //

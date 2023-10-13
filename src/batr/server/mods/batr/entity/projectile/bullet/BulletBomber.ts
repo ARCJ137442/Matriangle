@@ -87,7 +87,7 @@ export default class BulletBomber extends Bullet {
 	}
 
 	protected drawBomberSign(graphics: IGraphicContext): void {
-		let realRadius: number = BulletBasic.SIZE * 0.15;
+		const realRadius: number = BulletBasic.SIZE * 0.15;
 		graphics.beginFill(this.ownerLineColor);
 		graphics.moveTo(-realRadius, -realRadius);
 		graphics.lineTo(realRadius, 0);

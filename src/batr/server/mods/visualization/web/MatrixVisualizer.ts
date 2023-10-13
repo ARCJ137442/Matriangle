@@ -1,6 +1,6 @@
 import { int, uint } from "../../../../legacy/AS3Legacy";
 import IMatrix from "../../../main/IMatrix";
-import { SPMAVCV单点母体所有视角截面可视化, SPSACV单点稀疏地图所有视角截面可视化, entityLV实体列表可视化, matrixV母体可视化 } from "../textVisualizations";
+import { SPMAVCV单点母体所有视角截面可视化, entityLV实体列表可视化, matrixV母体可视化 } from "../textVisualizations";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 import Visualizer from "./Visualizer";
 import IPlayer, { isPlayer } from "../../native/entities/player/IPlayer";
@@ -39,9 +39,9 @@ export default class MatrixVisualizer extends Visualizer {
 	 * 解析「类型标签」
 	 */
 	public static parseTypeFlag(messageStr: string): TypeFlag {
-		this._tempFlag = +messageStr
+		this._tempFlag = +messageStr;
 		if (isFinite(this._tempFlag)) return uint(this._tempFlag);
-		else return messageStr
+		else return messageStr;
 	}
 	protected static _tempFlag: TypeFlag = 0;
 
@@ -69,12 +69,12 @@ export default class MatrixVisualizer extends Visualizer {
 								&& entity.customName === playerName
 						) as IPlayer | undefined;
 						if (player === undefined)
-							return `未找到玩家${playerName}`
+							return `未找到玩家${playerName}`;
 						else return SPMAVCV单点母体所有视角截面可视化(
 							matrix,
 							player.position,
 							string_l
-						)
+						);
 					} catch (e) {
 						console.error(`「${typeFlag}」格式不正确！正确格式应为「player6@p2」`, e);
 						return '';

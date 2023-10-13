@@ -1,5 +1,5 @@
 
-import { uint } from '../legacy/AS3Legacy'
+import { uint } from '../legacy/AS3Legacy';
 import { intPoint } from './geometricTools';
 
 /**
@@ -73,6 +73,6 @@ export function getXFromUint(uPoint: uint): uint {
  */
 export function getYFromUint(uPoint: uint): uint {
 	// don't use uPoint>>16 because the uint will be signed when bit-move.
-	let s: string = uPoint.toString(16);
+	const s: string = uPoint.toString(16);
 	return s.length > 4 ? uint(parseInt(s.slice(0, s.length - 4), 16)) : 0;
 }

@@ -1,12 +1,20 @@
-﻿import { int, uint, uint$MAX_VALUE, Class } from '../legacy/AS3Legacy'
+﻿/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { int, uint, uint$MAX_VALUE, Class } from '../legacy/AS3Legacy';
 import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display';
 import * as exMath from './exMath';
 
 //============Math Methods============//
 export function NumberToPercent(x: number, floatCount: uint = 0): string {
 	if (floatCount > 0) {
-		let pow: uint = 10 ** floatCount;
-		let returnNum: number = Math.floor(x * pow * 100) / pow;
+		const pow: uint = 10 ** floatCount;
+		const returnNum: number = Math.floor(x * pow * 100) / pow;
 		return returnNum + '%';
 	}
 	return Math.round(x * 100) + '%';
@@ -56,8 +64,8 @@ export function randomBoolean2(chance: number = 0.5): boolean {
 }
 
 export function binaryToBooleans(bin: uint, length: uint = 0): boolean[] {
-	let l: uint = Math.max(bin.toString(2).length, length);
-	let v: boolean[] = new Array<boolean>(Boolean(l), true); // ???
+	const l: uint = Math.max(bin.toString(2).length, length);
+	const v: boolean[] = new Array<boolean>(Boolean(l), true); // ???
 	for (let i: uint = 0; i < l; i++) {
 		v[i] = Boolean(bin >> i & 1);
 	}
@@ -65,7 +73,7 @@ export function binaryToBooleans(bin: uint, length: uint = 0): boolean[] {
 }
 
 export function booleansToBinary(...boo: boolean[]): uint {
-	let args: boolean[] = new Array<boolean>;
+	const args: boolean[] = new Array<boolean>;
 
 	for (let i: uint = 0; i < boo.length; i++) {
 		args[i] = boo[i];
@@ -74,7 +82,7 @@ export function booleansToBinary(...boo: boolean[]): uint {
 }
 
 export function booleansToBinary2(boo: boolean[]): uint {
-	let l: uint = boo.length;
+	const l: uint = boo.length;
 
 	let uin: uint = 0;
 
@@ -111,10 +119,10 @@ export function randomInParas<T>(...paras: Array<T>): T {
  * @param excepts （数组中唯一的）要排除的对象
  */
 export function randomWithout<T>(array: T[], excepts: T): T {
-	let result: T = array[exMath.randModWithout(
+	const result: T = array[exMath.randModWithout(
 		array.indexOf(excepts),
 		array.length
-	)]
+	)];
 	// 还是等于，就启用filter（性能&正确性考量）
 	return (
 		result === excepts ?
@@ -132,10 +140,10 @@ export function randomByWeight(weights: number[]): uint {
 	if (weights.length === 0) throw new Error("根本就没有要随机选择的对象！");
 	if (weights.length === 1) return 0;
 
-	let all: number = exMath.sum(weights);
-	let r: number = exMath.randomFloat(all);
+	const all: number = exMath.sum(weights);
+	const r: number = exMath.randomFloat(all);
 	for (let i = 0; i < weights.length; i++) {
-		let N = weights[i];
+		const N = weights[i];
 		let rs = 0;
 		for (let l = 0; l < i; l++)
 			rs += weights[l];
@@ -143,8 +151,8 @@ export function randomByWeight(weights: number[]): uint {
 		if (r <= rs + N)
 			return i;
 	}
-	console.error(weights, all, r)
-	throw new Error("加权随机：未正常随机到结果！")
+	console.error(weights, all, r);
+	throw new Error("加权随机：未正常随机到结果！");
 }
 
 /**
@@ -170,15 +178,15 @@ export function randomByWeight_KW<T>(values: T[], weights: number[]): T {
  */
 export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
 	// 尺寸=1 ⇒ 唯一键
-	if (weightMap.size == 1) return weightMap.keys().next().value;
+	if (weightMap.size == 1) return weightMap.keys().next().value as T;
 
 	// 拆解成顺序数组
-	let elements: T[] = [];
-	let weights: number[] = [];
+	const elements: T[] = [];
+	const weights: number[] = [];
 	weightMap.forEach((value, key): void => {
 		elements.push(key);
 		weights.push(value);
-	})
+	});
 
 	// 索引对照
 	return elements[randomByWeight(weights)];
@@ -193,9 +201,9 @@ export function mapObject(
 	vF: (arg: any) => any,
 	target: any = {}
 ): any {
-	for (let k in obj)
-		(target as any)[kF(k)] = vF(obj[k])
-	return target
+	for (const k in obj)
+		(target)[kF(k)] = vF(obj[k]);
+	return target;
 }
 
 /**
@@ -244,7 +252,7 @@ export function softMerge<T>(oldVal: T, newVal: any | undefined): T {
 }
 
 export function getPropertyInObjects(objects: object[], key: string): any[] {
-	let ra: any[] = new Array<any>();
+	const ra: any[] = new Array<any>();
 
 	for (let i: uint = 0; i < objects.length; i++) {
 		if (key in objects[i]) {
@@ -272,7 +280,7 @@ export function spliceAndReturnCount<T>(arr: T[], input: T | T[], count: uint = 
 	for (let ts: uint = arr.length - 1; ts >= 0; ts--) {
 		if (count == 0 || tempCount > 0) {
 			if (input instanceof Array) {
-				if (contains(input as T[], arr[ts])) {
+				if (contains(input, arr[ts])) {
 					arr.splice(ts, 1);
 					if (tempCount > 0)
 						tempCount--;
@@ -327,10 +335,10 @@ export function isEqualObject(
 	ignoreVariable: boolean = false,
 	notDetectB: boolean = false
 ): boolean {
-	for (let i in a) {
-		let fa: any = a[i];
+	for (const i in a) {
+		const fa: any = a[i];
 		if (ignoreUnique || b.hasOwnProperty(i)) {
-			let fb: any = b[i];
+			const fb: any = b[i];
 			if (!ignoreVariable) {
 				if (isPrimitiveInstance(fa) == isComplexInstance(fb)) {
 					return false;
@@ -415,8 +423,8 @@ export function MapFromObject<K extends key, V>(obj: { [key in K]: V }): Map<K, 
  * @returns 一个键值对映射表
  */
 export function MapFromGeneratorKV<B, K extends key, V>(basis: B[], kF: (b: B) => K, vF: (b: B) => V): Map<K, V> {
-	let map: Map<K, V> = new Map<K, V>();
-	for (let base of basis) {
+	const map: Map<K, V> = new Map<K, V>();
+	for (const base of basis) {
 		map.set(kF(base), vF(base));
 	}
 	return map;
@@ -445,7 +453,7 @@ export function isPrimitiveInstance(v: unknown): boolean {
 		typeof v === "bigint" ||
 		typeof v === "string" ||
 		typeof v === "symbol"
-	)
+	);
 }
 
 export function isComplexInstance(v: any): boolean {
@@ -499,12 +507,12 @@ export function flattenObject(
 	separator: string = '.',
 	prefix: string = ''
 ): dictionaryLikeObject {
-	const result: dictionaryLikeObject = {}
+	const result: dictionaryLikeObject = {};
 	for (const key in obj) {
 		if (!obj.hasOwnProperty(key))
 			continue;
 		const value = obj[key];
-		console.log(key, value)
+		console.log(key, value);
 		if (isPrimitiveInstance(value))
 			result[prefix + key] = value;
 		else
@@ -515,7 +523,7 @@ export function flattenObject(
 					prefix + key + separator
 				),
 				result
-			)
+			);
 	}
 	return result;
 }
@@ -530,7 +538,7 @@ export function flattenObject(
  * @returns the class(constructor) of the instance
  */
 export function getClass(instance: any): Class | undefined {
-	return instance?.constructor
+	return instance?.constructor;
 }
 
 /**
@@ -541,7 +549,7 @@ export function getClass(instance: any): Class | undefined {
  * @returns 子类是否可替换超类
  */
 export function isExtend(C1: Class, C: Class): boolean {
-	return C1 === C || C1.prototype instanceof C
+	return C1 === C || C1.prototype instanceof C;
 }
 
 export function identity<T>(x: T): T {
@@ -549,7 +557,7 @@ export function identity<T>(x: T): T {
 }
 
 export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> {
-	let arr: Array<T> = new Array<T>(length);
+	const arr: Array<T> = new Array<T>(length);
 	for (let i = 0; i < length; i++)
 		arr[i] = f(i);
 	return arr;

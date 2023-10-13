@@ -17,7 +17,6 @@ import { NativeBlockPrototypes } from "../../native/registry/NativeBlockRegistry
  * ? 或许后续会独立出来作为「外置地图包」实现
  */
 export module BatrDefaultMaps {
-
     // 地图的一般预设：大小、方块等
     export const MAP_SIZE: uint = 24;
     export const MAP_MAX_X: uint = MAP_SIZE - 1;

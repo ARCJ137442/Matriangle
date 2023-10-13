@@ -18,9 +18,9 @@ import IMapStorage from "../../../server/api/map/IMapStorage";
 
 export default interface IMapDisplayer {
 	get storage(): IMapStorage;
-	hasBlock(x: int, y: int): Boolean;
+	hasBlock(x: int, y: int): boolean;
 	getBlock(x: int, y: int): Block;
 	removeBlock(x: int, y: int): void;
 	clearBlock(): void;
-	setBlock(x: int, y: int, block: Block, overwrite?: Boolean/* = true*/): void;
+	setBlock(x: int, y: int, block: Block, overwrite?: boolean/* = true*/): void;
 }

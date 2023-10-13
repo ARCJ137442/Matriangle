@@ -1,9 +1,8 @@
 import { MatrixController } from "../../../../../api/control/MatrixControl";
 import { MatrixProgramLabel } from "../../../../../api/control/MatrixProgram";
-import { IEntityActive } from "../../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../../main/IMatrix";
 import IPlayer from "../IPlayer";
-import { NativePlayerEventOptions, PlayerEventOptions } from "./PlayerEvent";
+import { PlayerEventOptions } from "./PlayerEvent";
 
 /**
  * 「玩家控制器」

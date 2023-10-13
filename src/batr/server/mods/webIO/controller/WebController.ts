@@ -48,7 +48,7 @@ export default class WebController extends MultiKeyController {
 			(): void => {
 				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`);
 			}
-		)
+		);
 	}
 
 	/**

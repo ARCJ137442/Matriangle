@@ -1,5 +1,5 @@
 import { uint } from "../../../../legacy/AS3Legacy";
-import { Server, WebSocket } from "ws" // 需要使用`npm i --save-dev ws @types/ws`安装
+import { Server, WebSocket } from "ws"; // 需要使用`npm i --save-dev ws @types/ws`安装
 import MultiKeyController from "./MultiKeyController";
 import { MatrixProgramLabel } from "../../../api/control/MatrixProgram";
 
@@ -48,16 +48,16 @@ export default class WSController extends MultiKeyController {
 	 * * 0.0.0.0
 	 */
 	protected _hostname: string = 'localhost';
-	public get hostname(): string { return this._hostname }
+	public get hostname(): string { return this._hostname; }
 
 	/**
 	 * 端口
 	 */
 	protected _port: uint = 8080;
-	public get port(): uint { return this._port }
+	public get port(): uint { return this._port; }
 
 	/** （衍生）获取本机服务地址 */ // ! 注意：不是wss，那个要证书
-	public get serverAddress(): string { return `ws://${this.hostname}:${this._port}` }
+	public get serverAddress(): string { return `ws://${this.hostname}:${this._port}`; }
 
 	/**
 	 * 存储当前WebSocket服务器
@@ -75,7 +75,7 @@ export default class WSController extends MultiKeyController {
 			this._server = new Server(
 				{ host: this._hostname, port: this._port },
 				(): void => {
-					console.log(`${this.serverAddress}：服务器已成功启动`)
+					console.log(`${this.serverAddress}：服务器已成功启动`);
 				}
 			);
 			this._server.on(
@@ -122,7 +122,7 @@ export default class WSController extends MultiKeyController {
 	protected onWSMessage(message: Buffer): void {
 		// 解析消息
 		let controlKey: string, action: string;
-		let messageStr: string = message.toString('utf-8')
+		const messageStr: string = message.toString('utf-8');
 		try {
 			// !【2023-10-06 22:15:57】这要求消息格式必须是二元组
 			[controlKey, action] = messageStr.split('|');

@@ -36,7 +36,7 @@ export default class BulletBasic extends Bullet {
 		speed: number = BulletBasic.DEFAULT_SPEED,
 		finalExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS,
 	) {
-		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, finalExplodeRadius)
+		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, finalExplodeRadius);
 	}
 
 	/** 覆盖：通知母体创建爆炸 */

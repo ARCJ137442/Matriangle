@@ -1,4 +1,4 @@
-import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP, uniLoadJSObject, uniSaveJSON, uniSaveJSObject } from "../../../../common/JSObjectify";
+import { JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP, uniLoadJSObject, uniSaveJSObject } from "../../../../common/JSObjectify";
 import { key } from "../../../../common/utils";
 import { uint } from "../../../../legacy/AS3Legacy";
 import { typeID } from "../../../api/registry/IWorldRegistry";
@@ -30,13 +30,13 @@ export default class Weapon extends Tool {
 	// TODO: 有待迁移——或许要作为「自身属性」？
 	public static isAvailableDroneNotUse(weapon: Weapon): boolean {
 		// return isDroneTool(weapon) || weapon == Tool.BLOCK_THROWER || weapon == Tool.MELEE || weapon == Tool.BULLET_BOMBER;
-		return false
+		return false;
 	}
 
 	// JS对象 //
 
 	/** 模板构造函数 */
-	public static getBlank(): Weapon { return new Weapon('undefined', 0, 0, 0) };
+	public static getBlank(): Weapon { return new Weapon('undefined', 0, 0, 0); }
 
 	/** 复用「工具」的「对象化映射表」 */
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = { ...Tool.OBJECTIFY_MAP };
@@ -44,7 +44,7 @@ export default class Weapon extends Tool {
 	public static readonly key_baseDamage: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'baseDamage', uint(1),
-	)
+	);
 	protected _baseDamage: uint;
 	/** 武器的默认攻击伤害 */
 	public get baseDamage(): uint { return this._baseDamage; }
@@ -53,21 +53,21 @@ export default class Weapon extends Tool {
 	public static readonly key_canHurtEnemy: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'canHurtEnemy', true,
-	)
+	);
 	protected _canHurtEnemy: boolean;
 	public get canHurtEnemy(): boolean { return this._canHurtEnemy; }
 
 	public static readonly key_canHurtSelf: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'canHurtSelf', true,
-	)
+	);
 	protected _canHurtSelf: boolean;
 	public get canHurtSelf(): boolean { return this._canHurtSelf; }
 
 	public static readonly key_canHurtAlly: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'canHurtAlly', true,
-	)
+	);
 	protected _canHurtAlly: boolean;
 	public get canHurtAlly(): boolean { return this._canHurtAlly; }
 
@@ -75,21 +75,21 @@ export default class Weapon extends Tool {
 	public static readonly key_extraDamageCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'extraDamageCoefficient', uint(1),
-	)
+	);
 	protected _extraDamageCoefficient: uint = 5;
 	public get extraDamageCoefficient(): uint { return this._extraDamageCoefficient; }
 
 	public static readonly key_extraResistanceCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'extraResistanceCoefficient', uint(1),
-	)
+	);
 	protected _extraResistanceCoefficient: uint = 1;
 	public get extraResistanceCoefficient(): uint { return this._extraResistanceCoefficient; }
 
 	public static readonly key_useOnCenter: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'useOnCenter', uint(1),
-	)
+	);
 	protected _useOnCenter: boolean = false;
 	public get useOnCenter(): boolean { return this._useOnCenter; }
 
@@ -97,7 +97,7 @@ export default class Weapon extends Tool {
 	public static readonly key_chargePercentInDrone: key = fastAddJSObjectifyMapProperty_dashP(
 		Weapon.OBJECTIFY_MAP,
 		'chargePercentInDrone', 1.0,
-	)
+	);
 	protected _chargePercentInDrone: number = 1.0;
 	public get chargePercentInDrone(): number { return this._chargePercentInDrone; }
 
@@ -130,7 +130,7 @@ export default class Weapon extends Tool {
 	/**
 	 * ! 子类继承父类，必须要使用子类自己的「对象化映射表」，不然会使用父类的对象化映射表
 	 */
-	override get objectifyMap(): JSObjectifyMap { return Weapon.OBJECTIFY_MAP }
+	override get objectifyMap(): JSObjectifyMap { return Weapon.OBJECTIFY_MAP; }
 
 	//============Quick Initialize Tool Functions============//
 	/**

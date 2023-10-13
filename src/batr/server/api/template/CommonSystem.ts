@@ -107,7 +107,7 @@ export default class CommonSystem<T> {
 			return i;
 		}
 		else
-			return this._entries.length
+			return this._entries.length;
 	}
 
 	/**
@@ -144,8 +144,8 @@ export default class CommonSystem<T> {
 	 * @returns 所有元素组成的数组（新数组）
 	 */
 	public getAllEntry(): T[] {
-		let result: T[] = new Array<T>();
-		for (let obj of this._entries)
+		const result: T[] = new Array<T>();
+		for (const obj of this._entries)
 			if (obj !== undefined)
 				result.push(obj as T);
 		return result;
@@ -157,7 +157,7 @@ export default class CommonSystem<T> {
 	 * @returns 一个数组
 	 */
 	public get allValidUUID(): uint[] {
-		let result: uint[] = [];
+		const result: uint[] = [];
 		for (let i: uint = 0; i < this._entries.length; i++)
 			if (this.isValidUUID(i))
 				result.push(i);
@@ -173,7 +173,7 @@ export default class CommonSystem<T> {
 	 * @returns 自身
 	 */
 	public register(entry: T): this {
-		let newUUID: uint = this.nextEmptyUUID();
+		const newUUID: uint = this.nextEmptyUUID();
 		this._entries[newUUID] = entry;
 		this._temp_numEntries++;
 		return this;
@@ -203,7 +203,7 @@ export default class CommonSystem<T> {
 	 */
 	public add(entry: T): boolean {
 		if (this.hasValidUUID(entry)) return false;
-		this.register(entry)
+		this.register(entry);
 		return true;
 	}
 
@@ -229,7 +229,7 @@ export default class CommonSystem<T> {
 	 * @returns 是否移除成功
 	 */
 	public remove(entry: T): boolean {
-		let uuid: uint = this._entries.indexOf(entry);
+		const uuid: uint = this._entries.indexOf(entry);
 		if (uuid > 0) return this.removeAt(uuid);
 		return false;
 	}

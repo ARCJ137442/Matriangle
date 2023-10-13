@@ -4,7 +4,7 @@ import Block from "../../../../api/block/Block";
 import { MatrixProgram, MatrixProgramLabel } from "../../../../api/control/MatrixProgram";
 import { IEntityActive } from "../../../../api/entity/EntityInterfaces";
 import IMatrix from "../../../../main/IMatrix";
-import { NativeBlockEventType, NativeBlockTypeEventMap } from "../../registry/BlockEventRegistry";
+import { NativeBlockEventType } from "../../registry/BlockEventRegistry";
 
 /**
  * 「方块随机刻分派者」是
@@ -45,7 +45,7 @@ export default class BlockRandomTickDispatcher extends MatrixProgram implements 
 	public randomDelta: uint = 576;
 
 	// 活跃实体 //
-	public readonly i_active: true = true;
+	public readonly i_active = true as const;
 
 	/**
 	 * @implements
@@ -69,7 +69,7 @@ export default class BlockRandomTickDispatcher extends MatrixProgram implements 
 	 * 可被继承&重载的「分派函数」
 	 */
 	protected dispatch(host: IMatrix, position: iPoint): void {
-		let block: Block | null = host.map.storage.getBlock(position);
+		const block: Block | null = host.map.storage.getBlock(position);
 		if (block !== null)
 			host.registry.blockEventRegistry.getEventMapAt(block.id)
 				?.[NativeBlockEventType.RANDOM_TICK] // 取其中「随机刻事件」的处理函数

@@ -57,23 +57,23 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		energy: int
 	) {
 		super(owner, attackerDamage, extraDamageCoefficient, direction);
-		this._position.copyFrom(position)
+		this._position.copyFrom(position);
 		this._initialEnergy = this._energy = energy;
 	}
 
 	// 固定生命周期 //
-	public readonly i_fixedLive: true = true;
+	public readonly i_fixedLive = true as const;
 
-	get LIFE(): uint { return Lightning.LIFE }
-	get life(): uint { return this._life }
-	get lifePercent(): number { return this._life / this.LIFE }
+	get LIFE(): uint { return Lightning.LIFE; }
+	get life(): uint { return this._life; }
+	get lifePercent(): number { return this._life / this.LIFE; }
 
 	// 格点实体 //
-	// public readonly i_inGrid: true = true;
+	// public readonly i_inGrid = true as const;
 
 	/** 实现：返回自身整数位置（根节点所在方块位置） */
-	get position(): intPoint { return this._position }
-	set position(value: intPoint) { this._position.copyFrom(value) }
+	get position(): intPoint { return this._position; }
+	set position(value: intPoint) { this._position.copyFrom(value); }
 
 	//============Destructor Function============//
 	/** 析构：所有数组清空 */
@@ -89,8 +89,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 */
 	protected lightningWays(host: IMatrix): void {
 		// Draw in location in this
-		let head: iPoint = this._position.copy();
-		let cost: int = 0;
+		const head: iPoint = this._position.copy();
+		// let cost: int = 0;
 		let player: IPlayer | null = null;
 		let tRot: mRot = this.owner?.direction ?? 0;
 		let nRot: mRot | -1 = -1;
@@ -98,15 +98,16 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		// 先把自身位置加进路径
 		this.addWayPoint(this._position);
 		// 不断循环添加路径
-		while (true) {
+		while (
+			// 条件：能量 > 0
+			(this._energy -=
+				// 计算能量损耗
+				(/* cost =  */this.operateCost(host, head))
+			) > 0
+		) {
 			// console.log('initWay in '+head,nRot,tRot,cost);
-			// Cost and hit
-			cost = this.operateCost(host, head);
-			// 能量耗尽⇒结束
-			if ((this._energy -= cost) < 0)
-				break;
 			// 标记（并在后续伤害）当前位置的玩家
-			player = getHitEntity_I_Grid(head, getPlayers(host)) as (IPlayer | null);
+			player = getHitEntity_I_Grid(head, getPlayers(host));
 			if (player !== null && (
 				this.owner === null ||
 				playerCanHurtOther(
@@ -126,7 +127,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 				this.addWayPoint(head);
 			}
 			// Move
-			host.map.towardWithRot_II(head, nRot, 1)
+			host.map.towardWithRot_II(head, nRot, 1);
 		}
 		// 先前只是根据后节点的方向设置节点，所以最后要把头节点加上
 		this.addWayPoint(head);
@@ -162,9 +163,9 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		// 默认
 		// nowRot = host.map.storage.randomRotateDirectionAt(p, nowRot, 1); // ? 不知道这行「随机旋转」代码是干啥用的
 		// ! 现在不再是「从当前点开始旋转遍历」了，而是「在所有可前进方向中选择除了『来时路』外的所有方向」
-		let oppositeR: mRot = toOpposite_M(nowRot)
+		const oppositeR: mRot = toOpposite_M(nowRot);
 		let leastCost: int = int$MAX_VALUE; // 默认是最大值，鼓励后续贪心替代
-		for (let towardR of host.map.storage.getForwardDirectionsAt(p)) {
+		for (const towardR of host.map.storage.getForwardDirectionsAt(p)) {
 			// 不吃回头草
 			if (towardR === oppositeR) continue;
 			// 步进位移，缓存位置
@@ -196,7 +197,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 		if (isHitAnyEntity_I_Grid(p, getPlayers(host))) return 5; // The electricResistance of player
 		if (host.map.storage.isInMap(p))
 			return int$MAX_VALUE; // The electricResistance out of world
-		let attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(p);
+		const attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(p);
 		if (attributes !== null)
 			return attributes.electricResistance;
 		return 0;
@@ -208,7 +209,7 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			this.isCalculated = true;
 			this.lightningWays(host);
 			// lightningHurtPlayers(host, this, this._hurtPlayers, this._hurtDefaultDamage);
-			console.warn('WIP lightningHurtPlayers!', this, this._hurtPlayers, this._hurtDefaultDamage)
+			console.warn('WIP lightningHurtPlayers!', this, this._hurtPlayers, this._hurtDefaultDamage);
 		}
 		// 处理生命周期
 		if (this._life > 0)

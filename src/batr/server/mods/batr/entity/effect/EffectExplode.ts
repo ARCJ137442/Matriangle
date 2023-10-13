@@ -54,7 +54,7 @@ export default class EffectExplode extends Effect {
 
 	/** 实现：透明度跟随生命周期百分比 */
 	public shapeRefresh(shape: IShape): void {
-		shape.alpha = this.lifePercent
+		shape.alpha = this.lifePercent;
 	}
 
 }
