@@ -1,19 +1,20 @@
-import { fPoint, iPoint } from "../../../../../common/geometricTools";
-import { IShape } from "../../../../../display/api/DisplayInterfaces";
-import { NativeDecorationLabel } from "../../../../../display/mods/native/entity/player/DecorationLabels";
-import { uint } from "../../../../../legacy/AS3Legacy";
-import { TPS } from "../../../../main/GlobalWorldVariables";
-import IPlayer from "../../../native/entities/player/IPlayer";
-import EffectPlayerLike from "./EffectPlayerLike";
+import { fPoint, iPoint } from '../../../../../common/geometricTools'
+import { IShape } from '../../../../../display/api/DisplayInterfaces'
+import { NativeDecorationLabel } from '../../../../../display/mods/native/entity/player/DecorationLabels'
+import { uint } from '../../../../../legacy/AS3Legacy'
+import { TPS } from '../../../../main/GlobalWorldVariables'
+import IPlayer from '../../../native/entities/player/IPlayer'
+import EffectPlayerLike from './EffectPlayerLike'
 
 /**
  * 玩家死亡淡出
  * * 呈现一个线性淡出的纯色三角形
  * * 用于提示「先前有玩家死亡过」
  */
-export default class EffectPlayerDeathFadeout extends EffectPlayerLike {	//============Static Variables============//
-	public static readonly ALPHA: number = 0.8;
-	public static readonly MAX_LIFE: uint = TPS;
+export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
+	//============Static Variables============//
+	public static readonly ALPHA: number = 0.8
+	public static readonly MAX_LIFE: uint = TPS
 
 	//============Static Functions============//
 	public static fromPlayer(
@@ -23,31 +24,35 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {	//=====
 	): EffectPlayerDeathFadeout {
 		return EffectPlayerLike.alignToCenter(
 			new EffectPlayerDeathFadeout(
-				position, player.direction,
+				position,
+				player.direction,
 				player.fillColor,
 				player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
 				reverse
-			));
+			)
+		)
 	}
 
 	//============Constructor & Destructor============//
 	public constructor(
-		position: fPoint, rot: uint = 0,
-		color: uint = 0xffffff, decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
-		reverse: boolean = false, life: uint = EffectPlayerLike.MAX_LIFE
+		position: fPoint,
+		rot: uint = 0,
+		color: uint = 0xffffff,
+		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
+		reverse: boolean = false,
+		life: uint = EffectPlayerLike.MAX_LIFE
 	) {
-		super(position, rot, color, decorationLabel, reverse, life);
+		super(position, rot, color, decorationLabel, reverse, life)
 	}
 
 	//============Display Implements============//
 	public shapeInit(shape: IShape): void {
 		// 先绘制形状
-		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA);
-		EffectPlayerLike.moveToPlayerShape(shape.graphics); // 尺寸用默认值
+		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA)
+		EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值
 		// 然后绘制玩家标记
-		this.drawDecoration(shape);
+		this.drawDecoration(shape)
 		// 这时才停止
-		shape.graphics.endFill();
+		shape.graphics.endFill()
 	}
-
 }

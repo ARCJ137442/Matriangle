@@ -1,11 +1,11 @@
-﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy';
+﻿import { uint, uint$MAX_VALUE } from '../legacy/AS3Legacy'
 
 /**
  * 使用「多项式线性同余法」的随机数生成器
  */
 export default class RandomGenerator {
 	//============Static Variables============//
-	public static readonly DEFAULT_BUFFER: number[] = new Array<number>(1, 2, 3);
+	public static readonly DEFAULT_BUFFER: number[] = new Array<number>(1, 2, 3)
 
 	//============Static Functions============//
 	/**
@@ -16,168 +16,149 @@ export default class RandomGenerator {
 	 * @returns the calculated
 	 */
 	public static calcPoly(x: number, coefficients: number[]): number {
-		if (isNaN(x) || coefficients === null)
-			return 0;
+		if (isNaN(x) || coefficients === null) return 0
 		// let zeroIndex: uint = uint(coefficients[0]);
-		let result: number = 0;
+		let result: number = 0
 		// calculate polynomial uses Using Qin Jiushao algorithm
 		for (let i: uint = 0; i < coefficients.length; i++) {
-			result *= x;
-			result += coefficients[i];
+			result *= x
+			result += coefficients[i]
 		}
-		return result;
+		return result
 	}
 
 	public static lashToFloat(value: number, mode: number): number {
-		return (value % mode) / mode;
+		return (value % mode) / mode
 	}
 
 	protected static isEqualNumVec(v1: number[], v2: number[]): boolean {
-		if (v1.length != v2.length)
-			return false;
-		return v1.every(
-			(n: number, i: uint, v: number[]): boolean => v1[i] == v2[i]
-		);
+		if (v1.length != v2.length) return false
+		return v1.every((n: number, i: uint, v: number[]): boolean => v1[i] == v2[i])
 	}
 
 	//============Instance Variables============//
-	protected _mode: number;
-	protected _buffer: number[];
-	protected _randomList: number[] = new Array<number>();
+	protected _mode: number
+	protected _buffer: number[]
+	protected _randomList: number[] = new Array<number>()
 
 	//============Init RandomGenerator============//
 	public constructor(seed: number, mode: number, buffer: number[] | null = null, length: uint = 1) {
-		this._mode = mode;
-		this._buffer = buffer ?? RandomGenerator.DEFAULT_BUFFER;
-		this._randomList[0] = seed;
-		this.generateNext(length);
+		this._mode = mode
+		this._buffer = buffer ?? RandomGenerator.DEFAULT_BUFFER
+		this._randomList[0] = seed
+		this.generateNext(length)
 	}
 
 	//============Instance Functions============//
 	//======Getters And Setters======//
 	public get seed(): number {
-		return this._randomList[0];
+		return this._randomList[0]
 	}
 
 	public set seed(value: number) {
-		const reGenerate: boolean = (value !== this.seed);
-		this._randomList[0] = value;
-		if (reGenerate)
-			this.dealReset();
+		const reGenerate: boolean = value !== this.seed
+		this._randomList[0] = value
+		if (reGenerate) this.dealReset()
 	}
 
 	public get mode(): number {
-		return this._mode;
+		return this._mode
 	}
 
 	public set mode(value: number) {
-		const reGenerate: boolean = (value !== this.mode);
-		this._mode = value;
-		if (reGenerate)
-			this.dealReset();
+		const reGenerate: boolean = value !== this.mode
+		this._mode = value
+		if (reGenerate) this.dealReset()
 	}
 
 	public get buffer(): number[] {
-		return this._buffer;
+		return this._buffer
 	}
 
 	public set buffer(value: number[]) {
-		const reGenerate: boolean = !RandomGenerator.isEqualNumVec(this.buffer, value);
-		this._buffer = value;
-		if (reGenerate)
-			this.dealReset();
+		const reGenerate: boolean = !RandomGenerator.isEqualNumVec(this.buffer, value)
+		this._buffer = value
+		if (reGenerate) this.dealReset()
 	}
 
 	public get numList(): number[] {
 		// Include Seed
-		return this._randomList;
+		return this._randomList
 	}
 
 	public get numCount(): uint {
 		// Include Seed
-		return this._randomList.length;
+		return this._randomList.length
 	}
 
 	public get lastNum(): number {
-		return this._randomList[this._randomList.length - 1];
+		return this._randomList[this._randomList.length - 1]
 	}
 
 	public get cycle(): uint {
 		for (let i: uint = 0; i < this._randomList.length; i++) {
-			const li: uint = this._randomList.lastIndexOf(this._randomList[i], i);
-			if (li > i)
-				return li - i;
+			const li: uint = this._randomList.lastIndexOf(this._randomList[i], i)
+			if (li > i) return li - i
 		}
-		return uint$MAX_VALUE;
+		return uint$MAX_VALUE
 	}
 
 	//======Public Functions======//
 	public clone(): RandomGenerator {
-		return new RandomGenerator(this.seed, this.mode, this.buffer, this.numCount);
+		return new RandomGenerator(this.seed, this.mode, this.buffer, this.numCount)
 	}
 
 	public isEqual(other: RandomGenerator, strictMode: boolean = false): boolean {
-		if (this.mode != other.mode || this.seed != other.seed)
-			return false;
-		let i: uint;
+		if (this.mode != other.mode || this.seed != other.seed) return false
+		let i: uint
 		for (i = 0; i < this.buffer.length; i++) {
-			if (this.buffer[i] != other.buffer[i])
-				return false;
+			if (this.buffer[i] != other.buffer[i]) return false
 		}
 		if (strictMode) {
-			if (this.numCount != other.numCount)
-				return false;
+			if (this.numCount != other.numCount) return false
 			for (i = 1; i < this.numList.length; i++) {
-				if (this.numList[i] != other.numList[i])
-					return false;
+				if (this.numList[i] != other.numList[i]) return false
 			}
 		}
-		return true;
+		return true
 	}
 
 	public generateNext(count: uint = 1): void {
-		if (count == 0)
-			return;
+		if (count == 0) return
 		for (let i: uint = 0; i < count; i++) {
-			this._randomList.push(
-				RandomGenerator.calcPoly(
-					this.lastNum, this.buffer
-				) % this.mode
-			);
+			this._randomList.push(RandomGenerator.calcPoly(this.lastNum, this.buffer) % this.mode)
 		}
 	}
 
 	public getRandom(count: uint = 1): number[] {
-		const arr: number[] = [];
+		const arr: number[] = []
 		for (let i: uint = 0; i < count; i++) {
-			this.generateNext();
-			arr.push(this.lastNum);
+			this.generateNext()
+			arr.push(this.lastNum)
 		}
-		return arr;
+		return arr
 	}
 	public getRandomAt(index: uint = 0): number {
 		// index Start At 1
 		if (index == 0) {
-			this.generateNext();
-			return this.lastNum;
-		}
-		else if (index < this.numCount) {
-			return this._randomList[index];
-		}
-		else {
-			this.generateNext(index - (this.numCount - 1));
-			return this.lastNum;
+			this.generateNext()
+			return this.lastNum
+		} else if (index < this.numCount) {
+			return this._randomList[index]
+		} else {
+			this.generateNext(index - (this.numCount - 1))
+			return this.lastNum
 		}
 	}
 
 	public reset(): void {
-		this._randomList.length = 1;
-		this.dealReset();
+		this._randomList.length = 1
+		this.dealReset()
 	}
 
 	protected dealReset(): void {
-		const tempCount: uint = this.numCount - 1;
-		this.reset();
-		this.generateNext(tempCount);
+		const tempCount: uint = this.numCount - 1
+		this.reset()
+		this.generateNext(tempCount)
 	}
 }

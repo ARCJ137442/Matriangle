@@ -1,5 +1,5 @@
-import IPlayer from "../../../native/entities/player/IPlayer";
-import PlayerAttributes from "./attributes/PlayerAttributes";
+import IPlayer from '../../../native/entities/player/IPlayer'
+import PlayerAttributes from './attributes/PlayerAttributes'
 
 /**
  * 「有属性玩家」是
@@ -7,15 +7,13 @@ import PlayerAttributes from "./attributes/PlayerAttributes";
  * 玩家
  */
 export default interface IPlayerHasAttributes extends IPlayer {
-
 	//====Buff====//
 
 	/**
 	 * 玩家的所有属性（原「Buff系统」）
 	 * * 包括「伤害提升」「冷却减免」「抗性提升」「范围提升」
-	*/
-	get attributes(): PlayerAttributes;
-
+	 */
+	get attributes(): PlayerAttributes
 }
 
 /**
@@ -25,5 +23,5 @@ export default interface IPlayerHasAttributes extends IPlayer {
  * * 参考资料：https://www.jianshu.com/p/57df3cb66d3d
  */
 export function i_hasAttributes(player: IPlayer): player is IPlayerHasAttributes {
-	return (player as IPlayerHasAttributes)?.attributes !== undefined;
+	return (player as IPlayerHasAttributes)?.attributes !== undefined
 }

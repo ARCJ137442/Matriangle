@@ -4,3 +4,5 @@
 *.html
 test
 
+# 不要改Markdown
+*.md

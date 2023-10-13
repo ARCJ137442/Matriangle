@@ -1,34 +1,34 @@
-﻿import { uint } from "../../../../legacy/AS3Legacy";
-import MatrixRuleBatr from "../../native/rule/MatrixRuleBatr";
+﻿import { uint } from '../../../../legacy/AS3Legacy'
+import MatrixRuleBatr from '../../native/rule/MatrixRuleBatr'
 
 /**
  * 母体の统计
- * 
+ *
  * TODO: 有待迁移，或将部分纳入API范畴
- * 
+ *
  * @author ARCJ137442
  */
 export default class MatrixStats {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _rule: MatrixRuleBatr;
+	protected _rule: MatrixRuleBatr
 	// protected _players: PlayerStats[] = new Array<PlayerStats>();
 	// public get players(): PlayerStats[] { return this._players; }
 
-	protected _mapTransformCount: uint = 0;
-	protected _bonusGenerateCount: uint = 0;
+	protected _mapTransformCount: uint = 0
+	protected _bonusGenerateCount: uint = 0
 
 	//============Constructor============//
 	public constructor(rule: MatrixRuleBatr) {
-		this._rule = rule;
+		this._rule = rule
 		/* if (players !== null)
 			this.loadPlayers(players); */
 	}
 
 	// Unfinished
 	public clone(): MatrixStats {
-		return new MatrixStats(this._rule);/* .setPlayers(this._players); */
+		return new MatrixStats(this._rule) /* .setPlayers(this._players); */
 	}
 
 	//============Destructor============//
@@ -40,27 +40,27 @@ export default class MatrixStats {
 
 	//============Instance Getter And Setter============//
 	public get rule(): MatrixRuleBatr {
-		return this._rule;
+		return this._rule
 	}
 
 	public set rule(value: MatrixRuleBatr) {
-		this._rule = value;
+		this._rule = value
 	}
 
 	public get mapTransformCount(): uint {
-		return this._mapTransformCount;
+		return this._mapTransformCount
 	}
 
 	public set mapTransformCount(value: uint) {
-		this._mapTransformCount = value;
+		this._mapTransformCount = value
 	}
 
 	public get bonusGenerateCount(): uint {
-		return this._bonusGenerateCount;
+		return this._bonusGenerateCount
 	}
 
 	public set bonusGenerateCount(value: uint) {
-		this._bonusGenerateCount = value;
+		this._bonusGenerateCount = value
 	}
 
 	//============Instance Functions============//

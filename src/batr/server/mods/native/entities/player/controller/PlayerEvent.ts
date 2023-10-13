@@ -1,10 +1,10 @@
-import { uint } from "../../../../../../legacy/AS3Legacy";
-import IPlayer from "../IPlayer";
+import { uint } from '../../../../../../legacy/AS3Legacy'
+import IPlayer from '../IPlayer'
 
 /**
  * 通用的「玩家事件」类型
  */
-export type PlayerEvent = string;
+export type PlayerEvent = string
 
 /**
  * 原生玩家事件
@@ -37,7 +37,7 @@ export enum NativePlayerEvent {
 
 	/**
 	 * 在「重生」时响应
-	 * 
+	 *
 	 * ! 这时候应该已经恢复了状态，比如active参数
 	 */
 	RESPAWN = 'respawn',
@@ -48,47 +48,47 @@ export enum NativePlayerEvent {
  * * 【2023-10-09 19:29:37】用于从「类型索引」自动推断「所需的『附加参数类型』」
  * * 可继承：添加新类型事件时，可以直接继承于此
  */
-export type PlayerEventOptions = { [e: PlayerEvent]: unknown };
+export type PlayerEventOptions = { [e: PlayerEvent]: unknown }
 
 /**
  * 「原生事件参数集」
  */
 export interface NativePlayerEventOptions extends PlayerEventOptions {
-	[NativePlayerEvent.NULL]: undefined;
+	[NativePlayerEvent.NULL]: undefined
 
-	[NativePlayerEvent.TICK]: undefined;
+	[NativePlayerEvent.TICK]: undefined
 
 	[NativePlayerEvent.HEAL]: {
 		/** 治疗的生命点数 */
-		amount: uint;
+		amount: uint
 		/** 治疗者 */
-		healer: IPlayer | null;
-	};
+		healer: IPlayer | null
+	}
 	[NativePlayerEvent.CAUSE_DAMAGE]: {
 		/** 造成伤害点数 */
-		damage: uint;
+		damage: uint
 		/** 受害者 */
-		victim: IPlayer | null;
-	};
+		victim: IPlayer | null
+	}
 	[NativePlayerEvent.HURT]: {
 		/** 受到伤害点数 */
-		damage: uint;
+		damage: uint
 		/** 攻击者 */
-		attacker: IPlayer | null;
-	};
+		attacker: IPlayer | null
+	}
 
 	[NativePlayerEvent.KILL_PLAYER]: {
 		/** 造成伤害点数 */
-		damage: uint;
+		damage: uint
 		/** 受害者 */
-		victim: IPlayer | null;
-	};
+		victim: IPlayer | null
+	}
 	[NativePlayerEvent.DEATH]: {
 		/** 受到伤害点数 */
-		damage: uint;
+		damage: uint
 		/** 攻击者 */
-		attacker: IPlayer | null;
-	};
+		attacker: IPlayer | null
+	}
 
-	[NativePlayerEvent.RESPAWN]: undefined;
+	[NativePlayerEvent.RESPAWN]: undefined
 }

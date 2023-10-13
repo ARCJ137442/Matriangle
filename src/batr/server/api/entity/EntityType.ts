@@ -1,22 +1,21 @@
-﻿import { DisplayLayers } from "../../../display/api/DisplayInterfaces";
-import { Class, int } from "../../../legacy/AS3Legacy";
-import TypeCommon from "../template/TypeCommon";
+﻿import { DisplayLayers } from '../../../display/api/DisplayInterfaces'
+import { Class, int } from '../../../legacy/AS3Legacy'
+import TypeCommon from '../template/TypeCommon'
 
 /**
  * 用于识别的「实体类型」
  * * 存储与「实体类」有关的元信息
- * 
+ *
  * ! 这应该是静态的：即「一个『类型实例』对应多个『实体实例』的引用」
  */
 export default class EntityType extends TypeCommon {
-
 	//============Constructor & Destructor============//
 	public constructor(
 		// ! 现在不能用entityClass，因为「循环导入」可能没有初始化
 		name: string,
 		/**
 		 * 对应的实体类
-		 * 
+		 *
 		 * ! 📌现在使用其类名作为名称
 		 */
 		public readonly entityClass: Class,
@@ -25,10 +24,9 @@ export default class EntityType extends TypeCommon {
 		 * * 参考：DisplayLayers
 		 * * 默认：与玩家同层次
 		 */
-		public readonly displayLayer: int = DisplayLayers.PLAYER,
+		public readonly displayLayer: int = DisplayLayers.PLAYER
 	) {
-		super(name, 'entity');
-		if (!entityClass) throw new Error('entityClass is required');
+		super(name, 'entity')
+		if (!entityClass) throw new Error('entityClass is required')
 	}
-
 }

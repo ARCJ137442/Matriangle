@@ -1,9 +1,7 @@
-
-
-import PlayerStats from "../../../server/mods/batr/entity/player/stat/PlayerStats";
-import { uint } from "../../../legacy/AS3Legacy";
-import I18nText from "./I18nText";
-import I18ns from "./I18ns";
+import PlayerStats from '../../../server/mods/batr/entity/player/stat/PlayerStats'
+import { uint } from '../../../legacy/AS3Legacy'
+import I18nText from './I18nText'
+import I18ns from './I18ns'
 
 /**
  * ...
@@ -12,58 +10,53 @@ import I18ns from "./I18ns";
 export default class ForcedI18nText extends I18nText {
 	//============Static Getter And Setter============//
 	public static getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
-		let result: I18nText[] = new I18nText[];
+		let result: I18nText[] = []
 		for (let i: uint = 0; i < players.length; i++) {
-			result.push(
-				new ForcedI18nText(
-					null, null, players[i].profile.customName
-				)
-			);
+			result.push(new ForcedI18nText(null, null, players[i].profile.customName))
 		}
-		return result;
+		return result
 	}
 
 	//============Instance Variables============//
-	protected _forcedText: string;
+	protected _forcedText: string
 
 	//============Constructor & Destructor============//
 	public constructor(translations: I18ns, key: string = null, forcedText: string = null) {
-		super(translations, key);
-		this._forcedText = forcedText;
+		super(translations, key)
+		this._forcedText = forcedText
 	}
 
-	override public clone(): I18nText {
-		return new ForcedI18nText(this._translations, this._key, this._forcedText);
+	public override clone(): I18nText {
+		return new ForcedI18nText(this._translations, this._key, this._forcedText)
 	}
 
 	//============Destructor Function============//
-	override public destructor(): void {
-		this._forcedText = null;
-		super.destructor();
+	public override destructor(): void {
+		this._forcedText = null
+		super.destructor()
 	}
 
 	//============Instance Getter And Setter============//
 	public get forcedText(): string {
-		return this._forcedText;
+		return this._forcedText
 	}
 
 	public set forcedText(value: string) {
-		this._forcedText = value;
+		this._forcedText = value
 	}
 
 	override get currentText(): string {
-		if (this._forcedText !== null)
-			return this._forcedText;
-		return super.currentText;
+		if (this._forcedText !== null) return this._forcedText
+		return super.currentText
 	}
 
 	public removeForce(): I18nText {
-		this._forcedText = null;
-		return this;
+		this._forcedText = null
+		return this
 	}
 
 	public setForce(value: string): I18nText {
-		this._forcedText = null;
-		return this;
+		this._forcedText = null
+		return this
 	}
 }

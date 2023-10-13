@@ -1,19 +1,21 @@
 {
-    "cSpell.words": [
-        "AIID",
-        "batr",
-        "coaxis",
-        "fscommand",
-        "Matriangle",
-        "SPMAVCV",
-        "SPSACV",
-        "Unrotatable"
-    ],
-    "editor.insertSpaces": false,
-    "conventionalCommits.scopes": [
-        "IO/Web",
-        "可视化",
-        "显示端",
-        "世界机制"
-    ]
+	"cSpell.words": [
+		"AIID",
+		"batr",
+		"coaxis",
+		"fscommand",
+		"Matriangle",
+		"SPMAVCV",
+		"SPSACV",
+		"Unrotatable"
+	],
+	"conventionalCommits.scopes": [
+		"IO/Web",
+		"可视化",
+		"显示端",
+		"世界机制"
+	],
+	// Prittier×editorconfig参考：https://blog.csdn.net/qq_43886365/article/details/130409080
+	"prettier.configPath": ".prettierrc.mjs",
+	"prettier.useEditorConfig": true,
 }

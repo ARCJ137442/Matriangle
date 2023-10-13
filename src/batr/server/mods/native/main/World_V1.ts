@@ -1,6 +1,6 @@
-﻿import IMatrix from "../../../main/IMatrix";
-import IWorld from "../../../main/IWorld";
-import IWorldRegistry from "../../../api/registry/IWorldRegistry";
+﻿import IMatrix from '../../../main/IMatrix'
+import IWorld from '../../../main/IWorld'
+import IWorldRegistry from '../../../api/registry/IWorldRegistry'
 
 /**
  * 第一代「世界主体」
@@ -12,13 +12,15 @@ import IWorldRegistry from "../../../api/registry/IWorldRegistry";
  *   * 只负责「查找&返回」与「保存&加载」，不负责「具体运行」
  */
 export default class World_V1 implements IWorld {
-
 	public constructor(
 		protected _matrix: IMatrix,
-		protected _registry: IWorldRegistry,
-	) { }
+		protected _registry: IWorldRegistry
+	) {}
 
-	get matrix(): IMatrix { return this._matrix; }
-	get registry(): IWorldRegistry { return this._registry; }
-
+	get matrix(): IMatrix {
+		return this._matrix
+	}
+	get registry(): IWorldRegistry {
+		return this._registry
+	}
 }

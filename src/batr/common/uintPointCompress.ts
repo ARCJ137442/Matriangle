@@ -1,6 +1,5 @@
-
-import { uint } from '../legacy/AS3Legacy';
-import { intPoint } from './geometricTools';
+import { uint } from '../legacy/AS3Legacy'
+import { intPoint } from './geometricTools'
 
 /**
  * The module compress uint 0x0~0xffffffff into point(x:uint,y:uint)
@@ -15,7 +14,7 @@ import { intPoint } from './geometricTools';
  * @return	if x<=0xffff&&y<=0xffff.
  */
 export function isValidPositionToCompress(x: uint, y: uint): boolean {
-	return x <= 0xffff && y <= 0xffff;
+	return x <= 0xffff && y <= 0xffff
 }
 
 /**
@@ -24,8 +23,7 @@ export function isValidPositionToCompress(x: uint, y: uint): boolean {
  * @param	y	position y.
  */
 function testUintPoint(x: uint, y: uint): void {
-	if (!isValidPositionToCompress(x, y))
-		throw new Error('Position out of range:' + x + ',' + y);
+	if (!isValidPositionToCompress(x, y)) throw new Error('Position out of range:' + x + ',' + y)
 }
 
 /**
@@ -35,8 +33,8 @@ function testUintPoint(x: uint, y: uint): void {
  * @return	The uint as point.
  */
 export function compressFromPoint(x: uint, y: uint): uint {
-	testUintPoint(x, y);
-	return x | (y << 16);
+	testUintPoint(x, y)
+	return x | (y << 16)
 }
 
 /**
@@ -45,7 +43,7 @@ export function compressFromPoint(x: uint, y: uint): uint {
  * @return	The uint as point.
  */
 export function compressFromPoint2(p: intPoint): uint {
-	return compressFromPoint(p.x, p.y);
+	return compressFromPoint(p.x, p.y)
 }
 
 /**
@@ -54,7 +52,7 @@ export function compressFromPoint2(p: intPoint): uint {
  * @return	The uint as point.
  */
 export function releaseFromUint(uPoint: uint): intPoint {
-	return new intPoint(getXFromUint(uPoint), getYFromUint(uPoint));
+	return new intPoint(getXFromUint(uPoint), getYFromUint(uPoint))
 }
 
 /**
@@ -63,7 +61,7 @@ export function releaseFromUint(uPoint: uint): intPoint {
  * @return	the position X.
  */
 export function getXFromUint(uPoint: uint): uint {
-	return uPoint & 0xffff;
+	return uPoint & 0xffff
 }
 
 /**
@@ -73,6 +71,6 @@ export function getXFromUint(uPoint: uint): uint {
  */
 export function getYFromUint(uPoint: uint): uint {
 	// don't use uPoint>>16 because the uint will be signed when bit-move.
-	const s: string = uPoint.toString(16);
-	return s.length > 4 ? uint(parseInt(s.slice(0, s.length - 4), 16)) : 0;
+	const s: string = uPoint.toString(16)
+	return s.length > 4 ? uint(parseInt(s.slice(0, s.length - 4), 16)) : 0
 }

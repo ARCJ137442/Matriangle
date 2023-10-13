@@ -1,12 +1,12 @@
-import { int } from "../../../../../../legacy/AS3Legacy";
-import { MatrixEventType } from "../../../../../api/control/MatrixControl";
-import { mRot } from "../../../../../general/GlobalRot";
+import { int } from '../../../../../../legacy/AS3Legacy'
+import { MatrixEventType } from '../../../../../api/control/MatrixControl'
+import { mRot } from '../../../../../general/GlobalRot'
 
 /**
  * 玩家事件：从「控制器」向玩家回分派的事件类型
  * * 目前只有一个——添加动作
  */
-export const ADD_ACTION: MatrixEventType = 'addAction';
+export const ADD_ACTION: MatrixEventType = 'addAction'
 
 /**
  * 一个用于统一所有玩家输出的枚举
@@ -30,10 +30,10 @@ export enum EnumPlayerAction {
 
 	/**
 	 * 转向某方向
-	 * 
+	 *
 	 * ! 这是一系列操作的前缀
 	 * * 完整形式为「转向某方向(方向)」
-	 * 
+	 *
 	 * * 💭数值-字符串转换确实挺低效，还不如类型不稳定
 	 */
 	// TURN_TO_ = 'moveToward_',
@@ -59,10 +59,10 @@ export enum EnumPlayerAction {
 	/**
 	 * 向某方向前进（一格）
 	 * * 分解：转向某方向+前进（一格）
-	 * 
+	 *
 	 * ! 这是一系列操作的前缀
 	 * * 完整形式为「向某方向前进(方向)」
-	 * 
+	 *
 	 * * 💭数值-字符串转换确实挺低效，还不如类型不稳定
 	 */
 	// MOVE_TOWARD_ = 'moveToward_',
@@ -78,14 +78,13 @@ export enum EnumPlayerAction {
 	 * * 分解：停止使用+开始使用
 	 */
 	DISABLE_CHARGE = 'disableCharge',
-
 }
 
 /**
  * 从「转向方向」获取对应的「玩家行为」
  */
 export function getPlayerActionFromTurn(direction: mRot): PlayerAction {
-	return direction as PlayerAction;
+	return direction as PlayerAction
 }
 
 /**
@@ -96,7 +95,7 @@ export function getPlayerActionFromTurn(direction: mRot): PlayerAction {
  *     * 非负数n⇒转向「任意维整数角」n
  *     * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
  *   * 例如「转向」「移动」
- * 
+ *
  * ?【2023-10-09 18:20:51】目前这样利用基础类型是否过于随意，不利于后续加入「有参行为」？
  */
-export type PlayerAction = string | int;
+export type PlayerAction = string | int

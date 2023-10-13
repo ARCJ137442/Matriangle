@@ -1,143 +1,143 @@
 {
-    "language_self": "简体中文",
-    "code": {
-        "infinity": "无限",
-        "true": "真",
-        "false": "假",
-        "yes": "是",
-        "no": "否",
-        "completely_random": "完全随机",
-        "uniform_random": "统一随机",
-        "certainly_dead": "必死",
-        "never": "从不"
-    },
-    "menu": {
-        "language": "语言",
-        "quick_game": "快速游戏",
-        "select_game": "选择游戏",
-        "custom_mode": "自定义模式",
-        "start": "开始",
-        "advanced": "高级",
-        "config": "配置文件",
-        "saves": "存档",
-        "back": "返回",
-        "continue": "继续",
-        "main_menu": "主界面",
-        "global_stat": "全局统计",
-        "score_ranking": "总分排行",
-        "paused": "已暂停",
-        "restart": "重新开始",
-        "custom": {
-            "player_count": "玩家数量",
-            "ai_player_count": "ai玩家数量",
-            "game_mode": "游戏模式",
-            "initial_map": "初始地图",
-            "lock_teams": "锁定队伍",
-            "default_tool": "默认道具",
-            "default_HP": "默认生命值",
-            "default_max_HP": "默认最大生命值",
-            "remain_lives_player": "玩家剩余生命",
-            "remain_lives_ai": "ai剩余生命",
-            "max_bonus_count": "最大奖励箱数",
-            "bonus_spawn_after_death": "奖励箱死后生成",
-            "map_transform_time": "地图变换时间(s)",
-            "tools_no_cd": "道具无冷却",
-            "respawn_time": "重生时间(s)",
-            "asphyxia_damage": "窒息伤害"
-        },
-        "result": {
-            "game_result": "游戏结果",
-            "nothing_win": "没有玩家在游戏中胜利",
-            "win_single_player": "在游戏中胜利",
-            "win_multi_player": "在游戏中胜利",
-            "win_per_player": "个玩家在游戏中胜利",
-            "win_all_player": "所有玩家在游戏中胜利"
-        },
-        "fill_frame_off": "补帧关闭",
-        "fill_frame_on": "补帧开启"
-    },
-    "game": {
-        "map": {
-            "random": "随机地图"
-        },
-        "mode": {
-            "regular": "常规",
-            "battle": "混战",
-            "survival": "生存",
-            "hard": "困难"
-        },
-        "gui": {
-            "remain_transform_time": "剩余变换时间",
-            "game_duration": "游戏时长"
-        },
-        "stat": {
-            "transform_map_count": "地图变换次数",
-            "bonus_generate_count": "奖励箱生成数",
-            "player": {
-                "kill_count": "击杀数",
-                "death_count": "死亡数",
-                "death_count_from_player": "被玩家击杀数",
-                "damage_cause": "造成伤害",
-                "damage_by": "受到伤害",
-                "pickup_bonus": "拾取奖励箱",
-                "be_teleport_count": "被传送次数",
-                "total_score": "总分"
-            }
-        }
-    },
-    "block": {
-        "void": "空",
-        "wall": "墙",
-        "water": "水",
-        "glass": "玻璃",
-        "bedrock": "基岩",
-        "x_trap_hurt": "x陷阱-伤害",
-        "x_trap_kill": "x陷阱-死亡",
-        "x_trap_rotate": "x陷阱-旋转",
-        "colored_block": "彩色方块",
-        "color_spawner": "彩块生成器",
-        "laser_trap": "激光陷阱",
-        "metal": "金属"
-    },
-    "entity": {
-        "bullet_basic": "基础子弹",
-        "bullet_nuke": "核弹",
-        "bullet_bomber": "子轰炸机",
-        "bullet_tracking": "跟踪子弹",
-        "laser_basic": "基础激光",
-        "laser_pulse": "脉冲激光",
-        "laser_teleport": "传送激光",
-        "laser_absorption": "吸收激光",
-        "wave": "波浪",
-        "thrown_block": "抛出的方块",
-        "lightning": "闪电",
-        "bonus_box": "奖励箱",
-        "player": "玩家",
-        "ai_player": "AI玩家"
-    },
-    "effect": {
-        "explode": "爆炸",
-        "spawn": "重生",
-        "teleport": "传送",
-        "player_death_light": "玩家死亡光效",
-        "player_death_fadeout": "玩家死亡淡出",
-        "player_levelup": "玩家升级",
-        "block_light": "方块光效"
-    },
-    "tool": {
-        "bullet": "子弹",
-        "nuke": "核弹",
-        "bullet_bomber": "子轰炸机",
-        "bullet_tracking": "跟踪子弹",
-        "laser_basic": "基础激光",
-        "laser_pulse": "脉冲激光",
-        "laser_teleport": "传送激光",
-        "laser_absorption": "吸收激光",
-        "wave": "波浪",
-        "block_thrower": "方块投掷者",
-        "melee": "近战",
-        "lightning": "闪电",
-        "shockwave_alpha": "冲击波-α",
-        "shockwave_beta": "冲击波-β"
-    }
+	"language_self": "简体中文",
+	"code": {
+		"infinity": "无限",
+		"true": "真",
+		"false": "假",
+		"yes": "是",
+		"no": "否",
+		"completely_random": "完全随机",
+		"uniform_random": "统一随机",
+		"certainly_dead": "必死",
+		"never": "从不"
+	},
+	"menu": {
+		"language": "语言",
+		"quick_game": "快速游戏",
+		"select_game": "选择游戏",
+		"custom_mode": "自定义模式",
+		"start": "开始",
+		"advanced": "高级",
+		"config": "配置文件",
+		"saves": "存档",
+		"back": "返回",
+		"continue": "继续",
+		"main_menu": "主界面",
+		"global_stat": "全局统计",
+		"score_ranking": "总分排行",
+		"paused": "已暂停",
+		"restart": "重新开始",
+		"custom": {
+			"player_count": "玩家数量",
+			"ai_player_count": "ai玩家数量",
+			"game_mode": "游戏模式",
+			"initial_map": "初始地图",
+			"lock_teams": "锁定队伍",
+			"default_tool": "默认道具",
+			"default_HP": "默认生命值",
+			"default_max_HP": "默认最大生命值",
+			"remain_lives_player": "玩家剩余生命",
+			"remain_lives_ai": "ai剩余生命",
+			"max_bonus_count": "最大奖励箱数",
+			"bonus_spawn_after_death": "奖励箱死后生成",
+			"map_transform_time": "地图变换时间(s)",
+			"tools_no_cd": "道具无冷却",
+			"respawn_time": "重生时间(s)",
+			"asphyxia_damage": "窒息伤害"
+		},
+		"result": {
+			"game_result": "游戏结果",
+			"nothing_win": "没有玩家在游戏中胜利",
+			"win_single_player": "在游戏中胜利",
+			"win_multi_player": "在游戏中胜利",
+			"win_per_player": "个玩家在游戏中胜利",
+			"win_all_player": "所有玩家在游戏中胜利"
+		},
+		"fill_frame_off": "补帧关闭",
+		"fill_frame_on": "补帧开启"
+	},
+	"game": {
+		"map": {
+			"random": "随机地图"
+		},
+		"mode": {
+			"regular": "常规",
+			"battle": "混战",
+			"survival": "生存",
+			"hard": "困难"
+		},
+		"gui": {
+			"remain_transform_time": "剩余变换时间",
+			"game_duration": "游戏时长"
+		},
+		"stat": {
+			"transform_map_count": "地图变换次数",
+			"bonus_generate_count": "奖励箱生成数",
+			"player": {
+				"kill_count": "击杀数",
+				"death_count": "死亡数",
+				"death_count_from_player": "被玩家击杀数",
+				"damage_cause": "造成伤害",
+				"damage_by": "受到伤害",
+				"pickup_bonus": "拾取奖励箱",
+				"be_teleport_count": "被传送次数",
+				"total_score": "总分"
+			}
+		}
+	},
+	"block": {
+		"void": "空",
+		"wall": "墙",
+		"water": "水",
+		"glass": "玻璃",
+		"bedrock": "基岩",
+		"x_trap_hurt": "x陷阱-伤害",
+		"x_trap_kill": "x陷阱-死亡",
+		"x_trap_rotate": "x陷阱-旋转",
+		"colored_block": "彩色方块",
+		"color_spawner": "彩块生成器",
+		"laser_trap": "激光陷阱",
+		"metal": "金属"
+	},
+	"entity": {
+		"bullet_basic": "基础子弹",
+		"bullet_nuke": "核弹",
+		"bullet_bomber": "子轰炸机",
+		"bullet_tracking": "跟踪子弹",
+		"laser_basic": "基础激光",
+		"laser_pulse": "脉冲激光",
+		"laser_teleport": "传送激光",
+		"laser_absorption": "吸收激光",
+		"wave": "波浪",
+		"thrown_block": "抛出的方块",
+		"lightning": "闪电",
+		"bonus_box": "奖励箱",
+		"player": "玩家",
+		"ai_player": "AI玩家"
+	},
+	"effect": {
+		"explode": "爆炸",
+		"spawn": "重生",
+		"teleport": "传送",
+		"player_death_light": "玩家死亡光效",
+		"player_death_fadeout": "玩家死亡淡出",
+		"player_levelup": "玩家升级",
+		"block_light": "方块光效"
+	},
+	"tool": {
+		"bullet": "子弹",
+		"nuke": "核弹",
+		"bullet_bomber": "子轰炸机",
+		"bullet_tracking": "跟踪子弹",
+		"laser_basic": "基础激光",
+		"laser_pulse": "脉冲激光",
+		"laser_teleport": "传送激光",
+		"laser_absorption": "吸收激光",
+		"wave": "波浪",
+		"block_thrower": "方块投掷者",
+		"melee": "近战",
+		"lightning": "闪电",
+		"shockwave_alpha": "冲击波-α",
+		"shockwave_beta": "冲击波-β"
+	}
 }

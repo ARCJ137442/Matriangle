@@ -1,16 +1,14 @@
 // refer to: https://code.visualstudio.com/docs/typescript/typescript-tutorial
 {
-    "compilerOptions": {
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "target": "es2015",
-        "module": "commonjs",
-        "outDir": "./dist",
-        "sourceMap": true, // 生成代码映射，以允许直接从JS开始调试
-        "resolveJsonModule": true, // 允许使用import语句导入JSON文件（作为对象）
-        "declaration": true, // 生成相应的声明文件
-    },
-    "include": [
-        "src",
-    ],
+	"compilerOptions": {
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"target": "es2015",
+		"module": "commonjs",
+		"outDir": "./dist",
+		"sourceMap": true, // 生成代码映射，以允许直接从JS开始调试
+		"resolveJsonModule": true, // 允许使用import语句导入JSON文件（作为对象）
+		"declaration": true // 生成相应的声明文件
+	},
+	"include": ["src"]
 }

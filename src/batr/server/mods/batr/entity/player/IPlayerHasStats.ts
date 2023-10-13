@@ -1,5 +1,5 @@
-import IPlayer from "../../../native/entities/player/IPlayer";
-import PlayerStats from "./stat/PlayerStats";
+import IPlayer from '../../../native/entities/player/IPlayer'
+import PlayerStats from './stat/PlayerStats'
 
 /**
  * 「有统计玩家」是
@@ -7,14 +7,12 @@ import PlayerStats from "./stat/PlayerStats";
  * 玩家
  */
 export default interface IPlayerHasStats extends IPlayer {
-
 	/**
 	 * 获取玩家的统计信息
-	 * 
+	 *
 	 * TODO: 后续支持「自定义统计字段」
 	 */
-	get stats(): PlayerStats;
-
+	get stats(): PlayerStats
 }
 
 /**
@@ -22,5 +20,5 @@ export default interface IPlayerHasStats extends IPlayer {
  * * 逻辑：判断指定属性是否存在
  */
 export function i_hasStats(player: IPlayer): player is IPlayerHasStats {
-	return (player as IPlayerHasStats)?.stats !== undefined;
+	return (player as IPlayerHasStats)?.stats !== undefined
 }

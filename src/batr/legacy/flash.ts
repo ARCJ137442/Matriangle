@@ -5,10 +5,10 @@
  *   BTW, some classes must be used, in this case THEY SHOULD BE IMPLEMENTED AS ABSTRACT CLASSES
  * Finally, it need to 'use' by other modules, so EXPORT IS NECESSARILY NEED by `export`
  */
-export * as utils from './flash/utils';
-export * as display from './flash/display';
-export * as events from './flash/events';
-export * as geom from './flash/geom';
-export * as text from './flash/text';
+export * as utils from './flash/utils'
+export * as display from './flash/display'
+export * as events from './flash/events'
+export * as geom from './flash/geom'
+export * as text from './flash/text'
 
 // export { flash }; // cannot use default

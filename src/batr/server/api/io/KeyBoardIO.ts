@@ -1,32 +1,28 @@
-import { KeyCode } from "../../../common/keyCodes";
-import { CommonIO, CommonIO_IR } from "./CommonIO";
+import { KeyCode } from '../../../common/keyCodes'
+import { CommonIO, CommonIO_IR } from './CommonIO'
 
 /**
  * * 此文件主要用于对外接收键盘事件并由母体分派
- * 
+ *
  * TODO: 🏗️未完待续……
  */
-export class KeyBoardIO extends CommonIO {
-
-}
+export class KeyBoardIO extends CommonIO {}
 
 /**
  * * 控制流/中间语言的通用表示类
- * 
+ *
  * TODO: 🏗️未完待续……
- * 
+ *
  * ? 💭为何还要沿用Flash那一套？
  */
 export abstract class KeyBoardIO_IR extends CommonIO_IR {
-
-    public constructor(
-        public altKey: boolean,
-        public code: KeyCode,
-        public ctrlKey: boolean,
-        public shiftKey: boolean,
-        public type: 'press' | 'release',
-    ) {
-        super();
-    }
-
+	public constructor(
+		public altKey: boolean,
+		public code: KeyCode,
+		public ctrlKey: boolean,
+		public shiftKey: boolean,
+		public type: 'press' | 'release'
+	) {
+		super()
+	}
 }
