@@ -107,8 +107,9 @@ export default class Matrix_V1 implements IMatrix {
 	//========🕹️控制部分：主循环========//
 	tick(): void {
 		// 实体刻 // !【2023-10-12 17:36:58】现在只需遍历其中的「（轻量级）活跃实体」 // !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
-		for (const entity of this._entitySystem.entriesActive) entity.onTick(this)
-		for (const entity of this._entitySystem.entriesActiveLite) entity.onTick(this._temp_removeF)
+		for (const entity of this._entitySystem.entriesActive) if (entity.isActive) entity.onTick(this)
+		for (const entity of this._entitySystem.entriesActiveLite)
+			if (entity.isActive) entity.onTick(this._temp_removeF)
 		/*
 		!【2023-10-05 15:21:50】中途有可能会有实体（将）被删除，这没错
 		! 但现在不暴露「实体系统」，外界统一调用的`host.removeEntity`

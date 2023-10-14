@@ -10,6 +10,7 @@ import {
 	getRandomTeam,
 	loadAsBackgroundRule,
 	randomToolEnable,
+	toolCreateExplode,
 } from '../src/batr/server/mods/batr/mechanics/BatrMatrixMechanics'
 import { projectEntities } from '../src/batr/server/mods/native/mechanics/NativeMatrixMechanics'
 import { respawnAllPlayer } from '../src/batr/server/mods/native/mechanics/NativeMatrixMechanics'
@@ -19,7 +20,7 @@ import MatrixRuleBatr from '../src/batr/server/mods/native/rule/MatrixRuleBatr'
 import Matrix_V1 from '../src/batr/server/mods/native/main/Matrix_V1'
 import { listE列举实体, matrixV母体可视化 } from '../src/batr/server/mods/visualization/textVisualizations'
 import { TICK_TIME_MS, TPS } from '../src/batr/server/main/GlobalWorldVariables'
-import { mergeMaps, mergeMultiMaps } from '../src/batr/common/utils'
+import { mergeMaps, mergeMultiMaps, randomBoolean } from '../src/batr/common/utils'
 import { NativeBonusTypes as BatrBonusTypes } from '../src/batr/server/mods/batr/registry/BonusRegistry'
 import { iPoint } from '../src/batr/common/geometricTools'
 import MatrixVisualizer from '../src/batr/server/mods/visualization/web/MatrixVisualizer'
@@ -43,6 +44,12 @@ import WebController from '../src/batr/server/mods/webIO/controller/WebControlle
 import KeyboardControlCenter, {
 	generateBehaviorFromPlayerConfig,
 } from '../src/batr/server/mods/native/mechanics/program/KeyboardControlCenter'
+import ProgramAgent from './../src/batr/server/mods/TMatrix/program/Agent'
+import Entity from '../src/batr/server/api/entity/Entity'
+import { IEntityHasPosition, i_hasPosition, i_shortLive } from '../src/batr/server/api/entity/EntityInterfaces'
+import ProgramMerovingian from './../src/batr/server/mods/TMatrix/program/Merovingian'
+import { isPlayer } from '../src/batr/server/mods/native/entities/player/IPlayer'
+import { MatrixProgram } from '../src/batr/server/api/control/MatrixProgram'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -158,6 +165,33 @@ function setupVisualization(host: IMatrix): void {
 	// *添加实体
 	host.addEntities(visualizer)
 }
+/** 配置「特殊程序」 */
+function setupSpecialPrograms(host: IMatrix): void {
+	const agent1: ProgramAgent = new ProgramAgent(
+		// 监控「禁区」：实体的z坐标是否>15
+		(host: IMatrix, e: Entity): boolean =>
+			e !== agent1 && e.isActive /* && i_hasPosition(e) && e.position.z >= 15 */ && randomBoolean(1, 0xff),
+		// 武器「删除」：将实体取消激活
+		(host: IMatrix, e: Entity): void => {
+			e.isActive = false
+			host.removeEntity(e)
+			if (i_hasPosition(e))
+				toolCreateExplode(host, null, (e as IEntityHasPosition).position, 10, 100, 0, true, true, true, 0)
+			console.log('Solved an abnormal signal.')
+		}
+	)
+	const merovingian: ProgramMerovingian = new ProgramMerovingian(
+		[],
+		// 条件：玩家/程序
+		(host: IMatrix, e: Entity): boolean => isPlayer(e) || e instanceof MatrixProgram,
+		// 条件：自身私藏实体数 > 1
+		(host: IMatrix, e: Entity): boolean => merovingian.privatePossessions.length > 1
+	)
+	merovingian.hack(host)
+	// 添加
+	// !【2023-10-14 21:48:39】测试完成，暂且禁用封存
+	// host.addEntities(agent1, merovingian)
+}
 /** 配置机制程序 */
 function setupMechanicPrograms(host: IMatrix): void {
 	// 方块随机刻分派者
@@ -170,6 +204,8 @@ function setupMechanicPrograms(host: IMatrix): void {
 	)
 	// 地图切换者
 	const mapSwitcherRandom = new MapSwitcherRandom(TPS * 15) // 稳定期：十五秒切换一次
+	// 其它特殊程序
+	setupSpecialPrograms(host)
 
 	// *添加实体
 	host.addEntities(blockRTickDispatcher, bonusBoxGenerator, mapSwitcherRandom)

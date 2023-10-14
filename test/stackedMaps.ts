@@ -1,9 +1,9 @@
-import { iPoint, iPointRef, iPointVal } from '../src/batr/common/geometricTools';
-import { uint } from '../src/batr/legacy/AS3Legacy';
-import MapStorageSparse from './../src/batr/server/mods/native/maps/MapStorageSparse';
-import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations';
-import { BatrDefaultMaps } from "../src/batr/server/mods/batr/registry/MapRegistry";
-import IMap from '../src/batr/server/api/map/IMap';
+import { iPoint, iPointRef, iPointVal } from '../src/batr/common/geometricTools'
+import { uint } from '../src/batr/legacy/AS3Legacy'
+import MapStorageSparse from './../src/batr/server/mods/native/maps/MapStorageSparse'
+import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations'
+import { BatrDefaultMaps } from '../src/batr/server/mods/batr/registry/MapRegistry'
+import IMap from '../src/batr/server/api/map/IMap'
 
 /**
  * 堆叠合并多个地图
@@ -17,73 +17,65 @@ export function stackMaps(
 	deep: boolean = false
 ): MapStorageSparse {
 	// 先检查除了「待堆叠轴向」外的尺寸
-	const otherAxisSizes: uint[] = [];
-	let nDim: uint = 0;
-	const pileAxisSizes: Map<MapStorageSparse, uint | -1> = new Map();
+	const otherAxisSizes: uint[] = []
+	let nDim: uint = 0
+	const pileAxisSizes: Map<MapStorageSparse, uint | -1> = new Map()
 	/** 是否是在一个新维度上堆叠 */
-	let isInNewAxis: boolean = false;
+	let isInNewAxis: boolean = false
 	for (const map of maps) {
 		// 维数校对
-		if (nDim === 0)
-			nDim = map.numDimension;
-		else if (map.numDimension !== nDim)
-			throw new Error('维数不一致！');
+		if (nDim === 0) nDim = map.numDimension
+		else if (map.numDimension !== nDim) throw new Error('维数不一致！')
 		// 除了「堆叠维度」外的其它尺寸校对
-		const lSize = map.size.length;
+		const lSize = map.size.length
 		for (let i = 0; i < lSize; i++) {
 			// 计入「堆叠维数尺寸」
-			if (i === pileAxis)
-				pileAxisSizes.set(map, map.size[i]);
+			if (i === pileAxis) pileAxisSizes.set(map, map.size[i])
 			// 逐一比对
 			else {
-				otherAxisSizes[i] ??= map.size[i];
-				if (otherAxisSizes[i] !== map.size[i])
-					throw new Error('尺寸不一致！');
+				otherAxisSizes[i] ??= map.size[i]
+				if (otherAxisSizes[i] !== map.size[i]) throw new Error('尺寸不一致！')
 			}
 		}
 		// 若「待堆叠尺寸」没有⇒1
 		if (!pileAxisSizes.has(map)) {
-			pileAxisSizes.set(map, 1);
-			isInNewAxis = true;
+			pileAxisSizes.set(map, 1)
+			isInNewAxis = true
 		}
 	}
 	/** 待返回的新地图 */
-	const nMap: MapStorageSparse = new MapStorageSparse(isInNewAxis ? nDim + 1 : nDim);
+	const nMap: MapStorageSparse = new MapStorageSparse(isInNewAxis ? nDim + 1 : nDim)
 	// 开始合并
-	const copyPointer: iPointVal = new iPoint();
-	let pilePointer: uint = 0; // 堆叠从零开始
-	let map: MapStorageSparse;
+	const copyPointer: iPointVal = new iPoint()
+	let pilePointer: uint = 0 // 堆叠从零开始
+	let map: MapStorageSparse
 	for (let i = 0; i < maps.length; ++i) {
-		map = maps[i];
+		map = maps[i]
 		// * 遍历所有位置，复制方块
 		map.forEachValidPositions((p: iPointRef): void => {
 			// 指针跟随
-			copyPointer.copyFrom(p);
-			copyPointer[pileAxis] = pilePointer; // 可能会被覆写
+			copyPointer.copyFrom(p)
+			copyPointer[pileAxis] = pilePointer // 可能会被覆写
 			// 复制方块
 			// * 函数式编程：决定是「原样」还是「拷贝」
-			if (map.hasBlock(p)) // ! 不能省略：地图格式可能不只有此一种
-				nMap.setBlock(
-					copyPointer,
-					deep ?
-						(map.getBlock(p)).copy() :
-						(map.getBlock(p)).softCopy()
-				);
-		});
+			if (map.hasBlock(p))
+				// ! 不能省略：地图格式可能不只有此一种
+				nMap.setBlock(copyPointer, deep ? map.getBlock(p).copy() : map.getBlock(p).softCopy())
+		})
 		// 复制重生点
 		for (const sP of map.spawnPoints) {
-			if (deep)
-				nMap.addSpawnPointAt(sP);
-			else nMap.spawnPoints.push(sP);
+			// 指针跟随
+			copyPointer.copyFrom(sP)
+			copyPointer[pileAxis] = pilePointer
+			// 直接复制
+			nMap.addSpawnPointAt(copyPointer)
 		}
 		// 最后向「上」递增
-		pilePointer += pileAxisSizes.get(map) as uint;
+		pilePointer += pileAxisSizes.get(map) as uint
 	}
-	return nMap;
+	return nMap
 }
 
 console.log(
-	mapVH地图可视化_高维(
-		stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap) => map.storage as MapStorageSparse))
-	)
-);
+	mapVH地图可视化_高维(stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap) => map.storage as MapStorageSparse)))
+)

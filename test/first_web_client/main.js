@@ -2,7 +2,6 @@
 const controlAddress = document.getElementById('controlAddress');
 const controlKey = document.getElementById('controlKey');
 const controlMessage = document.getElementById('controlMessage');
-const controlCenterMessage = document.getElementById('controlCenterMessage');
 
 function getWSLinkControl() { return `ws://${controlAddress.value}`; }
 let socketScreen;
@@ -258,11 +257,16 @@ function handleMultiKeyController(event, isDown) {
  * ! 要「键位」code而非「键值」key
  *
  * @param {KeyboardEvent} event 键盘事件
- * @param {boolean} isPress 按键是否是「按下」（否则为「释放」）
+ * @param {boolean} isDown 按键是否是「按下」（否则为「释放」）
  */
-function handleKeyboardControlCenter(event, isPress) {
-	_temp_callKeyboardControlCenter_message = `|${isPress ? '+' : ''}${event.code}`
-	controlCenterMessage.innerText = _temp_callKeyboardControlCenter_message
+function handleKeyboardControlCenter(event, isDown) {
+	// 阻止默认操作
+	event.preventDefault();
+	// 生成特定消息
+	_temp_callKeyboardControlCenter_message = `|${isDown ? '+' : ''}${event.code}`
+	// 呈现
+	controlMessage.innerText = `${isDown ? '↓' : '↑'} message = ${_temp_callKeyboardControlCenter_message}`
+	// 发送
 	sendMessage(socketControl, _temp_callKeyboardControlCenter_message)
 }
 /** @type {string} */
