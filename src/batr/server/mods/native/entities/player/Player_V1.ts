@@ -12,7 +12,7 @@ import { respawnPlayer } from '../../mechanics/NativeMatrixMechanics'
 import { playerMoveInTest } from '../../mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../mechanics/NativeMatrixMechanics'
 import IPlayer from './IPlayer'
-import { PlayerAction, EnumPlayerAction, ADD_ACTION } from './controller/PlayerAction'
+import { PlayerAction, EnumNativePlayerAction, NativeMatrixPlayerEvent } from './controller/PlayerAction'
 import PlayerController from './controller/PlayerController'
 import { NativePlayerEventOptions, NativePlayerEvent } from './controller/PlayerEvent'
 
@@ -54,6 +54,22 @@ export default class Player_V1 extends Entity implements IPlayer {
 		this._lineColor = lineColor
 
 		// ! 控制器不在这里留有引用
+	}
+
+	/**
+	 * 析构函数
+	 * * 功能：解除侦听等引用
+	 *
+	 * !【2023-10-14 10:35:46】目前无需清空各个「临时点」的元素，因为其本身只含基础类型
+	 */
+	public destructor(): void {
+		// 🕹️控制 //
+
+		// 清空行为缓冲区
+		this._actionBuffer.length = 0
+
+		// 解除控制器连接
+		this.disconnectController()
 	}
 
 	// 🏷️名称 //
@@ -208,12 +224,12 @@ export default class Player_V1 extends Entity implements IPlayer {
 		// 其它枚举类
 		else
 			switch (action) {
-				case EnumPlayerAction.NULL:
+				case EnumNativePlayerAction.NULL:
 					return true
-				case EnumPlayerAction.MOVE_FORWARD:
+				case EnumNativePlayerAction.MOVE_FORWARD:
 					this.moveForward(host)
 					return true
-				case EnumPlayerAction.MOVE_BACK:
+				case EnumNativePlayerAction.MOVE_BACK:
 					this.turnBack(host)
 					this.moveForward(host)
 					return true
@@ -248,17 +264,12 @@ export default class Player_V1 extends Entity implements IPlayer {
 	}
 
 	/**
-	 * 实现：从「收到世界事件」到「缓冲操作」再到「执行操作」
-	 * * 功能：
-	 *   * 「添加行为」⇒直接添加到「缓存的行为」中
-	 *
-	 * @param type
-	 * @param args
+	 * @implements 实现：从「收到世界事件」到「缓冲操作」再到「执行操作」
 	 */
 	onReceive(type: string, action: PlayerAction | undefined = undefined): void {
 		switch (type) {
 			// 增加待执行的行为
-			case ADD_ACTION:
+			case NativeMatrixPlayerEvent.ADD_ACTION:
 				if (action === undefined) throw new Error('未指定要缓存的行为！')
 				this._actionBuffer.push(action)
 				break

@@ -15,7 +15,7 @@ export type MatrixEventType = string
 /**
  * 事件接收器
  */
-export interface IMatrixControlReceiver {
+export interface IMatrixEventReceiver {
 	/**
 	 * 接收事件
 	 * * 【2023-10-01 11:45:25】不设置单独的「事件」对象，是为了避免大量对象创建/回收的开销
@@ -30,7 +30,7 @@ export interface IMatrixControlReceiver {
 }
 
 /**
- * 「母体控制器」是一个
+ * 「母体事件分派器」是一个
  * * 可以接受其它「订阅者」订阅，并向「订阅事件的对象」分派事件的
  * 母体程序
  *
@@ -39,7 +39,6 @@ export interface IMatrixControlReceiver {
  * * 维护一个「订阅者」列表，以通过「分派函数」对其分派事件
  *
  * 典例：
- * * 玩家的「键盘控制器」
  * * 自动的「AI控制器」
  * * 利用网络收发控制信号的「HTTP控制器」
  *
@@ -56,7 +55,7 @@ export interface IMatrixControlReceiver {
  * > just like the Matrix!
  *
  */
-export abstract class MatrixController extends MatrixProgram {
+export abstract class MatrixEventDispatcher extends MatrixProgram {
 	/**
 	 * 构造函数
 	 */
@@ -65,7 +64,7 @@ export abstract class MatrixController extends MatrixProgram {
 		/**
 		 * 订阅者列表
 		 */
-		public readonly subscribers: IMatrixControlReceiver[] = []
+		public readonly subscribers: IMatrixEventReceiver[] = []
 	) {
 		super(label)
 	}
@@ -73,7 +72,7 @@ export abstract class MatrixController extends MatrixProgram {
 	/**
 	 * 增加订阅者
 	 */
-	public addSubscriber(subscriber: IMatrixControlReceiver): void {
+	public addSubscriber(subscriber: IMatrixEventReceiver): void {
 		this.subscribers.push(subscriber)
 	}
 
@@ -81,7 +80,7 @@ export abstract class MatrixController extends MatrixProgram {
 	 * 移除订阅者
 	 * @returns 是否成功删除
 	 */
-	public removeSubscriber(subscriber: IMatrixControlReceiver): boolean {
+	public removeSubscriber(subscriber: IMatrixEventReceiver): boolean {
 		for (let i = 0; i < this.subscribers.length; i++) {
 			if (subscriber === this.subscribers[i]) {
 				this.subscribers.splice(i, 1)
@@ -95,7 +94,7 @@ export abstract class MatrixController extends MatrixProgram {
 	 * 查询订阅者
 	 * @returns 接收者是否在其订阅之中
 	 */
-	public hasSubscriber(subscriber: IMatrixControlReceiver): boolean {
+	public hasSubscriber(subscriber: IMatrixEventReceiver): boolean {
 		for (const subscriber2 of this.subscribers) {
 			if (subscriber === subscriber2) return true
 		}

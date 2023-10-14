@@ -3,6 +3,7 @@ import { Server as WebSocketServer, WebSocket } from 'ws' // 需要使用`npm i 
 import { uint } from '../../../legacy/AS3Legacy'
 import { MatrixProgram, MatrixProgramLabel } from '../../api/control/MatrixProgram'
 import { MessageCallback, IMessageRouter } from './MessageInterfaces'
+import { voidF } from '../../../common/utils'
 
 /**
  * 目前支持的「网络」服务类型
@@ -56,10 +57,20 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 *
 	 * @returns {boolean} 是否注册成功
 	 */
-	public registerService(service: IService, launchedCallback?: () => void): boolean {
+	public registerService(service: IService, launchedCallback?: voidF): boolean {
 		// 先判断是否有，如果有则阻止
 		if (this._services.has(service.address)) {
 			console.warn(`[WebMessageRouter] 服务地址「${service.address}」已被注册，无法重复注册！`)
+			console.info(`（WIP）正在尝试追加服务回调...`)
+			const currentService: IService = this._services.get(service.address) as IService
+			const oldCallback: MessageCallback = currentService.messageCallback
+			currentService.messageCallback = (message: string): string | undefined => {
+				// * 【2023-10-14 18:45:56】服务串联：send先前的一个，返回最新的（HTTP可能就直接舍弃了）
+				const msg1: string | undefined = oldCallback(message)
+				const msg2: string | undefined = service.messageCallback(message)
+				if (msg1 !== undefined) currentService.send?.(msg1)
+				return msg2
+			}
 			return false
 		}
 		// 注册并启动
@@ -75,7 +86,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 *
 	 * @returns {boolean} 是否注销成功
 	 */
-	public unregisterService(service: IService, stoppedCallBack?: () => void): boolean {
+	public unregisterService(service: IService, stoppedCallBack?: voidF): boolean {
 		// 先判断有没有，如果没有则阻止
 		if (this._services.has(service.address)) {
 			console.warn(`[WebMessageRouter] 服务地址「${service.address}」未注册，无法注销！`)
@@ -101,7 +112,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		host: string,
 		port: uint,
 		messageCallback: MessageCallback,
-		launchedCallback?: () => void
+		launchedCallback?: voidF
 	): boolean {
 		return this.registerService(new HTTPService(host, port, messageCallback), launchedCallback)
 	}
@@ -120,7 +131,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		host: string,
 		port: uint,
 		messageCallback: MessageCallback,
-		launchedCallback?: () => void
+		launchedCallback?: voidF
 	): boolean {
 		return this.registerService(new WebSocketService(host, port, messageCallback), launchedCallback)
 	}
@@ -142,7 +153,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		host: string,
 		port: uint,
 		messageCallback: MessageCallback,
-		launchedCallback?: () => void
+		launchedCallback?: voidF
 	): boolean {
 		switch (type) {
 			case 'http':
@@ -164,12 +175,7 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 * @param {uint} port 注销服务的服务端口
 	 * @param {() => void} callback 在服务停止时回传的回调函数
 	 */
-	public unregisterServiceWithType(
-		type: NativeWebServiceType,
-		host: string,
-		port: uint,
-		callback?: () => void
-	): boolean {
+	public unregisterServiceWithType(type: NativeWebServiceType, host: string, port: uint, callback?: voidF): boolean {
 		const key: string = `${type}:${getAddress(host, port)}`
 		if (this._services.has(key)) return this.unregisterService(this._services.get(key) as IService, callback)
 		return false
@@ -182,12 +188,12 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		type: NativeWebServiceType,
 		host: string,
 		port: uint,
-		launchedCallback?: () => void
+		launchedCallback?: voidF
 	): boolean {
 		return this.registerServiceWithType(type, host, port, messageCallback, launchedCallback)
 	}
 	/** @implements 实现：复刻一遍先前的参数 */
-	unregisterMessageService(type: NativeWebServiceType, host: string, port: uint, callback?: () => void): boolean {
+	unregisterMessageService(type: NativeWebServiceType, host: string, port: uint, callback?: voidF): boolean {
 		return this.unregisterServiceWithType(type, host, port, callback)
 	}
 }
@@ -198,10 +204,10 @@ interface IService {
 	get address(): string
 
 	/** 启动 */
-	launch(callback?: () => void): void
+	launch(callback?: voidF): void
 
 	/** 终止 */
-	stop(callback?: () => void): void
+	stop(callback?: voidF): void
 
 	/**
 	 * （主动）回传消息（不一定有实现，比如单工的HTTP）
@@ -209,6 +215,12 @@ interface IService {
 	 * ?【2023-10-12 19:55:46】不知为何，在抽象类中无法做到可选实现，即便是标了问号也是一样
 	 */
 	send?(message: string): void
+
+	/**
+	 * 收到消息时的「回调处理函数」
+	 * * 类型：字符串⇒字符串
+	 */
+	messageCallback: MessageCallback
 }
 
 /**
@@ -242,10 +254,10 @@ abstract class Service implements IService {
 	}
 
 	/** 启动服务器 */
-	public abstract launch(callback?: () => void): void
+	public abstract launch(callback?: voidF): void
 
 	/** 终止服务器 */
-	public abstract stop(callback?: () => void): void
+	public abstract stop(callback?: voidF): void
 }
 
 /** HTTP服务器 */
@@ -270,7 +282,7 @@ class HTTPService extends Service {
 	 *
 	 * ? 似乎缺少一个「是否启动成功」的标签信息
 	 */
-	launch(callback?: () => void): void {
+	launch(callback?: voidF): void {
 		try {
 			// 创建服务器 // ! 注意：服务器的行为在创建时就已决定
 			this._server = createServer((req: IncomingMessage, res: ServerResponse): void => {
@@ -302,11 +314,11 @@ class HTTPService extends Service {
 	/**
 	 * 终止HTTP服务器
 	 */
-	stop(callback?: () => void): void {
+	stop(callback?: voidF): void {
 		this._server?.close((): void => {
 			console.log(`HTTP服务器${this.host}: ${this.port}已关闭！`)
 			// 这里可以执行一些清理操作或其他必要的处理
-			if (callback !== undefined) callback()
+			callback?.()
 		})
 	}
 }
@@ -334,13 +346,13 @@ class WebSocketService extends Service {
 	 * 启动WebSocket服务器
 	 * * 似乎缺少一个「是否启动成功」的标签信息
 	 */
-	launch(callback?: () => void): void {
+	launch(callback?: voidF): void {
 		try {
 			// 创建服务器
 			this._server = new WebSocketServer({ host: this.host, port: this.port }, (): void => {
 				console.log(`${this.address}：服务器已成功启动`)
 				// 回调告知
-				if (callback !== undefined) callback()
+				callback?.()
 			})
 			// 开始侦听连接
 			this._server.on('connection', (socket: WebSocket): void => {
@@ -375,11 +387,11 @@ class WebSocketService extends Service {
 	/**
 	 * 终止WebSocket服务器
 	 */
-	stop(callback?: () => void): void {
+	stop(callback?: voidF): void {
 		this._server?.close((): void => {
 			console.log(`${this.address}：服务器已关闭！`)
 			// 这里可以执行一些清理操作或其他必要的处理
-			if (callback !== undefined) callback()
+			callback?.()
 		})
 	}
 

@@ -1,9 +1,9 @@
-import { randInt } from '../../../../../../common/exMath'
+import { randInt, randomBetween } from '../../../../../../common/exMath'
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import { TPS } from '../../../../../main/GlobalWorldVariables'
 import IMatrix from '../../../../../main/IMatrix'
 import IPlayer from '../IPlayer'
-import { ADD_ACTION, EnumPlayerAction, PlayerAction } from './PlayerAction'
+import { NativeMatrixPlayerEvent, EnumNativePlayerAction, PlayerAction } from './PlayerAction'
 import PlayerController from './PlayerController'
 import { NativePlayerEvent, NativePlayerEventOptions, PlayerEventOptions } from './PlayerEvent'
 
@@ -60,8 +60,21 @@ export default abstract class AIController extends PlayerController {
 	}
 
 	/**
+	 * 随机化AI运行速度
+	 * * 功能：把AI运行速度{@link AIRunSpeed}限制在一个区间内，并重置AI刻
+	 * * 有一个「最大值-最小值」区间
+	 *
+	 * @returns 最终得到的「AI运行延时」，即{@link _AIRunDelay}
+	 */
+	public randomizeAIRunSpeed(min: number, max: number): uint {
+		this.AIRunSpeed = randomBetween(min, max)
+		this.initAITick()
+		return this._AIRunDelay
+	}
+
+	/**
 	 * 初始化自身AI刻
-	 * * 功能：设置AI刻到一个随机值
+	 * * 功能：设置AI刻{@link _AIRunDelay}到一个随机值
 	 * * 📌为何要设置到一个随机值而非`0`：**让AI之间看起来没有「同步行动」的诡异感**
 	 */
 	public initAITick(): void {
@@ -117,12 +130,12 @@ export default abstract class AIController extends PlayerController {
 		}
 		// 若非「已激活」「不再重生」：发送所有在「反应」时添加的玩家行为，然后清空
 		for (let i = 0; i < this._action_buffer.length; i++) {
-			if (this._action_buffer[i] !== EnumPlayerAction.NULL) {
+			if (this._action_buffer[i] !== EnumNativePlayerAction.NULL) {
 				// 生成「参数数组」
 				this._temp_add_action[0] = this._action_buffer[i]
 				// 分派
 				this.dispatchEvent(
-					ADD_ACTION,
+					NativeMatrixPlayerEvent.ADD_ACTION,
 					this._temp_add_action // ! 复用以避免创建大量数组
 				)
 			}

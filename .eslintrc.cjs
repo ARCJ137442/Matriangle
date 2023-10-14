@@ -63,8 +63,10 @@ module.exports = {
 			// 具体规则
 			rules: {
 				semi: 'off', // 不强求分号
-				'no-extra-semi': 'warn', // 不需要额外的分号；ASI自动分号插入
-				'prefer-const': 'warn', // 建议只赋值一次的使用`const`
+				// 不需要额外的分号；ASI自动分号插入 // !【2023-10-14 11:55:51】目前因为有了Prettier，所以不必启用
+				'no-extra-semi': 'off',
+				// 建议只赋值一次的使用`const`
+				'prefer-const': 'warn',
 
 				// TypeScript //
 

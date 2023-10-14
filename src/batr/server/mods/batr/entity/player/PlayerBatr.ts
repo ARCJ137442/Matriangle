@@ -21,7 +21,7 @@ import {
 	handlePlayerLocationChange,
 	computeFinalCD,
 } from '../../mechanics/BatrMatrixMechanics'
-import { EnumPlayerAction, PlayerAction } from '../../../native/entities/player/controller/PlayerAction'
+import { PlayerAction } from '../../../native/entities/player/controller/PlayerAction'
 import { NativePlayerEvent } from '../../../native/entities/player/controller/PlayerEvent'
 import { NativePlayerEventOptions } from '../../../native/entities/player/controller/PlayerEvent'
 import EffectPlayerHurt from '../effect/EffectPlayerHurt'
@@ -29,6 +29,7 @@ import MatrixRuleBatr from '../../../native/rule/MatrixRuleBatr'
 import IPlayerBatr from './IPlayerBatr'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from './BatrPlayerEvent'
 import Player_V1 from '../../../native/entities/player/Player_V1'
+import { EnumBatrPlayerAction } from './control/BatrPlayerAction'
 
 /**
  * 「Batr玩家」的主类
@@ -578,16 +579,16 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// 其它枚举类
 		else
 			switch (action) {
-				case EnumPlayerAction.DISABLE_CHARGE:
+				case EnumBatrPlayerAction.DISABLE_CHARGE:
 					if (this._isUsing) {
 						this.stopUsingTool(host)
 						this.startUsingTool(host)
 					}
 					return true
-				case EnumPlayerAction.START_USING:
+				case EnumBatrPlayerAction.START_USING:
 					this.startUsingTool(host)
 					return true
-				case EnumPlayerAction.STOP_USING:
+				case EnumBatrPlayerAction.STOP_USING:
 					this.stopUsingTool(host)
 					return true
 			}

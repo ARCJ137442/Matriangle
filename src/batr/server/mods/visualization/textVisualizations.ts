@@ -7,7 +7,7 @@ import MapStorageSparse from '../native/maps/MapStorageSparse'
 import { alignToGrid_P } from '../../general/PosTransform'
 import PlayerBatr from '../batr/entity/player/PlayerBatr'
 import IMapStorage from '../../api/map/IMapStorage'
-import { MatrixController } from '../../api/control/MatrixControl'
+import { MatrixEventDispatcher } from '../../api/control/MatrixControl'
 import PlayerController from '../native/entities/player/controller/PlayerController'
 import { MatrixProgram } from '../../api/control/MatrixProgram'
 import BonusBox from '../batr/entity/item/BonusBox'
@@ -19,6 +19,7 @@ import { NativeBlockIDs } from '../native/registry/NativeBlockRegistry'
 import EffectExplode from '../batr/entity/effect/EffectExplode'
 import MapSwitcherRandom from '../batr/mechanics/programs/MapSwitcherRandom'
 import IMatrix from '../../main/IMatrix'
+import IPlayer, { isPlayer } from '../native/entities/player/IPlayer'
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -40,6 +41,22 @@ export function showName(name: string, maxLength: uint = 7): string {
 	return name.slice(0, maxLength).padEnd(maxLength, ' ')
 }
 
+/**
+ * 呈现实体
+ * * 【2023-10-05 01:03:03】目前只呈现名称
+ */
+export function showEntity(entity: Entity, maxLength: uint = 7): string {
+	return showName(
+		// 自定义名称
+		(entity as IPlayer)?.customName ??
+			// 类名
+			getClass(entity)?.name ??
+			// 未定义
+			'#UNDEF',
+		maxLength
+	)
+}
+
 export function mapV地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
 	let line: string[]
 	const iP: iPoint = new iPoint(0, 0, ...otherPos_I)
@@ -51,14 +68,6 @@ export function mapV地图可视化(storage: MapStorageSparse, ...otherPos_I: in
 		}
 		console.log('|' + line.join(' ') + '|')
 	}
-}
-
-/**
- * 呈现实体
- * * 【2023-10-05 01:03:03】目前只呈现名称
- */
-export function showEntity(entity: Entity, maxLength: uint = 7): string {
-	return showName(getClass(entity)?.name ?? 'UNDEF', maxLength)
 }
 
 /**
@@ -176,12 +185,16 @@ export function entityLV实体列表可视化(es: Entity[], maxCount: uint = uin
 
 function entityTS实体标签显示(e: Entity): string {
 	// 玩家
-	if (e instanceof PlayerBatr)
-		return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${
-			e.HPText // 生命
-		}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${
-			e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
-		}]|#${e.team.name}:${e.team.id}#`
+	if (isPlayer(e))
+		if (e instanceof PlayerBatr)
+			// BaTr
+			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${
+				e.HPText // 生命
+			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${
+				e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
+			}]|#${e.team.name}:${e.team.id}#`
+		// 普通原生玩家
+		else return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${e.HPText}`
 	// 奖励箱
 	if (e instanceof BonusBox) return `${getClass(e)?.name}"${e.bonusType}"@${PV位置可视化(e)}`
 	// 特效
@@ -203,7 +216,7 @@ function entityTS实体标签显示(e: Entity): string {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`
 		// 控制器
-		else if (e instanceof MatrixController)
+		else if (e instanceof MatrixEventDispatcher)
 			if (e instanceof PlayerController)
 				// 玩家控制器
 				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(entityTS实体标签显示).join(', ')}`

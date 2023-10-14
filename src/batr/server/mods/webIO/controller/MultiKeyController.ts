@@ -1,11 +1,11 @@
 import { int } from '../../../../legacy/AS3Legacy'
 import IMatrix from '../../../main/IMatrix'
 import IPlayer from '../../native/entities/player/IPlayer'
-import { ADD_ACTION } from '../../native/entities/player/controller/PlayerAction'
+import { NativeMatrixPlayerEvent } from '../../native/entities/player/controller/PlayerAction'
 import PlayerController from '../../native/entities/player/controller/PlayerController'
 import { PlayerEventOptions } from '../../native/entities/player/controller/PlayerEvent'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import KeyboardController from './../../native/entities/player/controller/KeyboardController'
+import KeyboardControlCenter from '../../native/mechanics/program/KeyboardControlCenter'
 
 /**
  * 「多键控制器」是
@@ -14,7 +14,7 @@ import KeyboardController from './../../native/entities/player/controller/Keyboa
  *   * 「控制密钥」相同的玩家会被同时分派相同的动作
  * 玩家控制器
  *
- * TODO: 📌承继{@link KeyboardController}键盘控制器，还原其中的键控逻辑
+ * TODO: 📌承继{@link KeyboardControlCenter}键盘控制器，还原其中的键控逻辑
  */
 export default abstract class MultiKeyController extends PlayerController {
 	// 基于「控制密钥」的动作分派系统 //
@@ -89,7 +89,7 @@ export default abstract class MultiKeyController extends PlayerController {
 		for (const player of this.subscribers) {
 			if (this._playerKeyMap.get(player) === controlKey) {
 				// ! 这是唯一一个添加玩家行为的独有逻辑
-				player.onReceive(ADD_ACTION, action)
+				player.onReceive(NativeMatrixPlayerEvent.ADD_ACTION, action)
 			}
 		}
 	}

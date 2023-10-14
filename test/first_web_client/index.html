@@ -3,10 +3,10 @@
 <html lang="zh-cn">
 
 <head>
-	<title>Web controller WS</title>
+	<title>Matriangle Client V1</title>
 </head>
 
-<body onkeydown="onKeyDown">
+<body>
 
 	<div>
 		<h1>连接</h1>
@@ -14,15 +14,17 @@
 			<h2>控制器</h2>
 			<input type="text" id="controlAddress" placeholder="输入链接" value="127.0.0.1:3002">
 			<input type="text" id="controlKey" placeholder="输入控制密钥" value="p2">
+			<p id="controlCenterMessage"></p>
 			<p id="controlMessage"></p>
+			<button type="button" id="control">正在加载</button>
 		</div>
 		<div>
 			<h2>显示器</h2>
 			<input type="text" id="screenAddress" placeholder="输入链接" value="127.0.0.1:8080">
 			<input type="text" id="screenFPS" placeholder="输入FPS" value="10">
-			<input type="text" id="displayCode" placeholder="输入显示码" value="6">
+			<input type="text" id="displayCode" placeholder="输入显示码(6|player6@P2)" value="6">
 		</div>
-		<button type="button" id="reset">重置连接</button>
+		<button type="reset" id="reset">重置连接</button>
 	</div>
 
 	<!-- 若不使用CSS，则需要用<pre>标签保护其中有连续空格的文本，不然HTML会把连续空格变成一个空格 -->
@@ -37,6 +39,5 @@
 
 	<!-- 样式资源 -->
 	<link rel="stylesheet" href="style.css">
-
 
 </html>

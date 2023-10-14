@@ -1,4 +1,4 @@
-import { MatrixController } from '../../../../../api/control/MatrixControl'
+import { MatrixEventDispatcher } from '../../../../../api/control/MatrixControl'
 import { MatrixProgramLabel } from '../../../../../api/control/MatrixProgram'
 import IMatrix from '../../../../../main/IMatrix'
 import IPlayer from '../IPlayer'
@@ -8,11 +8,12 @@ import { PlayerEventOptions } from './PlayerEvent'
  * 「玩家控制器」
  * * 一个专用的用于控制玩家的世界控制器
  * * 封装了一系列有关玩家的钩子
+ * * 适用于：在「控制玩家」的基础上，需要「获取玩家反馈」的控制程序
  *
  * !【2023-10-09 21:20:28】现在不再是「活跃实体」：目前只需要处理「玩家需要其『反应』的`NativePlayerEvent.TICK`事件」，而无需在此添油加醋
  *
  */
-export default abstract class PlayerController extends MatrixController {
+export default abstract class PlayerController extends MatrixEventDispatcher {
 	/**
 	 * 构造函数
 	 */
@@ -33,9 +34,11 @@ export default abstract class PlayerController extends MatrixController {
 	override addSubscriber(subscriber: IPlayer): void {
 		return super.addSubscriber(subscriber)
 	}
+
 	override removeSubscriber(subscriber: IPlayer): boolean {
 		return super.removeSubscriber(subscriber)
 	}
+
 	override hasSubscriber(subscriber: IPlayer): boolean {
 		return super.hasSubscriber(subscriber)
 	}

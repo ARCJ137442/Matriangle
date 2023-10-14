@@ -6,7 +6,7 @@ import MatrixRuleBatr from '../rule/MatrixRuleBatr'
 import IMatrixRule from '../../../rule/IMatrixRule'
 import IMatrix from '../../../main/IMatrix'
 import IWorldRegistry from '../../../api/registry/IWorldRegistry'
-import { isDefined } from '../../../../common/utils'
+import { isDefined, voidF } from '../../../../common/utils'
 import { getRandomMap } from '../../batr/mechanics/BatrMatrixMechanics'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 
@@ -151,7 +151,7 @@ export default class Matrix_V1 implements IMatrix {
 	/** 待执行的「终执函数」，在所有实体刻、实体回收后执行 */
 	protected _tick_finalExecutions: (() => void)[] = []
 	/** @implements 实现：直接加入列表 */
-	insertFinalExecution(exe: () => void): void {
+	insertFinalExecution(exe: voidF): void {
 		this._tick_finalExecutions.push(exe)
 	}
 }

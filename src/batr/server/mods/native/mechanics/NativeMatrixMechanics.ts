@@ -6,6 +6,7 @@ import {
 	iPoint,
 	traverseNDSquareSurface,
 } from '../../../../common/geometricTools'
+import { MDNCodes } from '../../../../common/keyCodes'
 import { int, int$MIN_VALUE, uint } from '../../../../legacy/AS3Legacy'
 import BlockAttributes from '../../../api/block/BlockAttributes'
 import Entity from '../../../api/entity/Entity'
@@ -21,6 +22,7 @@ import { i_batrPlayer } from '../../batr/entity/player/IPlayerBatr'
 import { i_hasStats } from '../../batr/entity/player/IPlayerHasStats'
 import { computeFinalBlockDamage, bonusBoxTest } from '../../batr/mechanics/BatrMatrixMechanics'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
+import { PlayerControlConfig } from './program/KeyboardControlCenter'
 import MatrixRuleBatr from '../rule/MatrixRuleBatr'
 
 /**
@@ -44,12 +46,6 @@ import MatrixRuleBatr from '../rule/MatrixRuleBatr'
 
 //================🕹️玩家================//
 
-// 键盘控制相关 //
-
-//================🗺️地图================//
-
-// 测试
-
 // !【2023-10-09 19:26:02】`isPlayer`现已迁移至`IPlayer`类中
 /**
  * 用于在「通用化」后继续「专用化」，获取所有玩家的列表
@@ -67,6 +63,64 @@ export function getPlayers(host: IMatrix): IPlayer[] {
 		return host.entities.filter(isPlayer)
 	}
 }
+
+// 键盘控制相关 //
+
+// !【2023-10-14 10:30:37】有关「键盘控制标准」已移至{@link KeyboardController}
+
+/**
+ * 存储「玩家向某方向移动」的枚举
+ * * 很大程度上基于「任意维整数角」{@link mRot}
+ * * 注意：目前的「移动」是负数
+ */
+export enum PlayerMoveActions {
+	X_P = -1,
+	X_N = -2,
+	Y_P = -3,
+	Y_N = -4,
+	Z_P = -5,
+	Z_N = -6,
+	W_P = -7,
+	W_N = -8,
+}
+
+/**
+ * 存储（靠键盘操作的）玩家默认的「控制按键组」
+ */
+export const NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS: Record<uint, PlayerControlConfig> = {
+	// P1: WASD, Space
+	1: {
+		[MDNCodes.KEY_D]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.KEY_A]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.KEY_S]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.KEY_W]: PlayerMoveActions.Y_N, // 上
+	},
+	// P2: ↑←↓→, numpad_0
+	2: {
+		[MDNCodes.ARROW_RIGHT]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.ARROW_LEFT]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.ARROW_DOWN]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.ARROW_UP]: PlayerMoveActions.Y_N, // 上
+	},
+	// P3: UHJK, ]
+	3: {
+		[MDNCodes.KEY_K]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.KEY_H]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.KEY_J]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.KEY_U]: PlayerMoveActions.Y_N, // 上
+	},
+	// P4: 8456, +
+	4: {
+		[MDNCodes.NUMPAD_6]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.NUMPAD_4]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.NUMPAD_5]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.NUMPAD_8]: PlayerMoveActions.Y_N, // 上
+	},
+}
+
+//================🗺️地图================//
+
+// 测试
 
 /**
  * 当每个玩家「移动到某个方块」时，在移动后的测试
@@ -100,7 +154,6 @@ export function playerMoveInTest(host: IMatrix, player: IPlayer, isLocationChang
 					? (player.heal -= finalPlayerDamage) /* 注意：这里是负数 */ // 满生命值⇒加「储备生命值」
 					: player.addHP(host, -finalPlayerDamage, null) // 否则直接加生命值
 		}
-
 		// 正数⇒伤害
 		else player.removeHP(host, finalPlayerDamage, null)
 		returnBoo = true
@@ -283,6 +336,7 @@ function findFitSpawnPoint(host: IMatrix, player: IPlayer, spawnP: iPointRef, se
 	}
 	return spawnP
 }
+
 /**
  * 切换一个母体的地图
  * * 迁移自AS3版本`Game.changeMap`
@@ -292,12 +346,12 @@ function findFitSpawnPoint(host: IMatrix, player: IPlayer, spawnP: iPointRef, se
  * @param host 要更改地图的「游戏母体」
  * @param generateNew 是否告知地图「生成新一代」（用于一些「依靠代码随机生成」的地图）
  */
-
 export function changeMap(host: IMatrix, map: IMap, generateNew: boolean): void {
 	host.map = map
 	map.storage.generateNext()
 	// TODO: 显示更新
 }
+
 /**
  * 投影实体的坐标到某地图中
  * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
@@ -323,6 +377,7 @@ export function projectEntity(map: IMap, entity: Entity): void {
 		map.projectDirection(entity.direction)
 	}
 }
+
 /**
  * 投影所有实体的坐标
  * * 用于「在『维数不同』的地图间切换」中，确保坐标&朝向合法
@@ -331,7 +386,6 @@ export function projectEntity(map: IMap, entity: Entity): void {
  * * 如：不会触发玩家「移动」的钩子函数
  *
  */
-
 export function projectEntities(map: IMap, entities: Entity[]): void {
 	entities.forEach((e: Entity): void => projectEntity(map, e))
 }

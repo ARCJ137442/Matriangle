@@ -1,18 +1,35 @@
 import { int } from '../../../../../../legacy/AS3Legacy'
-import { MatrixEventType } from '../../../../../api/control/MatrixControl'
 import { mRot } from '../../../../../general/GlobalRot'
 
 /**
  * 玩家事件：从「控制器」向玩家回分派的事件类型
+ * * 继承自{@link MatrixEventType}
  * * 目前只有一个——添加动作
+ *
+ * !【2023-10-14 15:04:28】与「玩家告知给控制器的{@link PlayerEvent}不同」
  */
-export const ADD_ACTION: MatrixEventType = 'addAction'
+export enum NativeMatrixPlayerEvent {
+	ADD_ACTION = 'addAction',
+}
+
+/**
+ * 总体的「玩家行为」类型
+ * * 字符串对应「无参行为」
+ * * 数值用于表征「参数取值无限多」的「有参行为」
+ *   * 目前对应：
+ *     * 非负数n⇒转向「任意维整数角」n
+ *     * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
+ *   * 例如「转向」「移动」
+ *
+ * ?【2023-10-09 18:20:51】目前这样利用基础类型是否过于随意，不利于后续加入「有参行为」？
+ */
+export type PlayerAction = string | int
 
 /**
  * 一个用于统一所有玩家输出的枚举
  * * 用于在玩家接收事件时分派
  */
-export enum EnumPlayerAction {
+export enum EnumNativePlayerAction {
 	// **空操作** //
 	/**
 	 * 空操作
@@ -44,16 +61,6 @@ export enum EnumPlayerAction {
 	 */
 	TURN_BACK = 'turnBack',
 
-	/**
-	 * 开始使用（工具）
-	 */
-	START_USING = 'startUsing',
-
-	/**
-	 * 停止使用（工具）
-	 */
-	STOP_USING = 'stopUsing',
-
 	// **一些复合操作** //
 
 	/**
@@ -72,12 +79,6 @@ export enum EnumPlayerAction {
 	 * * 分解：转向后方+前进（一格）
 	 */
 	MOVE_BACK = 'moveBack',
-
-	/**
-	 * 停止充能
-	 * * 分解：停止使用+开始使用
-	 */
-	DISABLE_CHARGE = 'disableCharge',
 }
 
 /**
@@ -86,16 +87,3 @@ export enum EnumPlayerAction {
 export function getPlayerActionFromTurn(direction: mRot): PlayerAction {
 	return direction as PlayerAction
 }
-
-/**
- * 总体的「玩家行为」类型
- * * 字符串对应「无参行为」
- * * 数值用于表征「参数取值无限多」的「有参行为」
- *   * 目前对应：
- *     * 非负数n⇒转向「任意维整数角」n
- *     * 负数-n⇒转向「任意维整数角」(-n-1) + 前进
- *   * 例如「转向」「移动」
- *
- * ?【2023-10-09 18:20:51】目前这样利用基础类型是否过于随意，不利于后续加入「有参行为」？
- */
-export type PlayerAction = string | int

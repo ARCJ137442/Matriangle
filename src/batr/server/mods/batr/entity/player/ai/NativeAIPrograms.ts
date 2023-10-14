@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { randInt } from '../../../../../../common/exMath'
 import { uint } from '../../../../../../legacy/AS3Legacy'
-import { EnumPlayerAction, PlayerAction } from '../../../../native/entities/player/controller/PlayerAction'
+import { EnumNativePlayerAction, PlayerAction } from '../../../../native/entities/player/controller/PlayerAction'
 import { PlayerEvent } from '../../../../native/entities/player/controller/PlayerEvent'
 import AIControllerGenerator, { AIActionGenerator } from './AIControllerGenerator'
 import { getPlayerActionFromTurn } from '../../../../native/entities/player/controller/PlayerAction'
 import { i_hasTool } from '../IPlayerHasTool'
 import { AIPlayerEvent } from '../../../../native/entities/player/controller/AIController'
+import { EnumBatrPlayerAction } from '../control/BatrPlayerAction'
 
 /**
  * AI的「微行为」
@@ -33,7 +34,7 @@ export module MicroAIBehaviors {
 			throw new Error('AIProgram_Dummy: controller._temp_currentHost is undefined')
 
 		// 第一个「没有外界输入」的事件 //
-		let event: PlayerEvent = yield EnumPlayerAction.MOVE_FORWARD
+		let event: PlayerEvent = yield EnumNativePlayerAction.MOVE_FORWARD
 		// 主循环 //
 		while (true) {
 			// 移动 //
@@ -54,7 +55,7 @@ export module MicroAIBehaviors {
 			// 否则⇒移动总和递增，持续前进
 			else {
 				moveSum++
-				event = yield EnumPlayerAction.MOVE_FORWARD
+				event = yield EnumNativePlayerAction.MOVE_FORWARD
 			}
 		}
 	}
@@ -70,7 +71,7 @@ export module MicroAIBehaviors {
 			throw new Error('AIProgram_Dummy: controller._temp_currentHost is undefined')
 
 		// 第一个「没有外界输入」的事件 //
-		let event: PlayerEvent = yield EnumPlayerAction.START_USING
+		let event: PlayerEvent = yield EnumBatrPlayerAction.START_USING
 		// 主循环 //
 		while (true) {
 			// 「有工具机制」⇒正常进行 // * 为何放里面呢？因为这控制器可能控制不止一个玩家
@@ -78,24 +79,24 @@ export module MicroAIBehaviors {
 				if (controller._temp_currentPlayer.tool.reverseCharge) {
 					// 不停使用工具：持续按下「使用」键 //
 					event = yield controller._temp_currentPlayer.tool.chargingPercent >= 1
-						? EnumPlayerAction.START_USING // 已充能完毕⇒使用
+						? EnumBatrPlayerAction.START_USING // 已充能完毕⇒使用
 						: controller._temp_currentPlayer.isUsing // 否则⇒不要使用
-						? EnumPlayerAction.STOP_USING
-						: EnumPlayerAction.NULL // 兜底：返回空行为
+						? EnumBatrPlayerAction.STOP_USING
+						: EnumNativePlayerAction.NULL // 兜底：返回空行为
 					continue // !【2023-10-02 20:37:49】这个`continue`是必须的：若yield后还有代码会被执行，则下一次分派事件时就会无视一开始的过滤逻辑
 				}
 				// 否则，未使用⇒使用
 				else if (!controller._temp_currentPlayer.isUsing) {
-					event = yield EnumPlayerAction.START_USING
+					event = yield EnumBatrPlayerAction.START_USING
 					continue // !【2023-10-02 20:37:49】这个`continue`是必须的：若yield后还有代码会被执行，则下一次分派事件时就会无视一开始的过滤逻辑
 				}
 				// 空闲⇒返回空行为
 				else {
-					yield EnumPlayerAction.NULL
+					yield EnumNativePlayerAction.NULL
 					continue
 				}
 			// 否则⇒返回空
-			else yield EnumPlayerAction.NULL
+			else yield EnumNativePlayerAction.NULL
 		}
 	}
 }
@@ -120,13 +121,13 @@ export module NativeAIPrograms {
 		const aUsing: AIActionGenerator = MicroAIBehaviors.keepAlwaysUsingTool(controller)
 
 		// 第一个「没有外界输入」的事件 //
-		let event: PlayerEvent = yield EnumPlayerAction.NULL
+		let event: PlayerEvent = yield EnumNativePlayerAction.NULL
 		let reaction: PlayerAction
 		// 「行为生成器」总循环 //
 		while (true) {
 			// 屏蔽其它事件 //
 			if (event !== AIPlayerEvent.AI_TICK) {
-				event = yield EnumPlayerAction.NULL // !【2023-10-02 20:38:23】必须重新赋值，以刷新event变量
+				event = yield EnumNativePlayerAction.NULL // !【2023-10-02 20:38:23】必须重新赋值，以刷新event变量
 				continue
 			}
 			// console.log("[LOG] AIProgram_Dummy: event = ", event);
@@ -134,7 +135,7 @@ export module NativeAIPrograms {
 			// 第一层反应：优先保持使用工具
 			reaction = aUsing.next(event).value
 			// 非空⇒产出，空⇒下一个行为
-			if (reaction === EnumPlayerAction.NULL)
+			if (reaction === EnumNativePlayerAction.NULL)
 				// 移动
 				reaction = rWalk.next(event).value
 			// 最后肯定输出行为
@@ -151,7 +152,7 @@ export module NativeAIPrograms {
 	 */
 	export function* AIProgram_Novice(controller: AIControllerGenerator): AIActionGenerator {
 		while (true) {
-			yield EnumPlayerAction.NULL
+			yield EnumNativePlayerAction.NULL
 		}
 	}
 
@@ -163,7 +164,7 @@ export module NativeAIPrograms {
 	 */
 	export function* AIProgram_Adventurer(controller: AIControllerGenerator): AIActionGenerator {
 		while (true) {
-			yield EnumPlayerAction.NULL
+			yield EnumNativePlayerAction.NULL
 		}
 	}
 
@@ -176,7 +177,7 @@ export module NativeAIPrograms {
 	 */
 	export function* AIProgram_Master(controller: AIControllerGenerator): AIActionGenerator {
 		while (true) {
-			yield EnumPlayerAction.NULL
+			yield EnumNativePlayerAction.NULL
 		}
 	}
 }

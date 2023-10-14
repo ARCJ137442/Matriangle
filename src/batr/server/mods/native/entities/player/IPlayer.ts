@@ -12,8 +12,9 @@ import IMatrix from '../../../../main/IMatrix'
 import { mRot } from '../../../../general/GlobalRot'
 import { NativeDecorationLabel } from '../../../../../display/mods/native/entity/player/DecorationLabels'
 import PlayerController from './controller/PlayerController'
-import { IMatrixControlReceiver } from '../../../../api/control/MatrixControl'
+import { IMatrixEventReceiver } from '../../../../api/control/MatrixControl'
 import Entity from '../../../../api/entity/Entity'
+import { PlayerAction } from './controller/PlayerAction'
 
 /**
  * 「玩家」是
@@ -45,7 +46,7 @@ export default interface IPlayer
 		IEntityWithDirection,
 		IEntityHasHPAndHeal,
 		IEntityHasHPAndLives,
-		IMatrixControlReceiver {
+		IMatrixEventReceiver {
 	/**
 	 * 用于替代`instanceof`
 	 */
@@ -75,6 +76,16 @@ export default interface IPlayer
 	 * 与当前控制器断开
 	 */
 	disconnectController(): void
+
+	/**
+	 * 接收操作
+	 * * 功能：
+	 *   * 「添加行为」⇒直接添加到「缓存的行为」中
+	 *
+	 * @param type
+	 * @param args
+	 */
+	onReceive(type: string, action?: PlayerAction): void
 
 	/**
 	 * * 下面是一些用于「从IO中读取并执行」的「基本操作集合」

@@ -376,6 +376,27 @@ export function mergeMultiMaps<K, V>(a: Map<K, V>, ...bs: Map<K, V>[]): Map<K, V
 }
 
 /**
+ * 合并两个记录
+ * * {@link target}可为空：此时相当于（浅）拷贝source中的内容
+ *
+ * @param source 需要选取键值对合并的记录
+ * @param target 键值对合并的目标记录
+ * @param mergeCallback 合并的回调函数，默认选取「原记录」的值
+ * @returns 合并后的目标记录
+ */
+export function mergeRecords<K extends key | symbol, V>(
+	source: Record<K, V>,
+	target: Record<K, V>,
+	mergeCallback: (sourceV: V, targetV: V) => V = _temp_choose_first
+): Record<K, V> {
+	for (const k in source) {
+		target[k] = mergeCallback(source[k], target[k])
+	}
+	return target
+}
+const _temp_choose_first = <V>(v1: V, v2: V): V => v1
+
+/**
  * 从对象构建映射
  * @param obj 要变成映射的对象
  * @returns 对象变成的映射
@@ -430,10 +451,15 @@ export function isComplexInstance(v: any): boolean {
 	return !isPrimitiveInstance(v)
 }
 
+// ! 索引签名参数类型不能为文本类型或泛型类型。请考虑改用映射的对象类型。ts(1337)
+/* export type Records<K extends string | number | symbol, V> = {
+	[k: K]: V
+} */
+
 /**
  * 像「字典」一样「用字符串查询值」的对象
  */
-export interface dictionaryLikeObject {
+export type dictionaryLikeObject = {
 	[key: string]: any
 }
 
@@ -448,7 +474,7 @@ export interface dictionaryLikeObject {
  * @param to 要合并到的对象
  * @returns 合并后的数据对象
  */
-export function combineObject(from: any, to: any): any {
+export function mergeObject(from: any, to: any): any {
 	for (const i in from) {
 		if (from.hasOwnProperty(i)) {
 			to[i] = from[i]
@@ -483,7 +509,7 @@ export function flattenObject(
 		const value = obj[key]
 		console.log(key, value)
 		if (isPrimitiveInstance(value)) result[prefix + key] = value
-		else combineObject(flattenObject(value, separator, prefix + key + separator), result)
+		else mergeObject(flattenObject(value, separator, prefix + key + separator), result)
 	}
 	return result
 }
@@ -512,12 +538,45 @@ export function isExtend(C1: Class, C: Class): boolean {
 	return C1 === C || C1.prototype instanceof C
 }
 
-export function identity<T>(x: T): T {
-	return x
-}
+/**
+ * 单位函数
+ * * 映射结果即返回自身
+ *
+ * @param x 输入
+ * @returns 输入量自身
+ */
+export const identity = <T>(x: T): T => x
 
-export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> {
-	const arr: Array<T> = new Array<T>(length)
+/**
+ * 纯空函数
+ * * 零参数
+ * * 空返回
+ */
+export type voidF = () => void
+/**
+ * （零输入/单输入）空值函数
+ * * 不管输入任何结果，都只会返回空值（`undefined`）
+ *
+ * !【2023-10-14 11:20:37】使用`void 0`比使用`void x`性能更佳（这个`void`语句会在编译后的JS中保留）
+ */
+export const omega = (x?: unknown): void => void 0
+
+/**
+ * 空值函数
+ * * 不管输入任何结果，都只会返回空值（`undefined`）
+ */
+export const omegas = (...args: unknown[]): void => undefined
+
+/**
+ * 根据索引生成数组
+ *
+ * @param length 数组的长度
+ * @param f 「索引→元素」映射
+ * @returns 一个指定类型的数组，满足`arr[i] = f(i)`
+ */
+
+export function generateArray<T>(length: uint, f: (index: uint) => T): T[] {
+	const arr: T[] = new Array<T>(length)
 	for (let i = 0; i < length; i++) arr[i] = f(i)
 	return arr
 }
@@ -526,4 +585,16 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): Array<T> 
 export type key = string | number /*  | symbol */ // ? 【2023-10-07 21:24:37】是否要加入symbol，待定
 
 /** 可空对象 */ // ! 【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
-// export type nullable<T> = T | null;
+export type Nullable<T> = T | null
+
+/**
+ * 明确标识「引用类型」
+ * * 应用：使用「原地操作」改变参数的函数参数类型
+ */
+export type Ref<T> = T
+
+/**
+ * 明确标识「值类型」
+ * * 应用：「（使用`new`等）创建一个新对象」的函数返回值
+ */
+export type Val<T> = T

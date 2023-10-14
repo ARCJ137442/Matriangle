@@ -1,6 +1,6 @@
 ﻿import { BlockEventMap, BlockTypeEventMap, BlockEventType } from './BlockEventTypes'
 import { typeID } from '../registry/IWorldRegistry'
-import { combineObject } from '../../../common/utils'
+import { mergeObject } from '../../../common/utils'
 
 /**
  * 方块事件注册表
@@ -40,7 +40,7 @@ export default class BlockEventRegistry {
 		// 之前没有对ID注册过⇒开辟新对象
 		this._blockPatchMap[id] ??= {}
 		// 已注册⇒直接合并
-		combineObject(patch, this._blockPatchMap[id])
+		mergeObject(patch, this._blockPatchMap[id])
 		return this._blockPatchMap[id]
 	}
 

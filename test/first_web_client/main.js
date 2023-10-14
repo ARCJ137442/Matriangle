@@ -2,6 +2,7 @@
 const controlAddress = document.getElementById('controlAddress');
 const controlKey = document.getElementById('controlKey');
 const controlMessage = document.getElementById('controlMessage');
+const controlCenterMessage = document.getElementById('controlCenterMessage');
 
 function getWSLinkControl() { return `ws://${controlAddress.value}`; }
 let socketScreen;
@@ -27,7 +28,7 @@ const isEntityListSignal = (text) => text.startsWith('实体列表');
 
 /**
  * 重置网络
- * 
+ *
  * @param {boolean} force 是否强制
  */
 function resetAllWS(force = true/* 默认为真，留给侦听器直接调用 */) {
@@ -38,7 +39,7 @@ function resetAllWS(force = true/* 默认为真，留给侦听器直接调用 */
 }
 /**
  * 重置控制
- * 
+ *
  * @param {boolean} force 是否强制
  */
 function resetControlWS(force = false) {
@@ -60,7 +61,7 @@ function resetControlWS(force = false) {
 const reconnectScreenTimeoutID = { value: undefined };
 /**
  * 不冲突地设定timeout
- * @param {{value:number|undefined}} id 
+ * @param {{value:number|undefined}} id
  */
 const softSetTimeout = (id, callback, delay, ...args) => {
 	return (
@@ -71,7 +72,7 @@ const softSetTimeout = (id, callback, delay, ...args) => {
 };
 /**
  * 重置屏显
- * 
+ *
  * @param {boolean} force 是否强制
  */
 function resetScreenWS(force = false/* 默认为假，留给「自动重连」调用 */) {
@@ -138,7 +139,7 @@ resetAllWS(true);
 const pressed = {};
 /**
  * 根据键位获取「动作信息」
- * 
+ *
  * @param {KeyboardEvent} event 键盘事件
  * @param {boolean} isDown 是否按下
  * @returns WS信息
@@ -154,9 +155,9 @@ function getControlMessage(event, isDown) {
 
 /**
  * 根据键盘事件返回「玩家行动」
- * 
+ *
  * TODO: 这些代码计划内迁入TS中，变成原先AS3那样可配置的一部分
- * 
+ *
  * @param {KeyboardEvent} keyboardEvent 键盘事件
  * @param {boolean} isDown 是否按下
  * @returns 对应的「玩家行动」值
@@ -198,30 +199,46 @@ function getActionFromEvent(keyboardEvent, isDown) {
  * @param {KeyboardEvent} event 键盘事件
  */
 function onKeyDown(event) {
-	// 产生消息
-	const message = getControlMessage(event, true);
-	if (message === undefined) return;
-	if (controlMessage) controlMessage.innerText = `↓ message = ${message}`;
-	// 阻止默认操作（不会造成画面滚动）
-	event.preventDefault();
-	// 断线⇒尝试重连
-	if (!socketControl || socketControl.readyState === WebSocket.CLOSED) {
-		console.warn('控制WS断线。尝试重新连接。。。');
-		resetControlWS();
-		return;
-	}
-	// 发送请求
-	sendMessage(socketControl, message);
+	onKeyEvent(event, true)
 }
 /**
  * 键盘释放
  * @param {KeyboardEvent} event 键盘事件
  */
 function onKeyUp(event) {
+	onKeyEvent(event, false);
+}
+
+/**
+ * 统一键盘事件
+ *
+ * ! 注意：键盘事件的`key`、`code`是不一样的
+ * * `key`对应的是「键的语义」而不关注「位置」，如`Shift`（左右都会触发）
+ * * `code`在「语义的基础上」还关注「键的具体位置」，如`ShiftLeft`（只对应左Shift）
+ * * `keyCode`为「待弃用内容」，不推荐使用
+ *
+ * 参考：MDN文档（[key](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key)、[code](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/code)）
+ *
+ * @param {KeyboardEvent} event 键盘事件
+ * @param {boolean} isDown 是否为「按下」事件
+ */
+function onKeyEvent(event, isDown) {
+	// 指定指针
+	keyEventHandler?.(event, isDown)
+}
+/** @type {(event:KeyboardEvent, isDown:boolean) => void} */
+let keyEventHandler;
+
+/**
+ * 对接老式的「远控操作」
+ * @param {KeyboardEvent} event 键盘事件
+ * @param {boolean} isDown 是否为「按下」事件
+ */
+function handleMultiKeyController(event, isDown) {
 	// 产生消息
-	const message = getControlMessage(event, false);
+	const message = getControlMessage(event, isDown);
 	if (message === undefined) return;
-	if (controlMessage) controlMessage.innerText = `↑ message = ${message}`;
+	if (controlMessage) controlMessage.innerText = `${isDown ? '↓' : '↑'} message = ${message}`;
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault();
 	// 断线⇒尝试重连
@@ -235,8 +252,25 @@ function onKeyUp(event) {
 }
 
 /**
+ * 呼叫「键控中心」
+ * * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
+ *
+ * ! 要「键位」code而非「键值」key
+ *
+ * @param {KeyboardEvent} event 键盘事件
+ * @param {boolean} isPress 按键是否是「按下」（否则为「释放」）
+ */
+function handleKeyboardControlCenter(event, isPress) {
+	_temp_callKeyboardControlCenter_message = `|${isPress ? '+' : ''}${event.code}`
+	controlCenterMessage.innerText = _temp_callKeyboardControlCenter_message
+	sendMessage(socketControl, _temp_callKeyboardControlCenter_message)
+}
+/** @type {string} */
+let _temp_callKeyboardControlCenter_message
+
+/**
  * 向WS发送消息
- * 
+ *
  * * 只在状态为「打开」时发送消息
  * @param {KeyboardEvent} event 键盘事件
  */
@@ -245,15 +279,47 @@ function sendMessage(socket, message) {
 		socket.send(message);
 }
 
+// 操作状态 //
+const controlArea = document.getElementById('control')
+
+let _controlStatus = 0
+const controlStatusInf = [
+	{
+		name: '操作模式：无（点击切换）',
+		handler: () => void 0
+	},
+	{
+		name: '操作模式：指定玩家',
+		handler: handleMultiKeyController
+	},
+	{
+		name: '操作模式：键控中心',
+		handler: handleKeyboardControlCenter
+	},
+]
+
+function updateControlStatus(value) {
+	controlArea.innerText = controlStatusInf[value].name
+	keyEventHandler = controlStatusInf[value].handler
+}
+function switchControlStatus() {
+	_controlStatus++
+	_controlStatus %= controlStatusInf.length
+	updateControlStatus(_controlStatus)
+}
+updateControlStatus(_controlStatus)
+
+// 侦听器 //
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keyup', onKeyUp);
+controlArea.addEventListener('click', switchControlStatus);
 resetButton.addEventListener('click', resetAllWS);
 
 // 显示器 //
 
 /**
  * 刷新画面
- * 
+ *
  * @param {Element} text 文本元素
  */
 function setScreen(text) {
@@ -263,7 +329,7 @@ function setScreen(text) {
 
 /**
  * 刷新其它信息（实体列表）
- * 
+ *
  * @param {Element} text 文本元素
  */
 function setOtherInf(text) {

@@ -7,6 +7,7 @@ import {
 	randomInWeightMap,
 	MapFromObject,
 	randomBoolean,
+	mergeRecords,
 } from '../../../../common/utils'
 import BonusBoxSymbol from '../../../../display/mods/native/entity/BonusBoxSymbol'
 import { uint, int, uint$MAX_VALUE, int$MIN_VALUE, int$MAX_VALUE, ConcreteClass } from '../../../../legacy/AS3Legacy'
@@ -30,7 +31,6 @@ import Projectile from '../entity/projectile/Projectile'
 import Wave from '../entity/projectile/other/Wave'
 import { NativeTools } from '../registry/ToolRegistry'
 import IPlayer from '../../native/entities/player/IPlayer'
-import { KeyCode, keyCodes } from '../../../../common/keyCodes'
 import { HSVtoHEX } from '../../../../common/color'
 import IMatrixRule from '../../../rule/IMatrixRule'
 import { IEntityInGrid } from '../../../api/entity/EntityInterfaces'
@@ -60,9 +60,12 @@ import IPlayerHasTeam, { i_hasTeam } from '../entity/player/IPlayerHasTeam'
 import IPlayerHasStats, { i_hasStats } from '../entity/player/IPlayerHasStats'
 import { NativeBlockPrototypes } from '../../native/registry/NativeBlockRegistry'
 import Bullet from '../entity/projectile/bullet/Bullet'
-import { getPlayers } from '../../native/mechanics/NativeMatrixMechanics'
+import { NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS, getPlayers } from '../../native/mechanics/NativeMatrixMechanics'
 import { spreadPlayer } from '../../native/mechanics/NativeMatrixMechanics'
 import Entity from '../../../api/entity/Entity'
+import { PlayerControlConfig } from '../../native/mechanics/program/KeyboardControlCenter'
+import { EnumBatrPlayerAction } from '../entity/player/control/BatrPlayerAction'
+import { MDNCodes } from '../../../../common/keyCodes'
 
 /**
  * 所有世界的「原生逻辑」
@@ -1539,77 +1542,37 @@ export function playerLevelUpExperience(level: uint): uint {
 	return (level + 1) * 5 + (level >> 1)
 }
 
-// 键盘控制相关 //
-
-export type NativeControlKeyConfig = {
-	// 移动键（多个） // ! 注意：是根据「任意维整数角」排列的，方向为「右左下上」
-	move: KeyCode[]
-	// 使用键
-	use: KeyCode
-	// 选择键（WIP）
-	// select_left:KeyCode,
-	// select_right:KeyCode,
-}
-
-export type NativeControlKeyConfigs = {
-	[n: uint]: NativeControlKeyConfig
-}
-
 /**
  * 存储（靠键盘操作的）玩家默认的「控制按键组」
+ * * 除了默认值外，新增「使用」绑定
  */
-export const DEFAULT_PLAYER_CONTROL_KEYS: NativeControlKeyConfigs = {
-	// P0: 占位符
-	0: {
-		move: [
-			keyCodes.EMPTY, // 右
-			keyCodes.EMPTY, // 左
-			keyCodes.EMPTY, // 下
-			keyCodes.EMPTY, // 上
-		],
-		use: keyCodes.EMPTY, // 用
+export const BATR_DEFAULT_PLAYER_CONTROL_CONFIGS: Record<uint, PlayerControlConfig> = mergeRecords(
+	NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS,
+	{
+		// P1: WASD, Space
+		1: {
+			// 使用「二元组」表示「按下动作/释放动作」
+			[MDNCodes.SPACE]: [EnumBatrPlayerAction.START_USING, EnumBatrPlayerAction.STOP_USING], // 用
+		},
+		// P2: ↑←↓→, numpad_0
+		2: {
+			// 使用「二元组」表示「按下动作/释放动作」
+			[MDNCodes.NUMPAD_0]: [EnumBatrPlayerAction.START_USING, EnumBatrPlayerAction.STOP_USING], // 用
+		},
+		// P3: UHJK, ]
+		3: {
+			// 使用「二元组」表示「按下动作/释放动作」
+			[MDNCodes.BRACKET_RIGHT]: [EnumBatrPlayerAction.START_USING, EnumBatrPlayerAction.STOP_USING], // 用
+		},
+		// P4: 8456, +
+		4: {
+			// 使用「二元组」表示「按下动作/释放动作」
+			[MDNCodes.NUMPAD_ADD]: [EnumBatrPlayerAction.START_USING, EnumBatrPlayerAction.STOP_USING], // 用
+		},
 	},
-	// P1: WASD, Space
-	1: {
-		move: [
-			keyCodes.D, // 右
-			keyCodes.A, // 左
-			keyCodes.S, // 下
-			keyCodes.W, // 上
-		],
-		use: keyCodes.SPACE, // 用
-	},
-	// P2: ↑←↓→, numpad_0
-	2: {
-		move: [
-			keyCodes.RIGHT, // 右
-			keyCodes.LEFT, // 左
-			keyCodes.DOWN, // 下
-			keyCodes.UP, // 上
-		],
-		use: keyCodes.NUMPAD_0, // 用
-	},
-	// P3: UHJK, ]
-	3: {
-		move: [
-			keyCodes.K, // 右
-			keyCodes.H, // 左
-			keyCodes.J, // 下
-			keyCodes.U, // 上
-		],
-		use: keyCodes.RIGHT_BRACKET, // 用
-	},
-	// P4: 8456, +
-	4: {
-		move: [
-			keyCodes.NUMPAD_6, // 右
-			keyCodes.NUMPAD_4, // 左
-			keyCodes.NUMPAD_5, // 下
-			keyCodes.NUMPAD_8, // 上
-		],
-		use: keyCodes.NUMPAD_ADD, // 用
-	},
-}
+	// * 第二层合并，不然会变成「直接替换」
+	(sV, tV) => mergeRecords(sV, tV)
+)
 
 // 世界规则相关 //
 

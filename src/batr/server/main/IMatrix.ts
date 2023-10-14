@@ -3,6 +3,7 @@ import IMap from '../api/map/IMap'
 import Entity from '../api/entity/Entity'
 import IMatrixRule from '../rule/IMatrixRule'
 import IWorldRegistry from '../api/registry/IWorldRegistry'
+import { voidF } from '../../common/utils'
 
 /**
  * 母体：承载并控制所有「世界运行」有关的事物
@@ -65,7 +66,7 @@ export default interface IMatrix {
 	 * * 原理：插入之后的闭包函数，母体在「遍历全部实体的『游戏刻』」后自动执行并丢弃
 	 * * 应用：「地图切换机制」中用于防止「切换之后还需要遍历实体」的情况
 	 */
-	insertFinalExecution(exe: () => void): void
+	insertFinalExecution(exe: voidF): void
 
 	//========🗺️地图部分：地图加载、地图变换等========//
 	/**
@@ -212,7 +213,7 @@ export default interface IMatrix {
 	//====Functions About World Global Running====//
 
 	//====Listener Functions====// TODO: 后续将被统一的「控制器」取代
-	/*onEnterFrame(E:Event):void 
+	/*onEnterFrame(E:Event):void
 	refreshLastTime(): void;
 	dealSecond(): void;
 	updateGUIText(): void;
@@ -226,7 +227,7 @@ export default interface IMatrix {
 	/**
 	 * TODO: 这些函数计划被实现为Mod的「工具函数」
 	 * * 实现方法：在最前面附带母体以让函数完全独立于任何一个类
-	 * 
+	 *
 	 * !【2023-10-02 22:37:20】现已全部弃用：不再把「具体机制」内置于此，改为在「原生世界机制」中使用
 	 */
 

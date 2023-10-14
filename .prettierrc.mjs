@@ -13,7 +13,7 @@ const config = {
 	semi: false,
 
 	// 一行最大长度
-	printWidth: 120,
+	printWidth: 80,
 
 	// { 对象字面量: 空格 }
 	bracketSpacing: true,
