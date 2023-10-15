@@ -257,7 +257,7 @@ export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
 		// TODO: 如何在保持通用性的同时，保证专用性与效率。。。（过滤和遍历已经是一种方案了）
 		// FinalDamage
 		if (projectileCanHurtOther(wave, victim)) {
-			if (base.getDistance(victim.position) <= radius) {
+			if (base.getDistanceSquare(victim.position) <= radius * radius) {
 				victim.removeHP(host, wave.attackerDamage, wave.owner)
 			}
 		}
@@ -265,87 +265,6 @@ export function waveHurtPlayers(host: IMatrix, wave: Wave): void {
 }
 
 // !【2023-10-04 22:27:25】下面的代码全部在迁移之中，等待复活🏗️
-
-/* export function laserHurtPlayers(
-    host: IBatrMatrix, creator: IPlayer | null,
-    laser: LaserBasic,
-    damage: uint,
-    specialProcessCallback:(host:IBatrMatrix, victim:IPlayer) => vod
-): void {
-    // Set Variables
-    let attacker: IPlayer | null = laser.owner;
-    let damage: uint = laser.damage;
-
-    let length: uint = laser.length;
-    let rot: uint = laser.rot;
-    let teleport: boolean = laser instanceof LaserTeleport;
-    let absorption: boolean = laser instanceof LaserAbsorption;
-    let pulse: boolean = laser instanceof LaserPulse;
-
-    // Pos
-    let baseX: int = PosTransform.alignToGrid(laser.entityX);
-    let baseY: int = PosTransform.alignToGrid(laser.entityY);
-    let vx: int = GlobalRot.towardXInt(rot, 1);
-    let vy: int = GlobalRot.towardYInt(rot, 1);
-    let cx: int = baseX, cy: int = baseY, players: IPlayer[];
-
-    // let nextBlockAtt:BlockAttributes
-    // Damage
-    laser.hasDamaged = true;
-
-    let finalDamage: uint;
-    for (let i: uint = 0; i < length; i++) {
-        // nextBlockAtt=host.getBlockAttributes(cx+vx,cy+vy);
-        players = host.getHitPlayers(cx, cy);
-
-        for (let victim of players) {
-            if (victim === null)
-                continue;
-
-            // Operate
-            finalDamage = attacker === null ? damage : victim.computeFinalDamage(attacker, laser.ownerTool, damage);
-            // Effects
-            if (attacker === null || attacker.canUseToolHurtPlayer(victim, laser.ownerTool)) {
-                // Damage
-                victim.removeHP(finalDamage, attacker);
-
-                // Absorption
-                if (attacker !== null && !attacker.isRespawning && absorption)
-                    attacker.heal += damage;
-            }
-            if (victim != attacker && !victim.isRespawning) {
-                if (teleport) {
-                    host.spreadPlayer(victim);
-                }
-                if (pulse) {
-                    if ((laser as LaserPulse).isPull) {
-                        if (host.testCanPass(cx - vx, cy - vy, true, false, false, true, false))
-                            victim.addXY(-vx, -vy);
-                    }
-                    else if (host.testCanPass(cx + vx, cy + vy, true, false, false, true, false))
-                        victim.addXY(vx, vy);
-                }
-            }
-        }
-        cx += vx;
-        cy += vy;
-    }
-} */
-
-/* export function thrownBlockHurtPlayer(host: IBatrMatrix, block: ThrownBlock): void {
-    let attacker: IPlayer = block.owner;
-    let damage: uint = block.damage;
-    for (let victim of host._entitySystem.players) {
-        if (victim === null)
-            continue;
-        // FinalDamage
-        if (attacker === null || attacker.canUseToolHurtPlayer(victim, block.ownerTool)) {
-            if (victim.gridX == block.gridX && victim.gridY == block.gridY) {
-                victim.finalRemoveHP(attacker, block.ownerTool, damage);
-            }
-        }
-    }
-} */
 
 /* export function lightningHurtPlayers(host: IBatrMatrix, lightning: Lightning, players: IPlayer[], damages: uint[]): void {
     let p: IPlayer, d: uint;
@@ -1699,7 +1618,7 @@ export function randomTick_LaserTrap(
 				randomR
 			)
 			if (laserLength <= 0) continue
-
+			// 随机获取一个激光生成配置
 			const randomS = randomIn(_temp_randomTick_weapons)
 			p = new randomS[0](
 				null,
@@ -1711,14 +1630,8 @@ export function randomTick_LaserTrap(
 				// 其它附加参数
 				...randomS[2]
 			)
+			// 添加实体
 			host.addEntity(p)
-			console.log(
-				'laser at' + '(',
-				p.position,
-				'),' + p.life,
-				p.length,
-				p.owner
-			)
 			break
 		}
 	}

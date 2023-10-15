@@ -47,10 +47,7 @@ export default class LaserTeleport extends Laser {
 
 	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
-		if ((this.life & 7) === 0)
-			console.warn(
-				'LaserTeleport: laserHurtPlayers(host, this, (host,victim) => {}) WIP!'
-			) //laserHurtPlayers(host, this);
+		if ((this.life & 7) === 0) this.hurtPlayers(host)
 		super.onTick(host) // ! 超类逻辑：处理生命周期
 	}
 
