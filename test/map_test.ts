@@ -13,6 +13,7 @@ import { randInt, randIntBetween, sum } from '../src/matriangle/common/exMath'
 import { BatrDefaultMaps } from '../src/matriangle/server/mods/BaTS/registry/MapRegistry'
 import { BatrBlockPrototypes } from '../src/matriangle/server/mods/BaTS/registry/BlockRegistry'
 import { mapV地图可视化 } from '../src/matriangle/server/mods/visualization/textVisualizations'
+import { NativeBlockPrototypes } from '../src/matriangle/server/mods/native/registry/NativeBlockRegistry'
 
 const { log, info, time, timeEnd } = console
 log(new MapStorageSparse(2))
@@ -157,7 +158,7 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
 	s3.forEachValidPositions((p: iPoint): void => {
 		// 外框
 		if (p.some(x => x === 0 || x === 7))
-			s3.setBlock(p, BatrBlockPrototypes.COLORED.softCopy())
+			s3.setBlock(p, NativeBlockPrototypes.COLORED.softCopy())
 		// 内空
 		else s3.setVoid(p)
 	})

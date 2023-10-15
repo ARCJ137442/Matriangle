@@ -4,9 +4,9 @@ import Tool from '../server/registry/Tool'
 import GameModeType from '../../../server/rule/WorldModeType'
 import MatrixRuleBatr from '../../../server/mods/native/rule/MatrixRuleBatr'
 import { uint } from '../../../legacy/AS3Legacy'
-import ForcedI18nText from './ForcedI18nText'
+import ForcedI18nText from './ForcedI18nText.ts_depreceted'
 import I18nKey from './I18nKey'
-import I18ns from './I18ns'
+import I18ns from './I18ns.ts_depreceted'
 
 export default class I18nText {
 	//============Static Variables============//

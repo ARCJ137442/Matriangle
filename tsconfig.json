@@ -10,5 +10,13 @@
 		"resolveJsonModule": true, // 允许使用import语句导入JSON文件（作为对象）
 		"declaration": true // 生成相应的声明文件
 	},
-	"include": ["src"]
+	"include": [
+		"src",
+		"deprecated/Game.deprecated.ts",
+		"deprecated/Matrix_V1.deprecated.ts",
+		"deprecated/WorldRuleEvent.deprecated.ts",
+		"deprecated/[to-be-migrated]BlockShapeFunctions.deprecated.ts",
+		"deprecated/programs",
+		"deprecated/KeyListener.deprecated.ts"
+	]
 }

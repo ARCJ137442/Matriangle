@@ -11,6 +11,7 @@ bin-release/
 *.rar
 *.7z
 *.gz
+dist/
 
 # Windows:
 [Tt]humbs.db

@@ -3,7 +3,7 @@ import {
 	Server as HTTPServer,
 	IncomingMessage,
 	ServerResponse,
-} from 'node:http'
+} from 'http'
 import { Server as WebSocketServer, WebSocket } from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
 import { uint } from '../../../legacy/AS3Legacy'
 import {
