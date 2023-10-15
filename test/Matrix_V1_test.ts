@@ -18,9 +18,17 @@ import WorldRegistry_V1 from '../src/batr/server/mods/native/registry/Registry_V
 import { NativeTools as BatrTools } from '../src/batr/server/mods/batr/registry/ToolRegistry'
 import MatrixRuleBatr from '../src/batr/server/mods/native/rule/MatrixRuleBatr'
 import Matrix_V1 from '../src/batr/server/mods/native/main/Matrix_V1'
-import { listE列举实体, matrixV母体可视化 } from '../src/batr/server/mods/visualization/textVisualizations'
+import {
+	listE列举实体,
+	matrixV母体可视化,
+} from '../src/batr/server/mods/visualization/textVisualizations'
 import { TICK_TIME_MS, TPS } from '../src/batr/server/main/GlobalWorldVariables'
-import { mergeMaps, mergeMultiMaps, randomBoolean, randomIn } from '../src/batr/common/utils'
+import {
+	mergeMaps,
+	mergeMultiMaps,
+	randomBoolean,
+	randomIn,
+} from '../src/batr/common/utils'
 import { NativeBonusTypes as BatrBonusTypes } from '../src/batr/server/mods/batr/registry/BonusRegistry'
 import { iPoint } from '../src/batr/common/geometricTools'
 import MatrixVisualizer from '../src/batr/server/mods/visualization/web/MatrixVisualizer'
@@ -46,7 +54,10 @@ import KeyboardControlCenter, {
 } from '../src/batr/server/mods/native/mechanics/program/KeyboardControlCenter'
 import ProgramAgent from './../src/batr/server/mods/TMatrix/program/Agent'
 import Entity from '../src/batr/server/api/entity/Entity'
-import { IEntityHasPosition, i_hasPosition } from '../src/batr/server/api/entity/EntityInterfaces'
+import {
+	IEntityHasPosition,
+	i_hasPosition,
+} from '../src/batr/server/api/entity/EntityInterfaces'
 import ProgramMerovingian from './../src/batr/server/mods/TMatrix/program/Merovingian'
 import { isPlayer } from '../src/batr/server/mods/native/entities/player/IPlayer'
 import { MatrixProgram } from '../src/batr/server/api/control/MatrixProgram'
@@ -61,15 +72,24 @@ function initMatrixRule(): IMatrixRule {
 	const MAPS = [
 		new Map_V1(
 			'stacked',
-			stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap): MapStorageSparse => map.storage as MapStorageSparse))
+			stackMaps(
+				BatrDefaultMaps._ALL_MAPS.map(
+					(map: IMap): MapStorageSparse =>
+						map.storage as MapStorageSparse
+				)
+			)
 		),
 	] // 【2023-10-12 13:01:50】目前是「堆叠地图」测试
 	for (const map of MAPS) rule.mapRandomPotentials.set(map, 1)
 	// 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-	for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE) rule.bonusTypePotentials.set(bt, 1)
+	for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE)
+		rule.bonusTypePotentials.set(bt, 1)
 
 	// 设置所有工具 // * 现在开放激光系列
-	rule.enabledTools = [...BatrTools.WEAPONS_BULLET, ...BatrTools.WEAPONS_LASER]
+	rule.enabledTools = [
+		...BatrTools.WEAPONS_BULLET,
+		...BatrTools.WEAPONS_LASER,
+	]
 
 	return rule
 }
@@ -78,7 +98,11 @@ function initMatrixRule(): IMatrixRule {
 function initWorldRegistry(): IWorldRegistry {
 	const registry = new WorldRegistry_V1(
 		// * 生成最终「方块构造器映射表」：多个mod的映射表合并
-		mergeMultiMaps(new Map(), NATIVE_BLOCK_CONSTRUCTOR_MAP, BATR_BLOCK_CONSTRUCTOR_MAP),
+		mergeMultiMaps(
+			new Map(),
+			NATIVE_BLOCK_CONSTRUCTOR_MAP,
+			BATR_BLOCK_CONSTRUCTOR_MAP
+		),
 		new BlockEventRegistry(BATR_BLOCK_EVENT_MAP) // *【2023-10-08 17:51:25】使用原生的「方块事件列表」
 	)
 	mergeMaps(registry.toolUsageMap, BATR_TOOL_USAGE_MAP)
@@ -139,8 +163,18 @@ function setupPlayers(host: IMatrix): void {
 	let kcc: KeyboardControlCenter = new KeyboardControlCenter()
 	// 三号机没有控制器
 	// 添加p2的按键绑定
-	kcc.addKeyBehaviors(generateBehaviorFromPlayerConfig(p2, BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]))
-	kcc.addKeyBehaviors(generateBehaviorFromPlayerConfig(p3, BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[2]))
+	kcc.addKeyBehaviors(
+		generateBehaviorFromPlayerConfig(
+			p2,
+			BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]
+		)
+	)
+	kcc.addKeyBehaviors(
+		generateBehaviorFromPlayerConfig(
+			p3,
+			BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[2]
+		)
+	)
 	// 连接：键控中心 - 消息路由器
 	router.registerServiceWithType(
 		'ws',
@@ -181,22 +215,37 @@ function setupSpecialPrograms(host: IMatrix): void {
 	const agent1: ProgramAgent = new ProgramAgent(
 		// 监控「禁区」：实体的z坐标是否>15
 		(host: IMatrix, e: Entity): boolean =>
-			e !== agent1 && e.isActive /* && i_hasPosition(e) && e.position.z >= 15 */ && randomBoolean(1, 0xff),
+			e !== agent1 &&
+			e.isActive /* && i_hasPosition(e) && e.position.z >= 15 */ &&
+			randomBoolean(1, 0xff),
 		// 武器「删除」：将实体取消激活
 		(host: IMatrix, e: Entity): void => {
 			e.isActive = false
 			host.removeEntity(e)
 			if (i_hasPosition(e))
-				toolCreateExplode(host, null, (e as IEntityHasPosition).position, 10, 100, 0, true, true, true, 0)
+				toolCreateExplode(
+					host,
+					null,
+					(e as IEntityHasPosition).position,
+					10,
+					100,
+					0,
+					true,
+					true,
+					true,
+					0
+				)
 			console.log('Solved an abnormal signal.')
 		}
 	)
 	const merovingian: ProgramMerovingian = new ProgramMerovingian(
 		[],
 		// 条件：玩家/程序
-		(host: IMatrix, e: Entity): boolean => isPlayer(e) || e instanceof MatrixProgram,
+		(host: IMatrix, e: Entity): boolean =>
+			isPlayer(e) || e instanceof MatrixProgram,
 		// 条件：自身私藏实体数 > 1
-		(host: IMatrix, e: Entity): boolean => merovingian.privatePossessions.length > 1
+		(host: IMatrix, e: Entity): boolean =>
+			merovingian.privatePossessions.length > 1
 	)
 	merovingian.hack(host)
 	// 添加
@@ -206,11 +255,16 @@ function setupSpecialPrograms(host: IMatrix): void {
 /** 配置机制程序 */
 function setupMechanicPrograms(host: IMatrix): void {
 	// 方块随机刻分派者
-	const blockRTickDispatcher: BlockRandomTickDispatcher = new BlockRandomTickDispatcher().syncRandomDensity(
-		matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity)
-	)
+	const blockRTickDispatcher: BlockRandomTickDispatcher =
+		new BlockRandomTickDispatcher().syncRandomDensity(
+			matrix.rule.safeGetRule<uint>(
+				MatrixRuleBatr.key_blockRandomTickDensity
+			)
+		)
 	// 奖励箱生成者
-	const bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(matrix.rule).syncRandomDensity(
+	const bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(
+		matrix.rule
+	).syncRandomDensity(
 		matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity)
 	)
 	// 地图切换者
@@ -253,14 +307,24 @@ projectEntities(matrix.map, matrix.entities)
 
 // 第一次测试
 ;(): void => {
-	console.log(matrixV母体可视化(matrix.map.storage as MapStorageSparse, matrix.entities))
+	console.log(
+		matrixV母体可视化(
+			matrix.map.storage as MapStorageSparse,
+			matrix.entities
+		)
+	)
 
 	// 尝试运作
 	for (let i: uint = 0; i < 0xff; i++) {
 		matrix.tick()
 	}
 
-	console.log(matrixV母体可视化(matrix.map.storage as MapStorageSparse, matrix.entities))
+	console.log(
+		matrixV母体可视化(
+			matrix.map.storage as MapStorageSparse,
+			matrix.entities
+		)
+	)
 
 	listE列举实体(matrix.entities)
 }
@@ -284,7 +348,13 @@ function 迭代(num: uint, visualize: boolean = true): void {
 	}
 	if (visualize) {
 		// 可视化
-		console.log(matrixV母体可视化(matrix.map.storage as MapStorageSparse, matrix.entities, 6))
+		console.log(
+			matrixV母体可视化(
+				matrix.map.storage as MapStorageSparse,
+				matrix.entities,
+				6
+			)
+		)
 		listE列举实体(matrix.entities, 5) // !【2023-10-05 17:51:21】实体一多就麻烦
 	}
 }

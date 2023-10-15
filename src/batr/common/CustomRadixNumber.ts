@@ -17,7 +17,8 @@ export default class CustomRadixNumber {
 	public static readonly DEFAULT_DOT_CHAR: string = '.'
 	public static readonly DEFAULT_OPERATION_PRECISION: uint = 0x10
 
-	protected static _instances: Array<CustomRadixNumber> = new Array<CustomRadixNumber>()
+	protected static _instances: Array<CustomRadixNumber> =
+		new Array<CustomRadixNumber>()
 
 	//============Static Getter And Setter============//
 	public static get instanceCount(): uint {
@@ -34,8 +35,14 @@ export default class CustomRadixNumber {
 		CustomRadixNumber._instances.push(instance)
 	}
 
-	public static registerMechanism(charSet: string, dotStr: string, key: unknown = null): void {
-		CustomRadixNumber.registerInstance(new CustomRadixNumber(charSet, dotStr, key))
+	public static registerMechanism(
+		charSet: string,
+		dotStr: string,
+		key: unknown = null
+	): void {
+		CustomRadixNumber.registerInstance(
+			new CustomRadixNumber(charSet, dotStr, key)
+		)
 	}
 
 	public static getInstanceByKey(
@@ -44,8 +51,13 @@ export default class CustomRadixNumber {
 		strictEqual: boolean = false
 	): CustomRadixNumber | null {
 		for (const instance of CustomRadixNumber._instances) {
-			if (instance._key === key || (!strictEqual && instance._key == key)) {
-				if (CustomRadixNumber._instances.indexOf(instance) >= fromIndex) {
+			if (
+				instance._key === key ||
+				(!strictEqual && instance._key == key)
+			) {
+				if (
+					CustomRadixNumber._instances.indexOf(instance) >= fromIndex
+				) {
 					return instance
 				}
 			}
@@ -70,7 +82,8 @@ export default class CustomRadixNumber {
 			char = charSet.charAt(i)
 			otherIndex = charSet.indexOf(char, i + 1)
 			if (otherIndex >= 0) {
-				returnCharSet = returnCharSet.slice(0, i) + returnCharSet.slice(i + 1)
+				returnCharSet =
+					returnCharSet.slice(0, i) + returnCharSet.slice(i + 1)
 			}
 		}
 		// Output
@@ -110,11 +123,15 @@ export default class CustomRadixNumber {
 	 * ! radix with 2 contains charset '01'
 	 */
 	public get radix(): uint {
-		return CustomRadixNumber.isEmptyString(this._charSet) ? 0 : this._charSet.length
+		return CustomRadixNumber.isEmptyString(this._charSet)
+			? 0
+			: this._charSet.length
 	}
 
 	public get charSet(): string | null {
-		return CustomRadixNumber.isEmptyString(this._charSet) ? null : this._charSet
+		return CustomRadixNumber.isEmptyString(this._charSet)
+			? null
+			: this._charSet
 	}
 
 	public get key(): unknown {
@@ -168,7 +185,9 @@ export default class CustomRadixNumber {
 		let tempNum: uint = 0
 		// Operation
 		for (let i: uint = customNumber.length - 1; i >= 0; i--) {
-			tempNum = this.getWeightFromChar(customNumber.charAt(i)) * Math.pow(radix, customNumber.length - i - 1)
+			tempNum =
+				this.getWeightFromChar(customNumber.charAt(i)) *
+				Math.pow(radix, customNumber.length - i - 1)
 			returnNumber += tempNum
 		}
 		// Output
@@ -181,7 +200,10 @@ export default class CustomRadixNumber {
 	 * @param precision the float precision
 	 * @returns a string represents the number in custom radix
 	 */
-	public fromNumberFloat(number: number, precision: number = CustomRadixNumber.DEFAULT_OPERATION_PRECISION): string {
+	public fromNumberFloat(
+		number: number,
+		precision: number = CustomRadixNumber.DEFAULT_OPERATION_PRECISION
+	): string {
 		// Test
 		if (number == 0) return this.getCharFromWeight(0)
 		// Set
@@ -206,7 +228,10 @@ export default class CustomRadixNumber {
 			}
 			for (i = returnString.length - 1; i >= 0; i--) {
 				if (returnString.charAt(i) === this.getCharFromWeight(0)) {
-					returnString = returnString.slice(0, returnString.length - 1)
+					returnString = returnString.slice(
+						0,
+						returnString.length - 1
+					)
 				} else break
 			}
 		}
@@ -220,15 +245,23 @@ export default class CustomRadixNumber {
 		// Set
 		let returnNumber: number = 0
 		const radix: number = this.radix
-		const customNumberParts: Array<string> = customNumber.split(this._dotChar)
-		const cNumInt: string = String(customNumberParts[0] == undefined ? '' : customNumberParts[0])
-		const cNumFloat: string = String(customNumberParts[1] == undefined ? '' : customNumberParts[1])
+		const customNumberParts: Array<string> = customNumber.split(
+			this._dotChar
+		)
+		const cNumInt: string = String(
+			customNumberParts[0] == undefined ? '' : customNumberParts[0]
+		)
+		const cNumFloat: string = String(
+			customNumberParts[1] == undefined ? '' : customNumberParts[1]
+		)
 		// Operation
 		// number
-		if (!CustomRadixNumber.isEmptyString(cNumInt)) returnNumber += this.toNumberUInt(cNumInt)
+		if (!CustomRadixNumber.isEmptyString(cNumInt))
+			returnNumber += this.toNumberUInt(cNumInt)
 		// float
 		if (!CustomRadixNumber.isEmptyString(cNumFloat))
-			returnNumber += this.toNumberUInt(cNumFloat) / Math.pow(radix, cNumFloat.length)
+			returnNumber +=
+				this.toNumberUInt(cNumFloat) / Math.pow(radix, cNumFloat.length)
 		// Output
 		return returnNumber
 	}

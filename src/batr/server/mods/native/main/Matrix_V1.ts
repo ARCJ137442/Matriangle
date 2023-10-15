@@ -107,7 +107,8 @@ export default class Matrix_V1 implements IMatrix {
 	//========🕹️控制部分：主循环========//
 	tick(): void {
 		// 实体刻 // !【2023-10-12 17:36:58】现在只需遍历其中的「（轻量级）活跃实体」 // !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
-		for (const entity of this._entitySystem.entriesActive) if (entity.isActive) entity.onTick(this)
+		for (const entity of this._entitySystem.entriesActive)
+			if (entity.isActive) entity.onTick(this)
 		for (const entity of this._entitySystem.entriesActiveLite)
 			if (entity.isActive) entity.onTick(this._temp_removeF)
 		/*
@@ -123,10 +124,16 @@ export default class Matrix_V1 implements IMatrix {
 			this._temp_tick_entityToDeleted.forEach(this._temp_removeSysF)
 			this._temp_tick_entityToDeleted.length = 0
 			// 在一定情况下通知「实体系统」清除冗余空间（触发GC）
-			if (this._entitySystem.numEntries > this._temp_tick_lastGCEntityCountMax) {
+			if (
+				this._entitySystem.numEntries >
+				this._temp_tick_lastGCEntityCountMax
+			) {
 				this._entitySystem.GC()
-				this._temp_tick_lastGCEntityCount = this._entitySystem.numEntries
-				this._temp_tick_lastGCEntityCountMax = this._temp_tick_lastGCEntityCount * this._temp_tick_GCCoefficient
+				this._temp_tick_lastGCEntityCount =
+					this._entitySystem.numEntries
+				this._temp_tick_lastGCEntityCountMax =
+					this._temp_tick_lastGCEntityCount *
+					this._temp_tick_GCCoefficient
 			}
 		}
 		// 执行「最终代码」：先插入先执行
@@ -135,9 +142,11 @@ export default class Matrix_V1 implements IMatrix {
 		this._tick_finalExecutions.length = 0
 	}
 	/** 缓存的「删除实体」函数 */
-	protected readonly _temp_removeF: (e: Entity) => void = this.removeEntity.bind(this)
+	protected readonly _temp_removeF: (e: Entity) => void =
+		this.removeEntity.bind(this)
 	/** 缓存的「直接在系统内删除实体」函数 */
-	protected readonly _temp_removeSysF: (e: Entity) => void = this._entitySystem.remove.bind(this._entitySystem) // !【2023-10-05 15:25:50】这里使用bind绑定this参数，避免「半途丢this」的情况
+	protected readonly _temp_removeSysF: (e: Entity) => void =
+		this._entitySystem.remove.bind(this._entitySystem) // !【2023-10-05 15:25:50】这里使用bind绑定this参数，避免「半途丢this」的情况
 	/** 缓存的「待删除实体列表」 */
 	protected _temp_tick_entityToDeleted: Entity[] = []
 	/** 上一次GC时的实体数量 */

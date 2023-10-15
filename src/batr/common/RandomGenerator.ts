@@ -33,7 +33,9 @@ export default class RandomGenerator {
 
 	protected static isEqualNumVec(v1: number[], v2: number[]): boolean {
 		if (v1.length != v2.length) return false
-		return v1.every((n: number, i: uint, v: number[]): boolean => v1[i] == v2[i])
+		return v1.every(
+			(n: number, i: uint, v: number[]): boolean => v1[i] == v2[i]
+		)
 	}
 
 	//============Instance Variables============//
@@ -42,7 +44,12 @@ export default class RandomGenerator {
 	protected _randomList: number[] = new Array<number>()
 
 	//============Init RandomGenerator============//
-	public constructor(seed: number, mode: number, buffer: number[] | null = null, length: uint = 1) {
+	public constructor(
+		seed: number,
+		mode: number,
+		buffer: number[] | null = null,
+		length: uint = 1
+	) {
 		this._mode = mode
 		this._buffer = buffer ?? RandomGenerator.DEFAULT_BUFFER
 		this._randomList[0] = seed
@@ -76,7 +83,10 @@ export default class RandomGenerator {
 	}
 
 	public set buffer(value: number[]) {
-		const reGenerate: boolean = !RandomGenerator.isEqualNumVec(this.buffer, value)
+		const reGenerate: boolean = !RandomGenerator.isEqualNumVec(
+			this.buffer,
+			value
+		)
 		this._buffer = value
 		if (reGenerate) this.dealReset()
 	}
@@ -97,7 +107,10 @@ export default class RandomGenerator {
 
 	public get cycle(): uint {
 		for (let i: uint = 0; i < this._randomList.length; i++) {
-			const li: uint = this._randomList.lastIndexOf(this._randomList[i], i)
+			const li: uint = this._randomList.lastIndexOf(
+				this._randomList[i],
+				i
+			)
 			if (li > i) return li - i
 		}
 		return uint$MAX_VALUE
@@ -105,10 +118,18 @@ export default class RandomGenerator {
 
 	//======Public Functions======//
 	public clone(): RandomGenerator {
-		return new RandomGenerator(this.seed, this.mode, this.buffer, this.numCount)
+		return new RandomGenerator(
+			this.seed,
+			this.mode,
+			this.buffer,
+			this.numCount
+		)
 	}
 
-	public isEqual(other: RandomGenerator, strictMode: boolean = false): boolean {
+	public isEqual(
+		other: RandomGenerator,
+		strictMode: boolean = false
+	): boolean {
 		if (this.mode != other.mode || this.seed != other.seed) return false
 		let i: uint
 		for (i = 0; i < this.buffer.length; i++) {
@@ -126,7 +147,9 @@ export default class RandomGenerator {
 	public generateNext(count: uint = 1): void {
 		if (count == 0) return
 		for (let i: uint = 0; i < count; i++) {
-			this._randomList.push(RandomGenerator.calcPoly(this.lastNum, this.buffer) % this.mode)
+			this._randomList.push(
+				RandomGenerator.calcPoly(this.lastNum, this.buffer) % this.mode
+			)
 		}
 	}
 

@@ -1,6 +1,11 @@
 import Entity from '../../../api/entity/Entity'
 import CommonSystem from '../../../api/template/CommonSystem'
-import { IEntityActive, IEntityActiveLite, i_active, i_activeLite } from '../../../api/entity/EntityInterfaces'
+import {
+	IEntityActive,
+	IEntityActiveLite,
+	i_active,
+	i_activeLite,
+} from '../../../api/entity/EntityInterfaces'
 import { int } from '../../../../legacy/AS3Legacy'
 
 /**
@@ -43,10 +48,16 @@ export default class EntitySystem extends CommonSystem<Entity> {
 	 */
 	override remove(entry: Entity): boolean {
 		// 活跃实体⇒移除活跃实体列表
-		if (i_active(entry) && (this._temp_eIndex = this.entriesActive.indexOf(entry)) >= 0)
+		if (
+			i_active(entry) &&
+			(this._temp_eIndex = this.entriesActive.indexOf(entry)) >= 0
+		)
 			this.entriesActive.splice(this._temp_eIndex, 1)
 		// 不可能同为「活跃实体」与「轻量级活跃实体」
-		else if (i_activeLite(entry) && (this._temp_eIndex = this.entriesActiveLite.indexOf(entry)) >= 0)
+		else if (
+			i_activeLite(entry) &&
+			(this._temp_eIndex = this.entriesActiveLite.indexOf(entry)) >= 0
+		)
 			this.entriesActiveLite.splice(this._temp_eIndex, 1)
 		// 超类逻辑
 		return super.remove(entry)

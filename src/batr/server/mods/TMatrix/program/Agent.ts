@@ -1,4 +1,7 @@
-import { MatrixProgram, MatrixProgramLabel } from '../../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../../api/control/MatrixProgram'
 import Entity from '../../../api/entity/Entity'
 import { IEntityActive } from '../../../api/entity/EntityInterfaces'
 import IMatrix from '../../../main/IMatrix'
@@ -18,7 +21,10 @@ import IMatrix from '../../../main/IMatrix'
  * * 这一点是写就这个「类特工程序」的核心出发点之一
  * ```
  */
-export default class ProgramAgent extends MatrixProgram implements IEntityActive {
+export default class ProgramAgent
+	extends MatrixProgram
+	implements IEntityActive
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'AGENT' as const
 
@@ -27,7 +33,10 @@ export default class ProgramAgent extends MatrixProgram implements IEntityActive
 	 * @param host 所处在的「母体」
 	 * @param target 打击的目标
 	 */
-	public static readonly DEFAULT_WEAPON = (host: IMatrix, target: Entity): void => void host.removeEntity(target)
+	public static readonly DEFAULT_WEAPON = (
+		host: IMatrix,
+		target: Entity
+	): void => void host.removeEntity(target)
 
 	/**
 	 * 默认「监控」
@@ -35,7 +44,10 @@ export default class ProgramAgent extends MatrixProgram implements IEntityActive
 	 * @param e 被监控的实体
 	 * @returns 是否「需要攻击」
 	 */
-	public static readonly DEFAULT_MONITOR = (host: IMatrix, e: Entity): boolean => !e.isActive
+	public static readonly DEFAULT_MONITOR = (
+		host: IMatrix,
+		e: Entity
+	): boolean => !e.isActive
 
 	/**
 	 * 构造函数
@@ -45,12 +57,18 @@ export default class ProgramAgent extends MatrixProgram implements IEntityActive
 		 * 监控函数
 		 * * 表示「是否需要武器清除」
 		 */
-		protected monitor: (host: IMatrix, e: Entity) => boolean = ProgramAgent.DEFAULT_MONITOR,
+		protected monitor: (
+			host: IMatrix,
+			e: Entity
+		) => boolean = ProgramAgent.DEFAULT_MONITOR,
 		/**
 		 * 武器函数
 		 * * 一般要用到「所在母体」
 		 */
-		protected weapon: (host: IMatrix, target: Entity) => void = ProgramAgent.DEFAULT_WEAPON
+		protected weapon: (
+			host: IMatrix,
+			target: Entity
+		) => void = ProgramAgent.DEFAULT_WEAPON
 	) {
 		super(ProgramAgent.LABEL)
 	}

@@ -7,11 +7,18 @@ import { FIXED_TPS } from '../../../../../main/GlobalWorldVariables'
 import IMatrix from '../../../../../main/IMatrix'
 import { IEntityOutGrid } from '../../../../../api/entity/EntityInterfaces'
 import { mRot } from '../../../../../general/GlobalRot'
-import { alignToGridCenter_P, alignToGrid_P } from '../../../../../general/PosTransform'
+import {
+	alignToGridCenter_P,
+	alignToGrid_P,
+} from '../../../../../general/PosTransform'
 import { NativeBlockAttributes } from '../../../registry/BlockAttributesRegistry'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 import EffectBlockLight from '../../effect/EffectBlockLight'
-import { computeFinalDamage, getHitEntity_I_Grid, isHitAnyEntity_F_Grid } from '../../../mechanics/BatrMatrixMechanics'
+import {
+	computeFinalDamage,
+	getHitEntity_I_Grid,
+	isHitAnyEntity_F_Grid,
+} from '../../../mechanics/BatrMatrixMechanics'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
 
@@ -143,7 +150,11 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 			// 没碰到玩家
 			!isHitAnyEntity_F_Grid(this._position, getPlayers(host))
 		) {
-			host.map.towardWithRot_FF(this._position, this._direction, this._speed)
+			host.map.towardWithRot_FF(
+				this._position,
+				this._direction,
+				this._speed
+			)
 		}
 		// ! 只有「从未击中过」的方块才能进入「击中」流程
 		else if (!this._isHitAnything) {
@@ -165,7 +176,8 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 				host,
 				computeFinalDamage(
 					this._attackerDamage,
-					(hitPlayer as IPlayerHasAttributes)?.attributes.buffResistance ?? 0,
+					(hitPlayer as IPlayerHasAttributes)?.attributes
+						.buffResistance ?? 0,
 					this._extraResistanceCoefficient
 				),
 				this.owner
@@ -176,14 +188,20 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		const _temp_iPoint: iPoint = new iPoint()
 		alignToGrid_P(this._position, _temp_iPoint)
 		// 放置判断
-		if (host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)) {
+		if (
+			host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)
+		) {
 			// 放置
 			host.map.storage.setBlock(_temp_iPoint, this._carriedBlock)
 		}
 		// 特效
 		// ! 会更改自身坐标：复用自身坐标，更改为「将要生成的特效坐标」
 		host.addEntity(
-			EffectBlockLight.fromBlock(alignToGridCenter_P(this._position, this._position), this._carriedBlock, false)
+			EffectBlockLight.fromBlock(
+				alignToGridCenter_P(this._position, this._position),
+				this._carriedBlock,
+				false
+			)
 		)
 		// 移除自身
 		host.removeEntity(this)

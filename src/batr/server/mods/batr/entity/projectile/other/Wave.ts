@@ -2,7 +2,10 @@ import { uint } from '../../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import Projectile from '../Projectile'
 import { FIXED_TPS } from '../../../../../main/GlobalWorldVariables'
-import { IEntityFixedLived, IEntityOutGrid } from '../../../../../api/entity/EntityInterfaces'
+import {
+	IEntityFixedLived,
+	IEntityOutGrid,
+} from '../../../../../api/entity/EntityInterfaces'
 import { IShape } from '../../../../../../display/api/DisplayInterfaces'
 import { fPoint } from '../../../../../../common/geometricTools'
 import IMatrix from '../../../../../main/IMatrix'
@@ -16,7 +19,10 @@ import IPlayer from '../../../../native/entities/player/IPlayer'
  * * 伤害一切沿途接触到的玩家
  * * 在生成后随时间自身逐渐放大，伤害范围也逐渐扩大
  */
-export default class Wave extends Projectile implements IEntityOutGrid, IEntityFixedLived {
+export default class Wave
+	extends Projectile
+	implements IEntityOutGrid, IEntityFixedLived
+{
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
@@ -92,8 +98,14 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 		finalRadius: number
 	) {
 		/** 从最小到最大 */
-		const tempScale = Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent
-		super(owner, attackerDamage * (tempScale / Wave.MAX_SCALE), toolExtraDamageCoefficient, direction)
+		const tempScale =
+			Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent
+		super(
+			owner,
+			attackerDamage * (tempScale / Wave.MAX_SCALE),
+			toolExtraDamageCoefficient,
+			direction
+		)
 		this._nowScale =
 			owner === null
 				? tempScale
@@ -122,8 +134,20 @@ export default class Wave extends Projectile implements IEntityOutGrid, IEntityF
 
 		shape.graphics.curveTo(realRadius, realRadius, realRadius, 0)
 
-		shape.graphics.curveTo(realRadius, -realRadius, -realRadius, -realRadius)
-		shape.graphics.cubicCurveTo(realRadius / 2, -realRadius, realRadius / 2, realRadius, -realRadius, realRadius)
+		shape.graphics.curveTo(
+			realRadius,
+			-realRadius,
+			-realRadius,
+			-realRadius
+		)
+		shape.graphics.cubicCurveTo(
+			realRadius / 2,
+			-realRadius,
+			realRadius / 2,
+			realRadius,
+			-realRadius,
+			realRadius
+		)
 		shape.graphics.endFill()
 	}
 

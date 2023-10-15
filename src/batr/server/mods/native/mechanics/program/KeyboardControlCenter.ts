@@ -1,7 +1,10 @@
 import { KeyCode } from '../../../../../common/keyCodes'
 import { omega, voidF } from '../../../../../common/utils'
 import { uint } from '../../../../../legacy/AS3Legacy'
-import { MatrixProgram, MatrixProgramLabel } from '../../../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../../../api/control/MatrixProgram'
 import Entity from '../../../../api/entity/Entity'
 import { IEntityActiveLite } from '../../../../api/entity/EntityInterfaces'
 import { FIXED_TPS } from '../../../../main/GlobalWorldVariables'
@@ -286,7 +289,10 @@ function generateStatesFromBehavior(behavior: IKeyBehavior): KeyControlState {
  *
  * !【2023-10-06 21:56:17】现在因为能直接使用HTTP/WebSocket发送操作，这个程序接近废弃
  */
-export default class KeyboardControlCenter extends MatrixProgram implements IEntityActiveLite {
+export default class KeyboardControlCenter
+	extends MatrixProgram
+	implements IEntityActiveLite
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'KeyboardController'
 
@@ -301,7 +307,8 @@ export default class KeyboardControlCenter extends MatrixProgram implements IEnt
 	 * ! 会触发相应「按键行为」的析构函数
 	 */
 	public releaseKeyBehavior(code: KeyCode): void {
-		if (code in this._keyBehaviors) destructKeyBehavior(this._keyBehaviors[code])
+		if (code in this._keyBehaviors)
+			destructKeyBehavior(this._keyBehaviors[code])
 		delete this._keyBehaviors[code]
 	}
 	/**
@@ -372,7 +379,10 @@ export default class KeyboardControlCenter extends MatrixProgram implements IEnt
 	 * @param behaviors （新增的）按键行为记录表
 	 */
 	public addKeyBehavior(code: KeyCode, behavior: IKeyBehavior): void {
-		if (code in this._keyBehaviors) console.warn(`copyAndInitKeyBehavior: 正在覆盖${code}所对应的按键行为！`)
+		if (code in this._keyBehaviors)
+			console.warn(
+				`copyAndInitKeyBehavior: 正在覆盖${code}所对应的按键行为！`
+			)
 		// 开始设置
 		this._keyBehaviors[code] = copyKeyBehavior(behavior)
 		this._keyControlStates[code] = generateStatesFromBehavior(behavior)
@@ -400,7 +410,8 @@ export default class KeyboardControlCenter extends MatrixProgram implements IEnt
 	 * * 至于「状态是否能循环」要看「状态」自身（可能`tick`指向`omega`，这时候就不会在实际上触发循环）
 	 */
 	onTick(remove: (entity: Entity) => void): void {
-		for (const code in this._keyControlStates) this._keyControlStates[code].tick()
+		for (const code in this._keyControlStates)
+			this._keyControlStates[code].tick()
 	}
 
 	/**
@@ -418,7 +429,8 @@ export default class KeyboardControlCenter extends MatrixProgram implements IEnt
 	 */
 	public onRelease(code: KeyCode): void {
 		// ↓本身在索引时，数字和字符串就不区分
-		if (code in this._keyControlStates) this._keyControlStates[code].release()
+		if (code in this._keyControlStates)
+			this._keyControlStates[code].release()
 	}
 }
 
@@ -484,7 +496,8 @@ export function generateBehaviorFromPlayerConfig(
 				case 1: {
 					result[code] = {
 						callback:
-							(pcc[code] as Array<PlayerAction>)[0] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[0] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -503,7 +516,8 @@ export function generateBehaviorFromPlayerConfig(
 					result[code] = {
 						callback: omega,
 						callbackPress:
-							(pcc[code] as Array<PlayerAction>)[0] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[0] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -511,7 +525,8 @@ export function generateBehaviorFromPlayerConfig(
 											(pcc[code] as PlayerAction[])[0]
 										),
 						callbackRelease:
-							(pcc[code] as Array<PlayerAction>)[1] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[1] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -527,7 +542,8 @@ export function generateBehaviorFromPlayerConfig(
 				case 3: {
 					result[code] = {
 						callback:
-							(pcc[code] as Array<PlayerAction>)[0] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[0] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -535,7 +551,8 @@ export function generateBehaviorFromPlayerConfig(
 											(pcc[code] as PlayerAction[])[0]
 										),
 						callbackPress:
-							(pcc[code] as Array<PlayerAction>)[1] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[1] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -543,7 +560,8 @@ export function generateBehaviorFromPlayerConfig(
 											(pcc[code] as PlayerAction[])[1]
 										),
 						callbackRelease:
-							(pcc[code] as Array<PlayerAction>)[2] === EnumNativePlayerAction.NULL
+							(pcc[code] as Array<PlayerAction>)[2] ===
+							EnumNativePlayerAction.NULL
 								? omega
 								: (): void =>
 										void player.onReceive(
@@ -558,7 +576,11 @@ export function generateBehaviorFromPlayerConfig(
 			}
 		// * 默认配置：「激活」「按下」一致
 		else {
-			runAction = (): void => void player.onReceive(NativeMatrixPlayerEvent.ADD_ACTION, pcc[code] as PlayerAction)
+			runAction = (): void =>
+				void player.onReceive(
+					NativeMatrixPlayerEvent.ADD_ACTION,
+					pcc[code] as PlayerAction
+				)
 			result[code] = {
 				callback: runAction,
 				callbackPress: runAction,

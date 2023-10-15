@@ -1,4 +1,8 @@
-﻿import { BlockEventMap, BlockTypeEventMap, BlockEventType } from './BlockEventTypes'
+﻿import {
+	BlockEventMap,
+	BlockTypeEventMap,
+	BlockEventType,
+} from './BlockEventTypes'
 import { typeID } from '../registry/IWorldRegistry'
 import { mergeObject } from '../../../common/utils'
 
@@ -36,7 +40,10 @@ export default class BlockEventRegistry {
 	 *
 	 * @returns （引用）最新的「『方块ID⇒事件处理函数』映射表」
 	 */
-	public registerEventFor(id: typeID, patch: BlockTypeEventMap): BlockTypeEventMap {
+	public registerEventFor(
+		id: typeID,
+		patch: BlockTypeEventMap
+	): BlockTypeEventMap {
 		// 之前没有对ID注册过⇒开辟新对象
 		this._blockPatchMap[id] ??= {}
 		// 已注册⇒直接合并
@@ -84,10 +91,15 @@ export default class BlockEventRegistry {
 	 * @param id 需要操作的方块ID
 	 * @param [eventTypes=undefined] 需要删除的指定类型，不提供则默认删除所有「方块事件处理器」
 	 */
-	public unregisterEventFor(id: typeID, eventTypes: BlockEventType[] | undefined = undefined): void {
+	public unregisterEventFor(
+		id: typeID,
+		eventTypes: BlockEventType[] | undefined = undefined
+	): void {
 		// 未提供⇒删除所有
 		if (eventTypes === undefined) delete this._blockPatchMap[id]
 		// 已提供⇒逐个删除
-		else for (const eventType of eventTypes) delete this._blockPatchMap[id][eventType]
+		else
+			for (const eventType of eventTypes)
+				delete this._blockPatchMap[id][eventType]
 	}
 }

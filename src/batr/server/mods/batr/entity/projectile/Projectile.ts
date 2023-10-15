@@ -29,7 +29,11 @@ import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
  */
 export default abstract class Projectile
 	extends Entity
-	implements IEntityActive, IEntityWithDirection, IEntityDisplayable, IEntityShortLived
+	implements
+		IEntityActive,
+		IEntityWithDirection,
+		IEntityDisplayable,
+		IEntityShortLived
 {
 	//============Basic Properties============//
 	/** 实体的「实体类型」标签 */
@@ -93,7 +97,11 @@ export default abstract class Projectile
 	public canHurtAlly: boolean = false
 
 	/** 链式操作快速配置「可伤害の玩家」 */
-	public setCanHurt(canHurtEnemy: boolean, canHurtSelf: boolean, canHurtAlly: boolean): this {
+	public setCanHurt(
+		canHurtEnemy: boolean,
+		canHurtSelf: boolean,
+		canHurtAlly: boolean
+	): this {
 		this.canHurtEnemy = canHurtEnemy
 		this.canHurtSelf = canHurtSelf
 		this.canHurtAlly = canHurtAlly
@@ -111,14 +119,23 @@ export default abstract class Projectile
 			this.canHurtEnemy = tool.canHurtEnemy
 			this.canHurtSelf = tool.canHurtSelf
 			this.canHurtAlly = tool.canHurtAlly
-			this._attackerDamage = computeAttackerDamage(tool.baseDamage, buffDamage, tool.extraDamageCoefficient)
+			this._attackerDamage = computeAttackerDamage(
+				tool.baseDamage,
+				buffDamage,
+				tool.extraDamageCoefficient
+			)
 			this._extraResistanceCoefficient = tool.extraResistanceCoefficient
 		}
 		return this
 	}
 
 	//============Constructor & Destructor============//
-	public constructor(owner: IPlayer | null, attackerDamage: uint, extraDamageCoefficient: uint, direction: mRot) {
+	public constructor(
+		owner: IPlayer | null,
+		attackerDamage: uint,
+		extraDamageCoefficient: uint,
+		direction: mRot
+	) {
 		super()
 		this._owner = owner
 		this._attackerDamage = attackerDamage

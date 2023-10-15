@@ -22,6 +22,8 @@ export default interface IPlayerHasAttributes extends IPlayer {
  * * 推导依据：使用「类型谓词」（返回值中的「is」关键字），告知推导器「返回的是一个『类型判别』」
  * * 参考资料：https://www.jianshu.com/p/57df3cb66d3d
  */
-export function i_hasAttributes(player: IPlayer): player is IPlayerHasAttributes {
+export function i_hasAttributes(
+	player: IPlayer
+): player is IPlayerHasAttributes {
 	return (player as IPlayerHasAttributes)?.attributes !== undefined
 }

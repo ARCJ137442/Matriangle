@@ -1,10 +1,17 @@
-import { fPoint, iPoint, floatPoint } from '../../../../../../common/geometricTools'
+import {
+	fPoint,
+	iPoint,
+	floatPoint,
+} from '../../../../../../common/geometricTools'
 import { IShape } from '../../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import { logical2Real } from '../../../../../../display/api/PosTransform'
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import Block from '../../../../../api/block/Block'
-import { IEntityFixedLived, IEntityOutGrid } from '../../../../../api/entity/EntityInterfaces'
+import {
+	IEntityFixedLived,
+	IEntityOutGrid,
+} from '../../../../../api/entity/EntityInterfaces'
 import { alignToGrid_P } from '../../../../../general/PosTransform'
 import IMatrix from '../../../../../main/IMatrix'
 import Projectile from '../Projectile'
@@ -18,7 +25,10 @@ import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
  * * 在撞上方块后产生效果（一般是爆炸）的
  * 抛射体
  */
-export default abstract class Bullet extends Projectile implements IEntityOutGrid, IEntityFixedLived {
+export default abstract class Bullet
+	extends Projectile
+	implements IEntityOutGrid, IEntityFixedLived
+{
 	/** 子弹飞行的速度（每个世界刻） */
 	public speed: number
 	/** 最终爆炸半径「用于内置的『爆炸』函数」 */
@@ -111,8 +121,15 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		// 在移动进去之前
 		if (this.lastBlock !== this.nowBlock) {
 			// Random rotate
-			if (this.nowBlock !== null && this.nowBlock.attributes.rotateWhenMoveIn) {
-				this.direction = host.map.storage.randomRotateDirectionAt(this._position_I, this._direction, 1)
+			if (
+				this.nowBlock !== null &&
+				this.nowBlock.attributes.rotateWhenMoveIn
+			) {
+				this.direction = host.map.storage.randomRotateDirectionAt(
+					this._position_I,
+					this._direction,
+					1
+				)
 			}
 			// TODO: 未能触发，待解决bug
 			// 更新「上一个方块」
@@ -125,12 +142,24 @@ export default abstract class Bullet extends Projectile implements IEntityOutGri
 		// 移动进去之后
 		if (
 			host.map.isInMap_F(this.position) &&
-			host.map.testCanPass_F(this._position, false, true, false, false, true, getPlayers(host))
+			host.map.testCanPass_F(
+				this._position,
+				false,
+				true,
+				false,
+				false,
+				true,
+				getPlayers(host)
+			)
 		) {
 			this.lastBlock = this.nowBlock
 		} else {
 			// 反向前进，不要「墙里炸」
-			host.map.towardWithRot_FF(this._position, this._direction, -this.speed)
+			host.map.towardWithRot_FF(
+				this._position,
+				this._direction,
+				-this.speed
+			)
 			// 爆炸
 			this.explode(host)
 		}

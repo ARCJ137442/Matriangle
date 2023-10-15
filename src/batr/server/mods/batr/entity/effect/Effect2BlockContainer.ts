@@ -1,5 +1,9 @@
 import { fPoint } from '../../../../../common/geometricTools'
-import { IGraphicContext, IShape, IShapeContainer } from '../../../../../display/api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+	IShapeContainer,
+} from '../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import { uint } from '../../../../../legacy/AS3Legacy'
 import Effect from '../../../../api/entity/Effect'
@@ -9,9 +13,16 @@ import { IEntityDisplayableContainer } from '../../../../api/entity/EntityInterf
  * 双方块容器
  * * 由「特效/重生」「特效/传送」抽象出来
  */
-export default abstract class Effect2BlockContainer extends Effect implements IEntityDisplayableContainer {
+export default abstract class Effect2BlockContainer
+	extends Effect
+	implements IEntityDisplayableContainer
+{
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, LIFE: uint, scale: number = Effect2BlockContainer.SCALE) {
+	public constructor(
+		position: fPoint,
+		LIFE: uint,
+		scale: number = Effect2BlockContainer.SCALE
+	) {
 		super(position, LIFE)
 		this.maxScale = scale
 	}
@@ -37,7 +48,11 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 	public readonly i_displayableContainer = true as const
 
 	/** 实现：要求两个「普通图形」对象作为其子元素 */
-	public shapeInit(shape: IShapeContainer, block1: IShape, block2: IShape): void {
+	public shapeInit(
+		shape: IShapeContainer,
+		block1: IShape,
+		block2: IShape
+	): void {
 		// this.drawBlocks(Effect2BlockContainer.DEFAULT_COLOR, Effect2BlockContainer.SIZE);
 		this._block1 = block1
 		this._block2 = block2
@@ -68,10 +83,31 @@ export default abstract class Effect2BlockContainer extends Effect implements IE
 		if (this._block2 !== null) shapeContainer.addChild(this._block2)
 	}
 
-	protected drawBlocks(color: uint, size: uint, lineSize: number, lineAlpha: number, fillAlpha: number): void {
-		if (this._block1 !== null) this.drawBlock(this._block1.graphics, color, size, lineSize, lineAlpha, fillAlpha)
+	protected drawBlocks(
+		color: uint,
+		size: uint,
+		lineSize: number,
+		lineAlpha: number,
+		fillAlpha: number
+	): void {
+		if (this._block1 !== null)
+			this.drawBlock(
+				this._block1.graphics,
+				color,
+				size,
+				lineSize,
+				lineAlpha,
+				fillAlpha
+			)
 		if (this._block2 !== null) {
-			this.drawBlock(this._block2.graphics, color, size, lineSize, lineAlpha, fillAlpha)
+			this.drawBlock(
+				this._block2.graphics,
+				color,
+				size,
+				lineSize,
+				lineAlpha,
+				fillAlpha
+			)
 			// 给第二个方块旋转一定角度
 			this._block2.rot = 45
 		}

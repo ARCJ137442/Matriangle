@@ -1,5 +1,8 @@
 import { fPoint } from '../../../../../../common/geometricTools'
-import { IGraphicContext, IShape } from '../../../../../../display/api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+} from '../../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import { mRot } from '../../../../../general/GlobalRot'
@@ -41,7 +44,15 @@ export default class BulletBomber extends Bullet {
 		finalExplodeRadius: number,
 		maxBombTick: uint
 	) {
-		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, finalExplodeRadius)
+		super(
+			owner,
+			position,
+			direction,
+			attackerDamage,
+			extraDamageCoefficient,
+			speed,
+			finalExplodeRadius
+		)
 		this._maxBombTick = maxBombTick
 		this._bombTick = this._maxBombTick
 	}

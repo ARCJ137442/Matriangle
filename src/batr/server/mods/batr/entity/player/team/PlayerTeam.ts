@@ -22,7 +22,11 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public get id(): string {
 		return this._id
 	}
-	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(this.OBJECTIFY_MAP, 'id', 'string')
+	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
+		this.OBJECTIFY_MAP,
+		'id',
+		'string'
+	)
 
 	/**
 	 * 队伍的内部/显示名称
@@ -31,7 +35,11 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public get name(): string {
 		return this._name
 	}
-	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(this.OBJECTIFY_MAP, 'name', 'string')
+	public static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
+		this.OBJECTIFY_MAP,
+		'name',
+		'string'
+	)
 
 	/**
 	 * 队伍在显示时的颜色
@@ -40,7 +48,11 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	public get color(): uint {
 		return this._color
 	}
-	public static readonly key_color: key = fastAddJSObjectifyMapProperty_dashP(this.OBJECTIFY_MAP, 'color', 'number')
+	public static readonly key_color: key = fastAddJSObjectifyMapProperty_dashP(
+		this.OBJECTIFY_MAP,
+		'color',
+		'number'
+	)
 
 	/**
 	 * 判断其是否「非敌方」
@@ -66,13 +78,18 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 		// let k: keyof PlayerTeam
 		for (const k in this.OBJECTIFY_MAP) {
 			// 只要有一个不全等，就判断不相等
-			if (t1[k as keyof PlayerTeam] !== t2[k as keyof PlayerTeam]) return false
+			if (t1[k as keyof PlayerTeam] !== t2[k as keyof PlayerTeam])
+				return false
 		}
 		return true
 	}
 
 	//============Constructor & Destructor============//
-	public constructor(color: uint = 0x000000, id: string = `0x${color.toString(16)}`, name: string = `#${id}`) {
+	public constructor(
+		color: uint = 0x000000,
+		id: string = `0x${color.toString(16)}`,
+		name: string = `#${id}`
+	) {
 		this._id = id
 		this._color = color
 		this._name = name

@@ -2,13 +2,27 @@ import { uint, int } from '../../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import Projectile from '../Projectile'
 import ShockWaveDrone from './ShockWaveDrone'
-import { IEntityFixedLived, IEntityInGrid } from '../../../../../api/entity/EntityInterfaces'
+import {
+	IEntityFixedLived,
+	IEntityInGrid,
+} from '../../../../../api/entity/EntityInterfaces'
 import { IShape } from '../../../../../../display/api/DisplayInterfaces'
 import { FIXED_TPS } from '../../../../../main/GlobalWorldVariables'
-import { fPoint, iPoint, iPointRef, iPointVal } from '../../../../../../common/geometricTools'
+import {
+	fPoint,
+	iPoint,
+	iPointRef,
+	iPointVal,
+} from '../../../../../../common/geometricTools'
 import IMatrix from '../../../../../main/IMatrix'
 import { random1 } from '../../../../../../common/exMath'
-import { axis2mRot_n, axis2mRot_p, mRot, mRot2axis, rotate_M } from '../../../../../general/GlobalRot'
+import {
+	axis2mRot_n,
+	axis2mRot_p,
+	mRot,
+	mRot2axis,
+	rotate_M,
+} from '../../../../../general/GlobalRot'
 import Tool from '../../../tool/Tool'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 
@@ -16,7 +30,10 @@ import IPlayer from '../../../../native/entities/player/IPlayer'
  * ...
  * @author ARCJ137442
  */
-export default class ShockWaveBase extends Projectile implements IEntityInGrid, IEntityFixedLived {
+export default class ShockWaveBase
+	extends Projectile
+	implements IEntityInGrid, IEntityFixedLived
+{
 	//============Static Variables============//
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2
 
@@ -133,23 +150,43 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 				// 遍历所有非自身朝向的轴向
 				for (let i: uint = 1; i < host.map.storage.numDimension; i++) {
 					// 找到一个不与自身同一个轴向的坐标轴
-					newAxis = (mRot2axis(this._direction) + i) % host.map.storage.numDimension
+					newAxis =
+						(mRot2axis(this._direction) + i) %
+						host.map.storage.numDimension
 					// 正负方向各一个，且方向与自身（玩家发射时）方向一致
-					this.summonDrone(host, axis2mRot_p(newAxis), this._direction)
-					this.summonDrone(host, axis2mRot_n(newAxis), this._direction)
+					this.summonDrone(
+						host,
+						axis2mRot_p(newAxis),
+						this._direction
+					)
+					this.summonDrone(
+						host,
+						axis2mRot_n(newAxis),
+						this._direction
+					)
 				}
 				break
 			// * BETA模式（参见常量の注释）
 			case ShockWaveBase.MODE_BETA:
 				// 每隔两个轴向，在这两个轴向里生成涡旋
-				for (let i: uint = 0; i < host.map.storage.numDimension - 1; i += 2) {
+				for (
+					let i: uint = 0;
+					i < host.map.storage.numDimension - 1;
+					i += 2
+				) {
 					// * 此处「-1」的原因是「避免奇数维遍历到『维数溢出』的情况」
 					// 计算轴向、方向信息
-					;(axis_x = i), (axis_y = i + 1), (rot_xP = axis2mRot_p(axis_x))
+					;(axis_x = i),
+						(axis_y = i + 1),
+						(rot_xP = axis2mRot_p(axis_x))
 					const rotateOffset: int = random1()
 					// 绕这俩轴「四方旋转」
 					for (let u: int = 0; u < 4; u++) {
-						this.summonDrone(host, u, rotate_M(rot_xP, axis_y, u + rotateOffset))
+						this.summonDrone(
+							host,
+							u,
+							rotate_M(rot_xP, axis_y, u + rotateOffset)
+						)
 						console.debug(
 							'axis_x:',
 							axis_x,
@@ -173,7 +210,11 @@ export default class ShockWaveBase extends Projectile implements IEntityInGrid, 
 		}
 	}
 
-	public summonDrone(host: IMatrix, droneMoveDirection: mRot, toolDirection: mRot = this._direction): void {
+	public summonDrone(
+		host: IMatrix,
+		droneMoveDirection: mRot,
+		toolDirection: mRot = this._direction
+	): void {
 		const drone: ShockWaveDrone = new ShockWaveDrone(
 			this.owner,
 			this._position,

@@ -1,4 +1,9 @@
-import { fPoint, fPointRef, iPoint, iPointRef } from '../../../common/geometricTools'
+import {
+	fPoint,
+	fPointRef,
+	iPoint,
+	iPointRef,
+} from '../../../common/geometricTools'
 import { mRot } from '../../general/GlobalRot'
 import { int } from '../../../legacy/AS3Legacy'
 import BlockAttributes from '../block/BlockAttributes'
@@ -211,7 +216,10 @@ export default interface IMapLogic {
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
 	 * @returns 这个位置的方块「是否能被拿起」
 	 */
-	isBlockCarriable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean
+	isBlockCarriable(
+		position: iPointRef,
+		defaultWhenNotFound: BlockAttributes
+	): boolean
 
 	/**
 	 * 判断一个位置的方块「是否能破坏」
@@ -228,7 +236,10 @@ export default interface IMapLogic {
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
 	 * @returns 这个位置的方块「是否能破坏」
 	 */
-	isBlockBreakable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean
+	isBlockBreakable(
+		position: iPointRef,
+		defaultWhenNotFound: BlockAttributes
+	): boolean
 
 	/**
 	 * 将一个来自外界的「浮点坐标信息」投影到地图内

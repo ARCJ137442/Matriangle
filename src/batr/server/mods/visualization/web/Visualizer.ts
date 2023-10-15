@@ -1,5 +1,8 @@
 import { uint } from '../../../../legacy/AS3Legacy'
-import { MatrixProgram, MatrixProgramLabel } from '../../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../../api/control/MatrixProgram'
 import WebMessageRouter from '../../webIO/WebMessageRouter'
 import { NativeWebServiceType } from '../../webIO/WebMessageRouter'
 
@@ -36,9 +39,20 @@ export default abstract class Visualizer extends MatrixProgram {
 	 * @param {uint} port 开放的服务端口
 	 * @param {WebMessageRouter} router 所连接的「消息路由器」
 	 */
-	public linkToRouter(router: WebMessageRouter, type: NativeWebServiceType, ip: string, port: uint): boolean {
-		return router.registerServiceWithType(type, ip, port, this.getSignal.bind(this), (): void => {
-			console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
-		})
+	public linkToRouter(
+		router: WebMessageRouter,
+		type: NativeWebServiceType,
+		ip: string,
+		port: uint
+	): boolean {
+		return router.registerServiceWithType(
+			type,
+			ip,
+			port,
+			this.getSignal.bind(this),
+			(): void => {
+				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
+			}
+		)
 	}
 }

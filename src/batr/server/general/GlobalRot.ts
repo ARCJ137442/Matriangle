@@ -185,7 +185,12 @@ export function rotate_M(rot: mRot, coAxis: uint, step: int): mRot {
  * @param rotEnd 终止角
  * @param step 旋转角数
  */
-export function rotateInPlane_M(rot: mRot, rotStart: mRot, rotEnd: mRot, step: int): mRot {
+export function rotateInPlane_M(
+	rot: mRot,
+	rotStart: mRot,
+	rotEnd: mRot,
+	step: int
+): mRot {
 	// if (coAxis === rotAxis) return rot; // ! 起始角与目标轴本不应该相同（需要构成旋转平面），但需要能用
 	// if (rotStart >> 1 === rotEnd >> 1) return rot; // ! 「起始角」「终止角」不应该在同一个轴向
 	switch (

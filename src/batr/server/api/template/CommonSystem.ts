@@ -142,7 +142,8 @@ export default class CommonSystem<T> {
 	 */
 	public getAllEntry(): T[] {
 		const result: T[] = new Array<T>()
-		for (const obj of this._entries) if (obj !== undefined) result.push(obj as T)
+		for (const obj of this._entries)
+			if (obj !== undefined) result.push(obj as T)
 		return result
 	}
 
@@ -153,7 +154,8 @@ export default class CommonSystem<T> {
 	 */
 	public get allValidUUID(): uint[] {
 		const result: uint[] = []
-		for (let i: uint = 0; i < this._entries.length; i++) if (this.isValidUUID(i)) result.push(i)
+		for (let i: uint = 0; i < this._entries.length; i++)
+			if (this.isValidUUID(i)) result.push(i)
 		return result
 	}
 
@@ -246,7 +248,8 @@ export default class CommonSystem<T> {
 	 * 清除所有元素
 	 */
 	public clear(): void {
-		for (let i: uint = 0; i < this._entries.length; i++) delete this._entries[i]
+		for (let i: uint = 0; i < this._entries.length; i++)
+			delete this._entries[i]
 		this._temp_numEntries = 0
 	}
 
@@ -257,6 +260,7 @@ export default class CommonSystem<T> {
 	 * ! 可能改变原有元素的UUID
 	 */
 	public GC(): void {
-		for (let i = this._entries.length - 1; i >= 0; i--) if (this.isEmptyUUID(i)) this._entries.splice(i, 1)
+		for (let i = this._entries.length - 1; i >= 0; i--)
+			if (this.isEmptyUUID(i)) this._entries.splice(i, 1)
 	}
 }

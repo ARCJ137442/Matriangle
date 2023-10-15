@@ -44,7 +44,9 @@ export default class MatrixRule_V1 implements IMatrixRule {
 	 * ! 必须在所有属性初始化后再初始化「所有规则名」
 	 * * 初衷：避免「规则名」带下划线
 	 */
-	public static readonly ALL_RULE_KEYS: key[] = Object.getOwnPropertyNames(this.OBJECTIFY_MAP).map(
+	public static readonly ALL_RULE_KEYS: key[] = Object.getOwnPropertyNames(
+		this.OBJECTIFY_MAP
+	).map(
 		// * 映射到在JS对象中呈现的键
 		(key: string): key => this.OBJECTIFY_MAP[key].JSObject_key
 	)
@@ -82,7 +84,12 @@ export default class MatrixRule_V1 implements IMatrixRule {
 
 	// 遗留的「事件系统」 //
 
-	protected static preUpdateVariable<T>(rule: MatrixRule_V1, k: key, oldV: T, newV: T): boolean {
+	protected static preUpdateVariable<T>(
+		rule: MatrixRule_V1,
+		k: key,
+		oldV: T,
+		newV: T
+	): boolean {
 		if (oldV == newV) return false
 		rule.onVariableUpdate(k, oldV, newV)
 		return true

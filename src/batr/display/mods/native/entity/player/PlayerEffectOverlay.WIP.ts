@@ -16,9 +16,16 @@ export default class PlayerEffectOverlay extends Shape {
 	protected _color: uint = COLOR
 
 	//============Constructor & Destructor============//
-	public constructor(owner: IPlayer | null, color: uint = PlayerEffectOverlay.COLOR) {
+	public constructor(
+		owner: IPlayer | null,
+		color: uint = PlayerEffectOverlay.COLOR
+	) {
 		super()
-		this.drawShape(owner instanceof AIPlayer ? (owner as AIPlayer).decorationLabel : null)
+		this.drawShape(
+			owner instanceof AIPlayer
+				? (owner as AIPlayer).decorationLabel
+				: null
+		)
 		this.dealLife()
 	}
 
@@ -38,11 +45,15 @@ export default class PlayerEffectOverlay extends Shape {
 		shape.graphics.lineTo(realRadiusX, 0)
 		shape.graphics.lineTo(-realRadiusX, realRadiusY)
 		shape.graphics.lineTo(-realRadiusX, -realRadiusY)
-		if (decorationLabel !== null) AIPlayer.drawAIDecoration(shape.graphics, decorationLabel)
+		if (decorationLabel !== null)
+			AIPlayer.drawAIDecoration(shape.graphics, decorationLabel)
 		shape.graphics.endFill()
 	}
 
-	public playAnimation(life: uint = LIFE, color: uint = uint$MAX_VALUE): void {
+	public playAnimation(
+		life: uint = LIFE,
+		color: uint = uint$MAX_VALUE
+	): void {
 		color = color == uint$MAX_VALUE ? this._color : color
 		if (this._color != color) {
 			this._color = color

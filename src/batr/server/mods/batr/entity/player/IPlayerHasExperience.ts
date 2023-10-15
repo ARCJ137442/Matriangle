@@ -52,6 +52,8 @@ export default interface IPlayerHasExperience extends IPlayer {
  * 集中、通用的「判定继承接口」的方法
  * * 逻辑：判断指定属性是否存在
  */
-export function i_hasExperience(player: IPlayer): player is IPlayerHasExperience {
+export function i_hasExperience(
+	player: IPlayer
+): player is IPlayerHasExperience {
 	return (player as IPlayerHasExperience)?.experience !== undefined
 }

@@ -15,7 +15,10 @@ export interface IMessageRouter {
 	 * @param {...unknown[]} configs 其它配置
 	 * @returns {boolean} 是否成功
 	 */
-	registerMessageService(messageCallback: MessageCallback, ...configs: unknown[]): boolean
+	registerMessageService(
+		messageCallback: MessageCallback,
+		...configs: unknown[]
+	): boolean
 
 	/**
 	 * 注册消息服务

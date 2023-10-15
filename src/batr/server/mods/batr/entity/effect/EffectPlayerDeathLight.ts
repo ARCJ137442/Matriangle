@@ -73,6 +73,8 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		// ! ↓因为前面已经通过「是否倒放」设置了`shape.alpha`，而这里直接使用该值，以避免再次判断「是否倒放」
 		shape.scaleX = shape.scaleY =
 			EffectPlayerDeathLight.MIN_SCALE +
-			(EffectPlayerDeathLight.MAX_SCALE - EffectPlayerDeathLight.MIN_SCALE) * (1 - shape.alpha)
+			(EffectPlayerDeathLight.MAX_SCALE -
+				EffectPlayerDeathLight.MIN_SCALE) *
+				(1 - shape.alpha)
 	}
 }

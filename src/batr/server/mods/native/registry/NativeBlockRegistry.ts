@@ -13,7 +13,11 @@ import { BlockConstructorMap } from '../../../api/map/IMapStorage'
  * * 不深拷贝则会影响到后续创建的稳定性
  */
 export module NativeBlockPrototypes {
-	export const VOID: Block<null> = new Block('Void', NativeBlockAttributes.VOID, null)
+	export const VOID: Block<null> = new Block(
+		'Void',
+		NativeBlockAttributes.VOID,
+		null
+	)
 
 	/**
 	 * 带颜色方块
@@ -40,17 +44,21 @@ export module NativeBlockIDs {
 /**
  * 所有「原生方块」
  */
-export const ALL_NATIVE_BLOCKS: Block[] = [NativeBlockPrototypes.VOID, NativeBlockPrototypes.COLORED]
+export const ALL_NATIVE_BLOCKS: Block[] = [
+	NativeBlockPrototypes.VOID,
+	NativeBlockPrototypes.COLORED,
+]
 
 /**
  * 用于「ID⇒零参构造函数」的映射表
  * * 应用：「ID⇒白板对象⇒JS反对象化」
  * * 📌在真正加载出「母体」的时候，「所有导入的注册表」中的映射表将合并成一个「总映射表」
  */
-export const NATIVE_BLOCK_CONSTRUCTOR_MAP: BlockConstructorMap = MapFromGeneratorKV(
-	ALL_NATIVE_BLOCKS,
-	(block: Block): typeID => block.id,
-	(block: Block): (() => Block) =>
-		(): Block =>
-			block.copy()
-)
+export const NATIVE_BLOCK_CONSTRUCTOR_MAP: BlockConstructorMap =
+	MapFromGeneratorKV(
+		ALL_NATIVE_BLOCKS,
+		(block: Block): typeID => block.id,
+		(block: Block): (() => Block) =>
+			(): Block =>
+				block.copy()
+	)

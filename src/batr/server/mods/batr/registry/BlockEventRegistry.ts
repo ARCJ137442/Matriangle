@@ -31,7 +31,11 @@ export interface NativeBlockTypeEventMap extends BlockTypeEventMap {
 	 * @param position 触发事件的方块位置（一般与玩家位置相同）
 	 * @param p 移入方块的玩家
 	 */
-	[NativeBlockEventType.PLAYER_MOVED_IN]?: (host: IMatrix, position: iPoint, p: IPlayer) => void
+	[NativeBlockEventType.PLAYER_MOVED_IN]?: (
+		host: IMatrix,
+		position: iPoint,
+		p: IPlayer
+	) => void
 
 	/**
 	 * 处理「玩家移出方块」
@@ -41,7 +45,11 @@ export interface NativeBlockTypeEventMap extends BlockTypeEventMap {
 	 * @param position 触发事件的方块位置（一般与玩家位置相同）
 	 * @param p 将移出方块的玩家
 	 */
-	[NativeBlockEventType.PLAYER_MOVE_OUT]?: (host: IMatrix, position: iPoint, p: IPlayer) => void
+	[NativeBlockEventType.PLAYER_MOVE_OUT]?: (
+		host: IMatrix,
+		position: iPoint,
+		p: IPlayer
+	) => void
 
 	/**
 	 * 处理「方块随机刻」
@@ -51,5 +59,9 @@ export interface NativeBlockTypeEventMap extends BlockTypeEventMap {
 	 * @param position 触发事件的方块位置（一般与玩家位置相同）
 	 * @param block 被触发随机刻的方块对象（在「方块随机刻分派者」中复用）
 	 */
-	[NativeBlockEventType.RANDOM_TICK]?: (host: IMatrix, position: iPoint, block: Block) => void
+	[NativeBlockEventType.RANDOM_TICK]?: (
+		host: IMatrix,
+		position: iPoint,
+		block: Block
+	) => void
 }

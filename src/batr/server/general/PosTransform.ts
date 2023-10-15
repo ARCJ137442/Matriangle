@@ -81,7 +81,10 @@ export function alignToGridCenter(xi: number): number {
  * @param destination 对齐后的「目标点」（会被就地更改）
  * @returns 对齐网格后的「整数点」
  */
-export function alignToGridCenter_P(p: iPointRef, destination: fPointRef): fPointRef {
+export function alignToGridCenter_P(
+	p: iPointRef,
+	destination: fPointRef
+): fPointRef {
 	// * 先在维数上对齐：必须确保对齐后的点正确
 	destination.length = p.length
 	// 然后逐一转换

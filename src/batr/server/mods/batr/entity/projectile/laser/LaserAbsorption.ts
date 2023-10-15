@@ -66,22 +66,48 @@ export default class LaserAbsorption extends Laser {
 	}
 
 	/** @override 将对玩家造成的「最终伤害」转化为所有者的「储备生命值」 */
-	override hitAPlayer(host: IMatrix, player: IPlayer, canHurt: boolean, finalDamage: uint): void {
+	override hitAPlayer(
+		host: IMatrix,
+		player: IPlayer,
+		canHurt: boolean,
+		finalDamage: uint
+	): void {
 		// 造成伤害
 		super.hitAPlayer(host, player, canHurt, finalDamage)
 		// 吸收伤害
-		if (canHurt && this.owner !== null && !this.owner.isRespawning) this.owner.heal += finalDamage
+		if (canHurt && this.owner !== null && !this.owner.isRespawning)
+			this.owner.heal += finalDamage
 	}
 
 	//============Display Implements============//
 	override shapeInit(shape: IShape): void {
 		// Left
-		this.drawOwnerLine(shape.graphics, -LaserAbsorption.SIZE / 2, -LaserAbsorption.SIZE / 4, 0.6)
-		this.drawOwnerLine(shape.graphics, -LaserAbsorption.SIZE / 2, -LaserAbsorption.SIZE / 8, 0.5)
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserAbsorption.SIZE / 2,
+			-LaserAbsorption.SIZE / 4,
+			0.6
+		)
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserAbsorption.SIZE / 2,
+			-LaserAbsorption.SIZE / 8,
+			0.5
+		)
 
 		// Right
-		this.drawOwnerLine(shape.graphics, LaserAbsorption.SIZE / 4, LaserAbsorption.SIZE / 2, 0.6)
-		this.drawOwnerLine(shape.graphics, LaserAbsorption.SIZE / 8, LaserAbsorption.SIZE / 2, 0.5)
+		this.drawOwnerLine(
+			shape.graphics,
+			LaserAbsorption.SIZE / 4,
+			LaserAbsorption.SIZE / 2,
+			0.6
+		)
+		this.drawOwnerLine(
+			shape.graphics,
+			LaserAbsorption.SIZE / 8,
+			LaserAbsorption.SIZE / 2,
+			0.5
+		)
 		super.shapeInit(shape) // ! 超类逻辑：处理形状初始化
 	}
 

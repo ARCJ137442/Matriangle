@@ -21,7 +21,11 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public static readonly LIFE: uint = FIXED_TPS * 0.25
 
 	//============Static Functions============//
-	public static fromPlayer(position: fPoint | iPoint, player: IPlayer, reverse: boolean = false): EffectPlayerHurt {
+	public static fromPlayer(
+		position: fPoint | iPoint,
+		player: IPlayer,
+		reverse: boolean = false
+	): EffectPlayerHurt {
 		return EffectPlayerLike.alignToCenter(
 			new EffectPlayerHurt(
 				position,

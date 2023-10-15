@@ -320,45 +320,55 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	 */
 
 	// *【2023-09-28 21:14:49】为了保留逻辑，还是保留钩子函数（而非内联
-	override onHeal(host: IMatrix, amount: uint, healer: IPlayer | null = null): void {
+	override onHeal(
+		host: IMatrix,
+		amount: uint,
+		healer: IPlayer | null = null
+	): void {
 		super.onHeal(host, amount, healer)
 		// 通知控制器
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.HEAL>(
-			NativePlayerEvent.HEAL,
-			this,
-			host,
-			{
-				healer: healer,
-				amount: amount,
-			}
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.HEAL
+		>(NativePlayerEvent.HEAL, this, host, {
+			healer: healer,
+			amount: amount,
+		})
 	}
 
 	/**
 	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
-	override onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	override onHurt(
+		host: IMatrix,
+		damage: uint,
+		attacker: IPlayer | null = null
+	): void {
 		super.onHurt(host, damage, attacker)
 		// this._hurtOverlay.playAnimation();
-		host.addEntity(EffectPlayerHurt.fromPlayer(this.position, this, false /* 淡出 */))
+		host.addEntity(
+			EffectPlayerHurt.fromPlayer(this.position, this, false /* 淡出 */)
+		)
 		handlePlayerHurt(host, attacker, this, damage)
 
 		// 通知控制器
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.HURT>(
-			NativePlayerEvent.HURT,
-			this,
-			host,
-			{
-				attacker: attacker,
-				damage: damage,
-			}
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.HURT
+		>(NativePlayerEvent.HURT, this, host, {
+			attacker: attacker,
+			damage: damage,
+		})
 	}
 
 	/**
 	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
-	override onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null = null): void {
+	override onDeath(
+		host: IMatrix,
+		damage: uint,
+		attacker: IPlayer | null = null
+	): void {
 		super.onDeath(host, damage, attacker)
 		// 清除「储备生命值」 //
 		this.heal = 0
@@ -367,22 +377,23 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		this.tool.resetUsingState()
 
 		// 通知控制器 // !【2023-10-10 00:22:13】必须在「母体处理」（坐标移动）之前通知控制器，否则可能会有「非法坐标」报错
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.DEATH>(
-			NativePlayerEvent.DEATH,
-			this,
-			host,
-			{
-				attacker: attacker,
-				damage: damage,
-			}
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.DEATH
+		>(NativePlayerEvent.DEATH, this, host, {
+			attacker: attacker,
+			damage: damage,
+		})
 
 		// 触发击杀者的「击杀玩家」事件 // !【2023-10-10 00:45:52】必须在「设置重生」之前
-		if (attacker !== null && !attacker.isRespawning /* 不能在重生 */) attacker.onKillOther(host, this, damage)
+		if (attacker !== null && !attacker.isRespawning /* 不能在重生 */)
+			attacker.onKillOther(host, this, damage)
 
 		// 处理「重生」「生命数」 //
 		// 重置「重生刻」
-		this._respawnTick = host.rule.safeGetRule<uint>(MatrixRuleBatr.key_defaultRespawnTime)
+		this._respawnTick = host.rule.safeGetRule<uint>(
+			MatrixRuleBatr.key_defaultRespawnTime
+		)
 		// 检测「生命耗尽」 // !【2023-10-05 18:21:43】死了就是死了：生命值耗尽⇒通知世界移除自身
 		if (!this.lifeNotDecay && this._lives <= 0) {
 			// ! 生命数是在重生的时候递减的
@@ -401,29 +412,26 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	override onKillOther(host: IMatrix, victim: IPlayer, damage: uint): void {
 		super.onKillOther(host, victim, damage)
 		// 击杀玩家，经验++
-		if (victim !== this && !this.isRespawning) this.setExperience(host, this.experience + 1)
+		if (victim !== this && !this.isRespawning)
+			this.setExperience(host, this.experience + 1)
 
 		// 通知控制器
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.KILL_PLAYER>(
-			NativePlayerEvent.KILL_PLAYER,
-			this,
-			host,
-			{
-				victim: victim,
-				damage: damage,
-			}
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.KILL_PLAYER
+		>(NativePlayerEvent.KILL_PLAYER, this, host, {
+			victim: victim,
+			damage: damage,
+		})
 	}
 
 	override onRespawn(host: IMatrix): void {
 		super.onRespawn(host)
 		// 通知控制器
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.RESPAWN>(
-			NativePlayerEvent.RESPAWN,
-			this,
-			host,
-			undefined
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.RESPAWN
+		>(NativePlayerEvent.RESPAWN, this, host, undefined)
 	}
 
 	public onMapTransform(host: IMatrix): void {
@@ -431,23 +439,19 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		this._tool.resetUsingState()
 
 		// 通知控制器
-		this._controller?.reactPlayerEvent<BatrPlayerEventOptions, BatrPlayerEvent.MAP_TRANSFORM>(
-			BatrPlayerEvent.MAP_TRANSFORM,
-			this,
-			host,
-			undefined
-		)
+		this._controller?.reactPlayerEvent<
+			BatrPlayerEventOptions,
+			BatrPlayerEvent.MAP_TRANSFORM
+		>(BatrPlayerEvent.MAP_TRANSFORM, this, host, undefined)
 		// TODO: 显示更新
 	}
 
 	public onPickupBonusBox(host: IMatrix, box: BonusBox): void {
 		// 通知控制器
-		this._controller?.reactPlayerEvent<BatrPlayerEventOptions, BatrPlayerEvent.PICKUP_BONUS_BOX>(
-			BatrPlayerEvent.PICKUP_BONUS_BOX,
-			this,
-			host,
-			{ box: box }
-		)
+		this._controller?.reactPlayerEvent<
+			BatrPlayerEventOptions,
+			BatrPlayerEvent.PICKUP_BONUS_BOX
+		>(BatrPlayerEvent.PICKUP_BONUS_BOX, this, host, { box: box })
 	}
 
 	override onLocationChange(host: IMatrix, oldP: iPoint): void {
@@ -473,7 +477,11 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// 通知控制器
 	}
 
-	override onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void {
+	override onPositedBlockUpdate(
+		host: IMatrix,
+		ignoreDelay: boolean,
+		isLocationChange: boolean
+	): void {
 		super.onPositedBlockUpdate(host, ignoreDelay, isLocationChange)
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange)
 	}

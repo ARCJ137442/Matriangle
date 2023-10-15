@@ -2,16 +2,26 @@ import { uint } from '../../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import Projectile from '../Projectile'
 import { mRot } from '../../../../../general/GlobalRot'
-import { fPoint, iPoint, iPointRef } from '../../../../../../common/geometricTools'
+import {
+	fPoint,
+	iPoint,
+	iPointRef,
+} from '../../../../../../common/geometricTools'
 import { IShape } from '../../../../../../display/api/DisplayInterfaces'
 import IMatrix from '../../../../../main/IMatrix'
 import { IEntityInGrid } from '../../../../../api/entity/EntityInterfaces'
-import { FIXED_TPS, PROJECTILES_SPAWN_DISTANCE } from '../../../../../main/GlobalWorldVariables'
+import {
+	FIXED_TPS,
+	PROJECTILES_SPAWN_DISTANCE,
+} from '../../../../../main/GlobalWorldVariables'
 import { alignToGridCenter_P } from '../../../../../general/PosTransform'
 import Tool from '../../../tool/Tool'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 
-export default class ShockWaveDrone extends Projectile implements IEntityInGrid {
+export default class ShockWaveDrone
+	extends Projectile
+	implements IEntityInGrid
+{
 	//============Static Variables============//
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2
@@ -72,7 +82,10 @@ export default class ShockWaveDrone extends Projectile implements IEntityInGrid 
 			// 前进一格
 			host.map.towardWithRot_II(this._position, this._direction, 1)
 			// （前进后）坐标在地图外/不可跨越⇒消失
-			if (!host.map.isInMap_I(this._position) || !host.map.testCanPass_I(this._position, false, true, false)) {
+			if (
+				!host.map.isInMap_I(this._position) ||
+				!host.map.testCanPass_I(this._position, false, true, false)
+			) {
 				// Gone
 				host.removeEntity(this)
 			}

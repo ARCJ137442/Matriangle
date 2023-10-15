@@ -3,7 +3,10 @@ import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import Effect from '../../../../api/entity/Effect'
 import { IEntityWithDirection } from '../../../../api/entity/EntityInterfaces'
 import { TPS } from '../../../../main/GlobalWorldVariables'
-import { IGraphicContext, IShape } from '../../../../../display/api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+} from '../../../../../display/api/DisplayInterfaces'
 import { mRot } from '../../../../general/GlobalRot'
 import { fPoint } from '../../../../../common/geometricTools'
 import { NativeDecorationLabel } from '../../../../../display/mods/native/entity/player/DecorationLabels'
@@ -20,7 +23,10 @@ import { alignToGridCenter_P } from '../../../../general/PosTransform'
  * * 玩家死亡光效
  * * 玩家死亡淡出
  */
-export default abstract class EffectPlayerLike extends Effect implements IEntityWithDirection {
+export default abstract class EffectPlayerLike
+	extends Effect
+	implements IEntityWithDirection
+{
 	//============Static Variables============//
 	/** 默认尺寸：与玩家相同的一格大小 */
 	public static readonly SIZE: number = DEFAULT_SIZE
@@ -117,7 +123,8 @@ export default abstract class EffectPlayerLike extends Effect implements IEntity
 	}
 
 	protected drawDecoration(shape: IShape): void {
-		if (this._decorationLabel !== null) drawShapeDecoration(shape.graphics, this._decorationLabel)
+		if (this._decorationLabel !== null)
+			drawShapeDecoration(shape.graphics, this._decorationLabel)
 	}
 
 	/** 实现接口：更新不透明度 */

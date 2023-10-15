@@ -20,5 +20,10 @@ export default interface IMapDisplayer {
 	getBlock(x: int, y: int): Block
 	removeBlock(x: int, y: int): void
 	clearBlock(): void
-	setBlock(x: int, y: int, block: Block, overwrite?: boolean /* = true*/): void
+	setBlock(
+		x: int,
+		y: int,
+		block: Block,
+		overwrite?: boolean /* = true*/
+	): void
 }

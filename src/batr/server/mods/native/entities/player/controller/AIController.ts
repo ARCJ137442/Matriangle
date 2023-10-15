@@ -3,9 +3,17 @@ import { uint } from '../../../../../../legacy/AS3Legacy'
 import { TPS } from '../../../../../main/GlobalWorldVariables'
 import IMatrix from '../../../../../main/IMatrix'
 import IPlayer from '../IPlayer'
-import { NativeMatrixPlayerEvent, EnumNativePlayerAction, PlayerAction } from './PlayerAction'
+import {
+	NativeMatrixPlayerEvent,
+	EnumNativePlayerAction,
+	PlayerAction,
+} from './PlayerAction'
 import PlayerController from './PlayerController'
-import { NativePlayerEvent, NativePlayerEventOptions, PlayerEventOptions } from './PlayerEvent'
+import {
+	NativePlayerEvent,
+	NativePlayerEventOptions,
+	PlayerEventOptions,
+} from './PlayerEvent'
 
 /**
  * 用于表示新增的「AI事件」
@@ -40,7 +48,9 @@ export default abstract class AIController extends PlayerController {
 	/** AI运行的延时（时钟变量） */
 	protected _AIRunDelay: uint = 0
 	/** AI运行的最大延时 */
-	protected _AIRunMaxDelay: uint = uint(TPS / AIController.DEFAULT_AI_RUN_SPEED) // 默认值：0.5秒
+	protected _AIRunMaxDelay: uint = uint(
+		TPS / AIController.DEFAULT_AI_RUN_SPEED
+	) // 默认值：0.5秒
 
 	/**
 	 * AI的运行速度
@@ -112,7 +122,10 @@ export default abstract class AIController extends PlayerController {
 	 * 现在统一响应事件：计算AI刻，并分派钩子
 	 * * 原`onPlayerTick`已废弃
 	 */
-	reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(
+	reactPlayerEvent<
+		OptionMap extends PlayerEventOptions,
+		T extends keyof OptionMap,
+	>(
 		eventType: T,
 		self: IPlayer,
 		host: IMatrix,
@@ -121,12 +134,10 @@ export default abstract class AIController extends PlayerController {
 		// 定时分派自己的「AI刻」事件（必须以「世界刻」为前提）
 		if (eventType === NativePlayerEvent.TICK && this.dealAITick()) {
 			// 直接送去「反应」，预期在其中向「动作缓冲区」添加行为
-			this.reactPlayerEvent<NativePlayerEventOptions, AIPlayerEvent.AI_TICK>(
-				AIPlayerEvent.AI_TICK,
-				self,
-				host,
-				undefined
-			)
+			this.reactPlayerEvent<
+				NativePlayerEventOptions,
+				AIPlayerEvent.AI_TICK
+			>(AIPlayerEvent.AI_TICK, self, host, undefined)
 		}
 		// 若非「已激活」「不再重生」：发送所有在「反应」时添加的玩家行为，然后清空
 		for (let i = 0; i < this._action_buffer.length; i++) {

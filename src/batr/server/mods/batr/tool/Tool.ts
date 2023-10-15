@@ -1,4 +1,8 @@
-import { IJSObjectifiable, JSObjectifyMap, fastAddJSObjectifyMapProperty_dashP } from '../../../../common/JSObjectify'
+import {
+	IJSObjectifiable,
+	JSObjectifyMap,
+	fastAddJSObjectifyMapProperty_dashP,
+} from '../../../../common/JSObjectify'
 import { key } from '../../../../common/utils'
 import { uint } from '../../../../legacy/AS3Legacy'
 import IPlayer from '../../native/entities/player/IPlayer'
@@ -57,7 +61,11 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	public get id(): typeID {
 		return this._id
 	}
-	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(Tool.OBJECTIFY_MAP, 'id', 'string')
+	public static readonly key_id: key = fastAddJSObjectifyMapProperty_dashP(
+		Tool.OBJECTIFY_MAP,
+		'id',
+		'string'
+	)
 
 	//============Constructor & Destructor============//
 	/**
@@ -66,7 +74,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @param baseCD 工具的「使用冷却」
 	 * @param chargeMaxTime 工具的「最大充能时间」
 	 */
-	public constructor(id: typeID, baseCD: uint, chargeMaxTime: uint = 0, reverseCharge: boolean = false) {
+	public constructor(
+		id: typeID,
+		baseCD: uint,
+		chargeMaxTime: uint = 0,
+		reverseCharge: boolean = false
+	) {
 		this._id = id
 		this._usingCD = this._baseCD = baseCD
 		this._chargeTime = this._chargeMaxTime = chargeMaxTime
@@ -75,7 +88,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 
 	/** 复制：直接用构造函数（扩展性不强） */
 	public copy(): Tool {
-		return new Tool(this._id, this._baseCD, this._chargeMaxTime, this._reverseCharge)
+		return new Tool(
+			this._id,
+			this._baseCD,
+			this._chargeMaxTime,
+			this._reverseCharge
+		)
 	}
 
 	//============World Mechanics============//
@@ -95,11 +113,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this._usingCD = value
 	}
 	protected _usingCD: uint
-	public static readonly key_usingCD: key = fastAddJSObjectifyMapProperty_dashP(
-		Tool.OBJECTIFY_MAP,
-		'usingCD',
-		uint(1)
-	)
+	public static readonly key_usingCD: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Tool.OBJECTIFY_MAP,
+			'usingCD',
+			uint(1)
+		)
 
 	/**
 	 * 工具使用基础冷却
@@ -115,7 +134,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this._baseCD = value
 	}
 	protected _baseCD: uint
-	public static readonly key_baseCD: key = fastAddJSObjectifyMapProperty_dashP(Tool.OBJECTIFY_MAP, 'baseCD', uint(1))
+	public static readonly key_baseCD: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Tool.OBJECTIFY_MAP,
+			'baseCD',
+			uint(1)
+		)
 
 	/**
 	 * 工具充能状态（时间）
@@ -132,11 +156,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this._chargeTime = value
 	}
 	protected _chargeTime: uint
-	public static readonly key_chargeTime: key = fastAddJSObjectifyMapProperty_dashP(
-		Tool.OBJECTIFY_MAP,
-		'chargeTime',
-		uint(1)
-	)
+	public static readonly key_chargeTime: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Tool.OBJECTIFY_MAP,
+			'chargeTime',
+			uint(1)
+		)
 
 	/**
 	 * 工具最大充能时间
@@ -152,11 +177,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this._chargeMaxTime = value
 	}
 	protected _chargeMaxTime: uint
-	public static readonly key_chargeMaxTime: key = fastAddJSObjectifyMapProperty_dashP(
-		Tool.OBJECTIFY_MAP,
-		'chargeMaxTime',
-		uint(1)
-	)
+	public static readonly key_chargeMaxTime: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Tool.OBJECTIFY_MAP,
+			'chargeMaxTime',
+			uint(1)
+		)
 
 	/**
 	 * 工具是否「反向充能」
@@ -172,11 +198,12 @@ export default class Tool implements IJSObjectifiable<Tool> {
 		this._reverseCharge = value
 	}
 	protected _reverseCharge: boolean
-	public static readonly key_reverseCharge: key = fastAddJSObjectifyMapProperty_dashP(
-		Tool.OBJECTIFY_MAP,
-		'reverseCharge',
-		false
-	)
+	public static readonly key_reverseCharge: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Tool.OBJECTIFY_MAP,
+			'reverseCharge',
+			false
+		)
 
 	/**
 	 * （衍生）工具是否需要「冷却时间」
@@ -298,7 +325,8 @@ export default class Tool implements IJSObjectifiable<Tool> {
 					// 反向充能「只要使用就直接成功」
 					// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
 					return true
-				} else if (this._chargeTime < this._chargeMaxTime) this._chargeTime++
+				} else if (this._chargeTime < this._chargeMaxTime)
+					this._chargeTime++
 			}
 			// * 正向充能
 			else {

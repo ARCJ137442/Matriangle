@@ -43,14 +43,24 @@ export default class EffectPlayerLevelup extends Effect {
 
 	public shapeInit(shape: IShape): void {
 		// 设置颜色
-		shape.graphics.lineStyle(EffectPlayerLevelup.LINE_SIZE, this._color, EffectPlayerLevelup.LINE_ALPHA)
+		shape.graphics.lineStyle(
+			EffectPlayerLevelup.LINE_SIZE,
+			this._color,
+			EffectPlayerLevelup.LINE_ALPHA
+		)
 		shape.graphics.beginFill(this._color, EffectPlayerLevelup.FILL_ALPHA)
 		// 移动绘制
 		shape.graphics.moveTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1
 		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T2
 		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, 0) // B1
-		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, EffectPlayerLevelup.GRID_SIZE * 1.5) // B2
-		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, EffectPlayerLevelup.GRID_SIZE * 1.5) // B3
+		shape.graphics.lineTo(
+			EffectPlayerLevelup.GRID_SIZE / 2,
+			EffectPlayerLevelup.GRID_SIZE * 1.5
+		) // B2
+		shape.graphics.lineTo(
+			-EffectPlayerLevelup.GRID_SIZE / 2,
+			EffectPlayerLevelup.GRID_SIZE * 1.5
+		) // B3
 		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, 0) // B4
 		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T3
 		shape.graphics.lineTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1

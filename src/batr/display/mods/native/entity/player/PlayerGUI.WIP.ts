@@ -1,6 +1,10 @@
 ﻿import { uint } from '../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../api/GlobalDisplayVariables'
-import { IGraphicContext, IShape, IShapeContainer } from '../../../../api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+	IShapeContainer,
+} from '../../../../api/DisplayInterfaces'
 import { logical2Real, real2Logical } from '../../../../api/PosTransform'
 
 /**
@@ -25,8 +29,10 @@ export default class PlayerGUI implements IShapeContainer {
 	public static readonly BAR_FRAME_SIZE: number = DEFAULT_SIZE / 320
 	public static readonly UNDER_BAR_HEIGHT: number = DEFAULT_SIZE / 16
 	public static readonly UNDER_BAR_Y_0: number = 0.5 * DEFAULT_SIZE
-	public static readonly UNDER_BAR_Y_1: number = PlayerGUI.UNDER_BAR_Y_0 + PlayerGUI.UNDER_BAR_HEIGHT
-	public static readonly UNDER_BAR_Y_2: number = PlayerGUI.UNDER_BAR_Y_1 + PlayerGUI.UNDER_BAR_HEIGHT
+	public static readonly UNDER_BAR_Y_1: number =
+		PlayerGUI.UNDER_BAR_Y_0 + PlayerGUI.UNDER_BAR_HEIGHT
+	public static readonly UNDER_BAR_Y_2: number =
+		PlayerGUI.UNDER_BAR_Y_1 + PlayerGUI.UNDER_BAR_HEIGHT
 
 	// Display Texts
 	public static readonly EXPERIENCE_FORMAT: TextFormat = new TextFormat(
@@ -261,7 +267,8 @@ export default class PlayerGUI implements IShapeContainer {
 
 	public updateName(): void {
 		if (this._owner === null) return
-		this._nameTagText.text = this._owner.customName === null ? '' : this._owner.customName
+		this._nameTagText.text =
+			this._owner.customName === null ? '' : this._owner.customName
 	}
 
 	public updateTeam(): void {
@@ -273,12 +280,14 @@ export default class PlayerGUI implements IShapeContainer {
 	public updateHP(): void {
 		if (this._owner === null) return
 		this._HPBarHP.scaleX = this._owner.HPPercent
-		this._HPBarText.text = this._owner.HPText === null ? '' : this._owner.HPText
+		this._HPBarText.text =
+			this._owner.HPText === null ? '' : this._owner.HPText
 	}
 
 	public updateCharge(sort: boolean = true): void {
 		if (this._owner === null) return
-		this._chargeBarCharge.visible = this._chargeBarFrame.visible = this.getVisibleCharge()
+		this._chargeBarCharge.visible = this._chargeBarFrame.visible =
+			this.getVisibleCharge()
 		if (sort) this.sortUnderBars()
 		this._chargeBarCharge.scaleX = this._owner.toolChargingPercent
 	}
@@ -292,7 +301,8 @@ export default class PlayerGUI implements IShapeContainer {
 
 	public updateExperience(sort: boolean = true): void {
 		if (this._owner === null) return
-		this._experienceBarExperience.visible = this._experienceBarFrame.visible = this.getVisibleExperience()
+		this._experienceBarExperience.visible =
+			this._experienceBarFrame.visible = this.getVisibleExperience()
 		/*if(sort) sortUpperBars()*/
 		this._experienceBarExperience.scaleX = this._owner.experiencePercent
 		this._levelText.text = PlayerGUI.LEVEL_TEXT_HEAD + this._owner.level
@@ -307,7 +317,8 @@ export default class PlayerGUI implements IShapeContainer {
 		}*/
 		if (this.getVisibleCD(false)) sortCharge++
 		this._CDBarCD.y = this._CDBarFrame.y = PlayerGUI.getUnderBarY(sortCD)
-		this._chargeBarCharge.y = this._chargeBarFrame.y = PlayerGUI.getUnderBarY(sortCharge)
+		this._chargeBarCharge.y = this._chargeBarFrame.y =
+			PlayerGUI.getUnderBarY(sortCharge)
 		// this._experienceBarExperience.y=this._experienceBarFrame.y=getUnderBarY(sortExperience);
 	}
 
@@ -330,10 +341,22 @@ export default class PlayerGUI implements IShapeContainer {
 		this._HPBarText.defaultTextFormat = this._HPBarFormat
 		this._nameTagText.defaultTextFormat = this._nameTagFormat
 		this._levelText.defaultTextFormat = PlayerGUI.EXPERIENCE_FORMAT
-		this._HPBarText.selectable = this._nameTagText.selectable = this._levelText.selectable = false
-		this._HPBarText.multiline = this._nameTagText.multiline = this._levelText.multiline = false
-		this._HPBarText.embedFonts = this._nameTagText.embedFonts = this._levelText.embedFonts = true
-		this._HPBarText.autoSize = this._nameTagText.autoSize = this._levelText.autoSize = TextFieldAutoSize.CENTER
+		this._HPBarText.selectable =
+			this._nameTagText.selectable =
+			this._levelText.selectable =
+				false
+		this._HPBarText.multiline =
+			this._nameTagText.multiline =
+			this._levelText.multiline =
+				false
+		this._HPBarText.embedFonts =
+			this._nameTagText.embedFonts =
+			this._levelText.embedFonts =
+				true
+		this._HPBarText.autoSize =
+			this._nameTagText.autoSize =
+			this._levelText.autoSize =
+				TextFieldAutoSize.CENTER
 		// this._HPBarText.border=this._nameTagText.border=true;
 	}
 
@@ -367,12 +390,15 @@ export default class PlayerGUI implements IShapeContainer {
 		this.drawChargeBar()
 
 		this._chargeBarFrame.x = this._chargeBarCharge.x = -0.5 * DEFAULT_SIZE
-		this._chargeBarFrame.y = this._chargeBarCharge.y = PlayerGUI.UNDER_BAR_Y_2
+		this._chargeBarFrame.y = this._chargeBarCharge.y =
+			PlayerGUI.UNDER_BAR_Y_2
 		// Experience Bar
 		this.drawExperienceBar()
 
-		this._experienceBarFrame.x = this._experienceBarExperience.x = -0.5 * DEFAULT_SIZE
-		this._experienceBarFrame.y = this._experienceBarExperience.y = -0.6 * DEFAULT_SIZE
+		this._experienceBarFrame.x = this._experienceBarExperience.x =
+			-0.5 * DEFAULT_SIZE
+		this._experienceBarFrame.y = this._experienceBarExperience.y =
+			-0.6 * DEFAULT_SIZE
 	}
 
 	protected drawPointerTriangle(graphics: IGraphicContext): void {
@@ -388,38 +414,92 @@ export default class PlayerGUI implements IShapeContainer {
 	}
 
 	protected drawHPBar(): void {
-		this._HPBarFrame.graphics.lineStyle(DEFAULT_SIZE / 200, PlayerGUI.HP_BAR_FRAME_COLOR)
-		this._HPBarFrame.graphics.drawRect(0, 0, 0.9375 * DEFAULT_SIZE, PlayerGUI.HP_BAR_HEIGHT)
+		this._HPBarFrame.graphics.lineStyle(
+			DEFAULT_SIZE / 200,
+			PlayerGUI.HP_BAR_FRAME_COLOR
+		)
+		this._HPBarFrame.graphics.drawRect(
+			0,
+			0,
+			0.9375 * DEFAULT_SIZE,
+			PlayerGUI.HP_BAR_HEIGHT
+		)
 		this._HPBarFrame.graphics.endFill()
 		this._HPBarHP.graphics.beginFill(PlayerGUI.HP_COLOR)
-		this._HPBarHP.graphics.drawRect(0, 0, 0.9375 * DEFAULT_SIZE, PlayerGUI.HP_BAR_HEIGHT)
+		this._HPBarHP.graphics.drawRect(
+			0,
+			0,
+			0.9375 * DEFAULT_SIZE,
+			PlayerGUI.HP_BAR_HEIGHT
+		)
 		this._HPBarFrame.graphics.endFill()
 	}
 
 	protected drawCDBar(): void {
-		this._CDBarFrame.graphics.lineStyle(PlayerGUI.BAR_FRAME_SIZE, PlayerGUI.CD_BAR_FRAME_COLOR)
-		this._CDBarFrame.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._CDBarFrame.graphics.lineStyle(
+			PlayerGUI.BAR_FRAME_SIZE,
+			PlayerGUI.CD_BAR_FRAME_COLOR
+		)
+		this._CDBarFrame.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._CDBarFrame.graphics.endFill()
 		this._CDBarCD.graphics.beginFill(PlayerGUI.CD_COLOR)
-		this._CDBarCD.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._CDBarCD.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._CDBarCD.graphics.endFill()
 	}
 
 	protected drawChargeBar(): void {
-		this._chargeBarFrame.graphics.lineStyle(PlayerGUI.BAR_FRAME_SIZE, PlayerGUI.CHARGE_BAR_FRAME_COLOR)
-		this._chargeBarFrame.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._chargeBarFrame.graphics.lineStyle(
+			PlayerGUI.BAR_FRAME_SIZE,
+			PlayerGUI.CHARGE_BAR_FRAME_COLOR
+		)
+		this._chargeBarFrame.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._chargeBarFrame.graphics.endFill()
 		this._chargeBarCharge.graphics.beginFill(PlayerGUI.CHARGE_COLOR)
-		this._chargeBarCharge.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._chargeBarCharge.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._chargeBarCharge.graphics.endFill()
 	}
 
 	protected drawExperienceBar(): void {
-		this._experienceBarFrame.graphics.lineStyle(PlayerGUI.BAR_FRAME_SIZE, PlayerGUI.EXPERIENCE_BAR_FRAME_COLOR)
-		this._experienceBarFrame.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._experienceBarFrame.graphics.lineStyle(
+			PlayerGUI.BAR_FRAME_SIZE,
+			PlayerGUI.EXPERIENCE_BAR_FRAME_COLOR
+		)
+		this._experienceBarFrame.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._experienceBarFrame.graphics.endFill()
-		this._experienceBarExperience.graphics.beginFill(PlayerGUI.EXPERIENCE_COLOR)
-		this._experienceBarExperience.graphics.drawRect(0, 0, DEFAULT_SIZE, PlayerGUI.UNDER_BAR_HEIGHT)
+		this._experienceBarExperience.graphics.beginFill(
+			PlayerGUI.EXPERIENCE_COLOR
+		)
+		this._experienceBarExperience.graphics.drawRect(
+			0,
+			0,
+			DEFAULT_SIZE,
+			PlayerGUI.UNDER_BAR_HEIGHT
+		)
 		this._experienceBarExperience.graphics.endFill()
 	}
 

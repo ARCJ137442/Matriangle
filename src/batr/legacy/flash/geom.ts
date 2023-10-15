@@ -46,11 +46,30 @@ export abstract class Matrix {
 	public abstract concat(m: Matrix): void
 	public abstract invert(): void
 	public abstract clone(): Matrix
-	public abstract createBox(scaleX: number, scaleY: number, rotation?: number, tx?: number, ty?: number): void
-	public abstract createGradientBox(scaleX: number, scaleY: number, rotation?: number, tx?: number, ty?: number): void
+	public abstract createBox(
+		scaleX: number,
+		scaleY: number,
+		rotation?: number,
+		tx?: number,
+		ty?: number
+	): void
+	public abstract createGradientBox(
+		scaleX: number,
+		scaleY: number,
+		rotation?: number,
+		tx?: number,
+		ty?: number
+	): void
 
 	public abstract deltaTransformPoint(point: Point): Point
 	public abstract transformPoint(point: Point): Point
 
-	public abstract setTo(aa: number, ba: number, ca: number, da: number, txa: number, tya: number): void
+	public abstract setTo(
+		aa: number,
+		ba: number,
+		ca: number,
+		da: number,
+		txa: number,
+		tya: number
+	): void
 }

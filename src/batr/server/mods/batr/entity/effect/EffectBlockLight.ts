@@ -38,8 +38,17 @@ export default class EffectBlockLight extends Effect {
 	 * @param reverse 是否倒放
 	 * @returns 一个新实例
 	 */
-	public static fromBlock(position: iPoint, block: Block, reverse: boolean = false): EffectBlockLight {
-		return new EffectBlockLight(position, block.pixelColor, block.pixelAlpha, reverse).alignGridCenter(position)
+	public static fromBlock(
+		position: iPoint,
+		block: Block,
+		reverse: boolean = false
+	): EffectBlockLight {
+		return new EffectBlockLight(
+			position,
+			block.pixelColor,
+			block.pixelAlpha,
+			reverse
+		).alignGridCenter(position)
 	}
 
 	/** 快捷方式：在从整数坐标（格点）复制数据后，对齐网格中心 */
@@ -92,7 +101,12 @@ export default class EffectBlockLight extends Effect {
 		const realRadiusX: number = EffectBlockLight.SIZE / 2
 		const realRadiusY: number = EffectBlockLight.SIZE / 2
 		shape.graphics.beginFill(this._color, uintToPercent(this._alpha))
-		shape.graphics.drawRect(-realRadiusX, -realRadiusY, EffectBlockLight.SIZE, EffectBlockLight.SIZE)
+		shape.graphics.drawRect(
+			-realRadiusX,
+			-realRadiusY,
+			EffectBlockLight.SIZE,
+			EffectBlockLight.SIZE
+		)
 		shape.graphics.drawRect(
 			EffectBlockLight.LINE_SIZE - realRadiusX,
 			EffectBlockLight.LINE_SIZE - realRadiusY,
@@ -105,6 +119,8 @@ export default class EffectBlockLight extends Effect {
 	public shapeRefresh(shape: IShape): void {
 		shape.alpha = this._alphaFunction(this)
 		shape.scaleX = shape.scaleY =
-			EffectBlockLight.MIN_SCALE + (EffectBlockLight.MAX_SCALE - EffectBlockLight.MIN_SCALE) * (1 - shape.alpha)
+			EffectBlockLight.MIN_SCALE +
+			(EffectBlockLight.MAX_SCALE - EffectBlockLight.MIN_SCALE) *
+				(1 - shape.alpha)
 	}
 }

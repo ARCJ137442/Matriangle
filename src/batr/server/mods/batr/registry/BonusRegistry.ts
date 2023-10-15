@@ -52,7 +52,9 @@ export module NativeBonusTypes {
 		// *【2023-10-07 14:16:31】现在不用考虑「具体加成」的显示了
 		..._ABOUT_BUFF,
 	]
-	export const _ABOUT_TEAM: BonusType[] = [NativeBonusTypes.RANDOM_CHANGE_TEAM]
+	export const _ABOUT_TEAM: BonusType[] = [
+		NativeBonusTypes.RANDOM_CHANGE_TEAM,
+	]
 
 	export const _OTHER: BonusType[] = [NativeBonusTypes.RANDOM_TELEPORT]
 
@@ -70,5 +72,8 @@ export module NativeBonusTypes {
 		...NativeBonusTypes._ABOUT_ATTRIBUTES,
 		...NativeBonusTypes._ABOUT_TEAM,
 	]
-	export const _ALL_TYPE: BonusType[] = [...NativeBonusTypes._ALL_AVAILABLE_TYPE, ...NativeBonusTypes._UNUSED]
+	export const _ALL_TYPE: BonusType[] = [
+		...NativeBonusTypes._ALL_AVAILABLE_TYPE,
+		...NativeBonusTypes._UNUSED,
+	]
 }

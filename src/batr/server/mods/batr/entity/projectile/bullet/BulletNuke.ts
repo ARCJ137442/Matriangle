@@ -1,5 +1,8 @@
 import { fPoint } from '../../../../../../common/geometricTools'
-import { IGraphicContext, IShape } from '../../../../../../display/api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+} from '../../../../../../display/api/DisplayInterfaces'
 import { logical2Real } from '../../../../../../display/api/PosTransform'
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import { FIXED_TPS } from '../../../../../main/GlobalWorldVariables'
@@ -39,7 +42,15 @@ export default class BulletNuke extends Bullet {
 		speed: number,
 		finalExplodeRadius: number
 	) {
-		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, finalExplodeRadius)
+		super(
+			owner,
+			position,
+			direction,
+			attackerDamage,
+			extraDamageCoefficient,
+			speed,
+			finalExplodeRadius
+		)
 	}
 
 	//============Instance Functions============//

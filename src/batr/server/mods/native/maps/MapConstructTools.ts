@@ -33,8 +33,17 @@ export function copyBlock(block: Block): Block {
  * @param block 待放置方块
  * @param clone 是否复制
  */
-export function setBlock(storage: IMapStorage, x: int, y: int, block: Block, clone: boolean = false): void {
-	storage.setBlock(_temp_point_2d.copyFromArgs(x, y), clone ? block.copy() : block)
+export function setBlock(
+	storage: IMapStorage,
+	x: int,
+	y: int,
+	block: Block,
+	clone: boolean = false
+): void {
+	storage.setBlock(
+		_temp_point_2d.copyFromArgs(x, y),
+		clone ? block.copy() : block
+	)
 }
 
 /**
@@ -82,7 +91,10 @@ export function fillBlock(
 	if (!outline)
 		for (xi = xl + 1; xi < xm; xi++) {
 			for (yi = yl + 1; yi < ym; yi++) {
-				storage.setBlock(_temp_point_2d.copyFromArgs(xi, yi), blockF(block))
+				storage.setBlock(
+					_temp_point_2d.copyFromArgs(xi, yi),
+					blockF(block)
+				)
 			}
 		}
 }
@@ -111,10 +123,15 @@ export function setReflectBlock(
 ): void {
 	const blockF: (block: Block) => Block = clone ? copyBlock : identity<Block>
 	storage.setBlock(_temp_point_2d.copyFromArgs(x, y), blockF(block))
-	if (rX) storage.setBlock(_temp_point_2d.copyFromArgs(lx - x, y), blockF(block))
+	if (rX)
+		storage.setBlock(_temp_point_2d.copyFromArgs(lx - x, y), blockF(block))
 	if (rY) {
 		storage.setBlock(_temp_point_2d.copyFromArgs(x, ly - y), blockF(block))
-		if (rX) storage.setBlock(_temp_point_2d.copyFromArgs(lx - x, ly - y), blockF(block))
+		if (rX)
+			storage.setBlock(
+				_temp_point_2d.copyFromArgs(lx - x, ly - y),
+				blockF(block)
+			)
 	}
 }
 
@@ -151,7 +168,17 @@ export function fillReflectBlock(
 	if (rX) fillBlock(storage, lx - x2, y1, lx - x1, y2, block, outline, clone)
 	if (rY) {
 		fillBlock(storage, x1, ly - y2, x2, ly - y1, block, outline, clone)
-		if (rX) fillBlock(storage, lx - x2, ly - y2, lx - x1, ly - y1, block, outline, clone)
+		if (rX)
+			fillBlock(
+				storage,
+				lx - x2,
+				ly - y2,
+				lx - x1,
+				ly - y1,
+				block,
+				outline,
+				clone
+			)
 	}
 }
 
@@ -214,8 +241,34 @@ export function fillReflectMirrorBlock(
 	lx: int = 23,
 	ly: int = 23
 ): void {
-	fillReflectBlock(storage, rX, rY, x1, y1, x2, y2, type, outline, clone, lx, ly)
-	fillReflectBlock(storage, rY, rX, y1, x1, y2, x2, type, outline, clone, lx, ly)
+	fillReflectBlock(
+		storage,
+		rX,
+		rY,
+		x1,
+		y1,
+		x2,
+		y2,
+		type,
+		outline,
+		clone,
+		lx,
+		ly
+	)
+	fillReflectBlock(
+		storage,
+		rY,
+		rX,
+		y1,
+		x1,
+		y2,
+		x2,
+		type,
+		outline,
+		clone,
+		lx,
+		ly
+	)
 }
 
 //================地图特殊================//
@@ -313,7 +366,11 @@ export function drawLaserTrapBox(
 	setBlock(storage, x - 1, y + 1, blockWall, clone)
 }
 
-export function addSpawnPointWithMark(storage: IMapStorage, x: int, y: int): void {
+export function addSpawnPointWithMark(
+	storage: IMapStorage,
+	x: int,
+	y: int
+): void {
 	_temp_point_2d.copyFromArgs(x, y)
 	storage.addSpawnPointAt(_temp_point_2d)
 	storage.setBlock(

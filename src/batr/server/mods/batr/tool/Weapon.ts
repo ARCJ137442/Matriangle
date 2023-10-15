@@ -49,11 +49,12 @@ export default class Weapon extends Tool {
 		...Tool.OBJECTIFY_MAP,
 	}
 
-	public static readonly key_baseDamage: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'baseDamage',
-		uint(1)
-	)
+	public static readonly key_baseDamage: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'baseDamage',
+			uint(1)
+		)
 	protected _baseDamage: uint
 	/** 武器的默认攻击伤害 */
 	public get baseDamage(): uint {
@@ -61,73 +62,80 @@ export default class Weapon extends Tool {
 	}
 
 	// canHurt
-	public static readonly key_canHurtEnemy: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'canHurtEnemy',
-		true
-	)
+	public static readonly key_canHurtEnemy: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'canHurtEnemy',
+			true
+		)
 	protected _canHurtEnemy: boolean
 	public get canHurtEnemy(): boolean {
 		return this._canHurtEnemy
 	}
 
-	public static readonly key_canHurtSelf: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'canHurtSelf',
-		true
-	)
+	public static readonly key_canHurtSelf: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'canHurtSelf',
+			true
+		)
 	protected _canHurtSelf: boolean
 	public get canHurtSelf(): boolean {
 		return this._canHurtSelf
 	}
 
-	public static readonly key_canHurtAlly: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'canHurtAlly',
-		true
-	)
+	public static readonly key_canHurtAlly: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'canHurtAlly',
+			true
+		)
 	protected _canHurtAlly: boolean
 	public get canHurtAlly(): boolean {
 		return this._canHurtAlly
 	}
 
 	// Extra
-	public static readonly key_extraDamageCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'extraDamageCoefficient',
-		uint(1)
-	)
+	public static readonly key_extraDamageCoefficient: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'extraDamageCoefficient',
+			uint(1)
+		)
 	protected _extraDamageCoefficient: uint = 5
 	public get extraDamageCoefficient(): uint {
 		return this._extraDamageCoefficient
 	}
 
-	public static readonly key_extraResistanceCoefficient: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'extraResistanceCoefficient',
-		uint(1)
-	)
+	public static readonly key_extraResistanceCoefficient: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'extraResistanceCoefficient',
+			uint(1)
+		)
 	protected _extraResistanceCoefficient: uint = 1
 	public get extraResistanceCoefficient(): uint {
 		return this._extraResistanceCoefficient
 	}
 
-	public static readonly key_useOnCenter: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'useOnCenter',
-		uint(1)
-	)
+	public static readonly key_useOnCenter: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'useOnCenter',
+			uint(1)
+		)
 	protected _useOnCenter: boolean = false
 	public get useOnCenter(): boolean {
 		return this._useOnCenter
 	}
 
 	// 无人机
-	public static readonly key_chargePercentInDrone: key = fastAddJSObjectifyMapProperty_dashP(
-		Weapon.OBJECTIFY_MAP,
-		'chargePercentInDrone',
-		1.0
-	)
+	public static readonly key_chargePercentInDrone: key =
+		fastAddJSObjectifyMapProperty_dashP(
+			Weapon.OBJECTIFY_MAP,
+			'chargePercentInDrone',
+			1.0
+		)
 	protected _chargePercentInDrone: number = 1.0
 	public get chargePercentInDrone(): number {
 		return this._chargePercentInDrone

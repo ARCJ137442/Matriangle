@@ -12,7 +12,13 @@ import { BlockConstructorMap } from '../../../api/map/IMapStorage'
  * 统一「工具被玩家在指定『母体』内以某个方向使用」的回调函数类型
  * @returns 目前不返回任何值
  */
-export type toolUsageF = (host: IMatrix, user: IPlayer, tool: Tool, direction: mRot, chargePercent: number) => void
+export type toolUsageF = (
+	host: IMatrix,
+	user: IPlayer,
+	tool: Tool,
+	direction: mRot,
+	chargePercent: number
+) => void
 
 /**
  * 第一版「世界注册表」
@@ -22,7 +28,10 @@ export type toolUsageF = (host: IMatrix, user: IPlayer, tool: Tool, direction: m
 export default class Registry_V1 implements IWorldRegistry {
 	// 构造&析构 //
 	public constructor(
-		blockConstructorMap: BlockConstructorMap = new Map<typeID, () => Block>(),
+		blockConstructorMap: BlockConstructorMap = new Map<
+			typeID,
+			() => Block
+		>(),
 		blockEventRegistry: BlockEventRegistry = new BlockEventRegistry(),
 		entityTypeMap: Map<typeID, EntityType> = new Map<typeID, EntityType>()
 	) {
@@ -48,7 +57,10 @@ export default class Registry_V1 implements IWorldRegistry {
 	/**
 	 * ! 非接口
 	 */
-	public readonly toolUsageMap: Map<typeID, toolUsageF> = new Map<typeID, toolUsageF>()
+	public readonly toolUsageMap: Map<typeID, toolUsageF> = new Map<
+		typeID,
+		toolUsageF
+	>()
 
 	// !【2023-10-05 17:09:08】有关「工具」一类的东西确实不应该引进来，但可以参考Rule的做法
 }

@@ -25,7 +25,12 @@ import {
  */
 export default abstract class Effect
 	extends Entity
-	implements IEntityDisplayable, IEntityShortLived, IEntityFixedLived, IEntityOutGrid, IEntityActiveLite
+	implements
+		IEntityDisplayable,
+		IEntityShortLived,
+		IEntityFixedLived,
+		IEntityOutGrid,
+		IEntityActiveLite
 {
 	//============Constructor & Destructor============//
 	/**

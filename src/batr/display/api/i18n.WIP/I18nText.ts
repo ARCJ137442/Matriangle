@@ -12,50 +12,98 @@ export default class I18nText {
 	//============Static Variables============//
 
 	//============Static Getter And Setter============//
-	public static getTextsByAllBlocks(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllBlocks(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of BlockType._NORMAL_BLOCKS) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
 
-	public static getTextsByAllEntities(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllEntities(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of EntityType._ALL_ENTITY) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
 
-	public static getTextsByAllEffects(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllEffects(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of EffectType._ALL_EFFECT) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
 
-	public static getTextsByAllAvailableTools(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllAvailableTools(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of Tool._ALL_AVAILABLE_TOOL) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
 
-	public static getTextsByAllBonus(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllBonus(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of BonusType._ALL_TYPE) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
 
-	public static getTextsByAllGameModes(translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByAllGameModes(
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (const type of GameModeType._ALL_TYPE) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(type, isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(type, isDescription)
+				)
+			)
 		}
 		return result
 	}
@@ -68,10 +116,19 @@ export default class I18nText {
 		return result
 	}
 
-	public static getTextsByRuleTools(rule: MatrixRuleBatr, translations: I18ns, isDescription: boolean): I18nText[] {
+	public static getTextsByRuleTools(
+		rule: MatrixRuleBatr,
+		translations: I18ns,
+		isDescription: boolean
+	): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (let i: uint = 0; i < rule.enabledToolCount; i++) {
-			result.push(new I18nText(translations, I18nKey.getTypeKey(rule.enabledTools[i], isDescription)))
+			result.push(
+				new I18nText(
+					translations,
+					I18nKey.getTypeKey(rule.enabledTools[i], isDescription)
+				)
+			)
 		}
 		return result
 	}
@@ -79,7 +136,9 @@ export default class I18nText {
 	public static getTextsByLanguages(): I18nText[] {
 		const result: I18nText[] = new Array<I18nText>()
 		for (let i: uint = 0; i < I18ns.numI18ns; i++) {
-			result.push(new I18nText(I18ns.translationsList[i], I18nKey.LANGUAGE_SELF))
+			result.push(
+				new I18nText(I18ns.translationsList[i], I18nKey.LANGUAGE_SELF)
+			)
 		}
 		return result
 	}

@@ -11,14 +11,24 @@ export default class FixedI18nText extends I18nText {
 	protected _suffix: string
 
 	//============Constructor & Destructor============//
-	public constructor(translations: I18ns, key: string = null, prefix: string = '', suffix: string = '') {
+	public constructor(
+		translations: I18ns,
+		key: string = null,
+		prefix: string = '',
+		suffix: string = ''
+	) {
 		super(translations, key)
 		this._prefix = prefix
 		this._suffix = suffix
 	}
 
 	public override clone(): I18nText {
-		return new FixedI18nText(this._translations, this._key, this._prefix, this._suffix)
+		return new FixedI18nText(
+			this._translations,
+			this._key,
+			this._prefix,
+			this._suffix
+		)
 	}
 
 	//============Destructor Function============//

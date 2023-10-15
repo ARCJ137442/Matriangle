@@ -34,7 +34,8 @@ export function stackMaps(
 			// 逐一比对
 			else {
 				otherAxisSizes[i] ??= map.size[i]
-				if (otherAxisSizes[i] !== map.size[i]) throw new Error('尺寸不一致！')
+				if (otherAxisSizes[i] !== map.size[i])
+					throw new Error('尺寸不一致！')
 			}
 		}
 		// 若「待堆叠尺寸」没有⇒1
@@ -44,7 +45,9 @@ export function stackMaps(
 		}
 	}
 	/** 待返回的新地图 */
-	const nMap: MapStorageSparse = new MapStorageSparse(isInNewAxis ? nDim + 1 : nDim)
+	const nMap: MapStorageSparse = new MapStorageSparse(
+		isInNewAxis ? nDim + 1 : nDim
+	)
 	// 开始合并
 	const copyPointer: iPointVal = new iPoint()
 	let pilePointer: uint = 0 // 堆叠从零开始
@@ -60,7 +63,10 @@ export function stackMaps(
 			// * 函数式编程：决定是「原样」还是「拷贝」
 			if (map.hasBlock(p))
 				// ! 不能省略：地图格式可能不只有此一种
-				nMap.setBlock(copyPointer, deep ? map.getBlock(p).copy() : map.getBlock(p).softCopy())
+				nMap.setBlock(
+					copyPointer,
+					deep ? map.getBlock(p).copy() : map.getBlock(p).softCopy()
+				)
 		})
 		// 复制重生点
 		for (const sP of map.spawnPoints) {
@@ -77,5 +83,11 @@ export function stackMaps(
 }
 
 console.log(
-	mapVH地图可视化_高维(stackMaps(BatrDefaultMaps._ALL_MAPS.map((map: IMap) => map.storage as MapStorageSparse)))
+	mapVH地图可视化_高维(
+		stackMaps(
+			BatrDefaultMaps._ALL_MAPS.map(
+				(map: IMap) => map.storage as MapStorageSparse
+			)
+		)
+	)
 )

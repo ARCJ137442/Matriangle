@@ -1,7 +1,10 @@
 import { iPoint } from '../../../../../common/geometricTools'
 import { uint } from '../../../../../legacy/AS3Legacy'
 import Block from '../../../../api/block/Block'
-import { MatrixProgram, MatrixProgramLabel } from '../../../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../../../api/control/MatrixProgram'
 import { IEntityActive } from '../../../../api/entity/EntityInterfaces'
 import IMatrix from '../../../../main/IMatrix'
 import { NativeBlockEventType } from '../../registry/BlockEventRegistry'
@@ -16,12 +19,17 @@ import { NativeBlockEventType } from '../../registry/BlockEventRegistry'
  * !【2023-10-08 18:07:37】现在不再在其内部存储「随机刻分派映射表」，而利用所在母体的映射表
  * * 「方块随机刻」就是「方块随机刻」，不要干别的事情
  */
-export default class BlockRandomTickDispatcher extends MatrixProgram implements IEntityActive {
+export default class BlockRandomTickDispatcher
+	extends MatrixProgram
+	implements IEntityActive
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'BlockRandomTickDispatch'
 
 	// 构造&析构 //
-	public constructor(label: MatrixProgramLabel = BlockRandomTickDispatcher.LABEL) {
+	public constructor(
+		label: MatrixProgramLabel = BlockRandomTickDispatcher.LABEL
+	) {
 		super(label)
 	}
 
@@ -70,12 +78,14 @@ export default class BlockRandomTickDispatcher extends MatrixProgram implements 
 	protected dispatch(host: IMatrix, position: iPoint): void {
 		const block: Block | null = host.map.storage.getBlock(position)
 		if (block !== null)
-			host.registry.blockEventRegistry.getEventMapAt(block.id)?.[NativeBlockEventType.RANDOM_TICK]?.(
-				// 取其中「随机刻事件」的处理函数
-				host,
-				position,
-				block
-			)
+			host.registry.blockEventRegistry
+				.getEventMapAt(block.id)
+				?.[NativeBlockEventType.RANDOM_TICK]?.(
+					// 取其中「随机刻事件」的处理函数
+					host,
+					position,
+					block
+				)
 	}
 }
 

@@ -158,7 +158,9 @@ export interface IShape extends IDisplayable {
  * * 目前使用数组作为容器存放子元素的「容器」，故其索引为自然数
  */
 
-export interface IShapeContainer extends IShape, IChildContainer<IShape, uint> {}
+export interface IShapeContainer
+	extends IShape,
+		IChildContainer<IShape, uint> {}
 
 /**
  * The migrated interface from `flash.display.Graphics`
@@ -196,7 +198,12 @@ export interface IGraphicContext {
 	drawCircle(x: number, y: number, radius: number): void
 	drawEllipse(x: number, y: number, width: number, height: number): void
 
-	curveTo(controlX: number, controlY: number, anchorX: number, anchorY: number): void
+	curveTo(
+		controlX: number,
+		controlY: number,
+		anchorX: number,
+		anchorY: number
+	): void
 
 	/** 绘制三次贝塞尔曲线（Wave中使用） */
 	cubicCurveTo(

@@ -46,8 +46,15 @@ export default class EffectExplode extends Effect {
 
 	public shapeInit(shape: IShape): void {
 		shape.graphics.clear()
-		shape.graphics.lineStyle(EffectExplode.LINE_SIZE, this.color, uintToPercent(EffectExplode.LINE_ALPHA))
-		shape.graphics.beginFill(this.color, uintToPercent(EffectExplode.FILL_ALPHA))
+		shape.graphics.lineStyle(
+			EffectExplode.LINE_SIZE,
+			this.color,
+			uintToPercent(EffectExplode.LINE_ALPHA)
+		)
+		shape.graphics.beginFill(
+			this.color,
+			uintToPercent(EffectExplode.FILL_ALPHA)
+		)
 		shape.graphics.drawCircle(0, 0, logical2Real(this.radius))
 		shape.graphics.endFill()
 	}

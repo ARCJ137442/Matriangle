@@ -3,13 +3,20 @@ import { uint, int, int$MAX_VALUE } from '../../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import BlockAttributes from '../../../../../api/block/BlockAttributes'
 import Projectile from '../Projectile'
-import { IEntityFixedLived, IEntityInGrid } from '../../../../../api/entity/EntityInterfaces'
+import {
+	IEntityFixedLived,
+	IEntityInGrid,
+} from '../../../../../api/entity/EntityInterfaces'
 import { TPS } from '../../../../../main/GlobalWorldVariables'
 import { IShape } from '../../../../../../display/api/DisplayInterfaces'
 import IMatrix from '../../../../../main/IMatrix'
 import { mRot, toOpposite_M } from '../../../../../general/GlobalRot'
 import { intAbs, intMin } from '../../../../../../common/exMath'
-import { getHitEntity_I_Grid, isHitAnyEntity_I_Grid, playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
+import {
+	getHitEntity_I_Grid,
+	isHitAnyEntity_I_Grid,
+	playerCanHurtOther,
+} from '../../../mechanics/BatrMatrixMechanics'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
 import { clearArray } from '../../../../../../common/utils'
 import IPlayer from '../../../../native/entities/player/IPlayer'
@@ -26,7 +33,10 @@ import IPlayer from '../../../../native/entities/player/IPlayer'
  *
  * @author ARCJ137442
  */
-export default class Lightning extends Projectile implements IEntityFixedLived, IEntityInGrid {
+export default class Lightning
+	extends Projectile
+	implements IEntityFixedLived, IEntityInGrid
+{
 	protected _position: iPoint = new iPoint()
 	protected _life: uint = Lightning.LIFE
 
@@ -123,10 +133,18 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			if (
 				player !== null &&
 				(this.owner === null ||
-					playerCanHurtOther(this.owner, player, this.canHurtEnemy, this.canHurtSelf, this.canHurtAlly))
+					playerCanHurtOther(
+						this.owner,
+						player,
+						this.canHurtEnemy,
+						this.canHurtSelf,
+						this.canHurtAlly
+					))
 			) {
 				this._hurtPlayers.push(player)
-				this._hurtDefaultDamage.push(this._attackerDamage * this.energyPercent)
+				this._hurtDefaultDamage.push(
+					this._attackerDamage * this.energyPercent
+				)
 			}
 			// Update Rot
 			nRot = this.getLeastWeightRot(host, head, tRot)
@@ -163,7 +181,11 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	 * @param nowRot 当前朝向（默认方向）
 	 * @returns 新的「目标朝向」（若已找到前进方向），或`-1`（未找到前进方向，一般不会发生）
 	 */
-	protected getLeastWeightRot(host: IMatrix, p: iPoint, nowRot: mRot): mRot | -1 {
+	protected getLeastWeightRot(
+		host: IMatrix,
+		p: iPoint,
+		nowRot: mRot
+	): mRot | -1 {
 		let cost: int
 		let result: mRot | -1 = -1
 		// 默认
@@ -203,7 +225,8 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 	protected operateCost(host: IMatrix, p: iPoint): int {
 		if (isHitAnyEntity_I_Grid(p, getPlayers(host))) return 5 // The electricResistance of player
 		if (host.map.storage.isInMap(p)) return int$MAX_VALUE // The electricResistance out of world
-		const attributes: BlockAttributes | null = host.map.storage.getBlockAttributes(p)
+		const attributes: BlockAttributes | null =
+			host.map.storage.getBlockAttributes(p)
 		if (attributes !== null) return attributes.electricResistance
 		return 0
 	}
@@ -214,7 +237,12 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			this.isCalculated = true
 			this.lightningWays(host)
 			// lightningHurtPlayers(host, this, this._hurtPlayers, this._hurtDefaultDamage);
-			console.warn('WIP lightningHurtPlayers!', this, this._hurtPlayers, this._hurtDefaultDamage)
+			console.warn(
+				'WIP lightningHurtPlayers!',
+				this,
+				this._hurtPlayers,
+				this._hurtDefaultDamage
+			)
 		}
 		// 处理生命周期
 		if (this._life > 0) this._life--
@@ -267,10 +295,16 @@ export default class Lightning extends Projectile implements IEntityFixedLived, 
 			// Head
 			shape.graphics.beginFill(this.ownerColor, Lightning.LIGHT_ALPHA)
 			shape.graphics.drawRect(
-				DEFAULT_SIZE * (intMin(point.x, pointH.x) - Lightning.LIGHT_BLOCK_WIDTH),
-				DEFAULT_SIZE * (intMin(point.y, pointH.y) - Lightning.LIGHT_BLOCK_WIDTH),
-				DEFAULT_SIZE * (intAbs(point.x - pointH.x) + Lightning.LIGHT_BLOCK_WIDTH * 2),
-				DEFAULT_SIZE * (intAbs(point.y - pointH.y) + Lightning.LIGHT_BLOCK_WIDTH * 2)
+				DEFAULT_SIZE *
+					(intMin(point.x, pointH.x) - Lightning.LIGHT_BLOCK_WIDTH),
+				DEFAULT_SIZE *
+					(intMin(point.y, pointH.y) - Lightning.LIGHT_BLOCK_WIDTH),
+				DEFAULT_SIZE *
+					(intAbs(point.x - pointH.x) +
+						Lightning.LIGHT_BLOCK_WIDTH * 2),
+				DEFAULT_SIZE *
+					(intAbs(point.y - pointH.y) +
+						Lightning.LIGHT_BLOCK_WIDTH * 2)
 			)
 			shape.graphics.endFill()
 			// console.log('drawPoint at ',point,pointH);

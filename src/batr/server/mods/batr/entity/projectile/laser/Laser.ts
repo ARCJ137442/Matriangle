@@ -1,13 +1,26 @@
 import { iPoint, intPoint } from '../../../../../../common/geometricTools'
-import { IShape, IGraphicContext } from '../../../../../../display/api/DisplayInterfaces'
+import {
+	IShape,
+	IGraphicContext,
+} from '../../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
 import { uint } from '../../../../../../legacy/AS3Legacy'
-import { IEntityInGrid, IEntityFixedLived } from '../../../../../api/entity/EntityInterfaces'
-import { isAxisPositive_M, mRot, mRot2axis } from '../../../../../general/GlobalRot'
+import {
+	IEntityInGrid,
+	IEntityFixedLived,
+} from '../../../../../api/entity/EntityInterfaces'
+import {
+	isAxisPositive_M,
+	mRot,
+	mRot2axis,
+} from '../../../../../general/GlobalRot'
 import IMatrix from '../../../../../main/IMatrix'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
-import { computeFinalDamage, playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
+import {
+	computeFinalDamage,
+	playerCanHurtOther,
+} from '../../../mechanics/BatrMatrixMechanics'
 import Tool from '../../../tool/Tool'
 import { i_hasAttributes } from '../../player/IPlayerHasAttributes'
 import Projectile from '../Projectile'
@@ -20,7 +33,10 @@ import Projectile from '../Projectile'
  * 抛射体
  */
 
-export default abstract class Laser extends Projectile implements IEntityInGrid, IEntityFixedLived {
+export default abstract class Laser
+	extends Projectile
+	implements IEntityInGrid, IEntityFixedLived
+{
 	//============Instance Variables============//
 	/** 激光的长度 */
 	public _length: uint
@@ -155,7 +171,12 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * @param canHurt 计算出的「激光是否能（应）伤害该玩家」
 	 * @param finalDamage 计算出的「最终伤害」
 	 */
-	protected hitAPlayer(host: IMatrix, player: IPlayer, canHurt: boolean, finalDamage: uint): void {
+	protected hitAPlayer(
+		host: IMatrix,
+		player: IPlayer,
+		canHurt: boolean,
+		finalDamage: uint
+	): void {
 		if (canHurt) player.removeHP(host, finalDamage, this.owner)
 	}
 
@@ -175,11 +196,19 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 				this.hitAPlayer(
 					host,
 					player,
-					playerCanHurtOther(this.owner, player, this.canHurtEnemy, this.canHurtSelf, this.canHurtAlly),
+					playerCanHurtOther(
+						this.owner,
+						player,
+						this.canHurtEnemy,
+						this.canHurtSelf,
+						this.canHurtAlly
+					),
 					computeFinalDamage(
 						this._attackerDamage,
 						// 计算「最终伤害」
-						player !== null && i_hasAttributes(player) ? player.attributes.buffResistance : 0,
+						player !== null && i_hasAttributes(player)
+							? player.attributes.buffResistance
+							: 0,
 						this._extraResistanceCoefficient
 					)
 				)
@@ -234,7 +263,12 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		graphics.endFill()
 	}
 
-	protected drawOwnerLine(graphics: IGraphicContext, y1: number, y2: number, alpha: number = 1): void {
+	protected drawOwnerLine(
+		graphics: IGraphicContext,
+		y1: number,
+		y2: number,
+		alpha: number = 1
+	): void {
 		const yStart: number = Math.min(y1, y2)
 		graphics.beginFill(this.ownerColor, alpha)
 		graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)

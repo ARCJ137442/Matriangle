@@ -1,6 +1,11 @@
 import { uint } from '../../../../legacy/AS3Legacy'
 import { MatrixProgramLabel } from '../../../api/control/MatrixProgram'
-import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http'
+import {
+	createServer,
+	Server,
+	IncomingMessage,
+	ServerResponse,
+} from 'node:http'
 import { ParsedUrlQuery, parse } from 'node:querystring'
 import MultiKeyController from './MultiKeyController'
 
@@ -116,8 +121,10 @@ export default class HTTPController extends MultiKeyController {
 				req.url.indexOf('?') + 1
 			) ?? ''
 		)
-		const controlKey: string | string[] | undefined = queries?.[HTTPController.KEY_CONTROL_KEY]
-		const action: string | string[] | undefined = queries?.[HTTPController.KEY_ACTION]
+		const controlKey: string | string[] | undefined =
+			queries?.[HTTPController.KEY_CONTROL_KEY]
+		const action: string | string[] | undefined =
+			queries?.[HTTPController.KEY_ACTION]
 		let responseText: string = `No response of ${req.url}\n`
 		// 根据请求分派操作 // ! 目前只有「控制密钥」与「分派动作」均为字符串时才分派
 		if (typeof controlKey === 'string' && typeof action === 'string') {

@@ -7,6 +7,7 @@ export module GlobalServerInformation {
 	export const VERSION_BUILD: string = '01'
 	export const UPDATE_LOG: string = 'The First Immigration towards TypeScript'
 
-	export const FULL_VERSION = 'v' + VERSION_MAJOR + '-' + VERSION_MAIN + '.' + VERSION_BUILD
+	export const FULL_VERSION =
+		'v' + VERSION_MAJOR + '-' + VERSION_MAIN + '.' + VERSION_BUILD
 	export const FULL_NAME = NAME + ' ' + DEV_STAGE + ' ' + FULL_VERSION
 }

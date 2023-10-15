@@ -1,9 +1,20 @@
 import { uint } from '../../../../../legacy/AS3Legacy'
-import { DisplayLayers, IShape, IShapeContainer } from '../../../../../display/api/DisplayInterfaces'
+import {
+	DisplayLayers,
+	IShape,
+	IShapeContainer,
+} from '../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import Entity from '../../../../api/entity/Entity'
-import { IEntityDisplayableContainer, IEntityInGrid } from '../../../../api/entity/EntityInterfaces'
-import { iPoint, iPointRef, intPoint } from '../../../../../common/geometricTools'
+import {
+	IEntityDisplayableContainer,
+	IEntityInGrid,
+} from '../../../../api/entity/EntityInterfaces'
+import {
+	iPoint,
+	iPointRef,
+	intPoint,
+} from '../../../../../common/geometricTools'
 import { BonusType } from '../../registry/BonusRegistry'
 import IMatrix from '../../../../main/IMatrix'
 
@@ -15,7 +26,10 @@ import IMatrix from '../../../../main/IMatrix'
  * * 用于在世界机制中被玩家拾取的
  * 实体
  */
-export default class BonusBox extends Entity implements IEntityInGrid, IEntityDisplayableContainer {
+export default class BonusBox
+	extends Entity
+	implements IEntityInGrid, IEntityDisplayableContainer
+{
 	public static readonly LINE_COLOR: uint = 0x777777
 	public static readonly FILL_COLOR: uint = 0xdddddd
 
@@ -66,7 +80,16 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 
 	/** 实现：如果更新后自身位置被遮挡，则通知母体移除自身 */
 	public onPositedBlockUpdate(host: IMatrix): void {
-		if (!host.map.testCanPass_I(this._position, true, false, false, false, true)) {
+		if (
+			!host.map.testCanPass_I(
+				this._position,
+				true,
+				false,
+				false,
+				false,
+				true
+			)
+		) {
 			host.removeEntity(this)
 		}
 	}
@@ -76,7 +99,8 @@ export default class BonusBox extends Entity implements IEntityInGrid, IEntityDi
 	public readonly i_displayableContainer = true as const
 
 	/** 边缘的空白 */
-	public static readonly BORDER_SPACE: number = (DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
+	public static readonly BORDER_SPACE: number =
+		(DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
 
 	public shapeInit(shape: IShapeContainer, symbol: IShape): void {
 		// 绘制盒子

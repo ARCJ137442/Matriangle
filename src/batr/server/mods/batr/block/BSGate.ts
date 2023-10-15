@@ -53,9 +53,13 @@ export default class BSGate extends BlockState {
 			// 透明（激光通过）
 			this._temp_fullAttr.transparent = open
 			// 电流抗性
-			this._temp_fullAttr.electricResistance = open ? 0 : this._temp_fullAttr_electricResistance
+			this._temp_fullAttr.electricResistance = open
+				? 0
+				: this._temp_fullAttr_electricResistance
 			// 玩家伤害
-			this._temp_fullAttr.playerDamage = open ? int$MIN_VALUE : this._temp_fullAttr_playerDamage
+			this._temp_fullAttr.playerDamage = open
+				? int$MIN_VALUE
+				: this._temp_fullAttr_playerDamage
 			// 呈现不透明度
 			this._temp_fullAttr.defaultPixelAlpha = open
 				? this._temp_fullAttr_pixelAlpha >> 2 // 四分之一透明度
@@ -75,9 +79,11 @@ export default class BSGate extends BlockState {
 			// 缓存整个属性
 			this._temp_fullAttr = baseAttr.copy()
 			// 缓存需要临时改变的属性
-			this._temp_fullAttr_pixelAlpha = this._temp_fullAttr.defaultPixelAlpha
+			this._temp_fullAttr_pixelAlpha =
+				this._temp_fullAttr.defaultPixelAlpha
 			this._temp_fullAttr_playerDamage = this._temp_fullAttr.playerDamage
-			this._temp_fullAttr_electricResistance = this._temp_fullAttr.electricResistance
+			this._temp_fullAttr_electricResistance =
+				this._temp_fullAttr.electricResistance
 			// 更新属性
 			this.updateOpen(this._open) // !【2023-10-08 21:00:18】就是应该只有在「状态改变」时更新，除此之外应该不用更新
 		}

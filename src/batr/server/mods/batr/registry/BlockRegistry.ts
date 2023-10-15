@@ -22,8 +22,16 @@ export module BatrBlockPrototypes {
 		NativeBlockAttributes.WALL,
 		new BSBiColored(0xaaaaaa, 0xbbbbbb)
 	) // 灰色的墙
-	export const WATER: Block<BSColored> = new Block('Water', NativeBlockAttributes.WATER, new BSColored(0x2222ff)) // 蓝色的水
-	export const GLASS: Block<BSBiColored> = new Block('Glass', NativeBlockAttributes.GLASS, new BSBiColored(0xddffff)) // 青色的玻璃
+	export const WATER: Block<BSColored> = new Block(
+		'Water',
+		NativeBlockAttributes.WATER,
+		new BSColored(0x2222ff)
+	) // 蓝色的水
+	export const GLASS: Block<BSBiColored> = new Block(
+		'Glass',
+		NativeBlockAttributes.GLASS,
+		new BSBiColored(0xddffff)
+	) // 青色的玻璃
 	export const BEDROCK: Block<BSBiColored> = new Block(
 		'Bedrock',
 		NativeBlockAttributes.BEDROCK,
@@ -40,20 +48,52 @@ export module BatrBlockPrototypes {
 		new BSBiColored(0x889988, 0xbbccbb)
 	) // 绿色的墙
 
-	export const X_TRAP_HURT: Block<null> = new Block('XTrapHurt', NativeBlockAttributes.X_TRAP_HURT, null)
-	export const X_TRAP_KILL: Block<null> = new Block('XTrapKill', NativeBlockAttributes.X_TRAP_KILL, null)
-	export const X_TRAP_ROTATE: Block<null> = new Block('XTrapRotate', NativeBlockAttributes.X_TRAP_ROTATE, null)
+	export const X_TRAP_HURT: Block<null> = new Block(
+		'XTrapHurt',
+		NativeBlockAttributes.X_TRAP_HURT,
+		null
+	)
+	export const X_TRAP_KILL: Block<null> = new Block(
+		'XTrapKill',
+		NativeBlockAttributes.X_TRAP_KILL,
+		null
+	)
+	export const X_TRAP_ROTATE: Block<null> = new Block(
+		'XTrapRotate',
+		NativeBlockAttributes.X_TRAP_ROTATE,
+		null
+	)
 
-	export const COLOR_SPAWNER: Block<null> = new Block('ColorSpawner', NativeBlockAttributes.COLOR_SPAWNER, null)
-	export const LASER_TRAP: Block<null> = new Block('LaserTrap', NativeBlockAttributes.LASER_TRAP, null)
+	export const COLOR_SPAWNER: Block<null> = new Block(
+		'ColorSpawner',
+		NativeBlockAttributes.COLOR_SPAWNER,
+		null
+	)
+	export const LASER_TRAP: Block<null> = new Block(
+		'LaserTrap',
+		NativeBlockAttributes.LASER_TRAP,
+		null
+	)
 	export const SPAWN_POINT_MARK: Block<null> = new Block(
 		'SpawnPointMark',
 		NativeBlockAttributes.SPAWN_POINT_MARK,
 		null
 	)
-	export const SUPPLY_POINT: Block<null> = new Block('SupplyPoint', NativeBlockAttributes.SUPPLY_POINT, null)
-	export const GATE_OPEN: Block<BSGate> = new Block('Gate', NativeBlockAttributes.GATE_CLOSE, new BSGate(false)) // 打开的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
-	export const GATE_CLOSE: Block<BSGate> = new Block('Gate', NativeBlockAttributes.GATE_CLOSE, new BSGate(false)) // 关闭的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	export const SUPPLY_POINT: Block<null> = new Block(
+		'SupplyPoint',
+		NativeBlockAttributes.SUPPLY_POINT,
+		null
+	)
+	export const GATE_OPEN: Block<BSGate> = new Block(
+		'Gate',
+		NativeBlockAttributes.GATE_CLOSE,
+		new BSGate(false)
+	) // 打开的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	export const GATE_CLOSE: Block<BSGate> = new Block(
+		'Gate',
+		NativeBlockAttributes.GATE_CLOSE,
+		new BSGate(false)
+	) // 关闭的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
 }
 
 /**
@@ -77,7 +117,8 @@ export module BatrBlockIDs {
 
 	export const COLOR_SPAWNER: typeID = BatrBlockPrototypes.COLOR_SPAWNER.id
 	export const LASER_TRAP: typeID = BatrBlockPrototypes.LASER_TRAP.id
-	export const SPAWN_POINT_MARK: typeID = BatrBlockPrototypes.SPAWN_POINT_MARK.id
+	export const SPAWN_POINT_MARK: typeID =
+		BatrBlockPrototypes.SPAWN_POINT_MARK.id
 	export const SUPPLY_POINT: typeID = BatrBlockPrototypes.SUPPLY_POINT.id
 	export const GATE: typeID = BatrBlockPrototypes.GATE_OPEN.id
 }
@@ -103,10 +144,11 @@ export const ALL_BATR_BLOCKS: Block[] = [
  * 用于「ID⇒零参构造函数」的映射表
  * * 应用：「ID⇒白板对象⇒JS反对象化」
  */
-export const BATR_BLOCK_CONSTRUCTOR_MAP: BlockConstructorMap = MapFromGeneratorKV(
-	ALL_BATR_BLOCKS,
-	(block: Block): typeID => block.id,
-	(block: Block): (() => Block) =>
-		(): Block =>
-			block.copy()
-)
+export const BATR_BLOCK_CONSTRUCTOR_MAP: BlockConstructorMap =
+	MapFromGeneratorKV(
+		ALL_BATR_BLOCKS,
+		(block: Block): typeID => block.id,
+		(block: Block): (() => Block) =>
+			(): Block =>
+				block.copy()
+	)

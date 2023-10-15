@@ -1,7 +1,14 @@
 import EffectTeleport from '../../../../server/mods/batr/entity/effect/EffectTeleport'
-import { BonusType, NativeBonusTypes } from '../../../../server/mods/batr/registry/BonusRegistry'
+import {
+	BonusType,
+	NativeBonusTypes,
+} from '../../../../server/mods/batr/registry/BonusRegistry'
 import { uint } from '../../../../legacy/AS3Legacy'
-import { IDisplayable, IGraphicContext, IShape } from '../../../api/DisplayInterfaces'
+import {
+	IDisplayable,
+	IGraphicContext,
+	IShape,
+} from '../../../api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../api/GlobalDisplayVariables'
 
 /**
@@ -117,26 +124,47 @@ export default class BonusBoxSymbol implements IDisplayable {
 				break
 			// Attributes
 			case NativeBonusTypes.BUFF_RANDOM:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RANDOM_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.BUFF_RANDOM_COLOR
+				)
 				break
 			case NativeBonusTypes.BUFF_DAMAGE:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_DAMAGE_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.BUFF_DAMAGE_COLOR
+				)
 				break
 			case NativeBonusTypes.BUFF_CD:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_CD_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.BUFF_CD_COLOR
+				)
 				break
 			case NativeBonusTypes.BUFF_RESISTANCE:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RESISTANCE_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.BUFF_RESISTANCE_COLOR
+				)
 				break
 			case NativeBonusTypes.BUFF_RADIUS:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.BUFF_RADIUS_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.BUFF_RADIUS_COLOR
+				)
 				break
 			case NativeBonusTypes.ADD_EXPERIENCE:
-				this.drawAttributesSymbol(graphics, BonusBoxSymbol.EXPERIENCE_COLOR)
+				this.drawAttributesSymbol(
+					graphics,
+					BonusBoxSymbol.EXPERIENCE_COLOR
+				)
 				break
 			// Team
 			case NativeBonusTypes.RANDOM_CHANGE_TEAM:
-				this.drawTeamSymbol(graphics, BonusBoxSymbol.RANDOM_CHANGE_TEAM_LINE_COLOR)
+				this.drawTeamSymbol(
+					graphics,
+					BonusBoxSymbol.RANDOM_CHANGE_TEAM_LINE_COLOR
+				)
 				break
 			// case NativeBonusTypes.UNITE_PLAYER:
 			// 	this.drawTeamSymbol(graphics, BonusBoxSymbol.UNITE_PLAYER_LINE_COLOR);
@@ -215,12 +243,18 @@ export default class BonusBoxSymbol implements IDisplayable {
 	//====Tool====//
 	protected drawToolSymbol(graphics: IGraphicContext): void {
 		// Circle
-		graphics.lineStyle(BonusBoxSymbol.TOOL_LINE_SIZE, BonusBoxSymbol.TOOL_COLOR)
+		graphics.lineStyle(
+			BonusBoxSymbol.TOOL_LINE_SIZE,
+			BonusBoxSymbol.TOOL_COLOR
+		)
 		graphics.drawCircle(0, 0, BonusBoxSymbol.GRID_SIZE)
 	}
 
 	//====Attributes====//
-	protected drawAttributesSymbol(graphics: IGraphicContext, color: uint): void {
+	protected drawAttributesSymbol(
+		graphics: IGraphicContext,
+		color: uint
+	): void {
 		// Colored Rectangle
 		/*graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
 		graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
@@ -234,9 +268,15 @@ export default class BonusBoxSymbol implements IDisplayable {
 		graphics.lineTo(BonusBoxSymbol.GRID_SIZE * 1.5, 0) // T2
 		graphics.lineTo(BonusBoxSymbol.GRID_SIZE / 2, 0)
 		// B1
-		graphics.lineTo(BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 1.5)
+		graphics.lineTo(
+			BonusBoxSymbol.GRID_SIZE / 2,
+			BonusBoxSymbol.GRID_SIZE * 1.5
+		)
 		// B2
-		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE / 2, BonusBoxSymbol.GRID_SIZE * 1.5)
+		graphics.lineTo(
+			-BonusBoxSymbol.GRID_SIZE / 2,
+			BonusBoxSymbol.GRID_SIZE * 1.5
+		)
 		// B3
 		graphics.lineTo(-BonusBoxSymbol.GRID_SIZE / 2, 0)
 		// B4
@@ -259,8 +299,15 @@ export default class BonusBoxSymbol implements IDisplayable {
 	protected drawRandomTeleportSymbol(graphics: IGraphicContext): void {
 		// Teleport Effect
 		// 1
-		graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA)
-		graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA)
+		graphics.lineStyle(
+			EffectTeleport.LINE_SIZE,
+			EffectTeleport.DEFAULT_COLOR,
+			EffectTeleport.LINE_ALPHA
+		)
+		graphics.beginFill(
+			EffectTeleport.DEFAULT_COLOR,
+			EffectTeleport.FILL_ALPHA
+		)
 		graphics.drawRect(
 			-BonusBoxSymbol.GRID_SIZE,
 			-BonusBoxSymbol.GRID_SIZE,
@@ -269,8 +316,15 @@ export default class BonusBoxSymbol implements IDisplayable {
 		)
 		graphics.endFill()
 		// 2
-		graphics.lineStyle(EffectTeleport.LINE_SIZE, EffectTeleport.DEFAULT_COLOR, EffectTeleport.LINE_ALPHA)
-		graphics.beginFill(EffectTeleport.DEFAULT_COLOR, EffectTeleport.FILL_ALPHA)
+		graphics.lineStyle(
+			EffectTeleport.LINE_SIZE,
+			EffectTeleport.DEFAULT_COLOR,
+			EffectTeleport.LINE_ALPHA
+		)
+		graphics.beginFill(
+			EffectTeleport.DEFAULT_COLOR,
+			EffectTeleport.FILL_ALPHA
+		)
 		graphics.moveTo(0, -BonusBoxSymbol.GRID_SIZE * Math.SQRT2)
 		graphics.lineTo(BonusBoxSymbol.GRID_SIZE * Math.SQRT2, 0)
 		graphics.lineTo(0, BonusBoxSymbol.GRID_SIZE * Math.SQRT2)

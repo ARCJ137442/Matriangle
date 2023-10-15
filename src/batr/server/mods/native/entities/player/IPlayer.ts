@@ -172,7 +172,11 @@ export default interface IPlayer
 	setPosition(host: IMatrix, position: iPointRef, needHook: boolean): void
 
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
-	onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void
+	onPositedBlockUpdate(
+		host: IMatrix,
+		ignoreDelay: boolean,
+		isLocationChange: boolean
+	): void
 
 	/**
 	 * 用于判断「玩家是否可当前位置移动到另一位置」
@@ -224,7 +228,11 @@ export default interface IPlayer
 	 * @param amount 生命值提升的数量
 	 * @param healer 治疗者（可空）
 	 */
-	onHeal(host: IMatrix, amount: uint, healer: IPlayer | null /*  = null */): void
+	onHeal(
+		host: IMatrix,
+		amount: uint,
+		healer: IPlayer | null /*  = null */
+	): void
 
 	/**
 	 * 事件：（被玩家）伤害，即「生命值减少（但未减为零）」
@@ -235,7 +243,11 @@ export default interface IPlayer
 	 * @param damage 伤害值
 	 * @param attacker 攻击者（可空）
 	 */
-	onHurt(host: IMatrix, damage: uint, attacker: IPlayer | null /*  = null */): void
+	onHurt(
+		host: IMatrix,
+		damage: uint,
+		attacker: IPlayer | null /*  = null */
+	): void
 
 	/**
 	 * 事件：（被玩家）击杀，即「生命值减少为零」
@@ -246,7 +258,11 @@ export default interface IPlayer
 	 * @param damage 伤害值
 	 * @param attacker 击杀者（可空）
 	 */
-	onDeath(host: IMatrix, damage: uint, attacker: IPlayer | null /*  = null */): void
+	onDeath(
+		host: IMatrix,
+		damage: uint,
+		attacker: IPlayer | null /*  = null */
+	): void
 
 	/**
 	 * 事件：击杀其它（玩家）

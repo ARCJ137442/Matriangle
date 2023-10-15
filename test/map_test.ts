@@ -1,5 +1,9 @@
 import { int, uint } from '../src/batr/legacy/AS3Legacy'
-import { fPoint, iPoint, traverseNDSquare } from '../src/batr/common/geometricTools'
+import {
+	fPoint,
+	iPoint,
+	traverseNDSquare,
+} from '../src/batr/common/geometricTools'
 import IMap from '../src/batr/server/api/map/IMap'
 import IMapLogic from '../src/batr/server/api/map/IMapLogic'
 import IMapStorage from '../src/batr/server/api/map/IMapStorage'
@@ -13,7 +17,10 @@ import { mapV地图可视化 } from '../src/batr/server/mods/visualization/textV
 const { log, info, time, timeEnd } = console
 log(new MapStorageSparse(2))
 
-function assert(condition: boolean, errorMessage: string = 'Assertion failed!'): void {
+function assert(
+	condition: boolean,
+	errorMessage: string = 'Assertion failed!'
+): void {
 	if (!condition) throw new Error(errorMessage)
 }
 
@@ -35,7 +42,9 @@ function 地图读取测试(): void {
 	show('ms.getBlock(new iPoint(19, 2))', ms.getBlock(new iPoint(19, 2)))
 
 	info('all blocks: ')
-	ms.forEachValidPositions((p: iPoint): void => log(`(${p.x}, ${p.y}): `, ms.getBlock(p)))
+	ms.forEachValidPositions((p: iPoint): void =>
+		log(`(${p.x}, ${p.y}): `, ms.getBlock(p))
+	)
 }
 地图读取测试()
 
@@ -62,7 +71,8 @@ function 地图读取测试(): void {
 	timeEnd('2d')
 
 	time('point_new')
-	for (let x = s; x < e; x++) for (let y = s; y < e; y++) sum(new iPoint(x, y))
+	for (let x = s; x < e; x++)
+		for (let y = s; y < e; y++) sum(new iPoint(x, y))
 	timeEnd('point_new')
 
 	time('point_cached')
@@ -103,15 +113,24 @@ for (const map of BatrDefaultMaps._ALL_MAPS) {
 
 	for (let i = 0; i < nRandom; i++) {
 		// 生成随机朝向
-		assert(map.storage.randomRotateDirectionAt(pi, 0, randIntBetween(1, 3)) !== 0)
+		assert(
+			map.storage.randomRotateDirectionAt(pi, 0, randIntBetween(1, 3)) !==
+				0
+		)
 		// 朝着朝向前进
 		pi = map.storage.randomPoint
 		pf.copyFrom(pi)
 		rot = map.storage.randomForwardDirectionAt(pi)
 		step_i = randInt(5)
 		step_f = Math.random()
-		log(`Random toward-I [${pi.join(', ')}] --(${rot}, ${step_i})->`, map.towardWithRot_II(pi, rot, step_i))
-		log(`Random toward-F [${pf.join(', ')}] --(${rot}, ${step_f})->`, map.towardWithRot_FF(pf, rot, step_f))
+		log(
+			`Random toward-I [${pi.join(', ')}] --(${rot}, ${step_i})->`,
+			map.towardWithRot_II(pi, rot, step_i)
+		)
+		log(
+			`Random toward-F [${pf.join(', ')}] --(${rot}, ${step_f})->`,
+			map.towardWithRot_FF(pf, rot, step_f)
+		)
 	}
 })(BatrDefaultMaps.FRAME, 100)
 
@@ -119,8 +138,12 @@ for (const map of BatrDefaultMaps._ALL_MAPS) {
  * 像Julia遍历张量一样可视化一个地图
  */
 function 地图可视化_高维(storage: MapStorageSparse): void {
-	const zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2))
-	const zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2))
+	const zwMax: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMax.slice(2)
+	)
+	const zwMin: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMin.slice(2)
+	)
 	console.log(zwMax, zwMin)
 	traverseNDSquare(zwMin, zwMax, (zw: iPoint): void => {
 		console.info(`切片 [:, :, ${zw.join(', ')}] = `)
@@ -133,7 +156,8 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
 	s3.setBorder(new iPoint(0, 0, 0), new iPoint(7, 7, 7))
 	s3.forEachValidPositions((p: iPoint): void => {
 		// 外框
-		if (p.some(x => x === 0 || x === 7)) s3.setBlock(p, BatrBlockPrototypes.COLORED.softCopy())
+		if (p.some(x => x === 0 || x === 7))
+			s3.setBlock(p, BatrBlockPrototypes.COLORED.softCopy())
 		// 内空
 		else s3.setVoid(p)
 	})
@@ -147,8 +171,10 @@ function 地图可视化_高维(storage: MapStorageSparse): void {
 	s4.setBorder(new iPoint(0, 0, 0, 0), new iPoint(3, 3, 3, 3))
 	s4.forEachValidPositions((p: iPoint): void => {
 		// 外框
-		if (p.some(x => x === 0 || x === 3)) s4.setBlock(p, BatrBlockPrototypes.BEDROCK.softCopy())
-		else if (sum(p) == 5) s4.setBlock(p, BatrBlockPrototypes.GLASS.softCopy())
+		if (p.some(x => x === 0 || x === 3))
+			s4.setBlock(p, BatrBlockPrototypes.BEDROCK.softCopy())
+		else if (sum(p) == 5)
+			s4.setBlock(p, BatrBlockPrototypes.GLASS.softCopy())
 		// 内空
 		else s4.setVoid(p)
 	})

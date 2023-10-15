@@ -1,5 +1,8 @@
 ﻿import { fPoint } from '../../../../../../common/geometricTools'
-import { IGraphicContext, IShape } from '../../../../../../display/api/DisplayInterfaces'
+import {
+	IGraphicContext,
+	IShape,
+} from '../../../../../../display/api/DisplayInterfaces'
 import { logical2Real } from '../../../../../../display/api/PosTransform'
 import { uint, int } from '../../../../../../legacy/AS3Legacy'
 import { comparePosition_I, mRot } from '../../../../../general/GlobalRot'
@@ -7,7 +10,10 @@ import { FIXED_TPS } from '../../../../../main/GlobalWorldVariables'
 import IMatrix from '../../../../../main/IMatrix'
 import BulletBasic from './BulletBasic'
 import Bullet from './Bullet'
-import { projectileCanHurtOther, toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
+import {
+	projectileCanHurtOther,
+	toolCreateExplode,
+} from '../../../mechanics/BatrMatrixMechanics'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 
 /**
@@ -26,7 +32,8 @@ export default class BulletTracking extends Bullet {
 
 	//============Instance Variables============//
 	protected _target: IPlayer | null = null
-	protected _trackingFunction: (player: IPlayer) => mRot | -1 = this.getTargetRotWeak.bind(this) // not the criterion
+	protected _trackingFunction: (player: IPlayer) => mRot | -1 =
+		this.getTargetRotWeak.bind(this) // not the criterion
 	protected _scalePercent: number = 1
 	protected _cachedTargets: IPlayer[] = []
 
@@ -44,11 +51,20 @@ export default class BulletTracking extends Bullet {
 		initialScalePercent: number,
 		smartTrackingMode: boolean
 	) {
-		super(owner, position, direction, attackerDamage, extraDamageCoefficient, speed, finalExplodeRadius)
+		super(
+			owner,
+			position,
+			direction,
+			attackerDamage,
+			extraDamageCoefficient,
+			speed,
+			finalExplodeRadius
+		)
 		// 尺寸规模（需要多次切换，因此缓存为实例变量）
 		this._scalePercent = initialScalePercent
 		// 目标追踪函数
-		if (smartTrackingMode) this._trackingFunction = this.getTargetRot.bind(this)
+		if (smartTrackingMode)
+			this._trackingFunction = this.getTargetRot.bind(this)
 		// 缓存「潜在目标」
 		this.cacheTargetsIn(playersInWorld)
 	}
@@ -89,7 +105,8 @@ export default class BulletTracking extends Bullet {
 				if (this.getTargetRotWeak(player) !== -1) {
 					this._target = player
 					this.direction = this.getTargetRot(player)
-					this.speed = BulletTracking.DEFAULT_SPEED * this._scalePercent
+					this.speed =
+						BulletTracking.DEFAULT_SPEED * this._scalePercent
 					break
 				}
 			}
@@ -138,7 +155,12 @@ export default class BulletTracking extends Bullet {
 				isAnyLine = true
 				// 因为是弱化版本，所以只考虑「绝对距离最大」的轴向
 				// ! 这时候距离都为零了，还需要往哪儿移动？？
-			} else if ((temp_distance = this._position_I.getAbsDistanceAt(player.position, i)) > max_distance) {
+			} else if (
+				(temp_distance = this._position_I.getAbsDistanceAt(
+					player.position,
+					i
+				)) > max_distance
+			) {
 				max_i = i
 				max_distance = temp_distance
 			}
@@ -166,7 +188,9 @@ export default class BulletTracking extends Bullet {
 	 */
 	protected getTargetRot(player: IPlayer): int {
 		// 先获取一个最小索引，代表「绝对距离最大」的轴向
-		const iMaxAbsDistance: uint = this._position_I.indexOfAbsMaxDistance(player.position)
+		const iMaxAbsDistance: uint = this._position_I.indexOfAbsMaxDistance(
+			player.position
+		)
 		// 然后根据轴向生成「任意维整数角」
 		return (
 			(iMaxAbsDistance << 1) +

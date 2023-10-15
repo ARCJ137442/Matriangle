@@ -5,14 +5,20 @@
  */
 export default class TypeCommon {
 	// 工具函数：列表相关 //
-	public static isIncludeIn<T extends TypeCommon>(type: T, types: T[]): boolean {
+	public static isIncludeIn<T extends TypeCommon>(
+		type: T,
+		types: T[]
+	): boolean {
 		for (const type2 of types) {
 			if (type === type2) return true
 		}
 		return false
 	}
 
-	public static fromName<T extends TypeCommon>(str: string, types: T[]): T | null {
+	public static fromName<T extends TypeCommon>(
+		str: string,
+		types: T[]
+	): T | null {
 		for (const type of types) {
 			if (type.name == str) return type
 		}

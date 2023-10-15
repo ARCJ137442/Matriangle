@@ -1,4 +1,7 @@
-import { IJSObjectifiable, JSObjectifyMap } from '../../../../../../common/JSObjectify'
+import {
+	IJSObjectifiable,
+	JSObjectifyMap,
+} from '../../../../../../common/JSObjectify'
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 import IPlayerHasExperience from '../IPlayerHasExperience'
@@ -11,7 +14,9 @@ import IPlayerProfile from './IPlayerProfile'
  * * 【2023-09-27 19:07:50】一般是「只读不写」的
  * @author ARCJ137442
  */
-export default class PlayerProfile implements IPlayerProfile, IJSObjectifiable<PlayerProfile> {
+export default class PlayerProfile
+	implements IPlayerProfile, IJSObjectifiable<PlayerProfile>
+{
 	copyFromPlayer(p: IPlayer): this {
 		this._customName = p.customName
 		this._experience = (p as IPlayerHasExperience)?.experience ?? 0
@@ -60,7 +65,13 @@ export default class PlayerProfile implements IPlayerProfile, IJSObjectifiable<P
 	}
 
 	//============Constructor============//
-	public constructor(customName: string, experience: uint, level: uint, teamColor: uint, teamID: string) {
+	public constructor(
+		customName: string,
+		experience: uint,
+		level: uint,
+		teamColor: uint,
+		teamID: string
+	) {
 		this._customName = customName
 		this._experience = experience
 		this._level = level

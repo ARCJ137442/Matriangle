@@ -53,7 +53,10 @@ export default abstract class PlayerController extends MatrixEventDispatcher {
 	 *   * 【2023-10-09 19:53:37】目前还是需要手动锁定参数类型
 	 * * 亦或着直接使用「EventOptions」参数类型，但这样自由度过高。。。
 	 */
-	public abstract reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(
+	public abstract reactPlayerEvent<
+		OptionMap extends PlayerEventOptions,
+		T extends keyof OptionMap,
+	>(
 		eventType: T,
 		self: IPlayer,
 		host: IMatrix,

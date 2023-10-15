@@ -20,12 +20,18 @@ export default abstract class MultiKeyController extends PlayerController {
 	// 基于「控制密钥」的动作分派系统 //
 
 	/** 自身持有的「玩家-密钥」映射表 */
-	protected readonly _playerKeyMap: Map<IPlayer, string> = new Map<IPlayer, string>()
+	protected readonly _playerKeyMap: Map<IPlayer, string> = new Map<
+		IPlayer,
+		string
+	>()
 	/**
 	 * 添加密钥绑定
 	 * * 默认使用玩家的自定义名称
 	 */
-	protected addControlKeyBind(player: IPlayer, key: string = player.customName): void {
+	protected addControlKeyBind(
+		player: IPlayer,
+		key: string = player.customName
+	): void {
 		this._playerKeyMap.set(player, key)
 	}
 
@@ -59,7 +65,10 @@ export default abstract class MultiKeyController extends PlayerController {
 	 * @param player 要连接到此控制器的玩家
 	 * @param controlKey 这个玩家对应的「控制密钥」（默认是玩家的自定义名称）
 	 */
-	public addConnection(player: IPlayer, controlKey: string = player.customName): void {
+	public addConnection(
+		player: IPlayer,
+		controlKey: string = player.customName
+	): void {
 		// 无参设置绑定
 		this.addControlKeyBind(player, controlKey)
 		// 继续超类逻辑
@@ -81,7 +90,10 @@ export default abstract class MultiKeyController extends PlayerController {
 	/**
 	 * 根据「控制密钥」分派操作
 	 */
-	protected dispatchByControlKey(controlKey: string, actionStr: string): void {
+	protected dispatchByControlKey(
+		controlKey: string,
+		actionStr: string
+	): void {
 		// 解析整数行动
 		const a: int = parseInt(actionStr)
 		const action: int | string = isFinite(a) ? a : actionStr
@@ -95,7 +107,10 @@ export default abstract class MultiKeyController extends PlayerController {
 	}
 
 	/** @implements 不响应「玩家上报的触发」 */
-	public reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(
+	public reactPlayerEvent<
+		OptionMap extends PlayerEventOptions,
+		T extends keyof OptionMap,
+	>(
 		eventType: T,
 		self: IPlayer,
 		host: IMatrix,

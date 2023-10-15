@@ -20,13 +20,16 @@ export function getPrimesLessThan(x: uint): uint[] {
 
 export function getPrimeAt(i: uint): uint {
 	let arr: uint[] = new Array<uint>()
-	for (let i: uint = getLastPrime(); arr.length < i; i += 10) arr = getPrimesLessThan(i)
+	for (let i: uint = getLastPrime(); arr.length < i; i += 10)
+		arr = getPrimesLessThan(i)
 	if (arr.length >= i) return arr[i - 1]
 	return 2
 }
 
 function isPrime_local(x: uint): boolean {
-	return PRIME_LIST.every((p: uint, i: uint, v: uint[]): boolean => x % p != 0 || x == p)
+	return PRIME_LIST.every(
+		(p: uint, i: uint, v: uint[]): boolean => x % p != 0 || x == p
+	)
 }
 
 export function isPrime(x: uint): boolean {
@@ -69,7 +72,10 @@ export function $i(x: uint, y: uint = NaN): uint {
  * @return	χ(x∈N)
  */
 export function chi4(x: int): int {
-	return (((((x & 1) ^ ((x >> 1) & 1)) & ((x & 1) | 2)) << 1) | ((x + 1) & 1)) - 1
+	return (
+		(((((x & 1) ^ ((x >> 1) & 1)) & ((x & 1) | 2)) << 1) | ((x + 1) & 1)) -
+		1
+	)
 }
 
 /** some trial to improve the logic of chi
@@ -226,7 +232,13 @@ export function randIntBetween(min: int, max: int): int {
 	return min + randInt(max - min)
 }
 
-export function isBetween(x: number, n1: number, n2: number, withL: boolean = false, withM: boolean = false): boolean {
+export function isBetween(
+	x: number,
+	n1: number,
+	n2: number,
+	withL: boolean = false,
+	withM: boolean = false
+): boolean {
 	const m: number = Math.max(n1, n2)
 	const l: number = Math.min(n1, n2)
 	if (withL && withM) return x >= l && x <= m
@@ -273,7 +285,12 @@ export function removeEmptyInArrays(...lists: unknown[]): void {
 	}
 }
 
-export function getDistance(x1: number, y1: number, x2: number, y2: number): number {
+export function getDistance(
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number
+): number {
 	return getDistance2(x1 - x2, y1 - y2)
 }
 
@@ -281,7 +298,12 @@ export function getDistance2(dx: number, dy: number): number {
 	return Math.sqrt(getDistanceSquare2(dx, dy))
 }
 
-export function getDistanceSquare(x1: number, y1: number, x2: number, y2: number): number {
+export function getDistanceSquare(
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number
+): number {
 	return getDistanceSquare2(x1 - x2, y1 - y2)
 }
 

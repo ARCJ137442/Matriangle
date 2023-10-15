@@ -1,5 +1,8 @@
 import { fPoint } from '../../../../../common/geometricTools'
-import { IShape, IShapeContainer } from '../../../../../display/api/DisplayInterfaces'
+import {
+	IShape,
+	IShapeContainer,
+} from '../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import { uint } from '../../../../../legacy/AS3Legacy'
 import Entity from '../../../../api/entity/Entity'
@@ -20,8 +23,12 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	public static readonly SIZE: uint = uint(DEFAULT_SIZE * 1.6)
 	public static readonly MAX_LIFE: uint = uint(FIXED_TPS)
 	public static readonly SCALE: number = 1
-	public static readonly STAGE_1_START_TIME: uint = uint((EffectSpawn.MAX_LIFE * 3) / 4)
-	public static readonly STAGE_2_START_TIME: uint = uint(EffectSpawn.MAX_LIFE / 4)
+	public static readonly STAGE_1_START_TIME: uint = uint(
+		(EffectSpawn.MAX_LIFE * 3) / 4
+	)
+	public static readonly STAGE_2_START_TIME: uint = uint(
+		EffectSpawn.MAX_LIFE / 4
+	)
 	public static readonly ROTATE_ANGLE: uint = 45
 
 	//============Instance Variables============//
@@ -43,7 +50,11 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	// }
 
 	//============Instance Functions============//
-	override shapeInit(shape: IShapeContainer, block1: IShape, block2: IShape): void {
+	override shapeInit(
+		shape: IShapeContainer,
+		block1: IShape,
+		block2: IShape
+	): void {
 		super.shapeInit(shape, block1, block2)
 		this.drawBlocks(
 			EffectSpawn.DEFAULT_COLOR,
@@ -71,7 +82,8 @@ export default class EffectSpawn extends Effect2BlockContainer {
 				this._tempLife = this.LIFE - this.life
 				break
 			case 1:
-				this._tempLife = this.LIFE - this.life - EffectSpawn.STAGE_2_START_TIME
+				this._tempLife =
+					this.LIFE - this.life - EffectSpawn.STAGE_2_START_TIME
 				break
 			case 2:
 				this._tempLife = this.life
@@ -85,21 +97,30 @@ export default class EffectSpawn extends Effect2BlockContainer {
 			// 第一阶段：逐渐变大
 			case 0:
 				shape.scaleX = shape.scaleY =
-					(this._tempLife / (this.LIFE - EffectSpawn.STAGE_1_START_TIME)) * this.maxScale
+					(this._tempLife /
+						(this.LIFE - EffectSpawn.STAGE_1_START_TIME)) *
+					this.maxScale
 				break
 			// 第二阶段：两方块交错旋转90°
 			case 1:
 				;(this._block1 as IShape).rot =
-					-(this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) *
-					EffectSpawn.ROTATE_ANGLE
+					-(
+						this._tempLife /
+						(EffectSpawn.STAGE_1_START_TIME -
+							EffectSpawn.STAGE_2_START_TIME)
+					) * EffectSpawn.ROTATE_ANGLE
 				;(this._block2 as IShape).rot =
 					45 +
-					(this._tempLife / (EffectSpawn.STAGE_1_START_TIME - EffectSpawn.STAGE_2_START_TIME)) *
+					(this._tempLife /
+						(EffectSpawn.STAGE_1_START_TIME -
+							EffectSpawn.STAGE_2_START_TIME)) *
 						EffectSpawn.ROTATE_ANGLE
 				break
 			// 第三阶段：缩小消失
 			case 2:
-				shape.scaleX = shape.scaleY = (this._tempLife / EffectSpawn.STAGE_2_START_TIME) * this.maxScale
+				shape.scaleX = shape.scaleY =
+					(this._tempLife / EffectSpawn.STAGE_2_START_TIME) *
+					this.maxScale
 				break
 		}
 	}

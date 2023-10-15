@@ -19,7 +19,11 @@ import {
 } from '../../native/maps/MapConstructTools'
 import MapStorageSparse from '../../native/maps/MapStorageSparse'
 import Map_V1 from '../../native/maps/Map_V1'
-import { ALL_BATR_BLOCKS, BatrBlockIDs, BatrBlockPrototypes } from './BlockRegistry'
+import {
+	ALL_BATR_BLOCKS,
+	BatrBlockIDs,
+	BatrBlockPrototypes,
+} from './BlockRegistry'
 import { NativeBlockPrototypes } from '../../native/registry/NativeBlockRegistry'
 
 /**
@@ -71,25 +75,109 @@ export module BatrDefaultMaps {
 	// 所有地图的常量
 	/** 原先AS3的地图尺寸：24×24 */
 	export const _AS3_CONSERVED_MAP_SIZE: iPoint = new iPoint(24, 24)
-	export const EMPTY: Map_V1 = new Map_V1('EMPTY', STORAGE_EMPTY, _AS3_CONSERVED_MAP_SIZE)
-	export const FRAME: Map_V1 = new Map_V1('FRAME', STORAGE_FRAME, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_1: Map_V1 = new Map_V1('1', STORAGE_1, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_2: Map_V1 = new Map_V1('2', STORAGE_2, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_3: Map_V1 = new Map_V1('3', STORAGE_3, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_4: Map_V1 = new Map_V1('4', STORAGE_4, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_5: Map_V1 = new Map_V1('5', STORAGE_5, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_6: Map_V1 = new Map_V1('6', STORAGE_6, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_7: Map_V1 = new Map_V1('7', STORAGE_7, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_8: Map_V1 = new Map_V1('8', STORAGE_8, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_9: Map_V1 = new Map_V1('9', STORAGE_9, _AS3_CONSERVED_MAP_SIZE)
-	export const MAP_A: Map_V1 = new Map_V1('A', STORAGE_A, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_B: Map_V1 = new Map_V1('B', STORAGE_B, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_C: Map_V1 = new Map_V1('C', STORAGE_C, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_D: Map_V1 = new Map_V1('D', STORAGE_D, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_E: Map_V1 = new Map_V1('E', STORAGE_E, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_F: Map_V1 = new Map_V1('F', STORAGE_F, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_G: Map_V1 = new Map_V1('G', STORAGE_G, _AS3_CONSERVED_MAP_SIZE, true)
-	export const MAP_H: Map_V1 = new Map_V1('H', STORAGE_H, _AS3_CONSERVED_MAP_SIZE, true)
+	export const EMPTY: Map_V1 = new Map_V1(
+		'EMPTY',
+		STORAGE_EMPTY,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const FRAME: Map_V1 = new Map_V1(
+		'FRAME',
+		STORAGE_FRAME,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_1: Map_V1 = new Map_V1(
+		'1',
+		STORAGE_1,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_2: Map_V1 = new Map_V1(
+		'2',
+		STORAGE_2,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_3: Map_V1 = new Map_V1(
+		'3',
+		STORAGE_3,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_4: Map_V1 = new Map_V1(
+		'4',
+		STORAGE_4,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_5: Map_V1 = new Map_V1(
+		'5',
+		STORAGE_5,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_6: Map_V1 = new Map_V1(
+		'6',
+		STORAGE_6,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_7: Map_V1 = new Map_V1(
+		'7',
+		STORAGE_7,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_8: Map_V1 = new Map_V1(
+		'8',
+		STORAGE_8,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_9: Map_V1 = new Map_V1(
+		'9',
+		STORAGE_9,
+		_AS3_CONSERVED_MAP_SIZE
+	)
+	export const MAP_A: Map_V1 = new Map_V1(
+		'A',
+		STORAGE_A,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_B: Map_V1 = new Map_V1(
+		'B',
+		STORAGE_B,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_C: Map_V1 = new Map_V1(
+		'C',
+		STORAGE_C,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_D: Map_V1 = new Map_V1(
+		'D',
+		STORAGE_D,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_E: Map_V1 = new Map_V1(
+		'E',
+		STORAGE_E,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_F: Map_V1 = new Map_V1(
+		'F',
+		STORAGE_F,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_G: Map_V1 = new Map_V1(
+		'G',
+		STORAGE_G,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
+	export const MAP_H: Map_V1 = new Map_V1(
+		'H',
+		STORAGE_H,
+		_AS3_CONSERVED_MAP_SIZE,
+		true
+	)
 
 	export const _ALL_MAPS: IMap[] = [
 		EMPTY,
@@ -121,7 +209,15 @@ export module BatrDefaultMaps {
 	STORAGE_EMPTY.setBorder(new iPoint(0, 0), new iPoint(MAP_MAX_X, MAP_MAX_Y)) // ! 有必要给空地图整理好边界
 
 	//====Basic Frame====//
-	fillBlock(STORAGE_FRAME.copyBorderFrom(STORAGE_EMPTY), 0, 0, MAP_MAX_X, MAP_MAX_Y, BEDROCK, true)
+	fillBlock(
+		STORAGE_FRAME.copyBorderFrom(STORAGE_EMPTY),
+		0,
+		0,
+		MAP_MAX_X,
+		MAP_MAX_Y,
+		BEDROCK,
+		true
+	)
 
 	//====Map 1====//
 	STORAGE_1.copyFrom(STORAGE_FRAME)
@@ -295,7 +391,11 @@ export module BatrDefaultMaps {
 					2 + (i & 1) * 20,
 					X_TRAP_ROTATE
 				)
-				addSpawnPointWithMark(STORAGE_A, 2 + (i >> 1) * 19, 2 + (i & 1) * 19)
+				addSpawnPointWithMark(
+					STORAGE_A,
+					2 + (i >> 1) * 19,
+					2 + (i & 1) * 19
+				)
 			}
 		}
 	}
@@ -307,7 +407,12 @@ export module BatrDefaultMaps {
 		 * for fill:cross input
 		 */
 		// corner spawn point
-		for (i = 0; i < 4; i++) addSpawnPointWithMark(STORAGE_B, 2 + (i >> 1) * 19, 2 + (i & 1) * 19)
+		for (i = 0; i < 4; i++)
+			addSpawnPointWithMark(
+				STORAGE_B,
+				2 + (i >> 1) * 19,
+				2 + (i & 1) * 19
+			)
 		// Metal Middle Line&Laser Trap
 		// l
 		fillBlock(STORAGE_B, 0, 9, 13, 9, METAL)
@@ -377,10 +482,30 @@ export module BatrDefaultMaps {
 			setBlock(STORAGE_C, 10 + (i & 1) * 3, 3 + 17 * (i >> 1), WALL)
 			// corner LaserTrap/XTrapHurt
 			setBlock(STORAGE_C, 3 + (i >> 1) * 17, 3 + (i & 1) * 17, LASER_TRAP)
-			setBlock(STORAGE_C, 2 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT)
-			setBlock(STORAGE_C, 3 + (i >> 1) * 17, 2 + (i & 1) * 17, X_TRAP_HURT)
-			setBlock(STORAGE_C, 4 + (i >> 1) * 17, 3 + (i & 1) * 17, X_TRAP_HURT)
-			setBlock(STORAGE_C, 3 + (i >> 1) * 17, 4 + (i & 1) * 17, X_TRAP_HURT)
+			setBlock(
+				STORAGE_C,
+				2 + (i >> 1) * 17,
+				3 + (i & 1) * 17,
+				X_TRAP_HURT
+			)
+			setBlock(
+				STORAGE_C,
+				3 + (i >> 1) * 17,
+				2 + (i & 1) * 17,
+				X_TRAP_HURT
+			)
+			setBlock(
+				STORAGE_C,
+				4 + (i >> 1) * 17,
+				3 + (i & 1) * 17,
+				X_TRAP_HURT
+			)
+			setBlock(
+				STORAGE_C,
+				3 + (i >> 1) * 17,
+				4 + (i & 1) * 17,
+				X_TRAP_HURT
+			)
 		}
 	}
 	//====Map D====//
@@ -389,8 +514,22 @@ export module BatrDefaultMaps {
 		for (i = 0; i < 4; i++) {
 			// Water Circle
 			// long_line
-			fillBlock(STORAGE_D, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, 4 + (i & 1) * 15, WATER)
-			fillBlock(STORAGE_D, 4 + (i & 1) * 15, 9 + (i >> 1) * 2, 4 + (i & 1) * 15, 12 + (i >> 1) * 2, WATER)
+			fillBlock(
+				STORAGE_D,
+				9 + (i >> 1) * 2,
+				4 + (i & 1) * 15,
+				12 + (i >> 1) * 2,
+				4 + (i & 1) * 15,
+				WATER
+			)
+			fillBlock(
+				STORAGE_D,
+				4 + (i & 1) * 15,
+				9 + (i >> 1) * 2,
+				4 + (i & 1) * 15,
+				12 + (i >> 1) * 2,
+				WATER
+			)
 
 			// 2x line
 			// h
@@ -407,7 +546,12 @@ export module BatrDefaultMaps {
 				setBlock(STORAGE_D, 10 + i * 3, 21, WALL)
 			}
 			// corner spawner
-			setBlock(STORAGE_D, 4 + (i >> 1) * 15, 4 + (i & 1) * 15, COLOR_SPAWNER)
+			setBlock(
+				STORAGE_D,
+				4 + (i >> 1) * 15,
+				4 + (i & 1) * 15,
+				COLOR_SPAWNER
+			)
 			// Spawn Point/Wall,l&r
 			addSpawnPointWithMark(STORAGE_D, 2 + 19 * (i >> 1), 11 + (i & 1))
 			setBlock(STORAGE_D, 2 + 19 * (i >> 1), 10 + (i & 1) * 3, WALL)
@@ -426,7 +570,12 @@ export module BatrDefaultMaps {
 	//====Map E====//
 	STORAGE_E.copyFrom(STORAGE_FRAME)
 	{
-		for (i = 0; i < 4; i++) addSpawnPointWithMark(STORAGE_E, 2 + (i >> 1) * 19, 2 + (i & 1) * 19)
+		for (i = 0; i < 4; i++)
+			addSpawnPointWithMark(
+				STORAGE_E,
+				2 + (i >> 1) * 19,
+				2 + (i & 1) * 19
+			)
 		// Center E
 		fillReflectBlock(STORAGE_E, false, true, 6, 6, 17, 7, BEDROCK)
 		fillBlock(STORAGE_E, 6, 8, 7, 15, BEDROCK)
@@ -464,7 +613,8 @@ export module BatrDefaultMaps {
 	{
 		// ! 【20230913 17:47:00】注意：因为「方块类」是用于存储「方块状态」的，故这里的Gate状态不能共用
 		// Center spawnPoint
-		for (i = 0; i < 4; i++) addSpawnPointWithMark(STORAGE_F, 11 + (i >> 1), 11 + (i & 1))
+		for (i = 0; i < 4; i++)
+			addSpawnPointWithMark(STORAGE_F, 11 + (i >> 1), 11 + (i & 1))
 		// Bedrock&Gate
 		setReflectBlock(STORAGE_F, true, true, 1, 1, BEDROCK)
 		fillReflectMirrorBlock(STORAGE_F, true, true, 2, 1, 8, 1, BEDROCK)
@@ -484,9 +634,25 @@ export module BatrDefaultMaps {
 		fillReflectMirrorBlock(STORAGE_F, true, true, 10, 1, 10, 6, WATER)
 		setReflectBlock(STORAGE_F, true, true, 8, 8, COLOR_SPAWNER)
 		setReflectMirrorBlock(STORAGE_F, true, true, 9, 8, LASER_TRAP)
-		setReflectMirrorBlock(STORAGE_F, true, true, 10, 7, GATE_OPEN.softCopy(), true)
+		setReflectMirrorBlock(
+			STORAGE_F,
+			true,
+			true,
+			10,
+			7,
+			GATE_OPEN.softCopy(),
+			true
+		)
 		setReflectMirrorBlock(STORAGE_F, true, true, 10, 8, BEDROCK)
-		setReflectMirrorBlock(STORAGE_F, true, true, 11, 8, GATE_OPEN.softCopy(), true)
+		setReflectMirrorBlock(
+			STORAGE_F,
+			true,
+			true,
+			11,
+			8,
+			GATE_OPEN.softCopy(),
+			true
+		)
 	}
 	//====Map G====//
 	STORAGE_G.copyFrom(STORAGE_FRAME)
@@ -494,7 +660,12 @@ export module BatrDefaultMaps {
 		fillReflectMirrorBlock(STORAGE_G, true, true, 3, 3, 8, 3, BEDROCK)
 		setReflectMirrorBlock(STORAGE_G, true, true, 1, 1, MOVEABLE_WALL)
 		fillBlock(STORAGE_G, 4, 4, 19, 19, GATE_OPEN, false, true)
-		for (i = 0; i < 4; i++) addSpawnPointWithMark(STORAGE_G, 2 + (i >> 1) * 19, 2 + (i & 1) * 19)
+		for (i = 0; i < 4; i++)
+			addSpawnPointWithMark(
+				STORAGE_G,
+				2 + (i >> 1) * 19,
+				2 + (i & 1) * 19
+			)
 	}
 	//====Map H====//
 	STORAGE_H.generatorF = (storage: IMapStorage): IMapStorage => {
@@ -502,7 +673,15 @@ export module BatrDefaultMaps {
 		fillReflectMirrorBlock(STORAGE_H, true, true, 4, 4, 9, 4, BEDROCK)
 		ix = randomBoolean2() ? 0 : 9
 		iy = randomBoolean2() ? 0 : 9
-		fillBlock(STORAGE_H, 5 + ix, 5 + iy, 9 + ix, 9 + iy, MOVEABLE_WALL, false)
+		fillBlock(
+			STORAGE_H,
+			5 + ix,
+			5 + iy,
+			9 + ix,
+			9 + iy,
+			MOVEABLE_WALL,
+			false
+		)
 		for (i = 10; i <= 13; i++) {
 			// x
 			addSpawnPointWithMark(STORAGE_H, i, 4)

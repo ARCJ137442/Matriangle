@@ -1,4 +1,7 @@
-import { MatrixProgram, MatrixProgramLabel } from '../../../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../../../api/control/MatrixProgram'
 import Effect from '../../../../api/entity/Effect'
 import Entity from '../../../../api/entity/Entity'
 import IMap from '../../../../api/map/IMap'
@@ -6,7 +9,10 @@ import IMatrix from '../../../../main/IMatrix'
 import BonusBox from '../../entity/item/BonusBox'
 import IPlayer, { isPlayer } from '../../../native/entities/player/IPlayer'
 import Projectile from '../../entity/projectile/Projectile'
-import { changeMap, projectEntity } from '../../../native/mechanics/NativeMatrixMechanics'
+import {
+	changeMap,
+	projectEntity,
+} from '../../../native/mechanics/NativeMatrixMechanics'
 import { spreadPlayer } from '../../../native/mechanics/NativeMatrixMechanics'
 import { i_batrPlayer } from '../../entity/player/IPlayerBatr'
 
@@ -38,7 +44,11 @@ export default abstract class MapSwitcher extends MatrixProgram {
 		// 处理旧实体
 		for (const entity of entities) {
 			// 清除所有抛射体、奖励箱和特效
-			if (entity instanceof Projectile || entity instanceof BonusBox || entity instanceof Effect)
+			if (
+				entity instanceof Projectile ||
+				entity instanceof BonusBox ||
+				entity instanceof Effect
+			)
 				host.removeEntity(entity)
 			// 记录玩家
 			else if (isPlayer(entity)) players.push(entity)
@@ -53,9 +63,13 @@ export default abstract class MapSwitcher extends MatrixProgram {
 			// 重新激活 // !这里使用「已回收后的实体列表」，先前被删除的实体不再处理
 			for (const entity of host.entities) {
 				// 必须「映射里有」才能恢复
-				if (entityActives.has(entity)) entity.isActive = entityActives.get(entity) as boolean
+				if (entityActives.has(entity))
+					entity.isActive = entityActives.get(entity) as boolean
 				// 分散并告知玩家 // ! 必须是「执行该函数时母体中的玩家」，因为有可能在执行到这里之前玩家发生变动（杜绝「被删除但还是被遍历到」的情况）
-				if (isPlayer(entity) && entity.isRespawning /* 必须不在重生过程中 */) {
+				if (
+					isPlayer(entity) &&
+					entity.isRespawning /* 必须不在重生过程中 */
+				) {
 					spreadPlayer(host, entity, true, true)
 					if (i_batrPlayer(entity)) entity.onMapTransform(host)
 				} // 否则：不做任何事情，保留状态 // * 可能是后续又新增了实体

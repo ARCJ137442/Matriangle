@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { randInt } from '../../../../../../common/exMath'
 import { uint } from '../../../../../../legacy/AS3Legacy'
-import { EnumNativePlayerAction, PlayerAction } from '../../../../native/entities/player/controller/PlayerAction'
+import {
+	EnumNativePlayerAction,
+	PlayerAction,
+} from '../../../../native/entities/player/controller/PlayerAction'
 import { PlayerEvent } from '../../../../native/entities/player/controller/PlayerEvent'
-import AIControllerGenerator, { AIActionGenerator } from './AIControllerGenerator'
+import AIControllerGenerator, {
+	AIActionGenerator,
+} from './AIControllerGenerator'
 import { getPlayerActionFromTurn } from '../../../../native/entities/player/controller/PlayerAction'
 import { i_hasTool } from '../IPlayerHasTool'
 import { AIPlayerEvent } from '../../../../native/entities/player/controller/AIController'
@@ -22,16 +27,23 @@ export module MicroAIBehaviors {
 	 *
 	 * @param moveMaxSum 最大移动总数：大致表征「移动了多少次就转向」
 	 */
-	export function* roboticWalk(controller: AIControllerGenerator, moveMaxSum: uint): AIActionGenerator {
+	export function* roboticWalk(
+		controller: AIControllerGenerator,
+		moveMaxSum: uint
+	): AIActionGenerator {
 		// 自身程序状态⇒函数局部变量 //
 		/** 移动总数：记录当前「移动次数」状态 */
 		let moveSum: uint = 0
 
 		// 检查未定义值，不应该的情况就报错 // !【2023-10-02 20:47:35】但实际上只有一次——因为后面如果是`undefined`也会报错（无法访问属性/方法），无需手动检测
 		if (controller._temp_currentPlayer === undefined)
-			throw new Error('AIProgram_Dummy: controller._temp_currentPlayer is undefined')
+			throw new Error(
+				'AIProgram_Dummy: controller._temp_currentPlayer is undefined'
+			)
 		if (controller._temp_currentHost === undefined)
-			throw new Error('AIProgram_Dummy: controller._temp_currentHost is undefined')
+			throw new Error(
+				'AIProgram_Dummy: controller._temp_currentHost is undefined'
+			)
 
 		// 第一个「没有外界输入」的事件 //
 		let event: PlayerEvent = yield EnumNativePlayerAction.MOVE_FORWARD
@@ -41,7 +53,9 @@ export module MicroAIBehaviors {
 			// 超过「最大移动总数」 || 前方不可移动⇒随机转向
 			if (
 				moveSum >= moveMaxSum ||
-				!controller._temp_currentPlayer.testCanGoForward(controller._temp_currentHost)
+				!controller._temp_currentPlayer.testCanGoForward(
+					controller._temp_currentHost
+				)
 			) {
 				// 重置「移动总数」
 				moveSum = 0
@@ -63,12 +77,18 @@ export module MicroAIBehaviors {
 	/**
 	 * 保证所控制的玩家一直在（以最大充能程度）使用武器
 	 */
-	export function* keepAlwaysUsingTool(controller: AIControllerGenerator): AIActionGenerator {
+	export function* keepAlwaysUsingTool(
+		controller: AIControllerGenerator
+	): AIActionGenerator {
 		// 检查未定义值，不应该的情况就报错 // !【2023-10-02 20:47:35】但实际上只有一次——因为后面如果是`undefined`也会报错（无法访问属性/方法），无需手动检测
 		if (controller._temp_currentPlayer === undefined)
-			throw new Error('AIProgram_Dummy: controller._temp_currentPlayer is undefined')
+			throw new Error(
+				'AIProgram_Dummy: controller._temp_currentPlayer is undefined'
+			)
 		if (controller._temp_currentHost === undefined)
-			throw new Error('AIProgram_Dummy: controller._temp_currentHost is undefined')
+			throw new Error(
+				'AIProgram_Dummy: controller._temp_currentHost is undefined'
+			)
 
 		// 第一个「没有外界输入」的事件 //
 		let event: PlayerEvent = yield EnumBatrPlayerAction.START_USING
@@ -78,7 +98,8 @@ export module MicroAIBehaviors {
 			if (i_hasTool(controller._temp_currentPlayer))
 				if (controller._temp_currentPlayer.tool.reverseCharge) {
 					// 不停使用工具：持续按下「使用」键 //
-					event = yield controller._temp_currentPlayer.tool.chargingPercent >= 1
+					event = yield controller._temp_currentPlayer.tool
+						.chargingPercent >= 1
 						? EnumBatrPlayerAction.START_USING // 已充能完毕⇒使用
 						: controller._temp_currentPlayer.isUsing // 否则⇒不要使用
 						? EnumBatrPlayerAction.STOP_USING
@@ -112,13 +133,16 @@ export module NativeAIPrograms {
 	 *
 	 * @param controller 传入的「控制器」状态
 	 */
-	export function* AIProgram_Dummy(controller: AIControllerGenerator): AIActionGenerator {
+	export function* AIProgram_Dummy(
+		controller: AIControllerGenerator
+	): AIActionGenerator {
 		// 初始化所有子行为
 		const rWalk: AIActionGenerator = MicroAIBehaviors.roboticWalk(
 			controller,
 			4 + randInt(16) // 这是个硬编码
 		)
-		const aUsing: AIActionGenerator = MicroAIBehaviors.keepAlwaysUsingTool(controller)
+		const aUsing: AIActionGenerator =
+			MicroAIBehaviors.keepAlwaysUsingTool(controller)
 
 		// 第一个「没有外界输入」的事件 //
 		let event: PlayerEvent = yield EnumNativePlayerAction.NULL
@@ -150,7 +174,9 @@ export module NativeAIPrograms {
 	 *
 	 * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
 	 */
-	export function* AIProgram_Novice(controller: AIControllerGenerator): AIActionGenerator {
+	export function* AIProgram_Novice(
+		controller: AIControllerGenerator
+	): AIActionGenerator {
 		while (true) {
 			yield EnumNativePlayerAction.NULL
 		}
@@ -162,7 +188,9 @@ export module NativeAIPrograms {
 	 *
 	 * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
 	 */
-	export function* AIProgram_Adventurer(controller: AIControllerGenerator): AIActionGenerator {
+	export function* AIProgram_Adventurer(
+		controller: AIControllerGenerator
+	): AIActionGenerator {
 		while (true) {
 			yield EnumNativePlayerAction.NULL
 		}
@@ -175,7 +203,9 @@ export module NativeAIPrograms {
 	 *
 	 * TODO: 【2023-10-02 21:30:27】WIP——目前先实现主干（有一个AI能用即可），然后再迁移这些复杂的逻辑
 	 */
-	export function* AIProgram_Master(controller: AIControllerGenerator): AIActionGenerator {
+	export function* AIProgram_Master(
+		controller: AIControllerGenerator
+	): AIActionGenerator {
 		while (true) {
 			yield EnumNativePlayerAction.NULL
 		}

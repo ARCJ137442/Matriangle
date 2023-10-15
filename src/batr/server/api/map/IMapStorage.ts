@@ -16,7 +16,9 @@ export type BlockConstructorMap = Map<typeID, () => Block>
  * 定义地图的「存储层」，定义地图的「存储结构」
  * * 用于「增删改查」地图中的方块信息
  */
-export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage>, IJSObjectifiable<IMapStorage> {
+export default interface IMapStorage
+	extends ISelfModifyingGenerator<IMapStorage>,
+		IJSObjectifiable<IMapStorage> {
 	//============Interface Functions============//
 
 	/** 决定地图「一般意义上的宽度」，对应地图在x方向的尺寸 */
@@ -105,7 +107,10 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）
 	 * @param args ：用于在回调后附加的其它参数
 	 */
-	forEachValidPositions(f: (p: iPointRef, ...args: any[]) => void, ...args: unknown[]): IMapStorage
+	forEachValidPositions(
+		f: (p: iPointRef, ...args: any[]) => void,
+		...args: unknown[]
+	): IMapStorage
 
 	/**
 	 * 复制地图本身
@@ -132,7 +137,11 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param clearSelf 是否先清除自身（调用「清除方法」）
 	 * @param deep 是否为深拷贝
 	 */
-	copyContentFrom(source: IMapStorage, clearSelf?: boolean /* = false*/, deep?: boolean /* = true*/): IMapStorage
+	copyContentFrom(
+		source: IMapStorage,
+		clearSelf?: boolean /* = false*/,
+		deep?: boolean /* = true*/
+	): IMapStorage
 
 	/**
 	 * 从另一个地图中复制所有属性（包括「内容」）
@@ -141,7 +150,11 @@ export default interface IMapStorage extends ISelfModifyingGenerator<IMapStorage
 	 * @param clearSelf 是否先清除自身
 	 * @param createBlock 是否为深拷贝
 	 */
-	copyFrom(source: IMapStorage, clearSelf?: boolean /* = false*/, createBlock?: boolean /* = true*/): IMapStorage /**
+	copyFrom(
+		source: IMapStorage,
+		clearSelf?: boolean /* = false*/,
+		createBlock?: boolean /* = true*/
+	): IMapStorage /**
 
 	/**
 	* 用于构建「随机结构生成」的「生成器函数」

@@ -2,7 +2,8 @@ import { uint } from '../legacy/AS3Legacy'
 
 export default class ChemicalElement {
 	//============Static Variables============//
-	protected static readonly ELEMENTS: Array<ChemicalElement> = new Array<ChemicalElement>()
+	protected static readonly ELEMENTS: Array<ChemicalElement> =
+		new Array<ChemicalElement>()
 
 	protected static readonly ZH_CN_ELEMENT_NAME: string =
 		'氢氦锂铍硼碳氮氧氟氖钠镁铝硅磷硫氯氩钾钙钪钛钒铬锰铁钴镍铜锌镓锗砷硒溴氪铷锶钇锆铌钼锝钌铑钯银镉铟锡锑碲碘氙铯钡镧铈镨钕钷钐铕钆铽镝钬铒铥镱镥铪钽钨铼锇铱铂金汞铊铅铋钋砹氡钫镭锕钍镤铀镎钚镅锔锫锎锿镄钔锘铹鈩𨧀𨭎𨨏𨭆䥑鐽錀鎶鉨鈇镆鉝'
@@ -142,12 +143,16 @@ export default class ChemicalElement {
 	}
 
 	protected static addElement(symbol: string): void {
-		const element: ChemicalElement = new ChemicalElement(ChemicalElement.ELEMENTS.length + 1, symbol)
+		const element: ChemicalElement = new ChemicalElement(
+			ChemicalElement.ELEMENTS.length + 1,
+			symbol
+		)
 		ChemicalElement.ELEMENTS.push(element)
 	}
 
 	protected static addElements(...symbols: string[]): void {
-		for (let i: uint = 0; i < symbols.length; i++) this.addElement(symbols[i])
+		for (let i: uint = 0; i < symbols.length; i++)
+			this.addElement(symbols[i])
 	}
 
 	public static getElementFromSample(symbol: string): ChemicalElement | null {
@@ -187,7 +192,10 @@ export default class ChemicalElement {
 
 	//============Instance Getter And Setter============//
 	protected get hasCNSample(): boolean {
-		return 0 < this._ordinal && this._ordinal <= ChemicalElement.ZH_CN_ELEMENT_NAME.length
+		return (
+			0 < this._ordinal &&
+			this._ordinal <= ChemicalElement.ZH_CN_ELEMENT_NAME.length
+		)
 	}
 
 	public get symbol(): string {
@@ -195,7 +203,8 @@ export default class ChemicalElement {
 	}
 
 	public get symbol_CN(): string {
-		if (this.hasCNSample) return ChemicalElement.ZH_CN_ELEMENT_NAME.charAt(this._ordinal - 1)
+		if (this.hasCNSample)
+			return ChemicalElement.ZH_CN_ELEMENT_NAME.charAt(this._ordinal - 1)
 		return ''
 	}
 

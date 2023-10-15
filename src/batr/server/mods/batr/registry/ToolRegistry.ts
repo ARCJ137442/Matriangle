@@ -16,38 +16,81 @@ export module NativeTools {
 
 	// 子弹
 	export const TOOL_ID_BULLET_BASIC: string = 'Bullet'
-	export const WEAPON_BULLET_BASIC: Weapon = new Weapon(TOOL_ID_BULLET_BASIC, 0.25, 0, 5).setExtraProperty(1, 1)
+	export const WEAPON_BULLET_BASIC: Weapon = new Weapon(
+		TOOL_ID_BULLET_BASIC,
+		0.25,
+		0,
+		5
+	).setExtraProperty(1, 1)
 
 	export const TOOL_ID_BULLET_NUKE: string = 'Nuke'
-	export const WEAPON_BULLET_NUKE: Weapon = new Weapon(TOOL_ID_BULLET_NUKE, 5, 5, 320)
+	export const WEAPON_BULLET_NUKE: Weapon = new Weapon(
+		TOOL_ID_BULLET_NUKE,
+		5,
+		5,
+		320
+	)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 15)
 		.setDroneProperty(0)
 
 	export const TOOL_ID_BULLET_BOMBER: string = 'Bomber Bullet'
-	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon(TOOL_ID_BULLET_BOMBER, 1, 1, 5, true)
+	export const WEAPON_BULLET_BOMBER: Weapon = new Weapon(
+		TOOL_ID_BULLET_BOMBER,
+		1,
+		1,
+		5,
+		true
+	)
 		.setExtraProperty(2, 2)
 		.setDroneProperty(0)
 
 	export const TOOL_ID_BULLET_TRACKING: string = 'Tracking Bullet'
-	export const WEAPON_BULLET_TRACKING: Weapon = new Weapon(TOOL_ID_BULLET_TRACKING, 0.25, 0.5, 5, true)
+	export const WEAPON_BULLET_TRACKING: Weapon = new Weapon(
+		TOOL_ID_BULLET_TRACKING,
+		0.25,
+		0.5,
+		5,
+		true
+	)
 		.setExtraProperty(1, 1)
 		.setDroneProperty(0)
 
 	// 激光
 	export const TOOL_ID_LASER_BASIC: string = 'Laser'
-	export const WEAPON_LASER_BASIC: Weapon = new Weapon(TOOL_ID_LASER_BASIC, 3, 1, 120)
+	export const WEAPON_LASER_BASIC: Weapon = new Weapon(
+		TOOL_ID_LASER_BASIC,
+		3,
+		1,
+		120
+	)
 		.setExtraProperty(8, 6)
 		.setDroneProperty(0.8)
 
 	export const TOOL_ID_LASER_PULSE: string = 'Pulse Laser'
-	export const WEAPON_LASER_PULSE: Weapon = new Weapon(TOOL_ID_LASER_PULSE, 0.5, 0.5, 5, true).setExtraProperty(3, 3)
+	export const WEAPON_LASER_PULSE: Weapon = new Weapon(
+		TOOL_ID_LASER_PULSE,
+		0.5,
+		0.5,
+		5,
+		true
+	).setExtraProperty(3, 3)
 
 	export const TOOL_ID_LASER_TELEPORT: string = 'Teleport Laser'
-	export const WEAPON_LASER_TELEPORT: Weapon = new Weapon(TOOL_ID_LASER_TELEPORT, 3.5, 0, 40).setExtraProperty(4, 3)
+	export const WEAPON_LASER_TELEPORT: Weapon = new Weapon(
+		TOOL_ID_LASER_TELEPORT,
+		3.5,
+		0,
+		40
+	).setExtraProperty(4, 3)
 
 	export const TOOL_ID_LASER_ABSORPTION: string = 'Absorption Laser'
-	export const WEAPON_LASER_ABSORPTION: Weapon = new Weapon(TOOL_ID_LASER_ABSORPTION, 4, 0, 10).setExtraProperty(4, 2)
+	export const WEAPON_LASER_ABSORPTION: Weapon = new Weapon(
+		TOOL_ID_LASER_ABSORPTION,
+		4,
+		0,
+		10
+	).setExtraProperty(4, 2)
 
 	// 其它
 	export const TOOL_ID_WAVE: string = 'Wave'
@@ -56,32 +99,51 @@ export module NativeTools {
 		.setDroneProperty(0.25) // Not Full Charge
 
 	export const TOOL_ID_MELEE: string = 'Melee'
-	export const WEAPON_MELEE: Weapon = new Weapon(TOOL_ID_MELEE, 0.25, 0, 5).setExtraProperty(5, 3) // Used in BATR-alpha&beta
+	export const WEAPON_MELEE: Weapon = new Weapon(
+		TOOL_ID_MELEE,
+		0.25,
+		0,
+		5
+	).setExtraProperty(5, 3) // Used in BATR-alpha&beta
 
 	export const TOOL_ID_BLOCK_THROWER: string = 'Block Thrower'
-	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon(TOOL_ID_BLOCK_THROWER, 0.5, 1, 150)
+	export const WEAPON_BLOCK_THROWER: Weapon = new Weapon(
+		TOOL_ID_BLOCK_THROWER,
+		0.5,
+		1,
+		150
+	)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(10, 10)
 
 	export const TOOL_ID_LIGHTNING: string = 'Lightning'
-	export const WEAPON_LIGHTNING: Weapon = new Weapon(TOOL_ID_LIGHTNING, 0.25, 0.5, 20, true)
+	export const WEAPON_LIGHTNING: Weapon = new Weapon(
+		TOOL_ID_LIGHTNING,
+		0.25,
+		0.5,
+		20,
+		true
+	)
 		.setCanHurt(true, true, true)
 		.setExtraProperty(12, 10)
 
 	// 这些武器更像是BOSS用的 //
 
 	export const TOOL_ID_SHOCKWAVE_ALPHA: string = 'Shockwave_alpha'
-	export const WEAPON_SHOCKWAVE_ALPHA: Weapon = new Weapon(TOOL_ID_SHOCKWAVE_ALPHA, 10, 0, 100).setExtraProperty(
+	export const WEAPON_SHOCKWAVE_ALPHA: Weapon = new Weapon(
+		TOOL_ID_SHOCKWAVE_ALPHA,
 		10,
-		2
-	)
+		0,
+		100
+	).setExtraProperty(10, 2)
 
 	export const TOOL_ID_SHOCKWAVE_BETA: string = 'Shockwave_beta'
-	export const WEAPON_SHOCKWAVE_BETA: Weapon = new Weapon(TOOL_ID_SHOCKWAVE_BETA, 10, 0, 100).setExtraProperty(
+	export const WEAPON_SHOCKWAVE_BETA: Weapon = new Weapon(
+		TOOL_ID_SHOCKWAVE_BETA,
 		10,
-		2,
-		true
-	)
+		0,
+		100
+	).setExtraProperty(10, 2, true)
 
 	// 一些归类
 	/** 子弹类武器 */
@@ -101,13 +163,26 @@ export module NativeTools {
 	]
 
 	/** 一些特殊的武器 */
-	export const WEAPONS_SPECIAL: Weapon[] = [WEAPON_WAVE, WEAPON_MELEE, WEAPON_BLOCK_THROWER, WEAPON_LIGHTNING]
+	export const WEAPONS_SPECIAL: Weapon[] = [
+		WEAPON_WAVE,
+		WEAPON_MELEE,
+		WEAPON_BLOCK_THROWER,
+		WEAPON_LIGHTNING,
+	]
 
 	/** 被认为是「BOSS使用」的武器 */
-	export const WEAPONS_BOSS: Weapon[] = [WEAPON_SHOCKWAVE_ALPHA, WEAPON_SHOCKWAVE_BETA]
+	export const WEAPONS_BOSS: Weapon[] = [
+		WEAPON_SHOCKWAVE_ALPHA,
+		WEAPON_SHOCKWAVE_BETA,
+	]
 
 	/** 所有武器 */
-	export const WEAPONS_ALL: Weapon[] = [...WEAPONS_BULLET, ...WEAPONS_LASER, ...WEAPONS_SPECIAL, ...WEAPONS_BOSS]
+	export const WEAPONS_ALL: Weapon[] = [
+		...WEAPONS_BULLET,
+		...WEAPONS_LASER,
+		...WEAPONS_SPECIAL,
+		...WEAPONS_BOSS,
+	]
 
 	/** 所有目前可用的武器 */
 	export const WEAPONS_AVAILABLE: Weapon[] = [

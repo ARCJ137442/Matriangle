@@ -35,10 +35,21 @@ export default class WebController extends MultiKeyController {
 	 * @param {uint} port 开放的服务端口
 	 * @param {WebMessageRouter} router 所连接的「消息路由器」
 	 */
-	public linkToRouter(router: WebMessageRouter, type: NativeWebServiceType, ip: string, port: uint): boolean {
-		return router.registerServiceWithType(type, ip, port, this.onMessage.bind(this), (): void => {
-			console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
-		})
+	public linkToRouter(
+		router: WebMessageRouter,
+		type: NativeWebServiceType,
+		ip: string,
+		port: uint
+	): boolean {
+		return router.registerServiceWithType(
+			type,
+			ip,
+			port,
+			this.onMessage.bind(this),
+			(): void => {
+				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
+			}
+		)
 	}
 
 	/**

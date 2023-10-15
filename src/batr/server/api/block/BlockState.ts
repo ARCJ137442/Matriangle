@@ -10,7 +10,9 @@ import BlockAttributes from './BlockAttributes'
  * * 「有方向状态」的「方向」
  * * 「有颜色状态」的「颜色」
  */
-export default abstract class BlockState implements IJSObjectifiable<BlockState> {
+export default abstract class BlockState
+	implements IJSObjectifiable<BlockState>
+{
 	//============Constructor & Destructor============//
 	/** 构造函数 */
 	public constructor() {}

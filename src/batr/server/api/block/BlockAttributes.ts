@@ -1,4 +1,10 @@
-import { int, uint, int$MIN_VALUE, int$MAX_VALUE, uint$MAX_VALUE } from '../../../legacy/AS3Legacy'
+import {
+	int,
+	uint,
+	int$MIN_VALUE,
+	int$MAX_VALUE,
+	uint$MAX_VALUE,
+} from '../../../legacy/AS3Legacy'
 
 export default class BlockAttributes {
 	//============Instance Variables============//
@@ -78,7 +84,10 @@ export default class BlockAttributes {
 	public defaultPixelAlpha: uint
 
 	//============Constructor & Destructor============//
-	public constructor(defaultPixelColor: uint = 0xffffff, defaultPixelAlpha: uint = uint$MAX_VALUE) {
+	public constructor(
+		defaultPixelColor: uint = 0xffffff,
+		defaultPixelAlpha: uint = uint$MAX_VALUE
+	) {
 		this.defaultPixelColor = defaultPixelColor
 		this.defaultPixelAlpha = defaultPixelAlpha
 	}

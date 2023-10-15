@@ -1,7 +1,9 @@
 import { uint } from '../../../../../../legacy/AS3Legacy'
 import IMatrix from '../../../../../main/IMatrix'
 import BonusBox from '../../item/BonusBox'
-import AIController, { AIPlayerEvent } from '../../../../native/entities/player/controller/AIController'
+import AIController, {
+	AIPlayerEvent,
+} from '../../../../native/entities/player/controller/AIController'
 import { PlayerAction } from '../../../../native/entities/player/controller/PlayerAction'
 import {
 	NativePlayerEvent,
@@ -18,10 +20,16 @@ import { BatrPlayerEvent, BatrPlayerEventOptions } from '../BatrPlayerEvent'
  *   * 会通过其中self变量的`currentPlayer:IPlayer`进行「当前自我接入」
  * * 输出「玩家行为」（不管是yield还是return）
  */
-export type AIActionGenerator = Generator<PlayerAction, PlayerAction, PlayerEvent>
+export type AIActionGenerator = Generator<
+	PlayerAction,
+	PlayerAction,
+	PlayerEvent
+>
 
 /** 「AI行为生成器」的生成函数 */
-export type AIActionGeneratorF = (self: AIControllerGenerator) => AIActionGenerator
+export type AIActionGeneratorF = (
+	self: AIControllerGenerator
+) => AIActionGenerator
 
 /**
  * 基于「行为生成器」的AI控制器
@@ -84,15 +92,23 @@ export default class AIControllerGenerator extends AIController {
 	 * * 其它「要传入的参数」已经内置到「控制器实例属性」中了，只需要读取即可
 	 *   * 但这要尽可能避免读取「未涉及的、作为参数的实例属性」
 	 */
-	protected requestAction(event: PlayerEvent, self: IPlayer, host: IMatrix): PlayerAction {
+	protected requestAction(
+		event: PlayerEvent,
+		self: IPlayer,
+		host: IMatrix
+	): PlayerAction {
 		// 否则⇒继续
 		this._lastYieldedAction = this._actionGenerator.next(event).value
-		if (this._lastYieldedAction === undefined) throw new Error('生成器未正常执行')
+		if (this._lastYieldedAction === undefined)
+			throw new Error('生成器未正常执行')
 		return this._lastYieldedAction
 	}
 
 	// 钩子函数
-	public reactPlayerEvent<OptionMap extends PlayerEventOptions, T extends keyof OptionMap>(
+	public reactPlayerEvent<
+		OptionMap extends PlayerEventOptions,
+		T extends keyof OptionMap,
+	>(
 		eventType: T,
 		self: IPlayer,
 		host: IMatrix,
@@ -115,27 +131,43 @@ export default class AIControllerGenerator extends AIController {
 				break
 			case NativePlayerEvent.HURT:
 				// `otherInf.damage;`似乎就是没法推导出来💢
-				this._temp_lastHurtByDamage = (otherInf as NativePlayerEventOptions[NativePlayerEvent.HURT]).damage
+				this._temp_lastHurtByDamage = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.HURT]
+				).damage
 				// `otherInf.attacker;`似乎就是没法推导出来💢
-				this._temp_lastHurtByAttacker = (otherInf as NativePlayerEventOptions[NativePlayerEvent.HURT]).attacker
+				this._temp_lastHurtByAttacker = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.HURT]
+				).attacker
 				break
 			case NativePlayerEvent.DEATH:
 				// `otherInf.damage;`似乎就是没法推导出来💢
-				this._temp_lastDeathDamage = (otherInf as NativePlayerEventOptions[NativePlayerEvent.DEATH]).damage
+				this._temp_lastDeathDamage = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.DEATH]
+				).damage
 				// `otherInf.attacker;`似乎就是没法推导出来💢
-				this._temp_lastDeathAttacker = (otherInf as NativePlayerEventOptions[NativePlayerEvent.DEATH]).attacker
+				this._temp_lastDeathAttacker = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.DEATH]
+				).attacker
 				break
 			case NativePlayerEvent.KILL_PLAYER:
 				// `otherInf.damage;`似乎就是没法推导出来💢
-				this._temp_lastKillDamage = (otherInf as NativePlayerEventOptions[NativePlayerEvent.KILL_PLAYER]).damage
+				this._temp_lastKillDamage = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.KILL_PLAYER]
+				).damage
 				// `otherInf.victim;`似乎就是没法推导出来💢
-				this._temp_lastKillTarget = (otherInf as NativePlayerEventOptions[NativePlayerEvent.KILL_PLAYER]).victim
+				this._temp_lastKillTarget = (
+					otherInf as NativePlayerEventOptions[NativePlayerEvent.KILL_PLAYER]
+				).victim
 				break
 			case BatrPlayerEvent.PICKUP_BONUS_BOX:
-				this._temp_lastPickupBox = (otherInf as BatrPlayerEventOptions[BatrPlayerEvent.PICKUP_BONUS_BOX]).box // `otherInf.box;`似乎就是没法推导出来💢
+				this._temp_lastPickupBox = (
+					otherInf as BatrPlayerEventOptions[BatrPlayerEvent.PICKUP_BONUS_BOX]
+				).box // `otherInf.box;`似乎就是没法推导出来💢
 				break
 		}
 		// * 统一「反应」
-		this._action_buffer.push(this.requestAction(eventType as PlayerEvent, self, host))
+		this._action_buffer.push(
+			this.requestAction(eventType as PlayerEvent, self, host)
+		)
 	}
 }

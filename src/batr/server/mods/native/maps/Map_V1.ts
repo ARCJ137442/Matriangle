@@ -6,13 +6,21 @@ import {
 	fastAddJSObjectifyMapProperty_dashP,
 	loadRecursiveCriterion_true,
 } from '../../../../common/JSObjectify'
-import { fPointRef, iPoint, iPointRef, straightProjection } from '../../../../common/geometricTools'
+import {
+	fPointRef,
+	iPoint,
+	iPointRef,
+	straightProjection,
+} from '../../../../common/geometricTools'
 import { identity, key } from '../../../../common/utils'
 import { int, int$MAX_VALUE, uint } from '../../../../legacy/AS3Legacy'
 import BlockAttributes from '../../../api/block/BlockAttributes'
 import { mRot, mRot2axis } from '../../../general/GlobalRot'
 import { alignToGrid_P } from '../../../general/PosTransform'
-import { IEntityInGrid, IEntityOutGrid } from '../../../api/entity/EntityInterfaces'
+import {
+	IEntityInGrid,
+	IEntityOutGrid,
+} from '../../../api/entity/EntityInterfaces'
 import IPlayer from '../entities/player/IPlayer'
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces'
 import { isHitAnyEntity_I_Grid } from '../../batr/mechanics/BatrMatrixMechanics'
@@ -52,7 +60,11 @@ export default class Map_V1 implements IMap {
 	get name(): string {
 		return this._name
 	}
-	static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(Map_V1.OBJECTIFY_MAP, 'name', 'string')
+	static readonly key_name: key = fastAddJSObjectifyMapProperty_dashP(
+		Map_V1.OBJECTIFY_MAP,
+		'name',
+		'string'
+	)
 
 	/**
 	 * TODO: 所谓「竞技场」还有待进一步明确语义
@@ -90,7 +102,12 @@ export default class Map_V1 implements IMap {
 	}
 
 	copy(deep: boolean): IMap {
-		return new Map_V1(this._name, this._storage.copy(deep), this._size, this._isArena)
+		return new Map_V1(
+			this._name,
+			this._storage.copy(deep),
+			this._size,
+			this._isArena
+		)
 	}
 
 	//============World Mechanics: 原「逻辑层」的机制============//
@@ -145,13 +162,15 @@ export default class Map_V1 implements IMap {
 
 	// 对接世界逻辑
 	getBlockPlayerDamage(p: iPointRef, defaultValue: int = 0): int {
-		const blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p)
+		const blockAtt: BlockAttributes | null =
+			this._storage.getBlockAttributes(p)
 		if (blockAtt !== null) return blockAtt.playerDamage
 		return defaultValue
 	}
 
 	isKillZone(p: iPointRef, defaultValue: boolean = false): boolean {
-		const blockAtt: BlockAttributes | null = this._storage.getBlockAttributes(p)
+		const blockAtt: BlockAttributes | null =
+			this._storage.getBlockAttributes(p)
 		if (blockAtt !== null) return blockAtt.playerDamage == int$MAX_VALUE
 		return defaultValue
 	}
@@ -251,7 +270,8 @@ export default class Map_V1 implements IMap {
 		others: IEntityInGrid[] = []
 	): boolean {
 		// if(isOutOfMap(gridX,gridY)) return true
-		const attributes: BlockAttributes | null = this.storage.getBlockAttributes(p)
+		const attributes: BlockAttributes | null =
+			this.storage.getBlockAttributes(p)
 		return !(
 			attributes === null || // ! 默认行为：不可通过（【20230913 20:04:42】有助于找出bug）
 			(avoidHurting && attributes.playerDamage > -1) || // 避免伤害
@@ -274,7 +294,11 @@ export default class Map_V1 implements IMap {
 		players: IPlayer[] = []
 	): boolean {
 		return this.testCanPass_F(
-			this.towardWithRot_FF(this._temp_testFrontCanPass_P.copyFrom(entity.position), entity.direction, distance),
+			this.towardWithRot_FF(
+				this._temp_testFrontCanPass_P.copyFrom(entity.position),
+				entity.direction,
+				distance
+			),
 			asPlayer,
 			asBullet,
 			asLaser,
@@ -296,8 +320,12 @@ export default class Map_V1 implements IMap {
 	}
 
 	/** 实现：暂时使用「竞技场地图」判断 // TODO: @implements 继续完善「方块硬度」等逻辑 */
-	isBlockCarriable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean {
-		const blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+	isBlockCarriable(
+		position: iPointRef,
+		defaultWhenNotFound: BlockAttributes
+	): boolean {
+		const blockAttributes: BlockAttributes =
+			this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
 		return (
 			blockAttributes.isCarriable &&
 			!(
@@ -308,8 +336,12 @@ export default class Map_V1 implements IMap {
 	}
 
 	/** @implements 实现：暂时使用「竞技场地图」判断 */
-	isBlockBreakable(position: iPointRef, defaultWhenNotFound: BlockAttributes): boolean {
-		const blockAttributes: BlockAttributes = this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
+	isBlockBreakable(
+		position: iPointRef,
+		defaultWhenNotFound: BlockAttributes
+	): boolean {
+		const blockAttributes: BlockAttributes =
+			this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
 		return (
 			blockAttributes.isBreakable &&
 			!(

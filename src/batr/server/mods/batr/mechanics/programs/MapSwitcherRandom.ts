@@ -14,7 +14,10 @@ import MapSwitcher from './MapSwitcher'
  * * 作为AS3版本「地图变换机制」继任者的
  * 母体程序
  */
-export default class MapSwitcherRandom extends MapSwitcher implements IEntityActive {
+export default class MapSwitcherRandom
+	extends MapSwitcher
+	implements IEntityActive
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'MapSwitch:Random'
 
@@ -43,7 +46,11 @@ export default class MapSwitcherRandom extends MapSwitcher implements IEntityAct
 			// 先判断母体是否有相应的规则
 			if (host.rule.hasRule(MatrixRuleBatr.key_mapRandomPotentials)) {
 				// 如果母体只有一个地图⇒返回
-				if (host.rule.safeGetRule<Map<IMap, number>>(MatrixRuleBatr.key_mapRandomPotentials).size > 1)
+				if (
+					host.rule.safeGetRule<Map<IMap, number>>(
+						MatrixRuleBatr.key_mapRandomPotentials
+					).size > 1
+				)
 					// 随机地图
 					newMap = getRandomMap(host.rule).copy(true)
 				// !【2023-10-08 22:31:40】现在对地图进行深拷贝

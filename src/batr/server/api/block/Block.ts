@@ -45,7 +45,13 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	public static readonly key_id: key = addNReturnKey(
 		this.OBJECTIFY_MAP,
 		'id',
-		fastGenerateJSObjectifyMapProperty('id', 'string', identity, identity, loadRecursiveCriterion_false)
+		fastGenerateJSObjectifyMapProperty(
+			'id',
+			'string',
+			identity,
+			identity,
+			loadRecursiveCriterion_false
+		)
 	)
 
 	/**
@@ -86,7 +92,9 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	 *   * 有状态⇒与状态「叠加」出「最终属性」
 	 */
 	public get attributes(): BlockAttributes {
-		return this._state === null ? this._baseAttributes : this._state.getFullAttributes(this._baseAttributes)
+		return this._state === null
+			? this._baseAttributes
+			: this._state.getFullAttributes(this._baseAttributes)
 	}
 	// TODO: 还缺一个「属性对象化」逻辑
 
@@ -94,11 +102,17 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	 * @param typeMap 用于「id⇒白板对象」的构造函数
 	 * @override 从JS对象中加载，并且附带一个「id⇒白板对象」的映射
 	 */
-	public static fromJSObject(jso: JSObject, typeMap: Map<typeID, () => Block>): Block {
+	public static fromJSObject(
+		jso: JSObject,
+		typeMap: Map<typeID, () => Block>
+	): Block {
 		if (jso?.id === undefined) throw new Error('方块类型不存在！')
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-		const blankConstructor: (() => Block) | undefined = typeMap.get((jso as any).id)
-		if (blankConstructor === undefined) throw new Error(`方块类型${jso.id?.toString()}不存在！`)
+		const blankConstructor: (() => Block) | undefined = typeMap.get(
+			(jso as any).id
+		)
+		if (blankConstructor === undefined)
+			throw new Error(`方块类型${jso.id?.toString()}不存在！`)
 		return uniLoadJSObject(
 			blankConstructor(), // 用「白板构造函数」来获取「白板对象」
 			jso
@@ -141,7 +155,11 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	 * @returns 软拷贝后的自身，「属性」不变而「状态」全新
 	 */
 	public softCopy(): Block<BS> {
-		return new Block<BS>(this.id, this._baseAttributes, (this._state === null ? null : this._state.copy()) as BS)
+		return new Block<BS>(
+			this.id,
+			this._baseAttributes,
+			(this._state === null ? null : this._state.copy()) as BS
+		)
 	}
 
 	/**

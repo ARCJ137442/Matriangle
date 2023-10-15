@@ -32,39 +32,76 @@ export default class LaserTeleport extends Laser {
 		attackerDamage: uint,
 		extraDamageCoefficient: uint
 	) {
-		super(owner, position, direction, length, LaserTeleport.LIFE, attackerDamage, extraDamageCoefficient)
+		super(
+			owner,
+			position,
+			direction,
+			length,
+			LaserTeleport.LIFE,
+			attackerDamage,
+			extraDamageCoefficient
+		)
 	}
 
 	//============Instance Getter And Setter============//
 
 	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
-		if ((this.life & 7) === 0) console.warn('LaserTeleport: laserHurtPlayers(host, this, (host,victim) => {}) WIP!') //laserHurtPlayers(host, this);
+		if ((this.life & 7) === 0)
+			console.warn(
+				'LaserTeleport: laserHurtPlayers(host, this, (host,victim) => {}) WIP!'
+			) //laserHurtPlayers(host, this);
 		super.onTick(host) // ! 超类逻辑：处理生命周期
 	}
 
 	/** @override 在非致死伤害时传送玩家 */
-	override hitAPlayer(host: IMatrix, player: IPlayer, canHurt: boolean, finalDamage: number): void {
+	override hitAPlayer(
+		host: IMatrix,
+		player: IPlayer,
+		canHurt: boolean,
+		finalDamage: number
+	): void {
 		// 先伤害
 		super.hitAPlayer(host, player, canHurt, finalDamage)
 		// 再尝试传送
-		if (canHurt /* 不会传送自身 */ && !player.isRespawning /* 不会传送已死亡玩家 */) spreadPlayer(host, player)
+		if (
+			canHurt /* 不会传送自身 */ &&
+			!player.isRespawning /* 不会传送已死亡玩家 */
+		)
+			spreadPlayer(host, player)
 	}
 
 	//============Display Implements============//
 	override shapeInit(shape: IShape): void {
 		// Middle
-		this.drawOwnerLine(shape.graphics, -LaserTeleport.SIZE / 2, LaserTeleport.SIZE / 2, 0.25)
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserTeleport.SIZE / 2,
+			LaserTeleport.SIZE / 2,
+			0.25
+		)
 		// Side
-		this.drawOwnerLine(shape.graphics, -LaserTeleport.SIZE / 2, -LaserTeleport.SIZE / 4, 0.6)
-		this.drawOwnerLine(shape.graphics, LaserTeleport.SIZE / 4, LaserTeleport.SIZE / 2, 0.6)
+		this.drawOwnerLine(
+			shape.graphics,
+			-LaserTeleport.SIZE / 2,
+			-LaserTeleport.SIZE / 4,
+			0.6
+		)
+		this.drawOwnerLine(
+			shape.graphics,
+			LaserTeleport.SIZE / 4,
+			LaserTeleport.SIZE / 2,
+			0.6
+		)
 		super.shapeInit(shape)
 	}
 
 	public shapeRefresh(shape: IShape): void {
 		shape.alpha = (this.life & 7) < 2 ? 0.75 : 1
 		if (this.life < (1 / 4) * LaserTeleport.LIFE)
-			shape.scaleY = ((1 / 4) * LaserTeleport.LIFE - this.life) / ((1 / 4) * LaserTeleport.LIFE)
+			shape.scaleY =
+				((1 / 4) * LaserTeleport.LIFE - this.life) /
+				((1 / 4) * LaserTeleport.LIFE)
 		super.shapeRefresh(shape)
 	}
 }

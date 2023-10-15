@@ -146,7 +146,8 @@ export default class I18ns {
 
 	protected defaultGet(key: string): string {
 		const value: string = String(this._dictionary[key])
-		if (value == 'undefined' || value == 'null' || value == '') return getDefaultI18n.getDefaultI18n(key)
+		if (value == 'undefined' || value == 'null' || value == '')
+			return getDefaultI18n.getDefaultI18n(key)
 		return value
 	}
 

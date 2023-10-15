@@ -62,7 +62,10 @@ export class EventBus_V1<eventT> implements IEventBus<eventT> {
 	/**
 	 * 事件映射
 	 */
-	protected _eventMap: Map<EventType, Set<eventCallback<eventT>>> = new Map<EventType, Set<eventCallback<eventT>>>()
+	protected _eventMap: Map<EventType, Set<eventCallback<eventT>>> = new Map<
+		EventType,
+		Set<eventCallback<eventT>>
+	>()
 
 	/**
 	 * 实现：集合新增
@@ -71,7 +74,8 @@ export class EventBus_V1<eventT> implements IEventBus<eventT> {
 	 */
 	public on(type: EventType, listener: eventCallback<eventT>): void {
 		// 没有的时候才新增侦听器
-		if (!this._eventMap.has(type)) this._eventMap.set(type, new Set<eventCallback<eventT>>())
+		if (!this._eventMap.has(type))
+			this._eventMap.set(type, new Set<eventCallback<eventT>>())
 		// 确保是有集合的⇒去重留给自身
 		this._eventMap.get(type)?.add(listener)
 	}
@@ -86,7 +90,9 @@ export class EventBus_V1<eventT> implements IEventBus<eventT> {
 	public emit(type: EventType, data: eventT): void {
 		if (this._eventMap.has(type)) {
 			// 使用`for-of`而非forEach，避免创建对象
-			for (const listener of this._eventMap.get(type) as Set<eventCallback<eventT>>) {
+			for (const listener of this._eventMap.get(type) as Set<
+				eventCallback<eventT>
+			>) {
 				listener(data)
 			}
 		}

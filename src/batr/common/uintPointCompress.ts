@@ -23,7 +23,8 @@ export function isValidPositionToCompress(x: uint, y: uint): boolean {
  * @param	y	position y.
  */
 function testUintPoint(x: uint, y: uint): void {
-	if (!isValidPositionToCompress(x, y)) throw new Error('Position out of range:' + x + ',' + y)
+	if (!isValidPositionToCompress(x, y))
+		throw new Error('Position out of range:' + x + ',' + y)
 }
 
 /**

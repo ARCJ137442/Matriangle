@@ -77,9 +77,12 @@ export default class WSController extends MultiKeyController {
 		this._port = port
 		// 创建服务器，并开始侦听
 		try {
-			this._server = new Server({ host: this._hostname, port: this._port }, (): void => {
-				console.log(`${this.serverAddress}：服务器已成功启动`)
-			})
+			this._server = new Server(
+				{ host: this._hostname, port: this._port },
+				(): void => {
+					console.log(`${this.serverAddress}：服务器已成功启动`)
+				}
+			)
 			this._server.on('connection', this.onWSConnect.bind(this))
 		} catch (e) {
 			console.error(`${this.serverAddress}：服务器启动失败！`, e)
@@ -122,7 +125,10 @@ export default class WSController extends MultiKeyController {
 			// !【2023-10-06 22:15:57】这要求消息格式必须是二元组
 			;[controlKey, action] = messageStr.split('|')
 		} catch (e) {
-			console.error(`${this.serverAddress}：消息「${messageStr}」解析失败！`, e)
+			console.error(
+				`${this.serverAddress}：消息「${messageStr}」解析失败！`,
+				e
+			)
 			return
 		}
 		// 根据消息分派操作

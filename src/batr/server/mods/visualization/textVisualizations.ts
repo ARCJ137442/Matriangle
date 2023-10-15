@@ -1,8 +1,18 @@
-import { iPoint, iPointRef, iPointVal, traverseNDSquare } from '../../../common/geometricTools'
+import {
+	iPoint,
+	iPointRef,
+	iPointVal,
+	traverseNDSquare,
+} from '../../../common/geometricTools'
 import { getClass } from '../../../common/utils'
 import { int, uint, uint$MAX_VALUE } from '../../../legacy/AS3Legacy'
 import Entity from '../../api/entity/Entity'
-import { IEntityHasPosition, i_fixedLive, i_hasDirection, i_hasPosition } from '../../api/entity/EntityInterfaces'
+import {
+	IEntityHasPosition,
+	i_fixedLive,
+	i_hasDirection,
+	i_hasPosition,
+} from '../../api/entity/EntityInterfaces'
 import MapStorageSparse from '../native/maps/MapStorageSparse'
 import { alignToGrid_P } from '../../general/PosTransform'
 import PlayerBatr from '../batr/entity/player/PlayerBatr'
@@ -57,7 +67,10 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 	)
 }
 
-export function mapV地图可视化(storage: MapStorageSparse, ...otherPos_I: int[]): void {
+export function mapV地图可视化(
+	storage: MapStorageSparse,
+	...otherPos_I: int[]
+): void {
 	let line: string[]
 	const iP: iPoint = new iPoint(0, 0, ...otherPos_I)
 	for (let y = storage.borderMin[1]; y <= storage.borderMax[1]; y++) {
@@ -74,8 +87,12 @@ export function mapV地图可视化(storage: MapStorageSparse, ...otherPos_I: in
  * 像Julia遍历张量一样可视化一个地图
  */
 export function mapVH地图可视化_高维(storage: MapStorageSparse): void {
-	const zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2))
-	const zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2))
+	const zwMax: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMax.slice(2)
+	)
+	const zwMin: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMin.slice(2)
+	)
 	// console.log(zwMax, zwMin)
 	traverseNDSquare(zwMin, zwMax, (zw: iPoint): void => {
 		console.info(`切片 [:, :, ${zw.join(', ')}] = `)
@@ -94,7 +111,8 @@ export function matrixV母体可视化(
 	string_l: uint = 7 // 限制字长
 ): string {
 	// 分派「地图存储结构」的类型
-	if (storage instanceof MapStorageSparse) return sparseMapMV稀疏地图母体可视化(storage, entities, string_l)
+	if (storage instanceof MapStorageSparse)
+		return sparseMapMV稀疏地图母体可视化(storage, entities, string_l)
 	throw new Error('不支持该地图存储结构的母体可视化')
 }
 
@@ -106,13 +124,19 @@ function vPoint可视化单点(
 ): string {
 	let e: Entity | null = null
 	for (const ent of entitiesPositioned) {
-		if (alignToGrid_P(ent.position, _temp_母体可视化_entityIPoint).isEqual(p)) {
+		if (
+			alignToGrid_P(ent.position, _temp_母体可视化_entityIPoint).isEqual(
+				p
+			)
+		) {
 			e = ent
 			break
 		}
 	}
 	// 打印
-	return e === null ? showBlock(String(storage.getBlockID(p)), string_l) : showEntity(e, string_l)
+	return e === null
+		? showBlock(String(storage.getBlockID(p)), string_l)
+		: showEntity(e, string_l)
 }
 
 export function sparseMapMV稀疏地图母体可视化(
@@ -123,16 +147,27 @@ export function sparseMapMV稀疏地图母体可视化(
 	// 返回值
 	let result: string = ''
 	// 格点实体
-	const entitiesPositioned: IEntityHasPosition[] = entities.filter(i_hasPosition)
+	const entitiesPositioned: IEntityHasPosition[] =
+		entities.filter(i_hasPosition)
 	// 正式开始
-	const zwMax: iPoint = new iPoint().copyFromArgs(...storage.borderMax.slice(2))
-	const zwMin: iPoint = new iPoint().copyFromArgs(...storage.borderMin.slice(2))
+	const zwMax: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMax.slice(2)
+	)
+	const zwMin: iPoint = new iPoint().copyFromArgs(
+		...storage.borderMin.slice(2)
+	)
 
-	const vLine可视化单线 = (iP: iPoint, line: string[], ...otherPos_I: int[]): string => {
+	const vLine可视化单线 = (
+		iP: iPoint,
+		line: string[],
+		...otherPos_I: int[]
+	): string => {
 		for (let x = storage.borderMin[0]; x <= storage.borderMax[0]; x++) {
 			// 每一个点
 			iP.copyFromArgs(x, ...otherPos_I) // ! 会忽略其它地方的值
-			line.push(vPoint可视化单点(storage, iP, entitiesPositioned, string_l))
+			line.push(
+				vPoint可视化单点(storage, iP, entitiesPositioned, string_l)
+			)
 		}
 		return '|' + line.join(' ') + '|' + '\n'
 	}
@@ -149,7 +184,12 @@ export function sparseMapMV稀疏地图母体可视化(
 	// 处理各个维度的情况
 	switch (storage.numDimension) {
 		case 0:
-			result = vPoint可视化单点(storage, new iPoint(), entitiesPositioned, string_l)
+			result = vPoint可视化单点(
+				storage,
+				new iPoint(),
+				entitiesPositioned,
+				string_l
+			)
 			break
 		case 1:
 			result = vLine可视化单线(new iPoint(), [])
@@ -165,7 +205,10 @@ export function sparseMapMV稀疏地图母体可视化(
 	return result
 }
 
-export function listE列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE): void {
+export function listE列举实体(
+	es: Entity[],
+	maxCount: uint = uint$MAX_VALUE
+): void {
 	console.info(`实体列表(${es.length})：`)
 	for (const e of es) {
 		console.log(entityTS实体标签显示(e), e)
@@ -173,7 +216,10 @@ export function listE列举实体(es: Entity[], maxCount: uint = uint$MAX_VALUE)
 	}
 }
 
-export function entityLV实体列表可视化(es: Entity[], maxCount: uint = uint$MAX_VALUE): string {
+export function entityLV实体列表可视化(
+	es: Entity[],
+	maxCount: uint = uint$MAX_VALUE
+): string {
 	let result: string = ''
 	result += `实体列表(${es.length})：\n`
 	for (const e of es) {
@@ -188,23 +234,41 @@ function entityTS实体标签显示(e: Entity): string {
 	if (isPlayer(e))
 		if (e instanceof PlayerBatr)
 			// BaTr
-			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${
+			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(
+				e
+			)}|${
 				e.HPText // 生命
-			}|${e.isUsing ? '^' : '#'}[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${
-				e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
+			}|${e.isUsing ? '^' : '#'}[${e.tool.id}:${e.tool.usingCD}/${
+				e.tool.baseCD
+			}${
+				e.tool.needsCharge
+					? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}`
+					: '' // 工具
 			}]|#${e.team.name}:${e.team.id}#`
 		// 普通原生玩家
-		else return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${e.HPText}`
+		else
+			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(
+				e
+			)}|${e.HPText}`
 	// 奖励箱
-	if (e instanceof BonusBox) return `${getClass(e)?.name}"${e.bonusType}"@${PV位置可视化(e)}`
+	if (e instanceof BonusBox)
+		return `${getClass(e)?.name}"${e.bonusType}"@${PV位置可视化(e)}`
 	// 特效
 	if (e instanceof Effect)
 		if (e instanceof EffectExplode)
 			// 爆炸特效
-			return `${getClass(e)?.name}@${PV位置可视化(e)}${getLT获取生命周期标签(e)}(r=${e.radius})`
-		else return `${getClass(e)?.name}@${PV位置可视化(e)}${getLT获取生命周期标签(e)}`
+			return `${getClass(e)?.name}@${PV位置可视化(
+				e
+			)}${getLT获取生命周期标签(e)}(r=${e.radius})`
+		else
+			return `${getClass(e)?.name}@${PV位置可视化(
+				e
+			)}${getLT获取生命周期标签(e)}`
 	// 抛射体（不管有无坐标）
-	if (e instanceof Projectile) return `${getClass(e)?.name}${getPT获取坐标标签(e)}${getLT获取生命周期标签(e)}`
+	if (e instanceof Projectile)
+		return `${getClass(e)?.name}${getPT获取坐标标签(
+			e
+		)}${getLT获取生命周期标签(e)}`
 	// 母体程序
 	if (e instanceof MatrixProgram)
 		if (e instanceof BlockRandomTickDispatcher)
@@ -214,18 +278,27 @@ function entityTS实体标签显示(e: Entity): string {
 		else if (e instanceof MapSwitcherRandom)
 			// *↓使用any强制访问私有变量
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-			return `${getClass(e)?.name}[${e.label}]=#${(e as any)?._mapSwitchTick}/${e.mapSwitchInterval}#`
+			return `${getClass(e)?.name}[${e.label}]=#${(e as any)
+				?._mapSwitchTick}/${e.mapSwitchInterval}#`
 		// 控制器
 		else if (e instanceof MatrixEventDispatcher)
 			if (e instanceof PlayerController)
 				// 玩家控制器
-				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers.map(entityTS实体标签显示).join(', ')}`
+				return `${getClass(e)?.name}[${e.label}] -> ${e.subscribers
+					.map(entityTS实体标签显示)
+					.join(', ')}`
 			// 其它
 			else
 				return `${getClass(e)?.name}[${e.label}] -> ${
 					//
 					// eslint-disable-next-line @typescript-eslint/no-base-to-string
-					e.subscribers.map(x => (x instanceof Entity ? entityTS实体标签显示(e) : e?.toString())).join(', ')
+					e.subscribers
+						.map(x =>
+							x instanceof Entity
+								? entityTS实体标签显示(e)
+								: e?.toString()
+						)
+						.join(', ')
 				}`
 		// 普通情况：仅有一个标签
 		else return `${getClass(e)?.name}[${e.label}]`
@@ -235,7 +308,10 @@ function entityTS实体标签显示(e: Entity): string {
 
 /**  辅助函数 */
 function getPT获取坐标标签(e: Entity): string {
-	return (i_hasPosition(e) ? `@${PV位置可视化(e)}` : ``) + (i_hasDirection(e) ? `^${nameOfRot_M(e.direction)}` : ``)
+	return (
+		(i_hasPosition(e) ? `@${PV位置可视化(e)}` : ``) +
+		(i_hasDirection(e) ? `^${nameOfRot_M(e.direction)}` : ``)
+	)
 }
 
 /** 辅助函数 */
@@ -243,8 +319,10 @@ function getLT获取生命周期标签(e: Entity): string {
 	return i_fixedLive(e) ? `|${e.life}/${e.LIFE}` : ``
 }
 
-const number可视化 = (n: number): string => (Number.isInteger(n) ? n.toString() : n.toFixed(2))
-const PV位置可视化 = (e: IEntityHasPosition): string => e.position.map(number可视化).join(',')
+const number可视化 = (n: number): string =>
+	Number.isInteger(n) ? n.toString() : n.toFixed(2)
+const PV位置可视化 = (e: IEntityHasPosition): string =>
+	e.position.map(number可视化).join(',')
 
 // 截面可视化 //
 
@@ -285,7 +363,14 @@ export function getCutVisualization(
 		for (let x = axis_x_min; x <= axis_x_max; x++) {
 			_temp_getCutVisualization[axis_x] = x
 			_temp_getCutVisualization[axis_y] = y
-			line.push(vPoint可视化单点(storage, _temp_getCutVisualization, entitiesPositioned, string_l))
+			line.push(
+				vPoint可视化单点(
+					storage,
+					_temp_getCutVisualization,
+					entitiesPositioned,
+					string_l
+				)
+			)
 		}
 		result += '|' + line.join(' ') + '|\n'
 		line.length = 0
@@ -351,9 +436,19 @@ export function SPSACV单点稀疏地图所有视角截面可视化(
 		for (let axis_y: uint = axis_x + 1; axis_y < nDim; ++axis_y) {
 			// 直接生成一个截面
 			result +=
-				`Slice ${nameOfAxis_M(axis_x)}${nameOfAxis_M(axis_y)}(${storage.getSizeAt(axis_x)}x${storage.getSizeAt(
+				`Slice ${nameOfAxis_M(axis_x)}${nameOfAxis_M(
 					axis_y
-				)}):\n` + cutSV稀疏地图截面可视化(storage, entitiesPositioned, axis_x, axis_y, center, string_l) // ! ↑这里已经带了一个换行符
+				)}(${storage.getSizeAt(axis_x)}x${storage.getSizeAt(
+					axis_y
+				)}):\n` +
+				cutSV稀疏地图截面可视化(
+					storage,
+					entitiesPositioned,
+					axis_x,
+					axis_y,
+					center,
+					string_l
+				) // ! ↑这里已经带了一个换行符
 		}
 
 	return result
@@ -392,7 +487,11 @@ export function SPMAVCV单点母体所有视角截面可视化(
  * |x y| |a b|
  * |z w| |c d|
  */
-export function rowJoin(rowsA: string[], rowsB: string[], separator: string = ''): string {
+export function rowJoin(
+	rowsA: string[],
+	rowsB: string[],
+	separator: string = ''
+): string {
 	let result: string = ''
 	for (let i: uint = 0; i < rowsA.length; i++) {
 		result += rowsA[i] + separator + rowsB[i] + '\n'

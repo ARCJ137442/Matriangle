@@ -12,7 +12,13 @@ import { addNReturnKey, getClass, identity, key, safeMerge } from './utils'
 /**
  *  ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
  */
-export type JSObjectValue = number | string | boolean | null | Array<any> | JSObject
+export type JSObjectValue =
+	| number
+	| string
+	| boolean
+	| null
+	| Array<any>
+	| JSObject
 
 /**
  * 可转换为JSON的JS对象类型
@@ -138,7 +144,9 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
 	else
 		for (const propertyKey in objectifyMap) {
 			// 获取值&预处理
-			const property: any = objectifyMap[propertyKey].propertyConverterS((this_ as any)[propertyKey])
+			const property: any = objectifyMap[propertyKey].propertyConverterS(
+				(this_ as any)[propertyKey]
+			)
 			// 映射键
 			const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key
 			// 转换值
@@ -201,7 +209,13 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
 			const JSObjectKey: key = objectifyMap[propertyKey].JSObject_key
 			// 没属性⇒警告，跳过循环
 			if (!(JSObjectKey in source)) {
-				console.error('在JS对象', source, '中未找到键', JSObjectKey, '对应的数据')
+				console.error(
+					'在JS对象',
+					source,
+					'中未找到键',
+					JSObjectKey,
+					'对应的数据'
+				)
 				continue
 			}
 			// 获取（原始）值
@@ -213,7 +227,9 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
 			) {
 				// 创造一个该属性「原本类型」的空对象
 				const blank: IJSObjectifiable<any> = (
-					objectifyMap[propertyKey].blankConstructor as (this_?: any) => IJSObjectifiable<any>
+					objectifyMap[propertyKey].blankConstructor as (
+						this_?: any
+					) => IJSObjectifiable<any>
 				)(
 					// 先前已经判断好了
 					this_
@@ -221,17 +237,23 @@ export function uniLoadJSObject<T extends IJSObjectifiable<T>>(
 				// 递归操作
 				;(this_ as any)[propertyKey] = uniLoadJSObject(
 					blank,
-					objectifyMap[propertyKey].propertyConverterL(rawProperty) as JSObject, // 从当前属性值开始
+					objectifyMap[propertyKey].propertyConverterL(
+						rawProperty
+					) as JSObject, // 从当前属性值开始
 					blank.objectifyMap // 使用属性值自己的「JS对象化映射表」
 				)
 			} else {
 				// 基础类型：过滤→设置
 				;(this_ as any)[propertyKey] =
 					objectifyMap[propertyKey].propertyType === undefined // 以`undefined`作通配符（不进行类型检查）
-						? objectifyMap[propertyKey].propertyConverterL(rawProperty)
+						? objectifyMap[propertyKey].propertyConverterL(
+								rawProperty
+						  )
 						: safeMerge(
 								(this_ as any)[propertyKey], // 原先值的类型以作参考
-								objectifyMap[propertyKey].propertyConverterL(rawProperty) // 转换后的原始值 // !【2023-09-24 15:22:40】现在有可能是「任意类型」了
+								objectifyMap[propertyKey].propertyConverterL(
+									rawProperty
+								) // 转换后的原始值 // !【2023-09-24 15:22:40】现在有可能是「任意类型」了
 						  )
 			}
 		}
@@ -287,8 +309,10 @@ export function mapLoadJSObject<K, V>(
 	flag: string = 'Map',
 	parent: Map<K, V> = new Map<K, V>()
 ): Map<K, V> {
-	if (obj[flag] == undefined) throw new Error(`JSON2map: 没有找到标志为「${flag}」的键`)
-	else if (!(obj[flag] instanceof Map)) throw new Error(`JSON2map: 标志为「${flag}」的键的值不是映射`)
+	if (obj[flag] == undefined)
+		throw new Error(`JSON2map: 没有找到标志为「${flag}」的键`)
+	else if (!(obj[flag] instanceof Map))
+		throw new Error(`JSON2map: 标志为「${flag}」的键的值不是映射`)
 	;(obj[flag] as unknown as Map<any, any>).forEach((kv: [any, any]): void => {
 		parent.set(...callbackKV(kv[0], kv[1]))
 	})
@@ -326,7 +350,8 @@ export function uniLoadJSON<T extends IJSObjectifiable<T>>(
  */
 export function verifyJSObject(jso: any): boolean {
 	for (const key in jso) {
-		if (!verifyJSObjectKey(key) || !verifyJSObjectValue(jso[key])) return false
+		if (!verifyJSObjectKey(key) || !verifyJSObjectValue(jso[key]))
+			return false
 	}
 	return true
 }
@@ -392,9 +417,13 @@ export function verifyJSObjectValue(value: any): boolean {
 // 一些增进易用性的工具函数 //
 
 /** 判断「是否继续递归加载」恒真 */
-export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (v: JSObjectValue): true => true
+export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (
+	v: JSObjectValue
+): true => true
 /** 判断「是否继续递归加载」恒假 */
-export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (v: JSObjectValue): false => false
+export const loadRecursiveCriterion_false: (v: JSObjectValue) => boolean = (
+	v: JSObjectValue
+): false => false
 
 /**
  * 根据位置参数快速构造一个「JS对象化映射属性表」

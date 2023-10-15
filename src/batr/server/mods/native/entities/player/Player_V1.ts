@@ -1,6 +1,13 @@
 import { intMin } from '../../../../../common/exMath'
-import { iPoint, iPointRef, intPoint } from '../../../../../common/geometricTools'
-import { DisplayLayers, IShape as IShape } from '../../../../../display/api/DisplayInterfaces'
+import {
+	iPoint,
+	iPointRef,
+	intPoint,
+} from '../../../../../common/geometricTools'
+import {
+	DisplayLayers,
+	IShape as IShape,
+} from '../../../../../display/api/DisplayInterfaces'
 import { NativeDecorationLabel } from '../../../../../display/mods/native/entity/player/DecorationLabels'
 import { int, uint } from '../../../../../legacy/AS3Legacy'
 import Entity from '../../../../api/entity/Entity'
@@ -12,9 +19,16 @@ import { respawnPlayer } from '../../mechanics/NativeMatrixMechanics'
 import { playerMoveInTest } from '../../mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../mechanics/NativeMatrixMechanics'
 import IPlayer from './IPlayer'
-import { PlayerAction, EnumNativePlayerAction, NativeMatrixPlayerEvent } from './controller/PlayerAction'
+import {
+	PlayerAction,
+	EnumNativePlayerAction,
+	NativeMatrixPlayerEvent,
+} from './controller/PlayerAction'
 import PlayerController from './controller/PlayerController'
-import { NativePlayerEventOptions, NativePlayerEvent } from './controller/PlayerEvent'
+import {
+	NativePlayerEventOptions,
+	NativePlayerEvent,
+} from './controller/PlayerEvent'
 
 /**
  * 玩家第一版
@@ -41,7 +55,13 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 * @param fillColor 填充颜色（默认为队伍颜色）
 	 * @param lineColor 线条颜色（默认从队伍颜色中产生）
 	 */
-	public constructor(position: iPoint, direction: mRot, isActive: boolean, fillColor: number, lineColor: number) {
+	public constructor(
+		position: iPoint,
+		direction: mRot,
+		isActive: boolean,
+		fillColor: number,
+		lineColor: number
+	) {
 		super()
 		this._isActive = isActive
 
@@ -121,12 +141,24 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 */
 	moveParallel(host: IMatrix, direction: mRot): void {
 		// 能前进⇒前进 // !原`host.movePlayer`
-		if (this.testCanGoForward(host, direction, false, true, getPlayers(host)))
+		if (
+			this.testCanGoForward(
+				host,
+				direction,
+				false,
+				true,
+				getPlayers(host)
+			)
+		)
 			// 向前移动
 			this.setPosition(
 				host,
 				// 不能在
-				host.map.towardWithRot_II(this._temp_moveForward.copyFrom(this.position), direction, 1),
+				host.map.towardWithRot_II(
+					this._temp_moveForward.copyFrom(this.position),
+					direction,
+					1
+				),
 				true
 			)
 		// !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
@@ -171,12 +203,10 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 */
 	protected dealController(host: IMatrix): void {
 		// *【2023-10-09 21:19:27】现在也使用「事件分派」而非「特定名称函数」通知控制器了
-		this._controller?.reactPlayerEvent<NativePlayerEventOptions, NativePlayerEvent.TICK>(
-			NativePlayerEvent.TICK,
-			this,
-			host,
-			undefined
-		)
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.TICK
+		>(NativePlayerEvent.TICK, this, host, undefined)
 	}
 
 	/**
@@ -277,11 +307,15 @@ export default class Player_V1 extends Entity implements IPlayer {
 	/**
 	 * @implements 实现：从「收到世界事件」到「缓冲操作」再到「执行操作」
 	 */
-	onReceive(type: string, action: PlayerAction | undefined = undefined): void {
+	onReceive(
+		type: string,
+		action: PlayerAction | undefined = undefined
+	): void {
 		switch (type) {
 			// 增加待执行的行为
 			case NativeMatrixPlayerEvent.ADD_ACTION:
-				if (action === undefined) throw new Error('未指定要缓存的行为！')
+				if (action === undefined)
+					throw new Error('未指定要缓存的行为！')
 				this._actionBuffer.push(action)
 				break
 		}
@@ -368,7 +402,11 @@ export default class Player_V1 extends Entity implements IPlayer {
 		this.onHeal(host, value, healer)
 	}
 
-	removeHP(host: IMatrix, value: uint, attacker: IPlayer | null = null): void {
+	removeHP(
+		host: IMatrix,
+		value: uint,
+		attacker: IPlayer | null = null
+	): void {
 		// 非致死⇒受伤
 		if (this.HP > value) {
 			this.HP -= value
@@ -528,7 +566,10 @@ export default class Player_V1 extends Entity implements IPlayer {
 		// 位置更改前
 		if (needHook) this.onLocationChange(host, this._position)
 		// 更改位置
-		if (position === this._position) console.trace('不建议「先变更位置」，再`setPosition`的「先斩后奏」方法')
+		if (position === this._position)
+			console.trace(
+				'不建议「先变更位置」，再`setPosition`的「先斩后奏」方法'
+			)
 		this._position.copyFrom(position)
 		// 位置更改后
 		if (needHook) this.onLocationChanged(host, this._position)
@@ -556,7 +597,11 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 * @param ignoreDelay 是否忽略「方块伤害」等冷却直接开始
 	 * @param isLocationChange 是否为「位置改变」引发的
 	 */
-	protected dealMoveInTest(host: IMatrix, ignoreDelay: boolean = false, isLocationChange: boolean = false): void {
+	protected dealMoveInTest(
+		host: IMatrix,
+		ignoreDelay: boolean = false,
+		isLocationChange: boolean = false
+	): void {
 		// 忽略（强制更新）伤害延迟⇒立即开始判定
 		if (ignoreDelay) {
 			playerMoveInTest(host, this, isLocationChange) // !原`Game.moveInTestPlayer`，现在已经提取到「原生世界机制」中
@@ -567,7 +612,10 @@ export default class Player_V1 extends Entity implements IPlayer {
 			this._damageDelay--
 		}
 		// 否则，「伤害延迟」归零 && 方块对玩家执行了副作用⇒「伤害延迟」重置（&&继续）
-		else if (this._damageDelay == 0 && playerMoveInTest(host, this, isLocationChange)) {
+		else if (
+			this._damageDelay == 0 &&
+			playerMoveInTest(host, this, isLocationChange)
+		) {
 			// !原`Game.moveInTestPlayer`，现在已经提取到「原生世界机制」中
 			this._damageDelay = Player_V1.MAX_DAMAGE_DELAY
 		}
@@ -587,7 +635,11 @@ export default class Player_V1 extends Entity implements IPlayer {
 	): boolean {
 		return this.testCanGoTo(
 			host,
-			host.map.towardWithRot_II(this._temp_testCanGoForward_P.copyFrom(this.position), rotatedAsRot, 1),
+			host.map.towardWithRot_II(
+				this._temp_testCanGoForward_P.copyFrom(this.position),
+				rotatedAsRot,
+				1
+			),
 			avoidHurt,
 			avoidOthers,
 			others
@@ -601,18 +653,42 @@ export default class Player_V1 extends Entity implements IPlayer {
 		avoidOthers: boolean = true,
 		others: IEntityInGrid[] = []
 	): boolean {
-		return host.map.testCanPass_I(p, true, false, false, avoidHurt, avoidOthers, others)
+		return host.map.testCanPass_I(
+			p,
+			true,
+			false,
+			false,
+			avoidHurt,
+			avoidOthers,
+			others
+		)
 	}
 
 	// 📌钩子 //
-	public onHeal(host: IMatrix, amount: number, healer: IPlayer | null): void {}
-	public onHurt(host: IMatrix, damage: number, attacker: IPlayer | null): void {}
-	public onDeath(host: IMatrix, damage: number, attacker: IPlayer | null): void {}
+	public onHeal(
+		host: IMatrix,
+		amount: number,
+		healer: IPlayer | null
+	): void {}
+	public onHurt(
+		host: IMatrix,
+		damage: number,
+		attacker: IPlayer | null
+	): void {}
+	public onDeath(
+		host: IMatrix,
+		damage: number,
+		attacker: IPlayer | null
+	): void {}
 	public onKillOther(host: IMatrix, victim: IPlayer, damage: number): void {}
 	public onRespawn(host: IMatrix): void {}
 	public onLocationChange(host: IMatrix, oldP: intPoint): void {}
 	public onLocationChanged(host: IMatrix, newP: intPoint): void {}
-	public onPositedBlockUpdate(host: IMatrix, ignoreDelay: boolean, isLocationChange: boolean): void {}
+	public onPositedBlockUpdate(
+		host: IMatrix,
+		ignoreDelay: boolean,
+		isLocationChange: boolean
+	): void {}
 
 	// 🎨显示 //
 

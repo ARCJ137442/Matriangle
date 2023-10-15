@@ -126,12 +126,14 @@ function resetScreenWS(force = false /* 默认为假，留给「自动重连」�
 		socketScreen.onclose = event => {
 			console.info('屏显WS已关闭:', event)
 			// 不用关闭时钟，直接等待重连
-			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 5000)) console.info('五秒后尝试重新连接。。。')
+			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 5000))
+				console.info('五秒后尝试重新连接。。。')
 		}
 		// 报错时
 		socketScreen.onerror = event => {
 			console.warn('屏显WS出错:', event)
-			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 3000)) console.info('三秒后尝试重新连接。。。')
+			if (softSetTimeout(reconnectScreenTimeoutID, resetScreenWS, 3000))
+				console.info('三秒后尝试重新连接。。。')
 		}
 	}
 }
@@ -245,7 +247,8 @@ function handleMultiKeyController(event, isDown) {
 	// 产生消息
 	const message = getControlMessage(event, isDown)
 	if (message === undefined) return
-	if (controlMessage) controlMessage.innerText = `${isDown ? '↓' : '↑'} message = ${message}`
+	if (controlMessage)
+		controlMessage.innerText = `${isDown ? '↓' : '↑'} message = ${message}`
 	// 阻止默认操作（不会造成画面滚动）
 	event.preventDefault()
 	// 断线⇒尝试重连
@@ -271,9 +274,13 @@ function handleKeyboardControlCenter(event, isDown) {
 	// 阻止默认操作
 	event.preventDefault()
 	// 生成特定消息
-	_temp_callKeyboardControlCenter_message = `|${isDown ? '+' : ''}${event.code}`
+	_temp_callKeyboardControlCenter_message = `|${isDown ? '+' : ''}${
+		event.code
+	}`
 	// 呈现
-	controlMessage.innerText = `${isDown ? '↓' : '↑'} message = ${_temp_callKeyboardControlCenter_message}`
+	controlMessage.innerText = `${
+		isDown ? '↓' : '↑'
+	} message = ${_temp_callKeyboardControlCenter_message}`
 	// 发送
 	sendMessage(socketControl, _temp_callKeyboardControlCenter_message)
 }
@@ -287,7 +294,8 @@ let _temp_callKeyboardControlCenter_message
  * @param {KeyboardEvent} event 键盘事件
  */
 function sendMessage(socket, message) {
-	if (socket instanceof WebSocket && socket.readyState === WebSocket.OPEN) socket.send(message)
+	if (socket instanceof WebSocket && socket.readyState === WebSocket.OPEN)
+		socket.send(message)
 }
 
 // 操作状态 //

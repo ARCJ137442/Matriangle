@@ -1,7 +1,15 @@
-import { createServer, Server as HTTPServer, IncomingMessage, ServerResponse } from 'node:http'
+import {
+	createServer,
+	Server as HTTPServer,
+	IncomingMessage,
+	ServerResponse,
+} from 'node:http'
 import { Server as WebSocketServer, WebSocket } from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
 import { uint } from '../../../legacy/AS3Legacy'
-import { MatrixProgram, MatrixProgramLabel } from '../../api/control/MatrixProgram'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from '../../api/control/MatrixProgram'
 import { MessageCallback, IMessageRouter } from './MessageInterfaces'
 import { voidF } from '../../../common/utils'
 
@@ -27,7 +35,10 @@ function getAddress(hostName: string, port: uint): string {
  * * 支持对接外界消息（请求）与内部行为（订阅、消息）对接的
  * 母体程序
  */
-export default class WebMessageRouter extends MatrixProgram implements IMessageRouter {
+export default class WebMessageRouter
+	extends MatrixProgram
+	implements IMessageRouter
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'WebMessageRouter'
 
@@ -57,17 +68,27 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 *
 	 * @returns {boolean} 是否注册成功
 	 */
-	public registerService(service: IService, launchedCallback?: voidF): boolean {
+	public registerService(
+		service: IService,
+		launchedCallback?: voidF
+	): boolean {
 		// 先判断是否有，如果有则阻止
 		if (this._services.has(service.address)) {
-			console.warn(`[WebMessageRouter] 服务地址「${service.address}」已被注册，无法重复注册！`)
+			console.warn(
+				`[WebMessageRouter] 服务地址「${service.address}」已被注册，无法重复注册！`
+			)
 			console.info(`（WIP）正在尝试追加服务回调...`)
-			const currentService: IService = this._services.get(service.address) as IService
+			const currentService: IService = this._services.get(
+				service.address
+			) as IService
 			const oldCallback: MessageCallback = currentService.messageCallback
-			currentService.messageCallback = (message: string): string | undefined => {
+			currentService.messageCallback = (
+				message: string
+			): string | undefined => {
 				// * 【2023-10-14 18:45:56】服务串联：send先前的一个，返回最新的（HTTP可能就直接舍弃了）
 				const msg1: string | undefined = oldCallback(message)
-				const msg2: string | undefined = service.messageCallback(message)
+				const msg2: string | undefined =
+					service.messageCallback(message)
 				if (msg1 !== undefined) currentService.send?.(msg1)
 				return msg2
 			}
@@ -86,10 +107,15 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 *
 	 * @returns {boolean} 是否注销成功
 	 */
-	public unregisterService(service: IService, stoppedCallBack?: voidF): boolean {
+	public unregisterService(
+		service: IService,
+		stoppedCallBack?: voidF
+	): boolean {
 		// 先判断有没有，如果没有则阻止
 		if (this._services.has(service.address)) {
-			console.warn(`[WebMessageRouter] 服务地址「${service.address}」未注册，无法注销！`)
+			console.warn(
+				`[WebMessageRouter] 服务地址「${service.address}」未注册，无法注销！`
+			)
 			return false
 		}
 		// 停止并注销
@@ -114,7 +140,10 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		messageCallback: MessageCallback,
 		launchedCallback?: voidF
 	): boolean {
-		return this.registerService(new HTTPService(host, port, messageCallback), launchedCallback)
+		return this.registerService(
+			new HTTPService(host, port, messageCallback),
+			launchedCallback
+		)
 	}
 
 	/**
@@ -133,7 +162,10 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		messageCallback: MessageCallback,
 		launchedCallback?: voidF
 	): boolean {
-		return this.registerService(new WebSocketService(host, port, messageCallback), launchedCallback)
+		return this.registerService(
+			new WebSocketService(host, port, messageCallback),
+			launchedCallback
+		)
 	}
 
 	/**
@@ -157,9 +189,19 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	): boolean {
 		switch (type) {
 			case 'http':
-				return this.registerHTTPService(host, port, messageCallback, launchedCallback)
+				return this.registerHTTPService(
+					host,
+					port,
+					messageCallback,
+					launchedCallback
+				)
 			case 'ws':
-				return this.registerWebSocketService(host, port, messageCallback, launchedCallback)
+				return this.registerWebSocketService(
+					host,
+					port,
+					messageCallback,
+					launchedCallback
+				)
 			/* default:
 				console.error(`未知的服务类型：${type}`);
 				return false; */
@@ -175,9 +217,18 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 	 * @param {uint} port 注销服务的服务端口
 	 * @param {() => void} callback 在服务停止时回传的回调函数
 	 */
-	public unregisterServiceWithType(type: NativeWebServiceType, host: string, port: uint, callback?: voidF): boolean {
+	public unregisterServiceWithType(
+		type: NativeWebServiceType,
+		host: string,
+		port: uint,
+		callback?: voidF
+	): boolean {
 		const key: string = `${type}:${getAddress(host, port)}`
-		if (this._services.has(key)) return this.unregisterService(this._services.get(key) as IService, callback)
+		if (this._services.has(key))
+			return this.unregisterService(
+				this._services.get(key) as IService,
+				callback
+			)
 		return false
 	}
 
@@ -190,10 +241,21 @@ export default class WebMessageRouter extends MatrixProgram implements IMessageR
 		port: uint,
 		launchedCallback?: voidF
 	): boolean {
-		return this.registerServiceWithType(type, host, port, messageCallback, launchedCallback)
+		return this.registerServiceWithType(
+			type,
+			host,
+			port,
+			messageCallback,
+			launchedCallback
+		)
 	}
 	/** @implements 实现：复刻一遍先前的参数 */
-	unregisterMessageService(type: NativeWebServiceType, host: string, port: uint, callback?: voidF): boolean {
+	unregisterMessageService(
+		type: NativeWebServiceType,
+		host: string,
+		port: uint,
+		callback?: voidF
+	): boolean {
 		return this.unregisterServiceWithType(type, host, port, callback)
 	}
 }
@@ -285,16 +347,18 @@ class HTTPService extends Service {
 	launch(callback?: voidF): void {
 		try {
 			// 创建服务器 // ! 注意：服务器的行为在创建时就已决定
-			this._server = createServer((req: IncomingMessage, res: ServerResponse): void => {
-				res.writeHead(200, { 'Content-Type': 'text/plain' })
-				/** 有可能回调没有回复 */
-				const reply: string | undefined = this.messageCallback(
-					// 尝试从URL中解析
-					req.url?.slice(1) /* 截取掉开头的「/」 */ ?? ''
-				)
-				// 直接使用reply，因为undefined也是允许的
-				res.end(reply)
-			})
+			this._server = createServer(
+				(req: IncomingMessage, res: ServerResponse): void => {
+					res.writeHead(200, { 'Content-Type': 'text/plain' })
+					/** 有可能回调没有回复 */
+					const reply: string | undefined = this.messageCallback(
+						// 尝试从URL中解析
+						req.url?.slice(1) /* 截取掉开头的「/」 */ ?? ''
+					)
+					// 直接使用reply，因为undefined也是允许的
+					res.end(reply)
+				}
+			)
 			// 回调告知
 			if (callback !== undefined) this._server.on('listening', callback)
 			// 开始侦听
@@ -349,15 +413,21 @@ class WebSocketService extends Service {
 	launch(callback?: voidF): void {
 		try {
 			// 创建服务器
-			this._server = new WebSocketServer({ host: this.host, port: this.port }, (): void => {
-				console.log(`${this.address}：服务器已成功启动`)
-				// 回调告知
-				callback?.()
-			})
+			this._server = new WebSocketServer(
+				{ host: this.host, port: this.port },
+				(): void => {
+					console.log(`${this.address}：服务器已成功启动`)
+					// 回调告知
+					callback?.()
+				}
+			)
 			// 开始侦听连接
 			this._server.on('connection', (socket: WebSocket): void => {
 				// 提示
-				console.log(`${this.address}：与${socket.url}的WebSocket连接已建立！`, socket)
+				console.log(
+					`${this.address}：与${socket.url}的WebSocket连接已建立！`,
+					socket
+				)
 				// 继续往Socket添加钩子
 				socket.on('message', (messageBuffer: Buffer): void => {
 					// !【2023-10-07 14:45:37】现在统一把消息缓冲区转成字符串，交给内部的函数处理
@@ -371,12 +441,19 @@ class WebSocketService extends Service {
 				// 关闭时（只有一次）
 				socket.once('close', (code: number, reason: string): void => {
 					// 提示
-					console.log(`${this.address}：与${socket.url}的WebSocket连接已断开！`, code, reason)
+					console.log(
+						`${this.address}：与${socket.url}的WebSocket连接已断开！`,
+						code,
+						reason
+					)
 				})
 				// 报错
 				socket.once('error', (error: Error): void => {
 					// 提示
-					console.error(`${this.address}：与${socket.url}的WebSocket连接发生错误！`, error)
+					console.error(
+						`${this.address}：与${socket.url}的WebSocket连接发生错误！`,
+						error
+					)
 				})
 			})
 		} catch (e) {

@@ -40,7 +40,10 @@ export default class PlayerStats {
 		this.killPlayers.setPlayerValue(player, value)
 	}
 	public addKillPlayerCount(player: IPlayer | null, value: uint = 1): void {
-		this.killPlayers.setPlayerValue(player, this.getKillPlayerCount(player) + value)
+		this.killPlayers.setPlayerValue(
+			player,
+			this.getKillPlayerCount(player) + value
+		)
 	}
 
 	public getDeathByPlayerCount(player: IPlayer | null): uint {
@@ -49,8 +52,14 @@ export default class PlayerStats {
 	public setDeathByPlayerCount(player: IPlayer | null, value: uint): void {
 		this.deathByPlayers.setPlayerValue(player, value)
 	}
-	public addDeathByPlayerCount(player: IPlayer | null, value: uint = 1): void {
-		this.deathByPlayers.setPlayerValue(player, this.getDeathByPlayerCount(player) + value)
+	public addDeathByPlayerCount(
+		player: IPlayer | null,
+		value: uint = 1
+	): void {
+		this.deathByPlayers.setPlayerValue(
+			player,
+			this.getDeathByPlayerCount(player) + value
+		)
 	}
 
 	// 伤害 //
@@ -64,11 +73,20 @@ export default class PlayerStats {
 	public getCauseDamagePlayerCount(player: IPlayer | null): uint {
 		return this.causeDamagePlayers.getPlayerValue(player)
 	}
-	public setCauseDamagePlayerCount(player: IPlayer | null, value: uint): void {
+	public setCauseDamagePlayerCount(
+		player: IPlayer | null,
+		value: uint
+	): void {
 		this.causeDamagePlayers.setPlayerValue(player, value)
 	}
-	public addCauseDamagePlayerCount(player: IPlayer | null, value: uint = 1): void {
-		this.causeDamagePlayers.setPlayerValue(player, this.getCauseDamagePlayerCount(player) + value)
+	public addCauseDamagePlayerCount(
+		player: IPlayer | null,
+		value: uint = 1
+	): void {
+		this.causeDamagePlayers.setPlayerValue(
+			player,
+			this.getCauseDamagePlayerCount(player) + value
+		)
 	}
 	/** 受到玩家之伤害 */
 	public damageByPlayers: Stat_PlayerCount = new Stat_PlayerCount()
@@ -78,8 +96,14 @@ export default class PlayerStats {
 	public setDamageByPlayerCount(player: IPlayer | null, value: uint): void {
 		this.damageByPlayers.setPlayerValue(player, value)
 	}
-	public addDamageByPlayerCount(player: IPlayer | null, value: uint = 1): void {
-		this.damageByPlayers.setPlayerValue(player, this.getDamageByPlayerCount(player) + value)
+	public addDamageByPlayerCount(
+		player: IPlayer | null,
+		value: uint = 1
+	): void {
+		this.damageByPlayers.setPlayerValue(
+			player,
+			this.getDamageByPlayerCount(player) + value
+		)
 	}
 
 	/** 击杀自己⇒击杀 */
@@ -159,7 +183,10 @@ class Stat_PlayerCount extends Map<IPlayer | null, uint> {
 	 * @param value 设置的值
 	 * @returns 自身
 	 */
-	public setPlayerValue(player: IPlayer | null, value: uint): Stat_PlayerCount {
+	public setPlayerValue(
+		player: IPlayer | null,
+		value: uint
+	): Stat_PlayerCount {
 		this.set(player, value)
 		return this
 	}

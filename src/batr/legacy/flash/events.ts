@@ -10,7 +10,10 @@ export abstract class Event extends Object {
 
 	// public constructor(type: string, bubbles?: boolean, cancelable?: boolean);
 	public abstract clone(): Event
-	public abstract formatToString(className: string, ...args: unknown[]): string
+	public abstract formatToString(
+		className: string,
+		...args: unknown[]
+	): string
 	public abstract isDefaultPrevented(): boolean
 	public abstract preventDefault(): void
 	public abstract stopImmediatePropagation(): void
@@ -67,7 +70,8 @@ export abstract class Event extends Object {
 	public static TAB_CHILDREN_CHANGE: string = 'tabChildrenChange'
 	public static TAB_ENABLED_CHANGE: string = 'tabEnabledChange'
 	public static TAB_INDEX_CHANGE: string = 'tabIndexChange'
-	public static TEXT_INTERACTION_MODE_CHANGE: string = 'textInteractionModeChange'
+	public static TEXT_INTERACTION_MODE_CHANGE: string =
+		'textInteractionModeChange'
 	public static TEXTURE_READY: string = 'textureReady'
 	public static UNLOAD: string = 'unload'
 	public static USER_IDLE: string = 'userIdle'
@@ -112,7 +116,11 @@ export interface IEventDispatcher {
 	): void
 	dispatchEvent(event: Event): boolean
 	hasEventListener(type: string): boolean
-	removeEventListener(type: string, listener: Function, useCapture?: boolean): void
+	removeEventListener(
+		type: string,
+		listener: Function,
+		useCapture?: boolean
+	): void
 	willTrigger(type: string): boolean
 }
 
@@ -127,6 +135,10 @@ export abstract class EventDispatcher implements IEventDispatcher {
 	): void
 	abstract dispatchEvent(event: Event): boolean
 	abstract hasEventListener(type: string): boolean
-	abstract removeEventListener(type: string, listener: Function, useCapture?: boolean): void
+	abstract removeEventListener(
+		type: string,
+		listener: Function,
+		useCapture?: boolean
+	): void
 	abstract willTrigger(type: string): boolean
 }

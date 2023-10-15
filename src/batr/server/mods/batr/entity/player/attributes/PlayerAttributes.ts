@@ -10,7 +10,9 @@ import { uint } from '../../../../../../legacy/AS3Legacy'
  *
  * ! 不另设「接口」的原因：这个类中的属性只会以「复合」的方式在玩家中使用，初衷是拆分「玩家信息」
  */
-export default class PlayerAttributes implements IJSObjectifiable<PlayerAttributes> {
+export default class PlayerAttributes
+	implements IJSObjectifiable<PlayerAttributes>
+{
 	// JS对象 //
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
 	public get objectifyMap(): JSObjectifyMap {
@@ -50,7 +52,11 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
 	public set buffCD(value: uint) {
 		this._buffCD = value
 	}
-	public static readonly key_buffCD = fastAddJSObjectifyMapProperty_dashP(PlayerAttributes.OBJECTIFY_MAP, 'buffCD', 0)
+	public static readonly key_buffCD = fastAddJSObjectifyMapProperty_dashP(
+		PlayerAttributes.OBJECTIFY_MAP,
+		'buffCD',
+		0
+	)
 
 	protected _buffResistance: uint
 	/**
@@ -64,11 +70,12 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
 	public set buffResistance(value: uint) {
 		this._buffResistance = value
 	}
-	public static readonly key_buffResistance = fastAddJSObjectifyMapProperty_dashP(
-		PlayerAttributes.OBJECTIFY_MAP,
-		'buffResistance',
-		0
-	)
+	public static readonly key_buffResistance =
+		fastAddJSObjectifyMapProperty_dashP(
+			PlayerAttributes.OBJECTIFY_MAP,
+			'buffResistance',
+			0
+		)
 
 	protected _buffRadius: uint
 	/**
@@ -89,7 +96,12 @@ export default class PlayerAttributes implements IJSObjectifiable<PlayerAttribut
 	)
 
 	// 构造方法 //
-	public constructor(damage: uint = 0, CD: uint = 0, resistance: uint = 0, radius: uint = 0) {
+	public constructor(
+		damage: uint = 0,
+		CD: uint = 0,
+		resistance: uint = 0,
+		radius: uint = 0
+	) {
 		this._buffDamage = damage
 		this._buffCD = CD
 		this._buffResistance = resistance

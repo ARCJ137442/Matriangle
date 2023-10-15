@@ -12,7 +12,9 @@ export default class ForcedI18nText extends I18nText {
 	public static getTextsByPlayerNames(players: PlayerStats[]): I18nText[] {
 		let result: I18nText[] = []
 		for (let i: uint = 0; i < players.length; i++) {
-			result.push(new ForcedI18nText(null, null, players[i].profile.customName))
+			result.push(
+				new ForcedI18nText(null, null, players[i].profile.customName)
+			)
 		}
 		return result
 	}
@@ -21,13 +23,21 @@ export default class ForcedI18nText extends I18nText {
 	protected _forcedText: string
 
 	//============Constructor & Destructor============//
-	public constructor(translations: I18ns, key: string = null, forcedText: string = null) {
+	public constructor(
+		translations: I18ns,
+		key: string = null,
+		forcedText: string = null
+	) {
 		super(translations, key)
 		this._forcedText = forcedText
 	}
 
 	public override clone(): I18nText {
-		return new ForcedI18nText(this._translations, this._key, this._forcedText)
+		return new ForcedI18nText(
+			this._translations,
+			this._key,
+			this._forcedText
+		)
 	}
 
 	//============Destructor Function============//

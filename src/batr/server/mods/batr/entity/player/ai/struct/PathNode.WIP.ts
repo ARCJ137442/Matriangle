@@ -42,7 +42,13 @@ class PathNode extends iPoint {
 	public get pathToRoot(): PathNode[] {
 		const result: PathNode[] = new Array<PathNode>(this)
 		let p: PathNode | null = this.parent
-		while (p !== null && p !== this && p.parent && p.hasFromRot && p.parent.hasFromRot) {
+		while (
+			p !== null &&
+			p !== this &&
+			p.parent &&
+			p.hasFromRot &&
+			p.parent.hasFromRot
+		) {
 			p = p.parent
 			result.push(p)
 		}
@@ -103,6 +109,16 @@ class PathNode extends iPoint {
 	}
 
 	override toString(): string {
-		return '[pos=' + super.toString() + ',F=' + this.F + ',G=' + this.G + ',H=' + this.H + ']'
+		return (
+			'[pos=' +
+			super.toString() +
+			',F=' +
+			this.F +
+			',G=' +
+			this.G +
+			',H=' +
+			this.H +
+			']'
+		)
 	}
 }

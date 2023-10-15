@@ -10,7 +10,10 @@ import { Ref, Val, isInvalidNumber } from './utils'
  * * 在索引访问的基础上提供使用特定名称的几何方法
  * * 可选的「留给后续重载优化」的方法
  */
-export abstract class xPoint<T extends number = number> extends Array<T> implements IJSObjectifiable<xPoint<T>> {
+export abstract class xPoint<T extends number = number>
+	extends Array<T>
+	implements IJSObjectifiable<xPoint<T>>
+{
 	// JS对象化 //
 	/** 实现：{自身类名: 原始值（数组）} */
 	public saveToJSObject(target: JSObject): JSObject {
@@ -90,7 +93,8 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 
 	/** 显示点是否（在其长度内）有未定义量 */
 	public get hasUndefined(): boolean {
-		for (let i = 0; i < this.length; i++) if (this[i] === undefined) return true
+		for (let i = 0; i < this.length; i++)
+			if (this[i] === undefined) return true
 		return false
 	}
 
@@ -101,7 +105,8 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * ! 使用的必须是类型参数T为数值的类型
 	 */
 	public get invalid(): boolean {
-		for (let i = 0; i < this.length; i++) if (this[i] === undefined || isNaN(this[i] as number)) return true
+		for (let i = 0; i < this.length; i++)
+			if (this[i] === undefined || isNaN(this[i] as number)) return true
 		return false
 	}
 
@@ -137,7 +142,10 @@ export abstract class xPoint<T extends number = number> extends Array<T> impleme
 	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).inplace(f)`
 	 */
-	public inplaceMap(f: (t: T) => T, source: xPoint<T> | null = null): xPoint<T> {
+	public inplaceMap(
+		f: (t: T) => T,
+		source: xPoint<T> | null = null
+	): xPoint<T> {
 		source = source ?? this
 		for (let i = 0; i < this.length; i++) {
 			this[i] = f(source[i])
@@ -591,9 +599,15 @@ export function traverseNDSquare_Meta(
 	...args: unknown[]
 ): void {
 	// 直接执行代码
-	return eval(traverseNDSquare_Meta_Code(pMin, pMax, 'f(p, ...args);')) as void
+	return eval(
+		traverseNDSquare_Meta_Code(pMin, pMax, 'f(p, ...args);')
+	) as void
 }
-function traverseNDSquare_Meta_Code(pMin: iPointRef, pMax: iPointRef, f_str: string): string {
+function traverseNDSquare_Meta_Code(
+	pMin: iPointRef,
+	pMax: iPointRef,
+	f_str: string
+): string {
 	// 通过数组长度获取维数
 	const nDim: uint = pMax.length // !【2023-10-04 20:47:24】用空间复杂度还时间复杂度，避免不断访问
 	// 循环生成专用代码
@@ -712,7 +726,11 @@ export function traverseNDSquareSurface(
 	// * ↑实际上在eval中用到了
 	eval(traverseNDSquareSurface_Code(pMin, pMax, 'f(p, ...args)'))
 }
-function traverseNDSquareSurface_Code(pMin: iPointRef, pMax: iPointRef, f_code: string): string {
+function traverseNDSquareSurface_Code(
+	pMin: iPointRef,
+	pMax: iPointRef,
+	f_code: string
+): string {
 	const nDim = pMax.length
 	let code: string = ''
 
@@ -755,7 +773,8 @@ function traverseNDSquareSurface_Code(pMin: iPointRef, pMax: iPointRef, f_code: 
  * @param p 待检验的点
  * @returns 是否严格为「整数点」
  */
-export const verifyIntPoint = (p: iPointRef): boolean => p.every(Number.isInteger)
+export const verifyIntPoint = (p: iPointRef): boolean =>
+	p.every(Number.isInteger)
 /** 上一个函数的有报错版本 */
 export function verifyIntPointStrict(p: iPointRef): iPointRef {
 	if (p.every(Number.isInteger)) return p
@@ -809,7 +828,11 @@ export function modPoint_FI(p: fPointRef, modP: iPointRef): fPointRef {
  * @param targetNDim 要投影到的目标维度
  * @param padValue 缺少维度时填充的值
  */
-export function straightProjection<T extends number>(p: xPoint<T>, targetNDim: uint, padValue: T): xPoint<T> {
+export function straightProjection<T extends number>(
+	p: xPoint<T>,
+	targetNDim: uint,
+	padValue: T
+): xPoint<T> {
 	// 目标维度 > 点维度：填充
 	for (let i: uint = p.length; i < targetNDim; ++i) p[i] = padValue
 	// 目标维度 < 点维度：舍弃

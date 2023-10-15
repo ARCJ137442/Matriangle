@@ -8,7 +8,10 @@
  */
 
 import { fPoint, iPoint, xPoint } from '../../../common/geometricTools'
-import { IDisplayable, IDisplayableContainer } from '../../../display/api/DisplayInterfaces'
+import {
+	IDisplayable,
+	IDisplayableContainer,
+} from '../../../display/api/DisplayInterfaces'
 import { uint } from '../../../legacy/AS3Legacy'
 import IMatrix from '../../main/IMatrix'
 import { mRot } from '../../general/GlobalRot'
@@ -172,7 +175,9 @@ export interface IEntityDisplayable extends Entity, IDisplayable {}
  * * 特效/重生
  * * 特效/传送
  */
-export interface IEntityDisplayableContainer extends Entity, IDisplayableContainer {}
+export interface IEntityDisplayableContainer
+	extends Entity,
+		IDisplayableContainer {}
 
 /**
  * 「活跃实体」是指

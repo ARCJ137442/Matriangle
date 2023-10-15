@@ -6,7 +6,10 @@ import IMatrix from '../../../../main/IMatrix'
 import IMatrixRule from '../../../../rule/IMatrixRule'
 import MatrixRuleBatr from '../../../native/rule/MatrixRuleBatr'
 import { BonusType } from '../../registry/BonusRegistry'
-import { addBonusBoxInRandomTypeByRule, getBonusBoxCount } from '../BatrMatrixMechanics'
+import {
+	addBonusBoxInRandomTypeByRule,
+	getBonusBoxCount,
+} from '../BatrMatrixMechanics'
 import { getPlayers } from '../../../native/mechanics/NativeMatrixMechanics'
 import BlockRandomTickDispatcher from './BlockRandomTickDispatcher'
 
@@ -17,7 +20,10 @@ import BlockRandomTickDispatcher from './BlockRandomTickDispatcher'
  * * 作为AS3版本「随机奖励箱机制」继任者的
  * 方块随机刻分派者
  */
-export default class BonusBoxGenerator extends BlockRandomTickDispatcher implements IEntityActive {
+export default class BonusBoxGenerator
+	extends BlockRandomTickDispatcher
+	implements IEntityActive
+{
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'BonusBoxGenerator'
 
@@ -53,7 +59,9 @@ export default class BonusBoxGenerator extends BlockRandomTickDispatcher impleme
 		return new BonusBoxGenerator(
 			rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBoxMaxCount),
 			rule.safeGetRule<number>(MatrixRuleBatr.key_bonusBoxSpawnChance),
-			rule.safeGetRule<Map<BonusType, number>>(MatrixRuleBatr.key_bonusTypePotentials)
+			rule.safeGetRule<Map<BonusType, number>>(
+				MatrixRuleBatr.key_bonusTypePotentials
+			)
 		)
 	}
 
@@ -73,6 +81,7 @@ export default class BonusBoxGenerator extends BlockRandomTickDispatcher impleme
 	 */
 	override dispatch(host: IMatrix, position: iPointRef): void {
 		// 躲避玩家
-		if (host.map.testBonusBoxCanPlaceAt(position, getPlayers(host))) addBonusBoxInRandomTypeByRule(host, position)
+		if (host.map.testBonusBoxCanPlaceAt(position, getPlayers(host)))
+			addBonusBoxInRandomTypeByRule(host, position)
 	}
 }
