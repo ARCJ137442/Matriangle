@@ -3,8 +3,7 @@ const path = require('path')
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-	// entry: './src/index.ts',
-	entry: './test/Matrix_V1_test.ts',
+	entry: './src/client/V1/MatriangleClient_V1.ts',
 	devtool: 'inline-source-map',
 	module: {
 		rules: [

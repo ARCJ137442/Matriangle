@@ -1,19 +1,15 @@
-import { int, uint } from '../src/matriangle/legacy/AS3Legacy'
-import {
-	fPoint,
-	iPoint,
-	traverseNDSquare,
-} from '../src/matriangle/common/geometricTools'
-import IMap from '../src/matriangle/server/api/map/IMap'
-import IMapLogic from '../src/matriangle/server/api/map/IMapLogic'
-import IMapStorage from '../src/matriangle/server/api/map/IMapStorage'
-import MapStorageSparse from '../src/matriangle/server/mods/native/maps/MapStorageSparse'
-import { mRot } from '../src/matriangle/server/general/GlobalRot'
-import { randInt, randIntBetween, sum } from '../src/matriangle/common/exMath'
-import { BatrDefaultMaps } from '../src/matriangle/server/mods/BaTS/registry/MapRegistry'
-import { BatrBlockPrototypes } from '../src/matriangle/server/mods/BaTS/registry/BlockRegistry'
-import { mapV地图可视化 } from '../src/matriangle/server/mods/visualization/textVisualizations'
-import { NativeBlockPrototypes } from '../src/matriangle/server/mods/native/registry/NativeBlockRegistry'
+import { int, uint } from '../src/legacy/AS3Legacy'
+import { fPoint, iPoint, traverseNDSquare } from '../src/common/geometricTools'
+import IMap from '../src/server/api/map/IMap'
+import IMapLogic from '../src/server/api/map/IMapLogic'
+import IMapStorage from '../src/server/api/map/IMapStorage'
+import MapStorageSparse from '../src/server/mods/native/maps/MapStorageSparse'
+import { mRot } from '../src/server/general/GlobalRot'
+import { randInt, randIntBetween, sum } from '../src/common/exMath'
+import { BatrDefaultMaps } from '../src/server/mods/BaTS/registry/MapRegistry'
+import { BatrBlockPrototypes } from '../src/server/mods/BaTS/registry/BlockRegistry'
+import { mapV地图可视化 } from '../src/server/mods/visualization/textVisualizations'
+import { NativeBlockPrototypes } from '../src/server/mods/native/registry/NativeBlockRegistry'
 
 const { log, info, time, timeEnd } = console
 log(new MapStorageSparse(2))

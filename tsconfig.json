@@ -17,6 +17,7 @@
 		"deprecated/WorldRuleEvent.deprecated.ts",
 		"deprecated/[to-be-migrated]BlockShapeFunctions.deprecated.ts",
 		"deprecated/programs",
-		"deprecated/KeyListener.deprecated.ts"
+		"deprecated/KeyListener.deprecated.ts",
+		"src/client/V1/multiDimMaps.ts"
 	]
 }
