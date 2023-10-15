@@ -1,7 +1,7 @@
 import { uint, uint$MAX_VALUE } from '../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import Block from '../../../../api/block/Block'
-import Effect from '../../../../api/entity/Effect'
+import Effect from './Effect'
 import { IShape } from '../../../../../display/api/DisplayInterfaces'
 import { uintToPercent } from '../../../../../common/utils'
 import { fPoint, iPoint } from '../../../../../common/geometricTools'

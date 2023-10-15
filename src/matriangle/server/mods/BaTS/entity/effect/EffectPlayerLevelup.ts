@@ -1,6 +1,6 @@
 import { uint } from '../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
-import Effect from '../../../../api/entity/Effect'
+import Effect from './Effect'
 import { IShape } from '../../../../../display/api/DisplayInterfaces'
 import { fPoint } from '../../../../../common/geometricTools'
 import { TPS } from '../../../../main/GlobalWorldVariables'

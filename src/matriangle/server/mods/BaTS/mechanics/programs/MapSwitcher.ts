@@ -2,7 +2,7 @@ import {
 	MatrixProgram,
 	MatrixProgramLabel,
 } from '../../../../api/control/MatrixProgram'
-import Effect from '../../../../api/entity/Effect'
+import Effect from '../../entity/effect/Effect'
 import Entity from '../../../../api/entity/Entity'
 import IMap from '../../../../api/map/IMap'
 import IMatrix from '../../../../main/IMatrix'

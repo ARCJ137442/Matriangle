@@ -1,6 +1,6 @@
 ﻿import { getClass, isExtend } from '../../../../common/utils'
 import { DisplayLayers } from '../../../../display/api/DisplayInterfaces'
-import Effect from '../../../api/entity/Effect'
+import Effect from '../entity/effect/Effect'
 import Entity from '../../../api/entity/Entity'
 import EntityType from '../../../api/entity/EntityType'
 import EffectBlockLight from '../entity/effect/EffectBlockLight'

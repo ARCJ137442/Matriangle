@@ -6,7 +6,7 @@ import {
 } from '../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import { uint } from '../../../../../legacy/AS3Legacy'
-import Effect from '../../../../api/entity/Effect'
+import Effect from './Effect'
 import { IEntityDisplayableContainer } from '../../../../api/entity/EntityInterfaces'
 
 /**

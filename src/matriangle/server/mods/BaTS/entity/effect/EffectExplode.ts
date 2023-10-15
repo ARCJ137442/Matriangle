@@ -4,7 +4,7 @@ import { IShape } from '../../../../../display/api/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
 import { logical2Real } from '../../../../../display/api/PosTransform'
 import { uint, uint$MAX_VALUE } from '../../../../../legacy/AS3Legacy'
-import Effect from '../../../../api/entity/Effect'
+import Effect from './Effect'
 import { TPS } from '../../../../main/GlobalWorldVariables'
 
 /**

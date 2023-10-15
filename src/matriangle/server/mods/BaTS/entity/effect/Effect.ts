@@ -1,14 +1,14 @@
-import { fPoint } from '../../../common/geometricTools'
-import { IShape } from '../../../display/api/DisplayInterfaces'
-import { uint } from '../../../legacy/AS3Legacy'
-import Entity from './Entity'
+import { fPoint } from '../../../../../common/geometricTools'
+import { IShape } from '../../../../../display/api/DisplayInterfaces'
+import { uint } from '../../../../../legacy/AS3Legacy'
+import Entity from '../../../../api/entity/Entity'
 import {
 	IEntityActiveLite,
 	IEntityDisplayable,
 	IEntityFixedLived,
 	IEntityOutGrid,
 	IEntityShortLived,
-} from './EntityInterfaces'
+} from '../../../../api/entity/EntityInterfaces'
 
 /**
  * * 【20230913 23:18:15】现在将原本独立的「特效」也归入「实体」范畴了

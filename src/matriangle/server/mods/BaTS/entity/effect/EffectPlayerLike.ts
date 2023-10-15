@@ -1,6 +1,6 @@
 import { uint } from '../../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../../display/api/GlobalDisplayVariables'
-import Effect from '../../../../api/entity/Effect'
+import Effect from './Effect'
 import { IEntityWithDirection } from '../../../../api/entity/EntityInterfaces'
 import { TPS } from '../../../../main/GlobalWorldVariables'
 import {
