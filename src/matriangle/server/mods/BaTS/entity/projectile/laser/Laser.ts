@@ -60,7 +60,7 @@ export default abstract class Laser
 	) {
 		super(
 			owner,
-			attackerDamage * chargePercent, // ?【2023-10-15 12:39:29】这里的计算可能会被`initFromToolNAttributes`覆盖掉
+			uint(attackerDamage * chargePercent), // ?【2023-10-15 12:39:29】这里的计算可能会被`initFromToolNAttributes`覆盖掉
 			extraDamageCoefficient,
 			direction
 		)
@@ -68,14 +68,16 @@ export default abstract class Laser
 		this._length = length
 		this._temp_chargePercent = chargePercent // !【2023-10-15 12:39:19】临时缓存，以便在`initFromToolNAttributes`中调用
 		this._LIFE = LIFE
-		this._life = LIFE * chargePercent
+		this._life = uint(LIFE * chargePercent)
 	}
 	protected _temp_chargePercent: number = 1
 
 	override initFromToolNAttributes(tool: Tool, buffDamage: number): this {
 		// 先使用「工具默认伤害」初始化
 		super.initFromToolNAttributes(tool, buffDamage)
-		this._attackerDamage *= this._temp_chargePercent
+		this._attackerDamage = uint(
+			this._attackerDamage * this._temp_chargePercent
+		)
 		return this
 	}
 
