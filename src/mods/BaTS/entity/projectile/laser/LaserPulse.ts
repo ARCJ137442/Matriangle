@@ -6,7 +6,11 @@ import { iPoint } from '../../../../../common/geometricTools'
 import LaserBasic from './LaserBasic'
 import IMatrix from '../../../../../api/server/main/IMatrix'
 import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { mRot, mRot2axis, toOpposite_M } from '../../../../../api/server/general/GlobalRot'
+import {
+	mRot,
+	mRot2axis,
+	toOpposite_M,
+} from '../../../../../api/server/general/GlobalRot'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 
 /**
@@ -59,37 +63,34 @@ export default class LaserPulse extends Laser {
 		super.onTick(host) // ! 超类逻辑：处理生命周期
 	}
 
-	/** @override 非致死伤害⇒直接让玩家在自身（反，若为「回拽激光」）方向「平行前进」 */
+	/** @override 非致死伤害⇒直接让玩家在自身（反，若为「回拽激光」）方向「平行前进」⇒往复直到「无法移动玩家」 */
 	override hitAPlayer(
 		host: IMatrix,
 		player: IPlayer,
 		canHurt: boolean,
 		finalDamage: number
 	): void {
-		// 先伤害玩家
-		super.hitAPlayer(host, player, canHurt, finalDamage)
-		// 然后再挪移
-		if (canHurt && !player.isRespawning) {
-			// 暂记轴向
-			this._temp_movePlayer_mRotAxis = mRot2axis(this.direction)
-			// 若为「前推激光」，一次前进到底
-			do {
-				// 暂记位置
-				this._temp_movePlayer_pointerL =
-					player.position[this._temp_movePlayer_mRotAxis]
-				// 平行前进
-				player.moveParallel(
-					host,
-					this.isPull ? toOpposite_M(this.direction) : this.direction
-				)
-			} while (
-				// 并非「回拽激光」
-				!this.isPull &&
-				// 坐标发生了变化
-				player.position[this._temp_movePlayer_mRotAxis] !=
-					this.position[this._temp_movePlayer_mRotAxis]
+		// 暂记轴向
+		this._temp_movePlayer_mRotAxis = mRot2axis(this.direction)
+		// 若为「前推激光」，一次前进到底
+		do {
+			// 伤害玩家
+			if (canHurt) super.hitAPlayer(host, player, canHurt, finalDamage)
+			// 暂记位置
+			this._temp_movePlayer_pointerL =
+				player.position[this._temp_movePlayer_mRotAxis]
+			// 平行前进
+			player.moveParallel(
+				host,
+				this.isPull ? toOpposite_M(this.direction) : this.direction
 			)
-		}
+		} while (
+			// 玩家不在重生状态（可能中途致死）
+			!player.isRespawning &&
+			// 坐标发生了变化
+			player.position[this._temp_movePlayer_mRotAxis] !=
+				this._temp_movePlayer_pointerL
+		)
 	}
 	protected _temp_movePlayer_mRotAxis?: mRot
 	protected _temp_movePlayer_pointerL?: int
