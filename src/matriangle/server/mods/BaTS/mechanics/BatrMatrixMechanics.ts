@@ -21,6 +21,7 @@ import {
 	MapFromObject,
 	randomBoolean,
 	mergeRecords,
+	ConcreteClass,
 } from '../../../../common/utils'
 import BonusBoxSymbol from '../../../../display/mods/native/entity/BonusBoxSymbol'
 import {
@@ -29,7 +30,6 @@ import {
 	uint$MAX_VALUE,
 	int$MIN_VALUE,
 	int$MAX_VALUE,
-	ConcreteClass,
 } from '../../../../legacy/AS3Legacy'
 import Block from '../../../api/block/Block'
 import { mRot, mRot2axis, mRot2increment } from '../../../general/GlobalRot'

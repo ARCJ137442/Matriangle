@@ -1,9 +1,13 @@
-import { iPoint, iPointRef, iPointVal } from '../src/batr/common/geometricTools'
-import { uint } from '../src/batr/legacy/AS3Legacy'
-import MapStorageSparse from './../src/batr/server/mods/native/maps/MapStorageSparse'
-import { mapVH地图可视化_高维 } from './../src/batr/server/mods/visualization/textVisualizations'
-import { BatrDefaultMaps } from '../src/batr/server/mods/batr/registry/MapRegistry'
-import IMap from '../src/batr/server/api/map/IMap'
+import {
+	iPoint,
+	iPointRef,
+	iPointVal,
+} from '../src/matriangle/common/geometricTools'
+import { uint } from '../src/matriangle/legacy/AS3Legacy'
+import MapStorageSparse from './../src/matriangle/server/mods/native/maps/MapStorageSparse'
+import { mapVH地图可视化_高维 } from './../src/matriangle/server/mods/visualization/textVisualizations'
+import { BatrDefaultMaps } from '../src/matriangle/server/mods/BaTS/registry/MapRegistry'
+import IMap from '../src/matriangle/server/api/map/IMap'
 
 /**
  * 堆叠合并多个地图

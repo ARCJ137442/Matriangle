@@ -1,11 +1,11 @@
 ﻿/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { uint, int } from '../../../../legacy/AS3Legacy'
 import IMap from '../../../api/map/IMap'
-import PlayerTeam from '../../batr/entity/player/team/PlayerTeam'
+import PlayerTeam from '../../BaTS/entity/player/team/PlayerTeam'
 import { TPS } from '../../../main/GlobalWorldVariables'
 import { clearArray, identity, key } from '../../../../common/utils'
-import { BonusType } from '../../batr/registry/BonusRegistry'
-import Tool from '../../batr/tool/Tool'
+import { BonusType } from '../../BaTS/registry/BonusRegistry'
+import Tool from '../../BaTS/tool/Tool'
 import { iPoint } from '../../../../common/geometricTools'
 import {
 	JSObject,

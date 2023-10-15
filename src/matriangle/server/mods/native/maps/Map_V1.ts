@@ -23,7 +23,7 @@ import {
 } from '../../../api/entity/EntityInterfaces'
 import IPlayer from '../entities/player/IPlayer'
 import { IEntityWithDirection } from './../../../api/entity/EntityInterfaces'
-import { isHitAnyEntity_I_Grid } from '../../batr/mechanics/BatrMatrixMechanics'
+import { isHitAnyEntity_I_Grid } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import { reminder_F, reminder_I } from './../../../../common/exMath'
 
 /**

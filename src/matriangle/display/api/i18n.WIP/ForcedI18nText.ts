@@ -1,4 +1,4 @@
-import PlayerStats from '../../../server/mods/batr/entity/player/stat/PlayerStats'
+import PlayerStats from '../../../server/mods/BaTS/entity/player/stat/PlayerStats'
 import { uint } from '../../../legacy/AS3Legacy'
 import I18nText from './I18nText'
 import I18ns from './I18ns'

@@ -1,8 +1,8 @@
-import EffectTeleport from '../../../../server/mods/batr/entity/effect/EffectTeleport'
+import EffectTeleport from '../../../../server/mods/BaTS/entity/effect/EffectTeleport'
 import {
 	BonusType,
 	NativeBonusTypes,
-} from '../../../../server/mods/batr/registry/BonusRegistry'
+} from '../../../../server/mods/BaTS/registry/BonusRegistry'
 import { uint } from '../../../../legacy/AS3Legacy'
 import {
 	IDisplayable,

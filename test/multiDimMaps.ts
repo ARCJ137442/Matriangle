@@ -1,10 +1,10 @@
-import { iPoint } from '../src/batr/common/geometricTools'
-import { uint } from '../src/batr/legacy/AS3Legacy'
-import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse'
-import IMap from './../src/batr/server/api/map/IMap'
-import Map_V1 from './../src/batr/server/mods/native/maps/Map_V1'
-import { sparseMapMV稀疏地图母体可视化 } from '../src/batr/server/mods/visualization/textVisualizations'
-import { NativeBlockPrototypes } from '../src/batr/server/mods/native/registry/NativeBlockRegistry'
+import { iPoint } from '../src/matriangle/common/geometricTools'
+import { uint } from '../src/matriangle/legacy/AS3Legacy'
+import MapStorageSparse from '../src/matriangle/server/mods/native/maps/MapStorageSparse'
+import IMap from './../src/matriangle/server/api/map/IMap'
+import Map_V1 from './../src/matriangle/server/mods/native/maps/Map_V1'
+import { sparseMapMV稀疏地图母体可视化 } from '../src/matriangle/server/mods/visualization/textVisualizations'
+import { NativeBlockPrototypes } from '../src/matriangle/server/mods/native/registry/NativeBlockRegistry'
 
 /**
  * 用于测试「一个母体，异维地图」

@@ -1,8 +1,8 @@
-import { int, uint } from '../src/batr/legacy/AS3Legacy'
-import PlayerBatr from '../src/batr/server/mods/batr/entity/player/PlayerBatr'
-import AIControllerGenerator from '../src/batr/server/mods/batr/entity/player/ai/AIControllerGenerator'
-import { NativeAIPrograms } from '../src/batr/server/mods/batr/entity/player/ai/NativeAIPrograms'
-import MapStorageSparse from '../src/batr/server/mods/native/maps/MapStorageSparse'
+import { int, uint } from '../src/matriangle/legacy/AS3Legacy'
+import PlayerBatr from '../src/matriangle/server/mods/BaTS/entity/player/PlayerBatr'
+import AIControllerGenerator from '../src/matriangle/server/mods/BaTS/entity/player/ai/AIControllerGenerator'
+import { NativeAIPrograms } from '../src/matriangle/server/mods/BaTS/entity/player/ai/NativeAIPrograms'
+import MapStorageSparse from '../src/matriangle/server/mods/native/maps/MapStorageSparse'
 import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
@@ -11,56 +11,59 @@ import {
 	loadAsBackgroundRule,
 	randomToolEnable,
 	toolCreateExplode,
-} from '../src/batr/server/mods/batr/mechanics/BatrMatrixMechanics'
-import { projectEntities } from '../src/batr/server/mods/native/mechanics/NativeMatrixMechanics'
-import { respawnAllPlayer } from '../src/batr/server/mods/native/mechanics/NativeMatrixMechanics'
-import WorldRegistry_V1 from '../src/batr/server/mods/native/registry/Registry_V1'
-import { NativeTools as BatrTools } from '../src/batr/server/mods/batr/registry/ToolRegistry'
-import MatrixRuleBatr from '../src/batr/server/mods/native/rule/MatrixRuleBatr'
-import Matrix_V1 from '../src/batr/server/mods/native/main/Matrix_V1'
+} from '../src/matriangle/server/mods/BaTS/mechanics/BatrMatrixMechanics'
+import { projectEntities } from '../src/matriangle/server/mods/native/mechanics/NativeMatrixMechanics'
+import { respawnAllPlayer } from '../src/matriangle/server/mods/native/mechanics/NativeMatrixMechanics'
+import WorldRegistry_V1 from '../src/matriangle/server/mods/native/registry/Registry_V1'
+import { NativeTools as BatrTools } from '../src/matriangle/server/mods/BaTS/registry/ToolRegistry'
+import MatrixRuleBatr from '../src/matriangle/server/mods/native/rule/MatrixRuleBatr'
+import Matrix_V1 from '../src/matriangle/server/mods/native/main/Matrix_V1'
 import {
 	listE列举实体,
 	matrixV母体可视化,
-} from '../src/batr/server/mods/visualization/textVisualizations'
-import { TICK_TIME_MS, TPS } from '../src/batr/server/main/GlobalWorldVariables'
+} from '../src/matriangle/server/mods/visualization/textVisualizations'
+import {
+	TICK_TIME_MS,
+	TPS,
+} from '../src/matriangle/server/main/GlobalWorldVariables'
 import {
 	mergeMaps,
 	mergeMultiMaps,
 	randomBoolean,
 	randomIn,
-} from '../src/batr/common/utils'
-import { NativeBonusTypes as BatrBonusTypes } from '../src/batr/server/mods/batr/registry/BonusRegistry'
-import { iPoint } from '../src/batr/common/geometricTools'
-import MatrixVisualizer from '../src/batr/server/mods/visualization/web/MatrixVisualizer'
-import BlockRandomTickDispatcher from '../src/batr/server/mods/batr/mechanics/programs/BlockRandomTickDispatcher'
-import { BATR_BLOCK_EVENT_MAP } from '../src/batr/server/mods/batr/mechanics/BatrMatrixMechanics'
-import BlockEventRegistry from '../src/batr/server/api/block/BlockEventRegistry'
-import MapSwitcherRandom from '../src/batr/server/mods/batr/mechanics/programs/MapSwitcherRandom'
-import IPlayerBatr from '../src/batr/server/mods/batr/entity/player/IPlayerBatr'
-import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from '../src/batr/server/mods/native/registry/NativeBlockRegistry'
-import { BATR_BLOCK_CONSTRUCTOR_MAP } from '../src/batr/server/mods/batr/registry/BlockRegistry'
-import BonusBoxGenerator from '../src/batr/server/mods/batr/mechanics/programs/BonusBoxGenerator'
-import IMatrix from '../src/batr/server/main/IMatrix'
-import IMatrixRule from '../src/batr/server/rule/IMatrixRule'
-import IWorldRegistry from '../src/batr/server/api/registry/IWorldRegistry'
-import { BatrDefaultMaps } from '../src/batr/server/mods/batr/registry/MapRegistry'
-import IMap from '../src/batr/server/api/map/IMap'
+} from '../src/matriangle/common/utils'
+import { NativeBonusTypes as BatrBonusTypes } from '../src/matriangle/server/mods/BaTS/registry/BonusRegistry'
+import { iPoint } from '../src/matriangle/common/geometricTools'
+import MatrixVisualizer from '../src/matriangle/server/mods/visualization/web/MatrixVisualizer'
+import BlockRandomTickDispatcher from '../src/matriangle/server/mods/BaTS/mechanics/programs/BlockRandomTickDispatcher'
+import { BATR_BLOCK_EVENT_MAP } from '../src/matriangle/server/mods/BaTS/mechanics/BatrMatrixMechanics'
+import BlockEventRegistry from '../src/matriangle/server/api/block/BlockEventRegistry'
+import MapSwitcherRandom from '../src/matriangle/server/mods/BaTS/mechanics/programs/MapSwitcherRandom'
+import IPlayerBatr from '../src/matriangle/server/mods/BaTS/entity/player/IPlayerBatr'
+import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from '../src/matriangle/server/mods/native/registry/NativeBlockRegistry'
+import { BATR_BLOCK_CONSTRUCTOR_MAP } from '../src/matriangle/server/mods/BaTS/registry/BlockRegistry'
+import BonusBoxGenerator from '../src/matriangle/server/mods/BaTS/mechanics/programs/BonusBoxGenerator'
+import IMatrix from '../src/matriangle/server/main/IMatrix'
+import IMatrixRule from '../src/matriangle/server/rule/IMatrixRule'
+import IWorldRegistry from '../src/matriangle/server/api/registry/IWorldRegistry'
+import { BatrDefaultMaps } from '../src/matriangle/server/mods/BaTS/registry/MapRegistry'
+import IMap from '../src/matriangle/server/api/map/IMap'
 import { stackMaps } from './stackedMaps'
-import Map_V1 from '../src/batr/server/mods/native/maps/Map_V1'
-import WebMessageRouter from '../src/batr/server/mods/webIO/WebMessageRouter'
-import WebController from '../src/batr/server/mods/webIO/controller/WebController'
+import Map_V1 from '../src/matriangle/server/mods/native/maps/Map_V1'
+import WebMessageRouter from '../src/matriangle/server/mods/webIO/WebMessageRouter'
+import WebController from '../src/matriangle/server/mods/webIO/controller/WebController'
 import KeyboardControlCenter, {
 	generateBehaviorFromPlayerConfig,
-} from '../src/batr/server/mods/native/mechanics/program/KeyboardControlCenter'
-import ProgramAgent from './../src/batr/server/mods/TMatrix/program/Agent'
-import Entity from '../src/batr/server/api/entity/Entity'
+} from '../src/matriangle/server/mods/native/mechanics/program/KeyboardControlCenter'
+import ProgramAgent from './../src/matriangle/server/mods/TMatrix/program/Agent'
+import Entity from '../src/matriangle/server/api/entity/Entity'
 import {
 	IEntityHasPosition,
 	i_hasPosition,
-} from '../src/batr/server/api/entity/EntityInterfaces'
-import ProgramMerovingian from './../src/batr/server/mods/TMatrix/program/Merovingian'
-import { isPlayer } from '../src/batr/server/mods/native/entities/player/IPlayer'
-import { MatrixProgram } from '../src/batr/server/api/control/MatrixProgram'
+} from '../src/matriangle/server/api/entity/EntityInterfaces'
+import ProgramMerovingian from './../src/matriangle/server/mods/TMatrix/program/Merovingian'
+import { isPlayer } from '../src/matriangle/server/mods/native/entities/player/IPlayer'
+import { MatrixProgram } from '../src/matriangle/server/api/control/MatrixProgram'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {

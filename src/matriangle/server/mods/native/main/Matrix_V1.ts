@@ -7,7 +7,7 @@ import IMatrixRule from '../../../rule/IMatrixRule'
 import IMatrix from '../../../main/IMatrix'
 import IWorldRegistry from '../../../api/registry/IWorldRegistry'
 import { isDefined, voidF } from '../../../../common/utils'
-import { getRandomMap } from '../../batr/mechanics/BatrMatrixMechanics'
+import { getRandomMap } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 
 /**

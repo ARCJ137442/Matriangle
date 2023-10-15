@@ -1,7 +1,7 @@
 import Block from '../../../api/block/Block'
 import { typeID } from '../../../api/registry/IWorldRegistry'
-import BSColored from '../../batr/block/BSColored'
-import { NativeBlockAttributes } from '../../batr/registry/BlockAttributesRegistry'
+import BSColored from '../../BaTS/block/BSColored'
+import { NativeBlockAttributes } from '../../BaTS/registry/BlockAttributesRegistry'
 import { MapFromGeneratorKV } from '../../../../common/utils'
 import { BlockConstructorMap } from '../../../api/map/IMapStorage'
 

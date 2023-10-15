@@ -7,7 +7,7 @@ import { identity } from '../../../../common/utils'
 import { int, uint } from '../../../../legacy/AS3Legacy'
 import Block from '../../../api/block/Block'
 import IMapStorage from '../../../api/map/IMapStorage'
-import { BatrBlockPrototypes } from '../../batr/registry/BlockRegistry'
+import { BatrBlockPrototypes } from '../../BaTS/registry/BlockRegistry'
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
 const _temp_point_2d: iPoint = new iPoint(2)
