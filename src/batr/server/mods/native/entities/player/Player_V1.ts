@@ -107,15 +107,26 @@ export default class Player_V1 extends Entity implements IPlayer {
 	// !【2023-09-27 20:16:04】现在移除这部分的所有代码到`KeyboardController`中
 	// ! 现在这里的代码尽可能地使用`setter`
 
-	// !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
+	/**
+	 * @implements 现在等价于「朝着自身方向平行前进」
+	 *
+	 * !【2023-10-04 22:52:46】原`Game.movePlayer`已被内置至此
+	 */
 	moveForward(host: IMatrix): void {
+		this.moveParallel(host, this._direction)
+	}
+
+	/**
+	 * @implements 测试「是否通过」⇒设置坐标
+	 */
+	moveParallel(host: IMatrix, direction: mRot): void {
 		// 能前进⇒前进 // !原`host.movePlayer`
-		if (this.testCanGoForward(host, this._direction, false, true, getPlayers(host)))
+		if (this.testCanGoForward(host, direction, false, true, getPlayers(host)))
 			// 向前移动
 			this.setPosition(
 				host,
 				// 不能在
-				host.map.towardWithRot_II(this._temp_moveForward.copyFrom(this.position), this._direction, 1),
+				host.map.towardWithRot_II(this._temp_moveForward.copyFrom(this.position), direction, 1),
 				true
 			)
 		// !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
@@ -569,14 +580,14 @@ export default class Player_V1 extends Entity implements IPlayer {
 	protected _temp_testCanGoForward_P: iPoint = new iPoint()
 	testCanGoForward(
 		host: IMatrix,
-		rotatedAsRot?: number | undefined,
-		avoidHurt?: boolean | undefined,
-		avoidOthers?: boolean | undefined,
-		others?: IEntityInGrid[] | undefined
+		rotatedAsRot: number = this._direction,
+		avoidHurt: boolean = false,
+		avoidOthers: boolean = false,
+		others: IEntityInGrid[] = []
 	): boolean {
 		return this.testCanGoTo(
 			host,
-			host.map.towardWithRot_II(this._temp_testCanGoForward_P.copyFrom(this.position), this._direction, 1),
+			host.map.towardWithRot_II(this._temp_testCanGoForward_P.copyFrom(this.position), rotatedAsRot, 1),
 			avoidHurt,
 			avoidOthers,
 			others

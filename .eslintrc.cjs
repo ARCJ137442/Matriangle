@@ -111,6 +111,9 @@ module.exports = {
 					},
 				],
 
+				// !【2023-10-15 11:25:40】允许在制表符缩进之余（其一定在行首），使用空格进行对齐（一定在制表符之后）
+				'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
+
 				// Prettier //
 				'prettier/prettier': 'off', // 暂不启用
 			},

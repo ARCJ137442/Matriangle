@@ -26,7 +26,7 @@ export default class LaserAbsorption extends Laser {
 
 	//============Instance Variables============//
 	/** 纵轴的「尺寸」（用于控制动画与同步伤害） */
-	protected scaleY: number = LaserAbsorption.LIFE
+	protected scaleY: number = 1
 	/** 用于控制「尺寸」的增速（可负） */
 	protected scaleV: number = LaserAbsorption.SCALE_V
 	/**
@@ -39,9 +39,9 @@ export default class LaserAbsorption extends Laser {
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
+		length: uint = LaserBasic.LENGTH,
 		attackerDamage: uint,
-		extraDamageCoefficient: uint,
-		length: uint = LaserBasic.LENGTH
+		extraDamageCoefficient: uint
 	) {
 		super(
 			owner,
@@ -55,14 +55,22 @@ export default class LaserAbsorption extends Laser {
 		)
 	}
 
-	//============Instance Functions============//
+	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
 		this.scaleY += LaserAbsorption.SCALE_V * (this.scaleReverse ? -1 : 1)
 		if (this.scaleY >= 1) {
 			this.scaleReverse = true
-			console.warn('LaserAbsorption: laserHurtPlayers(host, this) WIP!') //laserHurtPlayers(host, this);
+			this.hurtPlayers(host)
 		} else if (this.scaleY <= -1) this.scaleReverse = false
 		super.onTick(host) // ! 超类逻辑：处理生命周期
+	}
+
+	/** @override 将对玩家造成的「最终伤害」转化为所有者的「储备生命值」 */
+	override hitAPlayer(host: IMatrix, player: IPlayer, canHurt: boolean, finalDamage: uint): void {
+		// 造成伤害
+		super.hitAPlayer(host, player, canHurt, finalDamage)
+		// 吸收伤害
+		if (canHurt && this.owner !== null && !this.owner.isRespawning) this.owner.heal += finalDamage
 	}
 
 	//============Display Implements============//

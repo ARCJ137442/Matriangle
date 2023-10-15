@@ -20,7 +20,7 @@ import MatrixRuleBatr from '../src/batr/server/mods/native/rule/MatrixRuleBatr'
 import Matrix_V1 from '../src/batr/server/mods/native/main/Matrix_V1'
 import { listE列举实体, matrixV母体可视化 } from '../src/batr/server/mods/visualization/textVisualizations'
 import { TICK_TIME_MS, TPS } from '../src/batr/server/main/GlobalWorldVariables'
-import { mergeMaps, mergeMultiMaps, randomBoolean } from '../src/batr/common/utils'
+import { mergeMaps, mergeMultiMaps, randomBoolean, randomIn } from '../src/batr/common/utils'
 import { NativeBonusTypes as BatrBonusTypes } from '../src/batr/server/mods/batr/registry/BonusRegistry'
 import { iPoint } from '../src/batr/common/geometricTools'
 import MatrixVisualizer from '../src/batr/server/mods/visualization/web/MatrixVisualizer'
@@ -46,7 +46,7 @@ import KeyboardControlCenter, {
 } from '../src/batr/server/mods/native/mechanics/program/KeyboardControlCenter'
 import ProgramAgent from './../src/batr/server/mods/TMatrix/program/Agent'
 import Entity from '../src/batr/server/api/entity/Entity'
-import { IEntityHasPosition, i_hasPosition, i_shortLive } from '../src/batr/server/api/entity/EntityInterfaces'
+import { IEntityHasPosition, i_hasPosition } from '../src/batr/server/api/entity/EntityInterfaces'
 import ProgramMerovingian from './../src/batr/server/mods/TMatrix/program/Merovingian'
 import { isPlayer } from '../src/batr/server/mods/native/entities/player/IPlayer'
 import { MatrixProgram } from '../src/batr/server/api/control/MatrixProgram'
@@ -68,8 +68,8 @@ function initMatrixRule(): IMatrixRule {
 	// 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
 	for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE) rule.bonusTypePotentials.set(bt, 1)
 
-	// 设置所有工具 // ! 目前限定为子弹系列
-	rule.enabledTools = BatrTools.WEAPONS_BULLET
+	// 设置所有工具 // * 现在开放激光系列
+	rule.enabledTools = [...BatrTools.WEAPONS_BULLET, ...BatrTools.WEAPONS_LASER]
 
 	return rule
 }
@@ -105,15 +105,24 @@ function setupPlayers(host: IMatrix): void {
 		getRandomTeam(matrix),
 		randomToolEnable(matrix.rule)
 	)
+	const p3: IPlayerBatr = new PlayerBatr(
+		new iPoint(1, 1),
+		0,
+		true,
+		getRandomTeam(matrix),
+		randomToolEnable(matrix.rule)
+	)
 
 	// 名字
 	p.customName = 'Player初号机'
 	p2.customName = 'Player二号机'
+	p3.customName = '三号靶机'
 	// 生命数不减少
-	p.lifeNotDecay = p2.lifeNotDecay = true
+	p.lifeNotDecay = p2.lifeNotDecay = p3.lifeNotDecay = true
 	// 武器
-	p.tool = BatrTools.WEAPON_BULLET_BASIC.copy()
-	p2.tool = BatrTools.WEAPON_BULLET_TRACKING.copy()
+	p.tool = randomIn(BatrTools.WEAPONS_BULLET).copy()
+	p2.tool = randomIn(BatrTools.WEAPONS_LASER).copy()
+	p3.tool = randomIn(BatrTools.WEAPONS_LASER).copy()
 	// 初号机の控制器
 	const ctl: AIControllerGenerator = new AIControllerGenerator(
 		'first',
@@ -128,9 +137,11 @@ function setupPlayers(host: IMatrix): void {
 	ctlWeb.addConnection(p, 'p')
 	ctlWeb.linkToRouter(router, 'ws', '127.0.0.1', 3002) // 连接到消息路由器
 	let kcc: KeyboardControlCenter = new KeyboardControlCenter()
+	// 三号机没有控制器
 	// 添加p2的按键绑定
 	kcc.addKeyBehaviors(generateBehaviorFromPlayerConfig(p2, BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]))
-	// 连接到消息路由器
+	kcc.addKeyBehaviors(generateBehaviorFromPlayerConfig(p3, BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[2]))
+	// 连接：键控中心 - 消息路由器
 	router.registerServiceWithType(
 		'ws',
 		'127.0.0.1',
@@ -150,7 +161,7 @@ function setupPlayers(host: IMatrix): void {
 	)
 
 	// *添加实体
-	host.addEntities(p, p2, ctl, /* ctlWeb, */ kcc)
+	host.addEntities(p, p2, p3, ctl, /* ctlWeb, */ kcc)
 	// 让所有玩家「重生」
 	respawnAllPlayer(matrix)
 }

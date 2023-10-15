@@ -190,7 +190,7 @@ function entityTS实体标签显示(e: Entity): string {
 			// BaTr
 			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(e)}|${
 				e.HPText // 生命
-			}|[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${
+			}|${e.isUsing ? '^' : '#'}[${e.tool.id}:${e.tool.usingCD}/${e.tool.baseCD}${
 				e.tool.needsCharge ? `!${e.tool.chargeTime}/${e.tool.chargeMaxTime}` : '' // 工具
 			}]|#${e.team.name}:${e.team.id}#`
 		// 普通原生玩家

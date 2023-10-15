@@ -512,10 +512,10 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	 */
 	protected dealUsingTime(host: IMatrix): void {
 		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
-		if (!this._tool.needsCD || this._tool.dealCD(this._isUsing)) {
+		if (this._tool.dealCD(this._isUsing)) {
 			// this._GUI.updateCD(); // TODO: 显示更新冷却
 			// *逻辑：需要充能⇒必定能使用
-			if (!this._tool.needsCharge || this.tool.dealCharge(this._isUsing)) {
+			if (this.tool.dealCharge(this._isUsing)) {
 				// 使用工具
 				this.directUseTool(host)
 				// 使用之后再重置

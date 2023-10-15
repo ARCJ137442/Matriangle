@@ -1,22 +1,36 @@
 {
-    // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            // "program": "${workspaceFolder}\\test\\test.ts",
-            "program": "${file}",
-            // "outFiles": [
-            //     "${workspaceFolder}/**/*.js"
-            // ],
-            "runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
-        }
-    ]
+	// 使用 IntelliSense 了解相关属性。
+	// 悬停以查看现有属性的描述。
+	// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch Program",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			// "program": "${workspaceFolder}\\test\\test.ts",
+			"program": "${file}",
+			// "outFiles": [
+			//     "${workspaceFolder}/**/*.js"
+			// ],
+			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Matrix V1 Test",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			// "program": "${workspaceFolder}\\test\\test.ts",
+			"program": "test/Matrix_V1_test.ts",
+			// "outFiles": [
+			//     "${workspaceFolder}/**/*.js"
+			// ],
+			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+		}
+	]
 }

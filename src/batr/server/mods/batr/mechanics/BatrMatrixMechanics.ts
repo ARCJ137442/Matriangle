@@ -66,6 +66,7 @@ import Entity from '../../../api/entity/Entity'
 import { PlayerControlConfig } from '../../native/mechanics/program/KeyboardControlCenter'
 import { EnumBatrPlayerAction } from '../entity/player/control/BatrPlayerAction'
 import { MDNCodes } from '../../../../common/keyCodes'
+import Weapon from '../tool/Weapon'
 
 /**
  * 所有世界的「原生逻辑」
@@ -507,8 +508,62 @@ function generateBullet(
 			.initLife(host.rule.getRule<uint>(MatrixRuleBatr.key_bulletMaxLife))
 	)
 }
-
 const _temp_toolUsage_PF: fPoint = new fPoint()
+
+interface LaserConstructor extends ConcreteClass<Laser> {
+	new (
+		owner: IPlayer | null,
+		position: iPoint,
+		direction: mRot,
+		length: uint,
+		attackerDamage: uint,
+		extraDamageCoefficient: uint,
+		...otherArgs: any[]
+		// chargePercent?: number // ! 「充能百分比」作为「附加参数」使用 // * 没有「充能机制」就是「完全充能」
+	): Laser
+
+	/** 需要的静态（类）属性 */
+	LIFE: uint
+}
+
+/**
+ * 集成所有「生成激光」的逻辑
+ */
+function generateLaser(
+	constructor: LaserConstructor,
+	host: IMatrix,
+	user: IPlayer,
+	tool: Tool,
+	direction: mRot,
+	...otherArgs: unknown[]
+): void {
+	// 预先计算坐标
+	host.map.towardWithRot_II(_temp_toolUsage_PI.copyFrom(user.position), direction)
+	// 手动计算长度
+	const length = calculateLaserLength(
+		host,
+		_temp_toolUsage_PI, // 这里的`_temp_toolUsage_PI`已经前进了
+		direction
+	)
+	// 长度非零⇒生成并添加实体
+	if (length > 0)
+		host.addEntity(
+			new constructor(
+				user,
+				// 直接在正前方一格生成
+				_temp_toolUsage_PI,
+				direction,
+				length,
+				// 后续从工具处初始化
+				0,
+				0,
+				// 「充能百分比」等其它附加参数
+				...otherArgs
+			).initFromToolNAttributes(tool, (user as IPlayerHasAttributes)?.attributes.buffDamage ?? 0)
+		)
+}
+const _temp_toolUsage_PI: fPoint = new iPoint()
+
 /**
  * 一个原生的「武器使用」映射表
  * * 基本继承原先AS3版本中的玩法
@@ -523,9 +578,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
 		tool: Tool,
 		direction: mRot,
 		chargePercent: number
-	): void => {
-		generateBullet(BulletBasic, host, user, tool, direction)
-	},
+	): void => generateBullet(BulletBasic, host, user, tool, direction),
 	// * 武器：核弹 * //
 	[NativeTools.TOOL_ID_BULLET_NUKE]: (
 		host: IMatrix,
@@ -577,7 +630,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
 		tool: Tool,
 		direction: mRot,
 		chargePercent: number
-	): void => {
+	): void =>
 		generateBullet(
 			BulletTracking,
 			host,
@@ -594,8 +647,66 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<type
 			1 + chargePercent * 0.5,
 			// * 完全充能⇒大于1
 			chargePercent >= 1
-		)
-	},
+		),
+	// * 武器：基础激光 * //
+	[NativeTools.TOOL_ID_LASER_BASIC]: (
+		host: IMatrix,
+		user: IPlayer,
+		tool: Tool,
+		direction: mRot,
+		chargePercent: number
+	): void =>
+		generateLaser(
+			LaserBasic,
+			host,
+			user,
+			tool,
+			direction,
+			// 充能大小
+			chargePercent
+		),
+	// * 武器：传送激光 * //
+	[NativeTools.TOOL_ID_LASER_TELEPORT]: (
+		host: IMatrix,
+		user: IPlayer,
+		tool: Tool,
+		direction: mRot,
+		chargePercent: number
+	): void =>
+		generateLaser(
+			LaserTeleport,
+			host,
+			user,
+			tool,
+			direction,
+			// 生命周期
+			LaserTeleport.LIFE
+		),
+	// * 武器：吸收激光 * //
+	[NativeTools.TOOL_ID_LASER_ABSORPTION]: (
+		host: IMatrix,
+		user: IPlayer,
+		tool: Tool,
+		direction: mRot,
+		chargePercent: number
+	): void => generateLaser(LaserAbsorption, host, user, tool, direction),
+	// * 武器：脉冲激光 * //
+	[NativeTools.TOOL_ID_LASER_PULSE]: (
+		host: IMatrix,
+		user: IPlayer,
+		tool: Tool,
+		direction: mRot,
+		chargePercent: number
+	): void =>
+		generateLaser(
+			LaserPulse,
+			host,
+			user,
+			tool,
+			direction,
+			// 是否为「回拽激光」
+			chargePercent < 1
+		),
 })
 
 /**
@@ -1334,51 +1445,18 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
 			// 长度
 			laserLength = calculateLaserLength(host, _temp_randomTick_LaserTrap, randomR)
 			if (laserLength <= 0) continue
-			// 生成随机激光
-			switch (randInt(4)) {
-				case 1:
-					p = new LaserTeleport(
-						null,
-						position,
-						randomR,
-						NativeTools.WEAPON_LASER_TELEPORT.baseDamage,
-						NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
-						laserLength
-					)
-					break
-				case 2:
-					p = new LaserAbsorption(
-						null,
-						position,
-						randomR,
-						NativeTools.WEAPON_LASER_ABSORPTION.baseDamage,
-						NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
-						laserLength
-					)
-					break
-				case 3:
-					p = new LaserPulse(
-						null,
-						position,
-						randomR,
-						NativeTools.WEAPON_LASER_PULSE.baseDamage,
-						NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
-						randInt(2), // 0|1
-						laserLength
-					)
-					break
-				default:
-					p = new LaserBasic(
-						null,
-						position,
-						randomR,
-						NativeTools.WEAPON_LASER_BASIC.baseDamage,
-						NativeTools.WEAPON_LASER_BASIC.extraResistanceCoefficient,
-						1.0,
-						laserLength
-					)
-					break
-			}
+
+			const randomS = randomIn(_temp_randomTick_weapons)
+			p = new randomS[0](
+				null,
+				_temp_randomTick_LaserTrap,
+				randomR,
+				laserLength,
+				randomS[1].baseDamage,
+				randomS[1].extraResistanceCoefficient,
+				// 其它附加参数
+				...randomS[2]
+			)
 			host.addEntity(p)
 			console.log('laser at' + '(', p.position, '),' + p.life, p.length, p.owner)
 			break
@@ -1387,6 +1465,13 @@ export function randomTick_LaserTrap(host: IMatrix, position: iPoint, block: Blo
 }
 /** 用于「激光生成的位置」 */
 const _temp_randomTick_LaserTrap: iPoint = new iPoint()
+/** 「激光陷阱」生成所有激光的列表 [构造函数, 对应武器, 附加参数] */
+const _temp_randomTick_weapons: Array<[LaserConstructor, Weapon, unknown[]]> = [
+	[LaserBasic, NativeTools.WEAPON_LASER_BASIC.copy(), [1 /* 完全充能 */]],
+	[LaserTeleport, NativeTools.WEAPON_LASER_TELEPORT.copy(), []],
+	[LaserAbsorption, NativeTools.WEAPON_LASER_ABSORPTION.copy(), []],
+	[LaserPulse, NativeTools.WEAPON_LASER_PULSE.copy(), [randomBoolean() /* 随机「回拽」「前推」 */]],
+]
 
 // !【2023-10-08 18:15:02】
 

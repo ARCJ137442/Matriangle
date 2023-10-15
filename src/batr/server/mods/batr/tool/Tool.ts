@@ -264,13 +264,17 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @returns 是否「可以使用」
 	 */
 	public dealCD(isUsing: boolean): boolean {
-		if (this._usingCD > 0) {
-			this._usingCD--
-			return false
-		} else {
-			// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑，导致「充能都没完成，就又需要等待冷却」
-			return true
-		}
+		// * 需要冷却⇒正常倒计时
+		if (this.needsCD)
+			if (this._usingCD > 0) {
+				this._usingCD--
+				return false
+			} else {
+				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑，导致「充能都没完成，就又需要等待冷却」
+				return true
+			}
+		// * 无需冷却⇒在使用⇒直接可用
+		else return isUsing
 	}
 
 	/**
@@ -286,27 +290,31 @@ export default class Tool implements IJSObjectifiable<Tool> {
 	 * @returns 是否「可以使用」
 	 */
 	public dealCharge(isUsing: boolean): boolean {
-		// * 反向充能
-		if (this._reverseCharge) {
-			if (isUsing) {
-				// 反向充能「只要使用就直接成功」
-				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
-				return true
-			} else if (this._chargeTime < this._chargeMaxTime) this._chargeTime++
-		}
-		// * 正向充能
-		else {
-			// 已充能满⇒可用
-			if (this._chargeTime >= this._chargeMaxTime) {
-				// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
-				return true
-			} else if (isUsing)
-				// 未充能满 & 正在使用⇒继续计时
-				this._chargeTime++
-			// 未充能满 & 不在使用 & !未充能⇒可用
-			else if (this.chargeTime > 0) return true
-		}
-		// 若先前未因「充能完毕/使用打断充能」返回true
+		// * 需要充能
+		if (this.needsCharge)
+			if (this._reverseCharge) {
+				// * 反向充能
+				if (isUsing) {
+					// 反向充能「只要使用就直接成功」
+					// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
+					return true
+				} else if (this._chargeTime < this._chargeMaxTime) this._chargeTime++
+			}
+			// * 正向充能
+			else {
+				// 已充能满⇒可用
+				if (this._chargeTime >= this._chargeMaxTime) {
+					// !【2023-10-05 14:50:20】现在不能再自动重置状态了：重置之后可能会干扰玩家侧代码的判断逻辑
+					return true
+				} else if (isUsing)
+					// 未充能满 & 正在使用⇒继续计时
+					this._chargeTime++
+				// 未充能满 & 不在使用 & !未充能⇒可用
+				else if (this.chargeTime > 0) return true
+			}
+		// * 无需充能：使用⇒通过
+		else return isUsing
+		// * 若先前未因「充能完毕/使用打断充能」返回true
 		return false
 	}
 

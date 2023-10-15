@@ -31,7 +31,7 @@
 }
 
 /* 输入框样式 */
-input[type="text"] {
+input[type='text'] {
 	/* 输入框宽度 */
 	width: 300px;
 	/* 输入框高度 */
@@ -49,7 +49,7 @@ input[type="text"] {
 }
 
 /* 输入框的placeholder样式 */
-input[type="text"]::placeholder {
+input[type='text']::placeholder {
 	color: #999;
 	/* 文字颜色 */
 }

@@ -123,6 +123,20 @@ export function mRot2increment(rot: mRot): 1 | -1 {
 }
 
 /**
+ * 返回一个「任意维整数角」是否在正方向
+ */
+export function isAxisPositive_M(rot: mRot): boolean {
+	return (rot & 1) === 0
+}
+
+/**
+ * 返回一个「任意维整数角」是否在负方向
+ */
+export function isAxisNegative_M(rot: mRot): boolean {
+	return (rot & 1) === 1
+}
+
+/**
  * 任意维整数角的「旋转」
  * * 通用于N维空间
  * * 举例：x+朝向在xOy平面的旋转，只需要调用「y+|y-」即可。其中：

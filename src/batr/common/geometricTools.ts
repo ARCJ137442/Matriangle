@@ -2,7 +2,7 @@
 import { int, uint } from '../legacy/AS3Legacy'
 import { IJSObjectifiable, JSObject, JSObjectifyMap } from './JSObjectify'
 import { intAbs } from './exMath'
-import { isInvalidNumber } from './utils'
+import { Ref, Val, isInvalidNumber } from './utils'
 
 /**
  * 所有类型点的基类
@@ -515,17 +515,17 @@ export type fPoint = floatPoint // 作为类型
  * * 🎯目标：（在类型上）区分「要自身存储的值」还是「无需存储的引用」
  * * ✨应用：在函数调用时区分「是复制新的值进函数，还是只需把引用传递过去」以及「就地更改是否影响函数之外的对象」
  */
-export type iPointRef = iPoint
+export type iPointRef = Ref<iPoint>
 /** 同上，作为一种「引用/指针」类型 */
-export type fPointRef = fPoint
+export type fPointRef = Ref<fPoint>
 /**
  * 📌相对于「引用类型」
  * * 🎯目标：标注这里需要一个新的「值」
  * * ✨应用：实体的坐标必须「掌握在自己手中」，所以必须要「自身存储值」
  */
-export type iPointVal = iPoint
+export type iPointVal = Val<iPoint>
 /** 同上，作为一种「引用/指针」类型 */
-export type fPointVal = fPoint
+export type fPointVal = Val<fPoint>
 
 // ! 缓存的变量
 const _temp_forEachPoint: iPointVal = new iPoint()

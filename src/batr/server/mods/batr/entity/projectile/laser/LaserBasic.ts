@@ -27,10 +27,10 @@ export default class LaserBasic extends Laser {
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
+		length: number = LaserBasic.LENGTH,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint,
-		chargePercent: number = 1,
-		length: number = LaserBasic.LENGTH
+		chargePercent: number = 1
 	) {
 		super(
 			owner,
@@ -44,13 +44,14 @@ export default class LaserBasic extends Laser {
 		)
 	}
 
-	//============Instance Functions============//
-
-	/** 覆盖：没有伤害过玩家，就触发母体计算伤害 */
+	//============World Mechanics============//
+	/** @override 覆盖：没有伤害过玩家，就触发母体计算伤害 */
 	override onTick(host: IMatrix): void {
-		if (!this.hasDamaged) console.warn('LaserBasic: laserHurtPlayers(host, this) WIP!') //laserHurtPlayers(host, this);
+		if (!this.hasDamaged) this.hurtPlayers(host)
 		super.onTick(host) // ! 超类逻辑：处理生命周期
 	}
+
+	// 使用默认的「伤害玩家」逻辑
 
 	//============Display Implements============//
 	/** 覆盖：先绘制，再拉伸 */

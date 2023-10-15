@@ -43,7 +43,10 @@ export function percentToUint(value: number): uint {
 }
 
 //============Display Methods============//
-export function removeChildIfContains(parent: DisplayObjectContainer, child: DisplayObject): void {
+export function removeChildIfContains(
+	parent: DisplayObjectContainer,
+	child: DisplayObject
+): void {
 	if (child !== null && parent.contains(child)) parent.removeChild(child)
 }
 
@@ -54,7 +57,10 @@ export function clearChildren(container: DisplayObjectContainer): void {
 }
 
 //============Boolean Methods============//
-export function randomBoolean(trueWeight: uint = 1, falseWeight: uint = 1): boolean {
+export function randomBoolean(
+	trueWeight: uint = 1,
+	falseWeight: uint = 1
+): boolean {
 	return exMath.randomFloat(trueWeight + falseWeight) < trueWeight
 }
 
@@ -118,9 +124,12 @@ export function randomInParas<T>(...paras: Array<T>): T {
  * @param excepts （数组中唯一的）要排除的对象
  */
 export function randomWithout<T>(array: T[], excepts: T): T {
-	const result: T = array[exMath.randModWithout(array.indexOf(excepts), array.length)]
+	const result: T =
+		array[exMath.randModWithout(array.indexOf(excepts), array.length)]
 	// 还是等于，就启用filter（性能&正确性考量）
-	return result === excepts ? randomIn(array.filter(item => item !== excepts)) : result
+	return result === excepts
+		? randomIn(array.filter(item => item !== excepts))
+		: result
 }
 
 /**
@@ -185,7 +194,12 @@ export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
 /**
  * 对（一般是JS对象的）对象的键值对作映射，并返回一个新的（JS）对象
  */
-export function mapObject(obj: any, kF: (arg: any) => any, vF: (arg: any) => any, target: any = {}): any {
+export function mapObject(
+	obj: any,
+	kF: (arg: any) => any,
+	vF: (arg: any) => any,
+	target: any = {}
+): any {
 	for (const k in obj) target[kF(k)] = vF(obj[k])
 	return target
 }
@@ -201,7 +215,11 @@ export function pushNReturn<T>(arr: T[], item: T): T {
 /**
  * 向一个对象添加一个属性，然后返回该属性
  */
-export function addNReturn<T, K extends keyof T>(obj: T, key: K, value: T[K]): T[K] {
+export function addNReturn<T, K extends keyof T>(
+	obj: T,
+	key: K,
+	value: T[K]
+): T[K] {
 	obj[key] = value
 	return value
 }
@@ -209,7 +227,11 @@ export function addNReturn<T, K extends keyof T>(obj: T, key: K, value: T[K]): T
 /**
  * 向一个对象添加一个属性，然后返回该属性的键
  */
-export function addNReturnKey<T, K extends keyof T>(obj: T, key: K, value: T[K]): K {
+export function addNReturnKey<T, K extends keyof T>(
+	obj: T,
+	key: K,
+	value: T[K]
+): K {
 	obj[key] = value
 	return key
 }
@@ -255,7 +277,11 @@ export function contains<T>(arr: T[], input: T): boolean {
 	return arr.indexOf(input) >= 0
 }
 
-export function spliceAndReturnCount<T>(arr: T[], input: T | T[], count: uint = 0): uint {
+export function spliceAndReturnCount<T>(
+	arr: T[],
+	input: T | T[],
+	count: uint = 0
+): uint {
 	if (isEmptyArray(arr)) {
 		return 0
 	}
@@ -366,7 +392,10 @@ export function mergeMaps<K, V>(a: Map<K, V>, b: Map<K, V>): Map<K, V> {
  * @param b 提供键值对的所有映射表
  * @param 合并后的映射表
  */
-export function mergeMultiMaps<K, V>(a: Map<K, V>, ...bs: Map<K, V>[]): Map<K, V> {
+export function mergeMultiMaps<K, V>(
+	a: Map<K, V>,
+	...bs: Map<K, V>[]
+): Map<K, V> {
 	for (const b of bs) {
 		for (const [key, value] of b) {
 			a.set(key, value)
@@ -401,7 +430,10 @@ const _temp_choose_first = <V>(v1: V, v2: V): V => v1
  * @param obj 要变成映射的对象
  * @returns 对象变成的映射
  */
-export function MapFromObject<K extends key, V>(obj: { [key in K]: V }): Map<K, V> {
+export function MapFromObject<K extends key, V>(obj: { [key in K]: V }): Map<
+	K,
+	V
+> {
 	return new Map<K, V>(Object.entries(obj) as [K, V][])
 }
 
@@ -413,7 +445,11 @@ export function MapFromObject<K extends key, V>(obj: { [key in K]: V }): Map<K, 
  * @param vF 基础对象⇒值
  * @returns 一个键值对映射表
  */
-export function MapFromGeneratorKV<B, K extends key, V>(basis: B[], kF: (b: B) => K, vF: (b: B) => V): Map<K, V> {
+export function MapFromGeneratorKV<B, K extends key, V>(
+	basis: B[],
+	kF: (b: B) => K,
+	vF: (b: B) => V
+): Map<K, V> {
 	const map: Map<K, V> = new Map<K, V>()
 	for (const base of basis) {
 		map.set(kF(base), vF(base))
@@ -428,12 +464,16 @@ export function MapFromGeneratorKV<B, K extends key, V>(basis: B[], kF: (b: B) =
  * @param vF 键⇒值
  * @returns 构造出来的映射表
  */
-export function MapFromGeneratorK<K extends key, V>(keys: K[], vF: (k: K) => V): Map<K, V> {
+export function MapFromGeneratorK<K extends key, V>(
+	keys: K[],
+	vF: (k: K) => V
+): Map<K, V> {
 	return MapFromGeneratorKV(keys, identity, vF)
 }
 
 export const isDefined = (obj: unknown): boolean => obj !== undefined
-export const isInvalidNumber = (num: unknown): boolean => num === undefined || isNaN(num as number)
+export const isInvalidNumber = (num: unknown): boolean =>
+	num === undefined || isNaN(num as number)
 
 export function isPrimitiveInstance(v: unknown): boolean {
 	return (
@@ -509,7 +549,11 @@ export function flattenObject(
 		const value = obj[key]
 		console.log(key, value)
 		if (isPrimitiveInstance(value)) result[prefix + key] = value
-		else mergeObject(flattenObject(value, separator, prefix + key + separator), result)
+		else
+			mergeObject(
+				flattenObject(value, separator, prefix + key + separator),
+				result
+			)
 	}
 	return result
 }
@@ -537,6 +581,26 @@ export function getClass(instance: any): Class | undefined {
 export function isExtend(C1: Class, C: Class): boolean {
 	return C1 === C || C1.prototype instanceof C
 }
+
+/**
+ * 扩展而来的「具体类」
+ * * 拥有构造函数签名
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ConcreteClass<T = unknown, Args extends any[] = any[]> = {
+	new (...args: Args): T
+}
+
+/**
+ * 包括「抽象类」和「具体类」的构造函数
+ */
+export type Constructor<T = any, Args extends Array<any> = any[]> =
+	| (new (...args: Args) => T)
+	| (abstract new (...args: Args) => T)
+
+export type ConcreteClassConstructor<T extends Constructor> = new (
+	...args: ConstructorParameters<T>
+) => InstanceType<T>
 
 /**
  * 单位函数

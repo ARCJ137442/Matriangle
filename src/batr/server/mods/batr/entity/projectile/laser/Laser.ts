@@ -1,12 +1,16 @@
-import { uint } from '../../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
-import Projectile from '../Projectile'
-import { IEntityFixedLived, IEntityInGrid } from '../../../../../api/entity/EntityInterfaces'
 import { iPoint, intPoint } from '../../../../../../common/geometricTools'
-import { IGraphicContext, IShape } from '../../../../../../display/api/DisplayInterfaces'
+import { IShape, IGraphicContext } from '../../../../../../display/api/DisplayInterfaces'
+import { DEFAULT_SIZE } from '../../../../../../display/api/GlobalDisplayVariables'
+import { uint } from '../../../../../../legacy/AS3Legacy'
+import { IEntityInGrid, IEntityFixedLived } from '../../../../../api/entity/EntityInterfaces'
+import { isAxisPositive_M, mRot, mRot2axis } from '../../../../../general/GlobalRot'
 import IMatrix from '../../../../../main/IMatrix'
-import { mRot } from '../../../../../general/GlobalRot'
 import IPlayer from '../../../../native/entities/player/IPlayer'
+import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
+import { computeFinalDamage, playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
+import Tool from '../../../tool/Tool'
+import { i_hasAttributes } from '../../player/IPlayerHasAttributes'
+import Projectile from '../Projectile'
 
 /**
  * 「激光」是
@@ -15,6 +19,7 @@ import IPlayer from '../../../../native/entities/player/IPlayer'
  * * 生成后在一固定周期内结束的
  * 抛射体
  */
+
 export default abstract class Laser extends Projectile implements IEntityInGrid, IEntityFixedLived {
 	//============Instance Variables============//
 	/** 激光的长度 */
@@ -37,11 +42,25 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		extraDamageCoefficient: uint,
 		chargePercent: number = 1 // * 没有「充能机制」就是「完全充能」
 	) {
-		super(owner, direction, attackerDamage * chargePercent, extraDamageCoefficient)
+		super(
+			owner,
+			attackerDamage * chargePercent, // ?【2023-10-15 12:39:29】这里的计算可能会被`initFromToolNAttributes`覆盖掉
+			extraDamageCoefficient,
+			direction
+		)
 		this._position.copyFrom(position)
 		this._length = length
+		this._temp_chargePercent = chargePercent // !【2023-10-15 12:39:19】临时缓存，以便在`initFromToolNAttributes`中调用
 		this._LIFE = LIFE
 		this._life = LIFE * chargePercent
+	}
+	protected _temp_chargePercent: number = 1
+
+	override initFromToolNAttributes(tool: Tool, buffDamage: number): this {
+		// 先使用「工具默认伤害」初始化
+		super.initFromToolNAttributes(tool, buffDamage)
+		this._attackerDamage *= this._temp_chargePercent
+		return this
 	}
 
 	// 固定生命周期 //
@@ -75,7 +94,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		this._position.copyFrom(value)
 	}
 
-	//============Instance Functions============//
+	//============World Mechanics============//
 	/**
 	 * 处理生命周期
 	 * * 不断减少「生命值」
@@ -94,14 +113,83 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 	 * @param host 母体
 	 */
 	override onTick(host: IMatrix): void {
+		super.onTick(host)
 		this.dealLife(host)
+	}
+
+	/**
+	 * 对玩家的碰撞测试
+	 * * 【2023-10-15 10:48:39】产生来由：只需要「玩家个数×坐标维数」的计算复杂度
+	 *   * 相比「预先缓存坐标」「主动循环遍历」（均为自身长度×玩家个数）的方式，性能更佳
+	 *
+	 * @param player 需要做碰撞测试的玩家
+	 * @returns 这个玩家是否在光束的作用范围内
+	 */
+	protected hitTestPlayer(player: IPlayer): boolean {
+		const beamAxis = mRot2axis(this.direction)
+		for (let i = 0; i < this.position.length; i++) {
+			// 「光束轴向」⇒判断「0 < 距离/朝向向量 < 自身实际长度」
+			if (i === beamAxis) {
+				// 计算相对于「光束朝向」的绝对距离，脱离范围相当于「在激光直线之外」
+				const hitDistance = isAxisPositive_M(this.direction)
+					? player.position[i] - this.position[i] // 自身朝向为正方向⇒应该用正数(自身方向)*【距离】碰到玩家坐标
+					: this.position[i] - player.position[i] // 自身朝向为负方向⇒应该用负数(自身方向)*【距离】碰到玩家坐标
+				// 脱离の条件：反方向 || 在长度之外（一般见于「被方块阻挡」，这里的「长度」是在外部被计算的）
+				if (hitDistance < 0 || hitDistance > this.length) return false
+			}
+			// 其它轴向：不等⇒不可能碰着
+			else if (this.position[i] !== player.position[i]) return false
+		}
+		return true
+	}
+
+	/**
+	 * 激光伤害单个玩家
+	 * * 用于被子类重载改写，以便扩展功能（如「传送激光」的传送）
+	 * * 📌实际核心还是避免「硬分派」的发生（如「在世界机制中手动判断乃至switch类型」）
+	 *
+	 * @default 默认逻辑：伤害玩家
+	 *
+	 * @param host 所在母体
+	 * @param player 被伤害的玩家
+	 * @param canHurt 计算出的「激光是否能（应）伤害该玩家」
+	 * @param finalDamage 计算出的「最终伤害」
+	 */
+	protected hitAPlayer(host: IMatrix, player: IPlayer, canHurt: boolean, finalDamage: uint): void {
+		if (canHurt) player.removeHP(host, finalDamage, this.owner)
+	}
+
+	/**
+	 * （在母体内）「伤害」玩家
+	 *
+	 * @param host 所影响的母体
+	 */
+	protected hurtPlayers(host: IMatrix): void {
+		// 改变「已尝试造成伤害」标签
+		this.hasDamaged = true
+		// 遍历所有玩家
+		for (const player of getPlayers(host)) {
+			// 碰撞检测
+			if (this.hitTestPlayer(player))
+				// 伤害（一个）玩家
+				this.hitAPlayer(
+					host,
+					player,
+					playerCanHurtOther(this.owner, player, this.canHurtEnemy, this.canHurtSelf, this.canHurtAlly),
+					computeFinalDamage(
+						this._attackerDamage,
+						// 计算「最终伤害」
+						player !== null && i_hasAttributes(player) ? player.attributes.buffResistance : 0,
+						this._extraResistanceCoefficient
+					)
+				)
+		}
 	}
 
 	/** 实现：不响应「所处方块更新」事件 */
 	public onPositedBlockUpdate(host: IMatrix): void {}
 
 	//============Display Implements============//
-
 	/**
 	 * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
 	 * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
@@ -137,7 +225,7 @@ export default abstract class Laser extends Projectile implements IEntityInGrid,
 		graphics: IGraphicContext,
 		y1: number,
 		y2: number,
-		color: uint = 0xffffff,
+		color: uint = 16777215,
 		alpha: number = 1
 	): void {
 		const yStart: number = Math.min(y1, y2)
