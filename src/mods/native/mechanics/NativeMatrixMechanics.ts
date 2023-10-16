@@ -6,21 +6,16 @@ import {
 	i_outGrid,
 	i_hasDirection,
 } from '../../../api/server/entity/EntityInterfaces'
-import { mRot } from '../../../api/server/general/GlobalRot'
-import {
-	alignToGridCenter_P,
-	alignToGrid_P,
-} from '../../../api/server/general/PosTransform'
+import { alignToGrid_P } from '../../../api/server/general/PosTransform'
 import IMatrix from '../../../api/server/main/IMatrix'
 import IMap from '../../../api/server/map/IMap'
+import { typeID } from '../../../api/server/registry/IWorldRegistry'
 import {
-	iPointVal,
-	fPointVal,
-	fPoint,
 	iPoint,
 	iPointRef,
 	traverseNDSquareSurface,
 	fPointRef,
+	iPointVal,
 } from '../../../common/geometricTools'
 import { MDNCodes } from '../../../common/keyCodes'
 import {
@@ -30,13 +25,11 @@ import {
 	int$MAX_VALUE,
 	uint$MAX_VALUE,
 } from '../../../legacy/AS3Legacy'
-import EffectPlayerDeathLight from '../../BaTS/entity/effect/EffectPlayerDeathLight'
-import EffectSpawn from '../../BaTS/entity/effect/EffectSpawn'
-import EffectTeleport from '../../BaTS/entity/effect/EffectTeleport'
-import { i_batrPlayer } from '../../BaTS/entity/player/IPlayerBatr'
-import { i_hasStats } from '../../BaTS/entity/player/IPlayerHasStats'
-import { bonusBoxTest } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
+import {
+	NativeBlockTypeEventMap,
+	NativeBlockEventType,
+} from '../registry/BlockEventRegistry_Native'
 import { MatrixRules_Native } from '../rule/MatrixRules_Native'
 import { PlayerControlConfig } from './program/KeyboardControlCenter'
 
@@ -80,9 +73,11 @@ export function getPlayers(host: IMatrix): IPlayer[] {
 /**
  * 重生所有玩家
  * @param host 所涉及的母体
+ *
+ * !【2023-10-17 00:35:48】现在`respawnPlayer`重新内迁至`player.onRespawn`中
  */
 export function respawnAllPlayer(host: IMatrix): void {
-	for (const player of getPlayers(host)) respawnPlayer_Native(host, player)
+	for (const player of getPlayers(host)) player.onRespawn(host)
 }
 
 /**
@@ -92,33 +87,7 @@ export function respawnAllPlayer(host: IMatrix): void {
  * @param host 所涉及的母体
  * @param player 重生的玩家
  */
-export function respawnPlayer_Native(host: IMatrix, player: IPlayer): IPlayer {
-	let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy() // 空值访问`null.copy()`会变成undefined
-
-	// 没位置⇒直接分散玩家
-	if (p === undefined) {
-		spreadPlayer(host, player, true, false)
-		p = player.position // 重新确定重生地
-	}
-
-	// 有位置⇒直接重生在此/进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
-	else
-		teleportPlayerTo(
-			host,
-			player,
-			findFitSpawnPoint(host, player, p), // !就是这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
-			host.map.storage.randomForwardDirectionAt(p),
-			false // 无需特效
-		) // 无需重新确定重生地
-
-	// 加特效
-	const fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央，只需要生成一个数组
-	host.addEntities(
-		new EffectSpawn(fp), // 重生效果
-		EffectPlayerDeathLight.fromPlayer(p, player, true)
-	)
-	// Return
-	// Debug: console.log('respawnPlayer:respawn '+player.customName+'.')
+export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
 	return player
 }
 
@@ -138,7 +107,7 @@ const _temp_findFitSpawnPoint_pMin: iPoint = new iPoint()
  *
  * @param searchR 搜索的最大曼哈顿半径（默认为16）
  */
-function findFitSpawnPoint(
+export function findFitSpawnPoint(
 	host: IMatrix,
 	player: IPlayer,
 	spawnP: iPointRef,
@@ -261,6 +230,55 @@ export function changeMap(
 }
 
 /**
+ * 在玩家位置改变**后**触发的「世界逻辑」
+ *
+ * ! 此时玩家位置已经改变
+ * @param newP 玩家移动之后的位置（一般是玩家当前位置）
+ */
+export function handlePlayerLocationChanged(
+	host: IMatrix,
+	player: IPlayer,
+	newP: iPointRef
+): void {
+	// ! 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
+	// * 通过注册表分派事件
+	const blockID: typeID | undefined = host.map.storage.getBlockID(newP)
+	if (
+		blockID !== undefined &&
+		host.registry.blockEventRegistry.hasRegistered(blockID)
+	)
+		(
+			host.registry.blockEventRegistry.getEventMapAt(
+				blockID
+			) as NativeBlockTypeEventMap
+		)?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player)
+}
+
+/**
+ * 在玩家位置改变**前**触发的「世界逻辑」
+ *
+ * ! 此时玩家位置尚未改变
+ *
+ * @param oldP 玩家移动之前的位置（一般是玩家当前位置）
+ */
+
+export function handlePlayerLocationChange(
+	host: IMatrix,
+	player: IPlayer,
+	oldP: iPointRef
+): void {
+	// * 通过注册表分派事件
+	const blockID: typeID | undefined = host.map.storage.getBlockID(oldP)
+	if (
+		blockID !== undefined &&
+		host.registry.blockEventRegistry.hasRegistered(blockID)
+	)
+		host.registry.blockEventRegistry
+			.getEventMapAt(blockID)
+			?.[NativeBlockEventType.PLAYER_MOVE_OUT]?.(host, oldP, player)
+}
+
+/**
  * 当每个玩家「移动到某个方块」时，在移动后的测试
  * * 测试位置即为玩家「当前位置」（移动后！）
  * * 有副作用：用于处理「伤害玩家的方块」
@@ -350,51 +368,14 @@ export const computeFinalBlockDamage = (
 		: playerDamage - 100
 
 /**
- * 传送玩家到指定位置
- * * 先取消玩家激活
- * * 不考虑「是否可通过」
- * * 可选的「传送特效」
- *
- * @param host 所在的母体
- * @param player 被传送的玩家
- * @param p 传送目的地
- * @param rotateTo 玩家传送后要被旋转到的方向（默认为玩家自身方向）
- * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
- * @returns 玩家自身
- */
-export function teleportPlayerTo(
-	host: IMatrix,
-	player: IPlayer,
-	p: iPointRef,
-	rotateTo: mRot = player.direction,
-	isTeleport: boolean = false
-): IPlayer {
-	player.isActive = false
-	// !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-	player.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
-	player.direction = rotateTo
-	// 在被传送的时候可能捡到奖励箱
-	if (i_batrPlayer(player)) bonusBoxTest(host, player, p)
-	// 被传送后添加特效
-	if (isTeleport) {
-		const fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
-		host.addEntity(new EffectTeleport(fp))
-		// 只有在「有特效」的情况下算作「被传送」
-		if (i_hasStats(player)) player.stats.beTeleportCount++
-	}
-	player.isActive = true
-	return player
-}
-
-/**
  * 分散玩家
- * * 不会附加特效
+ * * 可选的「是否为传送（形式）」
  */
 export function spreadPlayer(
 	host: IMatrix,
 	player: IPlayer,
 	rotatePlayer: boolean = true,
-	createEffect: boolean = true
+	isTeleport: boolean = true
 ): IPlayer {
 	// !【2023-10-04 17:12:26】现在不管玩家是否在重生
 	let p: iPointRef = host.map.storage.randomPoint
@@ -409,16 +390,21 @@ export function spreadPlayer(
 		p = host.map.storage.randomPoint // 复制一个引用
 	}
 	// 传送玩家
-	teleportPlayerTo(
-		host,
-		player,
-		p, // 传引用
-		// 是否要改变玩家朝向
-		rotatePlayer
+	if (isTeleport)
+		player.teleportTo(
+			host,
+			p, // 传引用
+			// 是否要改变玩家朝向
+			rotatePlayer
+				? host.map.storage.randomForwardDirectionAt(p)
+				: player.direction
+		)
+	else {
+		player.setPosition(host, p, true)
+		player.direction = rotatePlayer
 			? host.map.storage.randomForwardDirectionAt(p)
-			: player.direction,
-		createEffect
-	)
+			: player.direction
+	}
 	// Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
 	return player
 }

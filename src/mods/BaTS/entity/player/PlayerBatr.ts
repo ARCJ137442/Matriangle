@@ -2,7 +2,7 @@ import { uint } from '../../../../legacy/AS3Legacy'
 import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
 import PlayerStats from './stat/PlayerStats'
 import BonusBox from '../item/BonusBox'
-import { iPoint } from '../../../../common/geometricTools'
+import { fPoint, iPoint, iPointRef } from '../../../../common/geometricTools'
 import IMatrix from '../../../../api/server/main/IMatrix'
 import { IShape } from '../../../../api/display/DisplayInterfaces'
 import PlayerAttributes from './attributes/PlayerAttributes'
@@ -15,19 +15,22 @@ import {
 	playerLevelUpExperience,
 	handlePlayerHurt,
 	handlePlayerDeath,
-	handlePlayerLocationChanged,
 	handlePlayerLevelup,
 	playerUseTool,
-	handlePlayerLocationChange,
 	computeFinalCD,
+	bonusBoxTest,
 } from '../../mechanics/BatrMatrixMechanics'
+import { handlePlayerLocationChange } from '../../../native/mechanics/NativeMatrixMechanics'
 import { PlayerAction } from '../../../native/entities/player/controller/PlayerAction'
 import EffectPlayerHurt from '../effect/EffectPlayerHurt'
 import IPlayerBatr from './IPlayerBatr'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from './BatrPlayerEvent'
 import Player_V1 from '../../../native/entities/player/Player_V1'
 import { EnumBatrPlayerAction } from './control/BatrPlayerAction'
-import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
+import { alignToGridCenter_P } from '../../../../api/server/general/PosTransform'
+import EffectPlayerDeathLight from '../effect/EffectPlayerDeathLight'
+import EffectSpawn from '../effect/EffectSpawn'
+import EffectTeleport from '../effect/EffectTeleport'
 
 /**
  * 「Batr玩家」的主类
@@ -308,6 +311,23 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	// !【2023-09-27 23:36:42】删去「面前坐标」
 
 	//============Instance Functions============//
+	/** @override 传送后「拾取奖励箱」「增加特效」 */
+	override teleportTo(host: IMatrix, p: iPointRef): void {
+		// 传送
+		super.teleportTo(host, p)
+		// 在被传送的时候可能捡到奖励箱
+		bonusBoxTest(host, this, p)
+		// 被传送后添加特效
+		host.addEntity(
+			new EffectTeleport(
+				// 对齐网格中央
+				alignToGridCenter_P(p, new fPoint())
+			)
+		)
+		// 只有在「有特效」的情况下算作「被传送」
+		this.stats.beTeleportCount++
+	}
+
 	//====Functions About Hook====//
 	/**
 	 * 钩子函数的作用：
@@ -377,8 +397,21 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 			this.setExperience(host, this.experience + 1)
 	}
 
+	/** @override 增加特效 */
 	override onRespawn(host: IMatrix): void {
+		// 通知控制器、获得并设置位置……
 		super.onRespawn(host)
+		// 在被传送时可能捡到奖励箱
+		bonusBoxTest(host, this, this._position)
+		// 加特效
+		host.addEntities(
+			// 重生特效
+			new EffectSpawn(
+				// 对齐网格中央，只需要生成一个数组
+				alignToGridCenter_P(this._position, new fPoint())
+			),
+			EffectPlayerDeathLight.fromPlayer(this._position, this, true)
+		)
 	}
 
 	override onLocationChange(host: IMatrix, oldP: iPoint): void {
@@ -390,10 +423,11 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	override onLocationChanged(host: IMatrix, newP: iPoint): void {
+		// 外部处理 //
 		super.onLocationChanged(host, newP)
-		handlePlayerLocationChanged(host, this, newP) // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中
-		// 方块事件处理完后，开始处理「方块伤害」等逻辑
-		this.dealMoveInTest(host, true, true) // ! `dealMoveInTestOnLocationChange`只是别名而已
+		// 特有机制 //
+		// 测试「是否拾取到奖励箱」
+		bonusBoxTest(host, this, newP)
 
 		// 通知控制器
 	}

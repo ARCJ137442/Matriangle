@@ -218,6 +218,24 @@ export default interface IPlayer
 		others?: IEntityInGrid[] /* =[] */
 	): boolean
 
+	/**
+	 * （机制の封装）传送到指定地点
+	 * * 不考虑「是否可通过」
+	 * * 用于「单重分派」针对「原生/衍生模组」做取舍，例如「额外的特效」
+	 *   * 📝这样的方式在Julia很自然，但在传统OOP下难以取舍
+	 *
+	 * @param host 所在的母体
+	 * @param p 传送目的地
+	 * @param rotateTo 传送后要被旋转到的方向（默认为自身方向）
+	 * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
+	 */
+	teleportTo(
+		host: IMatrix,
+		p: iPointRef,
+		rotateTo?: mRot /*  = player.direction */,
+		isTeleport?: boolean /*  = false */
+	): void
+
 	// 📌钩子函数 //
 	/**
 	 * 事件：（被玩家）治疗，即「生命值增加」

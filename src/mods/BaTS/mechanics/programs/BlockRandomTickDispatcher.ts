@@ -7,7 +7,7 @@ import {
 } from '../../../../api/server/control/MatrixProgram'
 import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
 import IMatrix from '../../../../api/server/main/IMatrix'
-import { NativeBlockEventType } from '../../registry/BlockEventRegistry'
+import { BlockEventType_Batr } from '../../registry/BlockEventRegistry_Batr'
 
 /**
  * 「方块随机刻分派者」是
@@ -80,7 +80,7 @@ export default class BlockRandomTickDispatcher
 		if (block !== null)
 			host.registry.blockEventRegistry
 				.getEventMapAt(block.id)
-				?.[NativeBlockEventType.RANDOM_TICK]?.(
+				?.[BlockEventType_Batr.RANDOM_TICK]?.(
 					// 取其中「随机刻事件」的处理函数
 					host,
 					position,

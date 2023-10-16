@@ -1,104 +1,100 @@
-import {
-	ReLU_I,
-	intMax,
-	intMin,
-	randInt,
-	randIntBetween,
-} from '../../../common/exMath'
-import {
-	iPoint,
-	fPoint,
-	iPointRef,
-	fPointRef,
-	intPoint,
-	iPointVal,
-} from '../../../common/geometricTools'
-import {
-	randomWithout,
-	randomIn,
-	clearArray,
-	randomInWeightMap,
-	MapFromObject,
-	randomBoolean,
-	mergeRecords,
-	ConcreteClass,
-} from '../../../common/utils'
-import BonusBoxSymbol from '../display/entity/BonusBoxSymbol'
-import { uint, int } from '../../../legacy/AS3Legacy'
 import Block from '../../../api/server/block/Block'
+import { BlockEventMap } from '../../../api/server/block/BlockEventTypes'
+import Entity from '../../../api/server/entity/Entity'
 import {
 	mRot,
 	mRot2axis,
 	mRot2increment,
 } from '../../../api/server/general/GlobalRot'
 import { alignToGridCenter_P } from '../../../api/server/general/PosTransform'
+import { PROJECTILES_SPAWN_DISTANCE } from '../../../api/server/main/GlobalWorldVariables'
 import IMatrix from '../../../api/server/main/IMatrix'
+import IMap from '../../../api/server/map/IMap'
+import { typeID } from '../../../api/server/registry/IWorldRegistry'
+import IMatrixRule from '../../../api/server/rule/IMatrixRule'
+import { HSVtoHEX } from '../../../common/color'
+import {
+	randInt,
+	intMax,
+	intMin,
+	ReLU_I,
+	randIntBetween,
+} from '../../../common/exMath'
+import {
+	fPointRef,
+	fPoint,
+	iPoint,
+	iPointRef,
+	intPoint,
+	iPointVal,
+} from '../../../common/geometricTools'
+import { MDNCodes } from '../../../common/keyCodes'
+import {
+	randomIn,
+	randomWithout,
+	ConcreteClass,
+	MapFromObject,
+	randomBoolean,
+	mergeRecords,
+	clearArray,
+	randomInWeightMap,
+} from '../../../common/utils'
+import { uint, int } from '../../../legacy/AS3Legacy'
 import BSColored from '../../native/block/BSColored'
+import IPlayer from '../../native/entities/player/IPlayer'
+import {
+	getPlayers,
+	spreadPlayer,
+	hitTestEntity_I_Grid,
+	isHitAnyEntity_I_Grid,
+	NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS,
+} from '../../native/mechanics/NativeMatrixMechanics'
+import { PlayerControlConfig } from '../../native/mechanics/program/KeyboardControlCenter'
+import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
+import { MatrixRules_Native } from '../../native/rule/MatrixRules_Native'
+import BSGate from '../block/BSGate'
+import BonusBoxSymbol from '../display/entity/BonusBoxSymbol'
+import EffectBlockLight from '../entity/effect/EffectBlockLight'
+import EffectExplode from '../entity/effect/EffectExplode'
+import EffectPlayerDeathFadeout from '../entity/effect/EffectPlayerDeathFadeout'
+import EffectPlayerDeathLight from '../entity/effect/EffectPlayerDeathLight'
+import EffectPlayerLevelup from '../entity/effect/EffectPlayerLevelup'
 import BonusBox from '../entity/item/BonusBox'
+import IPlayerBatr from '../entity/player/IPlayerBatr'
+import IPlayerHasAttributes, {
+	i_hasAttributes,
+} from '../entity/player/IPlayerHasAttributes'
+import IPlayerHasExperience, {
+	i_hasExperience,
+} from '../entity/player/IPlayerHasExperience'
+import IPlayerHasStats, { i_hasStats } from '../entity/player/IPlayerHasStats'
+import IPlayerHasTeam, { i_hasTeam } from '../entity/player/IPlayerHasTeam'
+import IPlayerHasTool, { i_hasTool } from '../entity/player/IPlayerHasTool'
+import { EnumBatrPlayerAction } from '../entity/player/control/BatrPlayerAction'
+import PlayerStats from '../entity/player/stat/PlayerStats'
 import PlayerTeam from '../entity/player/team/PlayerTeam'
-import ThrownBlock from '../entity/projectile/other/ThrownBlock'
+import Projectile from '../entity/projectile/Projectile'
+import Bullet from '../entity/projectile/bullet/Bullet'
+import BulletBasic from '../entity/projectile/bullet/BulletBasic'
+import BulletBomber from '../entity/projectile/bullet/BulletBomber'
+import BulletNuke from '../entity/projectile/bullet/BulletNuke'
+import BulletTracking from '../entity/projectile/bullet/BulletTracking'
+import Laser from '../entity/projectile/laser/Laser'
 import LaserAbsorption from '../entity/projectile/laser/LaserAbsorption'
 import LaserBasic from '../entity/projectile/laser/LaserBasic'
 import LaserPulse from '../entity/projectile/laser/LaserPulse'
 import LaserTeleport from '../entity/projectile/laser/LaserTeleport'
-import Tool from '../tool/Tool'
+import ThrownBlock from '../entity/projectile/other/ThrownBlock'
+import Wave from '../entity/projectile/other/Wave'
+import { BlockEventType_Batr } from '../registry/BlockEventRegistry_Batr'
+import { NativeBlockEventType } from '../../native/registry/BlockEventRegistry_Native'
 import { BatrBlockIDs } from '../registry/BlockRegistry_Batr'
 import { BonusType, NativeBonusTypes } from '../registry/BonusRegistry'
-import Projectile from '../entity/projectile/Projectile'
-import Wave from '../entity/projectile/other/Wave'
-import { NativeTools } from '../registry/ToolRegistry'
-import IPlayer from '../../native/entities/player/IPlayer'
-import { HSVtoHEX } from '../../../common/color'
-import IMatrixRule from '../../../api/server/rule/IMatrixRule'
-import PlayerStats from '../entity/player/stat/PlayerStats'
-import EffectPlayerDeathLight from '../entity/effect/EffectPlayerDeathLight'
-import EffectPlayerDeathFadeout from '../entity/effect/EffectPlayerDeathFadeout'
-import EffectPlayerLevelup from '../entity/effect/EffectPlayerLevelup'
-import EffectBlockLight from '../entity/effect/EffectBlockLight'
-import IMap from '../../../api/server/map/IMap'
-import Laser from '../entity/projectile/laser/Laser'
-import EffectExplode from '../entity/effect/EffectExplode'
 import Registry_Batr, { toolUsageF } from '../registry/Registry_Batr'
-import BulletBasic from '../entity/projectile/bullet/BulletBasic'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
-import { PROJECTILES_SPAWN_DISTANCE } from '../../../api/server/main/GlobalWorldVariables'
-import BulletNuke from '../entity/projectile/bullet/BulletNuke'
-import BulletTracking from '../entity/projectile/bullet/BulletTracking'
-import BulletBomber from '../entity/projectile/bullet/BulletBomber'
-import BSGate from '../block/BSGate'
-import { BlockEventMap } from '../../../api/server/block/BlockEventTypes'
-import {
-	NativeBlockEventType,
-	NativeBlockTypeEventMap,
-} from '../registry/BlockEventRegistry'
-import IPlayerHasTool, { i_hasTool } from '../entity/player/IPlayerHasTool'
-import IPlayerHasExperience, {
-	i_hasExperience,
-} from '../entity/player/IPlayerHasExperience'
-import IPlayerBatr, { i_batrPlayer } from '../entity/player/IPlayerBatr'
-import IPlayerHasAttributes, {
-	i_hasAttributes,
-} from '../entity/player/IPlayerHasAttributes'
-import IPlayerHasTeam, { i_hasTeam } from '../entity/player/IPlayerHasTeam'
-import IPlayerHasStats, { i_hasStats } from '../entity/player/IPlayerHasStats'
-import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
-import Bullet from '../entity/projectile/bullet/Bullet'
-import {
-	NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS,
-	getPlayers,
-} from '../../native/mechanics/NativeMatrixMechanics'
-import { spreadPlayer } from '../../native/mechanics/NativeMatrixMechanics'
-import Entity from '../../../api/server/entity/Entity'
-import { PlayerControlConfig } from '../../native/mechanics/program/KeyboardControlCenter'
-import { EnumBatrPlayerAction } from '../entity/player/control/BatrPlayerAction'
-import { MDNCodes } from '../../../common/keyCodes'
-import Weapon from '../tool/Weapon'
-import {
-	hitTestEntity_I_Grid,
-	isHitAnyEntity_I_Grid,
-} from '../../native/mechanics/NativeMatrixMechanics'
+import { NativeTools } from '../registry/ToolRegistry'
 import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
-import { MatrixRules_Native } from '../../native/rule/MatrixRules_Native'
+import Tool from '../tool/Tool'
+import Weapon from '../tool/Weapon'
 
 /**
  * 基于旧有AS3游戏《Battle Triangle》的游戏逻辑函数库
@@ -858,58 +854,6 @@ public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRo
 } */
 
 /**
- * 在玩家位置改变**前**触发的「世界逻辑」
- *
- * ! 此时玩家位置尚未改变
- *
- * @param oldP 玩家移动之前的位置（一般是玩家当前位置）
- */
-export function handlePlayerLocationChange(
-	host: IMatrix,
-	player: IPlayer,
-	oldP: iPointRef
-): void {
-	// * 通过注册表分派事件
-	const blockID: typeID | undefined = host.map.storage.getBlockID(oldP)
-	if (
-		blockID !== undefined &&
-		host.registry.blockEventRegistry.hasRegistered(blockID)
-	)
-		(
-			host.registry.blockEventRegistry.getEventMapAt(
-				blockID
-			) as NativeBlockTypeEventMap
-		)?.[NativeBlockEventType.PLAYER_MOVE_OUT]?.(host, oldP, player)
-}
-
-/**
- * 在玩家位置改变**后**触发的「世界逻辑」
- *
- * ! 此时玩家位置已经改变
- * @param newP 玩家移动之后的位置（一般是玩家当前位置）
- */
-export function handlePlayerLocationChanged(
-	host: IMatrix,
-	player: IPlayer,
-	newP: iPointRef
-): void {
-	// ! 「锁定地图位置」已移交至MAP_V1的`limitPoint`中
-	// * 通过注册表分派事件
-	const blockID: typeID | undefined = host.map.storage.getBlockID(newP)
-	if (
-		blockID !== undefined &&
-		host.registry.blockEventRegistry.hasRegistered(blockID)
-	)
-		(
-			host.registry.blockEventRegistry.getEventMapAt(
-				blockID
-			) as NativeBlockTypeEventMap
-		)?.[NativeBlockEventType.PLAYER_MOVED_IN]?.(host, newP, player)
-	// 测试「是否拾取到奖励箱」
-	if (i_batrPlayer(player)) bonusBoxTest(host, player, newP)
-}
-
-/**
  * 根据（使用武器的）玩家与（被玩家使用的）武器计算「攻击者伤害」
  * * 应用：玩家发射抛射体，伤害&系数均转移到抛射体上
  *
@@ -1560,7 +1504,7 @@ export const BATR_BLOCK_EVENT_MAP: BlockEventMap = {
 			}
 		},
 		// * 关闭时：在随机刻后打开（切换其开关状态）
-		[NativeBlockEventType.RANDOM_TICK]: (
+		[BlockEventType_Batr.RANDOM_TICK]: (
 			host: IMatrix,
 			position: iPoint,
 			block: Block<BSGate>
@@ -1576,20 +1520,20 @@ export const BATR_BLOCK_EVENT_MAP: BlockEventMap = {
 	},
 	// * 颜色生成器（外置）
 	[BatrBlockIDs.COLOR_SPAWNER]: {
-		[NativeBlockEventType.RANDOM_TICK]: randomTick_ColorSpawner,
+		[BlockEventType_Batr.RANDOM_TICK]: randomTick_ColorSpawner,
 	},
 	// * 激光陷阱（外置）
 	[BatrBlockIDs.LASER_TRAP]: {
-		[NativeBlockEventType.RANDOM_TICK]: randomTick_LaserTrap,
+		[BlockEventType_Batr.RANDOM_TICK]: randomTick_LaserTrap,
 	},
 	// * 可移动墙（外置）
 	[BatrBlockIDs.MOVEABLE_WALL]: {
-		[NativeBlockEventType.RANDOM_TICK]: randomTick_MoveableWall,
+		[BlockEventType_Batr.RANDOM_TICK]: randomTick_MoveableWall,
 	},
 	// * 支援点
 	[BatrBlockIDs.SUPPLY_POINT]: {
 		// * 机制：收到一个随机刻时，有1/8概率生成一个奖励箱
-		[NativeBlockEventType.RANDOM_TICK]: (
+		[BlockEventType_Batr.RANDOM_TICK]: (
 			host: IMatrix,
 			position: iPoint,
 			block: Block<null>

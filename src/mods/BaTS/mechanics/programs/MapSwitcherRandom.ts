@@ -45,23 +45,25 @@ export default class MapSwitcherRandom
 			let newMap: IMap
 			// 先判断母体是否有相应的规则
 			if (host.rule.hasRule(MatrixRules_Native.key_mapRandomPotentials)) {
-				// 如果母体只有一个地图⇒返回
 				if (
 					host.rule.safeGetRule<Map<IMap, number>>(
 						MatrixRules_Native.key_mapRandomPotentials
 					).size > 1
 				)
-					// 随机地图
+					// 获取随机地图 // !【2023-10-08 22:31:40】现在对地图进行深拷贝
 					newMap = getRandomMap(host.rule).copy(true)
-				// !【2023-10-08 22:31:40】现在对地图进行深拷贝
+				// 如果母体只有一个地图⇒返回
 				else {
-					console.info('母体中只有一个地图，将不会切换！')
+					console.info(
+						'MapSwitcherRandom: 母体中只有一个地图，将不会切换！'
+					)
 					return
 				}
 			} else {
 				console.error('并未在母体中找到相应的「地图随机规则」！')
 				return
 			}
+			// 开始更改地图
 			this.changeMap(host, newMap)
 		}
 	}

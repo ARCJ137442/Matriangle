@@ -13,7 +13,11 @@ import {
 	TPS,
 } from '../../../../api/server/main/GlobalWorldVariables'
 import IMatrix from '../../../../api/server/main/IMatrix'
-import { respawnPlayer_Native } from '../../mechanics/NativeMatrixMechanics'
+import {
+	findFitSpawnPoint,
+	handlePlayerLocationChanged,
+	spreadPlayer,
+} from '../../mechanics/NativeMatrixMechanics'
 import { playerMoveInTest } from '../../mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../mechanics/NativeMatrixMechanics'
 import IPlayer from './IPlayer'
@@ -514,6 +518,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 			this._lives = lives
 		}
 	}
+
 	/**
 	 * 处理「重生」
 	 * * 功能：实现玩家在「死后重生」的等待时间
@@ -532,13 +537,14 @@ export default class Player_V1 extends Entity implements IPlayer {
 	protected dealRespawn(host: IMatrix): void {
 		if (this._respawnTick > 0) this._respawnTick--
 		else {
+			// 重置「重生刻」
 			this._respawnTick = -1
+			// 生命数递减
 			if (!this._lifeNotDecay && this._lives > 0) this._lives--
 			// 自身回满血
 			this._HP = this._maxHP // ! 无需显示更新
-			// 触发母体响应：帮助安排位置、添加特效等
-			respawnPlayer_Native(host, this)
-			this.onRespawn(host)
+			// 触发钩子函数：帮助安排位置、添加特效等
+			this.onRespawn(host) // !【2023-10-17 00:37:31】原`respawnPlayer`现并入此
 		}
 	}
 
@@ -664,6 +670,16 @@ export default class Player_V1 extends Entity implements IPlayer {
 		)
 	}
 
+	teleportTo(
+		host: IMatrix,
+		p: iPointRef,
+		rotateTo: mRot = this._direction
+	): void {
+		// !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
+		this.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
+		this.direction = rotateTo
+	}
+
 	// 📌钩子 //
 	/** @implements 通知控制器 */
 	onHeal(host: IMatrix, amount: number, healer: IPlayer | null): void {
@@ -730,15 +746,44 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 	/** @implements 通知控制器 */
 	onRespawn(host: IMatrix): void {
-		// 通知控制器
+		// 先通知控制器 // ! 不会像AS3版本那样触发「移动」等玩家行为，因为它（一般）只会向玩家分派事件，然后由玩家自己「执行行为」
 		this._controller?.reactPlayerEvent<
 			NativePlayerEventOptions,
 			NativePlayerEvent.RESPAWN
 		>(NativePlayerEvent.RESPAWN, this, host, undefined)
+
+		// ! 然后处理「重生」逻辑：传送 ! //
+
+		let p: iPointRef | null = host.map.storage.randomSpawnPoint
+
+		// 没位置⇒直接分散玩家
+		if (p === null) {
+			spreadPlayer(host, this, true, false)
+			p = this.position // 重新确定重生地
+		}
+		// 有位置⇒直接重生在此/进一步在其周围寻找（应对「已经有玩家占据位置」的情况）
+		else {
+			// !就是↓这里需要一个全新的值，并且因「类型不稳定」不能用缓存技术
+			p = findFitSpawnPoint(host, this, p.copy())
+			// 传送 //
+			// !【2023-10-04 17:25:13】现在直接设置位置
+			this.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
+			// 随机朝向
+			this.direction = host.map.storage.randomForwardDirectionAt(p)
+		}
+
+		// Return
+		// Debug: console.log('respawnPlayer:respawn '+this.customName+'.')
 	}
 
 	onLocationChange(host: IMatrix, oldP: intPoint): void {}
-	onLocationChanged(host: IMatrix, newP: intPoint): void {}
+	onLocationChanged(host: IMatrix, newP: intPoint): void {
+		// 外部处理事件
+		handlePlayerLocationChanged(host, this, newP) // !【2023-10-08 17:09:48】现在统一把逻辑放在`setPosition`中
+
+		// 方块事件处理完后，开始处理「方块伤害」等逻辑
+		this.dealMoveInTest(host, true, true) // ! `dealMoveInTestOnLocationChange`只是别名而已
+	}
 	onPositedBlockUpdate(
 		host: IMatrix,
 		ignoreDelay: boolean,

@@ -1,17 +1,13 @@
 import { BlockTypeEventMap } from '../../../api/server/block/BlockEventTypes'
 import { iPoint } from '../../../common/geometricTools'
 import IMatrix from '../../../api/server/main/IMatrix'
-import IPlayer from '../../native/entities/player/IPlayer'
-import Block from '../../../api/server/block/Block'
+import IPlayer from '../entities/player/IPlayer'
 
 /**
  * 原生的「方块事件类型」
  * * 只有真正用到时才取消注释
  */
 export enum NativeBlockEventType {
-	// TICK = "tick",
-	RANDOM_TICK = 'randomTick', // * 随机刻
-
 	// DESTROY = "destroy",
 	// CREATE = "create",
 	// UPDATE = "update"
@@ -49,19 +45,5 @@ export interface NativeBlockTypeEventMap extends BlockTypeEventMap {
 		host: IMatrix,
 		position: iPoint,
 		p: IPlayer
-	) => void
-
-	/**
-	 * 处理「方块随机刻」
-	 * * 一般由「方块随机刻分派者」分派
-	 * s
-	 * @param host 所在母体
-	 * @param position 触发事件的方块位置（一般与玩家位置相同）
-	 * @param block 被触发随机刻的方块对象（在「方块随机刻分派者」中复用）
-	 */
-	[NativeBlockEventType.RANDOM_TICK]?: (
-		host: IMatrix,
-		position: iPoint,
-		block: Block
 	) => void
 }
