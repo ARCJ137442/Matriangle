@@ -27,5 +27,7 @@ module.exports = {
 		path: path.resolve(__dirname, 'dist'),
 	},
 	// 参考：<https://juejin.cn/post/7223644725835644989>
-	externals: [nodeExternals()],
+	externals: [nodeExternals({
+		allowlist: [/^matriangle.*/],
+	})],
 }
