@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import {
-	randInt,
-	randIntBetween,
-	randModWithout,
-} from '../../../common/exMath'
+import { randInt, randIntBetween, randModWithout } from '../../../common/exMath'
 import { iPoint, iPointRef, iPointVal } from '../../../common/geometricTools'
 import {
 	generateArray,
@@ -16,7 +12,9 @@ import {
 import { mRot, rotate_M } from '../../../api/server/general/GlobalRot'
 import { int, uint } from '../../../legacy/AS3Legacy'
 import BlockAttributes from '../../../api/server/block/BlockAttributes'
-import IMapStorage, { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
+import IMapStorage, {
+	BlockConstructorMap,
+} from '../../../api/server/map/IMapStorage'
 import {
 	JSObject,
 	JSObjectValue,
@@ -34,7 +32,7 @@ import {
 	NativeBlockPrototypes,
 	NATIVE_BLOCK_CONSTRUCTOR_MAP,
 	NativeBlockIDs,
-} from '../registry/NativeBlockRegistry'
+} from '../registry/BlockRegistry_Native'
 
 /** 现在由于使用ESLint，直接抽象到最外面当函数库 */
 function _temp_copyContent_F(

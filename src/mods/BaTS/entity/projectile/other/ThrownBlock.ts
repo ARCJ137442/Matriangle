@@ -11,7 +11,6 @@ import {
 	alignToGridCenter_P,
 	alignToGrid_P,
 } from '../../../../../api/server/general/PosTransform'
-import { NativeBlockAttributes } from '../../../registry/BlockAttributesRegistry'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 import EffectBlockLight from '../../effect/EffectBlockLight'
 import { computeFinalDamage } from '../../../mechanics/BatrMatrixMechanics'
@@ -21,6 +20,7 @@ import {
 } from '../../../../native/mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
+import { BlockAttributes_Native } from '../../../../native/registry/BlockRegistry_Native'
 
 /**
  * 「掷出的方块」是
@@ -189,7 +189,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		alignToGrid_P(this._position, _temp_iPoint)
 		// 放置判断
 		if (
-			host.map.isBlockBreakable(_temp_iPoint, NativeBlockAttributes.VOID)
+			host.map.isBlockBreakable(_temp_iPoint, BlockAttributes_Native.VOID)
 		) {
 			// 放置
 			host.map.storage.setBlock(_temp_iPoint, this._carriedBlock)

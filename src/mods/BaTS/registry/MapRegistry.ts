@@ -11,20 +11,20 @@ import {
 	setBlock,
 	drawLaserTrapDownPillar,
 	drawLaserTrapUpPillar,
-	addSpawnPointWithMark,
 	fillReflectBlock,
 	setReflectBlock,
 	fillReflectMirrorBlock,
 	setReflectMirrorBlock,
-} from '../../native/maps/MapConstructTools'
-import MapStorageSparse from '../../native/maps/MapStorageSparse'
-import Map_V1 from '../../native/maps/Map_V1'
+} from '../../native/map/MapConstructTools_Native'
+import { addSpawnPointWithMark } from '../map/MapConstructTools_BaTS'
+import MapStorageSparse from '../../native/map/MapStorageSparse'
+import Map_V1 from '../../native/map/Map_V1'
 import {
 	ALL_BATR_BLOCKS,
 	BatrBlockIDs,
 	BatrBlockPrototypes,
-} from './BlockRegistry'
-import { NativeBlockPrototypes } from '../../native/registry/NativeBlockRegistry'
+} from './BlockRegistry_Batr'
+import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
 
 /**
  * 定义所有世界原生（自带）的地图

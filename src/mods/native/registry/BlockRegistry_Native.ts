@@ -1,9 +1,22 @@
 import Block from '../../../api/server/block/Block'
 import { typeID } from '../../../api/server/registry/IWorldRegistry'
-import BSColored from '../../BaTS/block/BSColored'
-import { NativeBlockAttributes } from '../../BaTS/registry/BlockAttributesRegistry'
+import BSColored from '../block/BSColored'
 import { MapFromGeneratorKV } from '../../../common/utils'
 import { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
+import BlockAttributes from '../../../api/server/block/BlockAttributes'
+
+/**
+ * 原生「方块属性」注册表
+ *
+ * ! 【20230910 9:33:30】独立成单个注册表，避免循环导入问题
+ * * 避免在未生成NativeBlockAttributes时注册「方块类型」时引用各自方块类，而类中又引入NativeBlockAttributes的问题
+ */
+export module BlockAttributes_Native {
+	/** 空：就像「空气」一样 */
+	export const VOID: BlockAttributes = new BlockAttributes(16777215, 0).asGas
+	/** 颜色方块：一般的「固体」 */
+	export const COLORED_BLOCK: BlockAttributes = new BlockAttributes(0).asSolid
+}
 
 /**
  * 方块原型列表
@@ -15,7 +28,7 @@ import { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
 export namespace NativeBlockPrototypes {
 	export const VOID: Block<null> = new Block(
 		'Void',
-		NativeBlockAttributes.VOID,
+		BlockAttributes_Native.VOID,
 		null
 	)
 
@@ -25,7 +38,7 @@ export namespace NativeBlockPrototypes {
 	 */
 	export const COLORED: Block<BSColored> = new Block(
 		'Colored',
-		NativeBlockAttributes.COLORED_BLOCK,
+		BlockAttributes_Native.COLORED_BLOCK,
 		new BSColored(0x000000)
 	) // 默认的黑色方块
 }

@@ -7,10 +7,9 @@ import { identity } from '../../../common/utils'
 import { int, uint } from '../../../legacy/AS3Legacy'
 import Block from '../../../api/server/block/Block'
 import IMapStorage from '../../../api/server/map/IMapStorage'
-import { BatrBlockPrototypes } from '../../BaTS/registry/BlockRegistry'
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
-const _temp_point_2d: iPoint = new iPoint(2)
+export const _temp_point_2d: iPoint = new iPoint(2)
 
 /**
  * ! 目前这些「世界内置地图」还是一种「迁移自BaTr Gamma」的情况，仍然是以二维为主
@@ -364,17 +363,4 @@ export function drawLaserTrapBox(
 	setBlock(storage, x - 1, y - 1, blockWall, clone)
 	setBlock(storage, x + 1, y + 1, blockWall, clone)
 	setBlock(storage, x - 1, y + 1, blockWall, clone)
-}
-
-export function addSpawnPointWithMark(
-	storage: IMapStorage,
-	x: int,
-	y: int
-): void {
-	_temp_point_2d.copyFromArgs(x, y)
-	storage.addSpawnPointAt(_temp_point_2d)
-	storage.setBlock(
-		_temp_point_2d,
-		BatrBlockPrototypes.SPAWN_POINT_MARK.copy() // ! 属性固定且无状态，故浅拷贝
-	)
 }

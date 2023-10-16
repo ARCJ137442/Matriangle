@@ -1,9 +1,9 @@
 ﻿import { uint, int } from '../../../legacy/AS3Legacy'
-import PlayerTeam from '../../BaTS/entity/player/team/PlayerTeam'
+import PlayerTeam from '../entity/player/team/PlayerTeam'
 import { TPS } from '../../../api/server/main/GlobalWorldVariables'
 import { identity, key } from '../../../common/utils'
-import { BonusType } from '../../BaTS/registry/BonusRegistry'
-import Tool from '../../BaTS/tool/Tool'
+import { BonusType } from '../registry/BonusRegistry'
+import Tool from '../tool/Tool'
 import {
 	JSObject,
 	JSObjectValue,

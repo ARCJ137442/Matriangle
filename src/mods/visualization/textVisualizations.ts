@@ -13,7 +13,7 @@ import {
 	i_hasDirection,
 	i_hasPosition,
 } from '../../api/server/entity/EntityInterfaces'
-import MapStorageSparse from '../native/maps/MapStorageSparse'
+import MapStorageSparse from '../native/map/MapStorageSparse'
 import { alignToGrid_P } from '../../api/server/general/PosTransform'
 import PlayerBatr from '../BaTS/entity/player/PlayerBatr'
 import IMapStorage from '../../api/server/map/IMapStorage'
@@ -25,11 +25,12 @@ import Effect from '../BaTS/entity/effect/Effect'
 import Projectile from '../BaTS/entity/projectile/Projectile'
 import BlockRandomTickDispatcher from '../BaTS/mechanics/programs/BlockRandomTickDispatcher'
 import { nameOfAxis_M, nameOfRot_M } from '../../api/server/general/GlobalRot'
-import { NativeBlockIDs } from '../native/registry/NativeBlockRegistry'
+import { NativeBlockIDs } from '../native/registry/BlockRegistry_Native'
 import EffectExplode from '../BaTS/entity/effect/EffectExplode'
 import MapSwitcherRandom from '../BaTS/mechanics/programs/MapSwitcherRandom'
 import IMatrix from '../../api/server/main/IMatrix'
 import IPlayer, { isPlayer } from '../native/entities/player/IPlayer'
+import { getEntityType } from '../BaTS/registry/EntityRegistry'
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -59,8 +60,8 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 	return showName(
 		// 自定义名称
 		(entity as IPlayer)?.customName ??
-			// 类名
-			getClass(entity)?.name ??
+			// Type.name
+			getEntityType(entity).name ??
 			// 未定义
 			'#UNDEF',
 		maxLength

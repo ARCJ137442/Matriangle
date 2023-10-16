@@ -4,7 +4,7 @@ import { MatrixProgramLabel } from '../../../../api/server/control/MatrixProgram
 import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
 import IMatrix from '../../../../api/server/main/IMatrix'
 import IMatrixRule from '../../../../api/server/rule/IMatrixRule'
-import { MatrixRules_Batr } from '../../../native/rule/MatrixRules_Batr'
+import { MatrixRules_Batr } from '../../rule/MatrixRules_Batr'
 import { BonusType } from '../../registry/BonusRegistry'
 import {
 	addBonusBoxInRandomTypeByRule,

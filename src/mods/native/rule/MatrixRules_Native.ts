@@ -17,8 +17,8 @@ import {
 	uniSaveJSObject,
 } from '../../../common/JSObjectify'
 import { loadRecursiveCriterion_true } from '../../../common/JSObjectify'
-import Map_V1 from '../maps/Map_V1'
-import MapStorageSparse from '../maps/MapStorageSparse'
+import Map_V1 from '../map/Map_V1'
+import MapStorageSparse from '../map/MapStorageSparse'
 import { RuleDefaultValueMap } from '../../../api/server/rule/IMatrixRule'
 
 /**

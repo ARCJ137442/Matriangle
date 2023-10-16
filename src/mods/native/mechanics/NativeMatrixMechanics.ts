@@ -1,41 +1,44 @@
-import {
-	iPointRef,
-	fPointVal,
-	fPoint,
-	iPointVal,
-	iPoint,
-	traverseNDSquareSurface,
-	fPointRef,
-} from '../../../common/geometricTools'
-import { MDNCodes } from '../../../common/keyCodes'
-import { int, int$MIN_VALUE, uint } from '../../../legacy/AS3Legacy'
 import BlockAttributes from '../../../api/server/block/BlockAttributes'
 import Entity from '../../../api/server/entity/Entity'
 import {
+	IEntityInGrid,
 	i_inGrid,
 	i_outGrid,
 	i_hasDirection,
-	IEntityInGrid,
 } from '../../../api/server/entity/EntityInterfaces'
-import IMap from '../../../api/server/map/IMap'
 import { mRot } from '../../../api/server/general/GlobalRot'
 import {
 	alignToGridCenter_P,
 	alignToGrid_P,
 } from '../../../api/server/general/PosTransform'
 import IMatrix from '../../../api/server/main/IMatrix'
+import IMap from '../../../api/server/map/IMap'
+import {
+	iPointVal,
+	fPointVal,
+	fPoint,
+	iPoint,
+	iPointRef,
+	traverseNDSquareSurface,
+	fPointRef,
+} from '../../../common/geometricTools'
+import { MDNCodes } from '../../../common/keyCodes'
+import {
+	uint,
+	int,
+	int$MIN_VALUE,
+	int$MAX_VALUE,
+	uint$MAX_VALUE,
+} from '../../../legacy/AS3Legacy'
 import EffectPlayerDeathLight from '../../BaTS/entity/effect/EffectPlayerDeathLight'
 import EffectSpawn from '../../BaTS/entity/effect/EffectSpawn'
 import EffectTeleport from '../../BaTS/entity/effect/EffectTeleport'
 import { i_batrPlayer } from '../../BaTS/entity/player/IPlayerBatr'
 import { i_hasStats } from '../../BaTS/entity/player/IPlayerHasStats'
-import {
-	computeFinalBlockDamage,
-	bonusBoxTest,
-} from '../../BaTS/mechanics/BatrMatrixMechanics'
+import { bonusBoxTest } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
-import { PlayerControlConfig } from './program/KeyboardControlCenter'
 import { MatrixRules_Native } from '../rule/MatrixRules_Native'
+import { PlayerControlConfig } from './program/KeyboardControlCenter'
 
 /**
  * 所有母体的「原生逻辑」
@@ -54,7 +57,6 @@ import { MatrixRules_Native } from '../rule/MatrixRules_Native'
  * * 注：这种特性在Julia中很自然（就是「声明不同方法+invoke」的事情），但在传统OOP中就没那么显而易见
  */
 //================🎛️世界加载================//
-
 // 世界规则相关 //
 
 //================⚙️实体管理================//
@@ -314,6 +316,38 @@ export function playerMoveInTest(
 	}
 	return returnBoo
 }
+
+/**
+ * 综合「玩家最大生命值」「规则的『窒息伤害』」「方块的『玩家伤害』」计算「最终方块伤害」
+ * * 返回负数以包括「治疗」的情况
+ *
+ * 具体规则：
+ * * int$MIN_VALUE -> int$MIN_VALUE（忽略）
+ * * [-inf, -1) -> playerDamage+1（偏置后的治疗值）
+ * * -1 -> 重定向到「使用规则伤害作『方块伤害』」
+ * * [0,100] -> player.maxHP * playerDamage/100（百分比）
+ * * (100...] -> playerDamage-100（偏置后的实际伤害值）
+ * * int.MAX_VALUE -> uint.MAX_VALUE
+ * @return 最终计算好的「方块伤害」
+ */
+export const computeFinalBlockDamage = (
+	playerMaxHP: uint,
+	ruleAsphyxiaDamage: int,
+	playerDamage: int
+): uint =>
+	playerDamage === int$MIN_VALUE
+		? int$MIN_VALUE
+		: playerDamage < -1
+		? playerDamage + 1
+		: playerDamage == -1
+		? computeFinalBlockDamage(playerMaxHP, 0, ruleAsphyxiaDamage) // 为了避免「循环递归」的问题，这里使用了硬编码0
+		: playerDamage == 0
+		? 0
+		: playerDamage <= 100
+		? uint((playerMaxHP * playerDamage) / 100)
+		: playerDamage == int$MAX_VALUE
+		? uint$MAX_VALUE
+		: playerDamage - 100
 
 /**
  * 传送玩家到指定位置

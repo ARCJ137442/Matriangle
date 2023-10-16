@@ -1,5 +1,5 @@
 import { uint } from '../../../legacy/AS3Legacy'
-import BSColored from './BSColored'
+import BSColored from '../../native/block/BSColored'
 
 /**
  * 「二重颜色状态」是

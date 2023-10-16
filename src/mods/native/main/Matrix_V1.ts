@@ -2,7 +2,6 @@
 import Entity from '../../../api/server/entity/Entity'
 import EntitySystem from './EntitySystem'
 import IMap from '../../../api/server/map/IMap'
-import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
 import IMatrixRule from '../../../api/server/rule/IMatrixRule'
 import IMatrix from '../../../api/server/main/IMatrix'
 import IWorldRegistry from '../../../api/server/registry/IWorldRegistry'
@@ -72,12 +71,6 @@ export default class Matrix_V1 implements IMatrix {
 	}
 	set map(value: IMap) {
 		this._currentMap = value
-	}
-
-	get mapTransformPeriod(): uint {
-		return this._rule.safeGetRule<uint>(
-			MatrixRules_Batr.key_mapTransformTime
-		)
 	}
 
 	//========🌟实体部分：实体管理、实体事件等========//

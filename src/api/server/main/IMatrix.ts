@@ -1,5 +1,4 @@
-﻿import { uint } from '../../../legacy/AS3Legacy'
-import IMap from '../map/IMap'
+﻿import IMap from '../map/IMap'
 import Entity from '../entity/Entity'
 import IMatrixRule from '../rule/IMatrixRule'
 import IWorldRegistry from '../registry/IWorldRegistry'
@@ -94,11 +93,7 @@ export default interface IMatrix {
 	// get mapIndex(): uint; // !【2023-10-02 23:26:35】现在讨论「索引」无意义
 	// get mapWidth(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
 	// get mapHeight(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
-	/**
-	 * 获取地图的「变换周期」
-	 * * 或许也需要外置？
-	 */
-	get mapTransformPeriod(): uint
+	// get mapTransformPeriod(): uint // !【2023-10-16 23:50:36】地图的「变换周期」现在也外置了
 	// set mapVisible(value: boolean); // !【2023-10-02 22:36:32】弃用：不再涉及「显示呈现」
 
 	//========🎯规则部分：规则加载、规则读写========//

@@ -2,7 +2,7 @@ import { int, uint } from '../../legacy/AS3Legacy'
 import PlayerBatr from '../../mods/BaTS/entity/player/PlayerBatr'
 import AIControllerGenerator from '../../mods/BaTS/entity/player/ai/AIControllerGenerator'
 import { NativeAIPrograms } from '../../mods/BaTS/entity/player/ai/NativeAIPrograms'
-import MapStorageSparse from '../../mods/native/maps/MapStorageSparse'
+import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
 import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
@@ -15,7 +15,7 @@ import {
 } from '../../mods/BaTS/mechanics/BatrMatrixMechanics'
 import { projectEntities } from '../../mods/native/mechanics/NativeMatrixMechanics'
 import { respawnAllPlayer } from '../../mods/native/mechanics/NativeMatrixMechanics'
-import WorldRegistry_V1 from '../../mods/native/registry/Registry_V1'
+import WorldRegistry_V1 from '../../mods/BaTS/registry/Registry_Batr'
 import { NativeTools as BatrTools } from '../../mods/BaTS/registry/ToolRegistry'
 import Matrix_V1 from '../../mods/native/main/Matrix_V1'
 import {
@@ -40,8 +40,8 @@ import { BATR_BLOCK_EVENT_MAP } from '../../mods/BaTS/mechanics/BatrMatrixMechan
 import BlockEventRegistry from '../../api/server/block/BlockEventRegistry'
 import MapSwitcherRandom from '../../mods/BaTS/mechanics/programs/MapSwitcherRandom'
 import IPlayerBatr from '../../mods/BaTS/entity/player/IPlayerBatr'
-import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from '../../mods/native/registry/NativeBlockRegistry'
-import { BATR_BLOCK_CONSTRUCTOR_MAP } from '../../mods/BaTS/registry/BlockRegistry'
+import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from '../../mods/native/registry/BlockRegistry_Native'
+import { BATR_BLOCK_CONSTRUCTOR_MAP } from '../../mods/BaTS/registry/BlockRegistry_Batr'
 import BonusBoxGenerator from '../../mods/BaTS/mechanics/programs/BonusBoxGenerator'
 import IMatrix from '../../api/server/main/IMatrix'
 import IMatrixRule from '../../api/server/rule/IMatrixRule'
@@ -49,7 +49,7 @@ import IWorldRegistry from '../../api/server/registry/IWorldRegistry'
 import { BatrDefaultMaps } from '../../mods/BaTS/registry/MapRegistry'
 import IMap from '../../api/server/map/IMap'
 import { stackMaps } from './stackedMaps'
-import Map_V1 from '../../mods/native/maps/Map_V1'
+import Map_V1 from '../../mods/native/map/Map_V1'
 import WebMessageRouter from '../../mods/webIO/WebMessageRouter'
 import WebController from '../../mods/webIO/controller/WebController'
 import KeyboardControlCenter, {
@@ -64,7 +64,7 @@ import { MatrixProgram } from '../../api/server/control/MatrixProgram'
 import { BlockConstructorMap } from '../../api/server/map/IMapStorage'
 import MatrixRule_V1 from '../../mods/native/rule/MatrixRule_V1'
 import { MatrixRules_Native } from '../../mods/native/rule/MatrixRules_Native'
-import { MatrixRules_Batr } from '../../mods/native/rule/MatrixRules_Batr'
+import { MatrixRules_Batr } from '../../mods/BaTS/rule/MatrixRules_Batr'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {

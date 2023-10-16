@@ -1,10 +1,10 @@
-import IMap from "../../api/server/map/IMap"
-import { iPoint } from "../../common/geometricTools"
-import { uint } from "../../legacy/AS3Legacy"
-import MapStorageSparse from "../../mods/native/maps/MapStorageSparse"
-import Map_V1 from "../../mods/native/maps/Map_V1"
-import { NativeBlockPrototypes } from "../../mods/native/registry/NativeBlockRegistry"
-import { sparseMapMV稀疏地图母体可视化 } from "../../mods/visualization/textVisualizations"
+import IMap from '../../api/server/map/IMap'
+import { iPoint } from '../../common/geometricTools'
+import { uint } from '../../legacy/AS3Legacy'
+import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
+import Map_V1 from '../../mods/native/map/Map_V1'
+import { NativeBlockPrototypes } from '../../mods/native/registry/BlockRegistry_Native'
+import { sparseMapMV稀疏地图母体可视化 } from '../../mods/visualization/textVisualizations'
 
 /**
  * 用于测试「一个母体，异维地图」

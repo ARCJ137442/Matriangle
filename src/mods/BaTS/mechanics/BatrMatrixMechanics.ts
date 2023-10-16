@@ -24,13 +24,7 @@ import {
 	ConcreteClass,
 } from '../../../common/utils'
 import BonusBoxSymbol from '../display/entity/BonusBoxSymbol'
-import {
-	uint,
-	int,
-	uint$MAX_VALUE,
-	int$MIN_VALUE,
-	int$MAX_VALUE,
-} from '../../../legacy/AS3Legacy'
+import { uint, int } from '../../../legacy/AS3Legacy'
 import Block from '../../../api/server/block/Block'
 import {
 	mRot,
@@ -39,7 +33,7 @@ import {
 } from '../../../api/server/general/GlobalRot'
 import { alignToGridCenter_P } from '../../../api/server/general/PosTransform'
 import IMatrix from '../../../api/server/main/IMatrix'
-import BSColored from '../block/BSColored'
+import BSColored from '../../native/block/BSColored'
 import BonusBox from '../entity/item/BonusBox'
 import PlayerTeam from '../entity/player/team/PlayerTeam'
 import ThrownBlock from '../entity/projectile/other/ThrownBlock'
@@ -48,7 +42,7 @@ import LaserBasic from '../entity/projectile/laser/LaserBasic'
 import LaserPulse from '../entity/projectile/laser/LaserPulse'
 import LaserTeleport from '../entity/projectile/laser/LaserTeleport'
 import Tool from '../tool/Tool'
-import { BatrBlockIDs } from '../registry/BlockRegistry'
+import { BatrBlockIDs } from '../registry/BlockRegistry_Batr'
 import { BonusType, NativeBonusTypes } from '../registry/BonusRegistry'
 import Projectile from '../entity/projectile/Projectile'
 import Wave from '../entity/projectile/other/Wave'
@@ -64,7 +58,7 @@ import EffectBlockLight from '../entity/effect/EffectBlockLight'
 import IMap from '../../../api/server/map/IMap'
 import Laser from '../entity/projectile/laser/Laser'
 import EffectExplode from '../entity/effect/EffectExplode'
-import Registry_V1, { toolUsageF } from '../../native/registry/Registry_V1'
+import Registry_Batr, { toolUsageF } from '../registry/Registry_Batr'
 import BulletBasic from '../entity/projectile/bullet/BulletBasic'
 import { typeID } from '../../../api/server/registry/IWorldRegistry'
 import { PROJECTILES_SPAWN_DISTANCE } from '../../../api/server/main/GlobalWorldVariables'
@@ -87,7 +81,7 @@ import IPlayerHasAttributes, {
 } from '../entity/player/IPlayerHasAttributes'
 import IPlayerHasTeam, { i_hasTeam } from '../entity/player/IPlayerHasTeam'
 import IPlayerHasStats, { i_hasStats } from '../entity/player/IPlayerHasStats'
-import { NativeBlockPrototypes } from '../../native/registry/NativeBlockRegistry'
+import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
 import Bullet from '../entity/projectile/bullet/Bullet'
 import {
 	NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS,
@@ -103,7 +97,7 @@ import {
 	hitTestEntity_I_Grid,
 	isHitAnyEntity_I_Grid,
 } from '../../native/mechanics/NativeMatrixMechanics'
-import { MatrixRules_Batr } from '../../native/rule/MatrixRules_Batr'
+import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
 import { MatrixRules_Native } from '../../native/rule/MatrixRules_Native'
 
 /**
@@ -469,7 +463,7 @@ export function playerUseTool(
 	rot: uint,
 	chargePercent: number
 ): void {
-	;(host.registry as Registry_V1)?.toolUsageMap.get(player.tool.id)?.(
+	;(host.registry as Registry_Batr)?.toolUsageMap.get(player.tool.id)?.(
 		host,
 		player,
 		player.tool,
@@ -477,7 +471,7 @@ export function playerUseTool(
 		chargePercent
 	)
 	// 没注册的工具才报信息
-	if ((host.registry as Registry_V1)?.toolUsageMap.has(player.tool.id)) {
+	if ((host.registry as Registry_Batr)?.toolUsageMap.has(player.tool.id)) {
 		/* empty */
 	} else
 		console.warn(
@@ -914,38 +908,6 @@ export function handlePlayerLocationChanged(
 	// 测试「是否拾取到奖励箱」
 	if (i_batrPlayer(player)) bonusBoxTest(host, player, newP)
 }
-
-/**
- * 综合「玩家最大生命值」「规则的『窒息伤害』」「方块的『玩家伤害』」计算「最终方块伤害」
- * * 返回负数以包括「治疗」的情况
- *
- * 具体规则：
- * * int$MIN_VALUE -> int$MIN_VALUE（忽略）
- * * [-inf, -1) -> playerDamage+1（偏置后的治疗值）
- * * -1 -> 重定向到「使用规则伤害作『方块伤害』」
- * * [0,100] -> player.maxHP * playerDamage/100（百分比）
- * * (100...] -> playerDamage-100（偏置后的实际伤害值）
- * * int.MAX_VALUE -> uint.MAX_VALUE
- * @return 最终计算好的「方块伤害」
- */
-export const computeFinalBlockDamage = (
-	playerMaxHP: uint,
-	ruleAsphyxiaDamage: int,
-	playerDamage: int
-): uint =>
-	playerDamage === int$MIN_VALUE
-		? int$MIN_VALUE
-		: playerDamage < -1
-		? playerDamage + 1
-		: playerDamage == -1
-		? computeFinalBlockDamage(playerMaxHP, 0, ruleAsphyxiaDamage) // 为了避免「循环递归」的问题，这里使用了硬编码0
-		: playerDamage == 0
-		? 0
-		: playerDamage <= 100
-		? uint((playerMaxHP * playerDamage) / 100)
-		: playerDamage == int$MAX_VALUE
-		? uint$MAX_VALUE
-		: playerDamage - 100
 
 /**
  * 根据（使用武器的）玩家与（被玩家使用的）武器计算「攻击者伤害」

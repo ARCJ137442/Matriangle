@@ -1,6 +1,6 @@
 import { iPoint, iPointRef, iPointVal } from '../../common/geometricTools'
 import { uint } from '../../legacy/AS3Legacy'
-import MapStorageSparse from '../../mods/native/maps/MapStorageSparse'
+import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
 import { mapVH地图可视化_高维 } from '../../mods/visualization/textVisualizations'
 import { BatrDefaultMaps } from '../../mods/BaTS/registry/MapRegistry'
 import IMap from '../../api/server/map/IMap'
