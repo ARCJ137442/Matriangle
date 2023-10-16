@@ -1,5 +1,5 @@
 ﻿import { uint } from '../../../legacy/AS3Legacy'
-import MatrixRuleBatr from '../../native/rule/MatrixRuleBatr'
+import { MatrixRules_Batr } from '../../native/rule/MatrixRules_Batr'
 
 /**
  * 母体の统计

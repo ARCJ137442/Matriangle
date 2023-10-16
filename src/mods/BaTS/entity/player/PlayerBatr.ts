@@ -22,14 +22,12 @@ import {
 	computeFinalCD,
 } from '../../mechanics/BatrMatrixMechanics'
 import { PlayerAction } from '../../../native/entities/player/controller/PlayerAction'
-import { NativePlayerEvent } from '../../../native/entities/player/controller/PlayerEvent'
-import { NativePlayerEventOptions } from '../../../native/entities/player/controller/PlayerEvent'
 import EffectPlayerHurt from '../effect/EffectPlayerHurt'
-import MatrixRuleBatr from '../../../native/rule/MatrixRuleBatr'
 import IPlayerBatr from './IPlayerBatr'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from './BatrPlayerEvent'
 import Player_V1 from '../../../native/entities/player/Player_V1'
 import { EnumBatrPlayerAction } from './control/BatrPlayerAction'
+import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
 
 /**
  * 「Batr玩家」的主类
@@ -95,7 +93,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 
 	// !【2023-09-27 19:44:37】现在废除「根据母体计算CD」这条规则，改为更软编码的「世界根据规则在分派工具时决定」方式
 	// !【2023-09-28 17:32:59】💭设置工具使用时间，这个不需要过早优化显示，但若以后的显示方式不是「充能条」，它就需要更新了
-	// !【2023-09-30 20:09:21】废除「工具相关函数」，但这使得世界没法在Player层保证「及时更新」，所以需要在外部「设置武器」时及时更新
+	// !【2023-09-30 20:09:21】废除「工具相关函数」，但这使得世界没法在Player层保证「及时更新」，所以需要在外部「设置工具」时及时更新
 
 	// 经验 //
 
@@ -250,7 +248,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	static readonly SIZE: number = 1 * DEFAULT_SIZE
 	/** 线条粗细 */
 	static readonly LINE_SIZE: number = DEFAULT_SIZE / 96
-	/** 所持有方块（若武器有🤔）的透明度 */
+	/** 所持有方块（若工具有🤔）的透明度 */
 	static readonly CARRIED_BLOCK_ALPHA: number = 1 / 4
 
 	// TODO: 继续思考&处理「显示依赖」的事。。。
@@ -325,15 +323,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		amount: uint,
 		healer: IPlayer | null = null
 	): void {
-		super.onHeal(host, amount, healer)
 		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			NativePlayerEventOptions,
-			NativePlayerEvent.HEAL
-		>(NativePlayerEvent.HEAL, this, host, {
-			healer: healer,
-			amount: amount,
-		})
+		super.onHeal(host, amount, healer)
 	}
 
 	/**
@@ -344,62 +335,32 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		damage: uint,
 		attacker: IPlayer | null = null
 	): void {
-		super.onHurt(host, damage, attacker)
 		// this._hurtOverlay.playAnimation();
 		host.addEntity(
 			EffectPlayerHurt.fromPlayer(this.position, this, false /* 淡出 */)
 		)
 		handlePlayerHurt(host, attacker, this, damage)
-
 		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			NativePlayerEventOptions,
-			NativePlayerEvent.HURT
-		>(NativePlayerEvent.HURT, this, host, {
-			attacker: attacker,
-			damage: damage,
-		})
+		super.onHurt(host, damage, attacker)
 	}
 
 	/**
-	 * @implements 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
+	 * @implements
+	 * 所有「BaTS特有的机制」如「添加特效」都被迁移至此（单重载）
+	 * 对于「更新统计」，因涉及「同时控制双方逻辑」，所以放入「母体逻辑」中
 	 */
 	override onDeath(
 		host: IMatrix,
 		damage: uint,
 		attacker: IPlayer | null = null
 	): void {
+		// 重生等逻辑
 		super.onDeath(host, damage, attacker)
 		// 清除「储备生命值」 //
 		this.heal = 0
 
 		// 重置「工具使用状态」 //
 		this.tool.resetUsingState()
-
-		// 通知控制器 // !【2023-10-10 00:22:13】必须在「母体处理」（坐标移动）之前通知控制器，否则可能会有「非法坐标」报错
-		this._controller?.reactPlayerEvent<
-			NativePlayerEventOptions,
-			NativePlayerEvent.DEATH
-		>(NativePlayerEvent.DEATH, this, host, {
-			attacker: attacker,
-			damage: damage,
-		})
-
-		// 触发击杀者的「击杀玩家」事件 // !【2023-10-10 00:45:52】必须在「设置重生」之前
-		if (attacker !== null && !attacker.isRespawning /* 不能在重生 */)
-			attacker.onKillOther(host, this, damage)
-
-		// 处理「重生」「生命数」 //
-		// 重置「重生刻」
-		this._respawnTick = host.rule.safeGetRule<uint>(
-			MatrixRuleBatr.key_defaultRespawnTime
-		)
-		// 检测「生命耗尽」 // !【2023-10-05 18:21:43】死了就是死了：生命值耗尽⇒通知世界移除自身
-		if (!this.lifeNotDecay && this._lives <= 0) {
-			// ! 生命数是在重生的时候递减的
-			console.log(`${this.customName} 生命耗尽，通知母体移除自身`)
-			host.removeEntity(this)
-		}
 
 		// 通知母体处理 //
 		handlePlayerDeath(host, attacker, this, damage)
@@ -414,44 +375,10 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// 击杀玩家，经验++
 		if (victim !== this && !this.isRespawning)
 			this.setExperience(host, this.experience + 1)
-
-		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			NativePlayerEventOptions,
-			NativePlayerEvent.KILL_PLAYER
-		>(NativePlayerEvent.KILL_PLAYER, this, host, {
-			victim: victim,
-			damage: damage,
-		})
 	}
 
 	override onRespawn(host: IMatrix): void {
 		super.onRespawn(host)
-		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			NativePlayerEventOptions,
-			NativePlayerEvent.RESPAWN
-		>(NativePlayerEvent.RESPAWN, this, host, undefined)
-	}
-
-	public onMapTransform(host: IMatrix): void {
-		// 地图切换后，武器状态清除
-		this._tool.resetUsingState()
-
-		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			BatrPlayerEventOptions,
-			BatrPlayerEvent.MAP_TRANSFORM
-		>(BatrPlayerEvent.MAP_TRANSFORM, this, host, undefined)
-		// TODO: 显示更新
-	}
-
-	public onPickupBonusBox(host: IMatrix, box: BonusBox): void {
-		// 通知控制器
-		this._controller?.reactPlayerEvent<
-			BatrPlayerEventOptions,
-			BatrPlayerEvent.PICKUP_BONUS_BOX
-		>(BatrPlayerEvent.PICKUP_BONUS_BOX, this, host, { box: box })
 	}
 
 	override onLocationChange(host: IMatrix, oldP: iPoint): void {
@@ -471,12 +398,6 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		// 通知控制器
 	}
 
-	public onLevelup(host: IMatrix): void {
-		handlePlayerLevelup(host, this)
-
-		// 通知控制器
-	}
-
 	override onPositedBlockUpdate(
 		host: IMatrix,
 		ignoreDelay: boolean,
@@ -486,12 +407,46 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange)
 	}
 
+	// 三种新事件 //
+	/** @implements 清除工具状态、通知控制器 */
+	public onMapTransform(host: IMatrix): void {
+		// 地图切换后，工具状态清除
+		this._tool.resetUsingState()
+
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			BatrPlayerEventOptions,
+			BatrPlayerEvent.MAP_TRANSFORM
+		>(BatrPlayerEvent.MAP_TRANSFORM, this, host, undefined)
+		// TODO: 显示更新
+	}
+
+	/** @implements 通知控制器 */
+	public onPickupBonusBox(host: IMatrix, box: BonusBox): void {
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			BatrPlayerEventOptions,
+			BatrPlayerEvent.PICKUP_BONUS_BOX
+		>(BatrPlayerEvent.PICKUP_BONUS_BOX, this, host, { box: box })
+	}
+
+	/** @implements 通知母体处理、通知控制器 */
+	public onLevelup(host: IMatrix): void {
+		handlePlayerLevelup(host, this)
+
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			BatrPlayerEventOptions,
+			BatrPlayerEvent.LEVELUP
+		>(BatrPlayerEvent.LEVELUP, this, host, undefined)
+	}
+
 	//====Functions About World====//
 
 	/*
 	! 【2023-09-23 16:52:31】`carriedBlock`、`isCarriedBlock`将拿到「工具」中，不再在这里使用
 	* 会在「方块投掷器」中使用，然后在显示的时候调用
-	TODO: 目前计划：作为一种存储了状态的「特殊武器」对待
+	TODO: 目前计划：作为一种存储了状态的「特殊工具」对待
 	*/
 
 	// get carriedBlock(): Block {return this._carriedBlock;}
@@ -512,11 +467,11 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	 *   * CD已归零⇒
 	 *	 * 无需充能⇒在使用⇒使用工具
 	 *	 * 需要充能⇒正向充能|反向充能（现在因废弃掉`-1`的状态，不再需要「初始化充能」了）
-	 * * 【2023-09-26 23:55:48】现在使用武器自身的数据，但「使用逻辑」还是在此处
+	 * * 【2023-09-26 23:55:48】现在使用工具自身的数据，但「使用逻辑」还是在此处
 	 *   * 一个是为了显示更新方便
 	 *   * 一个是为了对接逻辑方便
 	 *
-	 * ! 注意：因为「使用武器」需要对接母体，所以需要传入母体参数
+	 * ! 注意：因为「使用工具」需要对接母体，所以需要传入母体参数
 	 */
 	protected dealUsingTime(host: IMatrix): void {
 		// *逻辑：要么「无需冷却」，要么「冷却方面已允许自身使用」
@@ -536,7 +491,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 		}
 	}
 
-	//====Functions About Graphics====//
+	//====Display Implements====//
 
 	// TODO: 日后呈现时可能会用到这段代码
 	/* setCarriedBlock(block: Block, copyBlock: boolean = true): void {

@@ -1,6 +1,6 @@
 import { IGraphicContext } from '../../../api/display/DisplayInterfaces'
 import { DEFAULT_SIZE } from '../../../api/display/GlobalDisplayVariables'
-import { NativeDecorationLabel } from './entity/player/DecorationLabels'
+import { NativeDecorationLabel } from '../../native/entities/player/DecorationLabels'
 
 /**
  * （移植自AIPlayer）用于在主图形上显示「附加装饰」

@@ -5,6 +5,7 @@ import {
 	iPointVal,
 	iPoint,
 	traverseNDSquareSurface,
+	fPointRef,
 } from '../../../common/geometricTools'
 import { MDNCodes } from '../../../common/keyCodes'
 import { int, int$MIN_VALUE, uint } from '../../../legacy/AS3Legacy'
@@ -14,10 +15,14 @@ import {
 	i_inGrid,
 	i_outGrid,
 	i_hasDirection,
+	IEntityInGrid,
 } from '../../../api/server/entity/EntityInterfaces'
 import IMap from '../../../api/server/map/IMap'
 import { mRot } from '../../../api/server/general/GlobalRot'
-import { alignToGridCenter_P } from '../../../api/server/general/PosTransform'
+import {
+	alignToGridCenter_P,
+	alignToGrid_P,
+} from '../../../api/server/general/PosTransform'
 import IMatrix from '../../../api/server/main/IMatrix'
 import EffectPlayerDeathLight from '../../BaTS/entity/effect/EffectPlayerDeathLight'
 import EffectSpawn from '../../BaTS/entity/effect/EffectSpawn'
@@ -30,7 +35,7 @@ import {
 } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
 import { PlayerControlConfig } from './program/KeyboardControlCenter'
-import MatrixRuleBatr from '../rule/MatrixRuleBatr'
+import { MatrixRules_Native } from '../rule/MatrixRules_Native'
 
 /**
  * 所有母体的「原生逻辑」
@@ -64,214 +69,10 @@ import MatrixRuleBatr from '../rule/MatrixRuleBatr'
  * @returns 所有玩家的列表
  */
 export function getPlayers(host: IMatrix): IPlayer[] {
-	if ('players' in host) {
-		return host['players'] as IPlayer[]
-	}
-
+	return 'players' in host
+		? (host['players'] as IPlayer[])
+		: host.entities.filter(isPlayer)
 	// 否则原样筛选
-	else {
-		return host.entities.filter(isPlayer)
-	}
-}
-
-// 键盘控制相关 //
-
-// !【2023-10-14 10:30:37】有关「键盘控制标准」已移至{@link KeyboardController}
-
-/**
- * 存储「玩家向某方向移动」的枚举
- * * 很大程度上基于「任意维整数角」{@link mRot}
- * * 注意：目前的「移动」是负数
- */
-export enum PlayerMoveActions {
-	X_P = -1,
-	X_N = -2,
-	Y_P = -3,
-	Y_N = -4,
-	Z_P = -5,
-	Z_N = -6,
-	W_P = -7,
-	W_N = -8,
-}
-
-/**
- * 存储（靠键盘操作的）玩家默认的「控制按键组」
- */
-export const NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS: Record<
-	uint,
-	PlayerControlConfig
-> = {
-	// P1: WASD, Space
-	1: {
-		[MDNCodes.KEY_D]: PlayerMoveActions.X_P, // 右
-		[MDNCodes.KEY_A]: PlayerMoveActions.X_N, // 左
-		[MDNCodes.KEY_S]: PlayerMoveActions.Y_P, // 下
-		[MDNCodes.KEY_W]: PlayerMoveActions.Y_N, // 上
-	},
-	// P2: ↑←↓→, numpad_0
-	2: {
-		[MDNCodes.ARROW_RIGHT]: PlayerMoveActions.X_P, // 右
-		[MDNCodes.ARROW_LEFT]: PlayerMoveActions.X_N, // 左
-		[MDNCodes.ARROW_DOWN]: PlayerMoveActions.Y_P, // 下
-		[MDNCodes.ARROW_UP]: PlayerMoveActions.Y_N, // 上
-	},
-	// P3: UHJK, ]
-	3: {
-		[MDNCodes.KEY_K]: PlayerMoveActions.X_P, // 右
-		[MDNCodes.KEY_H]: PlayerMoveActions.X_N, // 左
-		[MDNCodes.KEY_J]: PlayerMoveActions.Y_P, // 下
-		[MDNCodes.KEY_U]: PlayerMoveActions.Y_N, // 上
-	},
-	// P4: 8456, +
-	4: {
-		[MDNCodes.NUMPAD_6]: PlayerMoveActions.X_P, // 右
-		[MDNCodes.NUMPAD_4]: PlayerMoveActions.X_N, // 左
-		[MDNCodes.NUMPAD_5]: PlayerMoveActions.Y_P, // 下
-		[MDNCodes.NUMPAD_8]: PlayerMoveActions.Y_N, // 上
-	},
-}
-
-//================🗺️地图================//
-
-// 测试
-
-/**
- * 当每个玩家「移动到某个方块」时，在移动后的测试
- * * 测试位置即为玩家「当前位置」（移动后！）
- * * 有副作用：用于处理「伤害玩家的方块」
- *
- * @param host 检测所在的母体
- * @param player 被检测的玩家
- * @param isLocationChange 是否是「位置变更」所需要的（false用于「陷阱检测」）
- * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
- */
-export function playerMoveInTest(
-	host: IMatrix,
-	player: IPlayer,
-	isLocationChange: boolean = false
-): boolean {
-	// 非激活&无属性⇒不检测（返回）
-	if (!player.isActive) return false
-	const attributes: BlockAttributes | null =
-		host.map.storage.getBlockAttributes(player.position)
-	if (attributes === null) return false
-
-	let returnBoo: boolean = false
-	// 开始计算
-	const finalPlayerDamage: int = computeFinalBlockDamage(
-		player.maxHP,
-		host.rule.safeGetRule<int>(MatrixRuleBatr.key_playerAsphyxiaDamage),
-		attributes.playerDamage
-	)
-	// int$MIN_VALUE⇒无伤害&无治疗
-	if (finalPlayerDamage !== int$MIN_VALUE) {
-		// 负数⇒治疗
-		if (finalPlayerDamage < 0) {
-			if (!isLocationChange)
-				player.isFullHP
-					? (player.heal -= finalPlayerDamage) /* 注意：这里是负数 */ // 满生命值⇒加「储备生命值」
-					: player.addHP(host, -finalPlayerDamage, null) // 否则直接加生命值
-		}
-		// 正数⇒伤害
-		else player.removeHP(host, finalPlayerDamage, null)
-		returnBoo = true
-	}
-	// 附加的「旋转」效果
-	if (attributes.rotateWhenMoveIn) {
-		// 玩家向随机方向旋转
-		player.turnTo(
-			host,
-			host.map.storage.randomRotateDirectionAt(
-				player.position,
-				player.direction,
-				1
-			)
-		)
-		returnBoo = true
-	}
-	return returnBoo
-}
-
-/**
- * 传送玩家到指定位置
- * * 先取消玩家激活
- * * 不考虑「是否可通过」
- * * 可选的「传送特效」
- *
- * @param host 所在的母体
- * @param player 被传送的玩家
- * @param p 传送目的地
- * @param rotateTo 玩家传送后要被旋转到的方向（默认为玩家自身方向）
- * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
- * @returns 玩家自身
- */
-export function teleportPlayerTo(
-	host: IMatrix,
-	player: IPlayer,
-	p: iPointRef,
-	rotateTo: mRot = player.direction,
-	isTeleport: boolean = false
-): IPlayer {
-	player.isActive = false
-	// !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
-	player.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
-	player.direction = rotateTo
-	// 在被传送的时候可能捡到奖励箱
-	if (i_batrPlayer(player)) bonusBoxTest(host, player, p)
-	// 被传送后添加特效
-	if (isTeleport) {
-		const fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
-		host.addEntity(new EffectTeleport(fp))
-		// 只有在「有特效」的情况下算作「被传送」
-		if (i_hasStats(player)) player.stats.beTeleportCount++
-	}
-	player.isActive = true
-	return player
-}
-
-/**
- * 分散玩家
- */
-export function spreadPlayer(
-	host: IMatrix,
-	player: IPlayer,
-	rotatePlayer: boolean = true,
-	createEffect: boolean = true
-): IPlayer {
-	// !【2023-10-04 17:12:26】现在不管玩家是否在重生
-	let p: iPointRef = host.map.storage.randomPoint
-	const players: IPlayer[] = getPlayers(host)
-	// 尝试最多256次
-	for (let i: uint = 0; i < 255; i++) {
-		// 找到一个合法位置⇒停
-		if (player.testCanGoTo(host, p, true, true, players)) {
-			break
-		}
-		// 没找到⇒继续
-		p = host.map.storage.randomPoint // 复制一个引用
-	}
-	// 传送玩家
-	teleportPlayerTo(
-		host,
-		player,
-		p, // 传引用
-		// 是否要改变玩家朝向
-		rotatePlayer
-			? host.map.storage.randomForwardDirectionAt(p)
-			: player.direction,
-		createEffect
-	)
-	// Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
-	return player
-}
-
-/**
- * 分散所有玩家
- */
-export function spreadAllPlayer(host: IMatrix): void {
-	for (const player of getPlayers(host)) {
-		spreadPlayer(host, player)
-	}
 }
 
 /**
@@ -279,9 +80,7 @@ export function spreadAllPlayer(host: IMatrix): void {
  * @param host 所涉及的母体
  */
 export function respawnAllPlayer(host: IMatrix): void {
-	for (const player of getPlayers(host)) {
-		respawnPlayer(host, player)
-	}
+	for (const player of getPlayers(host)) respawnPlayer_Native(host, player)
 }
 
 /**
@@ -291,7 +90,7 @@ export function respawnAllPlayer(host: IMatrix): void {
  * @param host 所涉及的母体
  * @param player 重生的玩家
  */
-export function respawnPlayer(host: IMatrix, player: IPlayer): IPlayer {
+export function respawnPlayer_Native(host: IMatrix, player: IPlayer): IPlayer {
 	let p: iPointVal | undefined = host.map.storage.randomSpawnPoint?.copy() // 空值访问`null.copy()`会变成undefined
 
 	// 没位置⇒直接分散玩家
@@ -381,6 +180,65 @@ function findFitSpawnPoint(
 	return spawnP
 }
 
+// 键盘控制相关 //
+
+// !【2023-10-14 10:30:37】有关「键盘控制标准」已移至{@link KeyboardController}
+
+/**
+ * 存储「玩家向某方向移动」的枚举
+ * * 很大程度上基于「任意维整数角」{@link mRot}
+ * * 注意：目前的「移动」是负数
+ */
+export enum PlayerMoveActions {
+	X_P = -1,
+	X_N = -2,
+	Y_P = -3,
+	Y_N = -4,
+	Z_P = -5,
+	Z_N = -6,
+	W_P = -7,
+	W_N = -8,
+}
+
+/**
+ * 存储（靠键盘操作的）玩家默认的「控制按键组」
+ */
+export const NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS: Record<
+	uint,
+	PlayerControlConfig
+> = {
+	// P1: WASD, Space
+	1: {
+		[MDNCodes.KEY_D]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.KEY_A]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.KEY_S]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.KEY_W]: PlayerMoveActions.Y_N, // 上
+	},
+	// P2: ↑←↓→, numpad_0
+	2: {
+		[MDNCodes.ARROW_RIGHT]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.ARROW_LEFT]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.ARROW_DOWN]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.ARROW_UP]: PlayerMoveActions.Y_N, // 上
+	},
+	// P3: UHJK, ]
+	3: {
+		[MDNCodes.KEY_K]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.KEY_H]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.KEY_J]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.KEY_U]: PlayerMoveActions.Y_N, // 上
+	},
+	// P4: 8456, +
+	4: {
+		[MDNCodes.NUMPAD_6]: PlayerMoveActions.X_P, // 右
+		[MDNCodes.NUMPAD_4]: PlayerMoveActions.X_N, // 左
+		[MDNCodes.NUMPAD_5]: PlayerMoveActions.Y_P, // 下
+		[MDNCodes.NUMPAD_8]: PlayerMoveActions.Y_N, // 上
+	},
+}
+
+//================🗺️地图================//
+
 /**
  * 切换一个母体的地图
  * * 迁移自AS3版本`Game.changeMap`
@@ -399,6 +257,237 @@ export function changeMap(
 	map.storage.generateNext()
 	// TODO: 显示更新
 }
+
+/**
+ * 当每个玩家「移动到某个方块」时，在移动后的测试
+ * * 测试位置即为玩家「当前位置」（移动后！）
+ * * 有副作用：用于处理「伤害玩家的方块」
+ *
+ * @param host 检测所在的母体
+ * @param player 被检测的玩家
+ * @param isLocationChange 是否是「位置变更」所需要的（false用于「陷阱检测」）
+ * @returns 这个函数是否执行了某些「副作用」（比如「伤害玩家」「旋转玩家」等），用于「陷阱伤害延迟」
+ */
+export function playerMoveInTest(
+	host: IMatrix,
+	player: IPlayer,
+	isLocationChange: boolean = false
+): boolean {
+	// 非激活&无属性⇒不检测（返回）
+	if (!player.isActive) return false
+	const attributes: BlockAttributes | null =
+		host.map.storage.getBlockAttributes(player.position)
+	if (attributes === null) return false
+
+	let returnBoo: boolean = false
+	// 开始计算
+	const finalPlayerDamage: int = computeFinalBlockDamage(
+		player.maxHP,
+		host.rule.safeGetRule<int>(MatrixRules_Native.key_playerAsphyxiaDamage),
+		attributes.playerDamage
+	)
+	// int$MIN_VALUE⇒无伤害&无治疗
+	if (finalPlayerDamage !== int$MIN_VALUE) {
+		// 负数⇒治疗
+		if (finalPlayerDamage < 0) {
+			if (!isLocationChange)
+				player.isFullHP
+					? (player.heal -= finalPlayerDamage) /* 注意：这里是负数 */ // 满生命值⇒加「储备生命值」
+					: player.addHP(host, -finalPlayerDamage, null) // 否则直接加生命值
+		}
+		// 正数⇒伤害
+		else player.removeHP(host, finalPlayerDamage, null)
+		returnBoo = true
+	}
+	// 附加的「旋转」效果
+	if (attributes.rotateWhenMoveIn) {
+		// 玩家向随机方向旋转
+		player.turnTo(
+			host,
+			host.map.storage.randomRotateDirectionAt(
+				player.position,
+				player.direction,
+				1
+			)
+		)
+		returnBoo = true
+	}
+	return returnBoo
+}
+
+/**
+ * 传送玩家到指定位置
+ * * 先取消玩家激活
+ * * 不考虑「是否可通过」
+ * * 可选的「传送特效」
+ *
+ * @param host 所在的母体
+ * @param player 被传送的玩家
+ * @param p 传送目的地
+ * @param rotateTo 玩家传送后要被旋转到的方向（默认为玩家自身方向）
+ * @param isTeleport 是否「不是重生」（亦即：有「传送特效」且被计入统计）
+ * @returns 玩家自身
+ */
+export function teleportPlayerTo(
+	host: IMatrix,
+	player: IPlayer,
+	p: iPointRef,
+	rotateTo: mRot = player.direction,
+	isTeleport: boolean = false
+): IPlayer {
+	player.isActive = false
+	// !【2023-10-04 17:25:13】现在直接设置位置（在setter中处理附加逻辑）
+	player.setPosition(host, p, true) // *【2023-10-08 20:37:56】目前还是触发相应钩子（方块事件）
+	player.direction = rotateTo
+	// 在被传送的时候可能捡到奖励箱
+	if (i_batrPlayer(player)) bonusBoxTest(host, player, p)
+	// 被传送后添加特效
+	if (isTeleport) {
+		const fp: fPointVal = alignToGridCenter_P(p, new fPoint()) // 对齐网格中央
+		host.addEntity(new EffectTeleport(fp))
+		// 只有在「有特效」的情况下算作「被传送」
+		if (i_hasStats(player)) player.stats.beTeleportCount++
+	}
+	player.isActive = true
+	return player
+}
+
+/**
+ * 分散玩家
+ * * 不会附加特效
+ */
+export function spreadPlayer(
+	host: IMatrix,
+	player: IPlayer,
+	rotatePlayer: boolean = true,
+	createEffect: boolean = true
+): IPlayer {
+	// !【2023-10-04 17:12:26】现在不管玩家是否在重生
+	let p: iPointRef = host.map.storage.randomPoint
+	const players: IPlayer[] = getPlayers(host)
+	// 尝试最多256次
+	for (let i: uint = 0; i < 255; i++) {
+		// 找到一个合法位置⇒停
+		if (player.testCanGoTo(host, p, true, true, players)) {
+			break
+		}
+		// 没找到⇒继续
+		p = host.map.storage.randomPoint // 复制一个引用
+	}
+	// 传送玩家
+	teleportPlayerTo(
+		host,
+		player,
+		p, // 传引用
+		// 是否要改变玩家朝向
+		rotatePlayer
+			? host.map.storage.randomForwardDirectionAt(p)
+			: player.direction,
+		createEffect
+	)
+	// Debug: console.log('Spread '+player.customName+' '+(i+1)+' times.')
+	return player
+}
+
+/**
+ * 分散所有玩家
+ */
+export function spreadAllPlayer(host: IMatrix): void {
+	for (const player of getPlayers(host)) spreadPlayer(host, player)
+}
+
+/**
+ * 一个整数位置是否接触到任何格点实体
+ * * 迁移自`Game.isHitAnyPlayer`
+ *
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 是否接触到任意一个格点实体
+ *
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+export function isHitAnyEntity_I_Grid(
+	p: iPointRef,
+	entities: IEntityInGrid[]
+): boolean {
+	for (const entity of entities)
+		if (entity.position.isEqual(p))
+			// 暂时使用「坐标是否相等」的逻辑
+			return true
+	return false
+}
+
+/**
+ * 一个浮点数数位置是否接触到任何格点实体
+ * * 迁移自`Game.isHitAnyPlayer`
+ *
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 是否接触到任意一个格点实体
+ *
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+export function isHitAnyEntity_F_Grid(
+	p: fPointRef,
+	entities: IEntityInGrid[]
+): boolean {
+	for (const entity of entities) {
+		// 对齐后相等
+		if (
+			alignToGrid_P(p, _temp_isHitAnyEntity_F_Grid_aligned).isEqual(
+				entity.position
+			)
+		)
+			// 暂时使用「坐标是否相等」的逻辑
+			return true
+	}
+	return false
+}
+const _temp_isHitAnyEntity_F_Grid_aligned: iPointVal = new iPoint()
+
+/**
+ * 获取一个格点位置所接触到的第一个「格点实体」
+ * * 迁移自`Game.getHitPlayerAt`
+ *
+ * @param p 要测试的位置
+ * @param entities 需要检测的（格点）实体
+ * @returns 第一个满足条件的「格点实体」
+ *
+ * ?【2023-10-04 09:17:47】这些涉及「实体」的函数，到底要不要放在这儿？
+ */
+
+export function getHitEntity_I_Grid<E extends IEntityInGrid>(
+	p: iPointRef,
+	entities: E[]
+): E | null {
+	for (const entity of entities) {
+		if (entity.position.isEqual(p))
+			// 暂时使用「坐标是否相等」的逻辑
+			return entity
+	}
+	return null
+}
+/**
+ * 碰撞检测：两个「格点实体」之间
+ * * 原`hitTestOfPlayer`
+ */
+
+export function hitTestEntity_between_Grid(
+	e1: IEntityInGrid,
+	e2: IEntityInGrid
+): boolean {
+	return e1.position.isEqual(e2.position)
+}
+/**
+ * 碰撞检测：「格点实体」与「格点」之间
+ * * 原`hitTestPlayer`
+ */
+
+export function hitTestEntity_I_Grid(e: IEntityInGrid, p: iPointRef): boolean {
+	return e.position.isEqual(p)
+}
+
+// 测试
 
 /**
  * 投影实体的坐标到某地图中

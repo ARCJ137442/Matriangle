@@ -14,11 +14,11 @@ import {
 import { NativeBlockAttributes } from '../../../registry/BlockAttributesRegistry'
 import IPlayer from '../../../../native/entities/player/IPlayer'
 import EffectBlockLight from '../../effect/EffectBlockLight'
+import { computeFinalDamage } from '../../../mechanics/BatrMatrixMechanics'
 import {
-	computeFinalDamage,
 	getHitEntity_I_Grid,
 	isHitAnyEntity_F_Grid,
-} from '../../../mechanics/BatrMatrixMechanics'
+} from '../../../../native/mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
 

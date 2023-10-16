@@ -7,6 +7,7 @@ import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
 	addBonusBoxInRandomTypeByRule,
+	getRandomMap,
 	getRandomTeam,
 	loadAsBackgroundRule,
 	randomToolEnable,
@@ -16,7 +17,6 @@ import { projectEntities } from '../../mods/native/mechanics/NativeMatrixMechani
 import { respawnAllPlayer } from '../../mods/native/mechanics/NativeMatrixMechanics'
 import WorldRegistry_V1 from '../../mods/native/registry/Registry_V1'
 import { NativeTools as BatrTools } from '../../mods/BaTS/registry/ToolRegistry'
-import MatrixRuleBatr from '../../mods/native/rule/MatrixRuleBatr'
 import Matrix_V1 from '../../mods/native/main/Matrix_V1'
 import {
 	listE列举实体,
@@ -29,7 +29,10 @@ import {
 	randomBoolean,
 	randomIn,
 } from '../../common/utils'
-import { NativeBonusTypes as BatrBonusTypes } from '../../mods/BaTS/registry/BonusRegistry'
+import {
+	NativeBonusTypes as BatrBonusTypes,
+	BonusType,
+} from '../../mods/BaTS/registry/BonusRegistry'
 import { iPoint } from '../../common/geometricTools'
 import MatrixVisualizer from '../../mods/visualization/web/MatrixVisualizer'
 import BlockRandomTickDispatcher from '../../mods/BaTS/mechanics/programs/BlockRandomTickDispatcher'
@@ -54,17 +57,18 @@ import KeyboardControlCenter, {
 } from '../../mods/native/mechanics/program/KeyboardControlCenter'
 import ProgramAgent from '../../mods/TMatrix/program/Agent'
 import Entity from '../../api/server/entity/Entity'
-import {
-	IEntityHasPosition,
-	i_hasPosition,
-} from '../../api/server/entity/EntityInterfaces'
+import { i_hasPosition } from '../../api/server/entity/EntityInterfaces'
 import ProgramMerovingian from '../../mods/TMatrix/program/Merovingian'
 import { isPlayer } from '../../mods/native/entities/player/IPlayer'
 import { MatrixProgram } from '../../api/server/control/MatrixProgram'
+import { BlockConstructorMap } from '../../api/server/map/IMapStorage'
+import MatrixRule_V1 from '../../mods/native/rule/MatrixRule_V1'
+import { MatrixRules_Native } from '../../mods/native/rule/MatrixRules_Native'
+import { MatrixRules_Batr } from '../../mods/native/rule/MatrixRules_Batr'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
-	const rule = new MatrixRuleBatr()
+	const rule = new MatrixRule_V1()
 	loadAsBackgroundRule(rule)
 
 	// 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
@@ -80,16 +84,29 @@ function initMatrixRule(): IMatrixRule {
 			)
 		),
 	] // 【2023-10-12 13:01:50】目前是「堆叠地图」测试
-	for (const map of MAPS) rule.mapRandomPotentials.set(map, 1)
+	rule.setRule<Map<IMap, number>>(
+		MatrixRules_Native.key_mapRandomPotentials,
+		new Map()
+	)
+	for (const map of MAPS)
+		rule.safeGetRule<Map<IMap, number>>(
+			MatrixRules_Native.key_mapRandomPotentials
+		).set(map, 1)
 	// 设置等权重的随机奖励类型 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
+	rule.setRule<Map<IMap, number>>(
+		MatrixRules_Batr.key_bonusTypePotentials,
+		new Map()
+	)
 	for (const bt of BatrBonusTypes._ALL_AVAILABLE_TYPE)
-		rule.bonusTypePotentials.set(bt, 1)
+		rule.safeGetRule<Map<BonusType, number>>(
+			MatrixRules_Batr.key_bonusTypePotentials
+		).set(bt, 1)
 
 	// 设置所有工具 // * 现在开放激光系列
-	rule.enabledTools = [
+	rule.safeSetRule(MatrixRules_Batr.key_enabledTools, [
 		...BatrTools.WEAPONS_BULLET,
 		...BatrTools.WEAPONS_LASER,
-	]
+	])
 
 	return rule
 }
@@ -102,7 +119,7 @@ function initWorldRegistry(): IWorldRegistry {
 			new Map(),
 			NATIVE_BLOCK_CONSTRUCTOR_MAP,
 			BATR_BLOCK_CONSTRUCTOR_MAP
-		),
+		) as BlockConstructorMap,
 		new BlockEventRegistry(BATR_BLOCK_EVENT_MAP) // *【2023-10-08 17:51:25】使用原生的「方块事件列表」
 	)
 	mergeMaps(registry.toolUsageMap, BATR_TOOL_USAGE_MAP)
@@ -160,7 +177,7 @@ function setupPlayers(host: IMatrix): void {
 	ctlWeb.addConnection(p2, 'p2')
 	ctlWeb.addConnection(p, 'p')
 	ctlWeb.linkToRouter(router, 'ws', '127.0.0.1', 3002) // 连接到消息路由器
-	let kcc: KeyboardControlCenter = new KeyboardControlCenter()
+	const kcc: KeyboardControlCenter = new KeyboardControlCenter()
 	// 三号机没有控制器
 	// 添加p2的按键绑定
 	kcc.addKeyBehaviors(
@@ -226,7 +243,7 @@ function setupSpecialPrograms(host: IMatrix): void {
 				toolCreateExplode(
 					host,
 					null,
-					(e as IEntityHasPosition).position,
+					e.position,
 					10,
 					100,
 					0,
@@ -258,14 +275,16 @@ function setupMechanicPrograms(host: IMatrix): void {
 	const blockRTickDispatcher: BlockRandomTickDispatcher =
 		new BlockRandomTickDispatcher().syncRandomDensity(
 			matrix.rule.safeGetRule<uint>(
-				MatrixRuleBatr.key_blockRandomTickDensity
+				MatrixRules_Batr.key_blockRandomTickDensity
 			)
 		)
 	// 奖励箱生成者
 	const bonusBoxGenerator: BonusBoxGenerator = BonusBoxGenerator.fromBatrRule(
 		matrix.rule
 	).syncRandomDensity(
-		matrix.rule.safeGetRule<uint>(MatrixRuleBatr.key_blockRandomTickDensity)
+		matrix.rule.safeGetRule<uint>(
+			MatrixRules_Batr.key_blockRandomTickDensity
+		)
 	)
 	// 地图切换者
 	const mapSwitcherRandom = new MapSwitcherRandom(TPS * 15) // 稳定期：十五秒切换一次
@@ -285,7 +304,13 @@ function setupEntities(host: IMatrix): void {
 }
 
 // 母体 //
-const matrix = new Matrix_V1(initMatrixRule(), initWorldRegistry())
+const rule = initMatrixRule()
+const matrix = new Matrix_V1(
+	rule,
+	initWorldRegistry(),
+	// ! 获取随机地图：只在「核心逻辑」之外干这件事
+	getRandomMap(rule).copy(true)
+)
 // console.log(matrix);
 matrix.initByRule()
 // 加载实体
@@ -369,6 +394,6 @@ async function 持续测试(i: int = 0, tick_time_ms: uint = 1000) {
 	}
 }
 
-持续测试(-1, TICK_TIME_MS)
+const p = 持续测试(-1, TICK_TIME_MS)
 
-console.log('It is done.')
+console.log('It is done.', p)

@@ -2,7 +2,7 @@
  * native，即「原生」
  * * 提供API各类接口的默认实现
  */
-export module native {
+export namespace native {
 	/** 模组名称 */
 	export const NAME: string = 'Matriangle Native'
 	/** 短名称 */

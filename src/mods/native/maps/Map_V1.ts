@@ -23,8 +23,8 @@ import {
 } from '../../../api/server/entity/EntityInterfaces'
 import IPlayer from '../entities/player/IPlayer'
 import { IEntityWithDirection } from '../../../api/server/entity/EntityInterfaces'
-import { isHitAnyEntity_I_Grid } from '../../BaTS/mechanics/BatrMatrixMechanics'
 import { reminder_F, reminder_I } from '../../../common/exMath'
+import { isHitAnyEntity_I_Grid } from '../mechanics/NativeMatrixMechanics'
 
 /**
  * 第一版地图

@@ -12,11 +12,11 @@ import { IShape } from '../../../../../api/display/DisplayInterfaces'
 import IMatrix from '../../../../../api/server/main/IMatrix'
 import { mRot, toOpposite_M } from '../../../../../api/server/general/GlobalRot'
 import { intAbs, intMin } from '../../../../../common/exMath'
+import { playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
 import {
 	getHitEntity_I_Grid,
 	isHitAnyEntity_I_Grid,
-	playerCanHurtOther,
-} from '../../../mechanics/BatrMatrixMechanics'
+} from '../../../../native/mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
 import { clearArray } from '../../../../../common/utils'
 import IPlayer from '../../../../native/entities/player/IPlayer'

@@ -91,7 +91,7 @@ module.exports = {
 					},
 				],
 
-				// !【2023-10-13 21:19:21】目前需要导出一个`module`来避免「命名空间冲突」，如「不同mod下的`MAP_1`」
+				// !【2023-10-13 21:19:21】目前需要导出`module/namespace`来强制避免「命名空间冲突」，如「不同mod下的`MAP_1`」
 				'@typescript-eslint/no-namespace': 'off',
 
 				// !【2023-10-13 21:54:19】忽略：目前需要特化原先AS3中的整数类型「int」「uint」

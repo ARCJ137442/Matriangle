@@ -3,9 +3,9 @@ import { MatrixProgramLabel } from '../../../../api/server/control/MatrixProgram
 import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
 import IMap from '../../../../api/server/map/IMap'
 import IMatrix from '../../../../api/server/main/IMatrix'
-import MatrixRuleBatr from '../../../native/rule/MatrixRuleBatr'
 import { getRandomMap } from '../BatrMatrixMechanics'
 import MapSwitcher from './MapSwitcher'
+import { MatrixRules_Native } from '../../../native/rule/MatrixRules_Native'
 
 /**
  * 「地图切换者」是
@@ -44,11 +44,11 @@ export default class MapSwitcherRandom
 			// 获取新的地图 //
 			let newMap: IMap
 			// 先判断母体是否有相应的规则
-			if (host.rule.hasRule(MatrixRuleBatr.key_mapRandomPotentials)) {
+			if (host.rule.hasRule(MatrixRules_Native.key_mapRandomPotentials)) {
 				// 如果母体只有一个地图⇒返回
 				if (
 					host.rule.safeGetRule<Map<IMap, number>>(
-						MatrixRuleBatr.key_mapRandomPotentials
+						MatrixRules_Native.key_mapRandomPotentials
 					).size > 1
 				)
 					// 随机地图

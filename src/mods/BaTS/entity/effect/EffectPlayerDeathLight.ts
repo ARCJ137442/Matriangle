@@ -2,7 +2,7 @@ import { uint } from '../../../../legacy/AS3Legacy'
 import { IShape } from '../../../../api/display/DisplayInterfaces'
 import { fPoint, iPoint } from '../../../../common/geometricTools'
 import EffectPlayerLike from './EffectPlayerLike'
-import { NativeDecorationLabel } from '../../display/entity/player/DecorationLabels'
+import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
 import IPlayer from '../../../native/entities/player/IPlayer'
 
 /**

@@ -12,7 +12,7 @@ import { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
  * !【2023-10-07 17:09:30】⚠️这里的所有对象，在被外部用于赋值时，都应该先进行深拷贝
  * * 不深拷贝则会影响到后续创建的稳定性
  */
-export module NativeBlockPrototypes {
+export namespace NativeBlockPrototypes {
 	export const VOID: Block<null> = new Block(
 		'Void',
 		NativeBlockAttributes.VOID,
@@ -35,7 +35,7 @@ export module NativeBlockPrototypes {
  * ? 💭这里的「ID管理」似乎有些混乱
  * * 暂且就使用类名
  */
-export module NativeBlockIDs {
+export namespace NativeBlockIDs {
 	export const VOID: typeID = NativeBlockPrototypes.VOID.id
 
 	export const COLORED: typeID = NativeBlockPrototypes.COLORED.id

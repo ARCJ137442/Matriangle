@@ -2,12 +2,11 @@
 import Entity from '../../../api/server/entity/Entity'
 import EntitySystem from './EntitySystem'
 import IMap from '../../../api/server/map/IMap'
-import MatrixRuleBatr from '../rule/MatrixRuleBatr'
+import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
 import IMatrixRule from '../../../api/server/rule/IMatrixRule'
 import IMatrix from '../../../api/server/main/IMatrix'
 import IWorldRegistry from '../../../api/server/registry/IWorldRegistry'
-import { isDefined, voidF } from '../../../common/utils'
-import { getRandomMap } from '../../BaTS/mechanics/BatrMatrixMechanics'
+import { Val, isDefined, voidF } from '../../../common/utils'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 
 /**
@@ -22,12 +21,16 @@ export default class Matrix_V1 implements IMatrix {
 	 * @param rule 加载入的规则
 	 * @param registry 链接的注册表
 	 */
-	constructor(rule: IMatrixRule, registry: IWorldRegistry) {
+	constructor(
+		rule: IMatrixRule,
+		registry: IWorldRegistry,
+		initialMap: Val<IMap>
+	) {
 		// 直接上载变量
 		this._rule = rule
 		this._registry = registry
 		// 第一个地图 // !【2023-10-08 22:30:51】现在对地图进行深拷贝，而非复用原先的地图
-		this._currentMap = getRandomMap(this._rule).copy(true)
+		this._currentMap = initialMap
 		// this.isActive = active; // ? 【2023-10-04 23:22:21】为何要「是否激活」呢
 	}
 
@@ -72,7 +75,9 @@ export default class Matrix_V1 implements IMatrix {
 	}
 
 	get mapTransformPeriod(): uint {
-		return this._rule.safeGetRule<uint>(MatrixRuleBatr.key_mapTransformTime)
+		return this._rule.safeGetRule<uint>(
+			MatrixRules_Batr.key_mapTransformTime
+		)
 	}
 
 	//========🌟实体部分：实体管理、实体事件等========//

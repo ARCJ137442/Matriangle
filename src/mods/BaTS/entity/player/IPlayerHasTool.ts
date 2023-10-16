@@ -38,19 +38,7 @@ export default interface IPlayerHasTool extends IPlayer {
 	 */
 	get isUsing(): boolean
 
-	// 钩子函数 //
-	/**
-	 * 当持有的工具改变时
-	 *
-	 * !【2023-09-23 17:45:32】弃用：现在几乎无需处理逻辑
-	 * * 一切基本已由「赋给新工具时」处理完毕（新工具的CD和充能状态都已「重置」）
-	 * * 对于「二阶武器」（如「冲击波」），也已在「奖励箱设置工具」时处理好
-	 *   * 直接装填玩家当前武器，并赋值给玩家
-	 *
-	 * @param oldT 旧工具
-	 * @param newT 新工具
-	 */
-	onToolChange?(oldT: Tool, newT: Tool): void
+	// !【2023-10-16 22:23:14】已废除钩子函数「当持有的工具改变时」：当AI使用时，应该交给AI自行（使用「lastTool」）检测
 
 	//====Control Functions====//
 	/**

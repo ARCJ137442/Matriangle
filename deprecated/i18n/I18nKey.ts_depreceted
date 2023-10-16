@@ -1,5 +1,3 @@
-import TypeCommon from '../../../api/server/template/TypeCommon'
-
 export default class I18nKey {
 	//============Static Variables============//
 	//====Keys====//
@@ -123,13 +121,13 @@ export default class I18nKey {
 	}
 
 	//========Block========//
-	public static getTypeNameKey(type: TypeCommon): string {
+	/* public static getTypeNameKey(type: TypeCommon): string {
 		return I18nKey.getCommonKey(type.label, type.name, 'name')
 	}
 
 	public static getTypeDescriptionKey(type: TypeCommon): string {
 		return I18nKey.getCommonKey(type.label, type.name, 'description')
-	}
+	} */
 
 	/**
 	 * Returns a translational key(String) that can use for native text display.
@@ -137,11 +135,11 @@ export default class I18nKey {
 	 * @param	isDescription	The boolean determines name/description.
 	 * @return	A string based on the type.
 	 */
-	public static getTypeKey(type: TypeCommon, isDescription: boolean): string {
+	/* public static getTypeKey(type: TypeCommon, isDescription: boolean): string {
 		return (
 			isDescription
 				? I18nKey.getTypeDescriptionKey
 				: I18nKey.getTypeNameKey
 		)(type)
-	}
+	} */
 }

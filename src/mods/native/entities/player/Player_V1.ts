@@ -1,21 +1,19 @@
 import { intMin } from '../../../../common/exMath'
-import {
-	iPoint,
-	iPointRef,
-	intPoint,
-} from '../../../../common/geometricTools'
+import { iPoint, iPointRef, intPoint } from '../../../../common/geometricTools'
 import {
 	DisplayLayers,
 	IShape as IShape,
 } from '../../../../api/display/DisplayInterfaces'
-import { NativeDecorationLabel } from '../../../BaTS/display/entity/player/DecorationLabels'
 import { int, uint } from '../../../../legacy/AS3Legacy'
 import Entity from '../../../../api/server/entity/Entity'
 import { IEntityInGrid } from '../../../../api/server/entity/EntityInterfaces'
 import { toOpposite_M, mRot } from '../../../../api/server/general/GlobalRot'
-import { FIXED_TPS, TPS } from '../../../../api/server/main/GlobalWorldVariables'
+import {
+	FIXED_TPS,
+	TPS,
+} from '../../../../api/server/main/GlobalWorldVariables'
 import IMatrix from '../../../../api/server/main/IMatrix'
-import { respawnPlayer } from '../../mechanics/NativeMatrixMechanics'
+import { respawnPlayer_Native } from '../../mechanics/NativeMatrixMechanics'
 import { playerMoveInTest } from '../../mechanics/NativeMatrixMechanics'
 import { getPlayers } from '../../mechanics/NativeMatrixMechanics'
 import IPlayer from './IPlayer'
@@ -29,6 +27,8 @@ import {
 	NativePlayerEventOptions,
 	NativePlayerEvent,
 } from './controller/PlayerEvent'
+import { MatrixRules_Native } from '../../rule/MatrixRules_Native'
+import { NativeDecorationLabel } from './DecorationLabels'
 
 /**
  * 玩家第一版
@@ -537,7 +537,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 			// 自身回满血
 			this._HP = this._maxHP // ! 无需显示更新
 			// 触发母体响应：帮助安排位置、添加特效等
-			respawnPlayer(host, this)
+			respawnPlayer_Native(host, this)
 			this.onRespawn(host)
 		}
 	}
@@ -665,26 +665,81 @@ export default class Player_V1 extends Entity implements IPlayer {
 	}
 
 	// 📌钩子 //
-	public onHeal(
-		host: IMatrix,
-		amount: number,
-		healer: IPlayer | null
-	): void {}
-	public onHurt(
-		host: IMatrix,
-		damage: number,
-		attacker: IPlayer | null
-	): void {}
-	public onDeath(
-		host: IMatrix,
-		damage: number,
-		attacker: IPlayer | null
-	): void {}
-	public onKillOther(host: IMatrix, victim: IPlayer, damage: number): void {}
-	public onRespawn(host: IMatrix): void {}
-	public onLocationChange(host: IMatrix, oldP: intPoint): void {}
-	public onLocationChanged(host: IMatrix, newP: intPoint): void {}
-	public onPositedBlockUpdate(
+	/** @implements 通知控制器 */
+	onHeal(host: IMatrix, amount: number, healer: IPlayer | null): void {
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.HEAL
+		>(NativePlayerEvent.HEAL, this, host, {
+			healer: healer,
+			amount: amount,
+		})
+	}
+
+	/** @implements 通知控制器 */
+	onHurt(host: IMatrix, damage: number, attacker: IPlayer | null): void {
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.HURT
+		>(NativePlayerEvent.HURT, this, host, {
+			attacker: attacker,
+			damage: damage,
+		})
+	}
+	/** @implements 通知控制器、击杀者事件、重生 */
+	onDeath(host: IMatrix, damage: number, attacker: IPlayer | null): void {
+		// 通知控制器 // !【2023-10-10 00:22:13】必须在「母体处理」（坐标移动）之前通知控制器，否则可能会有「非法坐标」报错
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.DEATH
+		>(NativePlayerEvent.DEATH, this, host, {
+			attacker: attacker,
+			damage: damage,
+		})
+
+		// 触发击杀者的「击杀玩家」事件 // !【2023-10-10 00:45:52】必须在「设置重生」之前
+		if (attacker !== null && !attacker.isRespawning /* 不能在重生 */)
+			attacker.onKillOther(host, this, damage)
+
+		// 处理「重生」「生命数」 //
+		// 重置「重生刻」
+		this._respawnTick = host.rule.safeGetRule<uint>(
+			MatrixRules_Native.key_defaultRespawnTime
+		)
+		// 检测「生命耗尽」 // !【2023-10-05 18:21:43】死了就是死了：生命值耗尽⇒通知世界移除自身
+		if (!this.lifeNotDecay && this._lives <= 0) {
+			// ! 生命数是在重生的时候递减的
+			console.log(`${this.customName} 生命耗尽，通知母体移除自身`)
+			host.removeEntity(this)
+		}
+	}
+
+	/** @implements 通知控制器 */
+	onKillOther(host: IMatrix, victim: IPlayer, damage: number): void {
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.KILL_PLAYER
+		>(NativePlayerEvent.KILL_PLAYER, this, host, {
+			victim: victim,
+			damage: damage,
+		})
+	}
+
+	/** @implements 通知控制器 */
+	onRespawn(host: IMatrix): void {
+		// 通知控制器
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.RESPAWN
+		>(NativePlayerEvent.RESPAWN, this, host, undefined)
+	}
+
+	onLocationChange(host: IMatrix, oldP: intPoint): void {}
+	onLocationChanged(host: IMatrix, newP: intPoint): void {}
+	onPositedBlockUpdate(
 		host: IMatrix,
 		ignoreDelay: boolean,
 		isLocationChange: boolean

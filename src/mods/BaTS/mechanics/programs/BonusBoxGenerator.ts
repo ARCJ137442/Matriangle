@@ -4,7 +4,7 @@ import { MatrixProgramLabel } from '../../../../api/server/control/MatrixProgram
 import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
 import IMatrix from '../../../../api/server/main/IMatrix'
 import IMatrixRule from '../../../../api/server/rule/IMatrixRule'
-import MatrixRuleBatr from '../../../native/rule/MatrixRuleBatr'
+import { MatrixRules_Batr } from '../../../native/rule/MatrixRules_Batr'
 import { BonusType } from '../../registry/BonusRegistry'
 import {
 	addBonusBoxInRandomTypeByRule,
@@ -57,10 +57,10 @@ export default class BonusBoxGenerator
 	 */
 	public static fromBatrRule(rule: IMatrixRule): BonusBoxGenerator {
 		return new BonusBoxGenerator(
-			rule.safeGetRule<uint>(MatrixRuleBatr.key_bonusBoxMaxCount),
-			rule.safeGetRule<number>(MatrixRuleBatr.key_bonusBoxSpawnChance),
+			rule.safeGetRule<uint>(MatrixRules_Batr.key_bonusBoxMaxCount),
+			rule.safeGetRule<number>(MatrixRules_Batr.key_bonusBoxSpawnChance),
 			rule.safeGetRule<Map<BonusType, number>>(
-				MatrixRuleBatr.key_bonusTypePotentials
+				MatrixRules_Batr.key_bonusTypePotentials
 			)
 		)
 	}

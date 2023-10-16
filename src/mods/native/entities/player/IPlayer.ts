@@ -10,11 +10,11 @@ import {
 } from '../../../../api/server/entity/EntityInterfaces'
 import IMatrix from '../../../../api/server/main/IMatrix'
 import { mRot } from '../../../../api/server/general/GlobalRot'
-import { NativeDecorationLabel } from '../../../BaTS/display/entity/player/DecorationLabels'
 import PlayerController from './controller/PlayerController'
 import { IMatrixEventReceiver } from '../../../../api/server/control/MatrixControl'
 import Entity from '../../../../api/server/entity/Entity'
 import { PlayerAction } from './controller/PlayerAction'
+import { NativeDecorationLabel } from './DecorationLabels'
 
 /**
  * 「玩家」是

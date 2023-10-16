@@ -9,7 +9,7 @@ import {
 } from '../../../../api/display/DisplayInterfaces'
 import { mRot } from '../../../../api/server/general/GlobalRot'
 import { fPoint } from '../../../../common/geometricTools'
-import { NativeDecorationLabel } from '../../display/entity/player/DecorationLabels'
+import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
 import { drawShapeDecoration } from '../../display/NativeDisplayImplements'
 import { alignToGridCenter_P } from '../../../../api/server/general/PosTransform'
 

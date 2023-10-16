@@ -1,6 +1,6 @@
 import { fPoint, iPoint } from '../../../../common/geometricTools'
 import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { NativeDecorationLabel } from '../../display/entity/player/DecorationLabels'
+import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
 import { uint } from '../../../../legacy/AS3Legacy'
 import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
 import IPlayer from '../../../native/entities/player/IPlayer'
