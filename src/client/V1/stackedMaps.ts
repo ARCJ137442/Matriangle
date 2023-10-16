@@ -1,9 +1,9 @@
-import { iPoint, iPointRef, iPointVal } from '../../common/geometricTools'
-import { uint } from '../../legacy/AS3Legacy'
-import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
+import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import { mapVH地图可视化_高维 } from '../../mods/visualization/textVisualizations'
-import { BatrDefaultMaps } from '../../mods/BaTS/registry/MapRegistry'
-import IMap from '../../api/server/map/IMap'
+import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
+import IMap from 'matriangle-api/server/map/IMap'
 
 /**
  * 堆叠合并多个地图

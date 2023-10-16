@@ -1,19 +1,19 @@
-import { randInt, randomBetween } from '../../../../../common/exMath'
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+import { TPS } from 'matriangle-api'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../IPlayer'
 import {
-	NativeMatrixPlayerEvent,
-	EnumNativePlayerAction,
 	PlayerAction,
+	EnumNativePlayerAction,
+	NativeMatrixPlayerEvent,
 } from './PlayerAction'
 import PlayerController from './PlayerController'
 import {
+	PlayerEventOptions,
 	NativePlayerEvent,
 	NativePlayerEventOptions,
-	PlayerEventOptions,
 } from './PlayerEvent'
+import { randomBetween, randInt } from 'matriangle-common'
+import { uint } from 'matriangle-legacy'
 
 /**
  * 用于表示新增的「AI事件」

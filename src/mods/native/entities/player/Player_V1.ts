@@ -1,25 +1,26 @@
-import { intMin } from '../../../../common/exMath'
-import { iPoint, iPointRef, intPoint } from '../../../../common/geometricTools'
 import {
-	DisplayLayers,
-	IShape as IShape,
-} from '../../../../api/display/DisplayInterfaces'
-import { int, uint } from '../../../../legacy/AS3Legacy'
-import Entity from '../../../../api/server/entity/Entity'
-import { IEntityInGrid } from '../../../../api/server/entity/EntityInterfaces'
-import { toOpposite_M, mRot } from '../../../../api/server/general/GlobalRot'
-import {
-	FIXED_TPS,
+	mRot,
+	toOpposite_M,
 	TPS,
-} from '../../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../../api/server/main/IMatrix'
+	FIXED_TPS,
+	IEntityInGrid,
+	IShape,
+	DisplayLayers,
+} from 'matriangle-api'
+import Entity from 'matriangle-api/server/entity/Entity'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { intMin } from 'matriangle-common/exMath'
+import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
+import { uint, int } from 'matriangle-legacy'
 import {
+	getPlayers,
+	playerMoveInTest,
+	spreadPlayer,
 	findFitSpawnPoint,
 	handlePlayerLocationChanged,
-	spreadPlayer,
 } from '../../mechanics/NativeMatrixMechanics'
-import { playerMoveInTest } from '../../mechanics/NativeMatrixMechanics'
-import { getPlayers } from '../../mechanics/NativeMatrixMechanics'
+import { MatrixRules_Native } from '../../rule/MatrixRules_Native'
+import { NativeDecorationLabel } from './DecorationLabels'
 import IPlayer from './IPlayer'
 import {
 	PlayerAction,
@@ -31,8 +32,6 @@ import {
 	NativePlayerEventOptions,
 	NativePlayerEvent,
 } from './controller/PlayerEvent'
-import { MatrixRules_Native } from '../../rule/MatrixRules_Native'
-import { NativeDecorationLabel } from './DecorationLabels'
 
 /**
  * 玩家第一版

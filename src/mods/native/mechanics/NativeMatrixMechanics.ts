@@ -1,30 +1,30 @@
-import BlockAttributes from '../../../api/server/block/BlockAttributes'
-import Entity from '../../../api/server/entity/Entity'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityInGrid,
 	i_inGrid,
 	i_outGrid,
 	i_hasDirection,
-} from '../../../api/server/entity/EntityInterfaces'
-import { alignToGrid_P } from '../../../api/server/general/PosTransform'
-import IMatrix from '../../../api/server/main/IMatrix'
-import IMap from '../../../api/server/map/IMap'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IMap from 'matriangle-api/server/map/IMap'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import {
 	iPoint,
 	iPointRef,
 	traverseNDSquareSurface,
 	fPointRef,
 	iPointVal,
-} from '../../../common/geometricTools'
-import { MDNCodes } from '../../../common/keyCodes'
+} from 'matriangle-common/geometricTools'
+import { MDNCodes } from 'matriangle-common/keyCodes'
 import {
 	uint,
 	int,
 	int$MIN_VALUE,
 	int$MAX_VALUE,
 	uint$MAX_VALUE,
-} from '../../../legacy/AS3Legacy'
+} from 'matriangle-legacy'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
 import {
 	NativeBlockTypeEventMap,

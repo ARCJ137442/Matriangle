@@ -1,11 +1,11 @@
-﻿import { uint } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../api/GlobalDisplayVariables'
+﻿import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/GlobalDisplayVariables'
 import {
 	IGraphicContext,
 	IShape,
 	IShapeContainer,
-} from '../../../../api/DisplayInterfaces'
-import { logical2Real, real2Logical } from '../../../../api/PosTransform'
+} from 'matriangle-api/DisplayInterfaces'
+import { logical2Real, real2Logical } from 'matriangle-api/PosTransform'
 
 /**
  * It's A GUI Attach to Player(x=0,y=0)

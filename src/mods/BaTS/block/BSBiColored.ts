@@ -1,5 +1,5 @@
-import { uint } from '../../../legacy/AS3Legacy'
-import BSColored from '../../native/block/BSColored'
+import { uint } from 'matriangle-legacy'
+import BSColored from 'matriangle-mod-native/block/BSColored'
 
 /**
  * 「二重颜色状态」是

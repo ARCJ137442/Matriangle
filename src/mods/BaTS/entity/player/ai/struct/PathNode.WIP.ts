@@ -1,6 +1,6 @@
-import { iPoint } from '../../../../../../common/geometricTools'
-import { uint, int } from '../../../../../../legacy/AS3Legacy'
-import { mRot } from '../../../../../../api/server/general/GlobalRot'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
 
 /**
  * ...

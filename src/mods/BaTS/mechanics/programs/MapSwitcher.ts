@@ -1,19 +1,21 @@
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../../api/server/control/MatrixProgram'
+} from 'matriangle-api/server/control/MatrixProgram'
 import Effect from '../../entity/effect/Effect'
-import Entity from '../../../../api/server/entity/Entity'
-import IMap from '../../../../api/server/map/IMap'
-import IMatrix from '../../../../api/server/main/IMatrix'
+import Entity from 'matriangle-api/server/entity/Entity'
+import IMap from 'matriangle-api/server/map/IMap'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import BonusBox from '../../entity/item/BonusBox'
-import IPlayer, { isPlayer } from '../../../native/entities/player/IPlayer'
+import IPlayer, {
+	isPlayer,
+} from 'matriangle-mod-native/entities/player/IPlayer'
 import Projectile from '../../entity/projectile/Projectile'
 import {
 	changeMap,
 	projectEntity,
-} from '../../../native/mechanics/NativeMatrixMechanics'
-import { spreadPlayer } from '../../../native/mechanics/NativeMatrixMechanics'
+} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { spreadPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import { i_batrPlayer } from '../../entity/player/IPlayerBatr'
 
 /**

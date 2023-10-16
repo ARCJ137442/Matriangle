@@ -1,4 +1,4 @@
-﻿// import { uint } from '../../../legacy/AS3Legacy'
+﻿// import { uint } from 'matriangle-legacy/AS3Legacy'
 // import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
 
 // /**

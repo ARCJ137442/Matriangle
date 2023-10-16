@@ -1,11 +1,11 @@
-﻿import { uint } from '../../../legacy/AS3Legacy'
-import Entity from '../../../api/server/entity/Entity'
+﻿import { uint } from 'matriangle-legacy'
+import Entity from 'matriangle-api/server/entity/Entity'
 import EntitySystem from './EntitySystem'
-import IMap from '../../../api/server/map/IMap'
-import IMatrixRule from '../../../api/server/rule/IMatrixRule'
-import IMatrix from '../../../api/server/main/IMatrix'
-import IWorldRegistry from '../../../api/server/registry/IWorldRegistry'
-import { Val, isDefined, voidF } from '../../../common/utils'
+import IMap from 'matriangle-api/server/map/IMap'
+import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
+import { Val, isDefined, voidF } from 'matriangle-common/utils'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 
 /**

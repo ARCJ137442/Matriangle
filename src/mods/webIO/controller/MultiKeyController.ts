@@ -1,11 +1,11 @@
-import { int } from '../../../legacy/AS3Legacy'
-import IMatrix from '../../../api/server/main/IMatrix'
-import IPlayer from '../../native/entities/player/IPlayer'
-import { NativeMatrixPlayerEvent } from '../../native/entities/player/controller/PlayerAction'
-import PlayerController from '../../native/entities/player/controller/PlayerController'
-import { PlayerEventOptions } from '../../native/entities/player/controller/PlayerEvent'
+import { int } from 'matriangle-legacy/AS3Legacy'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { NativeMatrixPlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
+import PlayerController from 'matriangle-mod-native/entities/player/controller/PlayerController'
+import { PlayerEventOptions } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import KeyboardControlCenter from '../../native/mechanics/program/KeyboardControlCenter'
+import KeyboardControlCenter from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
 
 /**
  * 「多键控制器」是

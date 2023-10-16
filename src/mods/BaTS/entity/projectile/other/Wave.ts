@@ -1,17 +1,17 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Projectile from '../Projectile'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	IEntityFixedLived,
 	IEntityOutGrid,
-} from '../../../../../api/server/entity/EntityInterfaces'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { fPoint } from '../../../../../common/geometricTools'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { fPoint } from 'matriangle-common/geometricTools'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { waveHurtPlayers } from '../../../mechanics/BatrMatrixMechanics'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「波浪」

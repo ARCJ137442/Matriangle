@@ -1,13 +1,13 @@
-import { fPoint } from '../../../../common/geometricTools'
+import { fPoint } from 'matriangle-common/geometricTools'
 import {
 	IGraphicContext,
 	IShape,
 	IShapeContainer,
-} from '../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
-import { uint } from '../../../../legacy/AS3Legacy'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import Effect from './Effect'
-import { IEntityDisplayableContainer } from '../../../../api/server/entity/EntityInterfaces'
+import { IEntityDisplayableContainer } from 'matriangle-api/server/entity/EntityInterfaces'
 
 /**
  * 双方块容器

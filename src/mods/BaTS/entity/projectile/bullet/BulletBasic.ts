@@ -1,10 +1,10 @@
-import { fPoint } from '../../../../../common/geometricTools'
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+import { fPoint } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import Bullet from './Bullet'
 
 /**

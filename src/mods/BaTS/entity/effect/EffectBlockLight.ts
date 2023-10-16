@@ -1,12 +1,12 @@
-import { uint, uint$MAX_VALUE } from '../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
-import Block from '../../../../api/server/block/Block'
+import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import Block from 'matriangle-api/server/block/Block'
 import Effect from './Effect'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { uintToPercent } from '../../../../common/utils'
-import { fPoint, iPoint } from '../../../../common/geometricTools'
-import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
-import { alignToGridCenter_P } from '../../../../api/server/general/PosTransform'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { uintToPercent } from 'matriangle-common/utils'
+import { fPoint, iPoint } from 'matriangle-common/geometricTools'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 
 /**
  * 方块光效

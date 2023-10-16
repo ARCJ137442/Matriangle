@@ -1,13 +1,13 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Laser from './Laser'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { iPoint } from '../../../../../common/geometricTools'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import LaserBasic from './LaserBasic'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「吸收激光」

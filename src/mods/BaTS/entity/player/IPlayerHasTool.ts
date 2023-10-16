@@ -1,6 +1,6 @@
-import IMatrix from '../../../../api/server/main/IMatrix'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import Tool from '../../tool/Tool'
-import IPlayer from '../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「有工具玩家」是

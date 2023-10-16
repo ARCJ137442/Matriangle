@@ -1,12 +1,12 @@
-import { iPoint } from '../../../../common/geometricTools'
-import { uint } from '../../../../legacy/AS3Legacy'
-import Block from '../../../../api/server/block/Block'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Block from 'matriangle-api/server/block/Block'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../../api/server/control/MatrixProgram'
-import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
-import IMatrix from '../../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/control/MatrixProgram'
+import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { BlockEventType_Batr } from '../../registry/BlockEventRegistry_Batr'
 
 /**

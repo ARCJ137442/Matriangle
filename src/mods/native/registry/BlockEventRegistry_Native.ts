@@ -1,6 +1,6 @@
-import { BlockTypeEventMap } from '../../../api/server/block/BlockEventTypes'
-import { iPoint } from '../../../common/geometricTools'
-import IMatrix from '../../../api/server/main/IMatrix'
+import { BlockTypeEventMap } from 'matriangle-api/server/block/BlockEventTypes'
+import { iPoint } from 'matriangle-common/geometricTools'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../entities/player/IPlayer'
 
 /**

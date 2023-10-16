@@ -1,14 +1,14 @@
-import { contains } from '../../../common/utils'
+import { contains } from 'matriangle-common/utils'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../api/server/control/MatrixProgram'
-import Entity from '../../../api/server/entity/Entity'
+} from 'matriangle-api/server/control/MatrixProgram'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityActive,
 	i_shortLive,
-} from '../../../api/server/entity/EntityInterfaces'
-import IMatrix from '../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 
 /**
  * 这个类其实有一部分是在实验JS「动态类型特性」中的「任意属性均可黑」「实例方法亦可改」的特性

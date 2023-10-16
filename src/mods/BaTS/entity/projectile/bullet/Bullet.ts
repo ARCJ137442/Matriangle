@@ -1,23 +1,19 @@
-import {
-	fPoint,
-	iPoint,
-	floatPoint,
-} from '../../../../../common/geometricTools'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
-import { logical2Real } from '../../../../../api/display/PosTransform'
-import { uint } from '../../../../../legacy/AS3Legacy'
-import Block from '../../../../../api/server/block/Block'
+import { fPoint, iPoint, floatPoint } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { logical2Real } from 'matriangle-api/display/PosTransform'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Block from 'matriangle-api/server/block/Block'
 import {
 	IEntityFixedLived,
 	IEntityOutGrid,
-} from '../../../../../api/server/entity/EntityInterfaces'
-import { alignToGrid_P } from '../../../../../api/server/general/PosTransform'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import Projectile from '../Projectile'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import IPlayer from '../../../../native/entities/player/IPlayer'
-import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 
 /**
  * 「子弹」是

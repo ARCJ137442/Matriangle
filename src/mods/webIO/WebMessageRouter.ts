@@ -5,13 +5,13 @@ import {
 	ServerResponse,
 } from 'http'
 import { Server as WebSocketServer, WebSocket } from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
-import { uint } from '../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../api/server/control/MatrixProgram'
+} from 'matriangle-api/server/control/MatrixProgram'
 import { MessageCallback, IMessageRouter } from './MessageInterfaces'
-import { voidF } from '../../common/utils'
+import { voidF } from 'matriangle-common/utils'
 
 /**
  * 目前支持的「网络」服务类型

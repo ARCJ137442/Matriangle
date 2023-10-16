@@ -2,8 +2,8 @@ import {
 	IJSObjectifiable,
 	JSObjectifyMap,
 	fastAddJSObjectifyMapProperty_dashP,
-} from '../../../../../common/JSObjectify'
-import { uint } from '../../../../../legacy/AS3Legacy'
+} from 'matriangle-common/JSObjectify'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * 一个用于存储「玩家属性」的类

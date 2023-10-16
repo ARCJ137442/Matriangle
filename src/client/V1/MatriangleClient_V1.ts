@@ -1,8 +1,8 @@
-import { int, uint } from '../../legacy/AS3Legacy'
-import PlayerBatr from '../../mods/BaTS/entity/player/PlayerBatr'
-import AIControllerGenerator from '../../mods/BaTS/entity/player/ai/AIControllerGenerator'
-import { NativeAIPrograms } from '../../mods/BaTS/entity/player/ai/NativeAIPrograms'
-import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
+import PlayerBatr from 'matriangle-mod-bats/entity/player/PlayerBatr'
+import AIControllerGenerator from 'matriangle-mod-bats/entity/player/ai/AIControllerGenerator'
+import { NativeAIPrograms } from 'matriangle-mod-bats/entity/player/ai/NativeAIPrograms'
+import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
@@ -12,59 +12,62 @@ import {
 	loadAsBackgroundRule,
 	randomToolEnable,
 	toolCreateExplode,
-} from '../../mods/BaTS/mechanics/BatrMatrixMechanics'
-import { projectEntities } from '../../mods/native/mechanics/NativeMatrixMechanics'
-import { respawnAllPlayer } from '../../mods/native/mechanics/NativeMatrixMechanics'
-import WorldRegistry_V1 from '../../mods/BaTS/registry/Registry_Batr'
-import { NativeTools as BatrTools } from '../../mods/BaTS/registry/ToolRegistry'
-import Matrix_V1 from '../../mods/native/main/Matrix_V1'
+} from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
+import { projectEntities } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { respawnAllPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import WorldRegistry_V1 from 'matriangle-mod-bats/registry/Registry_Batr'
+import { NativeTools as BatrTools } from 'matriangle-mod-bats/registry/ToolRegistry'
+import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import {
 	listE列举实体,
 	matrixV母体可视化,
 } from '../../mods/visualization/textVisualizations'
-import { TICK_TIME_MS, TPS } from '../../api/server/main/GlobalWorldVariables'
+import {
+	TICK_TIME_MS,
+	TPS,
+} from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	mergeMaps,
 	mergeMultiMaps,
 	randomBoolean,
 	randomIn,
-} from '../../common/utils'
+} from 'matriangle-common/utils'
 import {
 	NativeBonusTypes as BatrBonusTypes,
 	BonusType,
-} from '../../mods/BaTS/registry/BonusRegistry'
-import { iPoint } from '../../common/geometricTools'
+} from 'matriangle-mod-bats/registry/BonusRegistry'
+import { iPoint } from 'matriangle-common/geometricTools'
 import MatrixVisualizer from '../../mods/visualization/web/MatrixVisualizer'
-import BlockRandomTickDispatcher from '../../mods/BaTS/mechanics/programs/BlockRandomTickDispatcher'
-import { BATR_BLOCK_EVENT_MAP } from '../../mods/BaTS/mechanics/BatrMatrixMechanics'
-import BlockEventRegistry from '../../api/server/block/BlockEventRegistry'
-import MapSwitcherRandom from '../../mods/BaTS/mechanics/programs/MapSwitcherRandom'
-import IPlayerBatr from '../../mods/BaTS/entity/player/IPlayerBatr'
-import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from '../../mods/native/registry/BlockRegistry_Native'
-import { BATR_BLOCK_CONSTRUCTOR_MAP } from '../../mods/BaTS/registry/BlockRegistry_Batr'
-import BonusBoxGenerator from '../../mods/BaTS/mechanics/programs/BonusBoxGenerator'
-import IMatrix from '../../api/server/main/IMatrix'
-import IMatrixRule from '../../api/server/rule/IMatrixRule'
-import IWorldRegistry from '../../api/server/registry/IWorldRegistry'
-import { BatrDefaultMaps } from '../../mods/BaTS/registry/MapRegistry'
-import IMap from '../../api/server/map/IMap'
+import BlockRandomTickDispatcher from 'matriangle-mod-bats/mechanics/programs/BlockRandomTickDispatcher'
+import { BATR_BLOCK_EVENT_MAP } from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
+import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
+import MapSwitcherRandom from 'matriangle-mod-bats/mechanics/programs/MapSwitcherRandom'
+import IPlayerBatr from 'matriangle-mod-bats/entity/player/IPlayerBatr'
+import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import { BATR_BLOCK_CONSTRUCTOR_MAP } from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
+import BonusBoxGenerator from 'matriangle-mod-bats/mechanics/programs/BonusBoxGenerator'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
+import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
+import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
+import IMap from 'matriangle-api/server/map/IMap'
 import { stackMaps } from './stackedMaps'
-import Map_V1 from '../../mods/native/map/Map_V1'
+import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import WebMessageRouter from '../../mods/webIO/WebMessageRouter'
 import WebController from '../../mods/webIO/controller/WebController'
 import KeyboardControlCenter, {
 	generateBehaviorFromPlayerConfig,
-} from '../../mods/native/mechanics/program/KeyboardControlCenter'
+} from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
 import ProgramAgent from '../../mods/TMatrix/program/Agent'
-import Entity from '../../api/server/entity/Entity'
-import { i_hasPosition } from '../../api/server/entity/EntityInterfaces'
+import Entity from 'matriangle-api/server/entity/Entity'
+import { i_hasPosition } from 'matriangle-api/server/entity/EntityInterfaces'
 import ProgramMerovingian from '../../mods/TMatrix/program/Merovingian'
-import { isPlayer } from '../../mods/native/entities/player/IPlayer'
-import { MatrixProgram } from '../../api/server/control/MatrixProgram'
-import { BlockConstructorMap } from '../../api/server/map/IMapStorage'
-import MatrixRule_V1 from '../../mods/native/rule/MatrixRule_V1'
-import { MatrixRules_Native } from '../../mods/native/rule/MatrixRules_Native'
-import { MatrixRules_Batr } from '../../mods/BaTS/rule/MatrixRules_Batr'
+import { isPlayer } from 'matriangle-mod-native/entities/player/IPlayer'
+import { MatrixProgram } from 'matriangle-api/server/control/MatrixProgram'
+import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
+import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
+import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
+import { MatrixRules_Batr } from 'matriangle-mod-bats/rule/MatrixRules_Batr'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {

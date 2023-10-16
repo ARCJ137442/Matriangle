@@ -1,9 +1,9 @@
-import IMap from '../../api/server/map/IMap'
-import { iPoint } from '../../common/geometricTools'
-import { uint } from '../../legacy/AS3Legacy'
-import MapStorageSparse from '../../mods/native/map/MapStorageSparse'
-import Map_V1 from '../../mods/native/map/Map_V1'
-import { NativeBlockPrototypes } from '../../mods/native/registry/BlockRegistry_Native'
+import IMap from 'matriangle-api/server/map/IMap'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
+import Map_V1 from 'matriangle-mod-native/map/Map_V1'
+import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 import { sparseMapMV稀疏地图母体可视化 } from '../../mods/visualization/textVisualizations'
 
 /**

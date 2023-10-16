@@ -1,6 +1,6 @@
-import { uint } from '../../../legacy/AS3Legacy'
-import { randInt } from '../../../common/exMath'
-import BlockState from '../../../api/server/block/BlockState'
+import { uint } from 'matriangle-legacy'
+import { randInt } from 'matriangle-common'
+import BlockState from 'matriangle-api/server/block/BlockState'
 
 /**
  * 「有颜色状态」是

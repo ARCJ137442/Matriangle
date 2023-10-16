@@ -1,20 +1,20 @@
-import { int, uint } from '../../../../legacy/AS3Legacy'
-import { iPoint, iPointRef } from '../../../../common/geometricTools'
 import {
+	IEntityInGrid,
 	IEntityActive,
 	IEntityDisplayable,
+	IEntityWithDirection,
 	IEntityHasHPAndHeal,
 	IEntityHasHPAndLives,
-	IEntityInGrid,
-	IEntityWithDirection,
-} from '../../../../api/server/entity/EntityInterfaces'
-import IMatrix from '../../../../api/server/main/IMatrix'
-import { mRot } from '../../../../api/server/general/GlobalRot'
-import PlayerController from './controller/PlayerController'
-import { IMatrixEventReceiver } from '../../../../api/server/control/MatrixControl'
-import Entity from '../../../../api/server/entity/Entity'
-import { PlayerAction } from './controller/PlayerAction'
+	IMatrixEventReceiver,
+	mRot,
+} from 'matriangle-api'
+import Entity from 'matriangle-api/server/entity/Entity'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { iPointRef, iPoint } from 'matriangle-common/geometricTools'
+import { uint, int } from 'matriangle-legacy'
 import { NativeDecorationLabel } from './DecorationLabels'
+import { PlayerAction } from './controller/PlayerAction'
+import PlayerController from './controller/PlayerController'
 
 /**
  * 「玩家」是

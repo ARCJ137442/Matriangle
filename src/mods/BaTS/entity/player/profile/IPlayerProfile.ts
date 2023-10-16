@@ -1,5 +1,5 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 用于在「世界统计」中存储玩家信息的「档案」

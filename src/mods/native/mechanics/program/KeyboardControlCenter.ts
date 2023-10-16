@@ -1,13 +1,13 @@
-import { KeyCode } from '../../../../common/keyCodes'
-import { omega, voidF } from '../../../../common/utils'
-import { uint } from '../../../../legacy/AS3Legacy'
+import { KeyCode } from 'matriangle-common/keyCodes'
+import { omega, voidF } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../../api/server/control/MatrixProgram'
-import Entity from '../../../../api/server/entity/Entity'
-import { IEntityActiveLite } from '../../../../api/server/entity/EntityInterfaces'
-import { FIXED_TPS } from '../../../../api/server/main/GlobalWorldVariables'
+} from 'matriangle-api/server/control/MatrixProgram'
+import Entity from 'matriangle-api/server/entity/Entity'
+import { IEntityActiveLite } from 'matriangle-api/server/entity/EntityInterfaces'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	EnumNativePlayerAction,
 	NativeMatrixPlayerEvent,

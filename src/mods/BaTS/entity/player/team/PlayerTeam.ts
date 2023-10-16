@@ -2,9 +2,9 @@ import {
 	IJSObjectifiable,
 	JSObjectifyMap,
 	fastAddJSObjectifyMapProperty_dashP,
-} from '../../../../../common/JSObjectify'
-import { key } from '../../../../../common/utils'
-import { uint } from '../../../../../legacy/AS3Legacy'
+} from 'matriangle-common/JSObjectify'
+import { key } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 
 export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	// JS对象 //

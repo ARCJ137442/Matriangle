@@ -1,7 +1,7 @@
-import { BlockTypeEventMap } from '../../../api/server/block/BlockEventTypes'
-import { iPoint } from '../../../common/geometricTools'
-import IMatrix from '../../../api/server/main/IMatrix'
-import Block from '../../../api/server/block/Block'
+import { BlockTypeEventMap } from 'matriangle-api/server/block/BlockEventTypes'
+import { iPoint } from 'matriangle-common/geometricTools'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import Block from 'matriangle-api/server/block/Block'
 
 /**
  * 原生的「方块事件类型」

@@ -1,11 +1,11 @@
-import { uint } from '../../../../legacy/AS3Legacy'
-import { MatrixProgramLabel } from '../../../../api/server/control/MatrixProgram'
-import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
-import IMap from '../../../../api/server/map/IMap'
-import IMatrix from '../../../../api/server/main/IMatrix'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
+import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
+import IMap from 'matriangle-api/server/map/IMap'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { getRandomMap } from '../BatrMatrixMechanics'
 import MapSwitcher from './MapSwitcher'
-import { MatrixRules_Native } from '../../../native/rule/MatrixRules_Native'
+import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 
 /**
  * 「地图切换者」是

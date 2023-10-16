@@ -1,7 +1,7 @@
-import { int, int$MIN_VALUE, uint } from '../../../legacy/AS3Legacy'
-import { randomBoolean2 } from '../../../common/utils'
-import BlockState from '../../../api/server/block/BlockState'
-import BlockAttributes from '../../../api/server/block/BlockAttributes'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import BlockState from 'matriangle-api/server/block/BlockState'
+import { randomBoolean2 } from 'matriangle-common'
+import { int$MIN_VALUE, uint, int } from 'matriangle-legacy'
 
 /**
  * 用于存储「门」的开闭

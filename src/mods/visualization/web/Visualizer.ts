@@ -1,8 +1,8 @@
-import { uint } from '../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../api/server/control/MatrixProgram'
+} from 'matriangle-api/server/control/MatrixProgram'
 import WebMessageRouter from '../../webIO/WebMessageRouter'
 import { NativeWebServiceType } from '../../webIO/WebMessageRouter'
 

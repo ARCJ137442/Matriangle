@@ -1,6 +1,6 @@
-import { uint } from '../../../../legacy/AS3Legacy'
-import IMatrix from '../../../../api/server/main/IMatrix'
-import IPlayer from '../../../native/entities/player/IPlayer'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「有经验玩家」是

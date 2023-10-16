@@ -1,0 +1,15 @@
+{
+	"name": "matriangle-api",
+	"version": "0.1.0",
+	"description": "Matriangle的基础抽象接口",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"matriangle",
+		"api"
+	],
+	"author": "ARCJ137442",
+	"license": "MIT"
+}

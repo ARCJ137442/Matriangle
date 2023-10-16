@@ -1,12 +1,12 @@
-import { fPoint } from '../../../../common/geometricTools'
+import { fPoint } from 'matriangle-common/geometricTools'
 import {
 	IShape,
 	IShapeContainer,
-} from '../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
-import { uint } from '../../../../legacy/AS3Legacy'
-import Entity from '../../../../api/server/entity/Entity'
-import { FIXED_TPS } from '../../../../api/server/main/GlobalWorldVariables'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Entity from 'matriangle-api/server/entity/Entity'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import Effect2BlockContainer from './Effect2BlockContainer'
 
 /**

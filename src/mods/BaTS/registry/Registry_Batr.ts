@@ -1,14 +1,14 @@
-import EntityType from '../../../api/server/entity/EntityType'
-import { mRot } from '../../../api/server/general/GlobalRot'
-import IMatrix from '../../../api/server/main/IMatrix'
-import IPlayer from '../../native/entities/player/IPlayer'
+import EntityType from 'matriangle-api/server/entity/EntityType'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import Tool from '../tool/Tool'
 import IWorldRegistry, {
 	typeID,
-} from '../../../api/server/registry/IWorldRegistry'
-import BlockEventRegistry from '../../../api/server/block/BlockEventRegistry'
-import { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
-import Registry_V1 from '../../../api/server/registry/Registry_V1'
+} from 'matriangle-api/server/registry/IWorldRegistry'
+import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
+import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
+import Registry_V1 from 'matriangle-api/server/registry/Registry_V1'
 
 /**
  * 统一「工具被玩家在指定『母体』内以某个方向使用」的回调函数类型

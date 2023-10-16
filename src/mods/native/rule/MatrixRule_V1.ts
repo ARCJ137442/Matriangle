@@ -4,9 +4,9 @@
 /* eslint-disable no-prototype-builtins */
 import IMatrixRule, {
 	RuleDefaultValueMap,
-} from '../../../api/server/rule/IMatrixRule'
-import { key, safeMerge } from '../../../common/utils'
-import { JSObjectifyMap } from '../../../common/JSObjectify'
+} from 'matriangle-api/server/rule/IMatrixRule'
+import { key, safeMerge } from 'matriangle-common/utils'
+import { JSObjectifyMap } from 'matriangle-common/JSObjectify'
 
 /**
  * 第一代「规则」

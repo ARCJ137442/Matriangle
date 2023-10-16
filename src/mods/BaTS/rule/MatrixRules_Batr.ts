@@ -1,7 +1,7 @@
-﻿import { uint, int } from '../../../legacy/AS3Legacy'
+﻿import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import PlayerTeam from '../entity/player/team/PlayerTeam'
-import { TPS } from '../../../api/server/main/GlobalWorldVariables'
-import { identity, key } from '../../../common/utils'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { identity, key } from 'matriangle-common/utils'
 import { BonusType } from '../registry/BonusRegistry'
 import Tool from '../tool/Tool'
 import {
@@ -15,9 +15,9 @@ import {
 	mapSaveJSObject,
 	uniLoadJSObject,
 	uniSaveJSObject,
-} from '../../../common/JSObjectify'
-import { loadRecursiveCriterion_true } from '../../../common/JSObjectify'
-import { RuleDefaultValueMap } from '../../../api/server/rule/IMatrixRule'
+} from 'matriangle-common/JSObjectify'
+import { loadRecursiveCriterion_true } from 'matriangle-common/JSObjectify'
+import { RuleDefaultValueMap } from 'matriangle-api/server/rule/IMatrixRule'
 
 /**
  * 存储与「原生机制」有关的规则

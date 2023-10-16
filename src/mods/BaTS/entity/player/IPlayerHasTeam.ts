@@ -1,4 +1,4 @@
-import IPlayer from '../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import PlayerTeam from './team/PlayerTeam'
 
 /**

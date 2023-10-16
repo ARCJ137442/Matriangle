@@ -3,34 +3,39 @@ import {
 	iPointRef,
 	iPointVal,
 	traverseNDSquare,
-} from '../../common/geometricTools'
-import { getClass } from '../../common/utils'
-import { int, uint, uint$MAX_VALUE } from '../../legacy/AS3Legacy'
-import Entity from '../../api/server/entity/Entity'
+} from 'matriangle-common/geometricTools'
+import { getClass } from 'matriangle-common/utils'
+import { int, uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityHasPosition,
 	i_fixedLive,
 	i_hasDirection,
 	i_hasPosition,
-} from '../../api/server/entity/EntityInterfaces'
-import MapStorageSparse from '../native/map/MapStorageSparse'
-import { alignToGrid_P } from '../../api/server/general/PosTransform'
-import PlayerBatr from '../BaTS/entity/player/PlayerBatr'
-import IMapStorage from '../../api/server/map/IMapStorage'
-import { MatrixEventDispatcher } from '../../api/server/control/MatrixControl'
-import PlayerController from '../native/entities/player/controller/PlayerController'
-import { MatrixProgram } from '../../api/server/control/MatrixProgram'
-import BonusBox from '../BaTS/entity/item/BonusBox'
-import Effect from '../BaTS/entity/effect/Effect'
-import Projectile from '../BaTS/entity/projectile/Projectile'
-import BlockRandomTickDispatcher from '../BaTS/mechanics/programs/BlockRandomTickDispatcher'
-import { nameOfAxis_M, nameOfRot_M } from '../../api/server/general/GlobalRot'
-import { NativeBlockIDs } from '../native/registry/BlockRegistry_Native'
-import EffectExplode from '../BaTS/entity/effect/EffectExplode'
-import MapSwitcherRandom from '../BaTS/mechanics/programs/MapSwitcherRandom'
-import IMatrix from '../../api/server/main/IMatrix'
-import IPlayer, { isPlayer } from '../native/entities/player/IPlayer'
-import { getEntityType } from '../BaTS/registry/EntityRegistry'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
+import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
+import PlayerBatr from 'matriangle-mod-bats/entity/player/PlayerBatr'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
+import { MatrixEventDispatcher } from 'matriangle-api/server/control/MatrixControl'
+import PlayerController from 'matriangle-mod-native/entities/player/controller/PlayerController'
+import { MatrixProgram } from 'matriangle-api/server/control/MatrixProgram'
+import BonusBox from 'matriangle-mod-bats/entity/item/BonusBox'
+import Effect from 'matriangle-mod-bats/entity/effect/Effect'
+import Projectile from 'matriangle-mod-bats/entity/projectile/Projectile'
+import BlockRandomTickDispatcher from 'matriangle-mod-bats/mechanics/programs/BlockRandomTickDispatcher'
+import {
+	nameOfAxis_M,
+	nameOfRot_M,
+} from 'matriangle-api/server/general/GlobalRot'
+import { NativeBlockIDs } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import EffectExplode from 'matriangle-mod-bats/entity/effect/EffectExplode'
+import MapSwitcherRandom from 'matriangle-mod-bats/mechanics/programs/MapSwitcherRandom'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IPlayer, {
+	isPlayer,
+} from 'matriangle-mod-native/entities/player/IPlayer'
+import { getEntityType } from 'matriangle-mod-bats/registry/EntityRegistry'
 
 /**
  * 一个用于可视化母体的可视化函数库

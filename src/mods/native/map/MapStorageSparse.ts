@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { randInt, randIntBetween, randModWithout } from '../../../common/exMath'
-import { iPoint, iPointRef, iPointVal } from '../../../common/geometricTools'
+import {
+	randInt,
+	randIntBetween,
+	randModWithout,
+} from 'matriangle-common/exMath'
+import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import {
 	generateArray,
 	identity,
 	key,
 	mapObject,
 	randomIn,
-} from '../../../common/utils'
-import { mRot, rotate_M } from '../../../api/server/general/GlobalRot'
-import { int, uint } from '../../../legacy/AS3Legacy'
-import BlockAttributes from '../../../api/server/block/BlockAttributes'
+} from 'matriangle-common/utils'
+import { mRot, rotate_M } from 'matriangle-api/server/general/GlobalRot'
+import { int, uint } from 'matriangle-legacy'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import IMapStorage, {
 	BlockConstructorMap,
-} from '../../../api/server/map/IMapStorage'
+} from 'matriangle-api/server/map/IMapStorage'
 import {
 	JSObject,
 	JSObjectValue,
@@ -25,9 +29,9 @@ import {
 	loadRecursiveCriterion_false,
 	loadRecursiveCriterion_true,
 	uniSaveJSObject,
-} from '../../../common/JSObjectify'
-import Block from '../../../api/server/block/Block'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
+} from 'matriangle-common/JSObjectify'
+import Block from 'matriangle-api/server/block/Block'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import {
 	NativeBlockPrototypes,
 	NATIVE_BLOCK_CONSTRUCTOR_MAP,

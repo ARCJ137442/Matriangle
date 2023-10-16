@@ -1,8 +1,8 @@
-import { uint, int, uint$MAX_VALUE } from '../../../../../legacy/AS3Legacy'
-import { Shape } from '../../../../../legacy/flash/display'
+import { uint, int, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
+import { Shape } from 'matriangle-legacy/flash/display'
 import { FIXED_TPS } from '../../../../../server/main/GlobalWorldVariables'
-import PlayerBatr from '../../../../../server/mods/BaTS/entity/player/PlayerBatr'
-import IPlayer from '../../../../../server/mods/native/entities/player/IPlayer'
+import PlayerBatr from 'matriangle-mod-bats/entity/player/PlayerBatr'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 export default class PlayerEffectOverlay extends Shape {
 	//============Static Variables============//

@@ -1,11 +1,11 @@
-import { randInt } from '../../../common/exMath'
-import { iPoint } from '../../../common/geometricTools'
-import { randomIn, randomBoolean2 } from '../../../common/utils'
-import { uint, int } from '../../../legacy/AS3Legacy'
-import Block from '../../../api/server/block/Block'
+import { randInt } from 'matriangle-common/exMath'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { randomIn, randomBoolean2 } from 'matriangle-common/utils'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
+import Block from 'matriangle-api/server/block/Block'
 
-import IMap from '../../../api/server/map/IMap'
-import IMapStorage from '../../../api/server/map/IMapStorage'
+import IMap from 'matriangle-api/server/map/IMap'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
 import {
 	fillBlock,
 	setBlock,
@@ -15,16 +15,16 @@ import {
 	setReflectBlock,
 	fillReflectMirrorBlock,
 	setReflectMirrorBlock,
-} from '../../native/map/MapConstructTools_Native'
+} from 'matriangle-mod-native/map/MapConstructTools_Native'
 import { addSpawnPointWithMark } from '../map/MapConstructTools_BaTS'
-import MapStorageSparse from '../../native/map/MapStorageSparse'
-import Map_V1 from '../../native/map/Map_V1'
+import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
+import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import {
 	ALL_BATR_BLOCKS,
 	BatrBlockIDs,
 	BatrBlockPrototypes,
 } from './BlockRegistry_Batr'
-import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
+import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 
 /**
  * 定义所有世界原生（自带）的地图

@@ -1,5 +1,5 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import IPlayerProfile from '../profile/IPlayerProfile'
 import PlayerProfile from '../profile/PlayerProfile'
 

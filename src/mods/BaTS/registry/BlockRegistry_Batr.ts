@@ -1,11 +1,11 @@
-import Block from '../../../api/server/block/Block'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
-import BSColored from '../../native/block/BSColored'
+import Block from 'matriangle-api/server/block/Block'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import BSColored from 'matriangle-mod-native/block/BSColored'
 import BSBiColored from '../block/BSBiColored'
 import BSGate from '../block/BSGate'
-import { MapFromGeneratorKV } from '../../../common/utils'
-import { BlockConstructorMap } from '../../../api/server/map/IMapStorage'
-import BlockAttributes from '../../../api/server/block/BlockAttributes'
+import { MapFromGeneratorKV } from 'matriangle-common/utils'
+import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 
 /**
  * Define all attributes that instanceof used for classes of blocks

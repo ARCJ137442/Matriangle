@@ -1,18 +1,18 @@
-import { halfBrightnessTo } from '../../../../common/color'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { uint } from '../../../../legacy/AS3Legacy'
-import Entity from '../../../../api/server/entity/Entity'
+import { halfBrightnessTo } from 'matriangle-common/color'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityActive,
 	IEntityDisplayable,
 	IEntityShortLived,
 	IEntityWithDirection,
-} from '../../../../api/server/entity/EntityInterfaces'
-import { mRot } from '../../../../api/server/general/GlobalRot'
-import IMatrix from '../../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import Tool from '../../tool/Tool'
 import Weapon from '../../tool/Weapon'
-import IPlayer from '../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import IPlayerHasTeam from '../player/IPlayerHasTeam'
 import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
 

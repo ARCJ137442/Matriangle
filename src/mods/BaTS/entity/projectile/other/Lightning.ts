@@ -1,25 +1,25 @@
-import { iPoint, intPoint } from '../../../../../common/geometricTools'
-import { uint, int, int$MAX_VALUE } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
-import BlockAttributes from '../../../../../api/server/block/BlockAttributes'
+import { iPoint, intPoint } from 'matriangle-common/geometricTools'
+import { uint, int, int$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import Projectile from '../Projectile'
 import {
 	IEntityFixedLived,
 	IEntityInGrid,
-} from '../../../../../api/server/entity/EntityInterfaces'
-import { TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { mRot, toOpposite_M } from '../../../../../api/server/general/GlobalRot'
-import { intAbs, intMin } from '../../../../../common/exMath'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { mRot, toOpposite_M } from 'matriangle-api/server/general/GlobalRot'
+import { intAbs, intMin } from 'matriangle-common/exMath'
 import { playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
 import {
 	getHitEntity_I_Grid,
 	isHitAnyEntity_I_Grid,
-} from '../../../../native/mechanics/NativeMatrixMechanics'
-import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
-import { clearArray } from '../../../../../common/utils'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { clearArray } from 'matriangle-common/utils'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「闪电」

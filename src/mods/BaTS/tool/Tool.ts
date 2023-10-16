@@ -2,12 +2,12 @@ import {
 	IJSObjectifiable,
 	JSObjectifyMap,
 	fastAddJSObjectifyMapProperty_dashP,
-} from '../../../common/JSObjectify'
-import { key } from '../../../common/utils'
-import { uint } from '../../../legacy/AS3Legacy'
-import IPlayer from '../../native/entities/player/IPlayer'
-import IMatrix from '../../../api/server/main/IMatrix'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
+} from 'matriangle-common/JSObjectify'
+import { key } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 原`Tool`，现为（暂时轻量级的）「工具」类

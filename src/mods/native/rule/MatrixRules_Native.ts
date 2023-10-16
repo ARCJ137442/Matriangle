@@ -1,8 +1,8 @@
-﻿import { uint, int } from '../../../legacy/AS3Legacy'
-import IMap from '../../../api/server/map/IMap'
-import { TPS } from '../../../api/server/main/GlobalWorldVariables'
-import { identity, key } from '../../../common/utils'
-import { iPoint } from '../../../common/geometricTools'
+﻿import { uint, int } from 'matriangle-legacy'
+import IMap from 'matriangle-api/server/map/IMap'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { identity, key } from 'matriangle-common/utils'
+import { iPoint } from 'matriangle-common/geometricTools'
 import {
 	JSObject,
 	JSObjectValue,
@@ -15,11 +15,11 @@ import {
 	mapSaveJSObject,
 	uniLoadJSObject,
 	uniSaveJSObject,
-} from '../../../common/JSObjectify'
-import { loadRecursiveCriterion_true } from '../../../common/JSObjectify'
+} from 'matriangle-common/JSObjectify'
+import { loadRecursiveCriterion_true } from 'matriangle-common/JSObjectify'
 import Map_V1 from '../map/Map_V1'
 import MapStorageSparse from '../map/MapStorageSparse'
-import { RuleDefaultValueMap } from '../../../api/server/rule/IMatrixRule'
+import { RuleDefaultValueMap } from 'matriangle-api/server/rule/IMatrixRule'
 
 /**
  * 存储与「原生机制」有关的规则

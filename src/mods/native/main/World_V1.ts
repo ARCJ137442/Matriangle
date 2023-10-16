@@ -1,6 +1,6 @@
-﻿import IMatrix from '../../../api/server/main/IMatrix'
-import IWorld from '../../../api/server/main/IWorld'
-import IWorldRegistry from '../../../api/server/registry/IWorldRegistry'
+﻿import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IWorld from 'matriangle-api/server/main/IWorld'
+import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 第一代「世界主体」

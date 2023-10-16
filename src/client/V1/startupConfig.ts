@@ -1,4 +1,4 @@
-import IMatrixStartupConfig from '../../api/server/rule/IMatrixStartupConfig'
+import IMatrixStartupConfig from 'matriangle-api/server/rule/IMatrixStartupConfig'
 
 /**
  * 一个用于「配置母体启动」的文件

@@ -1,14 +1,16 @@
-import { int, uint } from '../../../legacy/AS3Legacy'
-import IMatrix from '../../../api/server/main/IMatrix'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import {
 	SPMAVCV单点母体所有视角截面可视化,
 	entityLV实体列表可视化,
 	matrixV母体可视化,
 } from '../textVisualizations'
-import { MatrixProgramLabel } from '../../../api/server/control/MatrixProgram'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
 import Visualizer from './Visualizer'
-import IPlayer, { isPlayer } from '../../native/entities/player/IPlayer'
-import Entity from '../../../api/server/entity/Entity'
+import IPlayer, {
+	isPlayer,
+} from 'matriangle-mod-native/entities/player/IPlayer'
+import Entity from 'matriangle-api/server/entity/Entity'
 
 /**
  * 返回的类型标识

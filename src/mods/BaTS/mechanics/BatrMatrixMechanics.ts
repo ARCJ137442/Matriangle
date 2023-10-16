@@ -1,25 +1,25 @@
-import Block from '../../../api/server/block/Block'
-import { BlockEventMap } from '../../../api/server/block/BlockEventTypes'
-import Entity from '../../../api/server/entity/Entity'
+import Block from 'matriangle-api/server/block/Block'
+import { BlockEventMap } from 'matriangle-api/server/block/BlockEventTypes'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	mRot,
 	mRot2axis,
 	mRot2increment,
-} from '../../../api/server/general/GlobalRot'
-import { alignToGridCenter_P } from '../../../api/server/general/PosTransform'
-import { PROJECTILES_SPAWN_DISTANCE } from '../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../api/server/main/IMatrix'
-import IMap from '../../../api/server/map/IMap'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
-import IMatrixRule from '../../../api/server/rule/IMatrixRule'
-import { HSVtoHEX } from '../../../common/color'
+} from 'matriangle-api/server/general/GlobalRot'
+import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
+import { PROJECTILES_SPAWN_DISTANCE } from 'matriangle-api/server/main/GlobalWorldVariables'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IMap from 'matriangle-api/server/map/IMap'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
+import { HSVtoHEX } from 'matriangle-common/color'
 import {
 	randInt,
 	intMax,
 	intMin,
 	ReLU_I,
 	randIntBetween,
-} from '../../../common/exMath'
+} from 'matriangle-common/exMath'
 import {
 	fPointRef,
 	fPoint,
@@ -27,8 +27,8 @@ import {
 	iPointRef,
 	intPoint,
 	iPointVal,
-} from '../../../common/geometricTools'
-import { MDNCodes } from '../../../common/keyCodes'
+} from 'matriangle-common/geometricTools'
+import { MDNCodes } from 'matriangle-common/keyCodes'
 import {
 	randomIn,
 	randomWithout,
@@ -38,20 +38,20 @@ import {
 	mergeRecords,
 	clearArray,
 	randomInWeightMap,
-} from '../../../common/utils'
-import { uint, int } from '../../../legacy/AS3Legacy'
-import BSColored from '../../native/block/BSColored'
-import IPlayer from '../../native/entities/player/IPlayer'
+} from 'matriangle-common/utils'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
+import BSColored from 'matriangle-mod-native/block/BSColored'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import {
 	getPlayers,
 	spreadPlayer,
 	hitTestEntity_I_Grid,
 	isHitAnyEntity_I_Grid,
 	NATIVE_DEFAULT_PLAYER_CONTROL_CONFIGS,
-} from '../../native/mechanics/NativeMatrixMechanics'
-import { PlayerControlConfig } from '../../native/mechanics/program/KeyboardControlCenter'
-import { NativeBlockPrototypes } from '../../native/registry/BlockRegistry_Native'
-import { MatrixRules_Native } from '../../native/rule/MatrixRules_Native'
+} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { PlayerControlConfig } from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
+import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 import BSGate from '../block/BSGate'
 import BonusBoxSymbol from '../display/entity/BonusBoxSymbol'
 import EffectBlockLight from '../entity/effect/EffectBlockLight'
@@ -87,7 +87,7 @@ import LaserTeleport from '../entity/projectile/laser/LaserTeleport'
 import ThrownBlock from '../entity/projectile/other/ThrownBlock'
 import Wave from '../entity/projectile/other/Wave'
 import { BlockEventType_Batr } from '../registry/BlockEventRegistry_Batr'
-import { NativeBlockEventType } from '../../native/registry/BlockEventRegistry_Native'
+import { NativeBlockEventType } from 'matriangle-mod-native/registry/BlockEventRegistry_Native'
 import { BatrBlockIDs } from '../registry/BlockRegistry_Batr'
 import { BonusType, NativeBonusTypes } from '../registry/BonusRegistry'
 import Registry_Batr, { toolUsageF } from '../registry/Registry_Batr'

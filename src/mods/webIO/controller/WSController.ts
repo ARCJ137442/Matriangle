@@ -1,7 +1,7 @@
-import { uint } from '../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { Server, WebSocket } from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
 import MultiKeyController from './MultiKeyController'
-import { MatrixProgramLabel } from '../../../api/server/control/MatrixProgram'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
 
 /**
  * 「WebSocket控制器」

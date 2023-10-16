@@ -1,0 +1,18 @@
+{
+	"name": "matriangle-legacy",
+	"version": "0.1.0",
+	"description": "Matriangle自AS3迁移时留下的AS3「遗产」，包括「整数类型」「Flash API」等",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"matriangle",
+		"legacy",
+		"ActionScript",
+		"AS3",
+		"Flash"
+	],
+	"author": "ARCJ137442",
+	"license": "MIT"
+}

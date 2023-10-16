@@ -1,17 +1,17 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import BonusBox from '../../item/BonusBox'
 import AIController, {
 	AIPlayerEvent,
-} from '../../../../native/entities/player/controller/AIController'
-import { PlayerAction } from '../../../../native/entities/player/controller/PlayerAction'
+} from 'matriangle-mod-native/entities/player/controller/AIController'
+import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import {
 	NativePlayerEvent,
 	NativePlayerEventOptions,
 	PlayerEvent,
 	PlayerEventOptions,
-} from '../../../../native/entities/player/controller/PlayerEvent'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+} from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from '../BatrPlayerEvent'
 
 /**

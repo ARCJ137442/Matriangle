@@ -1,10 +1,10 @@
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
-} from '../../../api/server/control/MatrixProgram'
-import Entity from '../../../api/server/entity/Entity'
-import { IEntityActive } from '../../../api/server/entity/EntityInterfaces'
-import IMatrix from '../../../api/server/main/IMatrix'
+} from 'matriangle-api/server/control/MatrixProgram'
+import Entity from 'matriangle-api/server/entity/Entity'
+import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 
 /**
  * 「Agent」是

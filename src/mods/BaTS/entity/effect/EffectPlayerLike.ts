@@ -1,17 +1,17 @@
-import { uint } from '../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Effect from './Effect'
-import { IEntityWithDirection } from '../../../../api/server/entity/EntityInterfaces'
-import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
+import { IEntityWithDirection } from 'matriangle-api/server/entity/EntityInterfaces'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	IGraphicContext,
 	IShape,
-} from '../../../../api/display/DisplayInterfaces'
-import { mRot } from '../../../../api/server/general/GlobalRot'
-import { fPoint } from '../../../../common/geometricTools'
-import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import { fPoint } from 'matriangle-common/geometricTools'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { drawShapeDecoration } from '../../display/NativeDisplayImplements'
-import { alignToGridCenter_P } from '../../../../api/server/general/PosTransform'
+import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 
 /**
  * （抽象）类玩家特效

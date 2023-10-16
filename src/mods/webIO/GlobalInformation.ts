@@ -3,7 +3,7 @@
  * * 提供Matriangle服务端与其它程序的通信工具
  * * 支持HTTP、WebSocket双协议
  */
-export module native {
+export module WebIO {
 	/** 模组名称 */
 	export const NAME: string = 'Matriangle WebIO'
 	/** 短名称 */

@@ -1,9 +1,6 @@
-import {
-	IJSObjectifiable,
-	JSObjectifyMap,
-} from '../../../../../common/JSObjectify'
-import { uint } from '../../../../../legacy/AS3Legacy'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import { IJSObjectifiable, JSObjectifyMap } from 'matriangle-common/JSObjectify'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import IPlayerHasExperience from '../IPlayerHasExperience'
 import IPlayerHasTeam from '../IPlayerHasTeam'
 import IPlayerProfile from './IPlayerProfile'

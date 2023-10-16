@@ -1,15 +1,15 @@
-import { fPoint } from '../../../../../common/geometricTools'
+import { fPoint } from 'matriangle-common/geometricTools'
 import {
 	IGraphicContext,
 	IShape,
-} from '../../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import Bullet from './Bullet'
 import BulletBasic from './BulletBasic'
 

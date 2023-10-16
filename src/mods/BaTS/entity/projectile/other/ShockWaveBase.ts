@@ -1,30 +1,30 @@
-import { uint, int } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Projectile from '../Projectile'
 import ShockWaveDrone from './ShockWaveDrone'
 import {
 	IEntityFixedLived,
 	IEntityInGrid,
-} from '../../../../../api/server/entity/EntityInterfaces'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	fPoint,
 	iPoint,
 	iPointRef,
 	iPointVal,
-} from '../../../../../common/geometricTools'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { random1 } from '../../../../../common/exMath'
+} from 'matriangle-common/geometricTools'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { random1 } from 'matriangle-common/exMath'
 import {
 	axis2mRot_n,
 	axis2mRot_p,
 	mRot,
 	mRot2axis,
 	rotate_M,
-} from '../../../../../api/server/general/GlobalRot'
+} from 'matriangle-api/server/general/GlobalRot'
 import Tool from '../../../tool/Tool'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * ...

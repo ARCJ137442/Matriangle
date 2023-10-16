@@ -1,22 +1,18 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Projectile from '../Projectile'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
-import {
-	fPoint,
-	iPoint,
-	iPointRef,
-} from '../../../../../common/geometricTools'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { IEntityInGrid } from '../../../../../api/server/entity/EntityInterfaces'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import { fPoint, iPoint, iPointRef } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import {
 	FIXED_TPS,
 	PROJECTILES_SPAWN_DISTANCE,
-} from '../../../../../api/server/main/GlobalWorldVariables'
-import { alignToGridCenter_P } from '../../../../../api/server/general/PosTransform'
+} from 'matriangle-api/server/main/GlobalWorldVariables'
+import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import Tool from '../../../tool/Tool'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 export default class ShockWaveDrone
 	extends Projectile

@@ -1,7 +1,7 @@
-import { int } from '../../../legacy/AS3Legacy'
-import IMapStorage from '../../../api/server/map/IMapStorage'
+import { int } from 'matriangle-legacy/AS3Legacy'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
 import { BatrBlockPrototypes } from '../registry/BlockRegistry_Batr'
-import { _temp_point_2d } from '../../native/map/MapConstructTools_Native'
+import { _temp_point_2d } from 'matriangle-mod-native/map/MapConstructTools_Native'
 
 /**
  * 增加重生点，顺带在其位置附带一个「重生点标记」

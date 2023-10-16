@@ -1,12 +1,12 @@
-import Entity from '../../../api/server/entity/Entity'
-import CommonSystem from '../../../api/server/template/CommonSystem'
 import {
 	IEntityActive,
 	IEntityActiveLite,
 	i_active,
 	i_activeLite,
-} from '../../../api/server/entity/EntityInterfaces'
-import { int } from '../../../legacy/AS3Legacy'
+} from 'matriangle-api'
+import Entity from 'matriangle-api/server/entity/Entity'
+import CommonSystem from 'matriangle-api/server/template/CommonSystem'
+import { int } from 'matriangle-legacy'
 
 /**
  * Use for manage entities in world.

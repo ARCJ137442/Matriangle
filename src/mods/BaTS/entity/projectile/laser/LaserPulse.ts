@@ -1,17 +1,17 @@
-﻿import { int, uint } from '../../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
+﻿import { int, uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Laser from './Laser'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import { iPoint } from '../../../../../common/geometricTools'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { iPoint } from 'matriangle-common/geometricTools'
 import LaserBasic from './LaserBasic'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import {
 	mRot,
 	mRot2axis,
 	toOpposite_M,
-} from '../../../../../api/server/general/GlobalRot'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+} from 'matriangle-api/server/general/GlobalRot'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 「脉冲激光」

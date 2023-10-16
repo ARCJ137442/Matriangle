@@ -1,4 +1,4 @@
-import { NativePlayerEventOptions } from '../../../native/entities/player/controller/PlayerEvent'
+import { NativePlayerEventOptions } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import BonusBox from '../item/BonusBox'
 
 /**

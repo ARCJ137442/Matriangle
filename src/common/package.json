@@ -1,0 +1,16 @@
+{
+	"name": "matriangle-common",
+	"version": "0.1.0",
+	"description": "Matriangle得以构建的一大批轮子，包括各种工具函数库，附加一些AS3版本的遗留代码",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"matriangle",
+		"common",
+		"util"
+	],
+	"author": "ARCJ137442",
+	"license": "MIT"
+}

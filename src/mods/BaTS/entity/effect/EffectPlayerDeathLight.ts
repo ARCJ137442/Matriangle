@@ -1,9 +1,9 @@
-import { uint } from '../../../../legacy/AS3Legacy'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { fPoint, iPoint } from '../../../../common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import EffectPlayerLike from './EffectPlayerLike'
-import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
-import IPlayer from '../../../native/entities/player/IPlayer'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 玩家死亡光效

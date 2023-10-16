@@ -1,15 +1,12 @@
 import EffectTeleport from '../../entity/effect/EffectTeleport'
-import {
-	BonusType,
-	NativeBonusTypes,
-} from '../../registry/BonusRegistry'
-import { uint } from '../../../../legacy/AS3Legacy'
+import { BonusType, NativeBonusTypes } from '../../registry/BonusRegistry'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	IDisplayable,
 	IGraphicContext,
 	IShape,
-} from '../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 
 /**
  * 奖励箱图形

@@ -1,6 +1,5 @@
-import { MatrixEventDispatcher } from '../../../../../api/server/control/MatrixControl'
-import { MatrixProgramLabel } from '../../../../../api/server/control/MatrixProgram'
-import IMatrix from '../../../../../api/server/main/IMatrix'
+import { MatrixEventDispatcher, MatrixProgramLabel } from 'matriangle-api'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../IPlayer'
 import { PlayerEventOptions } from './PlayerEvent'
 

@@ -1,26 +1,26 @@
-import { uint } from '../../../../../legacy/AS3Legacy'
-import Block from '../../../../../api/server/block/Block'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Block from 'matriangle-api/server/block/Block'
 import Projectile from '../Projectile'
-import { fPoint, iPoint } from '../../../../../common/geometricTools'
-import { IShape } from '../../../../../api/display/DisplayInterfaces'
-import { FIXED_TPS } from '../../../../../api/server/main/GlobalWorldVariables'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import { IEntityOutGrid } from '../../../../../api/server/entity/EntityInterfaces'
-import { mRot } from '../../../../../api/server/general/GlobalRot'
+import { fPoint, iPoint } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { IEntityOutGrid } from 'matriangle-api/server/entity/EntityInterfaces'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import {
 	alignToGridCenter_P,
 	alignToGrid_P,
-} from '../../../../../api/server/general/PosTransform'
-import IPlayer from '../../../../native/entities/player/IPlayer'
+} from 'matriangle-api/server/general/PosTransform'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectBlockLight from '../../effect/EffectBlockLight'
 import { computeFinalDamage } from '../../../mechanics/BatrMatrixMechanics'
 import {
 	getHitEntity_I_Grid,
 	isHitAnyEntity_F_Grid,
-} from '../../../../native/mechanics/NativeMatrixMechanics'
-import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
+} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
-import { BlockAttributes_Native } from '../../../../native/registry/BlockRegistry_Native'
+import { BlockAttributes_Native } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 
 /**
  * 「掷出的方块」是

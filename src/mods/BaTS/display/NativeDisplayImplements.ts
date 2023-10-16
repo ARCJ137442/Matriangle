@@ -1,6 +1,6 @@
-import { IGraphicContext } from '../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../api/display/GlobalDisplayVariables'
-import { NativeDecorationLabel } from '../../native/entities/player/DecorationLabels'
+import { IGraphicContext } from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 
 /**
  * （移植自AIPlayer）用于在主图形上显示「附加装饰」

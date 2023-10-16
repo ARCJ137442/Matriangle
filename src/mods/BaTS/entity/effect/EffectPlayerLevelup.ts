@@ -1,9 +1,9 @@
-import { uint } from '../../../../legacy/AS3Legacy'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Effect from './Effect'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { fPoint } from '../../../../common/geometricTools'
-import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { fPoint } from 'matriangle-common/geometricTools'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 
 /**
  * 玩家升级

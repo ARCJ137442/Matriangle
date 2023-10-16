@@ -1,5 +1,5 @@
-import { uint } from '../../../legacy/AS3Legacy'
-import { MatrixProgramLabel } from '../../../api/server/control/MatrixProgram'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
 import { createServer, Server, IncomingMessage, ServerResponse } from 'http'
 import { ParsedUrlQuery, parse } from 'querystring'
 import MultiKeyController from './MultiKeyController'

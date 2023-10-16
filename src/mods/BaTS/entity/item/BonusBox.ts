@@ -1,22 +1,18 @@
-import { uint } from '../../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	DisplayLayers,
 	IShape,
 	IShapeContainer,
-} from '../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
-import Entity from '../../../../api/server/entity/Entity'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityDisplayableContainer,
 	IEntityInGrid,
-} from '../../../../api/server/entity/EntityInterfaces'
-import {
-	iPoint,
-	iPointRef,
-	intPoint,
-} from '../../../../common/geometricTools'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
 import { BonusType } from '../../registry/BonusRegistry'
-import IMatrix from '../../../../api/server/main/IMatrix'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
 
 /**
  * 「奖励箱」是

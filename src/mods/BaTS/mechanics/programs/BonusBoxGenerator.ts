@@ -1,16 +1,16 @@
-import { iPointRef } from '../../../../common/geometricTools'
-import { uint } from '../../../../legacy/AS3Legacy'
-import { MatrixProgramLabel } from '../../../../api/server/control/MatrixProgram'
-import { IEntityActive } from '../../../../api/server/entity/EntityInterfaces'
-import IMatrix from '../../../../api/server/main/IMatrix'
-import IMatrixRule from '../../../../api/server/rule/IMatrixRule'
+import { iPointRef } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
+import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
 import { MatrixRules_Batr } from '../../rule/MatrixRules_Batr'
 import { BonusType } from '../../registry/BonusRegistry'
 import {
 	addBonusBoxInRandomTypeByRule,
 	getBonusBoxCount,
 } from '../BatrMatrixMechanics'
-import { getPlayers } from '../../../native/mechanics/NativeMatrixMechanics'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import BlockRandomTickDispatcher from './BlockRandomTickDispatcher'
 
 /**

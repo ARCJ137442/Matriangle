@@ -1,9 +1,9 @@
-import { fPoint, iPoint } from '../../../../common/geometricTools'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { NativeDecorationLabel } from '../../../native/entities/player/DecorationLabels'
-import { uint } from '../../../../legacy/AS3Legacy'
-import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
-import IPlayer from '../../../native/entities/player/IPlayer'
+import { fPoint, iPoint } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectPlayerLike from './EffectPlayerLike'
 
 /**

@@ -1,11 +1,11 @@
-import { fPoint } from '../../../../common/geometricTools'
-import { uintToPercent } from '../../../../common/utils'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../api/display/GlobalDisplayVariables'
-import { logical2Real } from '../../../../api/display/PosTransform'
-import { uint, uint$MAX_VALUE } from '../../../../legacy/AS3Legacy'
+import { fPoint } from 'matriangle-common/geometricTools'
+import { uintToPercent } from 'matriangle-common/utils'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { logical2Real } from 'matriangle-api/display/PosTransform'
+import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
 import Effect from './Effect'
-import { TPS } from '../../../../api/server/main/GlobalWorldVariables'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 
 /**
  * 爆炸特效

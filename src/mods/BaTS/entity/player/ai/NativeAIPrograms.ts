@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { randInt } from '../../../../../common/exMath'
-import { uint } from '../../../../../legacy/AS3Legacy'
+import { randInt } from 'matriangle-common/exMath'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	EnumNativePlayerAction,
 	PlayerAction,
-} from '../../../../native/entities/player/controller/PlayerAction'
-import { PlayerEvent } from '../../../../native/entities/player/controller/PlayerEvent'
+} from 'matriangle-mod-native/entities/player/controller/PlayerAction'
+import { PlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import AIControllerGenerator, {
 	AIActionGenerator,
 } from './AIControllerGenerator'
-import { getPlayerActionFromTurn } from '../../../../native/entities/player/controller/PlayerAction'
+import { getPlayerActionFromTurn } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import { i_hasTool } from '../IPlayerHasTool'
-import { AIPlayerEvent } from '../../../../native/entities/player/controller/AIController'
+import { AIPlayerEvent } from 'matriangle-mod-native/entities/player/controller/AIController'
 import { EnumBatrPlayerAction } from '../control/BatrPlayerAction'
 
 /**

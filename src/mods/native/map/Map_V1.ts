@@ -1,29 +1,29 @@
-import IMap from '../../../api/server/map/IMap'
-import IMapStorage from '../../../api/server/map/IMapStorage'
+import IMap from 'matriangle-api/server/map/IMap'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
 import {
 	JSObjectifyMap,
 	fastAddJSObjectifyMapProperty_dash,
 	fastAddJSObjectifyMapProperty_dashP,
 	loadRecursiveCriterion_true,
-} from '../../../common/JSObjectify'
+} from 'matriangle-common/JSObjectify'
 import {
 	fPointRef,
 	iPoint,
 	iPointRef,
 	straightProjection,
-} from '../../../common/geometricTools'
-import { identity, key } from '../../../common/utils'
-import { int, int$MAX_VALUE, uint } from '../../../legacy/AS3Legacy'
-import BlockAttributes from '../../../api/server/block/BlockAttributes'
-import { mRot, mRot2axis } from '../../../api/server/general/GlobalRot'
-import { alignToGrid_P } from '../../../api/server/general/PosTransform'
+} from 'matriangle-common/geometricTools'
+import { identity, key } from 'matriangle-common/utils'
+import { int, int$MAX_VALUE, uint } from 'matriangle-legacy'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import { mRot, mRot2axis } from 'matriangle-api/server/general/GlobalRot'
+import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
 import {
 	IEntityInGrid,
 	IEntityOutGrid,
-} from '../../../api/server/entity/EntityInterfaces'
+} from 'matriangle-api/server/entity/EntityInterfaces'
 import IPlayer from '../entities/player/IPlayer'
-import { IEntityWithDirection } from '../../../api/server/entity/EntityInterfaces'
-import { reminder_F, reminder_I } from '../../../common/exMath'
+import { IEntityWithDirection } from 'matriangle-api/server/entity/EntityInterfaces'
+import { reminder_F, reminder_I } from 'matriangle-common/exMath'
 import { isHitAnyEntity_I_Grid } from '../mechanics/NativeMatrixMechanics'
 
 /**

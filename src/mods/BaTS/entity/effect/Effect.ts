@@ -1,14 +1,14 @@
-import { fPoint } from '../../../../common/geometricTools'
-import { IShape } from '../../../../api/display/DisplayInterfaces'
-import { uint } from '../../../../legacy/AS3Legacy'
-import Entity from '../../../../api/server/entity/Entity'
+import { fPoint } from 'matriangle-common/geometricTools'
+import { IShape } from 'matriangle-api/display/DisplayInterfaces'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityActiveLite,
 	IEntityDisplayable,
 	IEntityFixedLived,
 	IEntityOutGrid,
 	IEntityShortLived,
-} from '../../../../api/server/entity/EntityInterfaces'
+} from 'matriangle-api/server/entity/EntityInterfaces'
 
 /**
  * * 【20230913 23:18:15】现在将原本独立的「特效」也归入「实体」范畴了

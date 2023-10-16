@@ -1,22 +1,22 @@
-import { iPoint, intPoint } from '../../../../../common/geometricTools'
+import { iPoint, intPoint } from 'matriangle-common/geometricTools'
 import {
 	IShape,
 	IGraphicContext,
-} from '../../../../../api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from '../../../../../api/display/GlobalDisplayVariables'
-import { uint } from '../../../../../legacy/AS3Legacy'
+} from 'matriangle-api/display/DisplayInterfaces'
+import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	IEntityInGrid,
 	IEntityFixedLived,
-} from '../../../../../api/server/entity/EntityInterfaces'
+} from 'matriangle-api/server/entity/EntityInterfaces'
 import {
 	isAxisPositive_M,
 	mRot,
 	mRot2axis,
-} from '../../../../../api/server/general/GlobalRot'
-import IMatrix from '../../../../../api/server/main/IMatrix'
-import IPlayer from '../../../../native/entities/player/IPlayer'
-import { getPlayers } from '../../../../native/mechanics/NativeMatrixMechanics'
+} from 'matriangle-api/server/general/GlobalRot'
+import IMatrix from 'matriangle-api/server/main/IMatrix'
+import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import {
 	computeFinalDamage,
 	playerCanHurtOther,

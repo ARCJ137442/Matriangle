@@ -2,11 +2,11 @@
  * 这个类最初是注册「原生2D地图」时使用的
  * * 【2023-10-07 21:13:54】目前还有很多还是2D，缺乏高维化扩展
  */
-import { iPoint } from '../../../common/geometricTools'
-import { identity } from '../../../common/utils'
-import { int, uint } from '../../../legacy/AS3Legacy'
-import Block from '../../../api/server/block/Block'
-import IMapStorage from '../../../api/server/map/IMapStorage'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { identity } from 'matriangle-common/utils'
+import { int, uint } from 'matriangle-legacy'
+import Block from 'matriangle-api/server/block/Block'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
 
 // ! 保留目前2d特性，全模块通用的「临时数组」
 export const _temp_point_2d: iPoint = new iPoint(2)

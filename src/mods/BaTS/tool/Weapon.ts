@@ -3,11 +3,11 @@ import {
 	fastAddJSObjectifyMapProperty_dashP,
 	uniLoadJSObject,
 	uniSaveJSObject,
-} from '../../../common/JSObjectify'
-import { key } from '../../../common/utils'
-import { uint } from '../../../legacy/AS3Legacy'
-import { typeID } from '../../../api/server/registry/IWorldRegistry'
-import { FIXED_TPS } from '../../../api/server/main/GlobalWorldVariables'
+} from 'matriangle-common/JSObjectify'
+import { key } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import Tool from './Tool'
 
 /**
