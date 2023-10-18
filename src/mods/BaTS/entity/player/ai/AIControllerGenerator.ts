@@ -93,9 +93,9 @@ export default class AIControllerGenerator extends AIController {
 	 *   * 但这要尽可能避免读取「未涉及的、作为参数的实例属性」
 	 */
 	protected requestAction(
-		event: PlayerEvent,
-		self: IPlayer,
-		host: IMatrix
+		event: PlayerEvent
+		// self: IPlayer, // ! 这俩已经在调用处被使用过了
+		// host: IMatrix
 	): PlayerAction {
 		// 否则⇒继续
 		this._lastYieldedAction = this._actionGenerator.next(event).value
@@ -167,7 +167,7 @@ export default class AIControllerGenerator extends AIController {
 		}
 		// * 统一「反应」
 		this._action_buffer.push(
-			this.requestAction(eventType as PlayerEvent, self, host)
+			this.requestAction(eventType as PlayerEvent /* , self, host */)
 		)
 	}
 }

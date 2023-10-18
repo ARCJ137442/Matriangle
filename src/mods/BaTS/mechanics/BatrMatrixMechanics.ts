@@ -91,7 +91,7 @@ import { NativeBlockEventType } from 'matriangle-mod-native/registry/BlockEventR
 import { BatrBlockIDs } from '../registry/BlockRegistry_Batr'
 import { BonusType, NativeBonusTypes } from '../registry/BonusRegistry'
 import Registry_Batr, { toolUsageF } from '../registry/Registry_Batr'
-import { NativeTools } from '../registry/ToolRegistry'
+import { BatrTools } from '../registry/ToolRegistry'
 import { MatrixRules_Batr } from '../rule/MatrixRules_Batr'
 import Tool from '../tool/Tool'
 import Weapon from '../tool/Weapon'
@@ -605,12 +605,12 @@ const _temp_toolUsage_PI: fPoint = new iPoint()
  *
  * * 💭【2023-10-05 17:33:39】本来放在「工具注册表」里面的，但这个映射表的「机制注册」已经多于「ID注册」了。。。
  */
-export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
+export const BATR_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 	typeID,
 	toolUsageF
 >({
 	// * 武器：普通子弹 * //
-	[NativeTools.TOOL_ID_BULLET_BASIC]: (
+	[BatrTools.TOOL_ID_BULLET_BASIC]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -618,7 +618,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 		chargePercent: number
 	): void => generateBullet(BulletBasic, host, user, tool, direction),
 	// * 武器：核弹 * //
-	[NativeTools.TOOL_ID_BULLET_NUKE]: (
+	[BatrTools.TOOL_ID_BULLET_NUKE]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -639,7 +639,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 		)
 	},
 	// * 武器：轰炸机 * //
-	[NativeTools.TOOL_ID_BULLET_BOMBER]: (
+	[BatrTools.TOOL_ID_BULLET_BOMBER]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -662,7 +662,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 		)
 	},
 	// * 武器：跟踪子弹 * //
-	[NativeTools.TOOL_ID_BULLET_TRACKING]: (
+	[BatrTools.TOOL_ID_BULLET_TRACKING]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -687,7 +687,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 			chargePercent >= 1
 		),
 	// * 武器：基础激光 * //
-	[NativeTools.TOOL_ID_LASER_BASIC]: (
+	[BatrTools.TOOL_ID_LASER_BASIC]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -704,7 +704,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 			chargePercent
 		),
 	// * 武器：传送激光 * //
-	[NativeTools.TOOL_ID_LASER_TELEPORT]: (
+	[BatrTools.TOOL_ID_LASER_TELEPORT]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -721,7 +721,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 			LaserTeleport.LIFE
 		),
 	// * 武器：吸收激光 * //
-	[NativeTools.TOOL_ID_LASER_ABSORPTION]: (
+	[BatrTools.TOOL_ID_LASER_ABSORPTION]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -729,7 +729,7 @@ export const NATIVE_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 		chargePercent: number
 	): void => generateLaser(LaserAbsorption, host, user, tool, direction),
 	// * 武器：脉冲激光 * //
-	[NativeTools.TOOL_ID_LASER_PULSE]: (
+	[BatrTools.TOOL_ID_LASER_PULSE]: (
 		host: IMatrix,
 		user: IPlayer,
 		tool: Tool,
@@ -1355,8 +1355,8 @@ export function randomTick_MoveableWall(
 				randomRot,
 				0.25 + Math.random() * 0.25, // 0.25~0.5 // * 【2023-10-08 00:33:11】别飞太快
 				block, // ! 【2023-09-22 22:32:47】现在在构造函数内部会自行拷贝
-				NativeTools.WEAPON_BLOCK_THROWER.baseDamage,
-				NativeTools.WEAPON_BLOCK_THROWER.extraResistanceCoefficient
+				BatrTools.WEAPON_BLOCK_THROWER.baseDamage,
+				BatrTools.WEAPON_BLOCK_THROWER.extraResistanceCoefficient
 			)
 		)
 	else return
@@ -1470,12 +1470,12 @@ export function randomTick_LaserTrap(
 const _temp_randomTick_LaserTrap: iPoint = new iPoint()
 /** 「激光陷阱」生成所有激光的列表 [构造函数, 对应武器, 附加参数] */
 const _temp_randomTick_weapons: Array<[LaserConstructor, Weapon, unknown[]]> = [
-	[LaserBasic, NativeTools.WEAPON_LASER_BASIC.copy(), [1 /* 完全充能 */]],
-	[LaserTeleport, NativeTools.WEAPON_LASER_TELEPORT.copy(), []],
-	[LaserAbsorption, NativeTools.WEAPON_LASER_ABSORPTION.copy(), []],
+	[LaserBasic, BatrTools.WEAPON_LASER_BASIC.copy(), [1 /* 完全充能 */]],
+	[LaserTeleport, BatrTools.WEAPON_LASER_TELEPORT.copy(), []],
+	[LaserAbsorption, BatrTools.WEAPON_LASER_ABSORPTION.copy(), []],
 	[
 		LaserPulse,
-		NativeTools.WEAPON_LASER_PULSE.copy(),
+		BatrTools.WEAPON_LASER_PULSE.copy(),
 		[randomBoolean() /* 随机「回拽」「前推」 */],
 	],
 ]

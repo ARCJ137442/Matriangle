@@ -1,0 +1,23 @@
+{
+	"name": "matriangle-mod-nar-framework",
+	"version": "0.1.0",
+	"description": "用于搭建NARS相关实验的框架",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"matriangle",
+		"mod",
+		"NARS"
+	],
+	"author": "ARCJ137442",
+	"license": "MIT",
+	"dependencies": {
+		"matriangle-common": "^0.1.0",
+		"matriangle-api": "^0.1.0",
+		"matriangle-legacy": "^0.1.0",
+		"matriangle-mod-native": "^0.1.0",
+		"matriangle-web-io": "^0.1.0"
+	}
+}

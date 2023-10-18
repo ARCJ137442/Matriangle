@@ -4,7 +4,13 @@ import {
 	IncomingMessage,
 	ServerResponse,
 } from 'http'
-import { Server as WebSocketServer, WebSocket } from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
+import {
+	Server as WebSocketServer,
+	WebSocket,
+	MessageEvent,
+	ErrorEvent,
+	CloseEvent,
+} from 'ws' // 需要使用`npm i --save-dev ws @types/ws`安装
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	MatrixProgram,
@@ -16,7 +22,7 @@ import { voidF } from 'matriangle-common/utils'
 /**
  * 目前支持的「网络」服务类型
  */
-export type NativeWebServiceType = 'http' | 'ws'
+export type NativeWebServiceType = 'http' | 'ws' | 'ws-client'
 
 /**
  * 拼接地址
@@ -141,13 +147,13 @@ export default class WebMessageRouter
 		launchedCallback?: voidF
 	): boolean {
 		return this.registerService(
-			new HTTPService(host, port, messageCallback),
+			new HTTPServiceServer(host, port, messageCallback),
 			launchedCallback
 		)
 	}
 
 	/**
-	 * 注册WebSocket服务（并立即启动）
+	 * 注册WebSocket（服务端）服务（并立即启动）
 	 *
 	 * @param {string} host 注册服务的服务主机地址
 	 * @param {uint} port 注册服务的服务端口
@@ -163,7 +169,29 @@ export default class WebMessageRouter
 		launchedCallback?: voidF
 	): boolean {
 		return this.registerService(
-			new WebSocketService(host, port, messageCallback),
+			new WebSocketServiceServer(host, port, messageCallback),
+			launchedCallback
+		)
+	}
+
+	/**
+	 * 注册WebSocket客户端服务（并立即启动）
+	 *
+	 * @param {string} host 注册服务的服务主机地址
+	 * @param {uint} port 注册服务的服务端口
+	 * @param {(message:string) => string} messageCallback 在收到消息时「进行处理并回传（阻塞）」的「消息处理回调函数」
+	 * @param {() => void} launchedCallback 在启动时回传的回调函数
+	 *
+	 * @returns {boolean} 是否启动成功
+	 */
+	public registerWebSocketServiceClient(
+		host: string,
+		port: uint,
+		messageCallback: MessageCallback,
+		launchedCallback?: voidF
+	): boolean {
+		return this.registerService(
+			new WebSocketServiceClient(host, port, messageCallback),
 			launchedCallback
 		)
 	}
@@ -202,6 +230,13 @@ export default class WebMessageRouter
 					messageCallback,
 					launchedCallback
 				)
+			case 'ws-client':
+				return this.registerWebSocketServiceClient(
+					host,
+					port,
+					messageCallback,
+					launchedCallback
+				)
 			/* default:
 				console.error(`未知的服务类型：${type}`);
 				return false; */
@@ -232,6 +267,21 @@ export default class WebMessageRouter
 		return false
 	}
 
+	public sendMessageTo(address: string, message: string): void {
+		// 有服务
+		if (this._services.has(address))
+			if ((this._services.get(address) as IService).send !== undefined)
+				// 支持发送消息
+				(
+					(this._services.get(address) as IService)
+						.send as CallableFunction
+				)(message)
+			// 不支持
+			else console.error(`服务「${address}」不支持发送消息`)
+		// 没服务
+		else console.error(`服务「${address}」不存在`)
+	}
+
 	// 实现：消息路由器 //
 	/** @implements 实现：把「消息回调函数」放最前头 */
 	registerMessageService(
@@ -249,6 +299,7 @@ export default class WebMessageRouter
 			launchedCallback
 		)
 	}
+
 	/** @implements 实现：复刻一遍先前的参数 */
 	unregisterMessageService(
 		type: NativeWebServiceType,
@@ -260,7 +311,7 @@ export default class WebMessageRouter
 	}
 }
 
-// 服务器部分 //
+// 服务（器）部分 //
 interface IService {
 	/** 地址 */
 	get address(): string
@@ -323,7 +374,7 @@ abstract class Service implements IService {
 }
 
 /** HTTP服务器 */
-class HTTPService extends Service {
+class HTTPServiceServer extends Service {
 	/**
 	 * 存储当前HTTP服务器
 	 */
@@ -388,11 +439,14 @@ class HTTPService extends Service {
 }
 
 /** WebSocket服务器 */
-class WebSocketService extends Service {
+class WebSocketServiceServer extends Service {
 	/**
 	 * 存储当前WebSocket服务器
 	 */
 	protected _server?: WebSocketServer
+
+	/** 存储所有连接至此的WebSocket连接 */
+	protected _connections: Set<WebSocket> = new Set()
 
 	/** 服务器类型：WebSocket */
 	override readonly SERVICE_TYPE: string = 'WebSocket'
@@ -428,6 +482,8 @@ class WebSocketService extends Service {
 					`${this.address}：与${socket.url}的WebSocket连接已建立！`,
 					socket
 				)
+				// 加入集合
+				this._connections.add(socket)
 				// 继续往Socket添加钩子
 				socket.on('message', (messageBuffer: Buffer): void => {
 					// !【2023-10-07 14:45:37】现在统一把消息缓冲区转成字符串，交给内部的函数处理
@@ -446,6 +502,8 @@ class WebSocketService extends Service {
 						code,
 						reason
 					)
+					// 移出集合
+					this._connections.delete(socket)
 				})
 				// 报错
 				socket.once('error', (error: Error): void => {
@@ -455,6 +513,8 @@ class WebSocketService extends Service {
 						error
 					)
 				})
+				// 移出集合
+				this._connections.delete(socket)
 			})
 		} catch (e) {
 			console.error(`${this.address}：服务器启动失败！`, e)
@@ -465,13 +525,108 @@ class WebSocketService extends Service {
 	 * 终止WebSocket服务器
 	 */
 	stop(callback?: voidF): void {
+		// 关闭服务器
 		this._server?.close((): void => {
 			console.log(`${this.address}：服务器已关闭！`)
 			// 这里可以执行一些清理操作或其他必要的处理
 			callback?.()
 		})
+		// 清除所有连接
+		if (this._server !== undefined) this._connections.clear()
+		// 删除服务器引用
+		delete this._server
 	}
 
 	/** @implements 实现：向所有已连接的「WebSocket连接」发送消息 */
-	send(message: string): void {}
+	send(message: string): void {
+		for (const connection of this._connections) {
+			connection.send(message)
+		}
+	}
+}
+
+/** WebSocket客户端 */
+class WebSocketServiceClient extends Service {
+	/**
+	 * 存储当前WebSocket服务器
+	 */
+	protected _connection?: WebSocket
+
+	/** 服务器类型：WebSocket */
+	override readonly SERVICE_TYPE: string = 'WebSocket-Client'
+
+	/** @override 重载：WebSocket地址前缀 */
+	override get address(): string {
+		return `ws://${getAddress(this.host, this.port)}`
+	}
+
+	// !【2023-10-12 21:08:47】目前无需存储所有与服务器连接的WebSocket
+	// ! 1. 在`on('connection')`中传入的`socket.url`为undefined，无法生成有意义的键
+	// ! 2. 目前只需「多个WS连接→一个回调函数」，暂时不需要「一对一」逻辑（后者可以再创建一个服务器）
+
+	/**
+	 * 启动WebSocket服务器
+	 * * 似乎缺少一个「是否启动成功」的标签信息
+	 */
+	launch(callback?: voidF): void {
+		try {
+			// 创建服务
+			this._connection = new WebSocket(this.address)
+			// 直接回调
+			callback?.()
+			// 开始侦听连接
+			// 提示
+			console.log(
+				`${this.address}：WebSocket连接已建立！`,
+				this._connection
+			)
+			// 继续往Socket添加钩子
+			this._connection.onmessage = (event: MessageEvent): void => {
+				// ! event.data的类型就是`string`
+				/** 有可能不回复 */
+				const reply: string | undefined = this.messageCallback(
+					String(event.data)
+				)
+				// 条件回传
+				if (reply !== undefined) this._connection?.send(reply)
+			}
+			// 关闭时（只有一次）
+			this._connection.onclose = (event: CloseEvent): void => {
+				// 提示
+				console.log(
+					`${this.address}：与${this._connection?.url}的WebSocket连接已断开！`,
+					event.code,
+					event.reason
+				)
+			}
+			// 报错
+			this._connection.onerror = (event: ErrorEvent): void => {
+				// 提示
+				console.error(
+					`${this.address}：与${this._connection?.url}的WebSocket连接发生错误！`,
+					event.error
+				)
+			}
+		} catch (e) {
+			console.error(`${this.address}：服务器启动失败！`, e)
+		}
+	}
+
+	/**
+	 * 终止WebSocket服务器
+	 */
+	stop(callback?: voidF): void {
+		this._connection?.close()
+		console.log(`${this.address}：服务器已关闭！`)
+		// 这里可以执行一些清理操作或其他必要的处理
+		callback?.()
+		delete this._connection
+	}
+
+	/** @implements 实现：向所有已连接的「WebSocket连接」发送消息 */
+	send(message: string): void {
+		// 必须是打开状态
+		if (this._connection?.readyState === WebSocket.OPEN)
+			this._connection.send(message)
+	}
 }

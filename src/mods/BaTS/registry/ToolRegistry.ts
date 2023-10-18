@@ -2,12 +2,13 @@ import Tool from '../tool/Tool'
 import Weapon from '../tool/Weapon'
 
 /**
- * 原生工具（武器）注册表
+ * 源自BaTr「武器系统」的工具（武器）注册表
+ * * 不包含在「API」与「原生」中
  * * 其中的「TOOL_ID_」用于在「玩家使用工具」时提供「功能映射」参考
  *
  * !【2023-09-24 21:21:24】现在这里提供的「武器」更多是一种「原型」
  */
-export module NativeTools {
+export module BatrTools {
 	// **空工具** //
 	export const TOOL_ID_NULL: string = ''
 	export const TOOL_NULL: Tool = new Tool(TOOL_ID_NULL, 0, 0, false)

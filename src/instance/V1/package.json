@@ -17,9 +17,9 @@
 		"matriangle-common": "^0.1.0",
 		"matriangle-legacy": "^0.1.0",
 		"matriangle-mod-bats": "^0.1.0",
-		"matriangle-mod-native": "^0.1.0"
+		"matriangle-mod-native": "^0.1.0",
+		"matriangle-mod-web-io": "^0.1.0",
+		"matriangle-mod-visualization": "^0.1.0"
 	},
-	"devDependencies": {
-		"html-webpack-plugin": "^5.5.3"
-	}
+	"devDependencies": {}
 }

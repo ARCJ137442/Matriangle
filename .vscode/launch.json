@@ -21,12 +21,12 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Matriangle Client V1",
+			"name": "Matriangle Instance V1",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
 			// "program": "${workspaceFolder}\\test\\test.ts",
-			"program": "src/client/V1/MatriangleClient_V1.ts",
+			"program": "src/instance/V1/MatriangleServer_V1.ts",
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],

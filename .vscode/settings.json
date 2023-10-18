@@ -16,9 +16,11 @@
 		"世界机制",
 		"BaTS",
 		"webpack",
-		"实例/客户端"
+		"实例/客户端",
+		"NARS"
 	],
 	// Prittier×editorconfig参考：https://blog.csdn.net/qq_43886365/article/details/130409080
 	"prettier.configPath": ".prettierrc.mjs",
 	"prettier.useEditorConfig": true,
+	"editor.formatOnSave": true,
 }

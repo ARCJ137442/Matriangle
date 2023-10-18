@@ -1,0 +1,13 @@
+{
+	"output": "./index.ts",
+	"imports": [
+		"**/*.extensions.ts"
+	],
+	"exports": [
+		"**/*.ts"
+	],
+	"exclude": [
+		"**/*.test.ts",
+		"**/*.deprecated.ts"
+	]
+}

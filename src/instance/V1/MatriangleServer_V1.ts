@@ -5,7 +5,7 @@ import { NativeAIPrograms } from 'matriangle-mod-bats/entity/player/ai/NativeAIP
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
-	NATIVE_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
+	BATR_TOOL_USAGE_MAP,
 	addBonusBoxInRandomTypeByRule,
 	getRandomMap,
 	getRandomTeam,
@@ -16,7 +16,7 @@ import {
 import { projectEntities } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import { respawnAllPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import WorldRegistry_V1 from 'matriangle-mod-bats/registry/Registry_Batr'
-import { NativeTools as BatrTools } from 'matriangle-mod-bats/registry/ToolRegistry'
+import { BatrTools } from 'matriangle-mod-bats/registry/ToolRegistry'
 import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import {
 	listE列举实体,
@@ -215,7 +215,7 @@ function setupPlayers(host: IMatrix): void {
 	)
 
 	// *添加实体
-	host.addEntities(p, p2, p3, ctl, /* ctlWeb, */ kcc)
+	host.addEntities(p, p2, p3, ctl, ctlWeb, kcc)
 	// 让所有玩家「重生」
 	respawnAllPlayer(matrix)
 }

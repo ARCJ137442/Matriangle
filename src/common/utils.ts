@@ -499,8 +499,8 @@ export function isComplexInstance(v: any): boolean {
 /**
  * 像「字典」一样「用字符串查询值」的对象
  */
-export type dictionaryLikeObject = {
-	[key: string]: any
+export type dictionaryLikeObject<T = any> = {
+	[key: string]: T
 }
 
 /**
