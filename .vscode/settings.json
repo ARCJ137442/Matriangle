@@ -15,7 +15,8 @@
 		"显示端",
 		"世界机制",
 		"BaTS",
-		"webpack"
+		"webpack",
+		"实例/客户端"
 	],
 	// Prittier×editorconfig参考：https://blog.csdn.net/qq_43886365/article/details/130409080
 	"prettier.configPath": ".prettierrc.mjs",
