@@ -17,11 +17,7 @@ import {
 	TICK_TIME_MS,
 	TPS,
 } from 'matriangle-api/server/main/GlobalWorldVariables'
-import {
-	dictionaryLikeObject,
-	mergeMaps,
-	mergeMultiMaps,
-} from 'matriangle-common/utils'
+import { mergeMaps, mergeMultiMaps, randomIn } from 'matriangle-common/utils'
 import { iPoint } from 'matriangle-common/geometricTools'
 import MatrixVisualizer from '../../mods/visualization/web/MatrixVisualizer'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
@@ -50,7 +46,8 @@ import {
 	NativePlayerEvent,
 	PlayerEvent,
 } from 'matriangle-mod-native'
-import { nameOfAxis_M } from 'matriangle-api'
+import { axis2mRot_n, axis2mRot_p, nameOfAxis_M } from 'matriangle-api'
+import { PyNARSOutputType } from '../../mods/NARFramework'
 
 // 地图 //
 function initMaps(): IMap[] {
@@ -130,7 +127,7 @@ function setupPlayers(host: IMatrix): void {
 	p.lifeNotDecay = true
 	// Web控制器
 	const ctlWeb: WebController = new WebController()
-	ctlWeb.addConnection(p, 'p2')
+	ctlWeb.addConnection(p, 'p2' /* UI遗留 */)
 	ctlWeb.linkToRouter(router, 'ws', '127.0.0.1', 3002) // 连接到消息路由器
 	const kcc: KeyboardControlCenter = new KeyboardControlCenter()
 
@@ -161,39 +158,121 @@ function setupPlayers(host: IMatrix): void {
 		}
 	)
 
-	// 建立服务
+	// 建立服务 //
 	const NARSServerHost: string = '127.0.0.1'
 	const NARSServerPort: uint = 8765
 	const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
+
+	// NARS参数 //
+	/** 对接的是PyNARS的逻辑 */
+	const ctlFeedback: FeedbackController = new FeedbackController('NARS')
+	// 词项常量池
+	const SELF: string = '{SELF}'
+	const SAFE: string = '[SAFE]'
+	const positiveTruth = '%1.0;0.9%'
+	const negativeTruth = '%0.0;0.9%'
+	const nativeOperatorNames = ['right', 'left', 'down', 'up'] // 用于对接OpenNARS、ONA这些「内置指定名称操作」的CIN
+	/** 单位执行速度 = 感知 */
+	ctlFeedback.AIRunSpeed = 1
+	/** 目标提醒相对倍率 */
+	const goalRemindRate: uint = 2
+	let _goalRemindRate: uint = 0
+	/** Babble相对倍率 */
+	const babbleRate: uint = 3
+	let _babbleRate: uint = 0
+	/** 已注册的操作 */
+	const registeredOperators: string[] = []
+	/** 距离「上一次NARS发送操作」所过的单位时间 */
+	let lastNARSOperated: uint = 0
+	/** 「长时间无操作⇒babble」的阈值 */
+	const babbleThreshold: uint = 5
+	/** 解包格式 */
+	type PyNARSOutput = {
+		interface_name?: string
+		output_type?: string
+		content?: string
+	}
+	/** PyNARS传回的消息中会有的格式 */
+	type PyNARSOutputJSON = PyNARSOutput[]
+
+	// 接收消息 //
 	router.registerWebSocketServiceClient(
 		NARSServerHost,
 		NARSServerPort,
 		// * 从NARS接收信息 * //
 		(message: string): undefined => {
-			// 解析JSON，格式：
-			const output_data: dictionaryLikeObject<string> = JSON.parse(
+			// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
+			const output_datas: PyNARSOutputJSON = JSON.parse(
 				message
-			) as dictionaryLikeObject<string>
-			console.log(
-				`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
-				output_data
-			)
+			) as PyNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
+			// 处理
+			for (
+				let i: uint = 0, output_data: PyNARSOutput;
+				i < output_datas.length;
+				i++
+			) {
+				output_data = output_datas[i]
+				// console.log(
+				// 	`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
+				// 	output_data
+				// )
+				if (typeof output_data.output_type === 'string')
+					switch (output_data.output_type) {
+						case PyNARSOutputType.IN:
+							break
+						case PyNARSOutputType.OUT:
+							break
+						case PyNARSOutputType.ERROR:
+							break
+						case PyNARSOutputType.ANSWER:
+							break
+						case PyNARSOutputType.ACHIEVED:
+							break
+						case PyNARSOutputType.EXE:
+							console.info(
+								`操作「${output_data?.content}」已被接收！`
+							)
+							// 提取操作符⇒执行 // * 格式：
+							// 清空计时
+							lastNARSOperated = 0
+							break
+						// 跳过
+						case PyNARSOutputType.INFO:
+						case PyNARSOutputType.COMMENT:
+							break
+					}
+			}
 		},
 		(): void => console.log(`${NARSServerAddress}：NARS连接成功！`)
 	)
 
 	// 反馈控制器⇒消息路由 // * 事件反馈
-	/** 对接的是PyNARS的逻辑 */
-	const ctlFeedback: FeedbackController = new FeedbackController('NARS')
-	ctlFeedback.AIRunSpeed = 5
 	// 辅助初始化工具
 	const xPointer: iPoint = new iPoint()
-	const SELF: string = '{SELF}'
+	/** 发送消息 */
 	const send = (message: string): void => {
 		// ! 这里实际上是「以客户端为主体，借客户端发送消息」
 		router.sendMessageTo(NARSServerAddress, message)
 		// * 向NARS发送Narsese * //
 		console.log(`Message sent: ${message}`)
+	}
+	/** 响应操作 */
+	let operateI: uint
+	const oldP: iPoint = new iPoint()
+	const operate = (op: string): void => {
+		// 获取索引 // * 索引即方向
+		operateI = registeredOperators.indexOf(op)
+		// 有操作⇒行动&反馈
+		if (operateI >= 0) {
+			// 缓存点
+			oldP.copyFrom(p.position)
+			p.moveToward(host, operateI)
+			// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
+			if (oldP.isEqual(p.position))
+				send(`<${SELF} --> ${SAFE}>. :|: ${negativeTruth}`)
+			// 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
+			else send(`<${SELF} --> ${SAFE}>. :|: ${positiveTruth}`)
+		} else console.error(`未知的操作「${op}」`)
 	}
 	// AI 初始化（PyNARS指令）
 	ctlFeedback.on(
@@ -204,15 +283,30 @@ function setupPlayers(host: IMatrix): void {
 			// 消息生成
 			// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
 			let name_p: string, name_n: string
+			// 翻译成「上下左右」以便让OpenNARS响应。若无法翻译则退化为「z_p」这样的形式
 			for (let i = 0; i < host.map.storage.numDimension; ++i) {
 				// 正方向
-				name_p = `${nameOfAxis_M(i)}_p`
+				// name_p = `${nameOfAxis_M(i)}_p`
+				name_p =
+					axis2mRot_p(i) < nativeOperatorNames.length
+						? nativeOperatorNames[axis2mRot_p(i)]
+						: `${nameOfAxis_M(i)}_p`
 				messages.push(`/reg ${name_p} eval `) // 注册操作符，使之能被EXE
-				messages.push(`<${SELF} --> ${name_p}(${SELF})>.`) // 将操作符与自身联系起来
+				messages.push(
+					`<${SELF} --> ${name_p}(${SELF})>. ${positiveTruth}`
+				) // 将操作符与自身联系起来
+				registeredOperators.push(`^${name_p}`) // ! 不要忘记尖号
 				// 负方向
-				name_n = `${nameOfAxis_M(i)}_n`
+				// name_n = `${nameOfAxis_M(i)}_n`
+				name_n =
+					axis2mRot_n(i) < nativeOperatorNames.length
+						? nativeOperatorNames[axis2mRot_n(i)]
+						: `${nameOfAxis_M(i)}_n`
 				messages.push(`/reg ${name_n} eval `) // 注册操作符，使之能被EXE
-				messages.push(`<${SELF} --> ${name_n}(${SELF})>.`) // 将操作符与自身联系起来
+				messages.push(
+					`<${SELF} --> ${name_n}(${SELF})>. ${positiveTruth}`
+				) // 将操作符与自身联系起来
+				registeredOperators.push(`^${name_n}`) // ! 不要忘记尖号 // 必须确保「正→负」这个顺序
 			}
 			// 消息发送 //
 			for (let i = 0; i < messages.length; ++i) send(messages[i])
@@ -224,21 +318,37 @@ function setupPlayers(host: IMatrix): void {
 	ctlFeedback.on(
 		AIPlayerEvent.AI_TICK,
 		(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
-			// 左右感知 //
+			// 左右感知 // TODO: 推广至任意维
 			// 左边
 			xPointer.copyFrom(self.position)
 			xPointer[0]--
 			if (!self.testCanGoTo(host, xPointer)) {
-				send(`<${SELF} --> [left_blocked]>. :|:`)
+				send(`<${SELF} --> [left_blocked]>. :|: ${positiveTruth}`)
 			}
 			// 右边
 			xPointer.copyFrom(self.position)
 			xPointer[0]++
 			if (!self.testCanGoTo(host, xPointer)) {
-				send(`<${SELF} --> [right_blocked]>. :|:`)
+				send(`<${SELF} --> [right_blocked]>. :|: ${positiveTruth}`)
 			}
 			// 提醒目标：自身安全 //
-			send(`<${SELF} --> [safe]>!`)
+			if (_goalRemindRate-- === 0) {
+				_goalRemindRate = goalRemindRate
+				send(`<${SELF} --> ${SAFE}>! :|: ${positiveTruth}`)
+			}
+			// 无事babble //
+			if (lastNARSOperated > babbleThreshold)
+				if (_babbleRate-- === 0) {
+					_babbleRate = babbleRate
+					// 随机选一个操作⇒做它
+					const babbleOp = randomIn(registeredOperators) // 带尖号
+					// 让系统知道「自己做了操作」
+					send(`<(*, ${SELF}) --> ${babbleOp}>. :|: ${positiveTruth}`) // f(x)
+					// 执行操作，收获后果
+					operate(babbleOp)
+				}
+			// 操作计数 //
+			lastNARSOperated++
 		}
 	)
 	// 默认事件处理

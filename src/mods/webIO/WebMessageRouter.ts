@@ -633,9 +633,20 @@ class WebSocketServiceClient extends Service {
 
 	/** @implements 实现：添加进缓存，然后尝试发送所有 */
 	send(message: string): void {
+		// 缓存
 		this._temp_message_toSend.push(message)
-		if (!this.trySendAll())
+		if (!this.trySendAll() /* 成功⇒清空缓存 */) {
 			console.warn(`未能发送消息「${message}」，已将其缓存！`)
+			if (
+				this._connection === undefined ||
+				this._connection?.readyState === WebSocket.CLOSED
+			) {
+				console.info(`正在尝试重连${this.address}。。。`)
+				// 重启
+				this.stop()
+				this.launch()
+			}
+		}
 	}
 
 	/**
@@ -649,6 +660,8 @@ class WebSocketServiceClient extends Service {
 			// 尝试发送所有缓存的消息
 			for (let i: uint = 0; i < this._temp_message_toSend.length; i++)
 				this._connection.send(this._temp_message_toSend[i])
+			// 清空缓存
+			this._temp_message_toSend.length = 0
 			return true
 		}
 		return false
