@@ -62,7 +62,7 @@ export default class AIControllerGenerator extends AIController {
 	public constructor(label: string, actionGeneratorF: AIActionGeneratorF) {
 		super(label)
 		this._actionGenerator = actionGeneratorF(this)
-		this._actionGenerator.next(AIPlayerEvent.INIT) // ! 跳过第一个「无用生成」
+		// this._actionGenerator.next(AIPlayerEvent.INIT) // !【2023-10-20 15:32:44】现在在父类中会自动触发，不必手动跳过第一个「无用生成」了
 	}
 
 	// 一些AI用的公开实例变量（在使用前是undefined，但这绝对不会在调用后发生）

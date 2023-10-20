@@ -118,9 +118,11 @@ export default abstract class AIController extends PlayerController {
 
 	protected _temp_add_action: PlayerAction[] = []
 	protected _action_buffer: PlayerAction[] = []
+	protected _temp_isInited: boolean = false
 	/**
 	 * 现在统一响应事件：计算AI刻，并分派钩子
 	 * * 原`onPlayerTick`已废弃
+	 * * 会在「第一次响应」之前，响应`AIPlayerEvent.INIT`事件
 	 */
 	reactPlayerEvent<
 		OptionMap extends PlayerEventOptions,
@@ -131,6 +133,17 @@ export default abstract class AIController extends PlayerController {
 		host: IMatrix,
 		otherInf: OptionMap[T]
 	): void {
+		// 未初始化⇒先初始化
+		if (!this._temp_isInited) {
+			this._temp_isInited = true
+			// 先响应「初始化」事件
+			this.reactPlayerEvent<AIPlayerEventOptions, AIPlayerEvent.INIT>(
+				AIPlayerEvent.INIT,
+				self,
+				host,
+				undefined
+			)
+		}
 		// 定时分派自己的「AI刻」事件（必须以「世界刻」为前提）
 		if (eventType === NativePlayerEvent.TICK && this.dealAITick()) {
 			// 直接送去「反应」，预期在其中向「动作缓冲区」添加行为

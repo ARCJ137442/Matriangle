@@ -50,6 +50,7 @@ import {
 	NativePlayerEvent,
 	PlayerEvent,
 } from 'matriangle-mod-native'
+import { nameOfAxis_M } from 'matriangle-api'
 
 // 地图 //
 function initMaps(): IMap[] {
@@ -182,47 +183,88 @@ function setupPlayers(host: IMatrix): void {
 	)
 
 	// 反馈控制器⇒消息路由 // * 事件反馈
+	/** 对接的是PyNARS的逻辑 */
 	const ctlFeedback: FeedbackController = new FeedbackController('NARS')
 	ctlFeedback.AIRunSpeed = 5
+	// 辅助初始化工具
 	const xPointer: iPoint = new iPoint()
+	const SELF: string = '{SELF}'
+	const send = (message: string): void => {
+		// ! 这里实际上是「以客户端为主体，借客户端发送消息」
+		router.sendMessageTo(NARSServerAddress, message)
+		// * 向NARS发送Narsese * //
+		console.log(`Message sent: ${message}`)
+	}
+	// AI 初始化（PyNARS指令）
+	ctlFeedback.on(
+		AIPlayerEvent.INIT,
+		(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
+			// 消息列表 //
+			const messages: string[] = []
+			// 消息生成
+			// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
+			let name_p: string, name_n: string
+			for (let i = 0; i < host.map.storage.numDimension; ++i) {
+				// 正方向
+				name_p = `${nameOfAxis_M(i)}_p`
+				messages.push(`/reg ${name_p} eval `) // 注册操作符，使之能被EXE
+				messages.push(`<${SELF} --> ${name_p}(${SELF})>.`) // 将操作符与自身联系起来
+				// 负方向
+				name_n = `${nameOfAxis_M(i)}_n`
+				messages.push(`/reg ${name_n} eval `) // 注册操作符，使之能被EXE
+				messages.push(`<${SELF} --> ${name_n}(${SELF})>.`) // 将操作符与自身联系起来
+			}
+			// 消息发送 //
+			for (let i = 0; i < messages.length; ++i) send(messages[i])
+			// 清空消息 //
+			messages.length = 0
+		}
+	)
+	// AI 运作周期
+	ctlFeedback.on(
+		AIPlayerEvent.AI_TICK,
+		(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
+			// 左右感知 //
+			// 左边
+			xPointer.copyFrom(self.position)
+			xPointer[0]--
+			if (!self.testCanGoTo(host, xPointer)) {
+				send(`<${SELF} --> [left_blocked]>. :|:`)
+			}
+			// 右边
+			xPointer.copyFrom(self.position)
+			xPointer[0]++
+			if (!self.testCanGoTo(host, xPointer)) {
+				send(`<${SELF} --> [right_blocked]>. :|:`)
+			}
+			// 提醒目标：自身安全 //
+			send(`<${SELF} --> [safe]>!`)
+		}
+	)
+	// 默认事件处理
 	ctlFeedback.on(
 		null,
+		// 对接的是PyNARS的逻辑
 		(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
 			// 预处理 //
-			let msg
 			switch (event) {
 				// 拒绝「世界刻」
 				case NativePlayerEvent.TICK:
 					return
-				// 左右感知
-				case AIPlayerEvent.AI_TICK:
-					// 左边
-					xPointer.copyFrom(self.position)
-					xPointer[0]--
-					if (!self.testCanGoTo(host, xPointer)) {
-						msg = `<{SELF} --> [left_blocked]>. :|:`
-						break
-					}
-					// 右边
-					xPointer.copyFrom(self.position)
-					xPointer[0]++
-					if (!self.testCanGoTo(host, xPointer)) {
-						msg = `<{SELF} --> [right_blocked]>. :|:`
-						break
-					}
-					break
 				// 默认放行
 				default:
 					break
 			}
 			// * 向NARS发送Narsese * //
-			msg ??= `<{SELF} --> [${event}]>. :|:` // 空值合并
+			const msg = `<{SELF} --> [${event}]>. :|:`
 			console.log(`Message sent: ${msg}`)
 			// ! 这里实际上是「以客户端为主体，借客户端发送消息」
 			router.sendMessageTo(NARSServerAddress, msg)
 		}
 	)
-	p.connectController(ctlFeedback) // 连接到控制器
+
+	// 连接到控制器
+	p.connectController(ctlFeedback)
 
 	// *添加实体
 	host.addEntities(p, router, ctlWeb, kcc, ctlFeedback)

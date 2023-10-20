@@ -31,6 +31,20 @@
 			//     "${workspaceFolder}/**/*.js"
 			// ],
 			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Matriangle Instance: AI Env V1",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			// "program": "${workspaceFolder}\\test\\test.ts",
+			"program": "src/instance/NARS-experiment-car-collision/server.ts",
+			// "outFiles": [
+			//     "${workspaceFolder}/**/*.js"
+			// ],
+			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
 		}
 	]
 }

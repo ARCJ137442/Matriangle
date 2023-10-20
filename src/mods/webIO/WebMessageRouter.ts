@@ -540,7 +540,15 @@ class WebSocketServiceServer extends Service {
 	/** @implements 实现：向所有已连接的「WebSocket连接」发送消息 */
 	send(message: string): void {
 		for (const connection of this._connections) {
-			connection.send(message)
+			// 有连接⇒发送
+			if (connection.readyState === WebSocket.OPEN)
+				connection.send(message)
+			// 没连接⇒警告
+			else
+				console.warn(
+					`send: 连接未打开，无法发送消息「${message}」！`,
+					connection
+				)
 		}
 	}
 }
@@ -623,10 +631,27 @@ class WebSocketServiceClient extends Service {
 		delete this._connection
 	}
 
-	/** @implements 实现：向所有已连接的「WebSocket连接」发送消息 */
+	/** @implements 实现：添加进缓存，然后尝试发送所有 */
 	send(message: string): void {
-		// 必须是打开状态
-		if (this._connection?.readyState === WebSocket.OPEN)
-			this._connection.send(message)
+		this._temp_message_toSend.push(message)
+		if (!this.trySendAll())
+			console.warn(`未能发送消息「${message}」，已将其缓存！`)
 	}
+
+	/**
+	 * 尝试发送所有缓存的消息
+	 *
+	 * @returns 是否发送成功（连接打开）
+	 */
+	protected trySendAll(): boolean {
+		// 必须是打开状态
+		if (this._connection?.readyState === WebSocket.OPEN) {
+			// 尝试发送所有缓存的消息
+			for (let i: uint = 0; i < this._temp_message_toSend.length; i++)
+				this._connection.send(this._temp_message_toSend[i])
+			return true
+		}
+		return false
+	}
+	protected readonly _temp_message_toSend: string[] = []
 }

@@ -29,7 +29,10 @@ export default class FeedbackController extends AIController {
 	protected readonly _eventHandlers: Map<PlayerEvent, PlayerEventHandler> =
 		new Map()
 
-	/** @override 直接分派给回调函数 */
+	/**
+	 * @override 直接分派给回调函数
+	 * * 第一次分派时，依自身「是否初始化」使用`AIPlayerEvent.INIT`事件（以便初始化AI）
+	 */
 	override reactPlayerEvent<
 		OptionMap extends PlayerEventOptions,
 		T extends keyof OptionMap,
