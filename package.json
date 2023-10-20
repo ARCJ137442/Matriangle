@@ -1,7 +1,7 @@
 {
 	"name": "matriangle",
 	"version": "0.1.0",
-	"description": "Matriangle主体",
+	"description": "Matriangle主体，包括API及下属各类模组",
 	"main": "",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
