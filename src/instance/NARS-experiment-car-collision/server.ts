@@ -229,12 +229,19 @@ function setupPlayers(host: IMatrix): void {
 						case PyNARSOutputType.ACHIEVED:
 							break
 						case PyNARSOutputType.EXE:
-							console.info(
-								`操作「${output_data?.content}」已被接收！`
-							)
-							// 提取操作符⇒执行 // * 格式：
-							// 清空计时
-							lastNARSOperated = 0
+							if (output_data?.content) {
+								// 使用「^名称」从content提取操作符⇒执行 // * 格式：
+								const match =
+									output_data.content.match(/(\^\w+)/) // 带尖号
+								if (match !== null) {
+									const op: string = match[1]
+									// 索引2对应使用括号提取出来的对象
+									console.info(`操作「${op}」已被接收！`)
+									operate(op)
+									// 清空计时
+									lastNARSOperated = 0
+								}
+							}
 							break
 						// 跳过
 						case PyNARSOutputType.INFO:
@@ -259,6 +266,7 @@ function setupPlayers(host: IMatrix): void {
 	/** 响应操作 */
 	let operateI: uint
 	const oldP: iPoint = new iPoint()
+	/** @param op 带尖号的操作符 */
 	const operate = (op: string): void => {
 		// 获取索引 // * 索引即方向
 		operateI = registeredOperators.indexOf(op)
