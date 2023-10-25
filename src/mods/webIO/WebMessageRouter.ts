@@ -512,9 +512,9 @@ class WebSocketServiceServer extends Service {
 						`${this.address}：与${socket.url}的WebSocket连接发生错误！`,
 						error
 					)
+					// 移出集合
+					this._connections.delete(socket)
 				})
-				// 移出集合
-				this._connections.delete(socket)
 			})
 		} catch (e) {
 			console.error(`${this.address}：服务器启动失败！`, e)

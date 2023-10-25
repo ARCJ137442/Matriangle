@@ -11,10 +11,6 @@
 	],
 	"author": "ARCJ137442",
 	"license": "MIT",
-	"dependencies": {
-		"http": "^0.0.1-security",
-		"os-locale": "^6.0.2"
-	},
 	"devDependencies": {
 		"@babel/cli": "^7.22.15",
 		"@babel/core": "^7.22.17",

@@ -172,28 +172,45 @@ function setupPlayers(host: IMatrix): void {
 	const positiveTruth = '%1.0;0.9%'
 	const negativeTruth = '%0.0;0.9%'
 	const nativeOperatorNames = ['right', 'left', 'down', 'up'] // 用于对接OpenNARS、ONA这些「内置指定名称操作」的CIN
+	/** 已注册的操作 */
+	const registeredOperators: string[] = []
 	/** 单位执行速度 = 感知 */
 	ctlFeedback.AIRunSpeed = 1
 	/** 目标提醒相对倍率 */
-	const goalRemindRate: uint = 2
+	const goalRemindRate: uint = 3 // 因子「教学目标」 3 5 10 0x100000000
 	let _goalRemindRate: uint = 0
 	/** Babble相对倍率 */
 	const babbleRate: uint = 3
 	let _babbleRate: uint = 0
-	/** 已注册的操作 */
-	const registeredOperators: string[] = []
-	/** 距离「上一次NARS发送操作」所过的单位时间 */
-	let lastNARSOperated: uint = 0
 	/** 「长时间无操作⇒babble」的阈值 */
 	const babbleThreshold: uint = 5
+	/** 获得「babble操作」的函数 */
+	const babbleF = (self: IPlayer, host: IMatrix): string =>
+		randomIn(registeredOperators) // 目前是「随机教学」
+	/** 距离「上一次NARS发送操作」所过的单位时间 */
+	let lastNARSOperated: uint = babbleThreshold // * 默认一开始就进行babble
 	/** 解包格式 */
-	type PyNARSOutput = {
+	type WebNARSOutput = {
 		interface_name?: string
 		output_type?: string
 		content?: string
 	}
-	/** PyNARS传回的消息中会有的格式 */
-	type PyNARSOutputJSON = PyNARSOutput[]
+	/** NARS通过Web(Socket)传回的消息中会有的格式 */
+	type WebNARSOutputJSON = WebNARSOutput[]
+
+	// 统计数据 //
+	/** 总时间：实验全程总时长 */
+	let 总时间: uint = 0
+	/** 总次数：实验全程小车的成功次数与失败次数之和 */
+	let 总次数: uint = 0 // * 即「总操作次数」
+	let 自主操作次数: uint = 0 // * 激活率 = 自主操作次数 / 总操作次数
+	let 自主成功次数: uint = 0 // 自主操作 && 成功
+	/** 总成功次数：实验全程小车遇到障碍物未发生碰撞的总次数 */
+	let 总成功次数: uint = 0 // * 成功率 = 总成功次数 / 总操作次数
+	/** 总失败次数：实验全程小车遇到障碍物发生碰撞的总次数 */
+	// let 总失败次数: uint = 0 // * 总失败次数 = 总操作次数 - 总成功次数
+	/** 成功率：实验全程小车的成功次数与总次数之比 */
+	/** 激活率：实验全程 OpenNARS 持续运动的频率 */
 
 	// 接收消息 //
 	router.registerWebSocketServiceClient(
@@ -202,12 +219,12 @@ function setupPlayers(host: IMatrix): void {
 		// * 从NARS接收信息 * //
 		(message: string): undefined => {
 			// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
-			const output_datas: PyNARSOutputJSON = JSON.parse(
+			const output_datas: WebNARSOutputJSON = JSON.parse(
 				message
-			) as PyNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
+			) as WebNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
 			// 处理
 			for (
-				let i: uint = 0, output_data: PyNARSOutput;
+				let i: uint = 0, output_data: WebNARSOutput;
 				i < output_datas.length;
 				i++
 			) {
@@ -237,9 +254,21 @@ function setupPlayers(host: IMatrix): void {
 									const op: string = match[1]
 									// 索引2对应使用括号提取出来的对象
 									console.info(`操作「${op}」已被接收！`)
-									operate(op)
+									// 执行
+									if (operate(op)) {
+										自主成功次数++
+										console.info(
+											`自主操作「${op}」执行成功！`
+										)
+									} else {
+										console.info(
+											`自主操作「${op}」执行失败！`
+										)
+									}
 									// 清空计时
 									lastNARSOperated = 0
+									// 数据收集统计
+									自主操作次数++
 								}
 							}
 							break
@@ -266,8 +295,13 @@ function setupPlayers(host: IMatrix): void {
 	/** 响应操作 */
 	let operateI: uint
 	const oldP: iPoint = new iPoint()
+	/** 操作返回值的类型，目前暂时是「是否成功」（移动是否发生碰撞） */
+	type OperationResult = boolean
+	let lastResult: OperationResult
 	/** @param op 带尖号的操作符 */
-	const operate = (op: string): void => {
+	const operate = (op: string): OperationResult => {
+		// 返回值初始化 //
+		lastResult = false
 		// 获取索引 // * 索引即方向
 		operateI = registeredOperators.indexOf(op)
 		// 有操作⇒行动&反馈
@@ -276,11 +310,19 @@ function setupPlayers(host: IMatrix): void {
 			oldP.copyFrom(p.position)
 			p.moveToward(host, operateI)
 			// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
-			if (oldP.isEqual(p.position))
+			if (oldP.isEqual(p.position)) {
 				send(`<${SELF} --> ${SAFE}>. :|: ${negativeTruth}`)
+			}
 			// 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
-			else send(`<${SELF} --> ${SAFE}>. :|: ${positiveTruth}`)
+			else {
+				send(`<${SELF} --> ${SAFE}>. :|: ${positiveTruth}`)
+				lastResult = true
+				总成功次数++
+			}
+			// 统计
+			总次数++
 		} else console.error(`未知的操作「${op}」`)
+		return lastResult
 	}
 	// AI 初始化（PyNARS指令）
 	ctlFeedback.on(
@@ -348,15 +390,30 @@ function setupPlayers(host: IMatrix): void {
 			if (lastNARSOperated > babbleThreshold)
 				if (_babbleRate-- === 0) {
 					_babbleRate = babbleRate
-					// 随机选一个操作⇒做它
-					const babbleOp = randomIn(registeredOperators) // 带尖号
+					// 从函数（教法）中选一个操作⇒做它
+					const babbleOp = babbleF(self, host) // 带尖号
 					// 让系统知道「自己做了操作」
 					send(`<(*, ${SELF}) --> ${babbleOp}>. :|: ${positiveTruth}`) // f(x)
 					// 执行操作，收获后果
 					operate(babbleOp)
+					// TODO: 数据收集统计
 				}
 			// 操作计数 //
 			lastNARSOperated++
+			// 图表数据绘制 //
+			router.sendMessageTo(
+				'ws://127.0.0.1:8080',
+				`图表${JSON.stringify({
+					x: 总时间,
+					成功率: 总成功次数 / 总次数,
+					教学成功率:
+						(总成功次数 - 自主成功次数) / (总次数 - 自主操作次数),
+					自主成功率: 自主成功次数 / 自主操作次数,
+					激活率: 自主操作次数 / 总次数,
+				})}`
+			)
+			// 时间推进 //
+			总时间++
 		}
 	)
 	// 默认事件处理
@@ -453,7 +510,7 @@ function 迭代(num: uint, visualize: boolean = true): void {
 	}
 }
 
-function 持续测试(i: int = 0, tick_time_ms: uint = 1000) {
+function 持续测试(i: int = 0, tick_time_ms: uint = 1000): void {
 	/** 迭代次数，是一个常量 */
 	const numIter: uint = (TPS * tick_time_ms) / 1000
 	let t = i
