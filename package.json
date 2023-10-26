@@ -4,6 +4,10 @@
 	"description": "Matriangle主体，包括API及下属各类模组",
 	"main": "",
 	"scripts": {
+		"WebUI-NARS": "start src/instance/NARS-experiment-UI/index.html",
+		"WebUI-V1": "start src/instance/V1/WebUI/index.html",
+		"client-nars-experiment": "npm run WebUI-NARS",
+		"client": "npm run WebUI-V1",
 		"test-batr": "npx ts-node src/instance/V1/MatriangleServer_V1.ts",
 		"test-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
 		"dev": "npm run",

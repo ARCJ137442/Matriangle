@@ -1,6 +1,6 @@
 # Matriangle
 
-## 概述
+## Overview 概述
 
 Matriangle（中译名未定）是一个
 
@@ -14,7 +14,53 @@ Matriangle（中译名未定）是一个
 
 其名由「Matrix」（取自《The Matrix》，象征「模拟」）「Triangle」（取自前身[BattleTriangle-Gamma](https://github.com/ARCJ137442/BattleTriangle-Gamma)，作为其TypeScript延续）组成。
 
-## 功能
+## Quick Start 快速开始
+
+### 安装
+
+作为一个npm包，Matriangle可以通过npm进行安装：
+
+```bash
+npm install
+```
+
+（确保命令的执行位置为matriangle根目录）
+
+### 运行
+
+在安装后，可直接通过npm运行：
+
+#### 显示「可执行命令」的列表（无描述）
+
+```bash
+npm run
+```
+
+#### 启动游戏「Battle Triangle TS」服务端
+
+```bash
+npm run test-batr
+```
+
+#### 启动默认客户端
+
+```bash
+npm run client
+```
+
+#### 启动「NARS小车碰撞实验」服务端
+
+```bash
+npm run test-nars-car
+```
+
+#### 启动「NARS实验通用」客户端
+
+```bash
+npm run client-nars-experiment
+```
+
+## Features 功能
 
 ### 模块：API | `matriangle-api`
 
@@ -110,11 +156,11 @@ Matriangle（中译名未定）是一个
 
 * 此时许可相对宽松
 
-## 相关项目
+## Related Repos 相关项目
 
 前身：[BattleTriangle-Gamma](https://github.com/ARCJ137442/BattleTriangle-Gamma)
 
-## 作者按
+## Author's Note 作者注
 
 * 该项目原先作为自身对Web开发的学习项目，用于学习TypeScript、Node与Web开发技术
 * 该项目尚未正式发布（进入「稳定版」1.0阶段），许多代码可能在未来面临大幅变动
