@@ -36,13 +36,25 @@ npm install
 npm run
 ```
 
+#### 启动游戏「Battle Triangle TS」
+
+```bash
+npm run batr
+```
+
+#### 启动「NARS小车碰撞实验」
+
+```bash
+npm run nars-car
+```
+
 #### 启动游戏「Battle Triangle TS」服务端
 
 ```bash
-npm run test-batr
+npm run server-batr
 ```
 
-#### 启动默认客户端
+#### 启动「默认」客户端
 
 ```bash
 npm run client
@@ -51,13 +63,13 @@ npm run client
 #### 启动「NARS小车碰撞实验」服务端
 
 ```bash
-npm run test-nars-car
+npm run server-nars-car
 ```
 
 #### 启动「NARS实验通用」客户端
 
 ```bash
-npm run client-nars-experiment
+npm run client-nars
 ```
 
 ## Features 功能

@@ -6,10 +6,12 @@
 	"scripts": {
 		"WebUI-NARS": "start src/instance/NARS-experiment-UI/index.html",
 		"WebUI-V1": "start src/instance/V1/WebUI/index.html",
-		"client-nars-experiment": "npm run WebUI-NARS",
+		"client-nars": "npm run WebUI-NARS",
 		"client": "npm run WebUI-V1",
-		"test-batr": "npx ts-node src/instance/V1/MatriangleServer_V1.ts",
-		"test-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
+		"server-batr": "npx ts-node src/instance/V1/MatriangleServer_V1.ts",
+		"server-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
+		"batr": "start src/instance/V1/WebUI/index.html & npm run server-batr",
+		"nars-car": "start src/instance/NARS-experiment-UI/index.html & npm run server-nars-car",
 		"dev": "npm run",
 		"test": "npm run"
 	},
