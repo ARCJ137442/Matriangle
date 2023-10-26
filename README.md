@@ -18,6 +18,7 @@ Matriangle（中译名未定）是一个
 
 ### 模块：API | `matriangle-api`
 
+* 许可证： ***LGPL 3.0***
 * 基于TypeScript的API，包含众多 `interface` 以及部分（实用）标准实现
 * 构建了Matriangle的基本框架和程序架构
   * 整个模拟世界运行在一个「Matrix」（母体）中
@@ -43,10 +44,12 @@ Matriangle（中译名未定）是一个
 
 ### 模块：通用 | `matriangle-common`
 
+* 许可证： *MIT*
 * 直接承继于其前身的[common文件夹](https://github.com/ARCJ137442/BattleTriangle-Gamma/tree/master/batr/common)，在此基础上进行了TS化和功能迁移
 
 ### 模块：遗留 | `matriangle-legacy`
 
+* 许可证： *MIT*
 * 主要包括了一些在「从 ***ActionScript 3.0*** 迁移到 ***TypeScript***」时遗留的AS3特性
 * 例如：
   * AS3的整数类型：`int`、`uint`等
@@ -62,6 +65,7 @@ Matriangle（中译名未定）是一个
 
 #### 原生 | `matriangle-mod-native`
 
+* 许可证： ***LGPL 3.0***
 * 主要提供API模块 `matriangle-api` 的标准默认实现
   * 「母体」
   * 「稀疏地图」
@@ -70,6 +74,7 @@ Matriangle（中译名未定）是一个
 
 #### BaTS | `matriangle-mod-bats`
 
+* 许可证： ***LGPL 3.0***
 * 其前身BattleTriangle-Gamma的TS复刻，即「BattleTriangle-TS」
   * 目前只复原了部分特性——尚未复原的如：
     * 除「子弹」「激光」以外的「武器系统」
@@ -79,24 +84,31 @@ Matriangle（中译名未定）是一个
 
 #### WebIO | `matriangle-mod-web-io`
 
+* 许可证： *MIT*
 * 用于「母体」服务器和各Web客户端之间的通信
   * 基于HTTP和WebSocket双协议，可实现「远程控制」「远程监控」等功能
 
 #### 可视化 | `matriangle-mod-visualization`
 
+* 许可证： *MIT*
 * 用于「母体」中「方块」「实体」的可视化
 * 可与**WebIO**结合，实现带显示界面的远程客户端
 
 #### NAR框架 | `matriangle-mod-nar-framework`
 
+* 许可证： *MIT*
 * 用于对接AI系统[NARS](http://www.opennars.org/)，以开展AI实验的框架
 
 ## 许可证
 
-以 ***LesserGNU General Public License v3(LGPLv3)*** 协议发布
+包的**整体**以 ***LesserGNU General Public License v3(LGPLv3)*** 协议发布
 
 * 使用者可以在**不修改源码时**私用
 * 若使用者修改了源码，则必须将源码以相同协议发布
+
+一部分包以 *MIT* 协议发布
+
+* 此时许可相对宽松
 
 ## 相关项目
 

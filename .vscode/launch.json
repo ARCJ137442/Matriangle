@@ -30,7 +30,7 @@
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],
-			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			"runtimeExecutable": "ts-node.cmd"
 		},
 		{
 			"type": "node",
@@ -44,7 +44,7 @@
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],
-			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			"runtimeExecutable": "ts-node.cmd"
 		}
 	]
 }

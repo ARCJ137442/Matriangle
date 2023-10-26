@@ -4,13 +4,16 @@
 	"description": "Matriangle主体，包括API及下属各类模组",
 	"main": "",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test-batr": "npx ts-node src/instance/V1/MatriangleServer_V1.ts",
+		"test-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
+		"dev": "npm run",
+		"test": "npm run"
 	},
 	"keywords": [
 		"matriangle"
 	],
 	"author": "ARCJ137442",
-	"license": "MIT",
+	"license": "LGPL-3.0-or-later",
 	"devDependencies": {
 		"@babel/cli": "^7.22.15",
 		"@babel/core": "^7.22.17",

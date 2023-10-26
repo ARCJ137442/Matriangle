@@ -12,7 +12,7 @@
 		"native"
 	],
 	"author": "ARCJ137442",
-	"license": "MIT",
+	"license": "LGPL-3.0-or-later",
 	"dependencies": {
 		"matriangle-api": "^0.1.0",
 		"matriangle-legacy": "^0.1.0",
