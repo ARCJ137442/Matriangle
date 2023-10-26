@@ -68,6 +68,27 @@ export default class WebMessageRouter
 	protected _callbacks: Map<string, IService> = new Map()
 
 	/**
+	 * 检查指定地址处是否有服务
+	 *
+	 * @param {string} address 待检查的服务地址
+	 * @returns {boolean} 指定地址处是否有服务
+	 */
+	public hasServiceAt(address: string): boolean {
+		return this._services.has(address)
+	}
+
+	/**
+	 * 获取指定地址处的服务
+	 * * 无服务⇒undefined
+	 *
+	 * @param {string} address 待获取的服务地址
+	 * @returns {IService|undefined} 指定地址处的服务
+	 */
+	public getServiceAt(address: string): IService | undefined {
+		return this._services.get(address)
+	}
+
+	/**
 	 * 注册服务
 	 *
 	 * @param {IService} service 已构造好的服务
@@ -330,6 +351,13 @@ interface IService {
 	send?(message: string): void
 
 	/**
+	 * 是否处于「活跃」状态
+	 * * 例@HTTP：永远处于「待接收状态」，返回值=是否启动成功
+	 * * 例@WebSocket：只需「有一个连接」，返回值=是否有连接
+	 */
+	get isActive(): boolean
+
+	/**
 	 * 收到消息时的「回调处理函数」
 	 * * 类型：字符串⇒字符串
 	 */
@@ -362,15 +390,18 @@ abstract class Service implements IService {
 	public abstract readonly SERVICE_TYPE: string
 
 	/** 服务器地址 */
-	public get address(): string {
+	get address(): string {
 		return getAddress(this.host, this.port)
 	}
 
 	/** 启动服务器 */
-	public abstract launch(callback?: voidF): void
+	abstract launch(callback?: voidF): void
 
 	/** 终止服务器 */
-	public abstract stop(callback?: voidF): void
+	abstract stop(callback?: voidF): void
+
+	/** 是否活跃 */
+	abstract get isActive(): boolean
 }
 
 /** HTTP服务器 */
@@ -380,12 +411,20 @@ class HTTPServiceServer extends Service {
 	 */
 	protected _server?: HTTPServer
 
+	/** 存储「是否启动成功」 */
+	protected _launched: boolean = false
+
 	/** 服务器类型：HTTP */
 	override readonly SERVICE_TYPE: string = 'HTTP'
 
 	/** @override 重载：HTTP地址前缀 */
 	override get address(): string {
 		return `http://${getAddress(this.host, this.port)}`
+	}
+
+	/** @override 重载：是否成功启动 */
+	override get isActive(): boolean {
+		return this._launched
 	}
 
 	/**
@@ -416,6 +455,7 @@ class HTTPServiceServer extends Service {
 			this._server.listen(this.port, this.host, (): void => {
 				// 启动成功
 				console.log(`${this.address}：服务器启动成功`)
+				this._launched = true
 			})
 			// 报错
 			this._server.on('error', (e: Error): void => {
@@ -432,6 +472,7 @@ class HTTPServiceServer extends Service {
 	stop(callback?: voidF): void {
 		this._server?.close((): void => {
 			console.log(`HTTP服务器${this.host}: ${this.port}已关闭！`)
+			this._launched = false
 			// 这里可以执行一些清理操作或其他必要的处理
 			callback?.()
 		})
@@ -454,6 +495,11 @@ class WebSocketServiceServer extends Service {
 	/** @override 重载：WebSocket地址前缀 */
 	override get address(): string {
 		return `ws://${getAddress(this.host, this.port)}`
+	}
+
+	/** @override 重载：是否有一个连接 */
+	override get isActive(): boolean {
+		return this._connections.size > 0
 	}
 
 	// !【2023-10-12 21:08:47】目前无需存储所有与服务器连接的WebSocket
@@ -479,8 +525,8 @@ class WebSocketServiceServer extends Service {
 			this._server.on('connection', (socket: WebSocket): void => {
 				// 提示
 				console.log(
-					`${this.address}：与${socket.url}的WebSocket连接已建立！`,
-					socket
+					`${this.address}：与${socket.url}的WebSocket连接已建立！`
+					// socket
 				)
 				// 加入集合
 				this._connections.add(socket)
@@ -510,7 +556,7 @@ class WebSocketServiceServer extends Service {
 					// 提示
 					console.error(
 						`${this.address}：与${socket.url}的WebSocket连接发生错误！`,
-						error
+						`error=${error.toString()}`
 					)
 					// 移出集合
 					this._connections.delete(socket)
@@ -556,7 +602,7 @@ class WebSocketServiceServer extends Service {
 /** WebSocket客户端 */
 class WebSocketServiceClient extends Service {
 	/**
-	 * 存储当前WebSocket服务器
+	 * 存储当前WebSocket连接
 	 */
 	protected _connection?: WebSocket
 
@@ -566,6 +612,14 @@ class WebSocketServiceClient extends Service {
 	/** @override 重载：WebSocket地址前缀 */
 	override get address(): string {
 		return `ws://${getAddress(this.host, this.port)}`
+	}
+
+	/** @override 重载：是否连接到Websocket服务器且连接处于「打开」状态 */
+	override get isActive(): boolean {
+		return (
+			this._connection !== undefined &&
+			this._connection.readyState === WebSocket.OPEN
+		)
 	}
 
 	// !【2023-10-12 21:08:47】目前无需存储所有与服务器连接的WebSocket
@@ -583,11 +637,13 @@ class WebSocketServiceClient extends Service {
 			// 直接回调
 			callback?.()
 			// 开始侦听连接
-			// 提示
-			console.log(
-				`${this.address}：WebSocket连接已建立！`,
-				this._connection
-			)
+			this._connection.once('open', (): void => {
+				// 提示
+				console.log(
+					`${this.address}：WebSocket连接已建立！`
+					// this._connection
+				)
+			})
 			// 继续往Socket添加钩子
 			this._connection.onmessage = (event: MessageEvent): void => {
 				// ! event.data的类型就是`string`
@@ -603,8 +659,8 @@ class WebSocketServiceClient extends Service {
 				// 提示
 				console.log(
 					`${this.address}：与${this._connection?.url}的WebSocket连接已断开！`,
-					event.code,
-					event.reason
+					`退出码=${event.code}`,
+					`断开原因=${event.reason}`
 				)
 			}
 			// 报错
@@ -612,11 +668,11 @@ class WebSocketServiceClient extends Service {
 				// 提示
 				console.error(
 					`${this.address}：与${this._connection?.url}的WebSocket连接发生错误！`,
-					event.error
+					`error=${event.error}`
 				)
 			}
 		} catch (e) {
-			console.error(`${this.address}：服务器启动失败！`, e)
+			console.error(`${this.address}：服务启动失败！`, e)
 		}
 	}
 

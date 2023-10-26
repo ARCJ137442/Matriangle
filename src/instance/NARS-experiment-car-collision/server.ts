@@ -49,6 +49,28 @@ import {
 import { axis2mRot_n, axis2mRot_p, nameOfAxis_M } from 'matriangle-api'
 import { PyNARSOutputType } from '../../mods/NARFramework'
 
+// 描述 //
+const infos = (...lines: string[]): void => console.info(lines.join('\n'))
+function printInitDescription(): void {
+	infos(
+		'[[实验：NARS小车碰撞]]',
+		'',
+		'[实验主要组成部分]',
+		'1. NARS服务器：参与实验的AI，能通过文本方式向实验环境收发信息',
+		'2. Matriangle服务端：运行实验环境，向AI提供「感知」并执行AI所发送的「操作」',
+		'3. Web客户端：呈现Matriangle的模拟环境，并统计其内部产生的数据',
+		'总体连接结构：NARS服务器 ⇄ Matriangle服务端 ⇄ Web客户端',
+		'',
+		'[注意事项]',
+		'1. 推荐的启动顺序：NARS服务器⇒Web客户端⇒Matriangle服务端',
+		'  - 原理：先启动连接的两端，再启动中间——确保NARS不受「先前经验污染」，保证服务端被客户端连接',
+		'2. 对应客户端的启动目录：相应WebUI中的index.html',
+		'  - 若客户端后启动，部分连接可能无法建立',
+		`3. NARS服务器需要监听 ${NARSServerAddress} 的Websocket地址，以便实验环境对接`,
+		'  - 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息'
+	)
+}
+
 // 地图 //
 function initMaps(): IMap[] {
 	const maps: IMap[] = []
@@ -157,11 +179,6 @@ function setupPlayers(host: IMatrix): void {
 			console.log('键控中心连接成功！')
 		}
 	)
-
-	// 建立服务 //
-	const NARSServerHost: string = '127.0.0.1'
-	const NARSServerPort: uint = 8765
-	const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
 
 	// NARS参数 //
 	/** 对接的是PyNARS的逻辑 */
@@ -463,6 +480,11 @@ function setupEntities(host: IMatrix): void {
 	setupPlayers(host)
 }
 
+// NARS服务 //
+const NARSServerHost: string = '127.0.0.1'
+const NARSServerPort: uint = 8765
+const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
+
 // 母体 //
 const rule = initMatrixRule()
 const matrix = new Matrix_V1(
@@ -471,12 +493,7 @@ const matrix = new Matrix_V1(
 	// ! 获取随机地图：只在「核心逻辑」之外干这件事
 	getRandomMap(rule).copy(true)
 )
-// console.log(matrix);
-matrix.initByRule()
-// 加载实体
-setupEntities(matrix)
-// ! 必要的坐标投影
-projectEntities(matrix.map, matrix.entities)
+
 /*
  * 地址：http://127.0.0.1:3001
  * 示例@前进：http://127.0.0.1:3001/?key=p2&action=moveForward
@@ -521,6 +538,63 @@ function 持续测试(i: int = 0, tick_time_ms: uint = 1000): void {
 	}, tick_time_ms)
 }
 
-const p = 持续测试(-1, TICK_TIME_MS)
+/** 返回一个「睡眠指定时长」的Promise */
+function sleep(ms: uint): Promise<void> {
+	return new Promise(
+		(resolve: () => void): void => void setTimeout(resolve, ms)
+	)
+}
 
-console.log('It is done.', p)
+/**
+ * 等待NARS连接
+ */
+async function waitNARSConnection(detectPeriodMS: uint = 1000): Promise<void> {
+	console.groupCollapsed('等待NARS连接')
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		// 检测连接
+		if (router.getServiceAt(NARSServerAddress) !== undefined)
+			if (router.getServiceAt(NARSServerAddress)?.isActive) break
+			else {
+				console.warn('NARS连接未建立，尝试重连。。。')
+				// 重连
+				router.getServiceAt(NARSServerAddress)?.stop()
+				router.getServiceAt(NARSServerAddress)?.launch()
+			}
+		else console.warn('NARS消息服务未建立')
+		// 等待
+		await sleep(detectPeriodMS)
+	}
+	console.groupEnd()
+	console.info(`NARS连接建立成功！地址：${NARSServerAddress}`)
+}
+
+/**
+ * 测试启动入口
+ */
+async function launch(): Promise<void> {
+	// 打印描述 //
+	printInitDescription()
+
+	// 初始化母体 //
+	// console.log(matrix);
+	matrix.initByRule()
+	// 加载实体
+	setupEntities(matrix)
+	// ! 必要的坐标投影
+	projectEntities(matrix.map, matrix.entities)
+
+	// 等待NARS连接 //
+	await waitNARSConnection()
+
+	// 二次打印描述（避免错过） //
+	printInitDescription()
+
+	// 异步开始持续测试 //
+	持续测试(-1, TICK_TIME_MS)
+
+	// 结束 //
+	// console.log('It is done.')
+}
+
+void launch()
