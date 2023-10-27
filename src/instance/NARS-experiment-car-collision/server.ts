@@ -118,7 +118,7 @@ function initMaps(): IMap[] {
 	// 填充边框
 	traverseNDSquareFrame(
 		new iPoint().copyFrom(mapSizes).fill(0),
-		mapSizes,
+		new iPoint().copyFrom(mapSizes).addFromSingle(-1),
 		(p: iPoint): void => {
 			storage.setBlock(p, NativeBlockPrototypes.COLORED.softCopy())
 		}
