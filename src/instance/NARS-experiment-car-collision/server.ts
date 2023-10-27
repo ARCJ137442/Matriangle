@@ -46,7 +46,7 @@ import {
 	NativePlayerEvent,
 	PlayerEvent,
 } from 'matriangle-mod-native'
-import { axis2mRot_n, axis2mRot_p, nameOfAxis_M } from 'matriangle-api'
+import { nameOfAxis_M } from 'matriangle-api'
 import { PyNARSOutputType } from '../../mods/NARFramework'
 
 // 描述 //
@@ -188,9 +188,22 @@ function setupPlayers(host: IMatrix): void {
 	const SAFE: string = '[SAFE]'
 	const positiveTruth = '%1.0;0.9%'
 	const negativeTruth = '%0.0;0.9%'
-	const nativeOperatorNames = ['right', 'left', 'down', 'up'] // 用于对接OpenNARS、ONA这些「内置指定名称操作」的CIN
-	/** 已注册的操作 */
-	const registeredOperators: string[] = []
+	// 词法模板
+	/** 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
+	const op_output = (op: string[]): string =>
+		`${op[0]}([${op.slice(1).join(', ')}])`
+	/** 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
+	const op_input = (op: string[]): string =>
+		`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`
+	/**
+	 * 已注册的操作
+	 * * 元素格式：`[^left, {SELF}, x]`，代表
+	 *   * OpenNARS输出`^left([{SELF}, x])`
+	 *   * 语句`<(*, {SELF}, x) --> ^left>` / `(^left, {SELF}, x)`
+	 */ //
+	const registeredOperations: string[][] = []
+	/** 存储形如「^left([{SELF}, x])」的字串以便快速识别 */
+	const registeredOperation_outputs: string[] = []
 	/** 单位执行速度 = 感知 */
 	ctlFeedback.AIRunSpeed = 1
 	/** 目标提醒相对倍率 */
@@ -202,8 +215,8 @@ function setupPlayers(host: IMatrix): void {
 	/** 「长时间无操作⇒babble」的阈值 */
 	const babbleThreshold: uint = 5
 	/** 获得「babble操作」的函数 */
-	const babbleF = (self: IPlayer, host: IMatrix): string =>
-		randomIn(registeredOperators) // 目前是「随机教学」
+	const babbleF = (self: IPlayer, host: IMatrix): string[] =>
+		randomIn(registeredOperations) // 目前是「随机教学」
 	/** 距离「上一次NARS发送操作」所过的单位时间 */
 	let lastNARSOperated: uint = babbleThreshold // * 默认一开始就进行babble
 	/** 解包格式 */
@@ -230,6 +243,40 @@ function setupPlayers(host: IMatrix): void {
 	/** 激活率：实验全程 OpenNARS 持续运动的频率 */
 
 	// 接收消息 //
+	/** 处理NARS传来的「操作」 */
+	const exeHandler = (output_content: string): void => {
+		// 使用「^名称」从content提取操作符⇒执行
+		/**
+		 * * 目标样例：`EXE $0.25;0.12;0.83$ ^left([{SELF}, x轴方向])=null`
+		 * @example
+		 * 匹配结果：[
+		 *     '^left([{SELF}, x轴方向])',
+		 *     '^left',
+		 *     '{SELF}, x轴方向',
+		 *     index: 21,
+		 *     input: 'EXE $0.25;0.12;0.83$ ^left([{SELF}, x轴方向])=null',
+		 *     groups: undefined
+		 * ]
+		 */
+		const match = output_content.match(/(\^\w+)\(\[(.+)\]\)/) // 带尖号，带参数
+		if (match !== null) {
+			const operation: string[] = [match[1], ...match[2].split(', ')]
+			// 索引2对应使用括号提取出来的对象
+			console.info(`操作「${op_output(operation)}」已被接收！`)
+			// 执行
+			if (operate(operation)) {
+				自主成功次数++
+				console.info(`自主操作「${op_output(operation)}」执行成功！`)
+			} else {
+				console.info(`自主操作「${op_output(operation)}」执行失败！`)
+			}
+			// 清空计时
+			lastNARSOperated = 0
+			// 数据收集统计
+			自主操作次数++
+		}
+	}
+	// 消息接收
 	router.registerWebSocketServiceClient(
 		NARSServerHost,
 		NARSServerPort,
@@ -263,31 +310,8 @@ function setupPlayers(host: IMatrix): void {
 						case PyNARSOutputType.ACHIEVED:
 							break
 						case PyNARSOutputType.EXE:
-							if (output_data?.content) {
-								// 使用「^名称」从content提取操作符⇒执行 // * 格式：
-								const match =
-									output_data.content.match(/(\^\w+)/) // 带尖号
-								if (match !== null) {
-									const op: string = match[1]
-									// 索引2对应使用括号提取出来的对象
-									console.info(`操作「${op}」已被接收！`)
-									// 执行
-									if (operate(op)) {
-										自主成功次数++
-										console.info(
-											`自主操作「${op}」执行成功！`
-										)
-									} else {
-										console.info(
-											`自主操作「${op}」执行失败！`
-										)
-									}
-									// 清空计时
-									lastNARSOperated = 0
-									// 数据收集统计
-									自主操作次数++
-								}
-							}
+							if (output_data?.content)
+								exeHandler(output_data.content)
 							break
 						// 跳过
 						case PyNARSOutputType.INFO:
@@ -301,7 +325,8 @@ function setupPlayers(host: IMatrix): void {
 
 	// 反馈控制器⇒消息路由 // * 事件反馈
 	// 辅助初始化工具
-	const xPointer: iPoint = new iPoint()
+	const posPointer: iPoint = new iPoint()
+	let experimentData
 	/** 发送消息 */
 	const send = (message: string): void => {
 		// ! 这里实际上是「以客户端为主体，借客户端发送消息」
@@ -311,16 +336,26 @@ function setupPlayers(host: IMatrix): void {
 	}
 	/** 响应操作 */
 	let operateI: uint
+	// let registeredOperation: string[]
 	const oldP: iPoint = new iPoint()
 	/** 操作返回值的类型，目前暂时是「是否成功」（移动是否发生碰撞） */
 	type OperationResult = boolean
 	let lastResult: OperationResult
-	/** @param op 带尖号的操作符 */
-	const operate = (op: string): OperationResult => {
+	/** @param {string[]} op [带尖号的操作符, 其它附加参数] */
+	const operate = (op: string[]): OperationResult => {
 		// 返回值初始化 //
 		lastResult = false
 		// 获取索引 // * 索引即方向
-		operateI = registeredOperators.indexOf(op)
+		operateI = registeredOperation_outputs.indexOf(op_output(op))
+		/* operateI = -1 // ! 遍历法现不使用
+		ops: for (let i: uint = 0; i < op.length; i++) {
+			registeredOperation = registeredOperations[i]
+			for (let j: uint = 0; j < op.length; j++) {
+				if (registeredOperation[j] !== op[j]) continue ops
+			}
+			operateI = i
+			break
+		} */
 		// 有操作⇒行动&反馈
 		if (operateI >= 0) {
 			// 缓存点
@@ -338,7 +373,7 @@ function setupPlayers(host: IMatrix): void {
 			}
 			// 统计
 			总次数++
-		} else console.error(`未知的操作「${op}」`)
+		} else console.error(`未知的操作「(${op_output(op)})」`)
 		return lastResult
 	}
 	// AI 初始化（PyNARS指令）
@@ -349,31 +384,29 @@ function setupPlayers(host: IMatrix): void {
 			const messages: string[] = []
 			// 消息生成
 			// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
-			let name_p: string, name_n: string
-			// 翻译成「上下左右」以便让OpenNARS响应。若无法翻译则退化为「z_p」这样的形式
-			for (let i = 0; i < host.map.storage.numDimension; ++i) {
-				// 正方向
-				// name_p = `${nameOfAxis_M(i)}_p`
-				name_p =
-					axis2mRot_p(i) < nativeOperatorNames.length
-						? nativeOperatorNames[axis2mRot_p(i)]
-						: `${nameOfAxis_M(i)}_p`
-				messages.push(`/reg ${name_p} eval `) // 注册操作符，使之能被EXE
-				messages.push(
-					`<${SELF} --> ${name_p}(${SELF})>. ${positiveTruth}`
-				) // 将操作符与自身联系起来
-				registeredOperators.push(`^${name_p}`) // ! 不要忘记尖号
-				// 负方向
-				// name_n = `${nameOfAxis_M(i)}_n`
-				name_n =
-					axis2mRot_n(i) < nativeOperatorNames.length
-						? nativeOperatorNames[axis2mRot_n(i)]
-						: `${nameOfAxis_M(i)}_n`
-				messages.push(`/reg ${name_n} eval `) // 注册操作符，使之能被EXE
-				messages.push(
-					`<${SELF} --> ${name_n}(${SELF})>. ${positiveTruth}`
-				) // 将操作符与自身联系起来
-				registeredOperators.push(`^${name_n}`) // ! 不要忘记尖号 // 必须确保「正→负」这个顺序
+			let name: string
+			// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
+			const lr = ['left', 'right']
+			let op: string[]
+			for (name of lr) {
+				messages.push(`/reg ${name} eval `) // 负/正 方向移动
+				for (let i = 0; i < host.map.storage.numDimension; ++i) {
+					// 负/正方向 //
+					op = [
+						// * 样例：['^left', '{SELF}', 'x']
+						'^' + name, // 朝负/正方向 // ! 不要忘记尖号
+						SELF,
+						nameOfAxis_M(i),
+					]
+					// 将操作符与自身联系起来
+					messages.push(
+						// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
+						`<${SELF} --> ${op_input(op)}>. ${positiveTruth}`
+					)
+					// 注册
+					registeredOperations.push(op)
+					registeredOperation_outputs.push(op_output(op))
+				}
 			}
 			// 消息发送 //
 			for (let i = 0; i < messages.length; ++i) send(messages[i])
@@ -382,21 +415,34 @@ function setupPlayers(host: IMatrix): void {
 		}
 	)
 	// AI 运作周期
+	let adaptationPassed: boolean = false
 	ctlFeedback.on(
 		AIPlayerEvent.AI_TICK,
 		(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
-			// 左右感知 // TODO: 推广至任意维
-			// 左边
-			xPointer.copyFrom(self.position)
-			xPointer[0]--
-			if (!self.testCanGoTo(host, xPointer)) {
-				send(`<${SELF} --> [left_blocked]>. :|: ${positiveTruth}`)
-			}
-			// 右边
-			xPointer.copyFrom(self.position)
-			xPointer[0]++
-			if (!self.testCanGoTo(host, xPointer)) {
-				send(`<${SELF} --> [right_blocked]>. :|: ${positiveTruth}`)
+			// 边界感知 //
+			// 指针归位
+			posPointer.copyFrom(self.position)
+			for (let i = 0; i < host.map.storage.numDimension; ++i) {
+				// 负半轴
+				posPointer[i]--
+				if (!self.testCanGoTo(host, posPointer)) {
+					send(
+						`<${SELF} --> [${nameOfAxis_M(
+							i
+						)}_left_blocked]>. :|: ${positiveTruth}`
+					)
+				}
+				// 从负到正
+				posPointer[i] += 2
+				if (!self.testCanGoTo(host, posPointer)) {
+					send(
+						`<${SELF} --> [${nameOfAxis_M(
+							i
+						)}_right_blocked]>. :|: ${positiveTruth}`
+					)
+				}
+				// 归位⇒下一座标轴
+				posPointer[i]--
 			}
 			// 提醒目标：自身安全 //
 			if (_goalRemindRate-- === 0) {
@@ -408,27 +454,44 @@ function setupPlayers(host: IMatrix): void {
 				if (_babbleRate-- === 0) {
 					_babbleRate = babbleRate
 					// 从函数（教法）中选一个操作⇒做它
-					const babbleOp = babbleF(self, host) // 带尖号
-					// 让系统知道「自己做了操作」
-					send(`<(*, ${SELF}) --> ${babbleOp}>. :|: ${positiveTruth}`) // f(x)
+					const babbleOp = babbleF(self, host) // [带尖号操作符, 其它参数序列]
+					// 让系统知道「自己做了操作」 // *形式：<(*, 【其它参数】) --> 【带尖号操作符】>. :|: 【正向真值】
+					send(
+						`<(*, ${babbleOp.slice(1).join(',')}) --> ${
+							babbleOp[0]
+						}>. :|: ${positiveTruth}`
+					)
 					// 执行操作，收获后果
 					operate(babbleOp)
-					// TODO: 数据收集统计
 				}
 			// 操作计数 //
 			lastNARSOperated++
 			// 图表数据绘制 //
+			// 生成
+			experimentData = {
+				x: 总时间,
+				成功率: 总成功次数 / 总次数,
+				教学成功率:
+					(总成功次数 - 自主成功次数) / (总次数 - 自主操作次数),
+				自主成功率: 自主成功次数 / 自主操作次数,
+				激活率: 自主操作次数 / 总次数,
+			}
+			// 发送
 			router.sendMessageTo(
 				'ws://127.0.0.1:8080',
-				`图表${JSON.stringify({
-					x: 总时间,
-					成功率: 总成功次数 / 总次数,
-					教学成功率:
-						(总成功次数 - 自主成功次数) / (总次数 - 自主操作次数),
-					自主成功率: 自主成功次数 / 自主操作次数,
-					激活率: 自主操作次数 / 总次数,
-				})}`
+				`图表${JSON.stringify(experimentData)}`
 			)
+			// 检测
+			if (
+				experimentData.自主成功率 > experimentData.教学成功率 &&
+				!adaptationPassed
+			) {
+				adaptationPassed = true
+				console.info(
+					'AI自主成功率超越教学成功率，自主学习能力测试通过！',
+					experimentData
+				)
+			}
 			// 时间推进 //
 			总时间++
 		}
@@ -577,12 +640,14 @@ async function launch(): Promise<void> {
 	printInitDescription()
 
 	// 初始化母体 //
+	console.groupCollapsed('初始化母体')
 	// console.log(matrix);
 	matrix.initByRule()
 	// 加载实体
 	setupEntities(matrix)
 	// ! 必要的坐标投影
 	projectEntities(matrix.map, matrix.entities)
+	console.groupEnd()
 
 	// 等待NARS连接 //
 	await waitNARSConnection()
