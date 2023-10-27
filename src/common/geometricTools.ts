@@ -55,6 +55,11 @@ export abstract class xPoint<T extends number = number>
 	/** 这是个可扩展的映射表 */
 	public static readonly OBJECTIFY_MAP: JSObjectifyMap = {}
 
+	/** 从数组中加载 */
+	public loadFromArray(source: T[]): xPoint<T> {
+		return this.copyFromArgs(...source)
+	}
+
 	//================Position Getter/Setter================//
 	public get nDimensions(): int {
 		return this.length

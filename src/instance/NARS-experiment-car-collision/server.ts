@@ -18,7 +18,7 @@ import {
 	TPS,
 } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { mergeMaps, mergeMultiMaps, randomIn } from 'matriangle-common/utils'
-import { iPoint } from 'matriangle-common/geometricTools'
+import { iPoint, traverseNDSquareFrame } from 'matriangle-common/geometricTools'
 import MatrixVisualizer from '../../mods/visualization/web/MatrixVisualizer'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
 import {
@@ -71,21 +71,57 @@ function printInitDescription(): void {
 	)
 }
 
+// 实验超参数 //
+
+// 词项常量池 & 词法模板
+const SELF: string = '{SELF}'
+const SAFE: string = '[SAFE]'
+const positiveTruth = '%1.0;0.9%'
+const negativeTruth = '%0.0;0.9%'
+/** 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
+const op_output = (op: string[]): string =>
+	`${op[0]}([${op.slice(1).join(', ')}])`
+/** 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
+const op_input = (op: string[]): string =>
+	`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`
+
+// 计时参数
+/** 单位执行速度 = 感知 */
+const unitAITickSpeed = 1
+/** 目标提醒相对倍率 */
+const goalRemindRate: uint = 3 // 因子「教学目标」 3 5 10 0x100000000
+/** Babble相对倍率 */
+const babbleRate: uint = 1
+/** 「长时间无操作⇒babble」的阈值 */
+const babbleThreshold: uint = 1
+
+// 地图参数
+/** 地图尺寸 */
+const mapSizes: iPoint = new iPoint().copyFromArgs(
+	// 【2023-10-27 16:51:08】目前是二维
+	5,
+	5
+)
+
+// NARS服务 //
+const NARSServerHost: string = '127.0.0.1'
+const NARSServerPort: uint = 8765
+const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
+
 // 地图 //
 function initMaps(): IMap[] {
 	const maps: IMap[] = []
 
 	// 存储结构 //
-	const storage = new MapStorageSparse(1)
+	const storage = new MapStorageSparse(mapSizes.length)
 	// * 大体结构：#__C__#
-	const N = 5 // 第几格
-	storage.setBlock(
-		new iPoint().copyFromArgs(0),
-		NativeBlockPrototypes.COLORED.softCopy()
-	)
-	storage.setBlock(
-		new iPoint().copyFromArgs(N - 1),
-		NativeBlockPrototypes.COLORED.softCopy()
+	// 填充边框
+	traverseNDSquareFrame(
+		new iPoint().copyFrom(mapSizes).fill(0),
+		mapSizes,
+		(p: iPoint): void => {
+			storage.setBlock(p, NativeBlockPrototypes.COLORED.softCopy())
+		}
 	)
 
 	// 注册 //
@@ -183,18 +219,6 @@ function setupPlayers(host: IMatrix): void {
 	// NARS参数 //
 	/** 对接的是PyNARS的逻辑 */
 	const ctlFeedback: FeedbackController = new FeedbackController('NARS')
-	// 词项常量池
-	const SELF: string = '{SELF}'
-	const SAFE: string = '[SAFE]'
-	const positiveTruth = '%1.0;0.9%'
-	const negativeTruth = '%0.0;0.9%'
-	// 词法模板
-	/** 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
-	const op_output = (op: string[]): string =>
-		`${op[0]}([${op.slice(1).join(', ')}])`
-	/** 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
-	const op_input = (op: string[]): string =>
-		`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`
 	/**
 	 * 已注册的操作
 	 * * 元素格式：`[^left, {SELF}, x]`，代表
@@ -204,16 +228,11 @@ function setupPlayers(host: IMatrix): void {
 	const registeredOperations: string[][] = []
 	/** 存储形如「^left([{SELF}, x])」的字串以便快速识别 */
 	const registeredOperation_outputs: string[] = []
-	/** 单位执行速度 = 感知 */
-	ctlFeedback.AIRunSpeed = 1
-	/** 目标提醒相对倍率 */
-	const goalRemindRate: uint = 3 // 因子「教学目标」 3 5 10 0x100000000
+	/** AI执行速度 = 单位执行速度 */
+	ctlFeedback.AIRunSpeed = unitAITickSpeed
+	// 两个计时器变量
 	let _goalRemindRate: uint = 0
-	/** Babble相对倍率 */
-	const babbleRate: uint = 3
 	let _babbleRate: uint = 0
-	/** 「长时间无操作⇒babble」的阈值 */
-	const babbleThreshold: uint = 5
 	/** 获得「babble操作」的函数 */
 	const babbleF = (self: IPlayer, host: IMatrix): string[] =>
 		randomIn(registeredOperations) // 目前是「随机教学」
@@ -386,7 +405,7 @@ function setupPlayers(host: IMatrix): void {
 			// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
 			let name: string
 			// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
-			const lr = ['left', 'right']
+			const lr = ['right', 'left'] // 先右后左，先正后负
 			let op: string[]
 			for (name of lr) {
 				messages.push(`/reg ${name} eval `) // 负/正 方向移动
@@ -542,11 +561,6 @@ function setupEntities(host: IMatrix): void {
 	setupVisualization(host)
 	setupPlayers(host)
 }
-
-// NARS服务 //
-const NARSServerHost: string = '127.0.0.1'
-const NARSServerPort: uint = 8765
-const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
 
 // 母体 //
 const rule = initMatrixRule()
