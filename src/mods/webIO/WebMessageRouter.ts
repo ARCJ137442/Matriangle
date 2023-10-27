@@ -637,13 +637,13 @@ class WebSocketServiceClient extends Service {
 			// 直接回调
 			callback?.()
 			// 开始侦听连接
-			this._connection.once('open', (): void => {
+			this._connection.onopen = (): void => {
 				// 提示
 				console.log(
 					`${this.address}：WebSocket连接已建立！`
 					// this._connection
 				)
-			})
+			}
 			// 继续往Socket添加钩子
 			this._connection.onmessage = (event: MessageEvent): void => {
 				// ! event.data的类型就是`string`
