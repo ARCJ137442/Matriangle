@@ -35,7 +35,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Matriangle Instance: AI Env V1",
+			"name": "Matriangle Instance: AI Env - Car Collision",
 			"skipFiles": [
 				"<node_internals>/**"
 			],

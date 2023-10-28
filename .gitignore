@@ -3,7 +3,7 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
-[Bb]uild/
+# [Bb]uild/ # !【2023-10-28 18:00:41】现在需要存放「构建用配置脚本」如Webpack
 *.lnk
 *.zip
 *.rar
