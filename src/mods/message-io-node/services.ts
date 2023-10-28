@@ -48,7 +48,7 @@ export class HTTPServiceServer extends MessageService {
 					res.writeHead(200, { 'Content-Type': 'text/plain' })
 					/** 有可能回调没有回复 */
 					const reply: string | undefined = this.messageCallback(
-						// 尝试从URL中解析
+						// 尝试从URL中解析 // * 示例：`/%3CA%20--%3E%20B%3E.`(<A --> B>.)
 						req.url?.slice(1) /* 截取掉开头的「/」 */ ?? ''
 					)
 					// 直接使用reply，因为undefined也是允许的
