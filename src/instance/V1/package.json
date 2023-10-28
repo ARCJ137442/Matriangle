@@ -19,6 +19,8 @@
 		"matriangle-mod-bats": "^0.1.0",
 		"matriangle-mod-native": "^0.1.0",
 		"matriangle-mod-web-io": "^0.1.0",
+		"matriangle-mod-message-io-api": "^0.1.0",
+		"matriangle-mod-message-io-node": "^0.1.0",
 		"matriangle-mod-visualization": "^0.1.0"
 	},
 	"devDependencies": {}

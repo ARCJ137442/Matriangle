@@ -18,6 +18,7 @@
 		"matriangle-api": "^0.1.0",
 		"matriangle-legacy": "^0.1.0",
 		"matriangle-mod-native": "^0.1.0",
+		"matriangle-mod-message-io-api": "^0.1.0",
 		"matriangle-mod-bats": "^0.1.0"
 	}
 }

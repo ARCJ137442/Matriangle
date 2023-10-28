@@ -30,7 +30,7 @@ import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
 import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
 import IMap from 'matriangle-api/server/map/IMap'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
-import WebMessageRouter from '../../mods/webIO/WebMessageRouter'
+import { ProgramMessageRouter } from 'matriangle-mod-message-io-api/MessageRouter'
 import WebController from '../../mods/webIO/controller/WebController'
 import KeyboardControlCenter, {
 	generateBehaviorFromPlayerConfig,
@@ -48,6 +48,14 @@ import {
 } from 'matriangle-mod-native'
 import { nameOfAxis_M } from 'matriangle-api'
 import { PyNARSOutputType } from '../../mods/NARFramework'
+import {
+	WebSocketServiceClient,
+	WebSocketServiceServer,
+} from 'matriangle-mod-message-io-node/services'
+import {
+	MessageCallback,
+	getFullAddress,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 // 描述 //
 const infos = (...lines: string[]): void => console.info(lines.join('\n'))
@@ -73,6 +81,15 @@ function printInitDescription(): void {
 
 // 实验超参数 //
 
+// 网络连接地址
+const CONTROL_SERVICE_HOST = '127.0.0.1'
+const CONTROL_SERVICE_PORT = 3002
+const DISPLAY_SERVICE_HOST = '127.0.0.1'
+const DISPLAY_SERVICE_PORT = 8080
+const NARSServerHost = '127.0.0.1'
+const NARSServerPort = 8765
+const NARSServerAddress = getFullAddress('ws', NARSServerHost, NARSServerPort)
+
 // 词项常量池 & 词法模板
 const SELF: string = '{SELF}'
 const SAFE: string = '[SAFE]'
@@ -84,6 +101,15 @@ const op_output = (op: string[]): string =>
 /** 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
 const op_input = (op: string[]): string =>
 	`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`
+// 网络通信
+/** 解包格式 */
+type WebNARSOutput = {
+	interface_name?: string
+	output_type?: string
+	content?: string
+}
+/** NARS通过Web(Socket)传回的消息中会有的格式 */
+type WebNARSOutputJSON = WebNARSOutput[]
 
 // 计时参数
 /** 单位执行速度 = 感知 */
@@ -102,11 +128,6 @@ const mapSizes: iPoint = new iPoint().copyFromArgs(
 	5,
 	5
 )
-
-// NARS服务 //
-const NARSServerHost: string = '127.0.0.1'
-const NARSServerPort: uint = 8765
-const NARSServerAddress: string = `ws://${NARSServerHost}:${NARSServerPort}`
 
 // 地图 //
 function initMaps(): IMap[] {
@@ -166,7 +187,7 @@ function initWorldRegistry(): IWorldRegistry {
 }
 
 /** 消息路由器 */
-const router: WebMessageRouter = new WebMessageRouter()
+const router: ProgramMessageRouter = new ProgramMessageRouter()
 
 /** 配置玩家 */
 function setupPlayers(host: IMatrix): void {
@@ -186,7 +207,17 @@ function setupPlayers(host: IMatrix): void {
 	// Web控制器
 	const ctlWeb: WebController = new WebController()
 	ctlWeb.addConnection(p, 'p2' /* UI遗留 */)
-	ctlWeb.linkToRouter(router, 'ws', '127.0.0.1', 3002) // 连接到消息路由器
+	ctlWeb.linkToRouterLazy(
+		router,
+		CONTROL_SERVICE_HOST,
+		CONTROL_SERVICE_PORT,
+		(messageCallback: MessageCallback) =>
+			new WebSocketServiceServer(
+				CONTROL_SERVICE_HOST,
+				CONTROL_SERVICE_PORT,
+				messageCallback
+			)
+	) // 连接到消息路由器
 	const kcc: KeyboardControlCenter = new KeyboardControlCenter()
 
 	// 按键绑定
@@ -198,19 +229,20 @@ function setupPlayers(host: IMatrix): void {
 	)
 
 	// 连接：键控中心 - 消息路由器
-	router.registerServiceWithType(
-		'ws',
-		'127.0.0.1',
-		3002,
-		// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
-		// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
-		(message: string): undefined => {
-			if (message[0] !== '|') return
-			// * 有加号⇒按下
-			if (message[1] === '+') kcc.onPress(message.slice(2))
-			// * 无加号⇒释放
-			else kcc.onRelease(message.slice(1))
-		},
+	router.registerService(
+		new WebSocketServiceServer(
+			CONTROL_SERVICE_HOST,
+			CONTROL_SERVICE_PORT,
+			// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
+			// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
+			(message: string): undefined => {
+				if (message[0] !== '|') return
+				// * 有加号⇒按下
+				if (message[1] === '+') kcc.onPress(message.slice(2))
+				// * 无加号⇒释放
+				else kcc.onRelease(message.slice(1))
+			}
+		),
 		(): void => {
 			console.log('键控中心连接成功！')
 		}
@@ -238,14 +270,6 @@ function setupPlayers(host: IMatrix): void {
 		randomIn(registeredOperations) // 目前是「随机教学」
 	/** 距离「上一次NARS发送操作」所过的单位时间 */
 	let lastNARSOperated: uint = babbleThreshold // * 默认一开始就进行babble
-	/** 解包格式 */
-	type WebNARSOutput = {
-		interface_name?: string
-		output_type?: string
-		content?: string
-	}
-	/** NARS通过Web(Socket)传回的消息中会有的格式 */
-	type WebNARSOutputJSON = WebNARSOutput[]
 
 	// 统计数据 //
 	/** 总时间：实验全程总时长 */
@@ -296,49 +320,51 @@ function setupPlayers(host: IMatrix): void {
 		}
 	}
 	// 消息接收
-	router.registerWebSocketServiceClient(
-		NARSServerHost,
-		NARSServerPort,
-		// * 从NARS接收信息 * //
-		(message: string): undefined => {
-			// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
-			const output_datas: WebNARSOutputJSON = JSON.parse(
-				message
-			) as WebNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
-			// 处理
-			for (
-				let i: uint = 0, output_data: WebNARSOutput;
-				i < output_datas.length;
-				i++
-			) {
-				output_data = output_datas[i]
-				// console.log(
-				// 	`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
-				// 	output_data
-				// )
-				if (typeof output_data.output_type === 'string')
-					switch (output_data.output_type) {
-						case PyNARSOutputType.IN:
-							break
-						case PyNARSOutputType.OUT:
-							break
-						case PyNARSOutputType.ERROR:
-							break
-						case PyNARSOutputType.ANSWER:
-							break
-						case PyNARSOutputType.ACHIEVED:
-							break
-						case PyNARSOutputType.EXE:
-							if (output_data?.content)
-								exeHandler(output_data.content)
-							break
-						// 跳过
-						case PyNARSOutputType.INFO:
-						case PyNARSOutputType.COMMENT:
-							break
-					}
+	router.registerService(
+		new WebSocketServiceClient(
+			NARSServerHost,
+			NARSServerPort,
+			// * 从NARS接收信息 * //
+			(message: string): undefined => {
+				// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
+				const output_datas: WebNARSOutputJSON = JSON.parse(
+					message
+				) as WebNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
+				// 处理
+				for (
+					let i: uint = 0, output_data: WebNARSOutput;
+					i < output_datas.length;
+					i++
+				) {
+					output_data = output_datas[i]
+					// console.log(
+					// 	`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
+					// 	output_data
+					// )
+					if (typeof output_data.output_type === 'string')
+						switch (output_data.output_type) {
+							case PyNARSOutputType.IN:
+								break
+							case PyNARSOutputType.OUT:
+								break
+							case PyNARSOutputType.ERROR:
+								break
+							case PyNARSOutputType.ANSWER:
+								break
+							case PyNARSOutputType.ACHIEVED:
+								break
+							case PyNARSOutputType.EXE:
+								if (output_data?.content)
+									exeHandler(output_data.content)
+								break
+							// 跳过
+							case PyNARSOutputType.INFO:
+							case PyNARSOutputType.COMMENT:
+								break
+						}
+				}
 			}
-		},
+		),
 		(): void => console.log(`${NARSServerAddress}：NARS连接成功！`)
 	)
 
@@ -349,7 +375,7 @@ function setupPlayers(host: IMatrix): void {
 	/** 发送消息 */
 	const send = (message: string): void => {
 		// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-		router.sendMessageTo(NARSServerAddress, message)
+		router.sendMessageTo(NARSServerHost, NARSServerPort, message)
 		// * 向NARS发送Narsese * //
 		console.log(`Message sent: ${message}`)
 	}
@@ -497,7 +523,8 @@ function setupPlayers(host: IMatrix): void {
 			}
 			// 发送
 			router.sendMessageTo(
-				'ws://127.0.0.1:8080',
+				DISPLAY_SERVICE_HOST,
+				DISPLAY_SERVICE_PORT,
 				`图表${JSON.stringify(experimentData)}`
 			)
 			// 检测
@@ -533,7 +560,7 @@ function setupPlayers(host: IMatrix): void {
 			const msg = `<{SELF} --> [${event}]>. :|:`
 			console.log(`Message sent: ${msg}`)
 			// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-			router.sendMessageTo(NARSServerAddress, msg)
+			router.sendMessageTo(NARSServerHost, NARSServerPort, msg)
 		}
 	)
 
@@ -551,7 +578,17 @@ function setupVisualization(host: IMatrix): void {
 	// 可视化信号
 	const visualizer: MatrixVisualizer = new MatrixVisualizer(matrix)
 	// 连接
-	visualizer.linkToRouter(router, 'ws', '127.0.0.1', 8080)
+	visualizer.linkToRouter(
+		router,
+		DISPLAY_SERVICE_HOST,
+		DISPLAY_SERVICE_PORT,
+		(messageCallback: MessageCallback) =>
+			new WebSocketServiceServer(
+				DISPLAY_SERVICE_HOST,
+				DISPLAY_SERVICE_PORT,
+				messageCallback
+			)
+	)
 
 	// *添加实体
 	host.addEntities(visualizer)
@@ -630,13 +667,14 @@ async function waitNARSConnection(detectPeriodMS: uint = 1000): Promise<void> {
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		// 检测连接
-		if (router.getServiceAt(NARSServerAddress) !== undefined)
-			if (router.getServiceAt(NARSServerAddress)?.isActive) break
+		if (router.getServiceAt(NARSServerHost, NARSServerPort) !== undefined)
+			if (router.getServiceAt(NARSServerHost, NARSServerPort)?.isActive)
+				break
 			else {
 				console.warn('NARS连接未建立，尝试重连。。。')
 				// 重连
-				router.getServiceAt(NARSServerAddress)?.stop()
-				router.getServiceAt(NARSServerAddress)?.launch()
+				router.getServiceAt(NARSServerHost, NARSServerPort)?.stop()
+				router.getServiceAt(NARSServerHost, NARSServerPort)?.launch()
 			}
 		else console.warn('NARS消息服务未建立')
 		// 等待

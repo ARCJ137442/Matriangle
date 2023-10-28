@@ -1,7 +1,10 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
-import WebMessageRouter from '../WebMessageRouter'
-import { NativeWebServiceType } from '../WebMessageRouter'
+import {
+	IMessageRouter,
+	IMessageService,
+	MessageCallback,
+} from '../../message-io-api/MessageInterfaces'
 import MultiKeyController from './MultiKeyController'
 
 /**
@@ -25,31 +28,49 @@ export default class WebController extends MultiKeyController {
 
 	// 服务器部分 //
 	/**
-	 * 以指定IP、端口连接到「消息路由器」
+	 * 以指定服务连接到「消息路由器」
+	 * * 会更改传入
 	 * * 与「开设服务器」不同的是：所有逻辑由自身决定
 	 *
-	 * !【2023-10-12 21:33:49】暂时不进行通用化（IMessageRouter）处理
-	 *
-	 * @type {NativeWebServiceType}
-	 * @param {string} ip 开放的地址
-	 * @param {uint} port 开放的服务端口
-	 * @param {WebMessageRouter} router 所连接的「消息路由器」
+	 * @type {MessageServiceType}
+	 * @param {IMessageService} service 用于注册的服务
+	 * @param {MessageRouter} router 所连接的「消息路由器」
 	 */
 	public linkToRouter(
-		router: WebMessageRouter,
-		type: NativeWebServiceType,
-		ip: string,
-		port: uint
+		router: IMessageRouter,
+		service: IMessageService
 	): boolean {
-		return router.registerServiceWithType(
-			type,
-			ip,
-			port,
-			this.onMessage.bind(this),
-			(): void => {
-				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
-			}
-		)
+		service.messageCallback = this.onMessage.bind(this)
+		return router.registerService(service, (): void => {
+			console.log(`与路由器成功在${service.addressFull}建立连接！`)
+		})
+	}
+
+	/**
+	 * 以指定服务连接到「消息路由器」，但是「懒注册」
+	 * * 只有在「可以注册」（路由器地址未注册）时构造路由器
+	 * * 会暴露自身的「内部消息接收接口」以便「为『消息服务』绑定『消息回调函数』」
+	 * * 与「开设服务器」不同的是：所有逻辑由自身决定
+	 *
+	 * @type {MessageServiceType}
+	 * @param {string} host 主机地址
+	 * @param {uint} port 服务端口
+	 * @param {(messageCallback: MessageCallback) => IMessageService} serviceF 用于注册的「服务构造函数」
+	 * @param {MessageRouter} router 所连接的「消息路由器」
+	 */
+	public linkToRouterLazy(
+		router: IMessageRouter,
+		host: string,
+		port: uint,
+		serviceF: (messageCallback: MessageCallback) => IMessageService
+	): boolean {
+		if (router.hasServiceAt(host, port)) return false
+		else {
+			const service: IMessageService = serviceF(this.onMessage.bind(this))
+			return router.registerService(service, (): void => {
+				console.log(`与路由器成功在${service.addressFull}建立连接！`)
+			})
+		}
 	}
 
 	/**

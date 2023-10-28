@@ -3,8 +3,11 @@ import {
 	MatrixProgram,
 	MatrixProgramLabel,
 } from 'matriangle-api/server/control/MatrixProgram'
-import WebMessageRouter from '../../webIO/WebMessageRouter'
-import { NativeWebServiceType } from '../../webIO/WebMessageRouter'
+import {
+	IMessageRouter,
+	IMessageService,
+	MessageCallback,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 /**
  * 「可视化者」是
@@ -34,25 +37,23 @@ export default abstract class Visualizer extends MatrixProgram {
 	 *
 	 * !【2023-10-12 21:33:49】暂时不进行通用化（IMessageRouter）处理
 	 *
-	 * @type {NativeWebServiceType}
+	 * @type {MessageServiceType}
 	 * @param {string} ip 开放的地址
 	 * @param {uint} port 开放的服务端口
-	 * @param {WebMessageRouter} router 所连接的「消息路由器」
+	 * @param {MessageRouter} router 所连接的「消息路由器」
 	 */
 	public linkToRouter(
-		router: WebMessageRouter,
-		type: NativeWebServiceType,
-		ip: string,
-		port: uint
+		router: IMessageRouter,
+		host: string,
+		port: uint,
+		serviceF: (messageCallback: MessageCallback) => IMessageService
 	): boolean {
-		return router.registerServiceWithType(
-			type,
-			ip,
-			port,
-			this.getSignal.bind(this),
-			(): void => {
-				console.log(`与路由器成功在${type}://${ip}:${port}建立连接！`)
-			}
-		)
+		if (router.hasServiceAt(host, port)) return false
+		else {
+			const service: IMessageService = serviceF(this.getSignal.bind(this))
+			return router.registerService(service, (): void => {
+				console.log(`与路由器成功在${service.addressFull}建立连接！`)
+			})
+		}
 	}
 }
