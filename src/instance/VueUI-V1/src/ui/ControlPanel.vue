@@ -1,6 +1,11 @@
 <template>
 	<h2>控制器</h2>
-	<input type="text" v-model="controlAddress" placeholder="输入链接" />
+	<input
+		type="text"
+		v-model="controlAddress"
+		placeholder="输入链接"
+		@keydown="(e: KeyboardEvent) => e.key === 'Enter' && onAddressChange()"
+	/>
 	<input type="text" v-model="controlKey" placeholder="输入控制密钥" />
 	<p>{{ controlMessage }}</p>
 	<button
@@ -18,6 +23,7 @@ import { Ref, ref } from 'vue'
 
 // 定义元素 //
 const controlAddress: Ref<string> = ref('127.0.0.1:3002')
+let _lastAddress: string = controlAddress.value
 const controlKey: Ref<string> = ref('p2')
 const controlMessage: Ref<string> = ref('')
 const controlStatusButton: Ref<HTMLElement | null> = ref(null)
@@ -25,13 +31,29 @@ const controlStatusButton: Ref<HTMLElement | null> = ref(null)
 // * 自定义事件发送 * //
 
 /** 注册事件发送器 */
-const emit = defineEmits(['message'])
+const emit = defineEmits(['message', 'link-change'])
 /** 发送消息 */
 function emitMessage(message: string): void {
 	emit('message', {
 		address: controlAddress.value,
 		message,
 	})
+}
+
+/**
+ * 地址变更事件
+ * * 格式：(旧地址：string, 新地址：string)
+ */
+function onAddressChange(): void {
+	emit(
+		'link-change',
+		// 旧地址
+		_lastAddress,
+		// 新地址
+		controlAddress.value
+	)
+	// 更新旧地址
+	_lastAddress = controlAddress.value
 }
 
 // 控制の消息 //

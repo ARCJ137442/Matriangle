@@ -1,6 +1,11 @@
 import path from 'path'
+import { fileURLToPath } from 'url';
 import { VueLoaderPlugin } from 'vue-loader'
 import HTMLWebpackPlugin from 'html-webpack-plugin'
+
+// ESM的「当前路径」参见：https://stackoverflow.com/questions/72456535/referenceerror-dirname-is-not-defined-in-es-module-scope
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default {
 	entry: path.join(__dirname, '../src/index.ts'), // 入口文件

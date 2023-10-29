@@ -56,6 +56,7 @@ import {
 	MessageCallback,
 	getFullAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import NARSPlotData from './PlotData-NARS.config'
 
 // 描述 //
 const infos = (...lines: string[]): void => console.info(lines.join('\n'))
@@ -74,7 +75,7 @@ function printInitDescription(): void {
 		'  - 原理：先启动连接的两端，再启动中间——确保NARS不受「先前经验污染」，保证服务端被客户端连接',
 		'2. 对应客户端的启动目录：相应WebUI中的index.html',
 		'  - 若客户端后启动，部分连接可能无法建立',
-		`3. NARS服务器需要监听 ${NARSServerAddress} 的Websocket地址，以便实验环境对接`,
+		`3. NARS服务器需要监听 ${NARS_SERVER_ADDRESS} 的Websocket地址，以便实验环境对接`,
 		'  - 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息'
 	)
 }
@@ -86,9 +87,15 @@ const CONTROL_SERVICE_HOST = '127.0.0.1'
 const CONTROL_SERVICE_PORT = 3002
 const DISPLAY_SERVICE_HOST = '127.0.0.1'
 const DISPLAY_SERVICE_PORT = 8080
-const NARSServerHost = '127.0.0.1'
-const NARSServerPort = 8765
-const NARSServerAddress = getFullAddress('ws', NARSServerHost, NARSServerPort)
+const DATA_SHOW_SERVICE_HOST = '127.0.0.1'
+const DATA_SHOW_SERVICE_PORT = 3030
+const NARS_SERVER_HOST = '127.0.0.1'
+const NARS_SERVER_PORT = 8765
+const NARS_SERVER_ADDRESS = getFullAddress(
+	'ws',
+	NARS_SERVER_HOST,
+	NARS_SERVER_PORT
+)
 
 // 词项常量池 & 词法模板
 const SELF: string = '{SELF}'
@@ -248,6 +255,19 @@ function setupPlayers(host: IMatrix): void {
 		}
 	)
 
+	// 连接：数据显示服务
+	router.registerService(
+		new WebSocketServiceServer(
+			DATA_SHOW_SERVICE_HOST,
+			DATA_SHOW_SERVICE_PORT,
+			/**
+			 * 消息回调=初始化：传入的任何消息都视作「初始数据获取请求」
+			 * * 消息格式：`JSON.stringify(NARSPlotData)`
+			 */
+			(message: string): string => JSON.stringify(NARSPlotData)
+		)
+	)
+
 	// NARS参数 //
 	/** 对接的是PyNARS的逻辑 */
 	const ctlFeedback: FeedbackController = new FeedbackController('NARS')
@@ -322,8 +342,8 @@ function setupPlayers(host: IMatrix): void {
 	// 消息接收
 	router.registerService(
 		new WebSocketServiceClient(
-			NARSServerHost,
-			NARSServerPort,
+			NARS_SERVER_HOST,
+			NARS_SERVER_PORT,
 			// * 从NARS接收信息 * //
 			(message: string): undefined => {
 				// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
@@ -365,7 +385,7 @@ function setupPlayers(host: IMatrix): void {
 				}
 			}
 		),
-		(): void => console.log(`${NARSServerAddress}：NARS连接成功！`)
+		(): void => console.log(`${NARS_SERVER_ADDRESS}：NARS连接成功！`)
 	)
 
 	// 反馈控制器⇒消息路由 // * 事件反馈
@@ -375,7 +395,7 @@ function setupPlayers(host: IMatrix): void {
 	/** 发送消息 */
 	const send = (message: string): void => {
 		// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-		router.sendMessageTo(NARSServerHost, NARSServerPort, message)
+		router.sendMessageTo(NARS_SERVER_HOST, NARS_SERVER_PORT, message)
 		// * 向NARS发送Narsese * //
 		console.log(`Message sent: ${message}`)
 	}
@@ -521,11 +541,11 @@ function setupPlayers(host: IMatrix): void {
 				自主成功率: 自主成功次数 / 自主操作次数,
 				激活率: 自主操作次数 / 总次数,
 			}
-			// 发送
+			// 发送到「图表服务」
 			router.sendMessageTo(
-				DISPLAY_SERVICE_HOST,
-				DISPLAY_SERVICE_PORT,
-				`图表${JSON.stringify(experimentData)}`
+				DATA_SHOW_SERVICE_HOST,
+				DATA_SHOW_SERVICE_PORT,
+				JSON.stringify(experimentData)
 			)
 			// 检测
 			if (
@@ -560,7 +580,7 @@ function setupPlayers(host: IMatrix): void {
 			const msg = `<{SELF} --> [${event}]>. :|:`
 			console.log(`Message sent: ${msg}`)
 			// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-			router.sendMessageTo(NARSServerHost, NARSServerPort, msg)
+			router.sendMessageTo(NARS_SERVER_HOST, NARS_SERVER_PORT, msg)
 		}
 	)
 
@@ -667,21 +687,29 @@ async function waitNARSConnection(detectPeriodMS: uint = 1000): Promise<void> {
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		// 检测连接
-		if (router.getServiceAt(NARSServerHost, NARSServerPort) !== undefined)
-			if (router.getServiceAt(NARSServerHost, NARSServerPort)?.isActive)
+		if (
+			router.getServiceAt(NARS_SERVER_HOST, NARS_SERVER_PORT) !==
+			undefined
+		)
+			if (
+				router.getServiceAt(NARS_SERVER_HOST, NARS_SERVER_PORT)
+					?.isActive
+			)
 				break
 			else {
 				console.warn('NARS连接未建立，尝试重连。。。')
 				// 重连
-				router.getServiceAt(NARSServerHost, NARSServerPort)?.stop()
-				router.getServiceAt(NARSServerHost, NARSServerPort)?.launch()
+				router.getServiceAt(NARS_SERVER_HOST, NARS_SERVER_PORT)?.stop()
+				router
+					.getServiceAt(NARS_SERVER_HOST, NARS_SERVER_PORT)
+					?.launch()
 			}
 		else console.warn('NARS消息服务未建立')
 		// 等待
 		await sleep(detectPeriodMS)
 	}
 	console.groupEnd()
-	console.info(`NARS连接建立成功！地址：${NARSServerAddress}`)
+	console.info(`NARS连接建立成功！地址：${NARS_SERVER_ADDRESS}`)
 }
 
 /**

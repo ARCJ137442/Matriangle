@@ -30,6 +30,24 @@ export type YDatas = {
 export type YData = {
 	[name: string]: unknown
 }
+/**
+ * XY复合数据
+ * * 用于通讯：在一次通信中将X、Y数据打包
+ * * 固定使用键`x`作为X坐标
+ */
+export type XYData<X = unknown> = {
+	x: X
+	[name: string]: unknown
+}
+
+/**
+ * 识别是否是
+ * * 用于通讯：在相同信道数据中识别「数据更新」与「数据初始化」
+ * * 核心逻辑：检查是否有「x」键
+ */
+export function IsXYData<X = unknown>(data: object): data is XYData<X> {
+	return 'x' in data
+}
 
 /**
  * 其整体作为一个图表API
@@ -39,17 +57,36 @@ export class Plot<X = unknown> {
 	// 变量声明
 	public x_datas: X[] = []
 	public y_datas: YDatas = {}
-	protected y_data_series: EChartsSeriesData[]
+	protected y_data_series: EChartsSeriesData[] = []
 	protected chart: ECharts
 
 	/** 统一初始化 */
 	constructor(
 		chartDom: HTMLDivElement,
 		/** 存储自身配置&数据 */
-		public option: EChartsOption
+		public option: EChartsOption | null
 	) {
+		this.chart = init(chartDom)
+
+		/** 初始化图表 */
+		this.resetOption(this.option)
+	}
+
+	/** 重置配置 */
+	resetOption(option: EChartsOption | null): void {
+		console.log('重置配置：', option)
+		// 空配置⇒返回
+		if (option === null) return
+
+		// 覆盖数据
+		this.option = option
+
+		// 重置XY数据
+		this.x_datas = []
+		this.y_datas = {}
+
 		/** 作为后续导入要用到的series，存储其中所有的数据 */
-		this.y_data_series = this.option.series as EChartsSeriesData[]
+		this.y_data_series = option.series as EChartsSeriesData[]
 
 		for (const s of this.y_data_series) {
 			// 批量创建数据历史
@@ -58,10 +95,7 @@ export class Plot<X = unknown> {
 			s.data = this.y_datas[s.name]
 		}
 
-		this.chart = init(chartDom)
-
-		/** 初始化图表 */
-		this.option && this.chart.setOption(this.option)
+		this.chart.setOption(option)
 	}
 
 	/** 数据增删 */
@@ -70,7 +104,9 @@ export class Plot<X = unknown> {
 		y_data: YData,
 		shift: boolean = false,
 		update: boolean = true
-	) {
+	): void {
+		// 空配置⇒跳过
+		if (this.option === null) return
 		// x坐标更新
 		this.x_datas.push(x_data)
 		// 各个按名称的y坐标更新
@@ -91,6 +127,8 @@ export class Plot<X = unknown> {
 
 	/** 图表更新 */
 	update(): void {
+		// 空配置⇒跳过
+		if (this.option === null) return
 		// 决定所更新的
 		const toUpdate_series = []
 		for (const y_data_config of this.y_data_series) {
@@ -99,7 +137,6 @@ export class Plot<X = unknown> {
 				data: y_data_config.data,
 			})
 		}
-		// console.log(toUpdate_series);
 		// 显示更新
 		this.chart.setOption({
 			xAxis: {

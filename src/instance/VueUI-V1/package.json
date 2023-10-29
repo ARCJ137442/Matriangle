@@ -1,11 +1,11 @@
 {
-	"name": "matriangle-vue-ui-nars",
+	"name": "matriangle-vue-ui",
 	"version": "1.0.0",
-	"description": "使用Vue3+TS+Webpack5搭建的新Matriangle前端，用于NARS实验",
+	"description": "使用Vue3+TS+Webpack5搭建的新Matriangle前端",
 	"main": "index.js",
 	"scripts": {
-		"dev": "webpack-dev-server -c build/webpack.dev.cjs",
-		"build": "webpack -c build/webpack.prod.cjs",
+		"dev": "webpack-dev-server -c build/webpack.dev.mjs",
+		"build": "webpack -c build/webpack.prod.mjs",
 		"serve": "serve -s dist"
 	},
 	"author": "",

@@ -7,12 +7,16 @@
 	<h1>显示</h1>
 	<DisplayPanel
 		ref="displayPanel"
-		@link="handleDisplayLinkRequest"
+		@link-start="handleLinkStartRequest"
 		@refresh="handleDisplayRefreshRequest"
 	/>
 
 	<h1>数据</h1>
-	<DataPanel ref="dataPanel" />
+	<DataPanel
+		ref="dataPanel"
+		@link-start="handleLinkStartRequest"
+		@config-request="handleConfigRequest"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +43,7 @@ import {
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import DisplayPanel from './DisplayPanel.vue'
 import DataPanel from './DataPanel.vue'
+import { voidF } from '../../../../common'
 
 /// 开始 ///
 
@@ -58,7 +63,7 @@ const router: VueElementRefNullable<typeof MessageRouter> = ref(null)
 }, 1000) */ // 【2023-10-29 00:52:30】测试成功
 /**
  * 向路由器输送消息
- * * 附带「自动重连」功能
+ * * 附带「响应式自动重连」功能
  */
 function sendMessagePack(
 	pack: MessagePack,
@@ -78,6 +83,27 @@ function sendMessagePack(
 			)
 		} else console.info('消息发送失败！')
 	else console.error('消息路由器未调用！')
+}
+
+/** 处理「开始连接请求」 */
+function handleLinkStartRequest(
+	address: string,
+	heartbeatTimeMS: number,
+	callbackMessage: MessageCallback,
+	callbackConnected?: voidF,
+	callbackStop?: voidF
+): void {
+	router.value?.openKeepConnectService(
+		address,
+		heartbeatTimeMS,
+		// 若无服务：让路由器新建服务
+		(): IMessageService =>
+			registerRouterServiceAt(address, callbackMessage),
+		// 回调：通知服务启动
+		callbackConnected,
+		// 回调：当发送连接时发现「服务不再活跃」，通知「服务关闭」
+		callbackStop
+	)
 }
 
 /**
@@ -103,55 +129,31 @@ function onKeyEvent(event: KeyboardEvent, isDown: boolean): void {
 
 // 屏显 //
 const displayPanel: VueElementRefNullable<typeof DisplayPanel> = ref(null)
-/** 处理「屏显连接请求」 */
-function handleDisplayLinkRequest(address: string): void {
-	router.value?.softOpenService(
-		address,
-		// 若无服务：让路由器新建服务
-		(): IMessageService =>
-			registerRouterServiceAt(address, displayMessageCallback_text),
-		// 回调：通知显示器服务启动
-		displayPanel.value?.onDisplayLinkOpen
-	)
-}
-/** 处理「屏显刷新请求」 */
+/**
+ * 处理「屏显刷新请求」
+ *
+ * !【2023-10-29 21:08:46】注意：刷新速度过快会导致服务端过载，造成「屏显不响应」的假象
+ */
 function handleDisplayRefreshRequest(address: string, message: string): void {
 	if (router.value === null) return console.error('未找到路由器！')
-	// 防止连接断开后缓存
-	if (router.value.isServiceActive(address))
-		router.value.send(address, message)
-	else if (displayPanel.value === null) return console.error('未找到显示器！')
-	else displayPanel.value.onDisplayLinkStop()
-}
 
-/**
- * 用于「文本显示」的回调
- * * 同时用于进一步分派
- */
-function displayMessageCallback_text(message: string): undefined {
-	// console.log('displayMessageCallback_text: 收到消息', message)
-	// 若为「图表」⇒更新图表
-	if (message.startsWith('图表')) {
-		// 解包
-		const data = JSON.parse(message.slice(2))
-		dataPanel.value?.update(data)
-	}
-	// 若为「实体列表」⇒更新「附加信息」
-	else if (message.startsWith('实体列表'))
-		displayPanel.value?.updateDisplayScreen({
-			// screen:
-			otherInf: message,
-		})
-	// 否则⇒更新「屏显」
-	else
-		displayPanel.value?.updateDisplayScreen({
-			screen: message,
-		})
-	return undefined
+	router.value.softSend(address, message) //if ()
+	// console.log('屏显刷新请求成功发送：', address, message)
 }
 
 // 数据 //
 const dataPanel: VueElementRefNullable<typeof DataPanel> = ref(null)
+
+/** 处理「配置刷新请求」 */
+function handleConfigRequest(address: string, message: string): void {
+	console.log(
+		'配置刷新请求:',
+		address,
+		message,
+		router.value?.isServiceActive(address)
+	)
+	router.value?.send(address, message)
+}
 </script>
 
 <style scoped></style>

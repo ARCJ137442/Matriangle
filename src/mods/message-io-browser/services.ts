@@ -28,10 +28,10 @@ export class WebSocketServiceClient extends MessageService {
 		try {
 			// 创建服务
 			this._connection = new WebSocket(this.addressFull) // ! 这里必须使用完整地址启动
-			// 直接回调
-			callback?.()
 			// 开始侦听连接
 			this._connection.onopen = (): void => {
+				// 直接回调 // ! 只有「连接建立」才算「启动完成」
+				callback?.()
 				// 提示
 				console.log(
 					`${this.addressFull}：WebSocket连接已建立！`
