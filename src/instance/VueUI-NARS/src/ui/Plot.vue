@@ -10,10 +10,7 @@ const eChart: Ref<HTMLDivElement | null> = ref<HTMLDivElement | null>(null)
 
 // 初始化
 function init(options: EChartsOption): void {
-	if (eChart.value === null) {
-		console.error('指定的元素eChart为空！')
-		return
-	}
+	if (eChart.value === null) return console.error('指定的元素eChart为空！')
 	plot = new Plot(eChart.value, options)
 	console.log('图表加载成功！', plot)
 }

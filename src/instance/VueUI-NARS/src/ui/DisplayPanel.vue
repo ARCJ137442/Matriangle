@@ -25,41 +25,21 @@ const screen: VueElementRefNullable<typeof ScreenText> = ref(null)
 const screenAddress: Ref<string> = ref('127.0.0.1:8080')
 const screenFPS: Ref<string> = ref('10')
 const displayCode: Ref<string> = ref('6')
-const HEART_BEAT_INTERVAL = 1000
+const HEART_BEAT_INTERVAL = 2000 // ! 太快的连接会导致频繁重连，发生连不上的情况
 // let screenIntervalID: any // 没法确认到底是Timeout、number还是其它什么类型
-
-// 事件 //
-/**
- * 更新连接
- * * 发送「连接」事件，请求更新连接：
- *   * 无连接⇒新建
- *   * 有连接⇒不做动作
- * * 事件参数：
- *   * 连接地址
- */
-function updateConnection(): void {
-	emit('link', screenAddress.value)
-}
-
-const emit = defineEmits(['link', 'refresh'])
-defineExpose({
-	updateConnection,
-	/**
-	 * 更新（文本）屏显
-	 */
-	updateDisplayScreen(data: { [key: string]: unknown }): void {
-		if (screen.value !== null) screen.value.update(data)
-		else console.warn('屏显对象不存在！')
-	},
-	/**
-	 * 获取刷新速率（整数）
-	 */
-	getFPS: (): number => 1000 / parseFloat(screenFPS.value),
-})
 
 // 心跳更新 //
 setInterval((): void => {
-	updateConnection()
+	/**
+	 * 更新连接
+	 * * 发送「连接」事件，请求更新连接：
+	 *   * 无连接⇒新建
+	 *   * 有连接⇒不做动作
+	 * * 事件参数：
+	 *   * 连接地址
+	 */
+	if (messageServiceConnected) return
+	emit('link', screenAddress.value)
 	onFPSRefresh(parseFloat(screenFPS.value))
 }, HEART_BEAT_INTERVAL)
 
@@ -72,7 +52,7 @@ function getMSfromFPS(fps: number): number {
 let FPSRefreshIntervalID: any = undefined
 /** 发送「附加信息」用的消息 */
 const otherInfMessage: string = 'entities'
-/** 当FPS刷新时 */
+/** 当FPS刷新时：处理周期 */
 function onFPSRefresh(newFPS: number): void {
 	// 原有⇒尝试清除
 	if (FPSRefreshIntervalID !== undefined) {
@@ -88,6 +68,41 @@ function onFPSRefresh(newFPS: number): void {
 		emit('refresh', screenAddress.value, otherInfMessage)
 	}, getMSfromFPS(newFPS))
 }
+
+// 状态参数
+let messageServiceConnected: boolean = false
+
+// 外部方法 //
+const emit = defineEmits(['link', 'refresh'])
+defineExpose({
+	/**
+	 * 更新（文本）屏显
+	 */
+	updateDisplayScreen(data: { [key: string]: unknown }): void {
+		if (screen.value !== null) screen.value.update(data)
+		else console.warn('屏显对象不存在！')
+	},
+	/**
+	 * 获取刷新速率（整数）
+	 */
+	getFPS: (): number => 1000 / parseFloat(screenFPS.value),
+	/** 当屏显连接开启时 */
+	onDisplayLinkOpen(): void {
+		// 更新状态
+		messageServiceConnected = true
+		// 开始屏显消息请求
+		onFPSRefresh(parseFloat(screenFPS.value))
+	},
+	/** 当屏显连接终止时 */
+	onDisplayLinkStop(): void {
+		// 更新状态
+		messageServiceConnected = false
+		// 已清除⇒作罢
+		if (FPSRefreshIntervalID === undefined) return
+		// 否则清除时钟
+		else FPSRefreshIntervalID = clearInterval(FPSRefreshIntervalID)
+	},
+})
 </script>
 
 <style scoped>

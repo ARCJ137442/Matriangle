@@ -5,14 +5,14 @@
 	<ControlPanel ref="panel" @message="pack => sendMessagePack(pack)" />
 
 	<h1>显示</h1>
-	<DisplayField
-		ref="display"
+	<DisplayPanel
+		ref="displayPanel"
 		@link="handleDisplayLinkRequest"
 		@refresh="handleDisplayRefreshRequest"
 	/>
 
-	<h1>图表</h1>
-	<Plot ref="plot" @vue:mounted="plotInit" />
+	<h1>数据</h1>
+	<DataPanel ref="dataPanel" />
 </template>
 
 <script setup lang="ts">
@@ -33,13 +33,12 @@ import { omega1 } from './../lib/common'
 import ControlPanel from './ControlPanel.vue'
 // import ScreenText from './ScreenText.vue'
 import MessageRouter from './MessageRouter.vue'
-import Plot from './Plot.vue'
-import plotConfig from './../config/PlotData.config'
 import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import DisplayField from './DisplayField.vue'
+import DisplayPanel from './DisplayPanel.vue'
+import DataPanel from './DataPanel.vue'
 
 /// 开始 ///
 
@@ -103,18 +102,26 @@ function onKeyEvent(event: KeyboardEvent, isDown: boolean): void {
 }
 
 // 屏显 //
-const display: VueElementRefNullable<typeof DisplayField> = ref(null)
+const displayPanel: VueElementRefNullable<typeof DisplayPanel> = ref(null)
 /** 处理「屏显连接请求」 */
 function handleDisplayLinkRequest(address: string): void {
 	router.value?.softOpenService(
 		address,
+		// 若无服务：让路由器新建服务
 		(): IMessageService =>
-			registerRouterServiceAt(address, displayMessageCallback_text)
+			registerRouterServiceAt(address, displayMessageCallback_text),
+		// 回调：通知显示器服务启动
+		displayPanel.value?.onDisplayLinkOpen
 	)
 }
 /** 处理「屏显刷新请求」 */
 function handleDisplayRefreshRequest(address: string, message: string): void {
-	router.value?.send(address, message)
+	if (router.value === null) return console.error('未找到路由器！')
+	// 防止连接断开后缓存
+	if (router.value.isServiceActive(address))
+		router.value.send(address, message)
+	else if (displayPanel.value === null) return console.error('未找到显示器！')
+	else displayPanel.value.onDisplayLinkStop()
 }
 
 /**
@@ -127,29 +134,24 @@ function displayMessageCallback_text(message: string): undefined {
 	if (message.startsWith('图表')) {
 		// 解包
 		const data = JSON.parse(message.slice(2))
-		plot.value?.append(data?.x, data)
+		dataPanel.value?.update(data)
 	}
 	// 若为「实体列表」⇒更新「附加信息」
 	else if (message.startsWith('实体列表'))
-		display.value?.updateDisplayScreen({
+		displayPanel.value?.updateDisplayScreen({
 			// screen:
 			otherInf: message,
 		})
 	// 否则⇒更新「屏显」
 	else
-		display.value?.updateDisplayScreen({
+		displayPanel.value?.updateDisplayScreen({
 			screen: message,
 		})
 	return undefined
 }
 
-// 图表 //
-const plot: VueElementRefNullable<typeof Plot> = ref(null)
-function plotInit(): void {
-	console.log('plot.value', plot.value)
-
-	plot.value?.init(plotConfig)
-}
+// 数据 //
+const dataPanel: VueElementRefNullable<typeof DataPanel> = ref(null)
 </script>
 
 <style scoped></style>

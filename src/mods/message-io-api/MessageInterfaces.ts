@@ -100,6 +100,9 @@ export function getFullAddress(
  * 所有「消息服务」的统一接口
  */
 export interface IMessageService {
+	/** 析构函数 */
+	destructor(): void
+
 	/** 主机地址 */
 	get host(): string
 

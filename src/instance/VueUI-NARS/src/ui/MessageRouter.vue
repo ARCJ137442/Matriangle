@@ -22,6 +22,14 @@ defineExpose({
 	hasService: (address: string): boolean =>
 		router.hasServiceAt(...splitAddress(address)),
 	/**
+	 * 检查服务是否活跃
+	 * * 具体条件：已存在 & 活跃
+	 */
+	isServiceActive: (address: string): boolean =>
+		router.hasServiceAt(...splitAddress(address)) &&
+		(router.getServiceAt(...splitAddress(address)) as IMessageService)
+			?.isActive,
+	/**
 	 * 软开启服务
 	 * * 没服务⇒使用「新服务构造函数」
 	 * * 有服务⇒重启旧服务
@@ -38,6 +46,7 @@ defineExpose({
 			if ((router.getServiceAt(host, port) as IMessageService).isActive)
 				return
 			;(router.getServiceAt(host, port) as IMessageService).stop()
+			// 在回调中重启，会导致「频繁关闭/重启」（可能因为「关闭的回调延时超过了心跳的时长」）
 			;(router.getServiceAt(host, port) as IMessageService).launch(
 				openedCallback
 			)
