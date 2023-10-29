@@ -4,8 +4,8 @@
 	"description": "使用Vue3+TS+Webpack5搭建的新Matriangle前端，用于NARS实验",
 	"main": "index.js",
 	"scripts": {
-		"dev": "webpack-dev-server -c build/webpack.dev.js",
-		"build": "webpack -c build/webpack.prod.js",
+		"dev": "webpack-dev-server -c build/webpack.dev.cjs",
+		"build": "webpack -c build/webpack.prod.cjs",
 		"serve": "serve -s dist"
 	},
 	"author": "",
