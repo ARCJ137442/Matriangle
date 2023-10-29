@@ -268,10 +268,10 @@ export class WebSocketServiceClient extends MessageService {
 	 * 终止WebSocket客户端
 	 */
 	stop(callback?: voidF): void {
-		this._connection?.close()
+		this._connection?.close(1005, '调用`stop(callback?: voidF)`方法')
 		console.log(`${this.addressFull}：客户端已关闭！`)
 		// 这里可以执行一些清理操作或其他必要的处理
-		callback?.()
+		callback?.() // ? 是否需要识别readyState
 		delete this._connection
 	}
 

@@ -74,10 +74,11 @@ export class WebSocketServiceClient extends MessageService {
 	 * 终止WebSocket客户端
 	 */
 	stop(callback?: voidF): void {
-		this._connection?.close()
+		// ! 1000而非1005，因为实际运行报错：Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. 1005 is neither.
+		this._connection?.close(1000, '调用`stop(callback?: voidF)`方法')
 		console.log(`${this.addressFull}：客户端已关闭！`)
 		// 这里可以执行一些清理操作或其他必要的处理
-		callback?.()
+		callback?.() // ? 是否需要识别readyState
 		delete this._connection
 	}
 
@@ -119,6 +120,7 @@ export class WebSocketServiceClient extends MessageService {
 	protected readonly _temp_message_toSend: string[] = []
 }
 
+/** HTTP服务-客户端（请求发送者） */
 export class HTTPServiceClient extends MessageService {
 	/** 服务类型：WebSocket */
 	override readonly type: string = 'http'
@@ -134,7 +136,7 @@ export class HTTPServiceClient extends MessageService {
 	 */
 	launch(callback?: voidF): void {
 		try {
-			// 直接回调
+			// 视作成功，直接回调
 			callback?.()
 		} catch (e) {
 			console.error(`${this.addressFull}：服务启动失败！`, e)

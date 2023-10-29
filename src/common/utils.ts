@@ -662,3 +662,15 @@ export type Ref<T> = T
  * * 应用：「（使用`new`等）创建一个新对象」的函数返回值
  */
 export type Val<T> = T
+
+/**
+ * 字典值迁移
+ * * 逻辑：将一个值从字典的一个键移动到另一个键上
+ * * 原先的键会被删除
+ */
+export function moveMapValue<K, V>(map: Map<K, V>, fromKey: K, toKey: K): void {
+	// 先设置值
+	map.set(toKey, map.get(fromKey)!)
+	// 后删除原键
+	map.delete(fromKey)
+}

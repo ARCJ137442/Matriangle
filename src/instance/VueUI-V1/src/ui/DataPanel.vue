@@ -1,5 +1,5 @@
 <template>
-	<button @click="switchPlotVisible" @vue:mounted="init">
+	<button type="button" @click="switchPlotVisible" @vue:mounted="init">
 		{{ plotVisible ? '点击隐藏图表' : '点击显示图表' }}
 	</button>
 	<div>

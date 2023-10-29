@@ -6,22 +6,127 @@
 
 <script setup lang="ts">
 import MessageRouter from 'matriangle-mod-message-io-api/MessageRouter'
+import { IMessageService } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { splitAddress } from '../lib/common'
-import { IMessageService } from '../../../../mods/message-io-api/MessageInterfaces'
-import { voidF } from '../../../../common'
+import { voidF } from 'matriangle-common'
 
 /** 路由器对象 */
 const router = new MessageRouter()
-/** 用于「尝试保持连接」的「间隔ID字典」 */
-const keepAliveIntervalIds = new Map<string, any>() // ! 这里值的类型不清楚
-/** 用于「尝试保持连接」的「间隔时长字典」 */
-const keepAliveIntervalPeriods = new Map<string, number>()
+
 /**
- * 用于模拟「服务关闭事件」、「在服务『不再活跃』时回调」的「关闭回调字典」
- * * 键：服务地址
- * * 值：回调函数
+ * 服务附加信息
+ * * 用于附加给服务，统一管理有关「心跳循环」等内容
+ * * 核心逻辑类似多继承和组合（mixin）
  */
-const serviceStopCallbacks = new Map<string, voidF | undefined>()
+type ServiceFurtherInf = {
+	/** 心跳循环ID */
+	intervalID: any
+	/** 心跳循环时长 */
+	intervalPeriod: number | undefined
+	/** 开启回调 */
+	openCallback: voidF | undefined
+	/** 关闭回调 */
+	stopCallback: voidF | undefined
+	/** 上一次活跃状态（用于边缘检测） */
+	lastActive: boolean
+}
+/**
+ * 以服务为中心，存储服务的「附加信息」
+ * * 键：服务
+ * * 值：附加信息
+ */
+const serviceFurtherInf: Map<IMessageService, ServiceFurtherInf> = new Map()
+
+/**
+ * 心跳循环的回调函数
+ * * 前提假设：服务已经启动
+ * * 核心逻辑
+ *   * 服务保持活跃⇒无动作
+ *   * 服务从不活跃变得活跃⇒回调「已开启」
+ *   * 服务从活跃变得不活跃⇒重启（+回调「已关闭」）
+ *     * 原因一般是网络异常或者服务未启动
+ */
+function keepAlive(service: IMessageService): void {
+	// 获取「附加信息」
+	let furtherInf: ServiceFurtherInf = serviceFurtherInf.get(service)!
+	// 当前正在活跃
+	if (service.isActive)
+		if (furtherInf.lastActive)
+			// 一直活跃⇒无动作
+			return
+		// 否则⇒回调「开启」事件
+		else {
+			furtherInf.lastActive = true
+			furtherInf.openCallback?.()
+		}
+	// 关闭状态
+	else {
+		// 边缘检测⇒关闭事件
+		if (furtherInf.lastActive) {
+			// 同步状态
+			furtherInf.lastActive = false
+			furtherInf.stopCallback?.()
+		}
+		// 尝试重启服务
+		console.log(
+			' 服务「' + service.address + '」未活跃! 正在尝试重启服务。。。'
+		)
+		service.stop()
+		service.launch()
+	}
+}
+
+/**
+ * 随着服务注册，初始化「附加信息」
+ * * 就好像这些属性真的是和服务一起的一样
+ * * 实现断言：服务已注册⇒服务一定有「附加信息」
+ *
+ * @returns {IMessageService} 服务自身，用于嵌套操作
+ */
+function initFurtherInf(service: IMessageService): IMessageService {
+	serviceFurtherInf.set(service, {
+		intervalID: undefined,
+		intervalPeriod: undefined,
+		openCallback: undefined,
+		stopCallback: undefined,
+		lastActive: service.isActive,
+	})
+	return service
+}
+
+/**
+ * 配置一个服务的「心跳循环」
+ */
+function setupHeartbeatLoop(
+	service: IMessageService,
+	heartbeatTimeMS: number,
+	openCallback?: voidF,
+	stopCallback?: voidF
+): void {
+	// 获取「附加信息」（有注册必有附加信息）
+	let furtherInf: ServiceFurtherInf = serviceFurtherInf.get(service)!
+
+	// 有旧循环⇒重置旧循环，预备开启新循环
+	if (furtherInf.intervalID !== undefined) {
+		// 清除旧的「心跳循环」，不论周期是否相同
+		clearInterval(furtherInf.intervalID)
+		furtherInf.intervalID = undefined
+		furtherInf.intervalPeriod = undefined
+	}
+
+	// 启动新的「心跳循环」 //
+	// 设置「开启回调」「关闭回调」
+	furtherInf.openCallback = openCallback
+	furtherInf.stopCallback = stopCallback
+	// 以新周期设置「心跳循环」
+	furtherInf.intervalID = setInterval((): void => {
+		console.log('心跳：', service.address)
+		// 运作逻辑：专用的「保持活跃」方法 // !【2023-10-29 23:17:51】不再滥用「软打开」
+		keepAlive(service)
+	}, heartbeatTimeMS)
+	// 将周期记录在册
+	furtherInf.intervalPeriod = heartbeatTimeMS
+}
 
 const self = {
 	/**
@@ -46,26 +151,35 @@ const self = {
 	 * 软开启服务
 	 * * 没服务⇒使用「新服务构造函数」
 	 * * 有服务⇒重启旧服务
+	 *
+	 * @returns {IMessageService} 已有的服务 / 新服务
 	 */
 	softOpenService: (
 		address: string,
-		serviceConstructor: () => IMessageService,
-		openedCallback?: () => void
-	): void => {
+		serviceConstructor: () => IMessageService
+	): IMessageService => {
 		// 有服务
 		const [host, port] = splitAddress(address)
 		if (router.hasServiceAt(host, port)) {
 			// 活跃⇒返回，非活跃⇒重启
-			if ((router.getServiceAt(host, port) as IMessageService).isActive)
-				return
-			;(router.getServiceAt(host, port) as IMessageService).stop()
+			let service: IMessageService = router.getServiceAt(host, port)!
+			if (service.isActive) return service
+			service!.stop()
 			// 在回调中重启，会导致「频繁关闭/重启」（可能因为「关闭的回调延时超过了心跳的时长」）
-			;(router.getServiceAt(host, port) as IMessageService).launch(
-				openedCallback
-			)
+			service!.launch()
+			return service
 		}
-		// 没服务
-		else router.registerService(serviceConstructor(), openedCallback)
+		// 没服务⇒注册服务
+		else if (router.registerService(serviceConstructor())) {
+			// 注册「附加信息」，返回（一定有的）服务
+			return initFurtherInf(router.getServiceAt(host, port)!)
+		}
+		// 理论上不可能发生：没有服务都已经注册了
+		else
+			throw new Error(
+				'softOpenService: 没有已有服务，但新服务注册失败' +
+					`${host}:${port}`
+			)
 	},
 	/**
 	 * 开启一个「保持连接」服务
@@ -80,38 +194,37 @@ const self = {
 		address: string,
 		heartbeatTimeMS: number,
 		serviceConstructor: () => IMessageService,
-		openedCallback?: voidF,
+		openCallback?: voidF,
 		stopCallback?: voidF
 	): void {
-		// 有「心跳循环」⇒检查心跳周期，关闭
-		if (keepAliveIntervalPeriods.has(address))
-			if (keepAliveIntervalPeriods.get(address) !== heartbeatTimeMS) {
-				// 清除旧的「心跳循环」
-				clearInterval(keepAliveIntervalIds.get(address))
-				// 删除「心跳周期」
-				keepAliveIntervalPeriods.delete(address)
-			}
-
-		// 无「心跳循环」⇒启动（注册）新的「心跳循环」
-		if (!keepAliveIntervalIds.has(address)) {
-			// 设置「关闭回调」
-			serviceStopCallbacks.set(address, stopCallback)
-			// 以新周期设置「心跳循环」
-			keepAliveIntervalIds.set(
-				address,
-				setInterval(
-					(): void =>
-						// 运作逻辑：不断「软打开服务」
-						this.softOpenService(
-							address,
-							serviceConstructor,
-							openedCallback
-						),
-					heartbeatTimeMS
-				)
+		// 对应地址有服务
+		if (router.hasServiceAt(...splitAddress(address))) {
+			// 初始化「心跳循环」
+			setupHeartbeatLoop(
+				router.getServiceAt(...splitAddress(address))!,
+				heartbeatTimeMS,
+				openCallback,
+				stopCallback
 			)
-			// 将周期记录在册
-			keepAliveIntervalPeriods.set(address, heartbeatTimeMS)
+		}
+		// 对应地址无服务⇒启动服务
+		else {
+			// 创建服务之后，重新启动心跳循环
+			console.log('对应地址无服务⇒启动服务', address)
+			self.softOpenService(address, serviceConstructor)
+			// 这时候一定有服务
+			if (router.hasServiceAt(...splitAddress(address)))
+				this.openKeepConnectService(
+					address,
+					heartbeatTimeMS,
+					serviceConstructor,
+					openCallback,
+					stopCallback
+				)
+			else
+				throw new Error(
+					'openKeepConnectService: 服务启动失败' + address
+				)
 		}
 	},
 	/**
@@ -126,11 +239,19 @@ const self = {
 		if (self.isServiceActive(address)) return self.send(address, message)
 		// 若有服务但不活跃⇒回调「关闭」事件
 		else if (self.hasService(address)) {
-			console.warn(' 服务「' + address + '」不再活跃!')
-			serviceStopCallbacks.get(address)?.()
+			/* console.warn(
+				'softSend: 服务「' + address + '」不再活跃!',
+				serviceFurtherInf.get(
+					router.getServiceAt(...splitAddress(address))!
+				)!.stopCallback
+			) */
+			// 回调
+			serviceFurtherInf
+				.get(router.getServiceAt(...splitAddress(address))!)!
+				.stopCallback?.()
 		}
 		// 没服务⇒报错
-		else console.error(' 服务「' + address + '」不存在!')
+		// else console.error('softSend: 服务「' + address + '」不存在!')
 		return false
 	},
 	/**
@@ -139,8 +260,18 @@ const self = {
 	 * * 可能有服务在变更后重启
 	 */
 	handleAddressChange(oldAddress: string, newAddress: string): void {
-		// TODO: 具体逻辑，以及路由器支持
 		console.log(`地址变更：${oldAddress} => ${newAddress}`)
+		// 通知路由器
+		if (
+			router.changeServiceAt(
+				...splitAddress(oldAddress),
+				...splitAddress(newAddress)
+			)
+		) {
+			console.info(`地址成功变更：${oldAddress} => ${newAddress}`)
+			// !【2023-10-29 22:29:18】现在和服务绑定，不再需要迁移「心跳循环」的回调函数
+			console.log
+		}
 	},
 }
 defineExpose(self)

@@ -52,6 +52,14 @@ export abstract class MessageService implements IMessageService {
 		return getFullAddress(this.type, this.host, this.port)
 	}
 
+	/** @implements 强制更改常量+直接重启服务 */
+	changeAddress(host: string, port: number, callback?: voidF): void {
+		// 在关闭后重新启动
+		this.stop((): void => this.launch(callback))
+		;(this.host as unknown) = host
+		;(this.port as unknown) = port
+	}
+
 	/** @implements 启动服务——抽象方法 */
 	abstract launch(callback?: voidF): void
 

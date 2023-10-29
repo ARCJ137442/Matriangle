@@ -42,6 +42,7 @@ export interface IMessageRouter {
 
 	/**
 	 * 注销消息服务
+	 * * 地址格式：`主机名:端口`
 	 *
 	 * @param {string} host 主机地址
 	 * @param {uint} port 服务端口
@@ -49,6 +50,25 @@ export interface IMessageRouter {
 	 * @returns {boolean} 是否成功
 	 */
 	unregisterServiceAt(host: string, port: uint, callback?: voidF): boolean
+
+	/**
+	 * 变更指定地址的服务
+	 * * 用于将服务从一个地址迁移到另一个地址
+	 *
+	 * @param {string} oldHost 旧主机地址
+	 * @param {uint} oldPort 旧服务端口
+	 * @param {string} newHost 新主机地址
+	 * @param {uint} newPort 新服务端口
+	 * @param {voidF} callback 变更后的回调
+	 * @returns {boolean} 是否成功
+	 */
+	changeServiceAt(
+		oldHost: string,
+		oldPort: uint,
+		newHost: string,
+		newPort: uint,
+		callback?: voidF
+	): boolean
 
 	/**
 	 * 传递消息到指定地址
@@ -123,10 +143,23 @@ export interface IMessageService {
 	 */
 	get type(): MessageServiceType
 
-	/** 启动 */
+	/**
+	 * 启动
+	 * @param callback **成功启动**后的回调（启动失败⇒不会调用）
+	 */
 	launch(callback?: voidF): void
 
-	/** 终止 */
+	/**
+	 * 变更地址
+	 * * 会涉及「启动」和「停止」
+	 * * 可以理解成「换个地方再服务」
+	 */
+	changeAddress(host: string, port: uint, callback?: voidF): void
+
+	/**
+	 * 终止
+	 * @param callback **成功终止**后的回调
+	 */
 	stop(callback?: voidF): void
 
 	/**

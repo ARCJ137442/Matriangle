@@ -2,12 +2,17 @@
 	<MessageRouter ref="router" />
 
 	<h1>控制</h1>
-	<ControlPanel ref="panel" @message="pack => sendMessagePack(pack)" />
+	<ControlPanel
+		ref="panel"
+		@message="pack => sendMessagePack(pack)"
+		@link-change="handleLinkChange"
+	/>
 
 	<h1>显示</h1>
 	<DisplayPanel
 		ref="displayPanel"
 		@link-start="handleLinkStartRequest"
+		@link-change="handleLinkChange"
 		@refresh="handleDisplayRefreshRequest"
 	/>
 
@@ -15,6 +20,7 @@
 	<DataPanel
 		ref="dataPanel"
 		@link-start="handleLinkStartRequest"
+		@link-change="handleLinkChange"
 		@config-request="handleConfigRequest"
 	/>
 </template>
@@ -105,6 +111,11 @@ function handleLinkStartRequest(
 		callbackStop
 	)
 }
+
+/** 处理「地址变更」请求 */
+const handleLinkChange = (oldAddress: string, newAddress: string): void =>
+	// 直接调用路由器方法
+	router.value?.handleAddressChange(oldAddress, newAddress)
 
 /**
  * 给路由器指定地址自动注册服务
