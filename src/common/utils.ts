@@ -497,10 +497,11 @@ export function isComplexInstance(v: any): boolean {
 } */
 
 /**
- * 像「字典」一样「用字符串查询值」的对象
+ * 像「字典」一样「用字符串/数值/符号查询值」的对象
  */
-export type dictionaryLikeObject<T = any> = {
-	[key: string]: T
+export type DictionaryLikeObject<V = any> = {
+	// ! 不要尝试改动这里的`string`：索引签名参数类型不能为文本类型或泛型类型。请考虑改用映射的对象类型。ts(1337)
+	[key: string | number | symbol]: V
 }
 
 /**
@@ -539,11 +540,11 @@ export function mergeObject(from: any, to: any): any {
  * @returns the new object with flatten values
  */
 export function flattenObject(
-	obj: dictionaryLikeObject,
+	obj: DictionaryLikeObject,
 	separator: string = '.',
 	prefix: string = ''
-): dictionaryLikeObject {
-	const result: dictionaryLikeObject = {}
+): DictionaryLikeObject {
+	const result: DictionaryLikeObject = {}
 	for (const key in obj) {
 		if (!obj.hasOwnProperty(key)) continue
 		const value = obj[key]
@@ -667,10 +668,58 @@ export type Val<T> = T
  * 字典值迁移
  * * 逻辑：将一个值从字典的一个键移动到另一个键上
  * * 原先的键会被删除
+ *
+ * ! 不会检测「原键是否存在」
  */
 export function moveMapValue<K, V>(map: Map<K, V>, fromKey: K, toKey: K): void {
 	// 先设置值
 	map.set(toKey, map.get(fromKey)!)
 	// 后删除原键
 	map.delete(fromKey)
+}
+
+/**
+ * 对象值迁移
+ * * 逻辑：将一个值从对象的一个键移动到另一个键上
+ * * 原先的键会被删除
+ *
+ * ! 不会检测「原键是否存在」
+ */
+export function moveObjectValue<K, V>(
+	obj: DictionaryLikeObject<V>,
+	fromKey: K,
+	toKey: K
+): void {
+	// 先设置值
+	;(obj as any)[toKey] = (obj as any)[fromKey]
+	// 后删除原键
+	delete (obj as any)[fromKey]
+}
+
+/**
+ * 对象键映射
+ * * 逻辑：根据「键映射对象」把原对象的键进行移动
+ * @example
+ * const obj = {
+ * 	a: 1,
+ * 	b: 2,
+ * 	c: 3,
+ * }
+ * console.log(mapObjectKey(obj, {
+ * 		a: 'a1',
+ * 		b: 'b2',
+ * 		c: 'c',
+ * 		d: '0',
+ * 	}))
+ * * 结果：{ c: 3, a1: 1, b2: 2 }
+ */
+export function mapObjectKey<V>(
+	obj: DictionaryLikeObject<V>,
+	keyMap: DictionaryLikeObject<key>
+): DictionaryLikeObject<V> {
+	for (const [oldKey, newKey] of Object.entries(keyMap)) {
+		if (oldKey in obj && oldKey !== newKey)
+			moveObjectValue<key, V>(obj, oldKey, newKey)
+	}
+	return obj
 }

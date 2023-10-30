@@ -86,7 +86,7 @@ export class Plot<X = unknown> {
 		this.y_datas = {}
 
 		/** 作为后续导入要用到的series，存储其中所有的数据 */
-		this.y_data_series = option.series as EChartsSeriesData[]
+		this.y_data_series = (option.series as EChartsSeriesData[]) ?? [] // !【2023-10-30 23:50:40】现在自动补空
 
 		for (const s of this.y_data_series) {
 			// 批量创建数据历史
@@ -129,6 +129,11 @@ export class Plot<X = unknown> {
 	update(): void {
 		// 空配置⇒跳过
 		if (this.option === null) return
+		if (!Array.isArray(this.y_data_series))
+			console.error(
+				'图表更新失败：y_data_series必须是数组',
+				this.y_data_series
+			)
 		// 决定所更新的
 		const toUpdate_series = []
 		for (const y_data_config of this.y_data_series) {

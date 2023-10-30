@@ -1,3 +1,8 @@
+<!--
+ 数据面板
+ * 用于呈现数据图表，并对接主体消息服务
+ TODO: 面对多个智能体时，可能需要实现「多图表服务」
+ -->
 <template>
 	<!-- * ↓这里反转变量无需使用`.value` * -->
 	<button
@@ -10,16 +15,29 @@
 		}}）
 	</button>
 	<div>
+		<!-- TODO: 控制图表数量 -->
 		<input
-			v-show="plotVisible"
+			v-show="false"
 			type="text"
-			v-model="dataShowAddress"
-			placeholder="输入链接"
+			v-model="numPlotsText"
+			placeholder="输入图表数量"
 			@keydown="
 				(e: KeyboardEvent) => e.key === 'Enter' && onAddressChange()
 			"
 		/>
-		<Plot v-show="plotVisible" ref="plot" @vue:mounted="plotInit" />
+		<!-- 各个图表 -->
+		<div>
+			<input
+				v-show="plotVisible"
+				type="text"
+				v-model="dataShowAddress"
+				placeholder="输入链接"
+				@keydown="
+					(e: KeyboardEvent) => e.key === 'Enter' && onAddressChange()
+				"
+			/>
+			<Plot v-show="plotVisible" ref="plot" @vue:mounted="plotInit" />
+		</div>
 	</div>
 </template>
 
@@ -46,6 +64,7 @@ const plot: VueElementRefNullable<typeof Plot> = ref(null)
  * * 解决方案：初始化后在{@link init}方法内修改
  */
 const plotVisible: Ref<boolean> = ref(true)
+const numPlotsText: Ref<string> = ref('1')
 /**
  * 存储内部「是否已连接」的状态
  */
@@ -68,7 +87,7 @@ function init(): void {
 			*/
 		dataShowAddress.value,
 		HEART_BEAT_INTERVAL,
-		onReceiveMessage,
+		(message: string) => onReceiveMessage(plot, message),
 		/** 连接打开后 */
 		(): void => {
 			// 更新连接状态
@@ -103,13 +122,17 @@ function onAddressChange(): void {
 }
 
 /** 消息回调函数：图表更新/重置 */
-function onReceiveMessage(message: string): void {
+function onReceiveMessage(
+	plot: VueElementRefNullable<typeof Plot>,
+	message: string
+): void {
 	// 检查图表元素是否存在
-	if (plot.value === null) return console.error('图表元素不存在！')
+	if (plot.value === null || plot.value.isInited === undefined)
+		return console.error('图表元素不存在！')
 	// 若有缓存数据⇒使用缓存数据，清除缓存
 	if (_temp_data.length > 0) {
 		console.log('使用缓存：', _temp_data[0])
-		onReceiveMessage(_temp_data.shift()!) // 因为这里要递归，所以需要独立定义函数
+		onReceiveMessage(plot, _temp_data.shift()!) // 因为这里要递归，所以需要独立定义函数
 	}
 	// 解析数据 // ! 不论是否有
 	const data = JSON.parse(message)

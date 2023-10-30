@@ -24,7 +24,7 @@ import { Ref, ref } from 'vue'
 // 定义元素 //
 const controlAddress: Ref<string> = ref('127.0.0.1:3002')
 let _lastAddress: string = controlAddress.value
-const controlKey: Ref<string> = ref('p2')
+const controlKey: Ref<string> = ref('Alpha')
 const controlMessage: Ref<string> = ref('')
 const controlStatusButton: Ref<HTMLElement | null> = ref(null)
 

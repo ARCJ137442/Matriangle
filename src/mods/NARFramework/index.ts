@@ -1,1 +1,1 @@
-export * from './NARSOutputType.enum'
+export * from './NARSTypes.type'
