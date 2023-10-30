@@ -1,6 +1,13 @@
 <template>
-	<button type="button" @click="switchPlotVisible" @vue:mounted="init">
-		{{ plotVisible ? '点击隐藏图表' : '点击显示图表' }}
+	<!-- * ↓这里反转变量无需使用`.value` * -->
+	<button
+		type="button"
+		@click="plotVisible = !plotVisible"
+		@vue:mounted="init"
+	>
+		{{ plotVisible ? '点击隐藏图表' : '点击显示图表' }}（{{
+			isConnected ? '已连接' : '未连接'
+		}}）
 	</button>
 	<div>
 		<input
@@ -23,7 +30,7 @@ import { VueElementRefNullable } from '../lib/common'
 import { IsXYData } from '../lib/plot'
 
 // 配置常量 //
-/** 「数据显示服务」服务地址 */ // TODO: 需要有一个「更新」函数
+/** 「数据显示服务」服务地址 */
 const dataShowAddress: Ref<string> = ref('127.0.0.1:3030')
 let _lastAddress: string = dataShowAddress.value
 const HEART_BEAT_INTERVAL = 3000 // ! 太快的连接会导致频繁重连，发生连不上的情况
@@ -39,6 +46,10 @@ const plot: VueElementRefNullable<typeof Plot> = ref(null)
  * * 解决方案：初始化后在{@link init}方法内修改
  */
 const plotVisible: Ref<boolean> = ref(true)
+/**
+ * 存储内部「是否已连接」的状态
+ */
+const isConnected: Ref<boolean> = ref(false)
 
 // 事件 //
 const emit = defineEmits(['link-start', 'link-change', 'config-request'])
@@ -57,7 +68,19 @@ function init(): void {
 			*/
 		dataShowAddress.value,
 		HEART_BEAT_INTERVAL,
-		onReceiveMessage
+		onReceiveMessage,
+		/** 连接打开后 */
+		(): void => {
+			// 更新连接状态
+			isConnected.value = true
+		},
+		/** 关闭连接后 */
+		(): void => {
+			// 更新连接状态
+			isConnected.value = false
+			// 自动隐藏图表
+			plotVisible.value = false
+		}
 	)
 	// 初始化后隐藏图表
 	plotVisible.value = false
@@ -86,7 +109,7 @@ function onReceiveMessage(message: string): void {
 	// 若有缓存数据⇒使用缓存数据，清除缓存
 	if (_temp_data.length > 0) {
 		console.log('使用缓存：', _temp_data[0])
-		onReceiveMessage(_temp_data.shift() as string)
+		onReceiveMessage(_temp_data.shift()!) // 因为这里要递归，所以需要独立定义函数
 	}
 	// 解析数据 // ! 不论是否有
 	const data = JSON.parse(message)
@@ -94,11 +117,15 @@ function onReceiveMessage(message: string): void {
 	// 若为「更新用数据」
 	if (IsXYData(data)) {
 		// 只有在「已初始化」后更新数据
-		if (plot.value.isInited())
+		if (plot.value.isInited()) {
+			// 图表未显示⇒自动打开
+			plotVisible.value = true
+			// 更新图表数据
 			plot.value.append(
-				// 【2023-10-29 17:07:40】现在直接是纯JSON文本了
+				// !【2023-10-30 15:30:08】现在仍使用解析后的JS对象
 				data
 			)
+		}
 	}
 	// 否则⇒重置配置（无论有无初始化）
 	else plot.value.reset(data)
@@ -125,10 +152,6 @@ function plotInit(): void {
  */
 function requestConfig(): void {
 	emit('config-request', dataShowAddress.value, 'config-request')
-}
-
-function switchPlotVisible(): void {
-	plotVisible.value = !plotVisible.value
 }
 </script>
 

@@ -35,12 +35,12 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Matriangle Instance: AI Env - Car Collision",
+			"name": "Matriangle Instance: AI Env",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
 			// "program": "${workspaceFolder}\\test\\test.ts",
-			"program": "src/instance/NARS-experiment-car-collision/server.ts",
+			"program": "src/instance/NARS-experiment/launch.ts",
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],

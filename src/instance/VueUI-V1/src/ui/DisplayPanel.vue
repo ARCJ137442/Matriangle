@@ -43,6 +43,13 @@ const HEART_BEAT_INTERVAL = 2000 // ! 太快的连接会导致频繁重连，发
 function requestAliveLink(): void {
 	emit(
 		'link-start',
+		/* 参数格式：
+			address: string,
+			heartbeatTimeMS: number,
+			callbackMessage: MessageCallback,
+			callbackConnected?: voidF,
+			callbackStop?: voidF
+			*/
 		displayAddress.value,
 		HEART_BEAT_INTERVAL,
 		/** 消息回调函数 */
@@ -67,6 +74,15 @@ function requestAliveLink(): void {
 			messageServiceConnectedText.value = '已连接'
 			// 开始屏显消息请求
 			onFPSRefresh(parseFloat(screenFPS.value))
+		},
+		/** 当屏显连接终止时 */
+		(): void => {
+			// 更新状态
+			messageServiceConnectedText.value = '断线'
+			// 已清除⇒作罢
+			if (FPSRefreshIntervalID === undefined) return
+			// 否则清除时钟
+			else FPSRefreshIntervalID = clearInterval(FPSRefreshIntervalID)
 		}
 	)
 }
@@ -134,15 +150,6 @@ const self = {
 	 * 获取刷新速率（整数）
 	 */
 	getFPS: (): number => 1000 / parseFloat(screenFPS.value),
-	/** 当屏显连接终止时 */
-	onDisplayLinkStop(): void {
-		// 更新状态
-		messageServiceConnectedText.value = '断线'
-		// 已清除⇒作罢
-		if (FPSRefreshIntervalID === undefined) return
-		// 否则清除时钟
-		else FPSRefreshIntervalID = clearInterval(FPSRefreshIntervalID)
-	},
 }
 defineExpose(self)
 </script>

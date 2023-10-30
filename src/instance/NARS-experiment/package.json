@@ -1,7 +1,7 @@
 {
-	"name": "matriangle-instance-nars-experiment-car-collision",
+	"name": "matriangle-instance-nars-experiment",
 	"version": "0.1.0",
-	"description": "基于NARS开展小车碰撞实验",
+	"description": "基于NARS开展各类实验",
 	"main": "server.ts",
 	"scripts": {
 		"test": "npx ts-node server.ts"
