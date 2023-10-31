@@ -12,6 +12,9 @@
 		"server-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
 		"batr": "start src/instance/V1/WebUI/index.html & npm run server-batr",
 		"nars-car": "start src/instance/NARS-experiment-UI/index.html & npm run server-nars-car",
+		"VueUI-build": "cd src/instance/VueUI-V1 & npm run build & cd ../../../",
+		"VueUI-dev": "cd src/instance/VueUI-V1 & npm run dev & cd ../../../",
+		"VueUI": "npm run VueUI-dev",
 		"dev": "npm run",
 		"test": "npm run"
 	},

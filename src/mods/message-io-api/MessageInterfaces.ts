@@ -182,3 +182,14 @@ export interface IMessageService {
 	 */
 	messageCallback: MessageCallback
 }
+
+/**
+ * 判断对象是否为「消息服务」
+ * * 判断依据：是否有「消息回调函数」{@link IMessageService.messageCallback}
+ *
+ * @param obj 要判断的对象
+ * @returns 对象是否是「消息服务」
+ */
+export function i_IMessageService(obj: unknown): obj is IMessageService {
+	return (obj as IMessageService).messageCallback !== undefined
+}

@@ -548,7 +548,7 @@ export function flattenObject(
 	for (const key in obj) {
 		if (!obj.hasOwnProperty(key)) continue
 		const value = obj[key]
-		console.log(key, value)
+		console.log('flattenObject:', key, value)
 		if (isPrimitiveInstance(value)) result[prefix + key] = value
 		else
 			mergeObject(
@@ -722,4 +722,137 @@ export function mapObjectKey<V>(
 			moveObjectValue<key, V>(obj, oldKey, newKey)
 	}
 	return obj
+}
+
+/**
+ * 用于表征一个对象「具体路径」的图式
+ * * 支持使用`null`作为通配符
+ */
+export type DictPathPattern = (key | null)[]
+/** 用于表征一个对象的具体「路径」 */
+export type DictPath = key[]
+
+/**
+ * 对象模式替换
+ * * 依赖于所给的路径，从对象路径中找到符合要求的子路径（不一定是头尾）以进行批量替换
+ * * 可使用`null`作为「匹配任意对象」的通配符
+ *   * 如`['a', null, 'b']`匹配`a.a.b`、`a.c.b`等
+ * * 例如：
+ *   * 头部替换：从`a.b.c`中查找模式`a.b`，并最终替换掉`a.b`的值
+ *   * 尾部替换：从`a.b.c`中查找模式`b.c`，并最终替换掉`a.b.c`的值
+ *   * 中部替换：从`a.b.c.d`中查找模式`b.c`，并最终替换掉`a.b.c`的值
+ *
+ * @param dict 待处理对象
+ * @param pattern 需要查找的模式
+ * @param replaceF 模式替换回调（亦可执行其它代码）
+ * @returns 模式替换后的对象
+ *
+ * @example 如下例子输出结果：{ a: { b: [ 1, 1, 2 ], c: 3 }, b: 2 }
+ * console.log(DictionaryPatternReplace({
+ *     a:{
+ *         b:[0,1,2],
+ *         c:3
+ *     },
+ *     b:2
+ * },['a','b',0],(v:unknown):number=>v as number+1))
+ */
+export function dictionaryPatternReplace<V>(
+	dict: DictionaryLikeObject<V>,
+	pattern: DictPathPattern,
+	replaceF: (v: V) => V
+): DictionaryLikeObject<V> {
+	_dictionaryPatternReplace(dict, pattern, replaceF)
+	return dict
+}
+
+// 用于将所有WS 服务替换为直连
+// 递归在所有键上搜索，直到根模式匹配
+function _dictionaryPatternReplace<V>(
+	dict: DictionaryLikeObject<V>,
+	pattern: DictPathPattern,
+	replaceF: (v: V) => V
+): void {
+	/** 根部是否为通配 */
+	const isRootUniversal: boolean = pattern[0] === null
+	// 搜索对象的一层路径
+	for (const key in dict) {
+		// 匹配当前深度的key⇒用「头匹配」 && 深度到达模式极限⇒末端替换
+		if (
+			isRootUniversal ||
+			key == pattern[0] // !这里需要「不严格相等」，以便数值类型自动转换为字符串
+		) {
+			dictionaryPatternReplaceHead(
+				dict[key] as DictionaryLikeObject<V>,
+				pattern,
+				replaceF,
+				1 // ! 这时候永远是相对的，`a.b`可能出现在`a.b.c.d`也可能出现在`c.a.b.d`，∴只需要深入1次（因为「根匹配」深入了一层）
+			)
+		} else if (
+			isComplexInstance(dict[key]) // * 只有在目标是「复合对象」时深入
+		) {
+			// 递归深入，不记录深度，直到匹配
+			_dictionaryPatternReplace(
+				dict[key] as DictionaryLikeObject<V>,
+				pattern,
+				replaceF
+			)
+		}
+	}
+}
+
+/**
+ * 对象头部模式替换
+ * * 参见{@link dictionaryPatternReplace}
+ * * 这个算法的约束在于：只能从根目录开始匹配，无法在a.b.c中识别b.c
+ *
+ * @param dict 要搜索替换的对象
+ * @param pattern 搜索替换的路径图式
+ * @param replaceF 替换函数
+ * @param currentPatternDepth 当前的搜索深度，如`1`和`a.b.c`可以被图式`b.c`匹配
+ */
+export function dictionaryPatternReplaceHead<V>(
+	dict: DictionaryLikeObject<V>,
+	pattern: DictPathPattern,
+	replaceF: (v: V) => V,
+	currentPatternDepth: uint = 0
+): void {
+	/** （指定深度的）模式是否为通配 */
+	const isPatternUniversal: boolean = pattern[currentPatternDepth] === null
+	// 搜索对象的一层路径
+	for (const key in dict) {
+		// 匹配当前深度的key 否则⇒深入 && 深度到达模式极限⇒末端替换
+		if (
+			isPatternUniversal ||
+			key == pattern[currentPatternDepth] // !这里需要「不严格相等」，以便数值类型自动转换为字符串
+		) {
+			// 完全匹配⇒末端替换
+			if (currentPatternDepth === pattern.length - 1) {
+				// 找到⇒替换 // ! 不会考虑是否为「枝叶」，也就是说可能替换到分支节点如值`{a:1}`
+				dict[key] = replaceF(dict[key])
+			} else if (
+				isComplexInstance(dict[key]) // * 只有在目标是「复合对象」时深入
+			) {
+				dictionaryPatternReplaceHead(
+					dict[key] as DictionaryLikeObject<V>,
+					pattern,
+					replaceF,
+					currentPatternDepth + 1
+				)
+			}
+		}
+	}
+}
+
+/**
+ * 链式应用函数到指定对象上
+ * @example 输出=3
+ * chainApply(
+ * 	1,
+ * 	x => x + 1,
+ * 	x => x + 1
+ * )
+ *
+ */
+export function chainApply<T>(obj: T, ...fs: ((t: T) => T)[]): T {
+	return fs.length === 0 ? obj : chainApply(fs[0](obj), ...fs.slice(1))
 }

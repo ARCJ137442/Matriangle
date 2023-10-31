@@ -50,12 +50,7 @@ import {
 	MessageCallback,
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import {
-	NARSEnvConfig,
-	NARSPlayerConfig,
-	NARSPlayerConfigs,
-	ServiceConfig,
-} from './config/API'
+import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
 
 // 网络通信
 /** 解包格式 */
@@ -122,7 +117,7 @@ export class NARSEnv {
 	readonly router: ProgramMessageRouter = new ProgramMessageRouter()
 
 	/** 配置玩家 */
-	setupPlayers(host: IMatrix, configs: NARSPlayerConfigs): void {
+	setupPlayers(host: IMatrix, configs: NARSPlayerConfig[]): void {
 		// 配置统一的控制器、键控中心
 
 		// Web控制器
@@ -333,11 +328,12 @@ export class NARSEnv {
 		console.groupEnd()
 
 		// 等待所有NARS连接 //
-		console.groupCollapsed('等待所有NARS连接。。。')
+		console.groupCollapsed('等待所有NARS连接。。。') // !【2023-10-31 17:07:29】目前只等待NARS连接，尝试「等待数据显示」但无法正确等待
 		await Promise.allSettled(
 			this.config.players.map(
+				// 这时候已经开始立即执行了，但会返回一个Promise
 				(p: NARSPlayerConfig): Promise<void> =>
-					// 这时候已经开始立即执行了，但会返回一个Promise
+					// 等待NARS连接
 					this.waitConnection(
 						1000,
 						p.connections.NARS.host,

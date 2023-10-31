@@ -208,11 +208,6 @@ export type NARSPlayerConfig = {
 }
 
 /**
- * 所有NARS玩家的配置
- */
-export type NARSPlayerConfigs = NARSPlayerConfig[]
-
-/**
  * NARS环境配置
  * * 在「环境构造时」加载
  * * 加载后便不再发生变更
@@ -250,5 +245,5 @@ export type NARSEnvConfig = {
 	}
 
 	/** 玩家 */
-	players: NARSPlayerConfigs
+	players: NARSPlayerConfig[]
 }
