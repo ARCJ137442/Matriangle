@@ -45,11 +45,8 @@ import FeedbackController from 'matriangle-mod-nar-framework/program/FeedbackCon
 import { AIPlayerEvent, PlayerEvent } from 'matriangle-mod-native'
 import { NARSOperation, PyNARSOutputType } from 'matriangle-mod-nar-framework'
 import {
-	WebSocketServiceClient,
-	WebSocketServiceServer,
-} from 'matriangle-mod-message-io-node/services'
-import {
 	IMessageRouter,
+	IMessageService,
 	MessageCallback,
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
@@ -134,8 +131,8 @@ export class NARSEnv {
 			this.router,
 			this.config.connections.controlService.host,
 			this.config.connections.controlService.port,
-			(messageCallback: MessageCallback): WebSocketServiceServer =>
-				new WebSocketServiceServer(
+			(messageCallback: MessageCallback): IMessageService =>
+				this.config.connections.controlService.constructor(
 					this.config.connections.controlService.host,
 					this.config.connections.controlService.port,
 					messageCallback
@@ -206,8 +203,8 @@ export class NARSEnv {
 			this.router,
 			this.config.connections.displayService.host,
 			this.config.connections.displayService.port,
-			(messageCallback: MessageCallback): WebSocketServiceServer =>
-				new WebSocketServiceServer(
+			(messageCallback: MessageCallback): IMessageService =>
+				this.config.connections.displayService.constructor(
 					this.config.connections.displayService.host,
 					this.config.connections.displayService.port,
 					messageCallback
@@ -432,7 +429,7 @@ export class NARSPlayerAgent {
 
 		// 连接：键控中心 - 消息路由器
 		router.registerService(
-			new WebSocketServiceServer(
+			env.config.connections.controlService.constructor(
 				env.config.connections.controlService.host,
 				env.config.connections.controlService.port,
 				// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
@@ -452,7 +449,7 @@ export class NARSPlayerAgent {
 
 		// 连接：数据显示服务
 		router.registerService(
-			new WebSocketServiceServer(
+			config.connections.dataShow.constructor(
 				config.connections.dataShow.host,
 				config.connections.dataShow.port,
 				/**
@@ -579,7 +576,7 @@ export class NARSPlayerAgent {
 		}
 		// 消息接收
 		router.registerService(
-			new WebSocketServiceClient(
+			config.connections.NARS.constructor(
 				config.connections.NARS.host,
 				config.connections.NARS.port,
 				// * 从NARS接收信息 * //

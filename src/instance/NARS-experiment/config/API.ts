@@ -10,6 +10,14 @@ import {
 	NARSOperation,
 	NARSOperationResult,
 } from 'matriangle-mod-nar-framework'
+import { IMessageService, MessageCallback } from 'matriangle-mod-message-io-api'
+
+/** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
+export type MessageServiceConstructor = (
+	host: string,
+	port: uint,
+	messageCallback: MessageCallback
+) => IMessageService
 
 /** 一个「消息服务」的配置 */
 export type ServiceConfig = {
@@ -17,6 +25,8 @@ export type ServiceConfig = {
 	host: string
 	/** 服务连接的端口 */
 	port: uint
+	/** 服务连接的构造函数（与地址无关） */
+	constructor: MessageServiceConstructor
 }
 
 /**

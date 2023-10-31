@@ -10,7 +10,11 @@ import {
 	NativePlayerEvent,
 	PlayerEvent,
 } from 'matriangle-mod-native'
-import { getAddress } from 'matriangle-mod-message-io-api'
+import {
+	IMessageService,
+	MessageCallback,
+	getAddress,
+} from 'matriangle-mod-message-io-api'
 import IMap from 'matriangle-api/server/map/IMap'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
@@ -20,6 +24,10 @@ import {
 } from 'matriangle-mod-nar-framework'
 import { uint } from 'matriangle-legacy'
 import { EChartsOption } from 'echarts'
+import {
+	WebSocketServiceClient,
+	WebSocketServiceServer,
+} from 'matriangle-mod-message-io-node'
 
 // 需复用的常量
 /** 目标：「安全」 */
@@ -51,14 +59,37 @@ const info = (config: NARSEnvConfig): string => `
 	- 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息'
 `
 
+/** 构造Websocket服务端 */
+const WSServiceServerConstructor = (
+	host: string,
+	port: uint,
+	messageCallback: MessageCallback
+): IMessageService => new WebSocketServiceServer(host, port, messageCallback)
+/** 构造Websocket客户端 */
+const WSServiceClientConstructor = (
+	host: string,
+	port: uint,
+	messageCallback: MessageCallback
+): IMessageService => new WebSocketServiceClient(host, port, messageCallback)
+
 /** 配置 */
 const config: NARSEnvConfig = {
 	// 根据自身输出 实验/配置 信息
 	info,
 	// 网络连接地址
 	connections: {
-		controlService: { host: '127.0.0.1', port: 3002 },
-		displayService: { host: '127.0.0.1', port: 8080 },
+		controlService: {
+			host: '127.0.0.1',
+			port: 3002,
+			// 构造服务端
+			constructor: WSServiceServerConstructor,
+		},
+		displayService: {
+			host: '127.0.0.1',
+			port: 8080,
+			// 构造服务端
+			constructor: WSServiceServerConstructor,
+		},
 	},
 
 	// 地图参数
@@ -123,8 +154,16 @@ const config: NARSEnvConfig = {
 
 			// 网络连接
 			connections: {
-				NARS: { host: '127.0.0.1', port: 8765 },
-				dataShow: { host: '127.0.0.1', port: 3030 },
+				NARS: {
+					host: '127.0.0.1',
+					port: 8765,
+					constructor: WSServiceClientConstructor,
+				},
+				dataShow: {
+					host: '127.0.0.1',
+					port: 3030,
+					constructor: WSServiceServerConstructor,
+				},
 				controlKey: 'Alpha',
 			},
 
@@ -333,8 +372,16 @@ const config: NARSEnvConfig = {
 
 			// 网络连接
 			connections: {
-				NARS: { host: '127.0.0.1', port: 8000 },
-				dataShow: { host: '127.0.0.1', port: 3030 },
+				NARS: {
+					host: '127.0.0.1',
+					port: 8000,
+					constructor: WSServiceClientConstructor,
+				},
+				dataShow: {
+					host: '127.0.0.1',
+					port: 3030,
+					constructor: WSServiceServerConstructor,
+				},
 				controlKey: 'Beta',
 			},
 
