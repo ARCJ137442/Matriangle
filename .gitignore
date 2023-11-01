@@ -40,3 +40,6 @@ git status
 
 # Other files and folders
 RECOVER_*
+
+# VSCode log
+debug.log
