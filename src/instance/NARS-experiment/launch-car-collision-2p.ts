@@ -1,6 +1,7 @@
 /**
- * 主文件
- * * 🔬可能经常被修改，以用于实验
+ * 专用：小车碰撞实验 2玩家
+ * * 用于特定的「小车碰撞实验」
+ * * 📍一般不会频繁更改
  */
 import { NARSEnv } from './server'
 import experimentCarCollisionConfigConstructor from './config/Experiment-car-collision.config.template'
@@ -16,7 +17,7 @@ function colorTransform(color: unknown): unknown {
 	if (typeof color === 'string' && startswith(color, '#'))
 		return (
 			'#' + // 色调位移；样例：#ff0000 -> #ff3333
-			hueShift4Hex(parseInt(color.slice(1), 16), 30).toString(16)
+			hueShift4Hex(parseInt(color.slice(1), 16), 30)
 		)
 	else throw new Error(`colorTransform: 超出常规的颜色！${String(color)}`)
 }

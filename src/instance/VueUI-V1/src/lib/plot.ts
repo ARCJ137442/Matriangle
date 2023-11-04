@@ -107,19 +107,46 @@ export class Plot<X = unknown> {
 	): void {
 		// 空配置⇒跳过
 		if (this.option === null) return
-		// x坐标更新
-		this.x_datas.push(x_data)
-		// 各个按名称的y坐标更新
-		for (const y_data_name in y_data) {
-			// 名称在内⇒更新
-			if (y_data_name in this.y_datas)
-				this.y_datas[y_data_name].push(y_data[y_data_name])
+		// x坐标（与末尾）相同⇒合并
+		if (
+			this.x_datas.length > 0 &&
+			this.x_datas[this.x_datas.length - 1] == x_data
+		) {
+			// ! 假定：x、y都不可能是空数组
+			// 各个按名称的y坐标更新
+			for (const y_data_name in y_data) {
+				// 有数组记录⇒末位赋值/构建
+				if (y_data_name in this.y_datas)
+					if (this.y_datas[y_data_name].length < this.x_datas.length)
+						// 落后于x坐标数目⇒追加
+						this.y_datas[y_data_name].push(y_data[y_data_name])
+					// 否则（等于|多于）⇒末位替换
+					else
+						this.y_datas[y_data_name][
+							this.y_datas[y_data_name].length - 1
+						] = y_data[y_data_name]
+				// 无数组记录⇒末位追加（创建）
+				else this.y_datas[y_data_name] = [y_data[y_data_name]]
+			}
+			// 此时不会截去开头：X坐标数目并未增多
 		}
-		// 可能的截去开头
-		if (shift) {
-			this.x_datas.shift()
-			for (const y_data_name in this.y_datas)
-				this.y_datas[y_data_name].shift()
+		// x坐标不同⇒追加
+		else {
+			this.x_datas.push(x_data)
+			// 各个按名称的y坐标更新
+			for (const y_data_name in y_data) {
+				// 名称在内⇒更新
+				if (y_data_name in this.y_datas)
+					this.y_datas[y_data_name].push(y_data[y_data_name])
+				// 不在内⇒新建
+				else this.y_datas[y_data_name] = [y_data[y_data_name]]
+			}
+			// 可能的截去开头
+			if (shift) {
+				this.x_datas.shift()
+				for (const y_data_name in this.y_datas)
+					this.y_datas[y_data_name].shift()
+			}
 		}
 		// 更新
 		if (update) this.update()

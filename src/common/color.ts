@@ -1,5 +1,6 @@
 /**
  * The Class called Color instanceof use for transform color between RGB,HSV,HEX
+ * * all of these number are integer
  * 0<=R<=255,0<=G<=255,0<=B<=255
  * 0<=H<=360,0<=S<=100,0<=V<=100
  * 0x000000<=HEX<=0xffffff
@@ -17,12 +18,12 @@ const defaultHEX: uint = 0x000000
 /**
  * vec[R=0~255,G=0~255,B=0~255]
  */
-const defaultRGB: Array<uint> = HEXtoRGB(defaultHEX)
+const defaultRGB: [uint, uint, uint] = HEXtoRGB(defaultHEX)
 
 /**
  * vec[H=0~360,S=0~100,V=0~100]
  */
-const defaultHSV: Array<uint> = RGBtoHSV2(defaultRGB)
+const defaultHSV: [uint, uint, uint] = RGBtoHSV2(defaultRGB)
 
 //========================Functions========================//
 //====RGB >> HEX====//
@@ -31,25 +32,22 @@ export function RGBtoHEX(R: uint, G: uint, B: uint): uint {
 	return (snapRGBtoUint(R) << 16) | (snapRGBtoUint(G) << 8) | snapRGBtoUint(B)
 }
 
-export function RGBtoHEX2(RGB: Array<uint>): uint {
+export function RGBtoHEX2(RGB: [uint, uint, uint]): uint {
 	if (RGB === null || RGB.length != 3) return defaultHEX
 	return RGBtoHEX(RGB[0], RGB[1], RGB[2])
 }
 
 //====HEX >> RGB====//
-export function HEXtoRGB(I: uint): Array<uint> {
-	const returnVec: Array<uint> = new Array<uint>() // fixed length 3
-	const Re: uint = snapRGB(I >> 16)
-	const Gr: uint = snapRGB((I & 0x00ff00) >> 8)
-	const Bl: uint = snapRGB(I & 0x0000ff)
-	returnVec[0] = Re
-	returnVec[1] = Gr
-	returnVec[2] = Bl
-	return returnVec
+export function HEXtoRGB(I: uint): [uint, uint, uint] {
+	return [
+		snapRGB(I >> 16),
+		snapRGB((I & 0x00ff00) >> 8),
+		snapRGB(I & 0x0000ff),
+	]
 }
 
 //====RGB >> HSV====//
-export function RGBtoHSV(R: uint, G: uint, B: uint): Array<uint> {
+export function RGBtoHSV(R: uint, G: uint, B: uint): [uint, uint, uint] {
 	// Define Variables
 	// Lash Color To 0~100
 	const Re: uint = snapRGB(R) / 2.55
@@ -58,44 +56,36 @@ export function RGBtoHSV(R: uint, G: uint, B: uint): Array<uint> {
 	// Get Report
 	const max: uint = Math.max(Re, Gr, Bl)
 	const min: uint = Math.min(Re, Gr, Bl)
-	const maxin: uint = max - min
+	const max_m_min: uint = max - min
 	let H: uint = 0,
 		S: uint = 0,
 		V: uint = 0
-	const returnVec: Array<uint> = new Array<uint>() // fixed length 3
 	// Set Hue
-	if (maxin == 0) H = NaN
+	if (max_m_min == 0) H = NaN
 	// Set Saturation
 	if (isNaN(H)) S = 0
-	else if (max == Re && Gr >= Bl) H = (60 * (Gr - Bl)) / maxin + 0
-	else if (max == Re && Gr < Bl) H = (60 * (Gr - Bl)) / maxin + 360
-	else if (max == Gr) H = (60 * (Bl - Re)) / maxin + 120
-	else if (max == Bl) H = (60 * (Re - Gr)) / maxin + 240
-	S = (maxin / max) * 100
+	else if (max == Re && Gr >= Bl) H = (60 * (Gr - Bl)) / max_m_min + 0
+	else if (max == Re && Gr < Bl) H = (60 * (Gr - Bl)) / max_m_min + 360
+	else if (max == Gr) H = (60 * (Bl - Re)) / max_m_min + 120
+	else if (max == Bl) H = (60 * (Re - Gr)) / max_m_min + 240
+	S = (max_m_min / max) * 100
 	// Reset Hue
 	if (S == 0) H = NaN
 	// Set Brightness
 	V = max
 	// Set Return
-	returnVec[0] = snapH(H)
-	returnVec[1] = snapS(S)
-	returnVec[2] = snapV(V)
-	return returnVec
+	return [snapH(H), snapS(S), snapV(V)]
 }
 
-export function RGBtoHSV2(RGB: Array<uint>): Array<uint> {
+export function RGBtoHSV2(RGB: [uint, uint, uint]): [uint, uint, uint] {
 	if (RGB === null || RGB.length != 3) return defaultHSV
-	const R: uint = RGB[0]
-	const G: uint = RGB[1]
-	const B: uint = RGB[2]
-	return RGBtoHSV(R, G, B)
+	return RGBtoHSV(...RGB /* R,G,B */)
 }
 
 //====HSV >> RGB====//
-export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
+export function HSVtoRGB(H: uint, S: uint, V: uint): [uint, uint, uint] {
 	// Define Variables
 	let r: uint, g: uint, b: uint
-	const returnVec: Array<uint> = new Array<uint>() // fixed length 3
 	// Get Report
 	const hu: uint = snapH(H)
 	const sa: uint = snapS(S)
@@ -147,22 +137,16 @@ export function HSVtoRGB(H: uint, S: uint, V: uint): Array<uint> {
 	g *= 255
 	b *= 255
 	// Set Return
-	returnVec[0] = snapRGB(r)
-	returnVec[1] = snapRGB(g)
-	returnVec[2] = snapRGB(b)
-	return returnVec
+	return [snapRGB(r), snapRGB(g), snapRGB(b)]
 }
 
-export function HSVtoRGB2(HSV: Array<uint>): Array<uint> {
+export function HSVtoRGB2(HSV: [uint, uint, uint]): [uint, uint, uint] {
 	if (HSV === null || HSV.length != 3) return defaultRGB
-	const H: uint = HSV[0]
-	const S: uint = HSV[1]
-	const V: uint = HSV[2]
-	return HSVtoRGB(H, S, V)
+	return HSVtoRGB(...HSV /* H,S,V */)
 }
 
 //====HEX >> HSV====//
-export function HEXtoHSV(I: uint): Array<uint> {
+export function HEXtoHSV(I: uint): [uint, uint, uint] {
 	return RGBtoHSV2(HEXtoRGB(I))
 }
 
@@ -171,7 +155,7 @@ export function HSVtoHEX(H: uint, S: uint, V: uint): uint {
 	return RGBtoHEX2(HSVtoRGB(H, S, V))
 }
 
-export function HSVtoHEX2(HSV: Array<uint>): uint {
+export function HSVtoHEX2(HSV: [uint, uint, uint]): uint {
 	return RGBtoHEX2(HSVtoRGB2(HSV))
 }
 
@@ -200,6 +184,11 @@ export function halfBrightnessTo(I: uint): uint {
 		uint((I & 0b000000001111111000000000) >> 1) |
 		uint((I & 0b000000000000000011111110) >> 1)
 	)
+}
+
+export function hueShift4Hex(I: uint, degree360: uint): uint {
+	const HSB: [uint, uint, uint] = HEXtoHSV(I)
+	return HSVtoHEX((HSB[0] + degree360) % 360, HSB[1], HSB[2])
 }
 
 //====Some Internal Other Function====//

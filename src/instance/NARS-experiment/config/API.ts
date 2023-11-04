@@ -9,7 +9,7 @@ import IMap from 'matriangle-api/server/map/IMap'
 import {
 	NARSOperation,
 	NARSOperationResult,
-} from 'matriangle-mod-nar-framework'
+} from 'matriangle-mod-nar-framework/NARSTypes.type'
 import { IMessageService, MessageCallback } from 'matriangle-mod-message-io-api'
 
 /** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
@@ -114,6 +114,47 @@ export type NARSPlayerConfig = {
 		op_output: (op: NARSOperation) => string
 		/** 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
 		op_input: (op: NARSOperation) => string
+
+		// !【2023-11-04 23:22:10】事实上「接口里定义readonly」毛用没有
+
+		/**
+		 * 要发给CIN的Narsese：基于NAVM发送NAIR指令
+		 *
+		 * @param narsese 要发给CIN的Narsese
+		 * @returns CIN一侧的NAVM所接收的NAIR指令
+		 */
+		generateNarseseToCIN: (narsese: string) => string
+
+		/**
+		 * 要发给CIN的「操作符注册」：基于NAVM发送NAIR指令
+		 *
+		 * @param operator_name 操作符名 // ! 不带尖号
+		 * @returns CIN一侧的NAVM所接收的NAIR指令
+		 */
+		generateOperatorRegToCIN: (operator_name: string) => string
+
+		/** CommonNarsese生成模板：基础二元结构
+		 * * 核心结构：`<S --> P>` + 标点
+		 *
+		 * @param subject 主词
+		 * @param copula 系词
+		 * @param prejudice 谓词 '-->'继承，'<->'相似，'==>'蕴含，'<=>'等价
+		 * @param punctuation 标点（默认为'.'判断 '!'目标，'?'问题，'@'请求）
+		 * @param tense 语句时态（默认为''永恒 ':/:'将来，':|:'现在，':\:'过去）
+		 * @param truth 真值（默认为''，格式为'%频率;信度%'）
+		 * @returns Narsese语句
+		 *
+		 * @example generateCommonNarseseInheritance('{SELF}', '[safe]', '.', ':|:', '%1.0;0.9%')
+		 * => `<{SELF} --> [safe]>. :|: %1.0;0.9%`
+		 */
+		generateCommonNarseseBinary: (
+			subject: string,
+			copula: string,
+			prejudice: string,
+			punctuation?: string,
+			tense?: string,
+			truth?: string
+		) => string
 	}
 
 	/** 行为参数 */

@@ -43,7 +43,16 @@ import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Nativ
 import Player_V1 from 'matriangle-mod-native/entities/player/Player_V1'
 import FeedbackController from 'matriangle-mod-nar-framework/program/FeedbackController'
 import { AIPlayerEvent, PlayerEvent } from 'matriangle-mod-native'
-import { NARSOperation, PyNARSOutputType } from 'matriangle-mod-nar-framework'
+import {
+	NARSOperation,
+	NarseseCopulas,
+	NarsesePunctuation,
+	NarseseTenses,
+	NARSOutputType,
+	WebNARSOutput,
+	WebNARSOutputJSON,
+	isNARSOperation,
+} from 'matriangle-mod-nar-framework/NARSTypes.type'
 import {
 	IMessageRouter,
 	IMessageService,
@@ -51,16 +60,6 @@ import {
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
-
-// 网络通信
-/** 解包格式 */
-type WebNARSOutput = {
-	interface_name?: string
-	output_type?: string
-	content?: string
-}
-/** NARS通过Web(Socket)传回的消息中会有的格式 */
-type WebNARSOutputJSON = WebNARSOutput[]
 
 /**
  * !【2023-10-30 14:53:21】现在使用一个类封装这些「内部状态」，让整个服务端变得更为「可配置化」
@@ -521,54 +520,31 @@ export class NARSPlayerAgent {
 			return false
 		}
 		// 接收消息 //
-		/** 处理NARS传来的「操作」 */
+		/**
+		 * 处理NARS传来的「操作」
+		 * *【2023-11-05 01:23:02】目前直接使用自BabelNAR包装好的「NARS操作」类型
+		 */
 		const exeHandler = (
 			self: IPlayer,
 			host: IMatrix,
-			output_content: string
+			operation: NARSOperation
 		): void => {
-			// 使用「^名称」从content提取操作符⇒执行
-			/**
-			 * * 目标样例：`EXE $0.25;0.12;0.83$ ^left([{SELF}, x轴方向])=null`
-			 * @example
-			 * 匹配结果：[
-			 *     '^left([{SELF}, x轴方向])',
-			 *     '^left',
-			 *     '{SELF}, x轴方向',
-			 *     index: 21,
-			 *     input: 'EXE $0.25;0.12;0.83$ ^left([{SELF}, x轴方向])=null',
-			 *     groups: undefined
-			 * ]
-			 */
-			const match = output_content.match(/(\^\w+)\(\[(.+)\]\)/) // 带尖号，带参数
-			if (match !== null && match.length > 2) {
-				const operation: NARSOperation = [
-					match[1],
-					...match[2].split(', '),
-				]
-				// 索引2对应使用括号提取出来的对象
+			// 现在直接有NARSOperation对象
+			console.info(`操作「${config.NAL.op_output(operation)}」已被接收！`)
+			// 执行
+			if (operateEnv(self, config, host, operation, true)) {
 				console.info(
-					`操作「${config.NAL.op_output(operation)}」已被接收！`
+					`自主操作「${config.NAL.op_output(operation)}」执行成功！`
 				)
-				// 执行
-				if (operateEnv(self, config, host, operation, true)) {
-					console.info(
-						`自主操作「${config.NAL.op_output(
-							operation
-						)}」执行成功！`
-					)
-				} else {
-					console.info(
-						`自主操作「${config.NAL.op_output(
-							operation
-						)}」执行失败！`
-					)
-				}
-				// 清空计时
-				lastNARSOperated = 0
-				// 数据收集统计
-				自主操作次数++
+			} else {
+				console.info(
+					`自主操作「${config.NAL.op_output(operation)}」执行失败！`
+				)
 			}
+			// 清空计时
+			lastNARSOperated = 0
+			// 数据收集统计
+			自主操作次数++
 		}
 		// 消息接收
 		router.registerService(
@@ -594,27 +570,31 @@ export class NARSPlayerAgent {
 						// )
 						if (typeof output_data.output_type === 'string')
 							switch (output_data.output_type) {
-								case PyNARSOutputType.IN:
+								case NARSOutputType.IN:
 									break
-								case PyNARSOutputType.OUT:
+								case NARSOutputType.OUT:
 									break
-								case PyNARSOutputType.ERROR:
+								case NARSOutputType.ERROR:
 									break
-								case PyNARSOutputType.ANSWER:
+								case NARSOutputType.ANSWER:
 									break
-								case PyNARSOutputType.ACHIEVED:
+								case NARSOutputType.ACHIEVED:
 									break
-								case PyNARSOutputType.EXE:
-									if (output_data?.content)
+								case NARSOutputType.EXE:
+									if (
+										isNARSOperation(
+											output_data?.output_operation
+										)
+									)
 										exeHandler(
-											p, // TODO: 从「单智能体」过渡到「多智能体」
+											p,
 											host,
-											output_data.content
+											output_data.output_operation
 										)
 									break
 								// 跳过
-								case PyNARSOutputType.INFO:
-								case PyNARSOutputType.COMMENT:
+								case NARSOutputType.INFO:
+								case NARSOutputType.COMMENT:
 									break
 							}
 					}
@@ -657,7 +637,10 @@ export class NARSPlayerAgent {
 					// 注册操作符
 					if (!this.hasRegisteredOperator(op[0]))
 						messages.push(
-							`/reg ${op[0].slice(1) /* 去掉开头的尖号 */}` // !【2023-10-30 20:25:28】现在开始无需额外的`eval`
+							// !【2023-11-05 02:29:18】现在开始接入NAVM的「REG」指令
+							config.NAL.generateOperatorRegToCIN(
+								op[0].slice(1) /* 去掉开头的尖号 */
+							)
 						) // 负/正 方向移动
 					// 注册内部状态
 					this.registeredOperations.push(op)
@@ -666,10 +649,17 @@ export class NARSPlayerAgent {
 					)
 					// 将操作符与自身联系起来
 					messages.push(
-						// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
-						`<${config.NAL.SELF} --> ${config.NAL.op_input(op)}>. ${
-							config.NAL.positiveTruth
-						}`
+						config.NAL.generateNarseseToCIN(
+							// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
+							config.NAL.generateCommonNarseseBinary(
+								config.NAL.SELF,
+								NarseseCopulas.Inheritance,
+								config.NAL.op_input(op),
+								NarsesePunctuation.Judgement,
+								NarseseTenses.Eternal,
+								config.NAL.positiveTruth
+							)
+						)
 					)
 				}
 				// 调用配置
@@ -708,12 +698,31 @@ export class NARSPlayerAgent {
 					// 先提醒正向目标
 					for (const goal of config.NAL.POSITIVE_GOALS)
 						send2NARS(
-							`<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.positiveTruth}`
+							config.NAL.generateNarseseToCIN(
+								config.NAL.generateCommonNarseseBinary(
+									config.NAL.SELF,
+									NarseseCopulas.Inheritance,
+									goal,
+									NarsesePunctuation.Goal,
+									NarseseTenses.Present,
+									config.NAL.positiveTruth
+								)
+							)
 						)
+					// `<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.positiveTruth}`
 					// 再提醒负向目标
 					for (const goal of config.NAL.NEGATIVE_GOALS)
 						send2NARS(
-							`<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.negativeTruth}`
+							config.NAL.generateNarseseToCIN(
+								config.NAL.generateCommonNarseseBinary(
+									config.NAL.SELF,
+									NarseseCopulas.Inheritance,
+									goal,
+									NarsesePunctuation.Goal,
+									NarseseTenses.Present,
+									config.NAL.negativeTruth
+								)
+							)
 						)
 					// ?【2023-10-30 21:51:57】是否要把目标的配置再细化一些，比如「不同目标不同周期/正负性」之类的
 				}
@@ -731,9 +740,16 @@ export class NARSPlayerAgent {
 						)
 						// 让系统知道「自己做了操作」 // *形式：<(*, 【其它参数】) --> 【带尖号操作符】>. :|: 【正向真值】
 						send2NARS(
-							`<(*, ${babbleOp.slice(1).join(', ')}) --> ${
-								babbleOp[0]
-							}>. :|: ${config.NAL.positiveTruth}`
+							config.NAL.generateNarseseToCIN(
+								config.NAL.generateCommonNarseseBinary(
+									`(*, ${babbleOp.slice(1).join(', ')})`,
+									NarseseCopulas.Inheritance,
+									babbleOp[0],
+									NarsesePunctuation.Judgement,
+									NarseseTenses.Present,
+									config.NAL.positiveTruth
+								)
+							)
 						)
 						// 执行操作
 						operateEnv(self, config, host, babbleOp, false)

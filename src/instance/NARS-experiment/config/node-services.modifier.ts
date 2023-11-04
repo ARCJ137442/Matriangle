@@ -78,6 +78,5 @@ export default function (originalConfig: NARSEnvConfig): NARSEnvConfig {
 		}
 	)
 
-	console.log('替换完毕！', originalConfig)
 	return originalConfig
 }
