@@ -8,7 +8,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default {
-	entry: path.join(__dirname, '../src/index.ts'), // 入口文件
+	// entry: path.join(__dirname, '../src/index.ts'), // 入口文件
+	// !【2023-11-05 21:36:40】现在入口交由引入的文件指定，以支持「多入口」「多模式」（「Node-浏览器」「纯浏览器」双模式并行）
 	// 打包文件出口
 	output: {
 		filename: 'static/js/[name].js', // 每个输出js的名称

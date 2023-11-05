@@ -2,10 +2,14 @@
 	"name": "matriangle-vue-ui",
 	"version": "1.0.0",
 	"description": "使用Vue3+TS+Webpack5搭建的新Matriangle前端",
-	"main": "index.js",
+	"main": "index-node.js",
 	"scripts": {
-		"dev": "webpack-dev-server -c build/webpack.dev.mjs",
-		"build": "webpack -c build/webpack.prod.mjs",
+		"dev-n": "webpack-dev-server -c build/node.webpack.dev.mjs",
+		"dev-b": "webpack-dev-server -c build/browser-nars.webpack.dev.mjs",
+		"dev-bn": "webpack-dev-server -c build/browser-nars.webpack.dev.mjs",
+		"build-n": "webpack -c build/node.webpack.prod.mjs",
+		"build-b": "webpack -c build/browser-nars.webpack.prod.mjs",
+		"build-bn": "webpack -c build/browser-nars.webpack.prod.mjs",
 		"serve": "serve -s dist"
 	},
 	"author": "",
