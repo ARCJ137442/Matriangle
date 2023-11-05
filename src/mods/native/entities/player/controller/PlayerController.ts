@@ -1,4 +1,11 @@
-import { MatrixEventDispatcher, MatrixProgramLabel } from 'matriangle-api'
+/*
+!【2023-11-05 16:00:53】浏览器端使用教训：不要信赖「直接从其它包导入」的技俩
+* 这可能导致模块加载顺序问题，使得浏览器（Webpack）无法正确处理依赖关系
+* 📌建议总是「从Mod包开始，直接深入到具体文件」，以确保导入的顺序
+*/
+// import { MatrixEventDispatcher, MatrixProgramLabel } from ' matriangle-api'
+import { MatrixEventDispatcher } from 'matriangle-api/server/control/MatrixControl'
+import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../IPlayer'
 import { PlayerEventOptions } from './PlayerEvent'

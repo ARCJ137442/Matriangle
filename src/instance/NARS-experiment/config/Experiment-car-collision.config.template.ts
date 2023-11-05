@@ -1,16 +1,14 @@
-import { iPoint, traverseNDSquareFrame } from 'matriangle-common'
+import { iPoint, traverseNDSquareFrame } from 'matriangle-common/geometricTools'
 import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../server'
-import { nameOfAxis_M } from 'matriangle-api'
+import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
+import { nameOfAxis_M } from 'matriangle-api/server/general/GlobalRot'
 import {
-	NativeBlockPrototypes,
-	NativePlayerEvent,
-	PlayerEvent,
-} from 'matriangle-mod-native'
-import { IMessageService, getAddress } from 'matriangle-mod-message-io-api'
+	IMessageService,
+	getAddress,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 import IMap from 'matriangle-api/server/map/IMap'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
@@ -21,8 +19,13 @@ import {
 	NarsesePunctuation,
 	NarseseTenses,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
-import { uint } from 'matriangle-legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { NAIRCmdTypes } from 'matriangle-mod-nar-framework/NAIRCmdTypes.type'
+import {
+	NativePlayerEvent,
+	PlayerEvent,
+} from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
+import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -113,8 +116,17 @@ export const generateCommonNarseseBinaryToCIN = (
 
 // 临时变量
 
+/** 额外配置 */
+export type ExtraCCExperimentConfig = {
+	/** 地图尺寸 */
+	map_sizes: uint[]
+}
+
 /** 配置 */
-const configConstructor: () => NARSEnvConfig = (): NARSEnvConfig => ({
+const configConstructor = (
+	// 额外参数 //
+	extraConfig: ExtraCCExperimentConfig
+): NARSEnvConfig => ({
 	// 根据自身输出 实验/配置 信息
 	info,
 	// 网络连接地址
@@ -139,11 +151,8 @@ const configConstructor: () => NARSEnvConfig = (): NARSEnvConfig => ({
 		initMaps: (): IMap[] => {
 			const maps: IMap[] = []
 
-			// 构造参数 //
-			const SIZES = new iPoint().copyFromArgs(
-				// *【2023-11-05 04:40:09】现在改成一维，但空间更大
-				7
-			)
+			// 构造参数 // !【2023-11-05 17:05:01】现在通过「额外参数」引入
+			const SIZES = new iPoint().copyFromArgs(...extraConfig.map_sizes)
 
 			// 存储结构 //
 			const storage = new MapStorageSparse(SIZES.length)

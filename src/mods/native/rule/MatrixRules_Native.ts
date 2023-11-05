@@ -1,4 +1,4 @@
-﻿import { uint, int } from 'matriangle-legacy'
+﻿import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import IMap from 'matriangle-api/server/map/IMap'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { identity, key } from 'matriangle-common/utils'

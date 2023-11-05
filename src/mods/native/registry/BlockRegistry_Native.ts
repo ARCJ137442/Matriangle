@@ -1,9 +1,9 @@
 import Block from 'matriangle-api/server/block/Block'
+import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
-import BSColored from '../block/BSColored'
 import { MapFromGeneratorKV } from 'matriangle-common/utils'
 import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
-import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import BSColored from '../block/BSColored'
 
 /**
  * 原生「方块属性」注册表

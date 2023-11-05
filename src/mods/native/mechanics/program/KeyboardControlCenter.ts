@@ -1,6 +1,6 @@
 import { KeyCode } from 'matriangle-common/keyCodes'
 import { omega, voidF } from 'matriangle-common/utils'
-import { uint } from 'matriangle-legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,

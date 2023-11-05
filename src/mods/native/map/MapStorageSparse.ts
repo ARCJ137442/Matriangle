@@ -14,7 +14,7 @@ import {
 	randomIn,
 } from 'matriangle-common/utils'
 import { mRot, rotate_M } from 'matriangle-api/server/general/GlobalRot'
-import { int, uint } from 'matriangle-legacy'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import IMapStorage, {
 	BlockConstructorMap,

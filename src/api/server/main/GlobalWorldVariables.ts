@@ -1,4 +1,4 @@
-﻿import { uint } from '../../../legacy/AS3Legacy'
+﻿import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /** 每秒世界刻数 */
 export const TPS: uint = 100

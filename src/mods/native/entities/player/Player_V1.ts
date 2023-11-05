@@ -1,17 +1,12 @@
-import {
-	mRot,
-	toOpposite_M,
-	TPS,
-	FIXED_TPS,
-	IEntityInGrid,
-	IShape,
-	DisplayLayers,
-} from 'matriangle-api'
+import { mRot, toOpposite_M } from 'matriangle-api/server/general/GlobalRot'
+import { TPS, FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
+import { IShape, DisplayLayers } from 'matriangle-api/display/DisplayInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { intMin } from 'matriangle-common/exMath'
 import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
-import { uint, int } from 'matriangle-legacy'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import {
 	getPlayers,
 	playerMoveInTest,

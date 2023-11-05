@@ -1,5 +1,5 @@
-import { mRot } from 'matriangle-api'
-import { int } from 'matriangle-legacy'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
+import { int } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * 玩家事件：从「控制器」向玩家回分派的事件类型

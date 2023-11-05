@@ -4,8 +4,8 @@ import {
 	IncomingMessage,
 	ServerResponse,
 } from 'http'
-import { voidF } from 'matriangle-common'
-import { uint } from 'matriangle-legacy'
+import { voidF } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	Server as WebSocketServer,
 	WebSocket,

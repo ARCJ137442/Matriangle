@@ -1,4 +1,4 @@
-import { uint } from 'matriangle-legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import BSColored from 'matriangle-mod-native/block/BSColored'
 
 /**

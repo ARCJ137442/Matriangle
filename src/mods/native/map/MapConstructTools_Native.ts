@@ -4,7 +4,7 @@
  */
 import { iPoint } from 'matriangle-common/geometricTools'
 import { identity } from 'matriangle-common/utils'
-import { int, uint } from 'matriangle-legacy'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import Block from 'matriangle-api/server/block/Block'
 import IMapStorage from 'matriangle-api/server/map/IMapStorage'
 

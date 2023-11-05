@@ -1,5 +1,5 @@
-import { voidF } from 'matriangle-common'
-import { uint } from 'matriangle-legacy'
+import { voidF } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { MessageService } from 'matriangle-mod-message-io-api/MessageService'
 
 /** WebSocket服务-客户端 */

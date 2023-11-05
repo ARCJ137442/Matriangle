@@ -1,4 +1,4 @@
-import { TPS } from 'matriangle-api'
+import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../IPlayer'
 import {
@@ -12,8 +12,8 @@ import {
 	NativePlayerEvent,
 	NativePlayerEventOptions,
 } from './PlayerEvent'
-import { randomBetween, randInt } from 'matriangle-common'
-import { uint } from 'matriangle-legacy'
+import { randomBetween, randInt } from 'matriangle-common/exMath'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * 用于表示新增的「AI事件」

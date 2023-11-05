@@ -48,6 +48,12 @@ export default {
 			},
 		]
 	},
+	// ! 排除掉基于Node环境的库
+	externals: {
+		// * 基于Node环境，但我不使用⇒排除
+		'matriangle-mod-message-io-node': 'matriangle-mod-message-io-node'
+	},
+	// 插件
 	plugins: [
 		// 打包Vue
 		new VueLoaderPlugin(), // vue-loader插件

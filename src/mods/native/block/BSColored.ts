@@ -1,5 +1,5 @@
-import { uint } from 'matriangle-legacy'
-import { randInt } from 'matriangle-common'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { randInt } from 'matriangle-common/exMath'
 import BlockState from 'matriangle-api/server/block/BlockState'
 
 /**

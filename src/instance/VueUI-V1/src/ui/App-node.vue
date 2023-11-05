@@ -1,26 +1,26 @@
 <template>
-	<MessageCenterDirect ref="router" @vue:mounted="launchEnv(100, 10)" />
+	<MessageCenter ref="router" />
 
 	<h1>控制</h1>
 	<ControlPanel
 		ref="panel"
-		@message="pack => sendMessagePackAsClient(pack)"
-		@link-change="handleLinkChangeAtClient"
+		@message="pack => sendMessagePack(pack)"
+		@link-change="handleLinkChange"
 	/>
 
 	<h1>显示</h1>
 	<DisplayPanel
 		ref="displayPanel"
-		@link-start="handleLinkStartRequestAtClient"
-		@link-change="handleLinkChangeAtClient"
+		@link-start="handleLinkStartRequest"
+		@link-change="handleLinkChange"
 		@refresh="handleDisplayRefreshRequest"
 	/>
 
 	<h1>数据</h1>
 	<DataPanel
 		ref="dataPanel"
-		@link-start="handleLinkStartRequestAtClient"
-		@link-change="handleLinkChangeAtClient"
+		@link-start="handleLinkStartRequest"
+		@link-change="handleLinkChange"
 		@config-request="handleConfigRequest"
 	/>
 </template>
@@ -34,6 +34,7 @@
  */
 import { ref } from 'vue'
 import { VueElementRefNullable, splitAddress } from '../lib/common'
+import { WebSocketServiceClient } from 'matriangle-mod-message-io-browser/services'
 
 /// 导入子组件 ///
 // import './app.css' // 导入CSS作为样式 // !【2023-10-29 01:20:49】现弃用
@@ -41,16 +42,14 @@ import { VueElementRefNullable, splitAddress } from '../lib/common'
 import { omega1 } from './../lib/common'
 import ControlPanel from './ControlPanel.vue'
 // import ScreenText from './ScreenText.vue'
-// import MessageCenter from './MessageCenter.vue'
+import MessageCenter from './MessageCenter.vue'
 import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { DirectService } from 'matriangle-mod-message-io-api/services/DirectService'
 import DisplayPanel from './DisplayPanel.vue'
 import DataPanel from './DataPanel.vue'
 import { voidF } from '../../../../common'
-import MessageCenterDirect from './MessageCenterDirect.vue'
 
 /// 开始 ///
 
@@ -64,12 +63,15 @@ window.addEventListener('keyup', (e: KeyboardEvent): void =>
 
 // 消息路由器 //
 type MessagePack = { address: string; message: string }
-const router: VueElementRefNullable<typeof MessageCenterDirect> = ref(null)
+const router: VueElementRefNullable<typeof MessageCenter> = ref(null)
+/* setInterval((): void => {
+	console.log(router.value?.router)
+}, 1000) */ // 【2023-10-29 00:52:30】测试成功
 /**
- * 向（客户端）路由器转发消息
+ * 向路由器输送消息
  * * 附带「响应式自动重连」功能
  */
-function sendMessagePackAsClient(
+function sendMessagePack(
 	pack: MessagePack,
 	messageCallback: MessageCallback = omega1<string>
 ): void {
@@ -90,8 +92,8 @@ function sendMessagePackAsClient(
 	else console.error('消息路由器未调用！')
 }
 
-/** 处理（客户端的）「开始连接请求」 */
-function handleLinkStartRequestAtClient(
+/** 处理「开始连接请求」 */
+function handleLinkStartRequest(
 	address: string,
 	heartbeatTimeMS: number,
 	callbackMessage: MessageCallback,
@@ -111,23 +113,14 @@ function handleLinkStartRequestAtClient(
 	)
 }
 
-/** 处理（客户端的）「地址变更」请求 */
-const handleLinkChangeAtClient = (
-	oldAddress: string,
-	newAddress: string
-): void =>
+/** 处理「地址变更」请求 */
+const handleLinkChange = (oldAddress: string, newAddress: string): void =>
 	// 直接调用路由器方法
-	router.value?.routerClient?.handleAddressChange(oldAddress, newAddress)
+	router.value?.routerClient.handleAddressChange(oldAddress, newAddress)
 
 /**
  * 给路由器指定地址自动注册服务
- * * 默认类型：直连（连接=另一个路由器）
- *
- * !【2023-11-05 17:13:33】目前从这里向「Vue端路由器」注册的服务，不包括「与CIN对接」的部分
- * * 因此「全部用直连服务做连接」也没问题
- *
- * !【2023-11-05 17:30:32】注意「直连服务」的连接问题
- * * 📌连接的对象是「母体侧路由器」而非「客户端路由器」
+ * * 默认类型：Websocket客户端
  *
  * @param address 服务地址
  * @param messageCallback 消息回调
@@ -137,24 +130,7 @@ function registerRouterServiceAt(
 	address: string,
 	messageCallback: MessageCallback
 ): IMessageService {
-	// 预先检查（理论上一定有！）
-	if (router.value === null) throw new Error('未找到路由器！')
-	// 构造服务
-	// return new WebSocketServiceClient(...splitAddress(address), messageCallback)
-	return new DirectService(
-		// 拆分的地址
-		...splitAddress(address),
-		// 消息回调
-		messageCallback,
-		// 对接「母体侧路由器」
-		router.value!.routerMatrix
-	)
-}
-
-// 启动环境 //
-function launchEnv(TPS: number, RPS: number): void {
-	// 启动路由器
-	router.value?.env.launch(TPS, RPS)
+	return new WebSocketServiceClient(...splitAddress(address), messageCallback)
 }
 
 // 键控面板 //
@@ -172,7 +148,7 @@ const displayPanel: VueElementRefNullable<typeof DisplayPanel> = ref(null)
  */
 function handleDisplayRefreshRequest(address: string, message: string): void {
 	if (router.value === null) return console.error('未找到路由器！')
-	// 控制客户端发送消息
+
 	router.value.routerClient.softSend(address, message) //if ()
 	// console.log('屏显刷新请求成功发送：', address, message)
 }
@@ -182,12 +158,11 @@ const dataPanel: VueElementRefNullable<typeof DataPanel> = ref(null)
 
 /** 处理「配置刷新请求」 */
 function handleConfigRequest(address: string, message: string): void {
-	// 控制客户端发送消息
 	console.log(
 		'配置刷新请求:',
 		address,
 		message,
-		router.value?.routerClient?.isServiceActive(address)
+		router.value?.routerClient.isServiceActive(address)
 	)
 	router.value?.routerClient.send(address, message)
 }

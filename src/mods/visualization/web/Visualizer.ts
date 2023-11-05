@@ -52,7 +52,7 @@ export default abstract class Visualizer extends MatrixProgram {
 		else {
 			const service: IMessageService = serviceF(this.getSignal.bind(this))
 			return router.registerService(service, (): void => {
-				console.log(`与路由器成功在${service.addressFull}建立连接！`)
+				console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
 			})
 		}
 	}

@@ -1,4 +1,4 @@
-﻿import { uint } from 'matriangle-legacy'
+﻿import { uint } from 'matriangle-legacy/AS3Legacy'
 import Entity from 'matriangle-api/server/entity/Entity'
 import EntitySystem from './EntitySystem'
 import IMap from 'matriangle-api/server/map/IMap'

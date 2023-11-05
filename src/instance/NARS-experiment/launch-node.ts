@@ -1,7 +1,6 @@
 /**
- * 专用：小车碰撞实验 2玩家
- * * 用于特定的「小车碰撞实验」
- * * 📍一般不会频繁更改
+ * 主文件（Node版本）
+ * * 🔬可能经常被修改，以用于实验
  */
 import nodeServicesModifier from './config/node-services.modifier'
 import { envConstructor, envModifiers_default } from './launch$base'

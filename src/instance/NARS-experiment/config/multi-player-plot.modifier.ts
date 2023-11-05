@@ -2,6 +2,11 @@ import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import { SeriesOption } from 'echarts'
 
 /**
+ * * 在「多玩家」的基础上支持「单图表显示」 *
+ * * 把所有玩家的数据显示在一个图表中
+ */
+
+/**
  * 根据玩家配置和「旧配置」生成「新配置」
  * @param seriesOption 旧的序列配置
  * @param nowPlayer 新序列归属的玩家配置

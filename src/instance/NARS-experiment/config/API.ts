@@ -1,16 +1,19 @@
-import { iPointRef } from 'matriangle-common'
-import { uint } from 'matriangle-legacy'
+import { iPointRef } from 'matriangle-common/geometricTools'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { EChartsOption } from 'echarts'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { PlayerEvent } from 'matriangle-mod-native'
+import { PlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../server'
+import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import IMap from 'matriangle-api/server/map/IMap'
 import {
 	NARSOperation,
 	NARSOperationResult,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
-import { IMessageService, MessageCallback } from 'matriangle-mod-message-io-api'
+import {
+	IMessageService,
+	MessageCallback,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 /** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
 export type MessageServiceConstructor = (

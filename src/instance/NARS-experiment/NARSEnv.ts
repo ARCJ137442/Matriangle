@@ -1,5 +1,4 @@
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import {
 	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	BATR_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
@@ -9,14 +8,7 @@ import { projectEntities } from 'matriangle-mod-native/mechanics/NativeMatrixMec
 import { respawnAllPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import WorldRegistry_V1 from 'matriangle-mod-bats/registry/Registry_Batr'
 import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
-import {
-	listE列举实体,
-	matrixV母体可视化,
-} from 'matriangle-mod-visualization/textVisualizations'
-import {
-	TICK_TIME_MS,
-	TPS,
-} from 'matriangle-api/server/main/GlobalWorldVariables'
+import { TPS as TPS_Matriangle } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	mapObjectKey,
 	mergeMaps,
@@ -42,7 +34,8 @@ import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 import Player_V1 from 'matriangle-mod-native/entities/player/Player_V1'
 import FeedbackController from 'matriangle-mod-nar-framework/program/FeedbackController'
-import { AIPlayerEvent, PlayerEvent } from 'matriangle-mod-native'
+import { PlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerEvent' // ! 📌不能信赖「直接的一股脑导入」
+import { AIPlayerEvent } from 'matriangle-mod-native/entities/player/controller/AIController'
 import {
 	NARSOperation,
 	NarseseCopulas,
@@ -69,13 +62,27 @@ export class NARSEnv {
 	printInitDescription(): void {
 		console.info(this.config.info(this.config).trim())
 	}
-	// 实验超参数 //
 
+	// 母体 //
+	readonly rule: IMatrixRule
+	readonly matrix: IMatrix
+
+	// 实验超参数（全在构造函数里） //
 	/**
 	 * 构造函数
 	 * @param config 载入的环境配置
 	 */
-	constructor(public readonly config: NARSEnvConfig) {}
+	constructor(public readonly config: NARSEnvConfig) {
+		// ! 不建议在变量定义时初始化（并且初始化为函数返回值！），容易导致「函数未定义就加载」的兼容问题
+		this.rule = this.initMatrixRule()
+		this.matrix = new Matrix_V1(
+			this.rule,
+			this.initWorldRegistry(),
+			// ! 获取随机地图：只在「核心逻辑」之外干这件事
+			getRandomMap(this.rule).copy(true)
+		)
+		this.router = new ProgramMessageRouter()
+	}
 
 	// 规则 //
 	initMatrixRule(): IMatrixRule {
@@ -84,6 +91,7 @@ export class NARSEnv {
 
 		// 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
 		// readonly MAPS = [...MULTI_DIM_TEST_MAPS, ...BatrDefaultMaps._ALL_MAPS]; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
+
 		const MAPS = this.config.map.initMaps()
 		rule.setRule<Map<IMap, number>>(
 			MatrixRules_Native.key_mapRandomPotentials,
@@ -113,7 +121,7 @@ export class NARSEnv {
 	}
 
 	/** 消息路由器 */
-	readonly router: ProgramMessageRouter = new ProgramMessageRouter()
+	readonly router: ProgramMessageRouter
 
 	/** 配置玩家 */
 	setupPlayers(host: IMatrix, configs: NARSPlayerConfig[]): void {
@@ -218,15 +226,6 @@ export class NARSEnv {
 		this.setupPlayers(host, this.config.players)
 	}
 
-	// 母体 //
-	readonly rule = this.initMatrixRule()
-	readonly matrix = new Matrix_V1(
-		this.rule,
-		this.initWorldRegistry(),
-		// ! 获取随机地图：只在「核心逻辑」之外干这件事
-		getRandomMap(this.rule).copy(true)
-	)
-
 	/*
 	 * 地址：http://127.0.0.1:3001
 	 * 示例@前进：http://127.0.0.1:3001/?key=p2&action=moveForward
@@ -241,34 +240,50 @@ export class NARSEnv {
 	// 全速测试
 	// while (true) matrix.tick();
 
-	/** 一次迭代 */
-	迭代(num: uint, visualize: boolean = true): void {
-		// TPS次迭代
-		for (let i: uint = 0; i < num; i++) {
-			this.matrix.tick()
-		}
-		if (visualize) {
-			// 可视化
-			console.log(
-				matrixV母体可视化(
-					this.matrix.map.storage as MapStorageSparse,
-					this.matrix.entities,
-					6
-				)
-			)
-			listE列举实体(this.matrix.entities, 5) // !【2023-10-05 17:51:21】实体一多就麻烦
-		}
-	}
-
-	持续测试(i: int = 0, tick_time_ms: uint = 1000): void {
-		/** 迭代次数，是一个常量 */
-		const numIter: uint = (TPS * tick_time_ms) / 1000
+	/**
+	 * 持续迭代
+	 * @param i 总刷新批次次数
+	 * @param TPS 世界刻每秒迭代次数
+	 * @param RPS 世界每秒刷新次数
+	 */
+	持续测试(i: int = 0, TPS: uint, RPS: uint): void {
+		/** 每刷新一次所间隔的毫秒数 */
+		// const tick_time_ms: uint = 1000 / TPS
+		const refresh_time_ms = 1000 / RPS
+		/** 每一次迭代次数，是一个常量 */
+		const numIter: uint = TPS / RPS
+		// 信息
+		/** 倒计时 */
 		let t = i
+		// 开始循环
 		const id = setInterval((): void => {
-			this.迭代(numIter, false /* 现在不再需要可视化 */)
+			// console.debug('持续测试：迭代!')
+			// 迭代
+			for (let i: uint = 0; i < numIter; i++) {
+				this.matrix.tick()
+			}
+			/* if (visualize) {
+				// 可视化
+				console.log(
+					matrixV母体可视化(
+						this.matrix.map.storage as MapStorageSparse,
+						this.matrix.entities,
+						6
+					)
+				)
+				listE列举实体(this.matrix.entities, 5) // !【2023-10-05 17:51:21】实体一多就麻烦
+			} */
+			// 计时
 			if (t === 0) clearInterval(id)
 			t--
-		}, tick_time_ms)
+		}, refresh_time_ms)
+		console.info(
+			`持续测试在id=${String(
+				id
+			)}开始！，RPS=${RPS}，TPS=${TPS}，刷新间隔=${refresh_time_ms}ms，将在${
+				i > 0 ? i : '无限'
+			}批迭代后结束！`
+		)
 	}
 
 	/** 返回一个「睡眠指定时长」的Promise */
@@ -311,8 +326,10 @@ export class NARSEnv {
 
 	/**
 	 * 测试启动入口
+	 * @param TPS 「Tick Per Second」决定世界迭代的速度
+	 * @param RPS 「Refresh Per Second」世界每秒刷新次数
 	 */
-	async launch(): Promise<void> {
+	async launch(TPS: uint = TPS_Matriangle, RPS: uint = 10): Promise<void> {
 		// 打印描述 //
 		this.printInitDescription()
 
@@ -349,7 +366,11 @@ export class NARSEnv {
 		this.printInitDescription()
 
 		// 异步开始持续测试 //
-		this.持续测试(-1, TICK_TIME_MS)
+		this.持续测试(
+			-1, // * 永久运行
+			TPS, // * 世界刻每秒迭代次数
+			RPS // * 世界每秒刷新次数
+		)
 
 		// 结束 //
 		// console.log('It is done.')

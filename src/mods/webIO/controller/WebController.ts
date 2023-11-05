@@ -42,7 +42,7 @@ export default class WebController extends MultiKeyController {
 	): boolean {
 		service.messageCallback = this.onMessage.bind(this)
 		return router.registerService(service, (): void => {
-			console.log(`与路由器成功在${service.addressFull}建立连接！`)
+			console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
 		})
 	}
 
@@ -68,7 +68,7 @@ export default class WebController extends MultiKeyController {
 		else {
 			const service: IMessageService = serviceF(this.onMessage.bind(this))
 			return router.registerService(service, (): void => {
-				console.log(`与路由器成功在${service.addressFull}建立连接！`)
+				console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
 			})
 		}
 	}

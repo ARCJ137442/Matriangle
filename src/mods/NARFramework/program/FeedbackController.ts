@@ -1,6 +1,9 @@
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { omegas } from 'matriangle-common'
-import { PlayerEvent, PlayerEventOptions } from 'matriangle-mod-native'
+import { omegas } from 'matriangle-common/utils'
+import {
+	PlayerEvent,
+	PlayerEventOptions,
+} from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import AIController from 'matriangle-mod-native/entities/player/controller/AIController'
 

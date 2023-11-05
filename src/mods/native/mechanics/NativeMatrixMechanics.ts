@@ -24,7 +24,7 @@ import {
 	int$MIN_VALUE,
 	int$MAX_VALUE,
 	uint$MAX_VALUE,
-} from 'matriangle-legacy'
+} from 'matriangle-legacy/AS3Legacy'
 import IPlayer, { isPlayer } from '../entities/player/IPlayer'
 import {
 	NativeBlockTypeEventMap,

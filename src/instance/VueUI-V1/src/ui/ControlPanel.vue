@@ -4,7 +4,10 @@
 		type="text"
 		v-model="controlAddress"
 		placeholder="输入链接"
-		@keydown="(e: KeyboardEvent) => e.key === 'Enter' && onAddressChange()"
+		@keydown="
+			(e: KeyboardEvent): false | void =>
+				e.key === 'Enter' && onAddressChange()
+		"
 	/>
 	<input type="text" v-model="controlKey" placeholder="输入控制密钥" />
 	<p>{{ controlMessage }}</p>

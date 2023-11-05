@@ -1,7 +1,7 @@
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import BlockState from 'matriangle-api/server/block/BlockState'
-import { randomBoolean2 } from 'matriangle-common'
-import { int$MIN_VALUE, uint, int } from 'matriangle-legacy'
+import { randomBoolean2 } from 'matriangle-common/utils'
+import { int$MIN_VALUE, uint, int } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * 用于存储「门」的开闭

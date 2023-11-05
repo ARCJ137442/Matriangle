@@ -87,7 +87,7 @@ function init(): void {
 			*/
 		dataShowAddress.value,
 		HEART_BEAT_INTERVAL,
-		(message: string) => onReceiveMessage(plot, message),
+		(message: string): void => onReceiveMessage(plot, message),
 		/** 连接打开后 */
 		(): void => {
 			// 更新连接状态
@@ -129,15 +129,17 @@ function onReceiveMessage(
 	// 检查图表元素是否存在
 	if (plot.value === null || plot.value.isInited === undefined)
 		return console.error('图表元素不存在！')
-	// 若有缓存数据⇒使用缓存数据，清除缓存
-	if (_temp_data.length > 0) {
-		console.log('使用缓存：', _temp_data[0])
-		onReceiveMessage(plot, _temp_data.shift()!) // 因为这里要递归，所以需要独立定义函数
-	}
 	// 解析数据 // ! 不论是否有
 	const data = JSON.parse(message)
 	// console.log('数据面板 数据：', data)
 	// 若为「更新用数据」
+	console.debug(
+		'数据面板 数据：',
+		data,
+		IsXYData(data),
+		plot.value.isInited()
+	)
+
 	if (IsXYData(data)) {
 		// 只有在「已初始化」后更新数据
 		if (plot.value.isInited()) {
@@ -155,12 +157,27 @@ function onReceiveMessage(
 
 	// 图表未初始化⇒缓存数据，请求重置
 	if (!plot.value.isInited()) {
-		console.log('缓存数据：', message)
-		_temp_data.push(message)
+		// 缓存数据
+		console.log(`缓存数据[${_temp_cached_received_data.length}]：`, message)
+		_temp_cached_received_data.push(message)
+		// 请求重置
 		requestConfig()
 	}
+	// 若有缓存数据⇒使用缓存数据，清除缓存 // ! 不要提前使用缓存了！即便顺序会不一致！在直连服务里会导致「无限递归」问题！
+	else if (_temp_cached_received_data.length > 0) {
+		// ! 测试用
+		if (_temp_cached_received_data.length > 0x10)
+			return console.error(
+				'缓存数据过多，可能意味着连接存在问题！',
+				_temp_cached_received_data,
+				plot.value.isInited
+			)
+		console.log('使用缓存：', _temp_cached_received_data[0])
+		// 发送消息，并清除最先发送的（实质上是「先进先出」队列）
+		onReceiveMessage(plot, _temp_cached_received_data.shift()!) // 因为这里要递归，所以需要独立定义函数
+	}
 }
-let _temp_data: string[] = []
+let _temp_cached_received_data: string[] = []
 
 /** 图表初始化 */
 function plotInit(): void {

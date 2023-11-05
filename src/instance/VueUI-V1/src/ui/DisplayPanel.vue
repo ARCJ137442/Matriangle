@@ -6,7 +6,10 @@
 		type="text"
 		v-model="displayAddress"
 		placeholder="输入连接地址"
-		@keydown="(e: KeyboardEvent) => e.key === 'Enter' && onAddressChange()"
+		@keydown="
+			(e: KeyboardEvent): false | void =>
+				e.key === 'Enter' && onAddressChange()
+		"
 	/>
 	<input
 		type="text"

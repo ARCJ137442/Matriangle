@@ -3,10 +3,10 @@ import {
 	IEntityActiveLite,
 	i_active,
 	i_activeLite,
-} from 'matriangle-api'
+} from 'matriangle-api/server/entity/EntityInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import CommonSystem from 'matriangle-api/server/template/CommonSystem'
-import { int } from 'matriangle-legacy'
+import { int } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * Use for manage entities in world.

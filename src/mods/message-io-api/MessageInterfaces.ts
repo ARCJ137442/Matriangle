@@ -1,5 +1,5 @@
-import { voidF } from 'matriangle-common'
-import { uint } from 'matriangle-legacy'
+import { voidF } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * 一个「消息回调」的类型

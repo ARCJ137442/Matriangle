@@ -1,13 +1,13 @@
 import { MessageServiceConstructor, NARSEnvConfig } from './API'
+import { DirectService } from 'matriangle-mod-message-io-api/services/DirectService'
 import {
-	DirectService,
-	IMessageService,
 	MessageCallback,
-} from 'matriangle-mod-message-io-api'
-import { uint } from 'matriangle-legacy'
-import { dictionaryPatternReplace } from 'matriangle-common'
+	IMessageService,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { dictionaryPatternReplace } from 'matriangle-common/utils'
 import MessageRouter from 'matriangle-mod-message-io-api/MessageRouter'
-import { WebSocketServiceClient } from 'matriangle-mod-message-io-browser'
+import { WebSocketServiceClient } from 'matriangle-mod-message-io-browser/services'
 
 // 需复用的常量
 /** 构造Websocket客户端服务（Node环境） */
@@ -23,7 +23,8 @@ const WSServiceClientConstructor: MessageServiceConstructor = (
  *
  * ! 原地操作：会修改原始配置
  *
- * @param clientRouter 用来让「直连服务」建立连接的消息路由器
+ * @param originalConfig 原始「NARS环境配置」
+ * @param clientRouter 用来让「直连服务」建立连接的消息路由器（连接的目标，如「前端Vue服务的路由器」）
  * @returns NARS环境配置
  */
 export default function (
@@ -40,7 +41,6 @@ export default function (
 
 	// * 下面这个命令是为了利用TS语法提示，防止后续重构时无法更新字符串表示的路径
 	void originalConfig.connections.controlService.constructor
-	void originalConfig.players[0]?.connections.NARS.constructor
 
 	/** 核心 模式替换：把所有「玩家用服务」「背景服务」都替换成「直连服务」 */
 	dictionaryPatternReplace(
@@ -58,6 +58,8 @@ export default function (
 		}
 	)
 
+	// * 下面这个命令是为了利用TS语法提示，防止后续重构时无法更新字符串表示的路径
+	void originalConfig.players[0]?.connections.NARS.constructor
 	/** 核心 模式替换：把所有「NARS用服务」替换成「WS客户端服务」（覆盖先前选项） */
 	dictionaryPatternReplace(
 		originalConfig,
@@ -66,7 +68,7 @@ export default function (
 			'players',
 			null,
 			'connections',
-			null,
+			'NARS',
 			'constructor',
 		],
 		// 替换成「WS客户端服务」

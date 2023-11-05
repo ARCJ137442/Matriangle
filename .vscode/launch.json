@@ -40,7 +40,7 @@
 				"<node_internals>/**"
 			],
 			// "program": "${workspaceFolder}\\test\\test.ts",
-			"program": "src/instance/NARS-experiment/launch.ts",
+			"program": "src/instance/NARS-experiment/launch-node.ts",
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],

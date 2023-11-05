@@ -5,13 +5,13 @@ import {
 	IEntityWithDirection,
 	IEntityHasHPAndHeal,
 	IEntityHasHPAndLives,
-	IMatrixEventReceiver,
-	mRot,
-} from 'matriangle-api'
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { IMatrixEventReceiver } from 'matriangle-api/server/control/MatrixControl'
+import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import Entity from 'matriangle-api/server/entity/Entity'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { iPointRef, iPoint } from 'matriangle-common/geometricTools'
-import { uint, int } from 'matriangle-legacy'
+import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import { NativeDecorationLabel } from './DecorationLabels'
 import { PlayerAction } from './controller/PlayerAction'
 import PlayerController from './controller/PlayerController'

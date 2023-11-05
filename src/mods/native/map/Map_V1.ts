@@ -13,7 +13,7 @@ import {
 	straightProjection,
 } from 'matriangle-common/geometricTools'
 import { identity, key } from 'matriangle-common/utils'
-import { int, int$MAX_VALUE, uint } from 'matriangle-legacy'
+import { int, int$MAX_VALUE, uint } from 'matriangle-legacy/AS3Legacy'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import { mRot, mRot2axis } from 'matriangle-api/server/general/GlobalRot'
 import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
