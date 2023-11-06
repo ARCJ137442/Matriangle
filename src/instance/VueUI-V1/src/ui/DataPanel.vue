@@ -5,36 +5,31 @@ pp<!--
  -->
 <template>
 	<!-- * 信息：有关实验本身的信息 * -->
-	<div textInfo.length @click="textVisible = !textVisible">
-		<p class="sub-title">
-			信息（{{ textVisible ? '点击隐藏' : '点击显示' }}）：
+	<div v-show="textInfo.length > 0">
+		<p @click="infoVisible = !infoVisible" class="sub-title">
+			信息（{{ infoVisible ? '点击折叠' : '点击展开' }}）：
 		</p>
 		<!-- ! 下面实现「点击展开/合并」的效果 -->
 		<p class="text">
-			{{ textVisible ? textInfo : textInfo.slice(0, 20) + '……' }}
+			{{ infoVisible ? textInfo : textInfo.slice(0, 20) + '……' }}
 		</p>
 	</div>
-	<!-- * 文本 * -->
-	<div v-show="textData.length > 0">
-		<p class="sub-title">文本：</p>
-		<p class="text">{{ textData }}</p>
-	</div>
 	<!-- * 图表 * -->
-	<p class="sub-title">图表：</p>
 	<div>
+		<p class="sub-title">图表：</p>
 		<!-- * ↓这里反转变量无需使用`.value` * -->
 		<button
 			type="button"
 			@click="plotVisible = !plotVisible"
 			@vue:mounted="init"
 		>
-			{{ plotVisible ? '点击隐藏图表' : '点击显示图表' }}（{{
+			{{ plotVisible ? '点击折叠图表' : '点击展开图表' }}（{{
 				isConnected ? '已连接' : '未连接'
 			}}）
 		</button>
 		<div>
 			<!-- TODO: 控制图表数量 -->
-			<!-- * 这里使用`v-show`控制图表的显示与隐藏 * -->
+			<!-- * 这里使用`v-show`控制图表的展开与折叠 * -->
 			<input
 				v-show="false"
 				type="text"
@@ -61,6 +56,15 @@ pp<!--
 			</div>
 		</div>
 	</div>
+	<!-- * 文本 * -->
+	<div v-show="textData.length > 0">
+		<p @click="textVisible = !textVisible" class="sub-title">
+			文本（{{ textVisible ? '点击折叠' : '点击展开' }}）：
+		</p>
+		<p class="text">
+			{{ textVisible ? textData : textData.slice(0, 20) + '……' }}
+		</p>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -78,9 +82,10 @@ const HEART_BEAT_INTERVAL = 3000 // ! 太快的连接会导致频繁重连，发
 // 子组件 //
 /** 实验自身的信息 */
 const textInfo: Ref<string> = ref('')
-const textVisible: Ref<boolean> = ref(true)
+const infoVisible: Ref<boolean> = ref(true)
 /** 作为文本显示的数据 */
 const textData: Ref<string> = ref('')
+const textVisible: Ref<boolean> = ref(true)
 /** 作为图表显示的数据 */
 const plot: VueElementRefNullable<typeof Plot> = ref(null)
 /**
