@@ -8,6 +8,8 @@ import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import IMap from 'matriangle-api/server/map/IMap'
 import {
 	NARSOperation,
+	NARSOperationRecord,
+	NARSOperationRecordFull,
 	NARSOperationResult,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
 import {
@@ -72,7 +74,7 @@ export type NARSPlayerConfig = {
 		controlKey: string
 	}
 
-	/** 图表参数 */
+	/** 数据显示参数 */
 	dataShow: {
 		/**
 		 * 用于「更新绘图」的数据包的「数据映射」
@@ -85,6 +87,41 @@ export type NARSPlayerConfig = {
 			激活率?: string */ // !【2023-10-31 00:16:20】现在使用任意映射
 			/** 其它映射 */
 			[oldName: string]: string
+		}
+		/**
+		 * 有关「操作历史显示」
+		 */
+		operationHistory: {
+			/**
+			 * 可视化操作历史——单记录、无「自主性区分」版
+			 *
+			 * @param record 操作记录：[操作, 是否自主, 是否成功]
+			 * * 可参考样例：`left_{SELF}_x-S` `S|F`
+			 *
+			 * @returns 一条操作记录 如：
+			 */
+			visualizeOperationRecord: (record: NARSOperationRecord) => string
+			/**
+			 * 可视化操作历史——单记录、有「自主性区分」版
+			 *
+			 * @param record 操作记录：[操作, 是否自主, 是否成功]
+			 * * 可参考样例：`left_{SELF}_x-@S` `@|#` `S|F`
+			 *
+			 * @returns 一条操作记录 如：
+			 */
+			visualizeOperationRecordFull: (
+				record: NARSOperationRecordFull
+			) => string
+			/**
+			 * 决定「自发性操作/自主操作」的前缀（需要带换行）
+			 * @example '自主操作：\n'
+			 */
+			spontaneousPrefix: string
+			/**
+			 * 决定「无意识操作/教学操作」的前缀（需要带换行）
+			 * @example '教学操作：\n'
+			 */
+			unconsciousPrefix: string
 		}
 	}
 

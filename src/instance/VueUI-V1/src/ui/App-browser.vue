@@ -21,7 +21,7 @@
 		ref="dataPanel"
 		@link-start="handleLinkStartRequestAtClient"
 		@link-change="handleLinkChangeAtClient"
-		@config-request="handleConfigRequest"
+		@config-request="handleMessageRequest"
 	/>
 </template>
 
@@ -41,16 +41,65 @@ import { VueElementRefNullable, splitAddress } from '../lib/common'
 import { omega1 } from './../lib/common'
 import ControlPanel from './ControlPanel.vue'
 // import ScreenText from './ScreenText.vue'
-// import MessageCenter from './MessageCenter.vue'
+import MessageCenterDirect from './MessageCenterDirect.vue'
+import DisplayPanel from './DisplayPanel.vue'
+import DataPanel from './DataPanel.vue'
 import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { DirectService } from 'matriangle-mod-message-io-api/services/DirectService'
-import DisplayPanel from './DisplayPanel.vue'
-import DataPanel from './DataPanel.vue'
 import { voidF } from '../../../../common'
-import MessageCenterDirect from './MessageCenterDirect.vue'
+import { DirectService } from 'matriangle-mod-message-io-api/services/DirectService'
+
+// diff //
+
+/** 消息路由器 */
+const router: VueElementRefNullable<typeof MessageCenterDirect> = ref(null)
+
+/**
+ * 给路由器指定地址自动注册服务
+ * * 默认类型：直连（连接=另一个路由器）
+ *
+ * !【2023-11-05 17:13:33】目前从这里向「Vue端路由器」注册的服务，不包括「与CIN对接」的部分
+ * * 因此「全部用直连服务做连接」也没问题
+ *
+ * !【2023-11-05 17:30:32】注意「直连服务」的连接问题
+ * * 📌连接的对象是「母体侧路由器」而非「客户端路由器」
+ *
+ * @param address 服务地址
+ * @param messageCallback 消息回调
+ * @returns 消息路由器服务
+ */
+function registerRouterServiceAt(
+	address: string,
+	messageCallback: MessageCallback
+): IMessageService {
+	// 预先检查（理论上一定有！）
+	if (router.value === null) throw new Error('未找到路由器！')
+	// 构造服务
+	// return new WebSocketServiceClient(...splitAddress(address), messageCallback)
+	return new DirectService(
+		// 拆分的地址
+		...splitAddress(address),
+		// 消息回调
+		messageCallback,
+		// 对接「母体侧路由器」
+		router.value!.routerMatrix
+	)
+}
+
+/**
+ * 启动环境
+ *
+ * ! 相比「Node端」新增的地方
+ *
+ * @param RPS 每秒刷新世界的次数
+ * @param TPS 每秒执行「世界刻」的次数
+ */
+function launchEnv(TPS: number, RPS: number): void {
+	// 启动路由器
+	router.value?.env.launch(TPS, RPS)
+}
 
 /// 开始 ///
 
@@ -62,9 +111,8 @@ window.addEventListener('keyup', (e: KeyboardEvent): void =>
 	onKeyEvent(e, false)
 )
 
-// 消息路由器 //
+// 消息路由 //
 type MessagePack = { address: string; message: string }
-const router: VueElementRefNullable<typeof MessageCenterDirect> = ref(null)
 /**
  * 向（客户端）路由器转发消息
  * * 附带「响应式自动重连」功能
@@ -119,44 +167,6 @@ const handleLinkChangeAtClient = (
 	// 直接调用路由器方法
 	router.value?.routerClient?.handleAddressChange(oldAddress, newAddress)
 
-/**
- * 给路由器指定地址自动注册服务
- * * 默认类型：直连（连接=另一个路由器）
- *
- * !【2023-11-05 17:13:33】目前从这里向「Vue端路由器」注册的服务，不包括「与CIN对接」的部分
- * * 因此「全部用直连服务做连接」也没问题
- *
- * !【2023-11-05 17:30:32】注意「直连服务」的连接问题
- * * 📌连接的对象是「母体侧路由器」而非「客户端路由器」
- *
- * @param address 服务地址
- * @param messageCallback 消息回调
- * @returns 消息路由器服务
- */
-function registerRouterServiceAt(
-	address: string,
-	messageCallback: MessageCallback
-): IMessageService {
-	// 预先检查（理论上一定有！）
-	if (router.value === null) throw new Error('未找到路由器！')
-	// 构造服务
-	// return new WebSocketServiceClient(...splitAddress(address), messageCallback)
-	return new DirectService(
-		// 拆分的地址
-		...splitAddress(address),
-		// 消息回调
-		messageCallback,
-		// 对接「母体侧路由器」
-		router.value!.routerMatrix
-	)
-}
-
-// 启动环境 //
-function launchEnv(TPS: number, RPS: number): void {
-	// 启动路由器
-	router.value?.env.launch(TPS, RPS)
-}
-
 // 键控面板 //
 const panel: VueElementRefNullable<typeof ControlPanel> = ref(null)
 function onKeyEvent(event: KeyboardEvent, isDown: boolean): void {
@@ -180,14 +190,13 @@ function handleDisplayRefreshRequest(address: string, message: string): void {
 // 数据 //
 const dataPanel: VueElementRefNullable<typeof DataPanel> = ref(null)
 
-/** 处理「配置刷新请求」 */
-function handleConfigRequest(address: string, message: string): void {
-	// 控制客户端发送消息
+/** 处理「数据显示面板 刷新请求」 */
+function handleMessageRequest(address: string, message: string): void {
 	console.log(
-		'配置刷新请求:',
+		'数据显示面板 刷新请求:',
 		address,
 		message,
-		router.value?.routerClient?.isServiceActive(address)
+		router.value?.routerClient.isServiceActive(address)
 	)
 	router.value?.routerClient.send(address, message)
 }

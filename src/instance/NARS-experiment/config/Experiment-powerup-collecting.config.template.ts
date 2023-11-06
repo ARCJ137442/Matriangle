@@ -1,4 +1,9 @@
-import { iPoint, traverseNDSquareFrame } from 'matriangle-common/geometricTools'
+import {
+	iPoint,
+	iPointRef,
+	iPointVal,
+	traverseNDSquareFrame,
+} from 'matriangle-common/geometricTools'
 import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
@@ -21,7 +26,7 @@ import {
 	NarsesePunctuation,
 	NarseseTenses,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
-import { uint } from 'matriangle-legacy/AS3Legacy'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import { NAIRCmdTypes } from 'matriangle-mod-nar-framework/NAIRCmdTypes.type'
 import {
 	NativePlayerEvent,
@@ -29,25 +34,30 @@ import {
 } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import Block from 'matriangle-api/server/block/Block'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import Entity from 'matriangle-api/server/entity/Entity'
+import {
+	IEntityDisplayable,
+	IEntityInGrid,
+} from 'matriangle-api/server/entity/EntityInterfaces'
+import { IShape, DisplayLayers } from 'matriangle-api'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
 export const SAFE: string = '[safe]'
+/** 目标：充能 */
+export const POWERED: string = '[powered]'
 
 /** 信息 */
 export const info = (config: NARSEnvConfig): string => `
-[[实验：NARS小车碰撞]]
+[[实验：NARS能量收集]]
 
 [实验内容]
-1. 主体：AI小车，具有
-  	- 感知：简单的边界感知，只有「直接被阻挡」才会收到「阻挡」信号
+1. 主体：AI收集者：具有
+	- 感知：对「能量包」的类型、距离感知
 	- 运动：向所有的「任意维整数角」方向移动（一维2，二维4，三维6……）
-2. 地图：简单的「方形边界」
-3. 目标：做出「安全」的碰撞——小车靠墙时，不继续往墙壁方向移动
-
-[实验目标]
-1. 理解NARS的基本原理
-2. 理解NARS的「操作」和「感知」
+2. 地图：有限无界的地图
+	- 能量包：随机分布在地图中不是「墙」的部分
+3. 目标：做出「安全」的碰撞——小车不往墙壁方向移动
 
 [实验主要组成部分]
 1. NARS服务器：参与实验的AI，能通过文本方式向实验环境收发信息
@@ -68,8 +78,13 @@ export const info = (config: NARSEnvConfig): string => `
 		)
 	)
 	.join('、')} 以便实验环境对接
-	- 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息
+	- 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息'
+
+[其它注解]
+// ! 实验与「小车碰撞」完全独立，二者间除了「可复用的代码」外没有任何关联
 `
+
+// 新世界机制 //
 
 /**
  * 简单的实验方块「墙」（原型对象）
@@ -81,6 +96,68 @@ export const WALL: Block<null> = new Block(
 	new BlockAttributes(0).asSolid,
 	null // 无特殊方块状态
 )
+
+/**
+ * 实验所用的「能量包」
+ */
+export class Powerup
+	extends Entity
+	implements IEntityInGrid, IEntityDisplayable
+{
+	/**
+	 * 构造函数
+	 * @param position 所处的位置
+	 * @param good 奖励类型：正向|负向
+	 */
+	public constructor(
+		position: iPointRef,
+		/**
+		 * 决定这个「能量包」的奖励类型：正向|负向
+		 * * true：正向
+		 * * false：负向
+		 */
+		public good: boolean
+	) {
+		super()
+		this.position.copyFrom(position)
+	}
+
+	// 接口实现 //
+
+	public position: iPointVal = new iPoint()
+	/** 方块更新：自身位置被阻挡⇒消失 */
+	onPositedBlockUpdate(host: IMatrix, ...args: unknown[]): void {
+		if (
+			!host.map.testCanPass_I(
+				this.position,
+				true,
+				false,
+				false,
+				false,
+				false,
+				[]
+			)
+		)
+			host.removeEntity(this)
+	}
+
+	// 可显示
+	i_displayableContainer = true as const
+	shapeInit(shape: IShape): void {
+		// !【2023-11-06 16:10:28】暂不实现
+	}
+	shapeRefresh(shape: IShape): void {
+		// !【2023-11-06 16:10:28】暂不实现
+	}
+	shapeDestruct(shape: IShape): void {
+		// !【2023-11-06 16:10:28】暂不实现
+	}
+	i_displayable = true as const
+	/** @implements 显示层级 = 奖励箱 */
+	zIndex: int = DisplayLayers.BONUS_BOX
+}
+
+// 实验环境 //
 
 /** 空白的构造器 */
 const BlankMessageServiceConstructor = (): IMessageService => {
@@ -209,7 +286,7 @@ const configConstructor = (
 		{
 			// 属性参数（对接母体逻辑）
 			attributes: {
-				name: 'Alpha',
+				name: 'Hai',
 				health: {
 					initialHP: 100,
 					initialMaxHP: 100,

@@ -23,6 +23,10 @@ const isString = (x: unknown): boolean => typeof x === 'string'
 /** 操作返回值的类型，目前暂时是「是否成功」 */
 export type NARSOperationResult = boolean
 
+/** 用于记录 */
+export type NARSOperationRecord = [NARSOperation, boolean]
+export type NARSOperationRecordFull = [...NARSOperationRecord, boolean]
+
 /**
  * NARS的输出类型
  * * 最初由PyNARS而来

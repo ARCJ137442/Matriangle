@@ -45,6 +45,8 @@ import {
 	WebNARSOutput,
 	WebNARSOutputJSON,
 	isNARSOperation,
+	NARSOperationRecordFull,
+	NARSOperationRecord,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
 import {
 	IMessageRouter,
@@ -216,6 +218,7 @@ export class NARSEnv {
 		// *添加实体
 		host.addEntities(visualizer)
 	}
+
 	/** （总领）配置实体 */
 	setupEntities(host: IMatrix): void {
 		// 消息路由器
@@ -399,6 +402,81 @@ export class NARSPlayerAgent {
 	protected _goalRemindRate: uint = 0
 	protected _babbleRate: uint = 0
 	/**
+	 * 操作历史
+	 *
+	 * @type 类型：`[所做操作, 是否自主, 是否成功]`
+	 * * 所做操作：同{@link NARSOperation}
+	 * * 是否自主：`true`代表自主操作，`false`代表被动操作
+	 * * 是否成功：`true`代表成功，`false`代表失败
+	 */
+	protected _operationHistory: NARSOperationRecordFull[] = []
+
+	/**
+	 * 可视化操作历史（整体版）
+	 * * 不管其「是否自主」，均会将「操作历史」直接以线性方式展开
+	 *
+	 * @example left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_y-#F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_z-@S -> left_{SELF}_y-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_z-@S -> left_{SELF}_z-#S -> right_{SELF}_z-@S -> right_{SELF}_z-#F -> right_{SELF}_x-@F -> left_{SELF}_z-#S
+	 */
+	public visualizeOperationHistoryFull(separator: string = ' -> '): string {
+		return this._operationHistory
+			.map(
+				// map方法保留数组各元素之间的顺序，参见：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+				record =>
+					this.config.dataShow.operationHistory.visualizeOperationRecordFull(
+						record
+					)
+			)
+			.join(separator)
+	}
+
+	/**
+	 * 可视化操作历史（分自主版）
+	 * * 以「自主」和「非自主」将输出分成两行
+	 *   * 第一行为「自主」
+	 *   * 第二行为「非自主」
+	 *
+	 * @example left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_y-#F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_z-@S -> left_{SELF}_y-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_z-@S -> left_{SELF}_z-#S -> right_{SELF}_z-@S -> right_{SELF}_z-#F -> right_{SELF}_x-@F -> left_{SELF}_z-#S
+	 */
+	public visualizeOperationHistorySeparated(
+		spontaneousPrefix: string = '',
+		unconsciousPrefix: string = '',
+		spontaneousSeparator: string = '-> ',
+		unconsciousSeparator: string = ' -> '
+	): string {
+		let result_s: string = spontaneousPrefix
+		let result_u: string = unconsciousPrefix
+		const current_record: NARSOperationRecord = [[''], false]
+		let current_record_str: string
+		let isFirst_s: boolean = false
+		let isFirst_u: boolean = false
+		for (const recordFull of this._operationHistory) {
+			// 剥去「自主/非自主」属性
+			current_record[0] = recordFull[0]
+			current_record[1] = recordFull[2] // ! 索引[2]才对应「是否成功」
+			current_record_str =
+				this.config.dataShow.operationHistory.visualizeOperationRecord(
+					current_record
+				)
+			// 若为「自主操作」
+			if (recordFull[1]) {
+				// 处理分隔符
+				if (!isFirst_s) isFirst_s = true
+				else result_s += spontaneousSeparator
+				// 增加记录
+				result_s += current_record_str
+			} else {
+				// 处理分隔符
+				if (!isFirst_u) isFirst_u = true
+				else result_u += unconsciousSeparator
+				// 增加记录
+				result_u += current_record_str
+			}
+		}
+		// 最后加上换行符
+		return result_s + '\n' + result_u
+	}
+
+	/**
 	 * 判断「已注册操作」中是否有指定的操作符
 	 * @param operator 操作符 // ! 带尖号「^0」
 	 */
@@ -424,7 +502,7 @@ export class NARSPlayerAgent {
 		env: NARSEnv,
 		host: IMatrix,
 		p: IPlayer,
-		config: NARSPlayerConfig,
+		public config: NARSPlayerConfig,
 		router: IMessageRouter,
 		ctlWeb: WebController,
 		kcc: KeyboardControlCenter
@@ -469,11 +547,28 @@ export class NARSPlayerAgent {
 				config.connections.dataShow.host,
 				config.connections.dataShow.port,
 				/**
-				 * 消息回调=初始化：传入的任何消息都视作「初始数据获取请求」
-				 * * 消息格式：`JSON.stringify(NARSPlotData)`
+				 * 消息回调=初始化：回传「配置信息」
+				 * * 初始配置：
+				 *   * 消息格式：`JSON.stringify(NARSPlotData)`
 				 */
-				(message: string): string =>
-					JSON.stringify(env.config.plot.initialOption)
+				(message: string): string => {
+					// 具体「消息源」参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#L247`
+					switch (message) {
+						// 'request-config' => 图表配置
+						case 'request-config':
+							return JSON.stringify(env.config.plot.initialOption)
+						// 'request-info' => 基本信息
+						case 'request-info':
+							// ! `i`为前缀 // 可参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#175`
+							return 'i' + env.config.info(env.config)
+						// 否则 => 空信息 + 并控制台报错
+						default:
+							console.error(
+								`数据显示服务：无效的消息「${message}」`
+							)
+							return ''
+					}
+				}
 			)
 		)
 
@@ -500,6 +595,7 @@ export class NARSPlayerAgent {
 		/** 激活率：实验全程 OpenNARS 持续运动的频率 */
 
 		// 对接NARS操作 //
+		let _temp_lastOperationSuccess: boolean
 		/**
 		 * 对接配置中的操作
 		 *
@@ -515,30 +611,33 @@ export class NARSPlayerAgent {
 			operation: NARSOperation,
 			spontaneous: boolean
 		): boolean => {
+			// 执行操作，返回结果
+			_temp_lastOperationSuccess = config.behavior.operate(
+				env,
+				self,
+				selfConfig,
+				host,
+				operation,
+				// 自动获取操作索引
+				this.registeredOperation_outputs.indexOf(
+					config.NAL.op_output(operation)
+				),
+				send2NARS
+			)
 			// 统计
 			总次数++
+			this._operationHistory.push([
+				operation,
+				spontaneous,
+				_temp_lastOperationSuccess,
+			])
 			// 成功
-			if (
-				config.behavior.operate(
-					env,
-					self,
-					selfConfig,
-					host,
-					operation,
-					// 自动获取操作索引
-					this.registeredOperation_outputs.indexOf(
-						config.NAL.op_output(operation)
-					),
-					send2NARS
-				)
-			) {
+			if (_temp_lastOperationSuccess) {
 				// 统计
 				总成功次数++
 				if (spontaneous) 自主成功次数++
-				// 返回
-				return true
 			}
-			return false
+			return _temp_lastOperationSuccess
 		}
 		// 接收消息 //
 		/**
@@ -797,6 +896,15 @@ export class NARSPlayerAgent {
 							config.dataShow.dataNameMap
 						)
 					)
+				)
+				router.sendMessageTo(
+					config.connections.dataShow.host,
+					config.connections.dataShow.port,
+					'|' +
+						this.visualizeOperationHistorySeparated(
+							config.dataShow.operationHistory.spontaneousPrefix,
+							config.dataShow.operationHistory.unconsciousPrefix
+						)
 				)
 				// 检测
 				if (
