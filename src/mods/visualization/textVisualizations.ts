@@ -66,7 +66,9 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 		// 自定义名称
 		(entity as IPlayer)?.customName ??
 			// Type.name
-			getEntityType(entity).name ??
+			getEntityType(entity)?.name ??
+			// 用类名
+			getClass(entity)?.name ??
 			// 未定义
 			'#UNDEF',
 		maxLength
@@ -235,9 +237,24 @@ export function entityLV实体列表可视化(
 	return result
 }
 
+interface 具有私用接口的实体类型 {
+	visualize_text: () => string
+}
+function 具有私用接口(e: Entity): e is 具有私用接口的实体类型 & Entity {
+	return (
+		(e as unknown as 具有私用接口的实体类型)?.visualize_text !== undefined
+	)
+}
+
 function entityTS实体标签显示(e: Entity): string {
+	// ! 私用接口：优先尝试调用`visualize_text`方法 ! //
+	if (具有私用接口(e))
+		return typeof e.visualize_text() === 'string'
+			? e.visualize_text()
+			: '#unknown'
+	// 正常判断部分 //
 	// 玩家
-	if (isPlayer(e))
+	else if (isPlayer(e))
 		if (e instanceof PlayerBatr)
 			// BaTr
 			return `${getClass(e)?.name}"${e.customName}"${getPT获取坐标标签(

@@ -16,6 +16,7 @@ import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import Entity from 'matriangle-api/server/entity/Entity'
 
 /** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
 export type MessageServiceConstructor = (
@@ -95,8 +96,8 @@ export type NARSPlayerConfig = {
 			/**
 			 * 可视化操作历史——单记录、无「自主性区分」版
 			 *
-			 * @param record 操作记录：[操作, 是否自主, 是否成功]
-			 * * 可参考样例：`left_{SELF}_x-S` `S|F`
+			 * @param record 操作记录：[操作, 操作结果]
+			 * * 可参考样例：`left_{SELF}_x-S` `?|S|F`
 			 *
 			 * @returns 一条操作记录 如：
 			 */
@@ -104,7 +105,7 @@ export type NARSPlayerConfig = {
 			/**
 			 * 可视化操作历史——单记录、有「自主性区分」版
 			 *
-			 * @param record 操作记录：[操作, 是否自主, 是否成功]
+			 * @param record 操作记录：[操作, 操作结果, 是否自主]
 			 * * 可参考样例：`left_{SELF}_x-@S` `@|#` `S|F`
 			 *
 			 * @returns 一条操作记录 如：
@@ -218,9 +219,11 @@ export type NARSPlayerConfig = {
 		) => void
 		/**
 		 * 一个AI刻（单位AI运行周期）中
+		 * * 原本的`self`可以通过`agent.player`取得
+		 *
 		 * @param env 所调用的环境
 		 * @param event 玩家事件
-		 * @param self 发送事件的玩家
+		 * @param agent 发送事件的玩家的「NARS智能体」
 		 * @param selfConfig 发送事件的玩家的配置（用于快速索引）
 		 * @param host 世界母体
 		 * @param posPointer 传递过来以提升性能的位置指针
@@ -229,7 +232,7 @@ export type NARSPlayerConfig = {
 		AITick: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			self: IPlayer,
+			agent: NARSPlayerAgent,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix,
 			posPointer: iPointRef,
@@ -253,15 +256,17 @@ export type NARSPlayerConfig = {
 		) => NARSOperation
 		/**
 		 * 执行操作
+		 * * 原本的`self`可以通过`agent.player`取得
+		 *
 		 * @param env 所调用的环境
-		 * @param self 调用的玩家
+		 * @param agent 发送事件的玩家的「NARS智能体」
 		 * @param selfConfig 调用的玩家的配置（用于快速索引）
 		 * @param host 世界母体
 		 * @param op 操作
 		 */
 		operate: (
 			env: NARSEnv,
-			self: IPlayer,
+			agent: NARSPlayerAgent,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix,
 			op: NARSOperation,
@@ -269,10 +274,12 @@ export type NARSPlayerConfig = {
 			send2NARS: (message: string) => void
 		) => NARSOperationResult
 		/**
+		 * 接收到「反馈控制器」的「事件反馈」时
+		 * * 原本的`self`可以通过`agent.player`取得
 		 *
 		 * @param env 所调用的环境
 		 * @param event 接收到的「玩家事件」
-		 * @param self 调用的玩家
+		 * @param agent 发送事件的玩家的「NARS智能体」
 		 * @param selfConfig 调用的玩家的配置（用于快速索引）
 		 * @param host 世界母体
 		 * @param send2NARS 「向NARS发送消息」的回调函数
@@ -280,7 +287,7 @@ export type NARSPlayerConfig = {
 		feedback: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			self: IPlayer,
+			agent: NARSPlayerAgent,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix,
 			send2NARS: (message: string) => void
@@ -321,8 +328,18 @@ export type NARSEnvConfig = {
 
 	/** 地图参数 */
 	map: {
-		/** 地图初始化 */
+		/**
+		 * 地图初始化
+		 * * 生成模拟环境所需的（所有）「地图」
+		 *   *【2023-11-06 22:43:55】目前尚未尝试「切换地图」一说——所以一般只返回一个地图
+		 */
 		initMaps: () => IMap[]
+		/**
+		 * 附加实体初始化
+		 * * 可选：若无此方法，则不会进行额外初始化
+		 * * 只需要创建一些实体对象然后返回——环境会自动将实体添加进母体中
+		 */
+		initExtraEntities?: (config: NARSEnvConfig, host: IMatrix) => Entity[]
 	}
 
 	/** 玩家 */

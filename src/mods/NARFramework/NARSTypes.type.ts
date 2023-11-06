@@ -20,11 +20,29 @@ export function isNARSOperation(x: unknown): x is NARSOperation {
 }
 const isString = (x: unknown): boolean => typeof x === 'string'
 
-/** 操作返回值的类型，目前暂时是「是否成功」 */
-export type NARSOperationResult = boolean
+/**
+ * 操作返回值的类型
+ * * 除了「是否成功」外，还有undefined代指「无结果」
+ */
+export type NARSOperationResult = boolean | undefined
 
-/** 用于记录 */
-export type NARSOperationRecord = [NARSOperation, boolean]
+/**
+ * 用于记录「操作历史」（其中一个记录，不包括「是否自主」）
+ *
+ * @type 类型：`[所做操作, 操作结果]`
+ * * 所做操作：同{@link NARSOperation}
+ * * 操作结果：`true`代表成功，`false`代表失败
+ */
+export type NARSOperationRecord = [NARSOperation, NARSOperationResult]
+
+/**
+ * 用于记录「操作历史」（其中一个记录）
+ *
+ * @type 类型：`[所做操作, 是否自主, 操作结果]`
+ * * 所做操作：同{@link NARSOperation}
+ * * 操作结果：`true`代表成功，`false`代表失败
+ * * 是否自主：`true`代表自主操作，`false`代表被动操作
+ */
 export type NARSOperationRecordFull = [...NARSOperationRecord, boolean]
 
 /**

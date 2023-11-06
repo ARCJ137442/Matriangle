@@ -228,12 +228,15 @@ export module NativeEntityTypes {
 export function getEntityType(
 	entity: Entity,
 	types: EntityType[] = NativeEntityTypes._ALL_ENTITY
-): EntityType {
+): EntityType | undefined {
+	// 尝试在「注册表」中搜索
 	for (const entityType of types) {
 		if (entityType.entityClass === getClass(entity)) {
 			return entityType
 		}
 	}
+	// 未找到⇒返回「未定义」 // TODO: 目前「实体注册机制」尚未完全实现
+	return undefined
 	throw new Error(
 		`未找到${entity.toString()}在${types.toString()}对应的实体类型`
 	)

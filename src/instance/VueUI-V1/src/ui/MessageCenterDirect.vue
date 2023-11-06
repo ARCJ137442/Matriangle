@@ -10,13 +10,11 @@
 import MessageRouterAdvanced, {
 	vueExposeConstructor,
 } from 'matriangle-mod-message-io-api/MessageRouterAdvanced'
-import {
-	envModifiers_default,
-	envConstructor,
-} from 'matriangle-instance-nars-experiment/launch$base'
+import { envConstructor } from 'matriangle-instance-nars-experiment/launch-browser'
 import directServicesModifier from 'matriangle-instance-nars-experiment/config/direct-services.modifier'
 import { NARSEnv } from '../../../NARS-experiment/NARSEnv'
 import { NARSEnvConfig } from '../../../NARS-experiment/config/API'
+import { envModifiers_default } from '../../../NARS-experiment/launch$base'
 
 // 客户端路由 //
 /** 路由器对象 */
@@ -26,11 +24,7 @@ const routerClient = new MessageRouterAdvanced()
 
 /** 创建环境 */
 const env: NARSEnv = envConstructor(
-	// 构造器的额外配置
-	{
-		// 二维地图
-		map_sizes: [7, 5],
-	},
+	// ! 构造器的额外配置现在在launch-browser处存储
 	// 承继默认修饰器
 	...envModifiers_default,
 	// 使用直连服务

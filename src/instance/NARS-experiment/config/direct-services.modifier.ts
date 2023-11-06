@@ -3,10 +3,10 @@ import { DirectService } from 'matriangle-mod-message-io-api/services/DirectServ
 import {
 	MessageCallback,
 	IMessageService,
+	IMessageRouter,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { dictionaryPatternReplace } from 'matriangle-common/utils'
-import MessageRouter from 'matriangle-mod-message-io-api/MessageRouter'
 import { WebSocketServiceClient } from 'matriangle-mod-message-io-browser/services'
 
 // 需复用的常量
@@ -29,7 +29,7 @@ const WSServiceClientConstructor: MessageServiceConstructor = (
  */
 export default function (
 	originalConfig: NARSEnvConfig,
-	clientRouter: MessageRouter
+	clientRouter: IMessageRouter
 ): NARSEnvConfig {
 	/** 构造直连服务 */
 	const directServiceConstructor = (

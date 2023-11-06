@@ -1,9 +1,4 @@
-import {
-	iPoint,
-	iPointRef,
-	iPointVal,
-	traverseNDSquareFrame,
-} from 'matriangle-common/geometricTools'
+import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
@@ -40,6 +35,10 @@ import {
 	IEntityInGrid,
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { IShape, DisplayLayers } from 'matriangle-api'
+import {
+	getPlayers,
+	hitTestEntity_between_Grid,
+} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -125,20 +124,76 @@ export class Powerup
 	// 接口实现 //
 
 	public position: iPointVal = new iPoint()
-	/** 方块更新：自身位置被阻挡⇒消失 */
+	/** 方块更新：自身位置被阻挡⇒重定位 */
 	onPositedBlockUpdate(host: IMatrix, ...args: unknown[]): void {
-		if (
-			!host.map.testCanPass_I(
-				this.position,
-				true,
-				false,
-				false,
-				false,
-				false,
-				[]
-			)
+		// 位置不适合⇒重定位
+		if (!this.isSuitablePosition(host)) this.relocate(host)
+	}
+
+	/** 判断自身当前位置是否「适合放置」 */
+	protected isSuitablePosition(host: IMatrix): boolean {
+		return Powerup.isSuitablePosition(host, this.position)
+	}
+
+	/** （静态）判断自身位置 */
+	protected static isSuitablePosition(
+		host: IMatrix,
+		position: iPointRef
+	): boolean {
+		return host.map.testCanPass_I(
+			position,
+			// 作为「玩家」
+			true,
+			false,
+			false,
+			// 不会「避免伤害」（BaTr遗留产物）
+			false,
+			// 避免玩家
+			true,
+			getPlayers(host)
 		)
-			host.removeEntity(this)
+	}
+
+	/**
+	 * 私用「文本可视化方法」
+	 */
+	public visualize_text(): string {
+		return `Powerup@${this.position.join(',')}[${this.good ? '正' : '负'}]`
+	}
+
+	/**
+	 * 重定位到一个「适合」的位置
+	 * @param host 所属母体
+	 * @returns 是否「重定位成功」
+	 */
+	public relocate(host: IMatrix): boolean {
+		/** 点の指针 */
+		const position_pointer = new iPoint()
+		/** 最多尝试256次 */
+		let max_i: int = 0x100
+		while (max_i-- > 0) {
+			// 随机取点
+			position_pointer.copyFrom(host.map.storage.randomPoint)
+			// 适合放置⇒移动&返回
+			if (Powerup.isSuitablePosition(host, position_pointer)) {
+				// ! 直接拷贝坐标
+				this.position.copyFrom(position_pointer)
+				// 返回
+				return true
+			}
+		}
+		let is_found: boolean = false
+		// 若还是没找到⇒地毯式搜索
+		host.map.storage.forEachValidPositions((position: iPointRef): void => {
+			if (is_found) return // ! 这里的`return`并非「整个函数返回」而只是代表「这个匿名函数返回」
+			if (Powerup.isSuitablePosition(host, position)) {
+				//! 直接拷贝坐标
+				this.position.copyFrom(position)
+				// 标记已找到
+				is_found = true
+			}
+		})
+		return is_found
 	}
 
 	// 可显示
@@ -155,6 +210,70 @@ export class Powerup
 	i_displayable = true as const
 	/** @implements 显示层级 = 奖励箱 */
 	zIndex: int = DisplayLayers.BONUS_BOX
+}
+
+/**
+ * 检测「（移动后的）玩家与能量包的碰撞」
+ * * 检测碰撞后，自动触发「玩家收集能量包」事件
+ *
+ * ! 只会检测一个
+ */
+function testPowerupCollision(
+	env: NARSEnv,
+	host: IMatrix,
+	agent: NARSPlayerAgent,
+	playerConfig: NARSPlayerConfig,
+	send2NARS: (message: string) => void
+): boolean {
+	for (const entity of host.entities) {
+		// 若其为「能量包」
+		if (entity instanceof Powerup) {
+			if (hitTestEntity_between_Grid(agent.player, entity))
+				onPowerupCollected(
+					env,
+					host,
+					entity,
+					agent,
+					playerConfig,
+					send2NARS
+				)
+		}
+	}
+	return false
+}
+
+/**
+ * 当玩家拾取到「能量包」
+ */
+function onPowerupCollected(
+	env: NARSEnv,
+	host: IMatrix,
+	powerup: Powerup,
+	agent: NARSPlayerAgent,
+	playerConfig: NARSPlayerConfig,
+	send2NARS: (message: string) => void
+): void {
+	// 重定位
+	powerup.relocate(host)
+	// 玩家作为「NARS智能体」：奖励/惩罚
+	// 发送给NARS
+	send2NARS(
+		// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+		generateCommonNarseseBinaryToCIN(
+			playerConfig.NAL.SELF, // 主词
+			NarseseCopulas.Inheritance, // 系词
+			POWERED, // 谓词
+			NarsesePunctuation.Judgement, // 标点
+			NarseseTenses.Present, // 时态
+			powerup.good // 真值
+				? // 正向
+				  playerConfig.NAL.positiveTruth
+				: // 负向
+				  playerConfig.NAL.negativeTruth
+		)
+	)
+	// * 记录进统计数据
+	agent.recordStat(powerup.good, agent.lastOperationSpontaneous)
 }
 
 // 实验环境 //
@@ -219,15 +338,22 @@ export const generateCommonNarseseBinaryToCIN = (
 // 临时变量
 
 /** 额外配置 */
-export type ExtraCCExperimentConfig = {
+export type ExtraPCExperimentConfig = {
 	/** 地图尺寸 */
 	map_sizes: uint[]
+	/** 能量包配置 */
+	powerup: {
+		/** 正向能量包数目 */
+		numGood: uint
+		/** 负向能量包数目 */
+		numBad: uint
+	}
 }
 
 /** 配置 */
 const configConstructor = (
 	// 额外参数 //
-	extraConfig: ExtraCCExperimentConfig
+	extraConfig: ExtraPCExperimentConfig
 ): NARSEnvConfig => ({
 	// 根据自身输出 实验/配置 信息
 	info,
@@ -250,28 +376,59 @@ const configConstructor = (
 	// 地图参数
 	map: {
 		/** 地图初始化 */
-		initMaps: (): IMap[] => {
+		initMaps(): IMap[] {
 			const maps: IMap[] = []
 
 			// 构造参数 // !【2023-11-05 17:05:01】现在通过「额外参数」引入
-			const SIZES = new iPoint().copyFromArgs(...extraConfig.map_sizes)
+			const SIZES: iPointVal = new iPoint().copyFromArgs(
+				...extraConfig.map_sizes
+			)
 
 			// 存储结构 //
 			const storage = new MapStorageSparse(SIZES.length)
 			// * 大体结构：#__C__#
-			// 填充边框
+			// 填充两个角落
+			storage.setBlock(
+				new iPoint().copyFrom(SIZES).fill(0),
+				WALL.softCopy()
+			)
+			storage.setBlock(
+				new iPoint().copyFrom(SIZES).addFromSingle(-1),
+				WALL.softCopy()
+			)
+			/* // 填充边框
+			! 新的模式没有边框
 			traverseNDSquareFrame(
 				new iPoint().copyFrom(SIZES).fill(0),
 				new iPoint().copyFrom(SIZES).addFromSingle(-1),
 				(p: iPoint): void => {
 					storage.setBlock(p, WALL.softCopy())
 				}
-			)
+			) */
 
 			// 注册 //
 			maps.push(new Map_V1('model', storage))
 
 			return maps
+		},
+		// 实体初始化：读取配置本身
+		initExtraEntities(config, host): Entity[] {
+			const entities: Entity[] = []
+			let i: uint, powerup: Powerup
+			// 正向能量包
+			for (i = 0; i < extraConfig.powerup.numGood; i++) {
+				powerup = new Powerup(host.map.storage.randomPoint, true)
+				powerup.relocate(host)
+				entities.push(powerup)
+			}
+			// 负向能量包
+			for (i = 0; i < extraConfig.powerup.numBad; i++) {
+				powerup = new Powerup(host.map.storage.randomPoint, false)
+				powerup.relocate(host)
+				entities.push(powerup)
+			}
+			// 返回实体列表
+			return entities
 		},
 	},
 
@@ -282,11 +439,11 @@ const configConstructor = (
 
 	// 玩家参数
 	players: [
-		// 第一个玩家Alpha
+		// 第一个玩家AgentHai
 		{
 			// 属性参数（对接母体逻辑）
 			attributes: {
-				name: 'Hai',
+				name: 'AgentHai',
 				health: {
 					initialHP: 100,
 					initialMaxHP: 100,
@@ -312,7 +469,7 @@ const configConstructor = (
 					port: 3030,
 					constructor: BlankMessageServiceConstructor,
 				},
-				controlKey: 'Alpha',
+				controlKey: 'AgentHai',
 			},
 
 			// 数据显示
@@ -338,7 +495,7 @@ const configConstructor = (
 						// 「操作-状态」分隔符
 						'-' +
 						// 是否成功：成功Success，失败Failed
-						(record[1] ? 'S' : 'F'),
+						(record[1] === undefined ? '?' : record[1] ? 'S' : 'F'),
 					/**
 					 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
 					 */
@@ -350,9 +507,9 @@ const configConstructor = (
 						// 「操作-状态」分隔符
 						'-' +
 						// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
-						(record[1] ? '@' : '#') +
-						// 是否成功：成功Success，失败Failed
-						(record[2] ? 'S' : 'F'),
+						(record[2] ? '@' : '#') +
+						// 是否成功：无果`?`，成功Success，失败Failed
+						(record[1] === undefined ? '?' : record[1] ? 'S' : 'F'),
 					spontaneousPrefix: '自主操作：\n',
 					unconsciousPrefix: '教学操作：\n',
 				},
@@ -361,14 +518,14 @@ const configConstructor = (
 			// 计时参数
 			timing: {
 				/** 单位执行速度:感知 */
-				unitAITickSpeed: 1,
+				unitAITickSpeed: 2,
 				/** 目标提醒相对倍率 */
 				goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
 
 				/** Babble相对倍率 */
 				babbleRate: 1,
 				/** 「长时间无操作⇒babble」的阈值 */
-				babbleThreshold: 1,
+				babbleThreshold: 3,
 			},
 
 			// 词项常量池 & 词法模板
@@ -377,7 +534,7 @@ const configConstructor = (
 			NAL: {
 				SELF: '{SELF}',
 				/** @implements 表示「正向目标」的词项组 */
-				POSITIVE_GOALS: [SAFE],
+				POSITIVE_GOALS: [/* SAFE,  */ POWERED], // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」 // TODO: 可能多目标还会「分心干扰」一些
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
 				positiveTruth: '%1.0;0.9%',
@@ -449,18 +606,57 @@ const configConstructor = (
 				AITick: (
 					env: NARSEnv,
 					event: PlayerEvent,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					posPointer: iPoint,
 					send2NARS: (message: string) => void
 				): void => {
 					// 指针归位
-					posPointer.copyFrom(self.position)
+					posPointer.copyFrom(agent.player.position)
+					// * 感知：能量包视野（单点无距离） * //
+					for (const entity of host.entities) {
+						// 若为能量包
+						if (entity instanceof Powerup) {
+							let i = 0
+							// 逐个维度对比
+							for (
+								i = 0;
+								i < host.map.storage.numDimension;
+								++i
+							) {
+								// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
+								// * 直接对每个维度进行判断，然后返回各自的「是否看见」
+								if (
+									entity.position[i] ===
+									agent.player.position[i]
+								)
+									// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
+									send2NARS(
+										// 例句：`<{SELF} --> [x_powerup_seen]>. :|: %1.0;0.9%`
+										generateCommonNarseseBinaryToCIN(
+											selfConfig.NAL.SELF, // 主词
+											NarseseCopulas.Inheritance, // 系词
+											`[${nameOfAxis_M(i)}_powerup_${
+												entity.good ? 'good' : 'bad'
+											}_seen]`, // 谓词
+											NarsesePunctuation.Judgement, // 标点
+											NarseseTenses.Present, // 时态
+											// 真值
+											/* entity.position[i] === self.position[i]
+											? selfConfig.NAL.positiveTruth
+											: selfConfig.NAL.negativeTruth */
+											selfConfig.NAL.positiveTruth
+										)
+									)
+							}
+						}
+					}
+					// * 感知：墙壁碰撞 * //
 					for (let i = 0; i < host.map.storage.numDimension; ++i) {
 						// 负半轴
 						posPointer[i]--
-						if (!self.testCanGoTo(host, posPointer)) {
+						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
 								generateCommonNarseseBinaryToCIN(
@@ -475,7 +671,7 @@ const configConstructor = (
 						}
 						// 从负到正
 						posPointer[i] += 2
-						if (!self.testCanGoTo(host, posPointer)) {
+						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
 								generateCommonNarseseBinaryToCIN(
@@ -490,6 +686,34 @@ const configConstructor = (
 						}
 						// 归位⇒下一座标轴
 						posPointer[i]--
+					}
+					// * 运动：前进 * //
+					// 缓存点
+					const oldP = new iPoint().copyFrom(agent.player.position)
+					// 前进
+					agent.player.moveForward(host)
+					// * 反馈式感知 * // TODO: 是否需要使用这里面的反馈
+					// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
+					testPowerupCollision(
+						env,
+						host,
+						agent,
+						selfConfig,
+						send2NARS
+					)
+					// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
+					if (oldP.isEqual(agent.player.position)) {
+						send2NARS(
+							// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+							generateCommonNarseseBinaryToCIN(
+								selfConfig.NAL.SELF, // 主词
+								NarseseCopulas.Inheritance, // 系词
+								SAFE, // 谓词
+								NarsesePunctuation.Judgement, // 标点
+								NarseseTenses.Present, // 时态
+								selfConfig.NAL.negativeTruth // 真值
+							)
+						)
 					}
 				},
 				/** @implements babble：取随机操作 */
@@ -506,7 +730,7 @@ const configConstructor = (
 				 */
 				operate: (
 					env: NARSEnv,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					op: NARSOperation,
@@ -515,27 +739,11 @@ const configConstructor = (
 				): NARSOperationResult => {
 					// 有操作⇒行动&反馈
 					if (operateI >= 0) {
-						// 缓存点
-						// oldP.copyFrom(self.position)
-						const oldP = new iPoint().copyFrom(self.position)
-						self.moveToward(host, operateI)
-						// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
-						if (oldP.isEqual(self.position)) {
-							send2NARS(
-								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									SAFE, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
-									selfConfig.NAL.negativeTruth // 真值
-								)
-							)
-							return false
-						}
-
-						// 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
+						// 玩家转向 // !【2023-11-07 00:32:16】行动「前进」在AITick中
+						agent.player.turnTo(host, operateI)
+						/** 否则⇒没撞墙⇒没有负反馈 */ // ! 目前不需要这个「边界检测」
+						return undefined
+						/* // 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
 						else {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
@@ -549,7 +757,7 @@ const configConstructor = (
 								)
 							)
 							return true
-						}
+						} */
 					} else
 						console.warn(
 							`未知的操作「${selfConfig.NAL.op_output(op)}」`
@@ -560,7 +768,7 @@ const configConstructor = (
 				feedback: (
 					env: NARSEnv,
 					event: string,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					send2NARS: (message: string) => void

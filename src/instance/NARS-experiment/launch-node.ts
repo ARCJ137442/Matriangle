@@ -3,16 +3,14 @@
  * * 🔬可能经常被修改，以用于实验
  */
 import nodeServicesModifier from './config/node-services.modifier'
-import { envConstructor, envModifiers_default } from './launch$base'
+import {
+	envConstructor as envConstructorBase,
+	envModifiers_default,
+} from './launch$base'
 import { NARSEnv } from './NARSEnv'
 
 /** 创建的环境 */
-const env: NARSEnv = envConstructor(
-	// 构造器的额外配置
-	{
-		// 二维地图
-		map_sizes: [5, 5, 5],
-	},
+const env: NARSEnv = envConstructorBase(
 	// 原先的所有配置
 	...envModifiers_default,
 	// // 新增玩家

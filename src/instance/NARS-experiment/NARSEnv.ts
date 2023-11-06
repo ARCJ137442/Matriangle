@@ -47,6 +47,7 @@ import {
 	isNARSOperation,
 	NARSOperationRecordFull,
 	NARSOperationRecord,
+	NARSOperationResult,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
 import {
 	IMessageRouter,
@@ -55,6 +56,7 @@ import {
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
+import Entity from 'matriangle-api/server/entity/Entity'
 
 /**
  * !【2023-10-30 14:53:21】现在使用一个类封装这些「内部状态」，让整个服务端变得更为「可配置化」
@@ -227,6 +229,12 @@ export class NARSEnv {
 		this.setupVisualization(host)
 		// 玩家
 		this.setupPlayers(host, this.config.players)
+		// 其他实体
+		const entities: Entity[] | undefined =
+			this.config.map.initExtraEntities?.(this.config, host)
+		if (entities !== undefined)
+			// 有实体⇒添加所有「其它实体」
+			for (const entity of entities) host.addEntity(entity)
 	}
 
 	/*
@@ -380,6 +388,23 @@ export class NARSEnv {
 	}
 }
 
+/** NARS智能体的统计数据 */
+export interface NARSAgentStats {
+	// 统计数据 //
+	/** 总时间：实验全程总时长 */
+	总时间: uint
+	/** 总次数：实验全程小车的成功次数与失败次数之和 */
+	总次数: uint // * 即「总操作次数」
+	自主操作次数: uint // * 激活率 = 自主操作次数 / 总操作次数
+	自主成功次数: uint // 自主操作 && 成功
+	/** 总成功次数：实验全程小车遇到障碍物未发生碰撞的总次数 */
+	总成功次数: uint // * 成功率 = 总成功次数 / 总操作次数
+	/** 总失败次数：实验全程小车遇到障碍物发生碰撞的总次数 */
+	//  总失败次数: uint = 0 // * 总失败次数 = 总操作次数 - 总成功次数
+	/** 成功率：实验全程小车的成功次数与总次数之比 */
+	/** 激活率：实验全程 OpenNARS 持续运动的频率 */
+}
+
 /**
  * 用于管理「NARS玩家」的「NARS玩家代理」
  *
@@ -401,15 +426,59 @@ export class NARSPlayerAgent {
 	// 两个计时器变量
 	protected _goalRemindRate: uint = 0
 	protected _babbleRate: uint = 0
+	/** 存储「上一个操作是否自发」 */
+	protected _lastOperationSpontaneous: boolean = false
+	/** 数据只读 */
+	public get lastOperationSpontaneous(): boolean {
+		return this._lastOperationSpontaneous
+	}
 	/**
 	 * 操作历史
 	 *
-	 * @type 类型：`[所做操作, 是否自主, 是否成功]`
+	 * @type 元素类型：`[所做操作, 是否自主, 是否成功]`
 	 * * 所做操作：同{@link NARSOperation}
 	 * * 是否自主：`true`代表自主操作，`false`代表被动操作
 	 * * 是否成功：`true`代表成功，`false`代表失败
 	 */
 	protected _operationHistory: NARSOperationRecordFull[] = []
+
+	// 统计数据 //
+	/** 有关「NARS运行状态」「智能体表现状态」的统计数据 */
+	protected readonly stats: NARSAgentStats = {
+		/** 总时间：实验全程总时长 */
+		总时间: 0,
+		/** 总次数：实验全程小车的成功次数与失败次数之和 */
+		总次数: 0, // * 即「总操作次数」
+		自主操作次数: 0, // * 激活率 = 自主操作次数 / 总操作次数
+		自主成功次数: 0, // 自主操作 && 成功
+		/** 总成功次数：实验全程小车遇到障碍物未发生碰撞的总次数 */
+		总成功次数: 0, // * 成功率 = 总成功次数 / 总操作次数
+		/** 总失败次数：实验全程小车遇到障碍物发生碰撞的总次数 */
+		//  总失败次数:0, // * 总失败次数 = 总操作次数 - 总成功次数
+		/** 成功率：实验全程小车的成功次数与总次数之比 */
+		/** 激活率：实验全程 OpenNARS 持续运动的频率 */
+	}
+
+	/**
+	 * 记录一条统计数据：试验结果
+	 */
+	public recordStat(result: NARSOperationResult, spontaneous: boolean): void {
+		// ! 必须是「操作有结果」的时候
+		if (result === undefined) return
+		// 总次数递增
+		this.stats.总次数++
+		if (result === true)
+			// 总成功次数递增
+			this.stats.总成功次数++
+		if (spontaneous) {
+			// 自主操作次数递增
+			this.stats.自主操作次数++ // ?【2023-11-07 01:33:29】这里所谓「自主操作」可能不再纯粹是「自己做出了操作」，有可能指「得到能量包的行为是自己做出的」而非「真实反应NARS的`EXE`数目」
+			if (result === true) {
+				// 自主成功次数递增
+				this.stats.自主成功次数++
+			}
+		}
+	}
 
 	/**
 	 * 可视化操作历史（整体版）
@@ -440,25 +509,25 @@ export class NARSPlayerAgent {
 	public visualizeOperationHistorySeparated(
 		spontaneousPrefix: string = '',
 		unconsciousPrefix: string = '',
-		spontaneousSeparator: string = '-> ',
+		spontaneousSeparator: string = ' -> ',
 		unconsciousSeparator: string = ' -> '
 	): string {
 		let result_s: string = spontaneousPrefix
 		let result_u: string = unconsciousPrefix
-		const current_record: NARSOperationRecord = [[''], false]
+		const current_record: NARSOperationRecord = [[''], undefined]
 		let current_record_str: string
 		let isFirst_s: boolean = false
 		let isFirst_u: boolean = false
 		for (const recordFull of this._operationHistory) {
 			// 剥去「自主/非自主」属性
 			current_record[0] = recordFull[0]
-			current_record[1] = recordFull[2] // ! 索引[2]才对应「是否成功」
+			current_record[1] = recordFull[1] // ! 索引[1]对应「操作结果」
 			current_record_str =
 				this.config.dataShow.operationHistory.visualizeOperationRecord(
 					current_record
 				)
-			// 若为「自主操作」
-			if (recordFull[1]) {
+			// ! 索引[2]对应「是否自主」
+			if (recordFull[2]) {
 				// 处理分隔符
 				if (!isFirst_s) isFirst_s = true
 				else result_s += spontaneousSeparator
@@ -501,14 +570,14 @@ export class NARSPlayerAgent {
 	public constructor(
 		env: NARSEnv,
 		host: IMatrix,
-		p: IPlayer,
+		public player: IPlayer,
 		public config: NARSPlayerConfig,
 		router: IMessageRouter,
 		ctlWeb: WebController,
 		kcc: KeyboardControlCenter
 	) {
 		ctlWeb.addConnection(
-			p,
+			player,
 			// 用于「Web控制器」
 			config.connections.controlKey
 		)
@@ -516,7 +585,7 @@ export class NARSPlayerAgent {
 		// 按键绑定
 		kcc.addKeyBehaviors(
 			generateBehaviorFromPlayerConfig(
-				p,
+				player,
 				BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]
 			)
 		)
@@ -580,22 +649,9 @@ export class NARSPlayerAgent {
 		/** 距离「上一次NARS发送操作」所过的单位时间 */
 		let lastNARSOperated: uint = config.timing.babbleThreshold // * 默认一开始就进行babble
 
-		// 统计数据 //
-		/** 总时间：实验全程总时长 */
-		let 总时间: uint = 0
-		/** 总次数：实验全程小车的成功次数与失败次数之和 */
-		let 总次数: uint = 0 // * 即「总操作次数」
-		let 自主操作次数: uint = 0 // * 激活率 = 自主操作次数 / 总操作次数
-		let 自主成功次数: uint = 0 // 自主操作 && 成功
-		/** 总成功次数：实验全程小车遇到障碍物未发生碰撞的总次数 */
-		let 总成功次数: uint = 0 // * 成功率 = 总成功次数 / 总操作次数
-		/** 总失败次数：实验全程小车遇到障碍物发生碰撞的总次数 */
-		// let 总失败次数: uint = 0 // * 总失败次数 = 总操作次数 - 总成功次数
-		/** 成功率：实验全程小车的成功次数与总次数之比 */
-		/** 激活率：实验全程 OpenNARS 持续运动的频率 */
-
 		// 对接NARS操作 //
-		let _temp_lastOperationSuccess: boolean
+		/** 上一次操作的结果 */
+		let _temp_lastOperationResult: NARSOperationResult
 		/**
 		 * 对接配置中的操作
 		 *
@@ -610,11 +666,13 @@ export class NARSPlayerAgent {
 			host: IMatrix,
 			operation: NARSOperation,
 			spontaneous: boolean
-		): boolean => {
+		): NARSOperationResult => {
+			// !【2023-11-07 01:00:20】（新）设置一个「背景状态」：把「该操作（作为『上一个操作』）是否自主」存到「NARS智能体」中
+			this._lastOperationSpontaneous = spontaneous
 			// 执行操作，返回结果
-			_temp_lastOperationSuccess = config.behavior.operate(
+			_temp_lastOperationResult = config.behavior.operate(
 				env,
-				self,
+				this,
 				selfConfig,
 				host,
 				operation,
@@ -624,20 +682,15 @@ export class NARSPlayerAgent {
 				),
 				send2NARS
 			)
-			// 统计
-			总次数++
+			// * 计入「操作历史」
 			this._operationHistory.push([
 				operation,
+				_temp_lastOperationResult,
 				spontaneous,
-				_temp_lastOperationSuccess,
 			])
-			// 成功
-			if (_temp_lastOperationSuccess) {
-				// 统计
-				总成功次数++
-				if (spontaneous) 自主成功次数++
-			}
-			return _temp_lastOperationSuccess
+			// * 统计，只有在「有结果」的时候算入「总次数」或者「总触发次数」（必须只有「成功/失败」）
+			this.recordStat(_temp_lastOperationResult, spontaneous)
+			return _temp_lastOperationResult
 		}
 		// 接收消息 //
 		/**
@@ -652,19 +705,31 @@ export class NARSPlayerAgent {
 			// 现在直接有NARSOperation对象
 			console.info(`操作「${config.NAL.op_output(operation)}」已被接收！`)
 			// 执行
-			if (operateEnv(self, config, host, operation, true)) {
-				console.info(
-					`自主操作「${config.NAL.op_output(operation)}」执行成功！`
-				)
-			} else {
-				console.info(
-					`自主操作「${config.NAL.op_output(operation)}」执行失败！`
-				)
+			switch (operateEnv(self, config, host, operation, true)) {
+				// 成功
+				case true:
+					console.info(
+						`自主操作「${config.NAL.op_output(
+							operation
+						)}」执行成功！`
+					)
+					break
+				// 失败
+				case false:
+					console.info(
+						`自主操作「${config.NAL.op_output(
+							operation
+						)}」执行失败！`
+					)
+					break
+				// 无结果：无需处理
+				default:
+					break
 			}
 			// 清空计时
 			lastNARSOperated = 0
-			// 数据收集统计
-			自主操作次数++
+			/* // 数据收集统计 // !【2023-11-07 01:34:45】不再忠实反映「NARS的`EXE`数」
+			this.stats.自主操作次数++ */
 		}
 		// 消息接收
 		router.registerService(
@@ -707,7 +772,7 @@ export class NARSPlayerAgent {
 										)
 									)
 										exeHandler(
-											p,
+											player,
 											host,
 											output_data.output_operation
 										)
@@ -806,7 +871,7 @@ export class NARSPlayerAgent {
 				config.behavior.AITick(
 					env,
 					event,
-					self,
+					this,
 					config,
 					host,
 					posPointer,
@@ -879,12 +944,14 @@ export class NARSPlayerAgent {
 				// 图表数据绘制 //
 				// 生成
 				experimentData = {
-					x: 总时间,
-					成功率: 总成功次数 / 总次数,
+					x: this.stats.总时间,
+					成功率: this.stats.总成功次数 / this.stats.总次数,
 					教学成功率:
-						(总成功次数 - 自主成功次数) / (总次数 - 自主操作次数),
-					自主成功率: 自主成功次数 / 自主操作次数,
-					激活率: 自主操作次数 / 总次数,
+						(this.stats.总成功次数 - this.stats.自主成功次数) /
+						(this.stats.总次数 - this.stats.自主操作次数),
+					自主成功率:
+						this.stats.自主成功次数 / this.stats.自主操作次数,
+					激活率: this.stats.自主操作次数 / this.stats.总次数,
 				}
 				// 发送到「图表服务」
 				router.sendMessageTo(
@@ -918,7 +985,7 @@ export class NARSPlayerAgent {
 					)
 				}
 				// 时间推进 //
-				总时间++
+				this.stats.总时间++
 			}
 		)
 		// 默认事件处理
@@ -929,7 +996,7 @@ export class NARSPlayerAgent {
 				config.behavior.feedback(
 					env,
 					event,
-					self,
+					this,
 					config,
 					host,
 					send2NARS
@@ -937,6 +1004,6 @@ export class NARSPlayerAgent {
 		)
 
 		// 连接到控制器
-		p.connectController(ctlFeedback)
+		player.connectController(ctlFeedback)
 	}
 }
