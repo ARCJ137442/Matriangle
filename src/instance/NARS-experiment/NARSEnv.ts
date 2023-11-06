@@ -10,6 +10,7 @@ import WorldRegistry_V1 from 'matriangle-mod-bats/registry/Registry_Batr'
 import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import { TPS as TPS_Matriangle } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
+	countIn,
 	mapObjectKey,
 	mergeMaps,
 	mergeMultiMaps,
@@ -48,6 +49,7 @@ import {
 	NARSOperationRecordFull,
 	NARSOperationRecord,
 	NARSOperationResult,
+	isOperationFullSpontaneous,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
 import {
 	IMessageRouter,
@@ -57,6 +59,7 @@ import {
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
 import Entity from 'matriangle-api/server/entity/Entity'
+import { normalShannonEntropy } from 'matriangle-common'
 
 /**
  * !【2023-10-30 14:53:21】现在使用一个类封装这些「内部状态」，让整个服务端变得更为「可配置化」
@@ -511,38 +514,103 @@ export class NARSPlayerAgent {
 		unconsciousPrefix: string = '',
 		spontaneousSeparator: string = ' -> ',
 		unconsciousSeparator: string = ' -> '
+		// ! 后续「合并相同历史の输出」的功能是硬编码进去的——同时这还破坏了「增量性」」
 	): string {
-		let result_s: string = spontaneousPrefix
-		let result_u: string = unconsciousPrefix
+		// let result_str_s: string = spontaneousPrefix
+		// let result_str_u: string = unconsciousPrefix
+		// ?【2023-11-07 03:22:47】为何不采用「预生成数组」的方式呢
+		const records_s: [string, uint][] = []
+		const records_u: [string, uint][] = []
 		const current_record: NARSOperationRecord = [[''], undefined]
-		let current_record_str: string
-		let isFirst_s: boolean = false
-		let isFirst_u: boolean = false
+		let currentRecord_str: string
 		for (const recordFull of this._operationHistory) {
 			// 剥去「自主/非自主」属性
 			current_record[0] = recordFull[0]
 			current_record[1] = recordFull[1] // ! 索引[1]对应「操作结果」
-			current_record_str =
+			// 预先处理记录
+			currentRecord_str =
 				this.config.dataShow.operationHistory.visualizeOperationRecord(
 					current_record
 				)
-			// ! 索引[2]对应「是否自主」
+			// ! 索引[2]对应「是否自主」 //
+			// * 自主
 			if (recordFull[2]) {
-				// 处理分隔符
-				if (!isFirst_s) isFirst_s = true
-				else result_s += spontaneousSeparator
-				// 增加记录
-				result_s += current_record_str
+				// 与记录（若有）的最后一个相同⇒相应地方计数器+1
+				if (
+					records_s.length > 0 &&
+					currentRecord_str === records_s[records_s.length - 1][0]
+				)
+					records_s[records_s.length - 1][1]++
+				// 若异⇒新增
+				else {
+					/* // 分隔符
+					if (records_s.length > 0) {
+						result_str_s += spontaneousSeparator
+						// 字串更新
+						result_str_s +=
+							records_s[records_s.length - 1][0] +
+							`(${records_s[records_s.length - 1][1]})`
+					} */
+					// 数据更新
+					records_s.push([currentRecord_str, 1])
+				}
 			} else {
-				// 处理分隔符
-				if (!isFirst_u) isFirst_u = true
-				else result_u += unconsciousSeparator
-				// 增加记录
-				result_u += current_record_str
+				// 与记录（若有）的最后一个相同⇒相应地方计数器+1
+				if (
+					records_u.length > 0 &&
+					currentRecord_str === records_u[records_u.length - 1][0]
+				)
+					records_u[records_u.length - 1][1]++
+				// 若异⇒更新&新增
+				else {
+					/* // 分隔符
+					if (records_u.length > 0) {
+						result_str_u += unconsciousSeparator
+						// 字串更新
+						result_str_u +=
+							records_u[records_u.length - 1][0] +
+							`(${records_u[records_u.length - 1][1]})`
+					} */
+					// 数据更新
+					records_u.push([currentRecord_str, 1])
+				}
 			}
 		}
 		// 最后加上换行符
-		return result_s + '\n' + result_u
+		return (
+			spontaneousPrefix +
+			records_s
+				.map(this._temp_visualizeOperationHistorySeparated_mapF)
+				.join(spontaneousSeparator) +
+			'\n' +
+			unconsciousPrefix +
+			records_u
+				.map(this._temp_visualizeOperationHistorySeparated_mapF)
+				.join(unconsciousSeparator)
+		)
+	}
+	protected readonly _temp_visualizeOperationHistorySeparated_mapF = (
+		item: [string, uint]
+	): string => item[0] + (item[1] > 1 ? `(${item[1]})` : '')
+
+	/**
+	 * 计算「操作历史」的「自主/教学操作多样性」
+	 * * 取值范围：0~1
+	 * * 核心算法：归一化香农熵
+	 */
+	public calculateOperationHistoryDiversity(spontaneous: boolean): number {
+		return this._operationHistory.length > 0
+			? normalShannonEntropy(
+					this._operationHistory
+						.filter(
+							(record: NARSOperationRecordFull): boolean =>
+								record[2] === spontaneous
+						)
+						.map((record: NARSOperationRecordFull): string =>
+							record[0].join('')
+						)
+			  )
+			: 0
 	}
 
 	/**
@@ -919,7 +987,6 @@ export class NARSPlayerAgent {
 						const babbleOp: NARSOperation = config.behavior.babble(
 							env,
 							this,
-							self,
 							config,
 							host
 						)
@@ -951,7 +1018,15 @@ export class NARSPlayerAgent {
 						(this.stats.总次数 - this.stats.自主操作次数),
 					自主成功率:
 						this.stats.自主成功次数 / this.stats.自主操作次数,
-					激活率: this.stats.自主操作次数 / this.stats.总次数,
+					激活率:
+						countIn(
+							isOperationFullSpontaneous,
+							this._operationHistory
+						) / this.stats.总时间,
+					自主操作多样性:
+						this.calculateOperationHistoryDiversity(true),
+					教学操作多样性:
+						this.calculateOperationHistoryDiversity(false),
 				}
 				// 发送到「图表服务」
 				router.sendMessageTo(

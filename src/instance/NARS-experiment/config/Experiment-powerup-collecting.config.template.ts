@@ -492,10 +492,11 @@ const configConstructor = (
 					): string =>
 						// 操作符&操作参数（截去前缀`^`）
 						record[0].join('_').slice(1) +
-						// 「操作-状态」分隔符
-						'-' +
-						// 是否成功：成功Success，失败Failed
-						(record[1] === undefined ? '?' : record[1] ? 'S' : 'F'),
+						(record[1] === undefined
+							? '' // 无果⇒没有「进一步连接」
+							: '-' + // 「操作-状态」分隔符
+							  // 是否成功：成功Success，失败Failed
+							  (record[1] ? 'S' : 'F')),
 					/**
 					 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
 					 */
@@ -507,9 +508,9 @@ const configConstructor = (
 						// 「操作-状态」分隔符
 						'-' +
 						// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
-						(record[2] ? '@' : '#') +
-						// 是否成功：无果`?`，成功Success，失败Failed
-						(record[1] === undefined ? '?' : record[1] ? 'S' : 'F'),
+						(record[1] ? '@' : '#') +
+						// 是否成功：成功Success，失败Failed
+						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
 					spontaneousPrefix: '自主操作：\n',
 					unconsciousPrefix: '教学操作：\n',
 				},
@@ -720,7 +721,6 @@ const configConstructor = (
 				babble: (
 					env: NARSEnv,
 					agent: NARSPlayerAgent,
-					self: IPlayer,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix
 				): NARSOperation => agent.randomRegisteredOperation(),

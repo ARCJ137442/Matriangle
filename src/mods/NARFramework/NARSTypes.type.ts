@@ -44,6 +44,9 @@ export type NARSOperationRecord = [NARSOperation, NARSOperationResult]
  * * 是否自主：`true`代表自主操作，`false`代表被动操作
  */
 export type NARSOperationRecordFull = [...NARSOperationRecord, boolean]
+export const isOperationFullSpontaneous = (
+	record: NARSOperationRecordFull
+): boolean => record[2]
 
 /**
  * NARS的输出类型

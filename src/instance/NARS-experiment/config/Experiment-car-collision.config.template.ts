@@ -258,10 +258,11 @@ const configConstructor = (
 					): string =>
 						// 操作符&操作参数（截去前缀`^`）
 						record[0].join('_').slice(1) +
-						// 「操作-状态」分隔符
-						'-' +
-						// 是否成功：成功Success，失败Failed
-						(record[1] ? 'S' : 'F'),
+						(record[1] === undefined
+							? '' // 无果⇒没有「进一步连接」
+							: '-' + // 「操作-状态」分隔符
+							  // 是否成功：成功Success，失败Failed
+							  (record[1] ? 'S' : 'F')),
 					/**
 					 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
 					 */
@@ -275,7 +276,7 @@ const configConstructor = (
 						// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
 						(record[1] ? '@' : '#') +
 						// 是否成功：成功Success，失败Failed
-						(record[2] ? 'S' : 'F'),
+						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
 					spontaneousPrefix: '自主操作：\n',
 					unconsciousPrefix: '教学操作：\n',
 				},
@@ -372,18 +373,18 @@ const configConstructor = (
 				AITick: (
 					env: NARSEnv,
 					event: PlayerEvent,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					posPointer: iPoint,
 					send2NARS: (message: string) => void
 				): void => {
 					// 指针归位
-					posPointer.copyFrom(self.position)
+					posPointer.copyFrom(agent.player.position)
 					for (let i = 0; i < host.map.storage.numDimension; ++i) {
 						// 负半轴
 						posPointer[i]--
-						if (!self.testCanGoTo(host, posPointer)) {
+						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
 								generateCommonNarseseBinaryToCIN(
@@ -398,7 +399,7 @@ const configConstructor = (
 						}
 						// 从负到正
 						posPointer[i] += 2
-						if (!self.testCanGoTo(host, posPointer)) {
+						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
 								generateCommonNarseseBinaryToCIN(
@@ -419,7 +420,6 @@ const configConstructor = (
 				babble: (
 					env: NARSEnv,
 					agent: NARSPlayerAgent,
-					self: IPlayer,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix
 				): NARSOperation => agent.randomRegisteredOperation(),
@@ -429,7 +429,7 @@ const configConstructor = (
 				 */
 				operate: (
 					env: NARSEnv,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					op: NARSOperation,
@@ -439,11 +439,12 @@ const configConstructor = (
 					// 有操作⇒行动&反馈
 					if (operateI >= 0) {
 						// 缓存点
-						// oldP.copyFrom(self.position)
-						const oldP = new iPoint().copyFrom(self.position)
-						self.moveToward(host, operateI)
+						const oldP = new iPoint().copyFrom(
+							agent.player.position
+						)
+						agent.player.moveToward(host, operateI)
 						// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
-						if (oldP.isEqual(self.position)) {
+						if (oldP.isEqual(agent.player.position)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 								generateCommonNarseseBinaryToCIN(
@@ -483,7 +484,7 @@ const configConstructor = (
 				feedback: (
 					env: NARSEnv,
 					event: string,
-					self: IPlayer,
+					agent: NARSPlayerAgent,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
 					send2NARS: (message: string) => void

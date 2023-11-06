@@ -327,3 +327,70 @@ export function numberBetween(
 export function float(x: int): number {
 	return x + 0.0
 }
+
+/**
+ * 给定任意数组，返回其频数组成的对象
+ */
+export function getFrequency<T = unknown>(arr: T[]): Record<string, number> {
+	const frequency: Record<string, number> = {}
+	for (const i of arr) {
+		if (frequency[i as string]) {
+			frequency[i as string]++
+		} else {
+			frequency[i as string] = 1
+		}
+	}
+	return frequency
+}
+
+/**
+ * 给定任意数组，返回其频率组成的数组
+ * * 其中「元素-频率」的关系丢失
+ */
+export function getFrequencyPercents<T = unknown>(arr: T[]): number[] {
+	const frequency: Record<string, number> = getFrequency(arr)
+	const frequencyPercents: number[] = []
+	for (const i in frequency) {
+		frequencyPercents.push(frequency[i] / arr.length)
+	}
+	return frequencyPercents
+}
+
+/**
+ * 计算x \log_2 x
+ * * 用到的极限：\lim_{x \to 0} x \ln x = 0
+ */
+export function xLog2x(x: number): number {
+	return x == 0 ? 0 : x * Math.log2(x)
+}
+
+/**
+ * 计算一个数组的香农熵
+ * * 核心公式：`H = - \sum^{n}_{i=1} f(i) \log_2(f(i))`
+ */
+export function shannonEntropy<T>(arr: T[]): number {
+	const frequencyPercents = getFrequencyPercents(arr)
+	let H: number = 0
+	for (const f of frequencyPercents) {
+		H += xLog2x(f)
+	}
+	return -H
+}
+
+/**
+ * 计算一个数组的香农熵，并将其归一化
+ * * 核心公式：除以数组长度的2对数
+ *
+ * @example console.log(
+ * 	normalShannonEntropy([1, 2, 3]),
+ * 	normalShannonEntropy([1, 2, 4]),
+ * 	normalShannonEntropy([1, 2, 2]),
+ * 	normalShannonEntropy([1, 1, 1]),
+ * 	normalShannonEntropy([1, 1, 1, 2]),
+ * 	normalShannonEntropy(['x', 'y', 'y'])
+ * )
+ * > 1 1 0.579380164285695 -0 0.4056390622295664 0.579380164285695
+ */
+export function normalShannonEntropy<T>(arr: T[]): number {
+	return shannonEntropy(arr) / Math.log2(arr.length)
+}

@@ -116,6 +116,17 @@ export function randomInParas<T>(...paras: Array<T>): T {
 }
 
 /**
+ * 数组计数
+ */
+export function countIn<T>(P: (item: T) => boolean, array: T[]): uint {
+	let result: uint = 0
+	for (let i = 0; i < array.length; i++) {
+		if (P(array[i])) result++
+	}
+	return result
+}
+
+/**
  * 随机挑选，但排除某个元素
  *
  * ! 确保要排除的元素在数组内

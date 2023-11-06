@@ -241,8 +241,7 @@ export type NARSPlayerConfig = {
 		/**
 		 * 在「教学环境」中产生「非自主操作」
 		 * @param env 所调用的环境
-		 * @param env 所调用的环境的「玩家智能体」
-		 * @param self 调用的玩家
+		 * @param agent 发送事件的玩家的「NARS智能体」
 		 * @param selfConfig 调用的玩家的配置（用于快速索引）
 		 * @param host 世界母体
 		 * @returns babble出来的参数
@@ -250,7 +249,6 @@ export type NARSPlayerConfig = {
 		babble: (
 			env: NARSEnv,
 			agent: NARSPlayerAgent,
-			self: IPlayer,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix
 		) => NARSOperation

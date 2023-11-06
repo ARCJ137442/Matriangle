@@ -31,11 +31,13 @@ export function playerAlpha2Beta(
 
 		// 数据显示
 		dataShow: {
+			...playerAlpha.dataShow,
 			dataNameMap: {
 				成功率: '成功率B',
 				教学成功率: '教学成功率B',
 				自主成功率: '自主成功率B',
 				激活率: '激活率B',
+				操作多样性: '操作多样性B',
 			},
 		},
 
