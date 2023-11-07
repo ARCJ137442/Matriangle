@@ -82,10 +82,7 @@ export type NARSPlayerConfig = {
 		 * * 其中的键可有可无（无⇒保持原样）
 		 */
 		dataNameMap: {
-			/* 成功率?: string
-			教学成功率?: string
-			自主成功率?: string
-			激活率?: string */ // !【2023-10-31 00:16:20】现在使用任意映射
+			// !【2023-10-31 00:16:20】现在使用任意映射，把「默认配置」交给专门的TS模块
 			/** 其它映射 */
 			[oldName: string]: string
 		}
@@ -132,6 +129,10 @@ export type NARSPlayerConfig = {
 		unitAITickSpeed: uint
 		/** 目标提醒相对倍率 */
 		goalRemindRate: uint
+
+		/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
+		teachingTime: uint
+
 		/** Babble相对倍率 */
 		babbleRate: uint
 		/** 「长时间无操作⇒babble」的阈值 */

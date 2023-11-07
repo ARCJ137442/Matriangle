@@ -39,6 +39,7 @@ import {
 	getPlayers,
 	hitTestEntity_between_Grid,
 } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -77,7 +78,7 @@ export const info = (config: NARSEnvConfig): string => `
 		)
 	)
 	.join('、')} 以便实验环境对接
-	- 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息'
+	- 这个连接主要用于向NARS实现（如OpenNARS、ONA、PyNARS）输入感知运动信息
 
 [其它注解]
 // ! 实验与「小车碰撞」完全独立，二者间除了「可复用的代码」外没有任何关联
@@ -390,11 +391,11 @@ const configConstructor = (
 			// 填充两个角落
 			storage.setBlock(
 				new iPoint().copyFrom(SIZES).fill(0),
-				WALL.softCopy()
+				NativeBlockPrototypes.VOID.softCopy()
 			)
 			storage.setBlock(
 				new iPoint().copyFrom(SIZES).addFromSingle(-1),
-				WALL.softCopy()
+				NativeBlockPrototypes.VOID.softCopy()
 			)
 			/* // 填充边框
 			! 新的模式没有边框
@@ -474,15 +475,8 @@ const configConstructor = (
 
 			// 数据显示
 			dataShow: {
-				// * 强制覆盖
-				dataNameMap: {
-					成功率: '成功率',
-					教学成功率: '教学成功率',
-					自主成功率: '自主成功率',
-					激活率: '激活率',
-					自主操作多样性: '自主操作多样性',
-					教学操作多样性: '教学操作多样性',
-				},
+				// * 无⇒保持原样
+				dataNameMap: {},
 				operationHistory: {
 					/**
 					 * @implements `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
@@ -522,6 +516,9 @@ const configConstructor = (
 				unitAITickSpeed: 2,
 				/** 目标提醒相对倍率 */
 				goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
+
+				/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
+				teachingTime: 30,
 
 				/** Babble相对倍率 */
 				babbleRate: 1,
@@ -584,12 +581,27 @@ const configConstructor = (
 				): void => {
 					// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
 					let name: string
+					/**
+					 * 内置的原子操作表
+					 * *【2023-11-08 00:46:18】鉴于先前实验和与他人的讨论，`移动(自身, 方向)`和`向左移动(自身)`不完全等价。
+					 * * 故在三维之前都使用`right|left|down|up`四个「原子操作」去（直接）让NARS执行
+					 */
+					const internalAtomicOperations: NARSOperation[] = [
+						['^right'],
+						['^left'],
+						['^down'],
+						['^up'],
+					]
+					// * 优先注册「内部原始操作」
+					for (const operation of internalAtomicOperations) {
+						registerOperation(operation)
+					}
 					// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
 					const rl = ['right', 'left'] // 先右后左，先正后负
 					for (name of rl) {
 						// 遍历各个维度，产生操作
 						for (
-							let i = 0;
+							let i = internalAtomicOperations.length >> 1; // !【2023-11-08 00:49:03】现在从「内置原始操作后的第一个维度」开始，若没有就作罢
 							i < host.map.storage.numDimension;
 							++i
 						) {
@@ -689,12 +701,10 @@ const configConstructor = (
 						posPointer[i]--
 					}
 					// * 运动：前进 * //
-					// 缓存点
-					const oldP = new iPoint().copyFrom(agent.player.position)
 					// 前进
 					agent.player.moveForward(host)
-					// * 反馈式感知 * // TODO: 是否需要使用这里面的反馈
 					// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
+					// TODO: 似乎这个应该交给「移动后触发」，也就是说「移动后」事件回传
 					testPowerupCollision(
 						env,
 						host,
@@ -702,20 +712,7 @@ const configConstructor = (
 						selfConfig,
 						send2NARS
 					)
-					// 位置相同⇒移动失败⇒「撞墙」⇒负反馈
-					if (oldP.isEqual(agent.player.position)) {
-						send2NARS(
-							// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-							generateCommonNarseseBinaryToCIN(
-								selfConfig.NAL.SELF, // 主词
-								NarseseCopulas.Inheritance, // 系词
-								SAFE, // 谓词
-								NarsesePunctuation.Judgement, // 标点
-								NarseseTenses.Present, // 时态
-								selfConfig.NAL.negativeTruth // 真值
-							)
-						)
-					}
+					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
 				},
 				/** @implements babble：取随机操作 */
 				babble: (
@@ -762,8 +759,8 @@ const configConstructor = (
 						console.warn(
 							`未知的操作「${selfConfig.NAL.op_output(op)}」`
 						)
-					// 没执行⇒没成功
-					return false
+					// 没执行⇒无结果
+					return undefined
 				},
 				feedback: (
 					env: NARSEnv,

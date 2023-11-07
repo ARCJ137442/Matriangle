@@ -241,14 +241,7 @@ const configConstructor = (
 			// 数据显示
 			dataShow: {
 				// * 无⇒保持原样
-				dataNameMap: {
-					/*
-					成功率: '成功率',
-					教学成功率: '教学成功率',
-					自主成功率: '自主成功率',
-					激活率: '激活率',
-					*/
-				},
+				dataNameMap: {},
 				operationHistory: {
 					/**
 					 * @implements `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
@@ -288,6 +281,9 @@ const configConstructor = (
 				unitAITickSpeed: 1,
 				/** 目标提醒相对倍率 */
 				goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
+
+				/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
+				teachingTime: 30,
 
 				/** Babble相对倍率 */
 				babbleRate: 1,
@@ -458,7 +454,6 @@ const configConstructor = (
 							)
 							return false
 						}
-
 						// 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
 						else {
 							send2NARS(
@@ -478,8 +473,8 @@ const configConstructor = (
 						console.warn(
 							`未知的操作「${selfConfig.NAL.op_output(op)}」`
 						)
-					// 没执行⇒没成功
-					return false
+					// 没执行⇒没结果
+					return undefined
 				},
 				feedback: (
 					env: NARSEnv,

@@ -1,3 +1,4 @@
+import { identity, key, mapObject } from 'matriangle-common/utils'
 import { NARSEnvConfig, NARSPlayerConfig } from './API'
 
 // 需复用的常量 //
@@ -33,12 +34,12 @@ export function playerAlpha2Beta(
 		dataShow: {
 			...playerAlpha.dataShow,
 			dataNameMap: {
-				成功率: '成功率B',
-				教学成功率: '教学成功率B',
-				自主成功率: '自主成功率B',
-				激活率: '激活率B',
-				自主操作多样性: '自主操作多样性B',
-				教学操作多样性: '教学操作多样性B',
+				// * 统一后缀加`B`
+				...mapObject<string>(
+					playerAlpha.dataShow.dataNameMap,
+					identity<key>,
+					(value: string): string => value + 'B'
+				),
 			},
 		},
 

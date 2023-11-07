@@ -136,12 +136,13 @@ export default class MapStorageSparse implements IMapStorage {
 			)
 		},
 		(v: JSObjectValue): unknown => {
-			return mapObject(v, identity, (value: JSObject): Block => {
+			throw new Error('尚未实现！')
+			/* return mapObject(v, identity, (value: JSObject): Block => {
 				//Block.fromJSObject(value, this.blockConstructorMap)
 				throw new Error(
 					'TODO: 【2023-10-09 20:34:21】这里需要在箭头函数中传回「自身」方能引用到「随自身映射变化而变化」的映射表。。。'
 				)
-			})
+			}) */
 		},
 		loadRecursiveCriterion_false,
 		(): Block => NativeBlockPrototypes.VOID.copy() // 本身属性不变且无状态，所以直接复制

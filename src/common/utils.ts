@@ -278,13 +278,15 @@ export function randomInWeightMap<T>(weightMap: Map<T, number>): T {
 
 /**
  * 对（一般是JS对象的）对象的键值对作映射，并返回一个新的（JS）对象
+ * * 这里是「分别映射」
+ * * 因为「JS对象存储」的需要，这里暂时都变成`any`类型
  */
-export function mapObject(
-	obj: any,
-	kF: (arg: any) => any,
-	vF: (arg: any) => any,
-	target: any = {}
-): any {
+export function mapObject<V = any, VT = any>(
+	obj: { [k: key]: V },
+	kF: (arg: key) => key,
+	vF: (arg: V) => VT,
+	target: { [k: key]: VT } = {}
+): { [k: key]: VT } {
 	for (const k in obj) target[kF(k)] = vF(obj[k])
 	return target
 }

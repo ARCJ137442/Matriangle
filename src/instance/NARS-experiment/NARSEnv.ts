@@ -716,6 +716,8 @@ export class NARSPlayerAgent {
 		ctlFeedback.AIRunSpeed = config.timing.unitAITickSpeed
 		/** 距离「上一次NARS发送操作」所过的单位时间 */
 		let lastNARSOperated: uint = config.timing.babbleThreshold // * 默认一开始就进行babble
+		/** 当前教学「所剩时间」（Babble「不被NARS操作所抑制」的阶段） */
+		let teachingTimeLasting: uint = config.timing.teachingTime
 
 		// 对接NARS操作 //
 		/** 上一次操作的结果 */
@@ -979,8 +981,13 @@ export class NARSPlayerAgent {
 						)
 					// ?【2023-10-30 21:51:57】是否要把目标的配置再细化一些，比如「不同目标不同周期/正负性」之类的
 				}
-				// 无事babble //
-				if (lastNARSOperated > config.timing.babbleThreshold)
+				// Babble机制 //
+				if (
+					// 教学时间
+					teachingTimeLasting > 0 ||
+					// 无事babble
+					lastNARSOperated > config.timing.babbleThreshold
+				)
 					if (this._babbleRate-- === 0) {
 						this._babbleRate = config.timing.babbleRate
 						// 从函数（教法）中选一个操作⇒进行「无意识操作」
@@ -1008,6 +1015,8 @@ export class NARSPlayerAgent {
 					}
 				// 操作计数 //
 				lastNARSOperated++
+				// 教学时间流逝：减少到零就停止 //
+				if (teachingTimeLasting > 0) teachingTimeLasting--
 				// 图表数据绘制 //
 				// 生成
 				experimentData = {
