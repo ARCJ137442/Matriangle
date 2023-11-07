@@ -394,3 +394,25 @@ export function shannonEntropy<T>(arr: T[]): number {
 export function normalShannonEntropy<T>(arr: T[]): number {
 	return shannonEntropy(arr) / Math.log2(arr.length)
 }
+
+// * 一些把「运算符视作函数」的箭头常量 * //
+/** （无类型考量的）加法 */
+export const plus = <T = number>(x: T, y: T): T =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+	((x as any) + (y as any)) as T
+/** （无类型考量的）减法 */
+export const minus = <T = number>(x: T, y: T): T =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+	((x as any) - (y as any)) as T
+/** （无类型考量的）乘法 */
+export const times = <T = number>(x: T, y: T): T =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+	((x as any) * (y as any)) as T
+/** （无类型考量的）除法 */
+export const divideBy = <T = number>(x: T, y: T): T =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+	((x as any) / (y as any)) as T
+/** （无类型考量的）取余 */
+export const mod = <T = number>(x: T, y: T): T =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+	((x as any) % (y as any)) as T

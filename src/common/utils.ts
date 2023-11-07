@@ -144,24 +144,98 @@ export function randomWithout<T>(array: T[], excepts: T): T {
 }
 
 /**
- * Choose an index in an array that regard the content as weights
- * @param weights the weight of random
- * @returns the selected index of the weight
+ * 从一个数组经过一定运算得到一个「累计分布」
+ * * 例如：求一个数组中所有数的「和数组」，其中和的分布从0开始依次增大
+ *
+ * @param array 被累积的函数
+ * @param cumulateF 将两个值进行合并累积的函数
+ * @returns 累积结果（与「被累积数组」相同长度的数组，且首个元素与第一个「被累积元素」相同）
+ *
+ * @example cumulate([3,2,1], (x,y) => x + y) == [3,5,6]
+ */
+export function cumulate<T>(array: T[], cumulateF: (t1: T, t2: T) => T): T[] {
+	// 长度为零⇒返回本身
+	if (array.length === 0) return []
+	/** 相同长度的返回值数组 */
+	const result: T[] = new Array<T>(array.length)
+	// 设置首个值
+	result[0] = array[0]
+	// 从0开始累积
+	for (let i = 1; i < array.length; i++) {
+		result[i] = cumulateF(result[i - 1], array[i])
+	}
+	// 返回结果
+	return result
+}
+
+/**
+ * 在数组中选择一个将内容视为权重的索引
+ * * 索引权重核心公式：// `P(return i) = weights[i] / sum(weights)` //
+ *
+ * @param weights 权重随机的权重
+ * @returns 权重的选定索引，概率分布如上述公式
  */
 export function randomByWeight(weights: number[]): uint {
+	// 处理「长度过短」的情况
 	if (weights.length === 0) throw new Error('根本就没有要随机选择的对象！')
 	if (weights.length === 1) return 0
 
-	const all: number = exMath.sum(weights)
-	const r: number = exMath.randomFloat(all)
-	for (let i = 0; i < weights.length; i++) {
-		const N = weights[i]
-		let rs = 0
-		for (let l = 0; l < i; l++) rs += weights[l]
-		// console.log(R+'|'+(rs+N)+'>R>='+rs+','+(i+1))
-		if (r <= rs + N) return i
+	/** 对数组进行累积 */
+	const cumulatedWeights: number[] = cumulate(weights, exMath.plus)
+	/** 随机探针：在「0~sum(weights)」之间取一个随机数 */
+	const randomProbe: number = exMath.randomFloat(
+		cumulatedWeights[cumulatedWeights.length - 1]
+	)
+
+	// 基于区间的二分查找（区分三个区间，优先看「是否等于」）
+	/**
+	 * 返回值
+	 * * 初值：取中点
+	 * * 最终情况：`cumulatedWeights[result-1] ?? 0 < randomProbe < cumulatedWeights[result]`
+	 *   * 这时候`weights[result]`正好对应于`randomProbe`
+	 */
+	let result: uint = weights.length >> 1
+	/**
+	 * 区间左端点
+	 * * 若`result===0`，其为`0`
+	 * * 否则为`cumulatedWeights[result-1]`
+	 */
+	let left: number, right: number
+	/** 返回值对应 */
+	while (0 <= result && result < weights.length) {
+		/* console.log(
+			'while',
+			cumulatedWeights,
+			result,
+			`(${left}, ${right}]`,
+			randomProbe
+		) */
+		// * 计算区间左右端点
+		left = result === 0 ? 0 : cumulatedWeights[result - 1]
+		right = cumulatedWeights[result]
+		// * 比「左端点」还左⇒左边切半
+		if (randomProbe < left) {
+			// * `result = (result + 0) / 2`等价的「移位写法」
+			result >>= 1
+		}
+		// * 比「右端点」还右⇒右边切半
+		else if (randomProbe >= right) {
+			// ! 这里是「大于等于」，因为「随机探针」生成的区间是`[0, sum(weights))`不包含右边
+			// * `result = (result + sum(weights)) / 2`等价的写法
+			result += (cumulatedWeights.length - result) >> 1
+		}
+		// * 在区间内⇒返回
+		else return result
 	}
-	console.error(weights, all, r)
+	/* let lo: uint = 0 // ? 「两个范围中间夹」和「一个指针到处走」可能是等价的
+	let hi: uint = cumulatedWeights.length - 1
+	while (lo < hi) {
+		const mid: uint = (lo + hi) >> 1
+		if (cumulatedWeights[mid] < randomProbe) lo = mid + 1
+		else hi = mid
+	} */
+
+	console.error(weights, cumulatedWeights)
 	throw new Error('加权随机：未正常随机到结果！')
 }
 
