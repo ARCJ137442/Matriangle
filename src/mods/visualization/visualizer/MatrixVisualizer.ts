@@ -10,13 +10,12 @@ import {
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 /**
- * 「可视化者」是
- * * 支持HTTP与WebSocket双协议的
+ * 「母体可视化者」是
  * * 用于传递可视化信号的
  * * 响应式的
  * 母体程序
  */
-export default abstract class Visualizer extends MatrixProgram {
+export default abstract class MatrixVisualizer extends MatrixProgram {
 	// 构造函数&析构函数 //
 	public constructor(label: MatrixProgramLabel) {
 		super(label)

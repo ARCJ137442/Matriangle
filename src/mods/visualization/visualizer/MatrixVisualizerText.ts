@@ -4,9 +4,9 @@ import {
 	SPMAVCV单点母体所有视角截面可视化,
 	entityLV实体列表可视化,
 	matrixV母体可视化,
-} from '../textVisualizations'
+} from '../logic/textVisualizations'
 import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
-import Visualizer from './Visualizer'
+import MatrixVisualizer from './MatrixVisualizer'
 import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
@@ -18,13 +18,14 @@ import Entity from 'matriangle-api/server/entity/Entity'
 type TypeFlag = uint | string
 
 /**
- * 「母体可视化者」是
+ * 「文本母体可视化者」是
  * * 用于传递母体的可视化信号的
+ * * 以「字符画」形式传递母体信号的
  * 可视化者
  *
  * TODO: 或许需要把「实体列表」独立出来，并且封装出一个可用的「服务器对象」以便复用WS服务
  */
-export default class MatrixVisualizer extends Visualizer {
+export default class MatrixVisualizerText extends MatrixVisualizer {
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'Visualizer:Matrix'
 
@@ -35,7 +36,7 @@ export default class MatrixVisualizer extends Visualizer {
 		 */
 		public linkedMatrix: IMatrix | null = null
 	) {
-		super(MatrixVisualizer.LABEL)
+		super(MatrixVisualizerText.LABEL)
 	}
 
 	// 母体可视化部分 //
@@ -52,8 +53,10 @@ export default class MatrixVisualizer extends Visualizer {
 
 	/**
 	 * （静态）获取某个母体的视野信号（文本）
+	 *
 	 * @param mapBlockStringLen 显示母体地图每一格的字符串长度
 	 * @param typeFlag 整数时是「地图每一格字符串长度」，字符串时回传其它特定信号
+	 * @returns 可视化信号（以文本形式表征）
 	 */
 	public static getVisionSignal(matrix: IMatrix, typeFlag: TypeFlag): string {
 		switch (typeFlag) {
@@ -111,9 +114,9 @@ export default class MatrixVisualizer extends Visualizer {
 	 */
 	getSignal(message: string): string {
 		if (this.linkedMatrix === null) return ''
-		return MatrixVisualizer.getVisionSignal(
+		return MatrixVisualizerText.getVisionSignal(
 			this.linkedMatrix,
-			MatrixVisualizer.parseTypeFlag(message)
+			MatrixVisualizerText.parseTypeFlag(message)
 		)
 	}
 }

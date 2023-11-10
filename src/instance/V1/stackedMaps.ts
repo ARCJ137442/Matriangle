@@ -1,7 +1,7 @@
 import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
-import { mapVH地图可视化_高维 } from '../../mods/visualization/textVisualizations'
+import { mapVH地图可视化_高维 } from '../../mods/visualization/logic/textVisualizations'
 import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
 import IMap from 'matriangle-api/server/map/IMap'
 

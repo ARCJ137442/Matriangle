@@ -21,7 +21,7 @@ import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import {
 	listE列举实体,
 	matrixV母体可视化,
-} from '../../mods/visualization/textVisualizations'
+} from '../../mods/visualization/logic/textVisualizations'
 import {
 	TICK_TIME_MS,
 	TPS,
@@ -37,7 +37,7 @@ import {
 	BonusType,
 } from 'matriangle-mod-bats/registry/BonusRegistry'
 import { iPoint } from 'matriangle-common/geometricTools'
-import MatrixVisualizer from '../../mods/visualization/web/MatrixVisualizer'
+import MatrixVisualizerText from '../../mods/visualization/visualizer/MatrixVisualizerText'
 import BlockRandomTickDispatcher from 'matriangle-mod-bats/mechanics/programs/BlockRandomTickDispatcher'
 import { BATR_BLOCK_EVENT_MAP } from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
@@ -242,7 +242,7 @@ function setupPlayers(host: IMatrix): void {
 /** 配置可视化 */
 function setupVisualization(host: IMatrix): void {
 	// 可视化信号
-	const visualizer: MatrixVisualizer = new MatrixVisualizer(matrix)
+	const visualizer: MatrixVisualizerText = new MatrixVisualizerText(matrix)
 	// 连接
 	visualizer.linkToRouter(
 		router,
