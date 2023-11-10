@@ -1,5 +1,7 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import IPlayer from '../IPlayer'
+import { voidF } from 'matriangle-common'
+import { PlayerAction } from './PlayerAction'
 
 /**
  * 通用的「玩家事件」类型
@@ -41,6 +43,12 @@ export enum NativePlayerEvent {
 	 * ! 这时候应该已经恢复了状态，比如active参数
 	 */
 	RESPAWN = 'respawn',
+	/**
+	 * 在「动作执行」前响应
+	 *
+	 * ! 这时候若需要获得「前后对比」的信息，可以修改其附加信息中的`afterCallback`参数
+	 */
+	PRE_ACTION = 'preAction',
 }
 
 /**
@@ -60,35 +68,64 @@ export interface NativePlayerEventOptions extends PlayerEventOptions {
 
 	[NativePlayerEvent.HEAL]: {
 		/** 治疗的生命点数 */
-		amount: uint
+		readonly amount: uint
 		/** 治疗者 */
-		healer: IPlayer | null
+		readonly healer: IPlayer | null
 	}
+
 	[NativePlayerEvent.CAUSE_DAMAGE]: {
 		/** 造成伤害点数 */
-		damage: uint
+		readonly damage: uint
 		/** 受害者 */
-		victim: IPlayer | null
+		readonly victim: IPlayer | null
 	}
+
 	[NativePlayerEvent.HURT]: {
 		/** 受到伤害点数 */
-		damage: uint
+		readonly damage: uint
 		/** 攻击者 */
-		attacker: IPlayer | null
+		readonly attacker: IPlayer | null
 	}
 
 	[NativePlayerEvent.KILL_PLAYER]: {
 		/** 造成伤害点数 */
-		damage: uint
+		readonly damage: uint
 		/** 受害者 */
-		victim: IPlayer | null
+		readonly victim: IPlayer | null
 	}
+
 	[NativePlayerEvent.DEATH]: {
 		/** 受到伤害点数 */
-		damage: uint
+		readonly damage: uint
 		/** 攻击者 */
-		attacker: IPlayer | null
+		readonly attacker: IPlayer | null
 	}
 
 	[NativePlayerEvent.RESPAWN]: undefined
+
+	[NativePlayerEvent.PRE_ACTION]: {
+		/**
+		 * 被执行的动作
+		 *
+		 * ! 这个参数只读，不应修改
+		 */
+		readonly action: PlayerAction
+		/**
+		 * 动作执行后用于「对比反馈」的回调函数（默认为空）
+		 * * 「事件回应函数」侧可将传入的信息进行闭包
+		 * * @default 空函数{@link omega}
+		 *
+		 * ! 不同于之前所有的事件参数，这里的参数可能会被接收者修改
+		 */
+		afterCallback: voidF
+		/**
+		 * 是否被阻止
+		 * * 若被设置为`true`，则传入事件时要执行的动作不会被执行
+		 * * 类似`preventDefault`
+		 * * @default 默认为`false`
+		 *
+		 * ! 可能会被接收者修改
+		 */
+		prevent: boolean
+	}
 }

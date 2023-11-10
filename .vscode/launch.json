@@ -54,7 +54,7 @@
 				"<node_internals>/**"
 			],
 			// "program": "${workspaceFolder}\\test\\test.ts",
-			"program": "src/instance/NARS-experiment/launch-car-collision.ts",
+			"program": "src/instance/NARS-experiment/launch-node-car-collision.ts",
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],

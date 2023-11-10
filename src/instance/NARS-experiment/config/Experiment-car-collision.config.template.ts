@@ -29,6 +29,11 @@ import {
 } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import Block from 'matriangle-api/server/block/Block'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
+import {
+	PlayerAction,
+	isActionMoveForward,
+	toRotFromActionMoveForward,
+} from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -454,6 +459,7 @@ const configConstructor = (
 							)
 							return false
 						}
+
 						// 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
 						else {
 							send2NARS(
@@ -476,7 +482,7 @@ const configConstructor = (
 					// 没执行⇒没结果
 					return undefined
 				},
-				feedback: (
+				fallFeedback: (
 					env: NARSEnv,
 					event: string,
 					agent: NARSPlayerAgent,
@@ -506,6 +512,26 @@ const configConstructor = (
 							)
 							break
 					}
+				},
+				/**
+				 * @implements 映射「前进」操作
+				 */
+				actionReplacementMap(
+					env: NARSEnv,
+					event: PlayerEvent,
+					agent: NARSPlayerAgent,
+					selfConfig: NARSPlayerConfig,
+					host: IMatrix,
+					action: PlayerAction
+				): NARSOperation | undefined | null {
+					// * 前进行为⇒执行操作
+					if (isActionMoveForward(action))
+						return agent.registeredOperations[
+							// * 直接翻译成「任意维整数角」⇒索引得到操作
+							toRotFromActionMoveForward(action)
+						]
+					// * 其它⇒放行
+					return undefined
 				},
 			},
 		},

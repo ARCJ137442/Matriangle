@@ -21,12 +21,15 @@ import {
 	PlayerAction,
 	EnumNativePlayerAction,
 	NativeMatrixPlayerEvent,
+	toRotFromActionMoveForward,
+	toRotFromActionTurn,
 } from './controller/PlayerAction'
 import PlayerController from './controller/PlayerController'
 import {
 	NativePlayerEventOptions,
 	NativePlayerEvent,
 } from './controller/PlayerEvent'
+import { omega } from 'matriangle-common'
 
 /**
  * 玩家第一版
@@ -252,30 +255,59 @@ export default class Player_V1 extends Entity implements IPlayer {
 	 * @returns 是否有动作被执行（用于子类覆写添加新行为）
 	 */
 	protected runAction(host: IMatrix, action: PlayerAction): boolean {
-		// 整数⇒处理转向相关
-		if (typeof action === 'number') {
-			// 非负⇒转向
-			if (action >= 0) this.turnTo(host, action)
-			// 负数⇒转向&移动
-			else this.moveToward(host, -action - 1)
-			return true
+		// 传入控制器信息，设置默认值 // ! 在此中信息可能被修改（或者说，要是想形成「完整操作反馈」，就需要修改）
+		;(this._temp_runAction_otherInf.action as unknown) = action // ! 这里强制赋值，但也只有这里
+		this._temp_runAction_otherInf.afterCallback = omega
+		this._temp_runAction_otherInf.prevent = false
+		// 通知控制器：「动作将被执行」
+		this._controller?.reactPlayerEvent<
+			NativePlayerEventOptions,
+			NativePlayerEvent.PRE_ACTION
+		>(
+			NativePlayerEvent.PRE_ACTION,
+			this,
+			host,
+			this._temp_runAction_otherInf
+		)
+		// * 接收后被阻止⇒直接返回
+		if (this._temp_runAction_otherInf.prevent) return false
+		// 正式执行：统一放入switch中 // *【2023-11-10 19:08:55】这里复用`otherInf.prevent`，语义不变
+		switch (action) {
+			// 空操作「执行空」视作「执行成功」
+			case EnumNativePlayerAction.NULL:
+				break
+			case EnumNativePlayerAction.MOVE_FORWARD:
+				this.moveForward(host)
+				break
+			case EnumNativePlayerAction.MOVE_BACK:
+				this.turnBack(host)
+				this.moveForward(host)
+				break
+			// * 非枚举部分
+			default:
+				// 整数⇒处理转向相关
+				if (typeof action === 'number') {
+					// 非负⇒转向
+					if (action >= 0)
+						this.turnTo(host, toRotFromActionTurn(action))
+					// 负数⇒转向&移动
+					else
+						this.moveToward(
+							host,
+							toRotFromActionMoveForward(action)
+						)
+				}
+				// * 没有动作被执行⇔动作被阻止
+				else this._temp_runAction_otherInf.prevent = true
 		}
-		// 其它枚举类
-		else
-			switch (action) {
-				case EnumNativePlayerAction.NULL:
-					return true
-				case EnumNativePlayerAction.MOVE_FORWARD:
-					this.moveForward(host)
-					return true
-				case EnumNativePlayerAction.MOVE_BACK:
-					this.turnBack(host)
-					this.moveForward(host)
-					return true
-			}
-		// 没有动作被执行
-		return false
+		// 执行后调用`afterCallback`
+		this._temp_runAction_otherInf.afterCallback()
+		// 最后返回结果
+		return !this._temp_runAction_otherInf.prevent
 	}
+	/** 缓存的控制器用变量（一定会在`runAction`中初始化） */
+	protected _temp_runAction_otherInf: NativePlayerEventOptions[NativePlayerEvent.PRE_ACTION] =
+		{} as unknown as NativePlayerEventOptions[NativePlayerEvent.PRE_ACTION]
 
 	/**
 	 * 执行所有已缓冲的玩家动作

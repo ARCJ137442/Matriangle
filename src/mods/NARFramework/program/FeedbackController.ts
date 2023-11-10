@@ -1,6 +1,7 @@
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { omegas } from 'matriangle-common/utils'
 import {
+	NativePlayerEventOptions,
 	PlayerEvent,
 	PlayerEventOptions,
 } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
@@ -37,8 +38,8 @@ export default class FeedbackController extends AIController {
 	 * * 第一次分派时，依自身「是否初始化」使用`AIPlayerEvent.INIT`事件（以便初始化AI）
 	 */
 	override reactPlayerEvent<
-		OptionMap extends PlayerEventOptions,
-		T extends keyof OptionMap,
+		OptionMap extends PlayerEventOptions = NativePlayerEventOptions,
+		T extends keyof OptionMap = keyof OptionMap,
 	>(
 		eventType: T,
 		self: IPlayer,
@@ -78,13 +79,21 @@ export default class FeedbackController extends AIController {
 	 * @param event 玩家事件的类型（若为null，则修改「默认处理函数」）
 	 * @param handler 回调函数（若不提供，则视作「清空」）
 	 */
-	public on(
-		event: PlayerEvent | null,
-		handler: PlayerEventHandler = omegas
+	public on<
+		OptionMap extends PlayerEventOptions = NativePlayerEventOptions,
+		T extends keyof OptionMap = keyof OptionMap,
+	>(
+		event: T | null,
+		handler: PlayerEventHandler<OptionMap, T> = omegas
 	): void {
 		// 空⇒设置「默认事件处理函数」
-		if (event === null) this.fallbackHandler = handler
+		if (event === null)
+			(this.fallbackHandler as PlayerEventHandler<OptionMap, T>) = handler
 		// 非空⇒设置对应事件处理函数
-		else this._eventHandlers.set(event, handler)
+		else
+			this._eventHandlers.set(
+				event as string,
+				handler as PlayerEventHandler
+			)
 	}
 }

@@ -35,7 +35,11 @@ import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 import Player_V1 from 'matriangle-mod-native/entities/player/Player_V1'
 import FeedbackController from 'matriangle-mod-nar-framework/program/FeedbackController'
-import { PlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerEvent' // ! 📌不能信赖「直接的一股脑导入」
+import {
+	NativePlayerEvent,
+	NativePlayerEventOptions,
+	PlayerEvent,
+} from 'matriangle-mod-native/entities/player/controller/PlayerEvent' // ! 📌不能信赖「直接的一股脑导入」
 import { AIPlayerEvent } from 'matriangle-mod-native/entities/player/controller/AIController'
 import {
 	NARSOperation,
@@ -1072,12 +1076,59 @@ export class NARSPlayerAgent {
 				this.stats.总时间++
 			}
 		)
+		// 响应动作执行 // *【2023-11-10 19:24:19】最初被用于「键盘按键⇒无意识操作」的转换
+		ctlFeedback.on(
+			NativePlayerEvent.PRE_ACTION,
+			(
+				event: PlayerEvent,
+				self: IPlayer,
+				host: IMatrix,
+				otherInf: NativePlayerEventOptions[NativePlayerEvent.PRE_ACTION]
+			): void => {
+				/**
+				 * 获取「行为映射」的回应
+				 * * `undefined`⇒「放行」，这时不会`operate`也不会触发其它行为
+				 * * `null`⇒「阻断」，这时不会执行「将执行的『玩家行为』」
+				 * * `NARSOperation`⇒「映射并（等同于）操作」，这时不执行「将执行的『玩家行为』」并用`operate(对应操作)`替代
+				 */
+				const reply: NARSOperation | null | undefined =
+					config.behavior.actionReplacementMap(
+						env,
+						event,
+						this,
+						config,
+						host,
+						otherInf.action
+					)
+				// * undefined⇒放行
+				if (reply === undefined) return
+				// * null⇒阻断
+				if (reply === null) {
+					// 修改「阻断」配置
+					otherInf.prevent = true
+					//返回
+					return
+				}
+				// * 否则即「玩家操作」⇒执行操作并阻断默认执行
+				else {
+					// 修改「阻断」配置
+					otherInf.prevent = true
+					// 执行返回的操作
+					operateEnv(
+						self,
+						config,
+						host,
+						reply,
+						false // ! 非自主操作
+					)
+				}
+			}
+		)
 		// 默认事件处理
 		ctlFeedback.on(
 			null,
-			// 对接的是PyNARS的逻辑
 			(event: PlayerEvent, self: IPlayer, host: IMatrix): void =>
-				config.behavior.feedback(
+				config.behavior.fallFeedback(
 					env,
 					event,
 					this,

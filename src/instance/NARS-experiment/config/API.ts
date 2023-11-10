@@ -17,6 +17,7 @@ import {
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
+import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 
 /** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
 export type MessageServiceConstructor = (
@@ -273,7 +274,8 @@ export type NARSPlayerConfig = {
 			send2NARS: (message: string) => void
 		) => NARSOperationResult
 		/**
-		 * 接收到「反馈控制器」的「事件反馈」时
+		 * 接收到「反馈控制器」的「默认事件反馈」时
+		 * * 因为这是「默认事件」，所以其它已注册「处理函数」的事件如`AITick`是不会走这里的
 		 * * 原本的`self`可以通过`agent.player`取得
 		 *
 		 * @param env 所调用的环境
@@ -283,7 +285,7 @@ export type NARSPlayerConfig = {
 		 * @param host 世界母体
 		 * @param send2NARS 「向NARS发送消息」的回调函数
 		 */
-		feedback: (
+		fallFeedback: (
 			env: NARSEnv,
 			event: PlayerEvent,
 			agent: NARSPlayerAgent,
@@ -291,6 +293,27 @@ export type NARSPlayerConfig = {
 			host: IMatrix,
 			send2NARS: (message: string) => void
 		) => void
+		/**
+		 * 将「玩家行为」映射到「自身操作」的函数
+		 * * 返回`undefined`表示「放行」，这时不会`operate`也不会触发其它行为
+		 * * 返回`null`表示「阻断」，这时不会执行「将执行的『玩家行为』」
+		 * * 返回`NARSOperation`表示「映射并（等同于）操作」，这时不执行「将执行的『玩家行为』」并用`operate(对应操作)`替代
+		 *
+		 * @param env 所调用的环境
+		 * @param event 接收到的「玩家事件」
+		 * @param agent 发送事件的玩家的「NARS智能体」
+		 * @param selfConfig 调用的玩家的配置（用于快速索引）
+		 * @param host 世界母体
+		 * @param action 将执行的「玩家行为」
+		 */
+		actionReplacementMap: (
+			env: NARSEnv,
+			event: PlayerEvent,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			action: PlayerAction
+		) => NARSOperation | undefined | null
 	}
 }
 

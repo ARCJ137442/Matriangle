@@ -40,6 +40,11 @@ import {
 	hitTestEntity_between_Grid,
 } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import {
+	PlayerAction,
+	isActionMoveForward,
+	toRotFromActionMoveForward,
+} from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -587,10 +592,11 @@ const configConstructor = (
 					 * * 故在三维之前都使用`right|left|down|up`四个「原子操作」去（直接）让NARS执行
 					 */
 					const internalAtomicOperations: NARSOperation[] = [
-						['^right'],
-						['^left'],
-						['^down'],
-						['^up'],
+						// !【2023-11-10 18:45:17】操作参数还是不能省略（虽然ONA支持「零参乘积」但OpenNARS不支持）
+						['^right', selfConfig.NAL.SELF],
+						['^left', selfConfig.NAL.SELF],
+						['^down', selfConfig.NAL.SELF],
+						['^up', selfConfig.NAL.SELF],
 					]
 					// * 优先注册「内部原始操作」
 					for (const operation of internalAtomicOperations) {
@@ -762,7 +768,7 @@ const configConstructor = (
 					// 没执行⇒无结果
 					return undefined
 				},
-				feedback: (
+				fallFeedback: (
 					env: NARSEnv,
 					event: string,
 					agent: NARSPlayerAgent,
@@ -792,6 +798,26 @@ const configConstructor = (
 							)
 							break
 					}
+				},
+				/**
+				 * @implements 映射「前进」操作
+				 */
+				actionReplacementMap(
+					env: NARSEnv,
+					event: PlayerEvent,
+					agent: NARSPlayerAgent,
+					selfConfig: NARSPlayerConfig,
+					host: IMatrix,
+					action: PlayerAction
+				): NARSOperation | undefined | null {
+					// * 前进行为⇒执行操作
+					if (isActionMoveForward(action))
+						return agent.registeredOperations[
+							// * 直接翻译成「任意维整数角」⇒索引得到操作
+							toRotFromActionMoveForward(action)
+						]
+					// * 其它⇒放行
+					return undefined
 				},
 			},
 		},
