@@ -38,7 +38,7 @@ export default abstract class Visualizer extends MatrixProgram {
 	 * !【2023-10-12 21:33:49】暂时不进行通用化（IMessageRouter）处理
 	 *
 	 * @type {MessageServiceType}
-	 * @param {string} ip 开放的地址
+	 * @param {string} host 开放的主机地址
 	 * @param {uint} port 开放的服务端口
 	 * @param {MessageRouter} router 所连接的「消息路由器」
 	 */
@@ -52,7 +52,9 @@ export default abstract class Visualizer extends MatrixProgram {
 		else {
 			const service: IMessageService = serviceF(this.getSignal.bind(this))
 			return router.registerService(service, (): void => {
-				console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
+				console.log(
+					`MatrixVisualizer@linkToRouter: 与路由器成功在 ${service.addressFull} 建立连接！`
+				)
 			})
 		}
 	}

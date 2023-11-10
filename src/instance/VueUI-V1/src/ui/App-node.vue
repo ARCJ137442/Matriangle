@@ -4,7 +4,7 @@
 	<h1>控制</h1>
 	<ControlPanel
 		ref="panel"
-		@message="pack => sendMessagePackAsClient(pack)"
+		@message="pack => sendMessagePackAsClient(pack, panel?.onMessage)"
 		@link-change="handleLinkChangeAtClient"
 	/>
 
@@ -99,11 +99,15 @@ function sendMessagePackAsClient(
 	pack: MessagePack,
 	messageCallback: MessageCallback = omega1<string>
 ): void {
+	// 检查路由器是否为空
 	if (router.value !== null)
 		if (pack.address === undefined || pack.message === undefined)
+			// 检查消息包是否有效
 			console.error('消息包无效！', pack)
+		// 检查消息是否发送成功
 		else if (router.value.routerClient.send(pack.address, pack.message))
 			void 0
+		// 服务不存在⇒尝试重连
 		else if (!router.value.routerClient.hasService(pack.address)) {
 			console.warn(`服务「${pack.address}」不存在！`)
 			console.info('正在尝试重连。。。')
@@ -112,7 +116,9 @@ function sendMessagePackAsClient(
 				(): IMessageService =>
 					registerRouterServiceAt(pack.address, messageCallback)
 			)
-		} else console.info('消息发送失败！')
+		}
+		// 纯粹发送失败
+		else console.info('消息发送失败！')
 	else console.error('消息路由器未调用！')
 }
 

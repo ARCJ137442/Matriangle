@@ -1,24 +1,45 @@
 <template>
 	<h2>控制器</h2>
-	<input
-		type="text"
-		v-model="controlAddress"
-		placeholder="输入链接"
+	<div>
+		<input
+			type="text"
+			v-model="controlAddress"
+			placeholder="输入链接"
+			@keydown="
+				(e: KeyboardEvent): false | void =>
+					e.key === 'Enter' && onAddressChange()
+			"
+		/>
+		<input type="text" v-model="controlKey" placeholder="输入控制密钥" />
+		<p>{{ controlMessage }}</p>
+		<button
+			type="button"
+			ref="controlStatusButton"
+			@click="switchControlStatus()"
+			@vue:mounted="updateControlStatus(_controlStatus)"
+		>
+			正在加载
+		</button>
+	</div>
+	<!-- 控制台指令（暂时用不到`@input`） -->
+	<!-- ! 【2023-11-10 23:38:16】目前的问题：在`consoleCmd.value +=`后，滚动条无法加入到光标处 ! -->
+	<textarea
+		class="console"
+		contenteditable="true"
+		v-model="consoleCmd"
+		ref="consoleElement"
+		placeholder="输入控制台指令"
 		@keydown="
-			(e: KeyboardEvent): false | void =>
-				e.key === 'Enter' && onAddressChange()
+			(e: KeyboardEvent): false | void => {
+				if (e.key === 'Enter') {
+					// 阻止默认按键
+					e.preventDefault()
+					// 执行指令
+					onConsoleCmd()
+				}
+			}
 		"
 	/>
-	<input type="text" v-model="controlKey" placeholder="输入控制密钥" />
-	<p>{{ controlMessage }}</p>
-	<button
-		type="button"
-		ref="controlStatusButton"
-		@click="switchControlStatus()"
-		@vue:mounted="updateControlStatus(_controlStatus)"
-	>
-		正在加载
-	</button>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +51,8 @@ let _lastAddress: string = controlAddress.value
 const controlKey: Ref<string> = ref('Alpha')
 const controlMessage: Ref<string> = ref('')
 const controlStatusButton: Ref<HTMLElement | null> = ref(null)
+const consoleCmd: Ref<string> = ref('')
+const consoleElement: Ref<HTMLTextAreaElement | null> = ref(null)
 
 // * 自定义事件发送 * //
 
@@ -57,6 +80,54 @@ function onAddressChange(): void {
 	)
 	// 更新旧地址
 	_lastAddress = controlAddress.value
+}
+
+/**
+ * 控制台指令事件
+ */
+function onConsoleCmd(): void {
+	if (consoleCmd.value.length !== 0) {
+		// 以用户输入的最后一行作为消息，加上「指令」前缀`/`
+		const lines = consoleCmd.value.split('\n')
+		// console.log('控制台指令', '/' + lines[lines.length - 1])
+		// 发送消息
+		emitMessage('/' + lines[lines.length - 1])
+	}
+	// 这里不换行，只有回显（有回应）后才换行
+}
+
+/**
+ * 控制台指令输出
+ */
+function onConsoleCmdOutput(out: string): void {
+	// 追加到输入框，附加换行
+	consoleCmd.value += '\n' + out + '\n'
+	// ! Vue里textarea无法通过dom属性获取到内容，并且其scrollTop并不准确
+	/* console.log(
+		'控制台指令',
+		consoleElement.value,
+		consoleElement.value?.textContent, //
+		consoleElement.value?.scrollHeight,
+		consoleElement.value?.scrollTop
+	) */
+	consoleElement
+
+	// 更新滚动
+	updateScrollStatusRef(consoleElement)
+}
+
+/** 更新滚动状态到最底部 */
+function updateScrollStatus(element: HTMLElement): void {
+	// !【2023-11-10 23:50:17】目前来说，需要延迟一小会儿，因为滚动条更新不一定那么快
+	setTimeout((): void => {
+		// `scrollHeight`属性不一定精确
+		element.scrollTop += 0x1000000
+		element.scrollTop *= 2
+	}, 100)
+}
+function updateScrollStatusRef(ref: Ref<HTMLElement | null>): void {
+	if (ref.value !== null) updateScrollStatus(ref.value)
+	else console.warn('滚动状态更新失败')
 }
 
 // 控制の消息 //
@@ -130,7 +201,7 @@ function getActionFromEvent(
 // 键盘事件 //
 
 /**
- * 统一键盘事件（接收者）
+ * 统一APP键盘事件（接收者）
  *
  * ! 注意：键盘事件的`key`、`code`是不一样的
  * * `key`对应的是「键的语义」而不关注「位置」，如`Shift`（左右都会触发）
@@ -225,6 +296,14 @@ function switchControlStatus(): void {
 
 defineExpose({
 	onKeyEvent,
+	/**
+	 * 不使用「心跳机制」调用「消息回调」
+	 */
+	onMessage(message: string): void {
+		// 前导`/`⇒指令输出更新
+		if (message.startsWith('/')) onConsoleCmdOutput(message.slice(1))
+		// 其它⇒暂时不做什么
+	},
 })
 </script>
 
@@ -268,5 +347,29 @@ input[type='text'] {
 input[type='text']::placeholder {
 	color: #999;
 	/* 文字颜色 */
+}
+
+/* 控制台文本 */
+.console {
+	/* 保留空格、自动换行 */
+	white-space: pre-wrap;
+	/* 字体 */
+	font-family: Consolas, Monaco, 'Courier New', monospace;
+	font-size: larger;
+	font-weight: inherit;
+	/* 固定尺寸 */
+	height: 100px;
+	/* 隐藏垂直滚动条 */
+	overflow-y: hidden;
+	/* 隐藏水平滚动条 */
+	overflow-x: hidden;
+	/* 隐藏尺寸调整 */
+	resize: both;
+	/* 滚动行为 */
+	scroll-behavior: auto;
+	/* 背景颜色 */
+	background-color: #222;
+	/* 文字颜色 */
+	color: #fff;
 }
 </style>

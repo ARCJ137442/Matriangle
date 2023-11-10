@@ -64,6 +64,7 @@ import {
 import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { normalShannonEntropy } from 'matriangle-common'
+import ProgramMatrixConsole from 'matriangle-mod-native/entities/control/MatrixConsole'
 
 /**
  * !【2023-10-30 14:53:21】现在使用一个类封装这些「内部状态」，让整个服务端变得更为「可配置化」
@@ -228,12 +229,59 @@ export class NARSEnv {
 		host.addEntities(visualizer)
 	}
 
+	/** 配置控制台 */
+	setupConsole(host: IMatrix): void {
+		/** 新建实体 */
+		const matrixConsole: ProgramMatrixConsole = new ProgramMatrixConsole(
+			host
+		)
+		/** 连接 */
+		const service: IMessageService =
+			// * 通过「控制服务」建立连接
+			this.config.connections.controlService.constructor(
+				this.config.connections.controlService.host,
+				this.config.connections.controlService.port,
+				// !【2023-11-10 22:32:43】直接执行指令，拆分等任务交给客户端
+				(message: string): string | undefined => {
+					// 空消息⇒不受理
+					if (message.length === 0) return undefined
+					// 按开头字符区分
+					switch (message[0]) {
+						// * 以`/`开头⇒运行指令并返回输出
+						case '/': {
+							const result = matrixConsole.executeCmd(
+								message.slice(1)
+							)
+							return (
+								// * 以`/`开头，以便被识别为「指令输出」
+								'/' +
+								// 不显示「undefined」
+								(result === undefined ? '' : String(result))
+								// 截掉开头的`/`
+							)
+						}
+						default:
+							return undefined
+					}
+				}
+			)
+		this.router.registerService(service, (): void => {
+			console.log(
+				`NARSEnv@setupConsole: 与路由器成功在 ${service.addressFull} 建立连接！`
+			)
+		})
+		/** 注入 */
+		host.addEntity(matrixConsole)
+	}
+
 	/** （总领）配置实体 */
 	setupEntities(host: IMatrix): void {
 		// 消息路由器
 		host.addEntity(this.router)
 		// 可视化
 		this.setupVisualization(host)
+		// 控制台
+		this.setupConsole(host)
 		// 玩家
 		this.setupPlayers(host, this.config.players)
 		// 其他实体
