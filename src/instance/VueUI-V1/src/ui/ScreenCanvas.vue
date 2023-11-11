@@ -9,12 +9,16 @@
 <script setup lang="ts">
 // Matriangle API
 import { DISPLAY_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import { canvasVisualize_V1 as canvasVisualize } from '../lib/canvasVisualizeBrowser'
+import {
+	canvasVisualize_V1 as canvasVisualize,
+	drawPlayerShape,
+} from '../lib/canvasVisualizeBrowser'
 // Vue
 import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 // 外部库
 import { Frame, Circle, Rectangle } from 'zimjs'
-import { randInt } from '../../../../common'
+import * as Zim from 'zimjs'
+import { randInt } from 'matriangle-common/exMath'
 
 let frame: Frame
 let r: Rectangle
@@ -36,7 +40,7 @@ onMounted(() => {
 		// 初始化
 		ready: (): void => {
 			// 添加一个圆
-			new Circle(50, red)
+			new Circle(50, '#f008') //半径50，半透明红色
 				// 放到屏幕中央
 				.center()
 				// 可拖动
@@ -52,6 +56,17 @@ onMounted(() => {
 				.pos(Math.random() * frame.width, Math.random() * frame.height)
 				// 可拖动
 				.drag()
+			// 添加一个新形状
+			const shape = new Zim.Shape()
+			// 放中间
+			shape.center()
+			// 像AS3那样绘图
+			/* shape.graphics.beginFill('#000')
+			shape.graphics.drawRect(0, 0, 100, 100)
+			shape.graphics.endFill() */
+			drawPlayerShape(shape)
+			// 可拖动
+			shape.drag()
 			// 更新场景
 			frame.stage.update()
 		},
