@@ -22,17 +22,19 @@
 		v-model="displayCode"
 		placeholder="输入显示码(6 | player6@P2)"
 	/>
-	<ScreenText ref="screen" @vue:mounted="requestAliveLink" />
+	<ScreenCanvas ref="screen" @vue:mounted="requestAliveLink" />
 </template>
 
 <script setup lang="ts">
 // 导入子组件 //
 import { Ref, ref } from 'vue'
-import ScreenText from './ScreenText.vue'
+import { default as Screen } from './ScreenCanvas.vue'
+import ScreenCanvas from './ScreenCanvas.vue' // 需要被template引用
+// import { default as Screen } from './ScreenText.vue'
 import { VueElementRefNullable } from '../lib/common'
 
 // 屏显 //
-const screen: VueElementRefNullable<typeof ScreenText> = ref(null)
+const screen: VueElementRefNullable<typeof Screen> = ref(null)
 
 // 控制参数 //
 const displayAddress: Ref<string> = ref('127.0.0.1:8080')

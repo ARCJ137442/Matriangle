@@ -30,12 +30,13 @@
 	},
 	"dependencies": {
 		"echarts": "^5.4.3",
-		"vue": "^3.3.7",
 		"matriangle-api": "^0.1.0",
 		"matriangle-common": "^0.1.0",
-		"matriangle-mod-native": "^0.1.0",
-		"matriangle-mod-message-io-browser": "^0.1.0",
+		"matriangle-instance-nars-experiment": "^0.1.0",
 		"matriangle-mod-message-io-api": "^0.1.0",
-		"matriangle-instance-nars-experiment": "^0.1.0"
+		"matriangle-mod-message-io-browser": "^0.1.0",
+		"matriangle-mod-native": "^0.1.0",
+		"vue": "^3.3.7",
+		"zimjs": "^15.0.12"
 	}
 }
