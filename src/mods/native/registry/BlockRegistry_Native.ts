@@ -55,6 +55,18 @@ export namespace NativeBlockIDs {
 }
 
 /**
+ * 原生方块状态类型
+ * * 用于TS类型推导
+ *
+ * !【2023-11-12 15:28:39】目前TS还不能直接通过值来推导类型
+ *
+ * @example 从`export const COLORED: Block<BSColored>`中提取出`BSColored`
+ */
+export type GetBlockStateType<ProtoType> = ProtoType extends Block<infer R>
+	? R
+	: never
+
+/**
  * 所有「原生方块」
  */
 export const ALL_NATIVE_BLOCKS: Block[] = [

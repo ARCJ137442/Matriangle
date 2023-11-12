@@ -2,26 +2,28 @@
 <template>
 	<!-- * 屏幕：纯文本 * -->
 	<h2>显示区（{{ messageServiceConnectedText }}）</h2>
-	<input
-		type="text"
-		v-model="displayAddress"
-		placeholder="输入连接地址"
-		@keydown="
-			(e: KeyboardEvent): false | void =>
-				e.key === 'Enter' && onAddressChange()
-		"
-	/>
-	<input
-		type="text"
-		v-model="screenFPS"
-		placeholder="输入FPS"
-		@keydown="onUpdateFPS"
-	/>
-	<input
-		type="text"
-		v-model="displayCode"
-		placeholder="输入显示码(6 | player6@P2)"
-	/>
+	<div>
+		<input
+			type="text"
+			v-model="displayAddress"
+			placeholder="输入连接地址"
+			@keydown="
+				(e: KeyboardEvent): false | void =>
+					e.key === 'Enter' && onAddressChange()
+			"
+		/>
+		<input
+			type="text"
+			v-model="screenFPS"
+			placeholder="输入FPS"
+			@keydown="onUpdateFPS"
+		/>
+		<input
+			type="text"
+			v-model="displayCode"
+			placeholder="输入显示码(6 | player6@P2)"
+		/>
+	</div>
 	<ScreenCanvas ref="screen" @vue:mounted="requestAliveLink" />
 </template>
 

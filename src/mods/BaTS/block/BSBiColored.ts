@@ -21,7 +21,7 @@ export default class BSBiColored extends BSColored {
 
 	//============Constructor & Destructor============//
 	public constructor(lineColor: uint = 0xaaaaaa, fillColor: uint = 0xbbbbbb) {
-		super(fillColor) // ! won't give the attributes
+		super(fillColor) // ! won't give the attributes // ↑上面的默认值是为了「白板构造函数」
 		this._lineColor = lineColor
 	}
 

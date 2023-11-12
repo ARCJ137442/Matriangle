@@ -217,3 +217,44 @@ function snapS(value: uint): uint {
 function snapV(value: uint): uint {
 	return snapS(value)
 }
+
+//========Format========//
+/**
+ * @example RGB [255, 0, 0] ==> `rgb(255, 0, 0)`
+ */
+export function formatRGB(r: uint, g: uint, b: uint): string {
+	return `rgb(${r}, ${g}, ${b})`
+}
+
+/**
+ * @example RGBA [255, 128, 0, 0.5] ==> `rgba(255, 128, 0, 0.5)`
+ */
+export function formatRGBA(r: uint, g: uint, b: uint, a: number): string {
+	return `rgba(${r}, ${g}, ${b}, ${a})`
+}
+
+/**
+ * @example HSV→RGB [0, 0, 0.5] ==> `rgb(128, 128, 128)`
+ */
+export function formatHSV(h: uint, s: uint, v: uint): string {
+	return `rgb(${HSVtoRGB(h, s, v).join(',')})`
+}
+
+/**
+ * @example 0x800000 ==> `#800000`
+ */
+export function formatHEX(I: uint): string {
+	return `#${I.toString(16).padStart(6, '0')}`
+}
+
+/**
+ * @example 0x800000 ==> `#800000`
+ */
+export function formatHEX_A(I: uint, alpha: number): string {
+	return (
+		formatHEX(I) +
+		uint(alpha * 0xff)
+			.toString(16)
+			.padStart(2, '0')
+	)
+}

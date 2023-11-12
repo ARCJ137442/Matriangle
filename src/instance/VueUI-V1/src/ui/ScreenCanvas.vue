@@ -11,14 +11,15 @@
 import { DISPLAY_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import {
 	canvasVisualize_V1 as canvasVisualize,
-	drawPlayerShape,
+	test_draw,
 } from '../lib/canvasVisualizeBrowser'
 // Vue
 import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 // 外部库
 import { Frame, Circle, Rectangle } from 'zimjs'
-import * as Zim from 'zimjs'
+import Zim from 'zimjs'
 import { randInt } from 'matriangle-common/exMath'
+import { formatRGBA } from '../../../../common'
 
 let frame: Frame
 let r: Rectangle
@@ -27,7 +28,7 @@ let r: Rectangle
  * 加载时初始化
  * 参考自<https://github.com/yoanhg421/zimjs-templates/blob/master/templates/vue-zim-ts/src/App.vue>
  */
-onMounted(() => {
+onMounted((): void => {
 	// 加载帧
 	frame = new Frame({
 		// 链接的元素id
@@ -40,7 +41,7 @@ onMounted(() => {
 		// 初始化
 		ready: (): void => {
 			// 添加一个圆
-			new Circle(50, '#f008') //半径50，半透明红色
+			new Circle(50, formatRGBA(255, 0, 0, 0.5)) //半径50，半透明红色
 				// 放到屏幕中央
 				.center()
 				// 可拖动
@@ -56,24 +57,15 @@ onMounted(() => {
 				.pos(Math.random() * frame.width, Math.random() * frame.height)
 				// 可拖动
 				.drag()
-			// 添加一个新形状
-			const shape = new Zim.Shape()
-			// 放中间
-			shape.center()
-			// 像AS3那样绘图
-			/* shape.graphics.beginFill('#000')
-			shape.graphics.drawRect(0, 0, 100, 100)
-			shape.graphics.endFill() */
-			drawPlayerShape(shape)
-			// 可拖动
-			shape.drag()
+			// 添加测试用新形状
+			test_draw(() => new Zim.Shape())
 			// 更新场景
 			frame.stage.update()
 		},
 	})
 })
 
-setInterval(() => {
+setInterval((): void => {
 	/* // 添加一个圆
 	new Circle(10 + randInt(40), '#' + randInt(0xffffff).toString(16))
 		// 随机一个位置
@@ -89,7 +81,7 @@ setInterval(() => {
 }, 1000)
 
 // 在卸载时释放资源
-onBeforeUnmount(() => {
+onBeforeUnmount((): void => {
 	// 尝试释放资源
 	frame?.dispose?.()
 })

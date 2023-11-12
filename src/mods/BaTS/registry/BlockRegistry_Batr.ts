@@ -84,12 +84,12 @@ export module BatrBlockPrototypes {
 	export const GLASS: Block<BSBiColored> = new Block(
 		'Glass',
 		BlockAttributes_Batr.GLASS,
-		new BSBiColored(0xddffff)
+		new BSBiColored(0xddffff, 0xddffff)
 	) // 青色的玻璃
 	export const BEDROCK: Block<BSBiColored> = new Block(
 		'Bedrock',
 		BlockAttributes_Batr.BEDROCK,
-		new BSBiColored(0x999999, 0xaaaaaa)
+		new BSBiColored(0x888888, 0xaaaaaa)
 	) // 颜色更深的墙
 	export const METAL: Block<BSBiColored> = new Block(
 		'Metal',
@@ -141,7 +141,7 @@ export module BatrBlockPrototypes {
 	export const GATE_OPEN: Block<BSGate> = new Block(
 		'Gate',
 		BlockAttributes_Batr.GATE_CLOSE,
-		new BSGate(false)
+		new BSGate(true)
 	) // 打开的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
 	export const GATE_CLOSE: Block<BSGate> = new Block(
 		'Gate',
