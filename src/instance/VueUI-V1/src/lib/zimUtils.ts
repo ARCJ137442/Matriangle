@@ -10,10 +10,12 @@ export const center_drags = (...shapes: Shape[]): Shape[] =>
 	shapes.map(center_drag)
 
 export function randomMove(shape: Shape, range: number = 400): Shape {
-	return shape.pos(
-		(shape.x += Math.random() * range - range / 2),
-		(shape.y += Math.random() * range - range / 2)
-	)
+	return shape
+		.pos(
+			(shape.x += Math.random() * range - range / 2),
+			(shape.y += Math.random() * range - range / 2)
+		)
+		.rot(Math.random() * 360)
 }
 
 // 绘图相关 //

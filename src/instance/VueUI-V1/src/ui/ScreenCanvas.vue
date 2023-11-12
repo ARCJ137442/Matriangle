@@ -74,7 +74,9 @@ setInterval((): void => {
 		.drag() */
 
 	// 随机一个位置
-	r.pos(Math.random() * frame.width, Math.random() * frame.height)
+	r.pos(Math.random() * frame.width, Math.random() * frame.height).rot(
+		Math.random() * 360
+	)
 	r.width = r.height = 10 + randInt(40)
 	// 更新场景
 	frame?.stage?.update()

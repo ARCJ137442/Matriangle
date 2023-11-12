@@ -15,28 +15,30 @@ import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
  * ! 【20230910 9:33:30】独立成单个注册表，避免循环导入问题
  * * 避免在未生成NativeBlockAttributes时注册「方块类型」时引用各自方块类，而类中又引入NativeBlockAttributes的问题
  */
-export module BlockAttributes_Batr {
-	export const WALL: BlockAttributes = new BlockAttributes(12303291).asSolid
+export module BatrBlockAttributes {
+	export const WALL: BlockAttributes = new BlockAttributes(0xaaaaaa).asSolid
 	export const WATER: BlockAttributes = new BlockAttributes(
-		2237183,
-		1073741824
+		0x2222ff,
+		0x40000000
 	).asLiquid.asArenaBlock
-	export const GLASS: BlockAttributes = new BlockAttributes(0, 2147483648)
-		.asTransparentSolid.asArenaBlock
-	export const BEDROCK: BlockAttributes = new BlockAttributes(8947848).asSolid
-		.asUnbreakable
+	export const GLASS: BlockAttributes = new BlockAttributes(
+		0xddffff,
+		0x80000000
+	).asTransparentSolid.asArenaBlock
+	export const BEDROCK: BlockAttributes = new BlockAttributes(0x888888)
+		.asSolid.asUnbreakable
 
 	export const X_TRAP_HURT: BlockAttributes = new BlockAttributes(
-		16776960,
-		3221225472
+		0xffff00,
+		0xc0000000
 	).asGas.asHurtZone.asArenaBlock
 	export const X_TRAP_KILL: BlockAttributes = new BlockAttributes(
-		16711680,
-		3221225472
+		0xff0000,
+		0xc0000000
 	).asGas.asKillZone.asArenaBlock
 	export const X_TRAP_ROTATE: BlockAttributes = new BlockAttributes(
-		255,
-		3221225472
+		0x0000ff,
+		0xc0000000
 	).asGas.asRotateZone.asArenaBlock
 
 	export const COLOR_SPAWNER: BlockAttributes = new BlockAttributes(4473924)
@@ -47,7 +49,7 @@ export module BlockAttributes_Batr {
 	export const METAL: BlockAttributes = new BlockAttributes(6710886).asSolid
 		.asMetal.asArenaBlock
 	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(
-		6711039
+		0x6666ff
 	).asBase
 
 	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(6750054)
@@ -71,83 +73,107 @@ export module BlockAttributes_Batr {
  * * 不深拷贝则会影响到后续创建的稳定性
  */
 export module BatrBlockPrototypes {
+	/** 灰色的墙 */
 	export const WALL: Block<BSBiColored> = new Block(
 		'Wall',
-		BlockAttributes_Batr.WALL,
-		new BSBiColored(0xaaaaaa, 0xbbbbbb)
-	) // 灰色的墙
+		BatrBlockAttributes.WALL,
+		new BSBiColored(BatrBlockAttributes.WALL.defaultPixelColor, 0xbbbbbb)
+	)
+	/** 蓝色的水 */
 	export const WATER: Block<BSColored> = new Block(
 		'Water',
-		BlockAttributes_Batr.WATER,
-		new BSColored(0x2222ff)
-	) // 蓝色的水
+		BatrBlockAttributes.WATER,
+		new BSColored(BatrBlockAttributes.WATER.defaultPixelColor)
+	)
+	/** 青色的玻璃 */
 	export const GLASS: Block<BSBiColored> = new Block(
 		'Glass',
-		BlockAttributes_Batr.GLASS,
-		new BSBiColored(0xddffff, 0xddffff)
-	) // 青色的玻璃
+		BatrBlockAttributes.GLASS,
+		new BSBiColored(
+			BatrBlockAttributes.GLASS.defaultPixelColor,
+			BatrBlockAttributes.GLASS.defaultPixelColor
+		)
+	)
+	/** 颜色更深的墙 */
 	export const BEDROCK: Block<BSBiColored> = new Block(
 		'Bedrock',
-		BlockAttributes_Batr.BEDROCK,
-		new BSBiColored(0x888888, 0xaaaaaa)
-	) // 颜色更深的墙
+		BatrBlockAttributes.BEDROCK,
+		new BSBiColored(
+			BatrBlockAttributes.BEDROCK.defaultPixelColor,
+			BatrBlockAttributes.WALL.defaultPixelColor
+		)
+	)
+	/** 白里透黑的金属 */
 	export const METAL: Block<BSBiColored> = new Block(
 		'Metal',
-		BlockAttributes_Batr.METAL,
+		BatrBlockAttributes.METAL,
 		new BSBiColored(0x444444, 0xdddddd)
-	) // 白里透黑的金属
+	)
+	/** 绿色的墙 */
 	export const MOVEABLE_WALL: Block<BSBiColored> = new Block(
 		'MoveableWall',
-		BlockAttributes_Batr.MOVEABLE_WALL,
+		BatrBlockAttributes.MOVEABLE_WALL,
 		new BSBiColored(0x889988, 0xbbccbb)
-	) // 绿色的墙
-
+	)
+	/** 橙叉叉 */
 	export const X_TRAP_HURT: Block<null> = new Block(
 		'XTrapHurt',
-		BlockAttributes_Batr.X_TRAP_HURT,
+		BatrBlockAttributes.X_TRAP_HURT,
 		null
 	)
+	/** 红叉叉 */
 	export const X_TRAP_KILL: Block<null> = new Block(
 		'XTrapKill',
-		BlockAttributes_Batr.X_TRAP_KILL,
+		BatrBlockAttributes.X_TRAP_KILL,
 		null
 	)
+	/** 蓝叉叉 */
 	export const X_TRAP_ROTATE: Block<null> = new Block(
 		'XTrapRotate',
-		BlockAttributes_Batr.X_TRAP_ROTATE,
+		BatrBlockAttributes.X_TRAP_ROTATE,
 		null
 	)
 
 	export const COLOR_SPAWNER: Block<null> = new Block(
 		'ColorSpawner',
-		BlockAttributes_Batr.COLOR_SPAWNER,
+		BatrBlockAttributes.COLOR_SPAWNER,
 		null
 	)
 	export const LASER_TRAP: Block<null> = new Block(
 		'LaserTrap',
-		BlockAttributes_Batr.LASER_TRAP,
+		BatrBlockAttributes.LASER_TRAP,
 		null
 	)
 	export const SPAWN_POINT_MARK: Block<null> = new Block(
 		'SpawnPointMark',
-		BlockAttributes_Batr.SPAWN_POINT_MARK,
+		BatrBlockAttributes.SPAWN_POINT_MARK,
 		null
 	)
 	export const SUPPLY_POINT: Block<null> = new Block(
 		'SupplyPoint',
-		BlockAttributes_Batr.SUPPLY_POINT,
+		BatrBlockAttributes.SUPPLY_POINT,
 		null
 	)
+	/**
+	 * 打开的门
+	 *
+	 * !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	 */
 	export const GATE_OPEN: Block<BSGate> = new Block(
 		'Gate',
-		BlockAttributes_Batr.GATE_CLOSE,
+		BatrBlockAttributes.GATE_CLOSE,
 		new BSGate(true)
-	) // 打开的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	)
+	/**
+	 * 关闭的门
+	 *
+	 * !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	 */
 	export const GATE_CLOSE: Block<BSGate> = new Block(
 		'Gate',
-		BlockAttributes_Batr.GATE_CLOSE,
+		BatrBlockAttributes.GATE_CLOSE,
 		new BSGate(false)
-	) // 关闭的门 // !【2023-10-07 21:53:46】只是状态不同，id还是相同的
+	)
 }
 
 /**

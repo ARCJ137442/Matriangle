@@ -845,3 +845,12 @@ export function straightProjection<T extends number>(
 	// 返回
 	return p
 }
+
+/**
+ * 展开投影
+ * * 在一个「固定尺寸」的「更低维空间」种，将更高维的点投影到能一一对应的点，并且按照指定的方向平铺
+ * * 例如：基于「切片」的二维投影 [0, 12, 1] ==y=> [0, 12+24, 0]
+ *
+ * TODO: 有待实现
+ */
+export function unfoldProject() {}

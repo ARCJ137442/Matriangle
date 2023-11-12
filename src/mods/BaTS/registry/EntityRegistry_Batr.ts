@@ -38,7 +38,7 @@ import Wave from '../entity/projectile/other/Wave'
  * !【2023-10-01 16:18:46】这不应该在「所有实体类加载完成前」被导入
  *
  */
-export module NativeEntityTypes {
+export module BatrEntityTypes {
 	//============Registry============//
 
 	// TODO: 增加「显示层级」
@@ -227,7 +227,7 @@ export module NativeEntityTypes {
 
 export function getEntityType(
 	entity: Entity,
-	types: EntityType[] = NativeEntityTypes._ALL_ENTITY
+	types: EntityType[] = BatrEntityTypes._ALL_ENTITY
 ): EntityType | undefined {
 	// 尝试在「注册表」中搜索
 	for (const entityType of types) {

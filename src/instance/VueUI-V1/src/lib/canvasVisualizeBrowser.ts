@@ -111,7 +111,10 @@ import {
 	drawSquareFrameOrigin,
 	fillSquareBiColored,
 } from './zimUtils'
-import { BatrBlockPrototypes } from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
+import {
+	BatrBlockIDs,
+	BatrBlockPrototypes,
+} from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
 
 /**
  * 临时定义的「Player」常量
@@ -201,6 +204,7 @@ export function drawColoredBlock(shape: Shape, state: BSColored): Shape {
 	return shape
 }
 
+/** 水（半透明颜色方块） */
 export function drawWater(
 	shape: Shape,
 	state: BSColored,
@@ -213,6 +217,7 @@ export function drawWater(
 	return shape
 }
 
+/** 墙（内外方形嵌套方块） */
 export function drawWall(
 	shape: Shape,
 	state: BSBiColored,
@@ -228,6 +233,7 @@ export function drawWall(
 	return shape
 }
 
+/** 金属（内部方形图案方块） */
 export function drawMetal(
 	shape: Shape,
 	state: BSBiColored,
@@ -245,6 +251,7 @@ export function drawMetal(
 	return shape
 }
 
+/** 可移动墙（内部圆点图案方块） */
 export function drawMoveableWall(
 	shape: Shape,
 	state: BSBiColored,
@@ -260,6 +267,7 @@ export function drawMoveableWall(
 	return shape
 }
 
+/** 玻璃（可透明方形嵌套方块） */
 export function drawGlass(
 	shape: Shape,
 	state: BSBiColored,
@@ -285,6 +293,7 @@ export function drawGlass(
 	return shape
 }
 
+/** 门（两种形态） */
 export function drawGate(
 	shape: Shape,
 	state: BSGate,
@@ -293,12 +302,15 @@ export function drawGate(
 	centerColor: uint = 0x666666,
 	lineSizeBorder: number = DEFAULT_SIZE / 20
 ): Shape {
+	// * 状态：开
 	if (state.open) {
 		// Line
 		shape.graphics.beginFill(formatHEX(lineColor))
 		drawSquareFrameOrigin(shape, DEFAULT_SIZE, lineSizeBorder)
 		shape.graphics.endFill()
-	} else {
+	}
+	// * 状态：关
+	else {
 		// * 底座
 		fillSquareBiColored(
 			shape,
@@ -320,6 +332,7 @@ export function drawGate(
 	return shape
 }
 
+/** 特殊图形：激光陷阱 */
 export function drawLaserTrap(
 	shape: Shape,
 	lineColor: uint = BatrBlockPrototypes.WALL.state.lineColor,
@@ -360,6 +373,7 @@ export function drawLaserTrap(
 	return shape
 }
 
+/** 特殊形状：颜色生成器 */
 export function drawColorSpawner(
 	shape: Shape,
 	lineColor: uint = BatrBlockPrototypes.WALL.state.lineColor,
@@ -385,8 +399,10 @@ export function drawColorSpawner(
 	return shape
 }
 
+/** 特殊标记：重生点 */
 export function drawSpawnPointMark(
 	shape: Shape,
+	backgroundAlpha: number = 1 / 4,
 	centerColor: uint = 0x8000ff,
 	// lineSize: number = DEFAULT_SIZE / 20,
 	lineSizeCenter: number = DEFAULT_SIZE / 32
@@ -395,7 +411,7 @@ export function drawSpawnPointMark(
 	/* // * 基座
 	drawWall(shape, state, lineSize) */
 	shape.graphics
-		.beginFill(formatHEX_A(0xffffff, 1 / 4))
+		.beginFill(formatHEX_A(0xffffff, backgroundAlpha))
 		.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE)
 		.endFill()
 	// * 图案（正方形+菱形 边框）
@@ -411,8 +427,10 @@ export function drawSpawnPointMark(
 	return shape
 }
 
+/** 特殊标记：供应点 */
 export function drawSupplyPoint(
 	shape: Shape,
+	backgroundAlpha: number = 1 / 4,
 	centerColor: uint = 0x00ff00,
 	crossLength: number = DEFAULT_SIZE * (6 / 8),
 	crossWidth: number = DEFAULT_SIZE * (2 / 8)
@@ -421,7 +439,7 @@ export function drawSupplyPoint(
 	/* // * 基座
 	drawWall(shape, state, lineSize) */
 	shape.graphics
-		.beginFill(formatHEX_A(0xffffff, 1 / 4))
+		.beginFill(formatHEX_A(0xffffff, backgroundAlpha))
 		.drawRect(0, 0, DEFAULT_SIZE, DEFAULT_SIZE)
 		.endFill()
 	// * 图案（十字）
@@ -446,6 +464,7 @@ export function drawSupplyPoint(
 	return shape
 }
 
+/** 特殊标记：X陷阱 */
 export function drawXTrap(
 	shape: Shape,
 	/**
@@ -455,8 +474,7 @@ export function drawXTrap(
 	 * protected static readonly COLOR_ROTATE: uint = 0x0000ff
 	 */
 	color: number,
-	alpha: number = 1,
-	alphaBack: number = 0.4,
+	alphaBack: number = 1 / 4,
 	lineSize: number = DEFAULT_SIZE / 20
 ): Shape {
 	// Back
@@ -466,7 +484,7 @@ export function drawXTrap(
 
 	// X
 	shape.graphics
-		.beginStroke(formatHEX_A(color, alpha)) // ! 替代Flash中的`graphics.lineStyle`
+		.beginStroke(formatHEX(color)) // ! 替代Flash中的`graphics.lineStyle`
 		.setStrokeStyle(lineSize)
 		// * 开始画线
 		.moveTo(lineSize / 2, lineSize / 2)
@@ -506,11 +524,29 @@ export const blockDisplayInitDict: {
 	/**
 	 * 彩色方块
 	 *
-	 * !【2023-11-12 15:35:34】📌bug：若不使用any罩着，这里`state`所对应的类型TS推导不出`BSColored`，只有`never`
+	 * !【2023-11-12 15:35:34】📌bug：若上面的对象类型不使用any罩着，这里`state`所对应的类型TS推导不出`BSColored`，只有`never`
 	 * * 这一点太废物了
 	 * * 另一个现象：若将VOID处的第二参数类型改为`BSColored`，则`state`所对应的类型TS推导出`BSColored`
 	 */
 	[NativeBlockIDs.COLORED]: drawColoredBlock,
+	/** 使用同样的方法 */
+	[BatrBlockIDs.WALL]: drawWall,
+	[BatrBlockIDs.WATER]: drawWater,
+	[BatrBlockIDs.GLASS]: drawGlass,
+	[BatrBlockIDs.BEDROCK]: drawWall,
+	[BatrBlockIDs.METAL]: drawMetal,
+	[BatrBlockIDs.MOVEABLE_WALL]: drawMoveableWall,
+	[BatrBlockIDs.X_TRAP_HURT]: (shape: Shape, _state: null): Shape =>
+		drawXTrap(shape, BatrBlockPrototypes.X_TRAP_HURT.pixelColor),
+	[BatrBlockIDs.X_TRAP_KILL]: (shape: Shape, _state: null): Shape =>
+		drawXTrap(shape, BatrBlockPrototypes.X_TRAP_KILL.pixelColor),
+	[BatrBlockIDs.X_TRAP_ROTATE]: (shape: Shape, _state: null): Shape =>
+		drawXTrap(shape, BatrBlockPrototypes.X_TRAP_ROTATE.pixelColor),
+	[BatrBlockIDs.COLOR_SPAWNER]: drawColorSpawner,
+	[BatrBlockIDs.LASER_TRAP]: drawLaserTrap,
+	[BatrBlockIDs.SPAWN_POINT_MARK]: drawSpawnPointMark,
+	[BatrBlockIDs.SUPPLY_POINT]: drawSupplyPoint,
+	[BatrBlockIDs.GATE]: drawGate,
 }
 
 /**
