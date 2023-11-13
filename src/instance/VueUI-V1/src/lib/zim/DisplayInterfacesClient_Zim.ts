@@ -15,13 +15,18 @@ import {
 	unfoldProject2D,
 	unfoldProjectPadBlockLength,
 } from 'matriangle-common/geometricTools'
-import { OptionalRecursive2 } from 'matriangle-common/utils'
+import { OptionalRecursive2, inplaceMapIn } from 'matriangle-common/utils'
 import {
 	typeID,
 	typeIDMap,
 } from 'matriangle-api/server/registry/IWorldRegistry'
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
+import {
+	DEFAULT_SIZE,
+	DISPLAY_GRIDS,
+} from 'matriangle-api/display/GlobalDisplayVariables'
+import { graphicsLineStyle } from './zimUtils'
+import { formatHEX } from 'matriangle-common'
 
 /**
  * 所有需要接收「更新信息」的图形都继承该类
@@ -162,6 +167,207 @@ export class ZimDisplayerBlock<
 }
 
 /**
+ * 地图背景
+ * * 承继自AS3版本`BattleTriangle-Gamma\batr\main\BackGround.as`
+ * * （默认不包括）地图的「底座」
+ * * 包括特别颜色的边线（Flash版本遗留）
+ */
+class ZimMapBackground extends Shape {
+	// 常量池（从Flash版本复刻） //
+	public static readonly BACKGROUND_COLOR: uint = 0xdddddd
+	public static readonly GRID_COLOR: uint = 0xd6d6d6
+	public static readonly GRID_SIZE: number = DEFAULT_SIZE / 32
+	public static readonly DEFAULT_DISPLAY_GRIDS: uint = DISPLAY_GRIDS
+	public static readonly GRID_SPREAD: uint = 0
+	public static readonly FRAME_LINE_COLOR: uint = 0x88ffff
+	public static readonly FRAME_LINE_SIZE: number = DEFAULT_SIZE / 8
+
+	/**
+	 * 构造函数
+	 */
+	public constructor(
+		/** 方块宽度（横向方块数） */
+		protected _blockWidth: uint,
+		/** 方块高度（纵向方块数） */
+		protected _blockHeight: uint,
+		/** 是否显示「地面」（即背景版） */
+		protected _showGround: boolean = true, // !【2023-11-14 01:32:21】目前默认关闭
+		/** 是否显示（内部）网格 */
+		protected _showGrid: boolean = true,
+		/** 是否显示网格边界线 */
+		protected _showBorder: boolean = true
+	) {
+		super()
+	}
+
+	// getter & setter
+	/**
+	 * 是否显示「地面」
+	 * * 即背景版
+	 */
+	public get showGround(): boolean {
+		return this._showGround
+	}
+	public set showGround(value: boolean) {
+		this._showGround = value
+		// 更新
+		this.update()
+	}
+
+	/** 是否显示「网格」 */
+	public get showGrid(): boolean {
+		return this._showGrid
+	}
+	public set showGrid(value: boolean) {
+		this._showGrid = value
+		// 更新
+		this.update()
+	}
+
+	/** 是否显示「网格边界线」 */
+	public get showGridBoundary(): boolean {
+		return this._showBorder
+	}
+	public set showGridBoundary(value: boolean) {
+		this._showBorder = value
+		// 更新
+		this.update()
+	}
+
+	/**
+	 * 初始化：绘制指定整数尺寸的网格
+	 * * 连接格点而非格内
+	 * * 包括边线
+	 */
+	public initWithWH(width: uint, height: uint): void {
+		this.updateWithWH(width, height)
+	}
+
+	/**
+	 * 更新
+	 *
+	 * @param width 更新的长
+	 * @param height 更新的宽
+	 */
+	public updateWithWH(width: uint, height: uint): void {
+		this._blockWidth = width
+		this._blockHeight = height
+		this.update()
+	}
+
+	/**
+	 * 更新
+	 *
+	 * @param width 更新的长
+	 * @param height 更新的宽
+	 */
+	public update(): void {
+		this.graphics.clear()
+		this._showGround && this.drawGround(this._blockWidth, this._blockHeight)
+		this._showGrid && this.drawGrid(this._blockWidth, this._blockHeight)
+		this._showBorder && this.drawBorder(this._blockWidth, this._blockHeight)
+	}
+
+	/**
+	 * 清空
+	 */
+	public clear(): void {
+		this.graphics.clear()
+	}
+
+	// * 旧AS3绘图函数（迁移） * //
+
+	protected drawGround(width: uint, height: uint): void {
+		this.graphics.beginFill(formatHEX(ZimMapBackground.BACKGROUND_COLOR))
+		this.graphics.drawRect(
+			0,
+			0,
+			width * DEFAULT_SIZE,
+			height * DEFAULT_SIZE
+		)
+	}
+
+	protected drawGrid(
+		width: uint,
+		height: uint,
+		beginX: int = 0,
+		beginY: int = 0
+	): void {
+		let dx: int = beginX,
+			dy: int = beginY
+		const mx: int = beginX + width,
+			my: int = beginY + height
+		graphicsLineStyle(
+			this.graphics,
+			ZimMapBackground.GRID_SIZE,
+			ZimMapBackground.GRID_COLOR
+		)
+		// V
+		while (dx <= mx) {
+			this.drawLineInBlockGrid(dx, beginY, dx, my)
+			dx++
+		}
+		// H
+		while (dy <= my) {
+			this.drawLineInBlockGrid(beginX, dy, mx, dy)
+			dy++
+		}
+	}
+
+	protected drawBorder(width: uint, height: uint): void {
+		graphicsLineStyle(
+			this.graphics,
+			ZimMapBackground.FRAME_LINE_SIZE,
+			ZimMapBackground.FRAME_LINE_COLOR
+		)
+		// * 新版重在「不要溢出地图方块本身」
+		// V
+		const halfLineSize = ZimMapBackground.FRAME_LINE_SIZE / 2,
+			halfLineSizeMax_W = width * DEFAULT_SIZE - halfLineSize,
+			halfLineSizeMax_H = height * DEFAULT_SIZE - halfLineSize
+		this.drawLineInGrid(
+			halfLineSize,
+			halfLineSize,
+			halfLineSize,
+			halfLineSizeMax_H
+		)
+		this.drawLineInGrid(
+			halfLineSizeMax_W,
+			halfLineSizeMax_H,
+			halfLineSize,
+			halfLineSizeMax_H
+		)
+		// H
+		this.drawLineInGrid(
+			halfLineSize,
+			halfLineSize,
+			halfLineSizeMax_W,
+			halfLineSize
+		)
+		this.drawLineInGrid(
+			halfLineSizeMax_W,
+			halfLineSizeMax_H,
+			halfLineSizeMax_W,
+			halfLineSize
+		)
+	}
+
+	protected drawLineInBlockGrid(x1: int, y1: int, x2: int, y2: int): void {
+		this.drawLineInGrid(
+			DEFAULT_SIZE * x1,
+			DEFAULT_SIZE * y1,
+			DEFAULT_SIZE * x2,
+			DEFAULT_SIZE * y2
+		)
+	}
+
+	protected drawLineInGrid(x1: int, y1: int, x2: int, y2: int): void {
+		this.graphics.moveTo(x1, y1)
+		this.graphics.lineTo(x2, y2)
+	}
+}
+
+/**
  * 总的「地图方块容器」对象
  * * 用于显示「一整个地图」，容纳方块并批量管理方块
  */
@@ -212,9 +418,18 @@ export class ZimDisplayerMap
 		/**
 		 * 存储对「方块绘图字典」的**引用**
 		 */
-		public blockDrawDict: typeIDMap<ZimDrawF_Block>
+		public blockDrawDict: typeIDMap<ZimDrawF_Block>,
+		/**
+		 * 存储用于显示「背景」的图形
+		 */
+		protected background: ZimMapBackground = new ZimMapBackground(
+			0,
+			0 // 两个零当默认值
+		)
 	) {
 		super()
+		// 添加背景
+		this.addChildAt(background, 0)
 	}
 
 	// 实现接口 //
@@ -267,8 +482,9 @@ export class ZimDisplayerMap
 	protected refreshSize(size: int[]): void {
 		// 尺寸拷贝
 		this.size.copyFrom(size)
-		// !【2023-11-13 22:52:04】有关「画布大小」的「尺寸控制」现在交给外部进行
 		// 绘制网格
+		this.background.updateWithWH(...this.unfoldedBlockSize2D)
+		// !【2023-11-13 22:52:04】有关「画布大小」的「尺寸控制」现在交给外部进行
 	}
 
 	/**
@@ -393,7 +609,7 @@ export class ZimDisplayerMap
 		}
 	}
 
-	public get actualSize2D(): [number, number] {
+	public get unfoldedBlockSize2D(): [uint, uint] {
 		return this.padAxis === 0
 			? // * x方向展开
 			  [
@@ -402,22 +618,33 @@ export class ZimDisplayerMap
 							unfoldProjectPadBlockLength(
 								this.size,
 								this.borderMax
-							)) *
-						DEFAULT_SIZE,
-					this.size[1] * DEFAULT_SIZE,
+							)),
+					this.size[1],
 			  ]
 			: // * y方向展开
 			  [
-					this.size[0] * DEFAULT_SIZE,
+					this.size[0],
 					this.size[1] *
 						(1 +
 							unfoldProjectPadBlockLength(
 								this.size,
 								this.borderMax
-							)) *
-						DEFAULT_SIZE,
+							)),
 			  ]
 	}
+
+	/**
+	 * 展开后「理论显示尺寸」
+	 * * 等同于「展开后方块尺寸 * 每格『理论显示大小/默认尺寸』」
+	 */
+	public get unfoldedDisplaySize2D(): [number, number] {
+		return inplaceMapIn(
+			this.unfoldedBlockSize2D,
+			ZimDisplayerMap.times_defaultSize
+		) as [number, number]
+	}
+	public static readonly times_defaultSize = (x: number): number =>
+		x * DEFAULT_SIZE
 
 	/**
 	 * 获取上边界
@@ -434,9 +661,10 @@ export class ZimDisplayerMap
 	 * * 呈现效果：将自身通过「适度缩放&平移」置于「帧」中央
 	 */
 	public relocateInFrame(stage: Stage): this {
-		const [actualW, actualH] = this.actualSize2D
+		if (stage === null) throw new Error('居然是空的舞台！')
+		const [actualW, actualH] = this.unfoldedDisplaySize2D
 		// this.fit(0, 0, stage.width, stage.height, true)
-		this.scaleTo(stage)
+		// this.scaleTo(stage)
 		// 保持纵横比的缩放
 		this.scaleX = this.scaleY = Math.min(
 			stage.height / actualH,

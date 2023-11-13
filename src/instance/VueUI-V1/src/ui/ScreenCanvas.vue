@@ -1,7 +1,7 @@
 <!-- 用于旧有「纯文本显示」的功能 -->
 <template>
 	<!-- 文本屏显 -->
-	<canvas ref="canvas" id="zim"></canvas>
+	<canvas ref="canvas" id="canvas"></canvas>
 	<!-- 附加信息 -->
 	<p class="otherInfText">{{ otherInfText }}</p>
 </template>
@@ -33,10 +33,10 @@ onMounted((): void => {
 	// 加载帧
 	frame = new Frame({
 		// 链接的元素id
-		scaling: 'zim',
+		scaling: 'canvas',
 		// 宽高
 		width: DISPLAY_SIZE,
-		height: DISPLAY_SIZE * 2,
+		height: DISPLAY_SIZE,
 		// 背景颜色 跟随BaTr
 		color: '#ddd',
 		// 初始化
@@ -61,7 +61,14 @@ onMounted((): void => {
 			// 添加测试用新形状
 			test_draw((): Shape => new Zim.Shape())
 			// 添加测试用地图呈现者
-			test_mapDisplayer(frame)
+			const mapDisplayer = test_mapDisplayer(frame)
+			// 调整尺寸 // ! 尺寸调不了，frame.remakeCanvas报错用不了
+			const aSize = mapDisplayer.unfoldedDisplaySize2D
+
+			// frame.remakeCanvas(aSize[0] * 0.32, aSize[1] * 0.32)
+			updateCanvasSize(aSize[0] * 0.32, aSize[1] * 0.32)
+			// 重定位
+			mapDisplayer.relocateInFrame(frame.stage).drag()
 			// 更新场景
 			frame.stage.update()
 		},
@@ -90,6 +97,19 @@ onBeforeUnmount((): void => {
 	// 尝试释放资源
 	frame?.dispose?.()
 })
+
+/**
+ * 更新画布尺寸
+ */
+function updateCanvasSize(W: number, H: number): void {
+	if (!canvas.value) {
+		console.error('未找到画板元素！')
+		return
+	}
+	canvas.value.width = W
+	canvas.value.height = H
+	console.log('画板尺寸更新：', [W, H])
+}
 
 // 类型定义
 type CanvasDisplayData = {

@@ -21,6 +21,23 @@ export function randomMove(shape: Shape, range: number = 400): Shape {
 // 绘图相关 //
 
 /**
+ * 用于从Flash快速迁移的lineStyle
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function graphicsLineStyle<T>(
+	graphics: T,
+	size: number,
+	colorHEX: uint
+): T {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+	;(graphics as any).setStrokeStyle(size)
+	// lineColor
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+	;(graphics as any).beginStroke(formatHEX(colorHEX))
+	return graphics
+}
+
+/**
  * 填充
  * * 以原点为起始点的
  * * 全不透明的

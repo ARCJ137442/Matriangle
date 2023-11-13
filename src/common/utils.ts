@@ -127,6 +127,17 @@ export function countIn<T>(P: (item: T) => boolean, array: T[]): uint {
 }
 
 /**
+ * 原地映射
+ *
+ * @param arr 待映射的数组
+ * @param mapF 映射函数
+ */
+export function inplaceMapIn<T>(arr: T[], mapF: (item: T) => T): T[] {
+	for (let i = 0; i < arr.length; i++) arr[i] = mapF(arr[i])
+	return arr
+}
+
+/**
  * 随机挑选，但排除某个元素
  *
  * ! 确保要排除的元素在数组内

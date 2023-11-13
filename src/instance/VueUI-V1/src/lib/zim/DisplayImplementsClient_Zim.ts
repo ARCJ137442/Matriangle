@@ -21,6 +21,7 @@ import {
 	drawSquareAndDiamond,
 	drawSquareFrameOrigin,
 	fillSquareBiColored,
+	graphicsLineStyle,
 } from './zimUtils'
 import {
 	BatrBlockIDs,
@@ -32,7 +33,7 @@ import Block from 'matriangle-api/server/block/Block'
 import { IDisplayDataBlock } from 'matriangle-api/display/remoteDisplayAPI'
 import IMap from 'matriangle-api/server/map/IMap'
 import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
-import { randomIn } from 'matriangle-common'
+import { generateArray, randomIn } from 'matriangle-common'
 import { stackMaps } from './../../../../V1/stackedMaps'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
@@ -66,8 +67,7 @@ export function drawPlayerShape(
 	const realRadiusY: number = (size - lineSize) / 2
 	shape.graphics.clear()
 	// shape.graphics.lineStyle(lineSize, lineColor) // ! 有一些地方还是不一致的
-	shape.graphics.setStrokeStyle(lineSize) // lineColor
-	shape.graphics.beginStroke('#' + lineColor.toString(16))
+	graphicsLineStyle(shape.graphics, lineSize, lineColor) // lineColor
 	// shape.graphics.beginFill(fillColor, 1.0)
 	/* let m: Matrix = new Matrix() // 📌Zim不再需要矩阵！
 	m.createGradientBox(
@@ -544,7 +544,7 @@ export const blockStateFromPrototype = (
 /**
  * 测试新的「地图呈现者」
  */
-export function test_mapDisplayer(frame: Frame): void {
+export function test_mapDisplayer(frame: Frame): ZimDisplayerMap {
 	const mapDisplayer = new ZimDisplayerMap(BLOCK_DRAW_DICT_BATR)
 	/* mapDisplayer.shapeInit({
 		size: [4, 4],
@@ -564,15 +564,24 @@ export function test_mapDisplayer(frame: Frame): void {
 	}) */
 	const MAP: IMap = new Map_V1(
 		'zim_test',
-		stackMaps([
-			randomIn(BatrDefaultMaps._ALL_MAPS).storage as MapStorageSparse,
-			randomIn(BatrDefaultMaps._ALL_MAPS).storage as MapStorageSparse,
-		])
+		stackMaps(
+			/* generateArray(
+				BatrDefaultMaps._ALL_MAPS.length,
+				i => BatrDefaultMaps._ALL_MAPS[i].storage as MapStorageSparse
+			) */
+			generateArray(
+				2,
+				() =>
+					randomIn(BatrDefaultMaps._ALL_MAPS)
+						.storage as MapStorageSparse
+			)
+		)
 	)
-	console.log('test_mapDisplayer', MAP.name)
+	// console.log('test_mapDisplayer', MAP.name)
 	mapDisplayer.shapeInit(MAP.storage.toDisplayData())
-	mapDisplayer.relocateInFrame(frame.stage).drag()
 	// .wiggle({ baseAmount: 10, property: 'x' }) /* .center().drag() */
 	// 必须添加进舞台
 	frame.stage.addChild(mapDisplayer as unknown as DisplayObject)
+	// 回传「地图呈现者」
+	return mapDisplayer
 }
