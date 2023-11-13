@@ -1,5 +1,5 @@
-import { addNReturnKey, identity, key } from '../../../common/utils'
-import { uint } from '../../../legacy/AS3Legacy'
+import { addNReturnKey, identity, key } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { IDisplayable, IShape } from '../../display/DisplayInterfaces'
 import BlockAttributes from './BlockAttributes'
 import {
@@ -11,7 +11,7 @@ import {
 	loadRecursiveCriterion_false,
 	loadRecursiveCriterion_true,
 	uniLoadJSObject,
-} from '../../../common/JSObjectify'
+} from 'matriangle-common/JSObjectify'
 import { typeID } from '../registry/IWorldRegistry'
 import BlockState from './BlockState'
 
@@ -217,6 +217,8 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 			? this.attributes.defaultPixelAlpha // default
 			: this._state.calculatePixelAlpha(this.attributes)
 	}
+
+	// TODO: 有待改进
 
 	/** 可显示 */
 	public readonly i_displayable = true as const

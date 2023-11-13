@@ -9,17 +9,18 @@
 <script setup lang="ts">
 // Matriangle API
 import { DISPLAY_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import {
-	canvasVisualize_V1 as canvasVisualize,
-	test_draw,
-} from '../lib/canvasVisualizeBrowser'
+import { canvasVisualize_V1 as canvasVisualize } from '../lib/canvasVisualizeBrowser'
 // Vue
 import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 // 外部库
-import { Frame, Circle, Rectangle } from 'zimjs'
+import { Frame, Circle, Rectangle, Shape } from 'zimjs'
 import Zim from 'zimjs'
 import { randInt } from 'matriangle-common/exMath'
-import { formatRGBA } from '../../../../common'
+import { formatRGBA } from 'matriangle-common/color'
+import {
+	test_draw,
+	test_mapDisplayer,
+} from '../lib/zim/DisplayImplementsClient_Zim'
 
 let frame: Frame
 let r: Rectangle
@@ -35,7 +36,7 @@ onMounted((): void => {
 		scaling: 'zim',
 		// 宽高
 		width: DISPLAY_SIZE,
-		height: DISPLAY_SIZE,
+		height: DISPLAY_SIZE * 2,
 		// 背景颜色 跟随BaTr
 		color: '#ddd',
 		// 初始化
@@ -58,7 +59,9 @@ onMounted((): void => {
 				// 可拖动
 				.drag()
 			// 添加测试用新形状
-			test_draw(() => new Zim.Shape())
+			test_draw((): Shape => new Zim.Shape())
+			// 添加测试用地图呈现者
+			test_mapDisplayer(frame)
 			// 更新场景
 			frame.stage.update()
 		},
@@ -128,3 +131,4 @@ defineExpose({
 	font-weight: inherit;
 }
 </style>
+../lib/zim/DisplayImplementsClient_Zim

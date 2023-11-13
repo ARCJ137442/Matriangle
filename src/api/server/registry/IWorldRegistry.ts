@@ -10,6 +10,14 @@ import EntityType from '../entity/EntityType'
 export type typeID = string
 
 /**
+ * 所有「ID⇒类型」的映射
+ * * 不是Map，只是Object
+ *   * 因为只有Object才有可能被「对象化」
+ *   * 而Map的键值类型是不确定的
+ */
+export type typeIDMap<T> = { [k: typeID]: T }
+
+/**
  * 「总注册表」
  * * 负责与「对象化/反对象化」「类型映射表」等数据交互
  * * 只负责「查找&返回」与「保存&加载」，不负责「具体运行」

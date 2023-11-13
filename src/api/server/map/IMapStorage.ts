@@ -6,6 +6,7 @@ import BlockAttributes from '../block/BlockAttributes'
 import Block from '../block/Block'
 import { IJSObjectifiable } from '../../../common/JSObjectify'
 import { typeID } from '../registry/IWorldRegistry'
+import { IDisplayDataMap } from '../../display'
 
 /**
  * 通用类型：用于「ID⇒零参构造函数」的映射表
@@ -281,8 +282,13 @@ export default interface IMapStorage
 
 	//============Display Implements============//
 
-	// TODO: 有待对接
-
-	// public setDisplayTo(target: IMapDisplayer): IMapStorage;
-	// public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): IMapStorage;
+	// TODO: 有待对接「刷新」逻辑
+	/**
+	 * 将地图数据转换为「显示数据」
+	 *
+	 * @returns 地图数据对应的「显示数据」
+	 *
+	 * !【2023-11-13 22:20:02】目前只需获取引用，因为后续将直接转换成JSON
+	 */
+	toDisplayData(): IDisplayDataMap
 }

@@ -1,7 +1,6 @@
-﻿import { getClass, isExtend } from 'matriangle-common/utils'
+﻿import { isExtend } from 'matriangle-common/utils'
 import { DisplayLayers } from 'matriangle-api/display/DisplayInterfaces'
 import Effect from '../entity/effect/Effect'
-import Entity from 'matriangle-api/server/entity/Entity'
 import EntityType from 'matriangle-api/server/entity/EntityType'
 import EffectBlockLight from '../entity/effect/EffectBlockLight'
 import EffectExplode from '../entity/effect/EffectExplode'
@@ -41,7 +40,6 @@ import Wave from '../entity/projectile/other/Wave'
 export module BatrEntityTypes {
 	//============Registry============//
 
-	// TODO: 增加「显示层级」
 	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
 	export const BULLET_BASIC: EntityType = new EntityType(
 		'BulletBasic',
@@ -222,22 +220,5 @@ export module BatrEntityTypes {
 	/** 自动过滤：EFFECTS */
 	export const _EFFECTS: EntityType[] = _ALL_ENTITY.filter(
 		(type: EntityType): boolean => isExtend(type.entityClass, Effect)
-	)
-}
-
-export function getEntityType(
-	entity: Entity,
-	types: EntityType[] = BatrEntityTypes._ALL_ENTITY
-): EntityType | undefined {
-	// 尝试在「注册表」中搜索
-	for (const entityType of types) {
-		if (entityType.entityClass === getClass(entity)) {
-			return entityType
-		}
-	}
-	// 未找到⇒返回「未定义」 // TODO: 目前「实体注册机制」尚未完全实现
-	return undefined
-	throw new Error(
-		`未找到${entity.toString()}在${types.toString()}对应的实体类型`
 	)
 }

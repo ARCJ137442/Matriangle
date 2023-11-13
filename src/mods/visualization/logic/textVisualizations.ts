@@ -35,7 +35,8 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
-import { getEntityType } from 'matriangle-mod-bats/registry/EntityRegistry'
+import { getEntityType } from 'matriangle-api/server/registry/IEntityRegistry'
+import { BatrEntityTypes } from 'matriangle-mod-bats/registry/EntityRegistry_Batr'
 
 /**
  * 一个用于可视化母体的可视化函数库
@@ -66,7 +67,7 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 		// 自定义名称
 		(entity as IPlayer)?.customName ??
 			// Type.name
-			getEntityType(entity)?.name ??
+			getEntityType(entity, BatrEntityTypes._ALL_ENTITY)?.name ??
 			// 用类名
 			getClass(entity)?.name ??
 			// 未定义

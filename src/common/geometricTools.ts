@@ -892,6 +892,7 @@ void function unfoldProject<T extends number = number>(
 /**
  * 将一个高维点展开在二维（屏幕）上，以便呈现高维内容
  * * 目前只适用于「高维→二维」的情况
+ * * 若对算法本身印象模糊，可以参考Git历史版本
  *
  * @param sizes 原空间的尺寸（使用前两个轴x、y进行投影）
  * @param target 被投影的点
@@ -952,47 +953,62 @@ export function unfoldProject2D<T extends number = number>(
 	}
 	// * 一般情况
 	else {
-		/** axisIncrements: 每个对应维度「多余的偏移量」应该被转化的方向 */
-		const l: T[] = [...sizes] // ! 从第一维开始存储，但累积从第三维开始
-		/** 临时变量 */
-		let i: uint
-		/**
-		 * 用乘法对其进行累积
-		 * * 越靠后的轴递增，对「展开方向」的贡献就越大
-		 * * 比如上面的`example`的例子
-		 *   * 实例贡献
-		 *     * z: l_z = (1)
-		 *     * w: l_w = (1 * size_z)
-		 *   * 实例结果：`[XXX, XXX, 1, size_z]`
-		 *   * 原理即为：z、w的取值范围分别是
-		 *     * z、w的取值范围分别是`0~z`、`0~w`
-		 *     * 这样在取值范围内，整体的「展开位置」就由「多余维度（z、w）」唯一确定了
-		 *       * 这个长度就是向『展开目标轴』展开的长度`L = target · l`
-		 *   * 这里的`1`含义实际上是「一个『展开目标轴』尺寸」即`sizes[padAxis]`
-		 */
-		for (i = 2 + 1; i < target.length; i++) {
-			// 连乘累积：如 `[4,3,2,1]` ==> `[4,12,24,24]`
-			;(l[i] as number) *= l[i - 1] / sizes[2]
-			/**
-			 * ! as 代表「同类型`T`是支持乘法的」
-			 * * 上面的` / sizes[2]`确保了`l * w = 1 * size_z`
-			 */
-		}
-		// 确保`l_z = 1`
-		;(l[2] as number) /= sizes[2]
-		// 使用数量积，批量计算「待展开目标轴」的「展开目标轴尺寸」
-		let L: T = 0 as T // ? 类型仍需商酌
-		for (i = 2; i < target.length; i++) {
-			;(L as number) += target[i] * l[i]
-		}
-		console.log(L, l)
-
 		// 从自身位置开始
 		result[0] = target[0]
 		result[1] = target[1]
-		// * 然后将「高维信息」转换为「低维的『盒子之外的展开』」
-		;(result[padAxis] as number) += L * sizes[padAxis]
+		// * 然后将「高维信息」转换为「低维的『盒子之外的展开』的长度增量」
+		;(result[padAxis] as number) +=
+			unfoldProjectPadBlockLength(sizes, target) * sizes[padAxis]
 	}
 	// 返回结果
 	return result
+}
+
+/**
+ * 此即「切片展开」中{@link unfoldProject2D}中出现的`L`值
+ * * 这里的「L值」是「方块长度」而非「地图长度的『方块长度』」
+ *   * 只能是「地图长度的倍数」
+ *
+ * ! 注意：「L值」的计算结果是「地图长度的倍数**增量**」，在实际使用时
+ */
+export function unfoldProjectPadBlockLength<T extends number = number>(
+	// ! 需要提供所有维度上的尺寸，以便为「切片展开」奠定边界
+	sizes: xPoint<T>,
+	target: xPoint<T>
+): int {
+	/** axisIncrements: 每个对应维度「多余的偏移量」应该被转化的方向 */
+	const l: T[] = [...sizes] // ! 从第一维开始存储，但累积从第三维开始
+	/** 临时变量 */
+	let i: uint
+	/**
+	 * 用乘法对其进行累积
+	 * * 越靠后的轴递增，对「展开方向」的贡献就越大
+	 * * 比如上面的`example`的例子
+	 *   * 实例贡献
+	 *     * z: l_z = (1)
+	 *     * w: l_w = (1 * size_z)
+	 *   * 实例结果：`[XXX, XXX, 1, size_z]`
+	 *   * 原理即为：z、w的取值范围分别是
+	 *     * z、w的取值范围分别是`0~z`、`0~w`
+	 *     * 这样在取值范围内，整体的「展开位置」就由「多余维度（z、w）」唯一确定了
+	 *       * 这个长度就是向『展开目标轴』展开的长度`L = target · l`
+	 *   * 这里的`1`含义实际上是「一个『展开目标轴』尺寸」即`sizes[padAxis]`
+	 */
+	for (i = 2 + 1; i < target.length; i++) {
+		// 连乘累积：如 `[4,3,2,1]` ==> `[4,12,24,24]`
+		;(l[i] as number) *= l[i - 1] / sizes[2]
+		/**
+		 * ! as 代表「同类型`T`是支持乘法的」
+		 * * 上面的` / sizes[2]`确保了`l * w = 1 * size_z`
+		 */
+	}
+	// 确保`l_z = 1`
+	;(l[2] as number) /= sizes[2]
+	// 使用数量积，批量计算「待展开目标轴」的「展开目标轴尺寸」
+	let L: T = 0 as T // ? 类型仍需商酌
+	for (i = 2; i < target.length; i++) {
+		;(L as number) += target[i] * l[i]
+	}
+	// 返回 // ? 或许整个算法还需要优化
+	return L
 }

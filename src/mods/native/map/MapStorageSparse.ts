@@ -37,6 +37,11 @@ import {
 	NATIVE_BLOCK_CONSTRUCTOR_MAP,
 	NativeBlockIDs,
 } from '../registry/BlockRegistry_Native'
+import {
+	IDisplayDataMap,
+	IDisplayDataMapBlocks,
+	pointToLocationStr,
+} from 'matriangle-api/display/remoteDisplayAPI'
 
 /** 现在由于使用ESLint，直接抽象到最外面当函数库 */
 function _temp_copyContent_F(
@@ -712,7 +717,30 @@ export default class MapStorageSparse implements IMapStorage {
 
 	//============Display Implements============//
 
-	// TODO: 有待对接
+	protected generateBlocksData(): IDisplayDataMapBlocks {
+		/** 返回值 */
+		const result: IDisplayDataMapBlocks = {}
+		// 临时指针
+		let block: Block
+		// 遍历所有位置，转换数据
+		this.forEachValidPositions((p: iPointRef): void => {
+			// 获取方块
+			block = this.getBlock(p)
+			// 生成方块
+			result[pointToLocationStr(p)] = {
+				blockID: block.id,
+				blockState: block.state,
+			}
+		})
+		return result
+	}
+
+	toDisplayData(): IDisplayDataMap {
+		return {
+			blocks: this.generateBlocksData(),
+			size: this.size,
+		}
+	}
 
 	// public setDisplayTo(target: IMapDisplayer): void {
 	// 	target.clearBlock();
