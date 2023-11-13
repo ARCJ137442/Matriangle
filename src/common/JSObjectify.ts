@@ -63,7 +63,7 @@ export interface IJSObjectifiable<T> {
 	 *
 	 * @param source 源头对象
 	 */
-	loadFromJSObject?(source: JSObject): T
+	loadFromJSObject?(source: JSObject): this
 
 	/**
 	 * 获取「通用对象化映射表」

@@ -1,6 +1,6 @@
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import BlockState from 'matriangle-api/server/block/BlockState'
-import { randomBoolean2 } from 'matriangle-common/utils'
+import { OptionalRecursive, randomBoolean2 } from 'matriangle-common/utils'
 import { int$MIN_VALUE, uint, int } from 'matriangle-legacy/AS3Legacy'
 
 /**
@@ -18,7 +18,16 @@ export default class BSGate extends BlockState {
 	}
 
 	copy(): this {
+		// ! "BSGate" 可赋给 "this" 类型的约束，但可以使用约束 "BSGate" 的其他子类型实例化 "this"。
 		return new BSGate(this._open) as this
+	}
+
+	/** @implements 从别处更新，并且附带更新「方块属性」 */
+	updateFrom(other: OptionalRecursive<BSGate>): this {
+		// 软更新状态
+		if (other.open !== undefined) this.open = other.open
+		// 返回自身
+		return this
 	}
 
 	//============Constructor & Destructor============//

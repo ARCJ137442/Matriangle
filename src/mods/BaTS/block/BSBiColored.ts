@@ -1,3 +1,4 @@
+import { OptionalRecursive } from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import BSColored from 'matriangle-mod-native/block/BSColored'
 
@@ -32,5 +33,15 @@ export default class BSBiColored extends BSColored {
 
 	override copy(): BSBiColored {
 		return new BSBiColored(this._lineColor, this._color)
+	}
+
+	/** @implements 软更新→返回自身 */
+	override updateFrom(other: OptionalRecursive<BSBiColored>): this {
+		// 父类更新
+		super.updateFrom(other)
+		// 软更新状态
+		if (other.lineColor !== undefined) this.lineColor = other.lineColor
+		// 返回自身
+		return this
 	}
 }

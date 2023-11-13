@@ -757,12 +757,39 @@ export type Val<T> = T
 export type Identity<T> = T
 
 /**
- * 标识「所有键变得可用」
+ * 标识「所有键变得可选」
  * * 原理：将一个类型中所有的键都变成「可选参数」状态
  * * 应用：响应式、部分式远程更新中的「部分更新」机制
  *   * 如：原先是{x, y}的只需传入{x}
+ *
+ * ! 只会让其内部**直接统属**的所有键变得可选
  */
 export type Optional<T> = { [K in keyof T]?: T[K] }
+
+/**
+ * 标识「所有键变得可用」，但是递归
+ * * 和{@link Optional}的唯一区别是：递归将其内所有属性变得「可选」
+ *
+ * ! 不会影响{@link Primitive 原始类型}
+ */
+export type OptionalRecursive<T> = { [K in keyof T]?: OptionalRecursive<T[K]> }
+
+/**
+ * 标识「所有键变得可用」，但递归且保护原始类型
+ * * 和{@link OptionalRecursive}的唯一区别：
+ *   * 递归不会影响到原始类型，并且不会让数组变得「可选」
+ *   * 编写的初衷：让数组元素不再变成`(T|undefined)[]`
+ */
+export type OptionalRecursive2<T> = {
+	[K in keyof T]?: T[K] extends unknown[] ? T[K] : OptionalRecursive2<T[K]>
+}
+
+/**
+ * 定义「原始类型」：
+ * * 除数组、对象在内
+ * * 所有的「可用简单字面量表示的类型」
+ */
+export type Primitive = string | number | boolean | symbol | null | undefined
 
 /**
  * 字典值迁移

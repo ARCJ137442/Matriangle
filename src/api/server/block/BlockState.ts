@@ -1,5 +1,5 @@
 import { IJSObjectifiable, JSObjectifyMap } from '../../../common/JSObjectify'
-import { key } from '../../../common/utils'
+import { OptionalRecursive, key } from '../../../common/utils'
 import { uint } from '../../../legacy/AS3Legacy'
 import BlockAttributes from './BlockAttributes'
 
@@ -11,6 +11,7 @@ import BlockAttributes from './BlockAttributes'
  * * 「有颜色状态」的「颜色」
  */
 export default abstract class BlockState
+	// 可被JS对象化（从而转换成JSON）
 	implements IJSObjectifiable<BlockState>
 {
 	//============Constructor & Destructor============//
@@ -36,11 +37,23 @@ export default abstract class BlockState
 
 	/**
 	 * （深）拷贝
-	 * @returns 一个与自身同类型的实例（使用`this`标注）
+	 * @returns 一个与自身同类型的实例
+	 *
+	 * ! 使用`this`标注会导致「"BS_XXX" 可赋给 "this" 类型的约束，但可以使用约束 "BS_XXX" 的其他子类型实例化 "this"」
 	 */
 	abstract copy(): BlockState
 
 	// Block //
+
+	/**
+	 * 从另一个相同类型的「方块状态」进行「部分化更新」
+	 * * 一般是「软更新」
+	 *   * 有状态⇒设置状态
+	 *   * 无状态⇒不更改
+	 *
+	 * @returns 自身
+	 */
+	abstract updateFrom(other: OptionalRecursive<BlockState>): this
 
 	/**
 	 * 以随机状态初始化

@@ -22,7 +22,7 @@ export abstract class xPoint<T extends number = number>
 	}
 
 	/** 实现：读取与自身类名相同的值 */
-	public loadFromJSObject(source: JSObject): xPoint<T> {
+	loadFromJSObject(source: JSObject): this {
 		const value: unknown = source[this.constructor.name]
 		if (Array.isArray(value))
 			value.forEach((item: any, index: number): void => {
@@ -96,6 +96,17 @@ export abstract class xPoint<T extends number = number>
 
 	//================Util Functions================//
 
+	/**
+	 * 清除点上的所有值
+	 * * 但实际上可看作`this.length=0`的封装版
+	 *
+	 * @returns 自身（支持链式操作）
+	 */
+	public clear(): this {
+		this.length = 0
+		return this
+	}
+
 	/** 显示点是否（在其长度内）有未定义量 */
 	public get hasUndefined(): boolean {
 		for (let i = 0; i < this.length; i++)
@@ -135,7 +146,7 @@ export abstract class xPoint<T extends number = number>
 	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).generateFrom(f)`
 	 */
-	public generate(f: (i: int) => T, length: uint = this.length): xPoint<T> {
+	public generate(f: (i: int) => T, length: uint = this.length): this {
 		for (let i = 0; i < length; i++) {
 			this[i] = f(i)
 		}
@@ -147,11 +158,7 @@ export abstract class xPoint<T extends number = number>
 	 * * 可以配合`new xPoint<T>(长度)`使用
 	 * * 例如：`new xPoint<T>(长度).inplace(f)`
 	 */
-	public inplaceMap(
-		f: (t: T) => T,
-		source: xPoint<T> | null = null
-	): xPoint<T> {
-		source = source ?? this
+	public inplaceMap(f: (t: T) => T, source: xPoint<T> = this): this {
 		for (let i = 0; i < this.length; i++) {
 			this[i] = f(source[i])
 		}
@@ -162,20 +169,21 @@ export abstract class xPoint<T extends number = number>
 	 * 从其它点拷贝坐标到此处
 	 * * 原理：根据源头点各分量逐一赋值
 	 * * 【20230912 16:31:39】现在循环采用的是「遍历对方的所有值」而非「遍历自己的所有值」
-	 *   * 这样可以保证「遍历到的`point[i]`始终有效」
+	 *   * 这样可以保证「遍历到的`other[i]`始终有效」
 	 *   * 利用JS「设置数组值无需考虑边界问题」的特性，可以实现「自己只new未初始化到指定维度，仍然可以『开箱复制即用』」
 	 *	 * 便于其它地方使用「数组缓存技术」：先初始化一个空数组，需要的时候再把内容copy过去，避免「未初始化的维数」这样的情况
+	 * * 【2023-11-13 18:08:14】现在参数名改为`other`，并可直接用数组
 	 *
 	 * ! 会修改自身
 	 *
 	 * @returns 返回自身，与另一点相等
 	 */
-	public copyFrom(point: xPoint<T>): xPoint<T> {
+	public copyFrom(other: Array<T>): xPoint<T> {
 		// 先把长度对齐
-		this.length = point.length
+		this.length = other.length
 		// 然后逐一设置值
-		for (let i = 0; i < point.length; i++) {
-			this[i] = point[i]
+		for (let i = 0; i < other.length; i++) {
+			this[i] = other[i]
 		}
 		return this
 	}
@@ -209,7 +217,7 @@ export abstract class xPoint<T extends number = number>
 	 *
 	 * @returns 返回自身
 	 */
-	public addFrom(point: xPoint<T>): xPoint<T> {
+	public addFrom(point: xPoint<T>): this {
 		for (let i = 0; i < point.length; i++) {
 			this[i] += point[i] as any
 		}
@@ -224,7 +232,7 @@ export abstract class xPoint<T extends number = number>
 	 *
 	 * @returns 返回自身
 	 */
-	public addFromSingle(x: T): xPoint<T> {
+	public addFromSingle(x: T): this {
 		for (let i = 0; i < this.length; i++) {
 			this[i] += x as any
 		}
@@ -823,6 +831,28 @@ export function modPoint_FI(p: fPointRef, modP: iPointRef): fPointRef {
 }
 
 /**
+ * 数组（作为向量）点积
+ * * 作为批量计算 $∑^n_{i=1} a_i b_i$ 的辅助函数
+ *
+ * @param a 点积参数1（作为维数参考与白板参考）
+ * @param b 点积参数2
+ * @param target 存放点积结果的数组（默认为a的新拷贝）
+ * @returns 存放点积结果的数组
+ */
+export function dotProduct<T extends number = number>(
+	a: xPoint<T>,
+	b: xPoint<T>,
+	target: xPoint<T> = a.copy()
+): xPoint<T> {
+	for (let i: uint = 0; i < a.length; ++i) {
+		;(target[i] as number) = a[i] * b[i]
+	}
+	return target
+}
+
+// * 后面是更多面向应用的「专用化函数」 * //
+
+/**
  * 直投影
  * * 逻辑：多余维度⇒去除，缺少维度⇒补数
  * * 用于不同维度之间点的坐标转换
@@ -853,4 +883,116 @@ export function straightProjection<T extends number>(
  *
  * TODO: 有待实现
  */
-export function unfoldProject() {}
+void function unfoldProject<T extends number = number>(
+	projectBox_min: xPoint<T>,
+	projectBox_max: xPoint<T>,
+	target: xPoint<T>
+) {}
+
+/**
+ * 将一个高维点展开在二维（屏幕）上，以便呈现高维内容
+ * * 目前只适用于「高维→二维」的情况
+ *
+ * @param sizes 原空间的尺寸（使用前两个轴x、y进行投影）
+ * @param target 被投影的点
+ * @param result 投影的目标坐标（元组）
+ * @returns 投影的目标元组
+ *
+ * @example AxBx2x2的四维投影 belike
+ * |-----|
+ * | z=1 |
+ * | w=1 |
+ * |-----| ↓往下挪移
+ * | z=2 |
+ * | w=1 |
+ * |-----| ↓z轮完了，到w增加
+ * | z=1 |
+ * | w=2 |
+ * |-----|
+ * | z=2 |
+ * | w=2 |
+ * |-----|
+ *
+ * @example 代码测试：
+ *  const sizes = new iPoint(2, 2, 2, 2)
+ *
+ * const targets = [
+ * 	new iPoint(0, 0, 0, 0),
+ * 	new iPoint(0, 0, 1, 0),
+ * 	new iPoint(0, 0, 0, 1),
+ * 	new iPoint(0, 0, 1, 1),
+ * ]
+ * for (const target of targets) {
+ * 	console.log(target, '=>', unfoldProject2D(sizes, target))
+ * 	target[2]++
+ * }
+ *
+ * `测试结果：
+ * { L=0 l=[ 2, 2, 1, 2 ] } | intPoint(4) [ 0, 0, 0, 0 ] => [ 0, 0 ]
+ * { L=1 l=[ 2, 2, 1, 2 ] } | intPoint(4) [ 0, 0, 1, 0 ] => [ 0, 2 ]
+ * { L=2 l=[ 2, 2, 1, 2 ] } | intPoint(4) [ 0, 0, 0, 1 ] => [ 0, 4 ]
+ * { L=3 l=[ 2, 2, 1, 2 ] } | intPoint(4) [ 0, 0, 1, 1 ] => [ 0, 6 ]
+ * `
+ */
+export function unfoldProject2D<T extends number = number>(
+	// ! 需要提供所有维度上的尺寸，以便为「切片展开」奠定边界
+	sizes: xPoint<T>,
+	target: xPoint<T>,
+	padAxis: uint = 1, // 默认y轴
+	result: [T, T] = [target[0], target[1]]
+): [T, T] {
+	// * 处理平凡情况：目标和尺寸不足二维
+	if (sizes.length < 2 || target.length < 2)
+		throw new Error('unfoldProject2D: 目标和尺寸维数不足二维')
+	// * 处理平凡情况：目标和尺寸维数相同且为2维
+	else if (sizes.length === target.length && sizes.length == 2) {
+		// 直接等于
+		result[0] = target[0]
+		result[1] = target[1]
+	}
+	// * 一般情况
+	else {
+		/** axisIncrements: 每个对应维度「多余的偏移量」应该被转化的方向 */
+		const l: T[] = [...sizes] // ! 从第一维开始存储，但累积从第三维开始
+		/** 临时变量 */
+		let i: uint
+		/**
+		 * 用乘法对其进行累积
+		 * * 越靠后的轴递增，对「展开方向」的贡献就越大
+		 * * 比如上面的`example`的例子
+		 *   * 实例贡献
+		 *     * z: l_z = (1)
+		 *     * w: l_w = (1 * size_z)
+		 *   * 实例结果：`[XXX, XXX, 1, size_z]`
+		 *   * 原理即为：z、w的取值范围分别是
+		 *     * z、w的取值范围分别是`0~z`、`0~w`
+		 *     * 这样在取值范围内，整体的「展开位置」就由「多余维度（z、w）」唯一确定了
+		 *       * 这个长度就是向『展开目标轴』展开的长度`L = target · l`
+		 *   * 这里的`1`含义实际上是「一个『展开目标轴』尺寸」即`sizes[padAxis]`
+		 */
+		for (i = 2 + 1; i < target.length; i++) {
+			// 连乘累积：如 `[4,3,2,1]` ==> `[4,12,24,24]`
+			;(l[i] as number) *= l[i - 1] / sizes[2]
+			/**
+			 * ! as 代表「同类型`T`是支持乘法的」
+			 * * 上面的` / sizes[2]`确保了`l * w = 1 * size_z`
+			 */
+		}
+		// 确保`l_z = 1`
+		;(l[2] as number) /= sizes[2]
+		// 使用数量积，批量计算「待展开目标轴」的「展开目标轴尺寸」
+		let L: T = 0 as T // ? 类型仍需商酌
+		for (i = 2; i < target.length; i++) {
+			;(L as number) += target[i] * l[i]
+		}
+		console.log(L, l)
+
+		// 从自身位置开始
+		result[0] = target[0]
+		result[1] = target[1]
+		// * 然后将「高维信息」转换为「低维的『盒子之外的展开』」
+		;(result[padAxis] as number) += L * sizes[padAxis]
+	}
+	// 返回结果
+	return result
+}

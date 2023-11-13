@@ -1,6 +1,7 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { randInt } from 'matriangle-common/exMath'
 import BlockState from 'matriangle-api/server/block/BlockState'
+import { OptionalRecursive } from 'matriangle-common/utils'
 
 /**
  * 「有颜色状态」是
@@ -37,6 +38,14 @@ export default class BSColored extends BlockState {
 
 	randomize(): this {
 		this._color = randInt(0xffffff)
+		return this
+	}
+
+	/** @implements 软更新→返回自身 */
+	updateFrom(other: OptionalRecursive<BSColored>): this {
+		// 软更新状态
+		if (other.color !== undefined) this.color = other.color
+		// 返回自身
 		return this
 	}
 
