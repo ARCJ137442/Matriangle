@@ -493,8 +493,8 @@ export const BLOCK_DRAW_DICT_BATR: {
 /**
  * 测试旧BaTr的图形绘制
  */
-export function test_draw(shape_constructor: () => Shape): void {
-	center_drags(
+export function test_draw(shape_constructor: () => Shape): Shape[] {
+	return center_drags(
 		// 方块 //
 		// 颜色方块
 		drawColoredBlock(shape_constructor(), new BSColored(0x66ccff)),

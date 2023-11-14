@@ -13,21 +13,20 @@ import { canvasVisualize_V1 as canvasVisualize } from '../lib/canvasVisualizeBro
 // Vue
 import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 // 外部库
-import { Frame, Circle, Rectangle, Shape } from 'zimjs'
+import { Frame, Shape } from 'zimjs'
 import Zim from 'zimjs'
-import { randInt } from 'matriangle-common/exMath'
-import { formatRGBA } from 'matriangle-common/color'
 import {
 	test_draw,
 	test_mapDisplayer,
 } from '../lib/zim/DisplayImplementsClient_Zim'
 
 let frame: Frame
-let r: Rectangle
+let shapes: Shape[]
 
 /**
  * 加载时初始化
  * 参考自<https://github.com/yoanhg421/zimjs-templates/blob/master/templates/vue-zim-ts/src/App.vue>
+ * TODO: 尚处测试阶段
  */
 onMounted((): void => {
 	// 加载帧
@@ -41,25 +40,8 @@ onMounted((): void => {
 		color: '#ddd',
 		// 初始化
 		ready: (): void => {
-			// 添加一个圆
-			new Circle(50, formatRGBA(255, 0, 0, 0.5)) //半径50，半透明红色
-				// 放到屏幕中央
-				.center()
-				// 可拖动
-				.drag()
-			// 添加一个随机正方形
-			const a = randInt(50) + 10
-			r = new Rectangle({
-				width: a,
-				height: a,
-				color: '#' + randInt(0xffffff).toString(16),
-			})
-				// 随机一个位置
-				.pos(Math.random() * frame.width, Math.random() * frame.height)
-				// 可拖动
-				.drag()
 			// 添加测试用新形状
-			test_draw((): Shape => new Zim.Shape())
+			shapes = test_draw((): Shape => new Zim.Shape())
 			// 添加测试用地图呈现者
 			const mapDisplayer = test_mapDisplayer(frame)
 			// 调整尺寸 // ! 尺寸调不了，frame.remakeCanvas报错用不了
@@ -76,21 +58,26 @@ onMounted((): void => {
 })
 
 setInterval((): void => {
-	/* // 添加一个圆
+	// 遍历每个生成的图形
+	shapes.forEach((shape: Shape): void => {
+		if (shape === null || shape === undefined) return
+		/* // 添加一个圆
 	new Circle(10 + randInt(40), '#' + randInt(0xffffff).toString(16))
 		// 随机一个位置
 		.pos(Math.random() * frame.width, Math.random() * frame.height)
 		// 可拖动
 		.drag() */
 
-	// 随机一个位置
-	r.pos(Math.random() * frame.width, Math.random() * frame.height).rot(
-		Math.random() * 360
-	)
-	r.width = r.height = 10 + randInt(40)
-	// 更新场景
-	frame?.stage?.update()
-}, 1000)
+		// 随机一个位置
+		shape
+			.pos(Math.random() * frame.width, Math.random() * frame.height)
+			.rot(Math.random() * 360)
+		// shape.width = shape.height = 10 + randInt(40)
+		shape.scaleX = shape.scaleY = 0.5 + Math.random()
+		// 更新场景
+		frame?.stage?.update()
+	})
+}, 4000)
 
 // 在卸载时释放资源
 onBeforeUnmount((): void => {

@@ -277,6 +277,13 @@ class ZimMapBackground extends Shape {
 
 	// * 旧AS3绘图函数（迁移） * //
 
+	/**
+	 * Draws the ground with the specified width and height.
+	 *
+	 * @param {uint} width - The width of the ground.
+	 * @param {uint} height - The height of the ground.
+	 * @return {void} This function does not return anything.
+	 */
 	protected drawGround(width: uint, height: uint): void {
 		this.graphics.beginFill(formatHEX(ZimMapBackground.BACKGROUND_COLOR))
 		this.graphics.drawRect(
@@ -287,6 +294,15 @@ class ZimMapBackground extends Shape {
 		)
 	}
 
+	/**
+	 * Draws a grid on the canvas.
+	 *
+	 * @param {uint} width - The width of the grid.
+	 * @param {uint} height - The height of the grid.
+	 * @param {int} beginX - The starting X coordinate of the grid.
+	 * @param {int} beginY - The starting Y coordinate of the grid.
+	 * @return {void} This function does not return anything.
+	 */
 	protected drawGrid(
 		width: uint,
 		height: uint,
@@ -314,37 +330,44 @@ class ZimMapBackground extends Shape {
 		}
 	}
 
+	/**
+	 * Draws a border around the specified width and height.
+	 *
+	 * @param {uint} width - The width of the border.
+	 * @param {uint} height - The height of the border.
+	 * @return {void}
+	 */
 	protected drawBorder(width: uint, height: uint): void {
 		graphicsLineStyle(
 			this.graphics,
 			ZimMapBackground.FRAME_LINE_SIZE,
 			ZimMapBackground.FRAME_LINE_COLOR
 		)
-		// * 新版重在「不要溢出地图方块本身」
-		// V
+		// * 新版重在「不要溢出地图的方块本身」
 		const halfLineSize = ZimMapBackground.FRAME_LINE_SIZE / 2,
 			halfLineSizeMax_W = width * DEFAULT_SIZE - halfLineSize,
 			halfLineSizeMax_H = height * DEFAULT_SIZE - halfLineSize
-		this.drawLineInGrid(
+		// V
+		this.drawLine(
 			halfLineSize,
 			halfLineSize,
 			halfLineSize,
 			halfLineSizeMax_H
 		)
-		this.drawLineInGrid(
+		this.drawLine(
 			halfLineSizeMax_W,
 			halfLineSizeMax_H,
 			halfLineSize,
 			halfLineSizeMax_H
 		)
 		// H
-		this.drawLineInGrid(
+		this.drawLine(
 			halfLineSize,
 			halfLineSize,
 			halfLineSizeMax_W,
 			halfLineSize
 		)
-		this.drawLineInGrid(
+		this.drawLine(
 			halfLineSizeMax_W,
 			halfLineSizeMax_H,
 			halfLineSizeMax_W,
@@ -353,7 +376,7 @@ class ZimMapBackground extends Shape {
 	}
 
 	protected drawLineInBlockGrid(x1: int, y1: int, x2: int, y2: int): void {
-		this.drawLineInGrid(
+		this.drawLine(
 			DEFAULT_SIZE * x1,
 			DEFAULT_SIZE * y1,
 			DEFAULT_SIZE * x2,
@@ -361,14 +384,14 @@ class ZimMapBackground extends Shape {
 		)
 	}
 
-	protected drawLineInGrid(x1: int, y1: int, x2: int, y2: int): void {
+	protected drawLine(x1: int, y1: int, x2: int, y2: int): void {
 		this.graphics.moveTo(x1, y1)
 		this.graphics.lineTo(x2, y2)
 	}
 }
 
 /**
- * 总的「地图方块容器」对象
+ * 「地图呈现者」
  * * 用于显示「一整个地图」，容纳方块并批量管理方块
  */
 export class ZimDisplayerMap
@@ -657,7 +680,7 @@ export class ZimDisplayerMap
 	protected _temp_borderMax: iPointVal = new iPoint()
 
 	/**
-	 * 在一个「帧」（亦或AS3 Flash中的「舞台」）中进行「重定位」
+	 * 在「舞台」中进行「重定位」
 	 * * 呈现效果：将自身通过「适度缩放&平移」置于「帧」中央
 	 */
 	public relocateInFrame(stage: Stage): this {

@@ -1,4 +1,4 @@
-﻿import { DisplayLayers } from '../../display/DisplayInterfaces'
+﻿import { DisplayLevel } from '../../display/DisplayInterfaces'
 import { Class, int } from '../../../legacy/AS3Legacy'
 import TypeCommon from '../template/TypeCommon'
 
@@ -24,7 +24,7 @@ export default class EntityType extends TypeCommon {
 		 * * 参考：DisplayLayers
 		 * * 默认：与玩家同层次
 		 */
-		public readonly displayLayer: int = DisplayLayers.PLAYER
+		public readonly displayLayer: int = DisplayLevel.PLAYER
 	) {
 		super(name, 'entity')
 		if (!entityClass) throw new Error('entityClass is required')

@@ -247,7 +247,7 @@ export interface IGraphicContext {
  * * <Bottom>: NEGATIVE
  * * Background
  */
-export module DisplayLayers {
+export module DisplayLevel {
 	/**
 	 * 游戏背景所在层
 	 *

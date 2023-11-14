@@ -21,14 +21,14 @@ import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import {
 	ALL_BATR_BLOCKS,
+	ARENA_LEVELS,
 	BatrBlockIDs,
 	BatrBlockPrototypes,
 } from './BlockRegistry_Batr'
 import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 
 /**
- * 定义所有世界原生（自带）的地图
- * ? 或许后续会独立出来作为「外置地图包」实现
+ * BaTr自带的地图
  */
 export module BatrDefaultMaps {
 	// 地图的一般预设：大小、方块等
@@ -133,51 +133,43 @@ export module BatrDefaultMaps {
 	export const MAP_A: Map_V1 = new Map_V1(
 		'A',
 		STORAGE_A,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_B: Map_V1 = new Map_V1(
 		'B',
 		STORAGE_B,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_C: Map_V1 = new Map_V1(
 		'C',
 		STORAGE_C,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_D: Map_V1 = new Map_V1(
 		'D',
 		STORAGE_D,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_E: Map_V1 = new Map_V1(
 		'E',
 		STORAGE_E,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_F: Map_V1 = new Map_V1(
 		'F',
 		STORAGE_F,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_G: Map_V1 = new Map_V1(
 		'G',
 		STORAGE_G,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 	export const MAP_H: Map_V1 = new Map_V1(
 		'H',
 		STORAGE_H,
-		_AS3_CONSERVED_MAP_SIZE,
-		true
-	)
+		_AS3_CONSERVED_MAP_SIZE
+	).setLevels(ARENA_LEVELS) // * 原理：不是「地图等级>方块等级」就无法破坏/修改
 
 	export const _ALL_MAPS: IMap[] = [
 		EMPTY,

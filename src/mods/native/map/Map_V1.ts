@@ -66,12 +66,27 @@ export default class Map_V1 implements IMap {
 		'string'
 	)
 
+	protected _hardnessLevel: uint
+	get mapHardnessLevel(): uint {
+		return this._hardnessLevel
+	}
+
+	protected _modificationLevel: uint
+	get mapModificationLevel(): uint {
+		return this._modificationLevel
+	}
+
 	/**
-	 * TODO: 所谓「竞技场」还有待进一步明确语义
+	 * （链式）设置「地图XX等级」
+	 * * 这个一般只在「构建地图实例」时使用（因为会耗费object）
 	 */
-	protected _isArena: boolean
-	get isArenaMap(): boolean {
-		return this._isArena
+	public setLevels(levels: { hardness: uint; modification: uint }): this {
+		// * 根据`levels键: 自身属性名`解构赋值
+		;({
+			hardness: this._hardnessLevel,
+			modification: this._modificationLevel,
+		} = levels)
+		return this
 	}
 
 	// JS对象化 //
@@ -88,13 +103,15 @@ export default class Map_V1 implements IMap {
 	public constructor(
 		name: string,
 		storage: IMapStorage,
-		size: iPointRef | undefined = new iPoint(...storage.size),
-		isArena: boolean = false
+		size: iPointRef = new iPoint(...storage.size),
+		hardnessLevel: uint = 1, // * 此处的`1`旨在模拟先前的`isCarriable`，其位于`[0, uint$MAX_VALUE]`区间内，不至于让「不可破坏」失效
+		modificationLevel: uint = 1
 	) {
 		this._name = name
 		this._storage = storage
-		this._isArena = isArena
-		if (size !== undefined) this._size = size // 复制值
+		this._hardnessLevel = hardnessLevel
+		this._modificationLevel = modificationLevel
+		this._size = size // 复制值
 	}
 
 	destructor(): void {
@@ -106,7 +123,7 @@ export default class Map_V1 implements IMap {
 			this._name,
 			this._storage.copy(deep),
 			this._size,
-			this._isArena
+			this._hardnessLevel
 		)
 	}
 
@@ -319,35 +336,31 @@ export default class Map_V1 implements IMap {
 		return this.testCanPass_I(p, true, false, false, true, true, avoids)
 	}
 
-	/** 实现：暂时使用「竞技场地图」判断 // TODO: @implements 继续完善「方块硬度」等逻辑 */
-	isBlockCarriable(
+	/** @implements 使用「地图修改等级>方块修改等级」判断 */
+	isBlockModifiable(
 		position: iPointRef,
 		defaultWhenNotFound: BlockAttributes
 	): boolean {
-		const blockAttributes: BlockAttributes =
-			this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
 		return (
-			blockAttributes.isCarriable &&
-			!(
-				// 竞技场地图「特别判断」
-				(this._isArena && blockAttributes.unbreakableInArenaMap)
-			)
+			// * 判据：自身「地图修改等级」是否大于「方块修改等级」
+			this._modificationLevel >
+			// 获取方块属性
+			(this.storage.getBlockAttributes(position) ?? defaultWhenNotFound)
+				.modificationLevel
 		)
 	}
 
-	/** @implements 实现：暂时使用「竞技场地图」判断 */
+	/** @implements 使用「地图硬度等级>方块硬度等级」判断 */
 	isBlockBreakable(
 		position: iPointRef,
 		defaultWhenNotFound: BlockAttributes
 	): boolean {
-		const blockAttributes: BlockAttributes =
-			this.storage.getBlockAttributes(position) ?? defaultWhenNotFound
 		return (
-			blockAttributes.isBreakable &&
-			!(
-				// 竞技场地图「特别判断」
-				(this.isArenaMap && blockAttributes.unbreakableInArenaMap)
-			)
+			// * 判据：自身「地图硬度等级」是否大于「方块硬度等级」
+			this._hardnessLevel >
+			// 获取方块属性
+			(this.storage.getBlockAttributes(position) ?? defaultWhenNotFound)
+				.hardnessLevel
 		)
 	}
 

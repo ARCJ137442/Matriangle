@@ -143,3 +143,17 @@ export interface IDisplayDataMap extends IDisplayStateData {
 	 */
 	blocks: IDisplayDataMapBlocks
 }
+
+/**
+ * 实体的「显示数据」
+ * * 【2023-11-14 19:50:31】目前实体的情况：
+ *   * 有一些像「方块坐标」「朝向」「xy缩放尺寸」的「基本属性」，但对「特殊属性」的需求比「方块」大
+ *   * 可能需要通过「显示代理」传递「显示数据」
+ * * 当下的处理思路：类似「多继承」的思想，但需要和一类「显示代理」绑定
+ *   * 使用「显示代理」的getter/setter，将「修改属性」转换成「更新数据」
+ *   * 这里「显示代理」类似一种「待更新数据缓冲区」的角色
+ */
+export interface IDisplayDataEntity<StateType> extends IDisplayStateData {
+	entityID: typeID
+	entityState: StateType
+}

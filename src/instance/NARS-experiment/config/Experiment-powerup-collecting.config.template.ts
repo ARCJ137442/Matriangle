@@ -34,7 +34,7 @@ import {
 	IEntityDisplayable,
 	IEntityInGrid,
 } from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape, DisplayLayers } from 'matriangle-api'
+import { IShape, DisplayLevel } from 'matriangle-api'
 import {
 	getPlayers,
 	hitTestEntity_between_Grid,
@@ -215,7 +215,7 @@ export class Powerup
 	}
 	i_displayable = true as const
 	/** @implements 显示层级 = 奖励箱 */
-	zIndex: int = DisplayLayers.BONUS_BOX
+	zIndex: int = DisplayLevel.BONUS_BOX
 }
 
 /**

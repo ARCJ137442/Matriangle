@@ -13,9 +13,14 @@ import BSColored from '../block/BSColored'
  */
 export module BlockAttributes_Native {
 	/** 空：就像「空气」一样 */
-	export const VOID: BlockAttributes = new BlockAttributes(16777215, 0).asGas
+	export const VOID: BlockAttributes = new BlockAttributes(
+		0xffffff,
+		0
+	).loadAsGas()
 	/** 颜色方块：一般的「固体」 */
-	export const COLORED_BLOCK: BlockAttributes = new BlockAttributes(0).asSolid
+	export const COLORED_BLOCK: BlockAttributes = new BlockAttributes(
+		0
+	).loadAsSolid()
 }
 
 /**

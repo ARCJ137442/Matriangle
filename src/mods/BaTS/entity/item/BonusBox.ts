@@ -1,6 +1,6 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
-	DisplayLayers,
+	DisplayLevel,
 	IShape,
 	IShapeContainer,
 } from 'matriangle-api/display/DisplayInterfaces'
@@ -119,7 +119,7 @@ export default class BonusBox
 		}
 	}
 
-	protected _zIndex: uint = DisplayLayers.BONUS_BOX
+	protected _zIndex: uint = DisplayLevel.BONUS_BOX
 	get zIndex(): uint {
 		return this._zIndex
 	}

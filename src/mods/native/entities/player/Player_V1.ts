@@ -1,7 +1,7 @@
 import { mRot, toOpposite_M } from 'matriangle-api/server/general/GlobalRot'
 import { TPS, FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape, DisplayLayers } from 'matriangle-api/display/DisplayInterfaces'
+import { IShape, DisplayLevel } from 'matriangle-api/display/DisplayInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { intMin } from 'matriangle-common/exMath'
@@ -838,7 +838,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 	shapeDestruct(shape: IShape): void {}
 
 	/** 堆叠覆盖层级：默认是「玩家」层级 */
-	protected _zIndex: uint = DisplayLayers.PLAYER
+	protected _zIndex: uint = DisplayLevel.PLAYER
 	get zIndex(): uint {
 		return this._zIndex
 	}

@@ -24,6 +24,7 @@ export type typeIDMap<T> = { [k: typeID]: T }
  *
  * TODO: JS对象化
  * * 作为通用API，不会涉及「工具使用映射表」
+ * * 【2023-11-14 19:58:59】目前似乎没法对象化——其中**内嵌的函数**无法转换成JS对象
  */
 export default interface IWorldRegistry {
 	/**

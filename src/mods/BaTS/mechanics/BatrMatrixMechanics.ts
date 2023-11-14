@@ -745,14 +745,10 @@ export const BATR_TOOL_USAGE_MAP: Map<typeID, toolUsageF> = MapFromObject<
 			// 是否为「回拽激光」
 			chargePercent < 1
 		),
+	// TODO: 其它武器
 })
 
-/**
- * 玩家使用工具的代码
- * TODO: 代码太多太大太集中，需要迁移！重构！💢
- */
-/*
-
+/* // ! 迁移：参照如下AS3代码
 public playerUseToolAt(player: IPlayer, tool: Tool, x: number, y: number, toolRot: uint, chargePercent: number, projectilesSpawnDistance: number): void {
     // Set Variables
     let p: Projectile = null;
@@ -1541,7 +1537,7 @@ export const BATR_BLOCK_EVENT_MAP: BlockEventMap = {
 			// *过程：八分之一概率⇒未有奖励箱在其上⇒生成奖励箱
 			if (
 				randomBoolean(1, 7) &&
-				isHitAnyEntity_I_Grid(position, getBonusBoxes(host))
+				!isHitAnyEntity_I_Grid(position, getBonusBoxes(host))
 			) {
 				addBonusBoxInRandomTypeByRule(host, position)
 			}

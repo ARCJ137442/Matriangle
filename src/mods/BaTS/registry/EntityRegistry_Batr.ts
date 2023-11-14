@@ -1,5 +1,5 @@
 ﻿import { isExtend } from 'matriangle-common/utils'
-import { DisplayLayers } from 'matriangle-api/display/DisplayInterfaces'
+import { DisplayLevel } from 'matriangle-api/display/DisplayInterfaces'
 import Effect from '../entity/effect/Effect'
 import EntityType from 'matriangle-api/server/entity/EntityType'
 import EffectBlockLight from '../entity/effect/EffectBlockLight'
@@ -44,129 +44,129 @@ export module BatrEntityTypes {
 	export const BULLET_BASIC: EntityType = new EntityType(
 		'BulletBasic',
 		BulletBasic,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_NUKE: EntityType = new EntityType(
 		'BulletNuke',
 		BulletNuke,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_BOMBER: EntityType = new EntityType(
 		'BulletBomber',
 		BulletBomber,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_TRACKING: EntityType = new EntityType(
 		'BulletTracking',
 		BulletTracking,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 
 	// 激光
 	export const LASER_BASIC: EntityType = new EntityType(
 		'LaserBasic',
 		LaserBasic,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const LASER_PULSE: EntityType = new EntityType(
 		'LaserPulse',
 		LaserPulse,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const LASER_TELEPORT: EntityType = new EntityType(
 		'LaserTeleport',
 		LaserTeleport,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const LASER_ABSORPTION: EntityType = new EntityType(
 		'LaserAbsorption',
 		LaserAbsorption,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 
 	// 其它抛射物
 	export const WAVE: EntityType = new EntityType(
 		'Wave',
 		Wave,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const THROWN_BLOCK: EntityType = new EntityType(
 		'ThrownBlock',
 		ThrownBlock,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const LIGHTNING: EntityType = new EntityType(
 		'Lightning',
 		Lightning,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 
 	// 冲击波（子机）相关
 	export const SHOCKWAVE_BASE: EntityType = new EntityType(
 		'ShockWaveBase',
 		ShockWaveBase,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 	export const SHOCKWAVE_DRONE: EntityType = new EntityType(
 		'ShockWaveDrone',
 		ShockWaveDrone,
-		DisplayLayers.PROJECTILE
+		DisplayLevel.PROJECTILE
 	)
 
 	// 奖励箱
 	export const BONUS_BOX: EntityType = new EntityType(
 		'BonusBox',
 		BonusBox,
-		DisplayLayers.BONUS_BOX
+		DisplayLevel.BONUS_BOX
 	)
 
 	// 玩家
 	export const PLAYER: EntityType = new EntityType(
 		'Player',
 		PlayerBatr,
-		DisplayLayers.PLAYER
+		DisplayLevel.PLAYER
 	)
 
 	// 特效
 	export const EFFECT_EXPLODE: EntityType = new EntityType(
 		'EffectExplode',
 		EffectExplode,
-		DisplayLayers.EFFECT_TOP
+		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_SPAWN: EntityType = new EntityType(
 		'EffectSpawn',
 		EffectSpawn,
-		DisplayLayers.EFFECT_BOTTOM
+		DisplayLevel.EFFECT_BOTTOM
 	)
 	export const EFFECT_TELEPORT: EntityType = new EntityType(
 		'EffectTeleport',
 		EffectTeleport,
-		DisplayLayers.EFFECT_BOTTOM
+		DisplayLevel.EFFECT_BOTTOM
 	)
 	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(
 		'EffectPlayerDeathLight',
 		EffectPlayerDeathLight,
-		DisplayLayers.EFFECT_TOP
+		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(
 		'EffectPlayerDeathFadeout',
 		EffectPlayerDeathFadeout,
-		DisplayLayers.EFFECT_MIDDLE
+		DisplayLevel.EFFECT_MIDDLE
 	)
 	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(
 		'EffectPlayerHurt',
 		EffectPlayerHurt,
-		DisplayLayers.EFFECT_TOP
+		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(
 		'EffectPlayerLevelup',
 		EffectPlayerLevelup,
-		DisplayLayers.EFFECT_TOP
+		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(
 		'EffectBlockLight',
 		EffectBlockLight,
-		DisplayLayers.EFFECT_TOP
+		DisplayLevel.EFFECT_TOP
 	)
 
 	/**

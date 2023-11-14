@@ -8,6 +8,15 @@ import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 
 /**
+ * 原先「竞技场方块」的等级
+ * * 需要「硬度」和「修改」等级为2的方块
+ */
+export const ARENA_LEVELS = {
+	hardness: 2,
+	modification: 2,
+}
+
+/**
  * Define all attributes that instanceof used for classes of blocks
  * ! The link between BlockType and block instanceof the property `attributes` of instances of a BlockType
  * * So that it's unnecessarily to make a list to contain all of the attributes
@@ -16,51 +25,75 @@ import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
  * * 避免在未生成NativeBlockAttributes时注册「方块类型」时引用各自方块类，而类中又引入NativeBlockAttributes的问题
  */
 export module BatrBlockAttributes {
-	export const WALL: BlockAttributes = new BlockAttributes(0xaaaaaa).asSolid
+	export const WALL: BlockAttributes = new BlockAttributes(
+		0xaaaaaa
+	).loadAsSolid()
 	export const WATER: BlockAttributes = new BlockAttributes(
 		0x2222ff,
 		0x40000000
-	).asLiquid.asArenaBlock
+	)
+		.loadAsLiquid()
+		.setLevels(ARENA_LEVELS)
 	export const GLASS: BlockAttributes = new BlockAttributes(
 		0xddffff,
 		0x80000000
-	).asTransparentSolid.asArenaBlock
+	)
+		.loadAsSolid()
+		.loadAsTransparent()
+		.setLevels(ARENA_LEVELS)
 	export const BEDROCK: BlockAttributes = new BlockAttributes(0x888888)
-		.asSolid.asUnbreakable
+		.loadAsSolid()
+		.loadAsUnbreakable()
 
 	export const X_TRAP_HURT: BlockAttributes = new BlockAttributes(
 		0xffff00,
 		0xc0000000
-	).asGas.asHurtZone.asArenaBlock
+	)
+		.loadAsGas()
+		.loadAsHurtZone()
+		.setLevels(ARENA_LEVELS)
 	export const X_TRAP_KILL: BlockAttributes = new BlockAttributes(
 		0xff0000,
 		0xc0000000
-	).asGas.asKillZone.asArenaBlock
+	)
+		.loadAsGas()
+		.loadAsKillZone()
+		.setLevels(ARENA_LEVELS)
 	export const X_TRAP_ROTATE: BlockAttributes = new BlockAttributes(
 		0x0000ff,
 		0xc0000000
-	).asGas.asRotateZone.asArenaBlock
+	)
+		.loadAsGas()
+		.loadAsRotateZone()
+		.setLevels(ARENA_LEVELS)
 
 	export const COLOR_SPAWNER: BlockAttributes = new BlockAttributes(4473924)
-		.asSolid.asArenaBlock
+		.loadAsSolid()
+		.setLevels(ARENA_LEVELS)
 
 	export const LASER_TRAP: BlockAttributes = new BlockAttributes(4473924)
-		.asSolid.asArenaBlock
-	export const METAL: BlockAttributes = new BlockAttributes(6710886).asSolid
-		.asMetal.asArenaBlock
+		.loadAsSolid()
+		.setLevels(ARENA_LEVELS)
+	export const METAL: BlockAttributes = new BlockAttributes(6710886)
+		.loadAsSolid()
+		.loadAsConductor()
+		.setLevels(ARENA_LEVELS)
 	export const SPAWN_POINT_MARK: BlockAttributes = new BlockAttributes(
 		0x6666ff
-	).asBase
+	).loadAsBase()
 
 	export const SUPPLY_POINT: BlockAttributes = new BlockAttributes(6750054)
-		.asBase.asSupplyPoint
+		.loadAsBase()
+		.loadAsSupplyPoint()
 
-	// export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).asGateOpen; // !【2023-10-08 00:15:59】暂时不使用，因为已经在Gate状态中「动态缓存」了
-	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(8947848)
-		.asGateClose
+	// export const GATE_OPEN: BlockAttributes = new BlockAttributes(0x888888, 0x50000000).loadAsGateOpen(); // !【2023-10-08 00:15:59】暂时不使用，因为已经在Gate状态中「动态缓存」了
+	export const GATE_CLOSE: BlockAttributes = new BlockAttributes(
+		8947848
+	).loadAsGateClose()
 
 	export const MOVEABLE_WALL: BlockAttributes = new BlockAttributes(12320699)
-		.asSolid.asArenaBlock
+		.loadAsSolid()
+		.setLevels(ARENA_LEVELS)
 }
 
 /**

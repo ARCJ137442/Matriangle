@@ -25,6 +25,7 @@
 		/>
 	</div>
 	<ScreenCanvas ref="screen" @vue:mounted="requestAliveLink" />
+	<!-- <ScreenText ref="screen" @vue:mounted="requestAliveLink" /> -->
 </template>
 
 <script setup lang="ts">
@@ -33,6 +34,7 @@ import { Ref, ref } from 'vue'
 import { default as Screen } from './ScreenCanvas.vue'
 import ScreenCanvas from './ScreenCanvas.vue' // 需要被template引用
 // import { default as Screen } from './ScreenText.vue'
+// import ScreenText from './ScreenText.vue' // 需要被template引用
 import { VueElementRefNullable } from '../lib/common'
 
 // 屏显 //

@@ -5,7 +5,7 @@ import {
 	iPointRef,
 } from '../../../common/geometricTools'
 import { mRot } from '../general/GlobalRot'
-import { int } from '../../../legacy/AS3Legacy'
+import { int, uint } from '../../../legacy/AS3Legacy'
 import BlockAttributes from '../block/BlockAttributes'
 import IMapStorage from './IMapStorage'
 import { IEntityInGrid, IEntityOutGrid } from '../entity/EntityInterfaces'
@@ -43,11 +43,16 @@ export default interface IMapLogic {
 	get storage(): IMapStorage
 
 	/**
-	 * 【对接世界】获取「是否」为「竞技场地图」
-	 * * 定义：「竞技场地图」中，除了指定种类的方块外，不允许对大多数方块进行更改
-	 * ? TODO: 或许日后通过「方块修改权限」机制做到「非特殊化」
+	 * 「地图硬度等级」
+	 * * 用于「背景硬度等级」的计算，通过对比「方块硬度等级」判断「方块（在此地图中）是否可破坏」
 	 */
-	get isArenaMap(): boolean
+	get mapHardnessLevel(): uint
+
+	/**
+	 * 「地图修改等级」
+	 * * 用于「背景修改等级」的计算，通过对比「方块修改等级」判断「方块（在此地图中）是否可修改」
+	 */
+	get mapModificationLevel(): uint
 
 	//============World Mechanics============//
 
@@ -204,19 +209,18 @@ export default interface IMapLogic {
 	// !【2023-09-30 12:13:45】现在把「testPlayer」系列函数（都使用了玩家的实例，且更多与玩家相关）放在了Player类中
 
 	/**
-	 * 判断一个位置的方块「是否能被拿起」
-	 * * 应用：在玩家尝试使用「方块投掷器」拾取方块时，判断「是否能拿起方块」
+	 * 判断一个位置的方块「是否能被修改」
+	 * * 原`isBlockCarriable`
+	 * * 应用：在玩家尝试使用「方块投掷器」拾取方块时，判断「是否能修改方块」
 	 *   * 同样用于AI判断中
 	 *
 	 * * 会受到地图本身的特性影响，所以移到「逻辑」部分
 	 *
-	 * TODO: 或许以后会用「方块硬度」的机制「通用化」
-	 *
 	 * @param position 判断的位置
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
-	 * @returns 这个位置的方块「是否能被拿起」
+	 * @returns 这个位置的方块「是否能被修改」
 	 */
-	isBlockCarriable(
+	isBlockModifiable(
 		position: iPointRef,
 		defaultWhenNotFound: BlockAttributes
 	): boolean
@@ -229,8 +233,6 @@ export default interface IMapLogic {
 	 * * 💭真不知道当时自己是怎么想的
 	 *
 	 * * 会受到地图本身的特性影响，所以移到「逻辑」部分
-	 *
-	 * TODO: 或许以后会用「方块硬度」的机制「通用化」
 	 *
 	 * @param position 判断的位置
 	 * @param defaultWhenNotFound 在「方块属性未找到」时使用的默认值
