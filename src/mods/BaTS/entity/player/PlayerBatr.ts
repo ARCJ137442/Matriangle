@@ -261,8 +261,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	// get guiShape(): IPlayerGUI { return this._GUI };
 
 	// TODO: 这个有些过于涉及显示实现了，到底要不要尾大不掉地放在这儿？本身跟逻辑毫无关系的代码，为什么还要有这样的冗余。。。
-	override shapeInit(shape: IShape): void {
-		super.shapeInit(shape)
+	override displayInit(shape: IShape): void {
+		super.displayInit(shape)
 
 		const realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2
 		const realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2
@@ -301,8 +301,8 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	}
 
 	/** TODO: 待实现的「析构」函数 */
-	override shapeDestruct(shape: IShape): void {
-		super.shapeDestruct(shape)
+	override displayDestruct(shape: IShape): void {
+		super.displayDestruct(shape)
 		throw new Error('Method not implemented.')
 	}
 

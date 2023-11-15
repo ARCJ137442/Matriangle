@@ -12,6 +12,8 @@ import { IEntityDisplayableContainer } from 'matriangle-api/server/entity/Entity
 /**
  * 双方块容器
  * * 由「特效/重生」「特效/传送」抽象出来
+ *
+ * TODO: 【2023-11-15 17:10:20】现在拟将「生命周期百分比」作为「实体数据」传递，以便终结「单独图形还是多图形容器」——全部由「显示端」自行决定
  */
 export default abstract class Effect2BlockContainer
 	extends Effect
@@ -48,7 +50,7 @@ export default abstract class Effect2BlockContainer
 	public readonly i_displayableContainer = true as const
 
 	/** 实现：要求两个「普通图形」对象作为其子元素 */
-	public shapeInit(
+	public displayInit(
 		shape: IShapeContainer,
 		block1: IShape,
 		block2: IShape
@@ -63,7 +65,7 @@ export default abstract class Effect2BlockContainer
 	public abstract shapeRefresh(shape: IShapeContainer): void
 
 	/**	实现：移除子图形 */
-	public shapeDestruct(shape: IShapeContainer): void {
+	public displayDestruct(shape: IShapeContainer): void {
 		// 尺寸同步
 		shape.scaleX = shape.scaleY = 0 // 尺寸清零
 		// block1

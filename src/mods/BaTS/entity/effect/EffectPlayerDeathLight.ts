@@ -57,7 +57,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 
 	//============Instance Functions============//
 	/** 实现：绘制玩家轮廓 */
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color)
 		EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值

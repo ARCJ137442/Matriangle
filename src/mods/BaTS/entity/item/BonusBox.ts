@@ -98,7 +98,7 @@ export default class BonusBox
 	public static readonly BORDER_SPACE: number =
 		(DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
 
-	public shapeInit(shape: IShapeContainer, symbol: IShape): void {
+	public displayInit(shape: IShapeContainer, symbol: IShape): void {
 		// 绘制盒子
 		this.drawBox(shape)
 		// 初始化符号
@@ -112,7 +112,7 @@ export default class BonusBox
 		// ? 待定
 	}
 
-	public shapeDestruct(shape: IShapeContainer): void {
+	public displayDestruct(shape: IShapeContainer): void {
 		// 遍历（唯一的一个）子元素
 		for (const symbol of shape.children) {
 			symbol.graphics.clear()

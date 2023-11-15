@@ -17,6 +17,7 @@ import IMatrix from '../main/IMatrix'
 import { mRot } from '../general/GlobalRot'
 import { CommonIO_IR } from '../io/CommonIO'
 import Entity from './Entity'
+import { IDisplayProxyEntity } from '../../display/remoteDisplayAPI'
 
 /**
  * 「有坐标实体」是
@@ -164,7 +165,14 @@ export function i_hasDirection(e: Entity): e is IEntityWithDirection {
  * 典例：
  * * 几乎一切原生实体
  */
-export interface IEntityDisplayable extends Entity, IDisplayable {}
+export interface IEntityDisplayable extends Entity, IDisplayable {
+	/**
+	 * 相对应的「实体显示代理」
+	 * // * 可空（这时候无需更新「显示状态」）
+	 * * ↑暂时还是不可空好些（因为没有）
+	 */
+	proxy: IDisplayProxyEntity /* | null */
+}
 
 /**
  * 「容器可显示实体」是

@@ -50,12 +50,12 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	// }
 
 	//============Instance Functions============//
-	override shapeInit(
+	override displayInit(
 		shape: IShapeContainer,
 		block1: IShape,
 		block2: IShape
 	): void {
-		super.shapeInit(shape, block1, block2)
+		super.displayInit(shape, block1, block2)
 		this.drawBlocks(
 			EffectSpawn.DEFAULT_COLOR,
 			EffectSpawn.SIZE,

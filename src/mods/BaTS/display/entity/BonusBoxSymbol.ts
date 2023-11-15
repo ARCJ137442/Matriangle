@@ -78,18 +78,18 @@ export default class BonusBoxSymbol implements IDisplayable {
 	public readonly i_displayable = true as const
 
 	/** 实现：绘制图形 */
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		this.drawSymbol(shape.graphics)
 	}
 
 	/** 实现：刷新=重绘 */
 	public shapeRefresh(shape: IShape): void {
-		this.shapeDestruct(shape)
-		this.shapeInit(shape)
+		this.displayDestruct(shape)
+		this.displayInit(shape)
 	}
 
 	/** 实现：清空绘图内容 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

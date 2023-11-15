@@ -181,7 +181,7 @@ export default abstract class Bullet
 	 *
 	 * @param shape 初始化要绘制到的图形
 	 */
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		const realRadiusX: number = Bullet.SIZE / 2
 		const realRadiusY: number = Bullet.SIZE / 2
 
@@ -209,7 +209,7 @@ export default abstract class Bullet
 
 	public shapeRefresh(shape: IShape): void {}
 
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

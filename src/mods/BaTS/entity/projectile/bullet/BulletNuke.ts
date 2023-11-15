@@ -75,8 +75,8 @@ export default class BulletNuke extends Bullet {
 
 	//============Display Implements============//
 	/** 先绘制基本轮廓，再绘制特殊标记 */
-	override shapeInit(shape: IShape): void {
-		super.shapeInit(shape)
+	override displayInit(shape: IShape): void {
+		super.displayInit(shape)
 		this.drawNukeMark(shape.graphics)
 		shape.scaleX = shape.scaleY = BulletNuke.SIZE / BulletBasic.SIZE
 	}

@@ -44,7 +44,7 @@ export default class EffectExplode extends Effect {
 	/** 默认线条粗细 */
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25
 
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		shape.graphics.clear()
 		shape.graphics.lineStyle(
 			EffectExplode.LINE_SIZE,

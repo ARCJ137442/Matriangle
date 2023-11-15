@@ -100,7 +100,7 @@ export default class LaserPulse extends Laser {
 	 * 实现：
 	 * @param shape 绘制的目标
 	 */
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		for (let i: uint = 0; i < 2; i++) {
 			// 0,1
 			this.drawOwnerLine(
@@ -110,7 +110,7 @@ export default class LaserPulse extends Laser {
 				i * 0.1 + 0.2
 			)
 		}
-		super.shapeInit(shape) // 调用超类，计算长度
+		super.displayInit(shape) // 调用超类，计算长度
 	}
 
 	/**

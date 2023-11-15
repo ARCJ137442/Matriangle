@@ -125,7 +125,7 @@ export default class Wave
 	 * * 使用三次贝塞尔曲线绘制月牙形状
 	 * @param shape 目标图形
 	 */
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		const realRadius: number = Wave.SIZE / 2
 
 		shape.graphics.beginFill(this.ownerColor, Wave.ALPHA)
@@ -156,7 +156,7 @@ export default class Wave
 		shape.scaleX = shape.scaleY = this._nowScale
 	}
 
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

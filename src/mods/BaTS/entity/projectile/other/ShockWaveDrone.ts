@@ -117,7 +117,7 @@ export default class ShockWaveDrone
 	public onPositedBlockUpdate(host: IMatrix): void {}
 
 	//============Display Implements============//
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		shape.graphics.beginFill(this.ownerColor, 0.5)
 		shape.graphics.drawRect(
 			-ShockWaveDrone.BLOCK_RADIUS,
@@ -138,7 +138,7 @@ export default class ShockWaveDrone
 	public shapeRefresh(shape: IShape): void {}
 
 	/** 实现：清除绘图 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }

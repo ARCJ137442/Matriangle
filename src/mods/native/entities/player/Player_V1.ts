@@ -30,6 +30,7 @@ import {
 	NativePlayerEvent,
 } from './controller/PlayerEvent'
 import { omega } from 'matriangle-common'
+import { IDisplayProxyEntity } from './../../../../api/display/remoteDisplayAPI'
 
 /**
  * 玩家第一版
@@ -833,9 +834,9 @@ export default class Player_V1 extends Entity implements IPlayer {
 	/** 用于判断「装饰类型」的标记 */
 	decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY
 
-	shapeInit(shape: IShape, ...params: unknown[]): void {}
+	displayInit(shape: IShape, ...params: unknown[]): void {}
 	shapeRefresh(shape: IShape): void {}
-	shapeDestruct(shape: IShape): void {}
+	displayDestruct(shape: IShape): void {}
 
 	/** 堆叠覆盖层级：默认是「玩家」层级 */
 	protected _zIndex: uint = DisplayLevel.PLAYER

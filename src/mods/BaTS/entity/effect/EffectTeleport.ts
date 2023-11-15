@@ -30,12 +30,12 @@ export default class EffectTeleport extends Effect2BlockContainer {
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25
 
 	/** 覆盖：要求两个「普通图形」对象作为其子元素 */
-	override shapeInit(
+	override displayInit(
 		shape: IShapeContainer,
 		block1: IShape,
 		block2: IShape
 	): void {
-		super.shapeInit(shape, block1, block2) // 调用超类方法实现元素管理
+		super.displayInit(shape, block1, block2) // 调用超类方法实现元素管理
 		this.drawBlocks(
 			EffectTeleport.DEFAULT_COLOR,
 			EffectTeleport.SIZE,

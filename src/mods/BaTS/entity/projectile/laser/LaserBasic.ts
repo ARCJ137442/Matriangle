@@ -55,7 +55,7 @@ export default class LaserBasic extends Laser {
 
 	//============Display Implements============//
 	/** 覆盖：先绘制，再拉伸 */
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		// 先绘制
 		for (let i: uint = 0; i < 3; i++) {
 			// 0,1,2
@@ -67,7 +67,7 @@ export default class LaserBasic extends Laser {
 			)
 		}
 		// 再拉伸
-		super.shapeInit(shape)
+		super.displayInit(shape)
 	}
 
 	/**

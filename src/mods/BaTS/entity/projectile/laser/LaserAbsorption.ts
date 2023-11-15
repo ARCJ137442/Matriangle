@@ -80,7 +80,7 @@ export default class LaserAbsorption extends Laser {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		// Left
 		this.drawOwnerLine(
 			shape.graphics,
@@ -108,7 +108,7 @@ export default class LaserAbsorption extends Laser {
 			LaserAbsorption.SIZE / 2,
 			0.5
 		)
-		super.shapeInit(shape) // ! 超类逻辑：处理形状初始化
+		super.displayInit(shape) // ! 超类逻辑：处理形状初始化
 	}
 
 	public shapeRefresh(shape: IShape): void {

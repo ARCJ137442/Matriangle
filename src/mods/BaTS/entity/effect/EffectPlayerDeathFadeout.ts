@@ -46,7 +46,7 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 	}
 
 	//============Display Implements============//
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA)
 		EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值

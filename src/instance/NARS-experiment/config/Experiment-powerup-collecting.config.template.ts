@@ -204,13 +204,13 @@ export class Powerup
 
 	// 可显示
 	i_displayableContainer = true as const
-	shapeInit(shape: IShape): void {
+	displayInit(shape: IShape): void {
 		// !【2023-11-06 16:10:28】暂不实现
 	}
 	shapeRefresh(shape: IShape): void {
 		// !【2023-11-06 16:10:28】暂不实现
 	}
-	shapeDestruct(shape: IShape): void {
+	displayDestruct(shape: IShape): void {
 		// !【2023-11-06 16:10:28】暂不实现
 	}
 	i_displayable = true as const

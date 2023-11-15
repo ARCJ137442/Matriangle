@@ -69,7 +69,7 @@ export default class LaserTeleport extends Laser {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		// Middle
 		this.drawOwnerLine(
 			shape.graphics,
@@ -90,7 +90,7 @@ export default class LaserTeleport extends Laser {
 			LaserTeleport.SIZE / 2,
 			0.6
 		)
-		super.shapeInit(shape)
+		super.displayInit(shape)
 	}
 
 	public shapeRefresh(shape: IShape): void {

@@ -91,8 +91,8 @@ export default class BulletBomber extends Bullet {
 	public static readonly SIZE: number = 0.4 * DEFAULT_SIZE
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00
 
-	override shapeInit(shape: IShape): void {
-		super.shapeInit(shape)
+	override displayInit(shape: IShape): void {
+		super.displayInit(shape)
 		this.drawBomberSign(shape.graphics)
 		shape.scaleX = shape.scaleY = BulletBomber.SIZE / BulletBasic.SIZE
 	}

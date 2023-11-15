@@ -138,4 +138,3 @@ defineExpose({
 	font-weight: inherit;
 }
 </style>
-../lib/zim/DisplayImplementsClient_Zim

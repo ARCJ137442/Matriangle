@@ -121,10 +121,10 @@ export default abstract class Effect
 	// 可显示 //
 	public readonly i_displayable = true as const
 
-	public abstract shapeInit(shape: IShape, ...params: unknown[]): void
+	public abstract displayInit(shape: IShape, ...params: unknown[]): void
 	public abstract shapeRefresh(shape: IShape): void
 	/** */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }

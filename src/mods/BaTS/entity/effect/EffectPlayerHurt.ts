@@ -49,7 +49,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		super(position, rot, color, decorationLabel, reverse, life)
 	}
 
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color)
 		EffectPlayerLike.moveToPlayerShape(shape.graphics)

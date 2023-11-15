@@ -97,7 +97,7 @@ export default class EffectBlockLight extends Effect {
 	}
 
 	//============Display Implements============//
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		const realRadiusX: number = EffectBlockLight.SIZE / 2
 		const realRadiusY: number = EffectBlockLight.SIZE / 2
 		shape.graphics.beginFill(this._color, uintToPercent(this._alpha))

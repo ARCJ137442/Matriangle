@@ -214,9 +214,9 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	 * ! 【2023-09-22 22:27:00】现在其显示直接复用相应方块的显示
 	 * * 坐标系统也一并对齐（采用「左上角布局」）
 	 */
-	public shapeInit(blockShape: IShape): void {
+	public displayInit(blockShape: IShape): void {
 		// 内部方块的显示
-		return this._carriedBlock?.shapeInit(blockShape)
+		return this._carriedBlock?.displayInit(blockShape)
 		/* if (this._carriedBlock !== null) {
 			// ↓ 现在采用了新坐标系统
 			// this._carriedBlock.x = -this._carriedBlock.width / 2;
@@ -232,7 +232,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	public shapeRefresh(shape: IShape): void {}
 
 	/** 实现：清除图形 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }

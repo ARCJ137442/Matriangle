@@ -1,6 +1,7 @@
 import { int, uint } from '../../legacy/AS3Legacy'
 import { Matrix } from '../../legacy/flash/geom'
 import { IChildContainer } from '../../common/abstractInterfaces'
+import { IDisplayProxyEntity } from './remoteDisplayAPI'
 
 /**
  * the interface faced to logical object that can manipulate its display status
@@ -21,10 +22,11 @@ export interface IDisplayable {
 	 *
 	 * ! 【2023-09-17 10:29:09】现在允许其后跟随任意数量的初始化参数，包括用于「容器类型」的子元素
 	 *
-	 * @param shape the display object corresponds `Shape` in Flash.
+	 * @param proxy 用于更新数据的「显示代理」
 	 */
-	shapeInit(shape: IShape, ...params: unknown[]): void
+	displayInit(proxy: IDisplayProxyEntity): void
 
+	// ? 或许不再需要「显示刷新」，而是通过「调用『显示代理』的setter」将显示数据传递（然后「显示代理」在「可视化程序」收到「更新指令」时「呈递数据」）
 	/**
 	 * The same as `shapeInit`, but it will be called by object refreshing
 	 * * 在显示对象内部需要重绘（内部几何线条图形、颜色等……）
@@ -32,9 +34,9 @@ export interface IDisplayable {
 	 * ! May contains position updates
 	 * ! 【20230913 23:25:03】目前不包括平移、旋转等操作
 	 *
-	 * @param shape the display object corresponds `Shape` in Flash.
-	 */
-	shapeRefresh(shape: IShape): void
+	 * @param proxy the display object corresponds `Shape` in Flash.
+	shapeRefresh(proxy: IDisplayProxyEntity): void
+	*/
 
 	/**
 	 * The destructor of shape, it will be called by object rerendering
@@ -45,7 +47,7 @@ export interface IDisplayable {
 	 *
 	 * @param shape the display object corresponds `Shape` in Flash.
 	 */
-	shapeDestruct(shape: IShape): void
+	displayDestruct(shape: IShape): void
 
 	/**
 	 * 控制对象显示时的「堆叠覆盖层级」
@@ -56,10 +58,27 @@ export interface IDisplayable {
 	 * ! 协议：「显示层级被更改」需要告知显示方「需要更新」
 	 * ? 或许会加入类似「事件侦听器」这样的东西
 	 *
-	 * TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
 	 */
 	get zIndex(): uint
 	set zIndex(value: uint)
+}
+/**
+ * 判断一个对象是否为「可显示对象」
+ *
+ * @param target 判断对象
+ * @returns 对象是否为「可显示对象」
+ */
+export function i_displayable(target: unknown): target is IDisplayable {
+	return (target as IDisplayable)?.i_displayable === true
+	/*
+	* 原先需要下面这样的形式，但现在使用「链式判断」可大大简化
+	* 参考：https://es6.ruanyifeng.com/#docs/operator
+	(
+		typeof target === 'object' &&
+		target !== null &&
+		'i_displayable' in target &&
+		target.i_displayable === true
+	) */
 }
 
 /**
@@ -76,13 +95,25 @@ export interface IDisplayableContainer extends IDisplayable {
 	readonly i_displayableContainer: true
 
 	/** 现在要求是「容器」了 */
-	shapeInit(shape: IShapeContainer, ...children: IDisplayable[]): void
+	displayInit(shape: IShapeContainer, ...children: IDisplayable[]): void
 
 	/** 现在要求是「容器」了 */
 	shapeRefresh(shape: IShapeContainer): void
 
 	/** 现在要求是「容器」了 */
-	shapeDestruct(shape: IShapeContainer): void
+	displayDestruct(shape: IShapeContainer): void
+}
+
+/**
+ * 判断一个对象是否为「可显示容器对象」
+ *
+ * @param target 判断对象
+ * @returns 对象是否为「可显示容器对象」
+ */
+export function i_displayableContainer(
+	target: unknown
+): target is IDisplayableContainer {
+	return (target as IDisplayableContainer)?.i_displayableContainer === true
 }
 
 /**
@@ -94,6 +125,8 @@ export interface IDisplayableContainer extends IDisplayable {
  * so that the logic can control the front-end rendering and separate from the concrete implementation of the display.
  * * 使逻辑端可以控制显示端的呈现，并与「具体显示平台实现」分离。
  *   * 如：逻辑端只需要调用这个文件里接口有的方法，不需要管这个IShape到底是用H5还是QT实现的
+ *
+ * ! @deprecated 此类即将被「实体显示代理」取代，后续需要重新考虑整个「实体显示」系统
  */
 export interface IShape extends IDisplayable {
 	/**
@@ -127,13 +160,10 @@ export interface IShape extends IDisplayable {
 	 * 图形（在容器中）的x坐标
 	 */
 	get x(): number
-	set x(
-		x: number
-
-		/**
-		 * （在容器中）图形的y坐标
-		 */
-	)
+	set x(x: number)
+	/**
+	 * （在容器中）图形的y坐标
+	 */
 	get y(): number
 	set y(y: number)
 
@@ -216,13 +246,13 @@ export interface IGraphicContext {
 	): void
 
 	lineStyle(
-		thickness: number /*\1*/,
-		color: uint /*\1*/,
-		alpha?: number /*\1*/,
-		pixelHinting?: boolean /*\1*/,
-		scaleMode?: string /*\1*/,
-		caps?: string /*\1*/,
-		joints?: string /*\1*/,
+		thickness: number /* = 1*/,
+		color: uint /* = 1*/,
+		alpha?: number /* = 1*/,
+		pixelHinting?: boolean /* = 1*/,
+		scaleMode?: string /* = 1*/,
+		caps?: string /* = 1*/,
+		joints?: string /* = 1*/,
 		miterLimit?: number /* = 3*/
 	): void
 	// lineGradientStyle

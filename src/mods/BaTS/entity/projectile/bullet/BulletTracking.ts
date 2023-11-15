@@ -224,8 +224,8 @@ export default class BulletTracking extends Bullet {
 	}
 
 	//============Display Implements============//
-	override shapeInit(shape: IShape): void {
-		super.shapeInit(shape)
+	override displayInit(shape: IShape): void {
+		super.displayInit(shape)
 		this.drawTrackingSign(shape.graphics)
 		shape.scaleX = shape.scaleY = BulletTracking.SIZE / BulletBasic.SIZE
 	}

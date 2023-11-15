@@ -41,7 +41,7 @@ export default class EffectPlayerLevelup extends Effect {
 		shape.y -= (EffectPlayerLevelup.GRID_SIZE / 4) * (1 - this.lifePercent)
 	}
 
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		// 设置颜色
 		shape.graphics.lineStyle(
 			EffectPlayerLevelup.LINE_SIZE,

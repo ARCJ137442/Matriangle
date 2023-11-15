@@ -191,9 +191,9 @@ export default abstract class Projectile
 		this._zIndex = value
 	}
 
-	public abstract shapeInit(shape: IShape, ...params: unknown[]): void
+	public abstract displayInit(shape: IShape, ...params: unknown[]): void
 	public abstract shapeRefresh(shape: IShape): void
-	public abstract shapeDestruct(shape: IShape): void
+	public abstract displayDestruct(shape: IShape): void
 
 	/**
 	 * （显示端）获取所有者（玩家）的填充颜色

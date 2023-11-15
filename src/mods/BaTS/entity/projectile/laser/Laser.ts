@@ -225,7 +225,7 @@ export default abstract class Laser
 	 * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
 	 * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
 	 */
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		shape.scaleX = this._length
 	}
 	/**
@@ -240,7 +240,7 @@ export default abstract class Laser
 		shape.scaleX = this._length
 	}
 	/** 析构：清空图形上下文 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

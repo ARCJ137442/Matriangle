@@ -275,11 +275,11 @@ export default class Lightning
 		this._isDrawComplete = this.isCalculated
 	}
 
-	override shapeInit(shape: IShape): void {
+	override displayInit(shape: IShape): void {
 		// ! 这时候可能路径还没计算好，所以不能绘制……
 	}
 
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 

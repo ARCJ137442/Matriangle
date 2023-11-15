@@ -224,16 +224,16 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	public readonly i_displayable = true as const
 
 	/** 初始化：无 */
-	public shapeInit(shape: IShape): void {}
+	public displayInit(shape: IShape): void {}
 
 	/** 默认实现：重绘图形 */
 	public shapeRefresh(shape: IShape): void {
-		this.shapeDestruct(shape)
-		this.shapeInit(shape)
+		this.displayDestruct(shape)
+		this.displayInit(shape)
 	}
 
 	/** 默认实现：删除绘图数据 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }

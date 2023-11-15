@@ -232,7 +232,7 @@ export default class ShockWaveBase
 	//============Display Implements============//
 
 	/** 实现：大方形盖掉小方形 */
-	public shapeInit(shape: IShape): void {
+	public displayInit(shape: IShape): void {
 		shape.graphics.beginFill(this.ownerColor)
 		shape.graphics.drawRect(
 			-ShockWaveBase.BLOCK_RADIUS,
@@ -256,7 +256,7 @@ export default class ShockWaveBase
 	}
 
 	/** 实现：清除绘图 */
-	public shapeDestruct(shape: IShape): void {
+	public displayDestruct(shape: IShape): void {
 		shape.graphics.clear()
 	}
 }
