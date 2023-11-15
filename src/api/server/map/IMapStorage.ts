@@ -6,7 +6,7 @@ import BlockAttributes from '../block/BlockAttributes'
 import Block from '../block/Block'
 import { IJSObjectifiable } from '../../../common/JSObjectify'
 import { typeID } from '../registry/IWorldRegistry'
-import { IDisplayDataMap } from '../../display/remoteDisplayAPI'
+import { IDisplayDataMap } from '../../display/RemoteDisplayAPI'
 
 /**
  * 通用类型：用于「ID⇒零参构造函数」的映射表

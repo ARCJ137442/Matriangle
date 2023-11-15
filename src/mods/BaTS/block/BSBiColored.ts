@@ -1,6 +1,8 @@
 import { OptionalRecursive } from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import BSColored from 'matriangle-mod-native/block/BSColored'
+import BSColored, {
+	IDisplayDataBSColored,
+} from 'matriangle-mod-native/block/BSColored'
 
 /**
  * 「二重颜色状态」是
@@ -44,4 +46,16 @@ export default class BSBiColored extends BSColored {
 		// 返回自身
 		return this
 	}
+
+	/** @implements 生成显示数据 */
+	override generateDisplayData(): IDisplayDataBSBiColored {
+		return {
+			...super.generateDisplayData(),
+			lineColor: this._lineColor,
+		}
+	}
+}
+/** 对接显示端的「门」数据 */
+export interface IDisplayDataBSBiColored extends IDisplayDataBSColored {
+	lineColor: uint
 }

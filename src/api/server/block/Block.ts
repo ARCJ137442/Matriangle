@@ -1,6 +1,6 @@
 import { addNReturnKey, identity, key } from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import { IDisplayable, IShape } from '../../display/DisplayInterfaces'
+import { IDisplayable } from '../../display/DisplayInterfaces'
 import BlockAttributes from './BlockAttributes'
 import {
 	IJSObjectifiable,
@@ -13,7 +13,8 @@ import {
 	uniLoadJSObject,
 } from 'matriangle-common/JSObjectify'
 import { typeID } from '../registry/IWorldRegistry'
-import BlockState from './BlockState'
+import BlockState, { IDisplayDataBlockState } from './BlockState'
+import { IDisplayDataBlock } from '../../display/RemoteDisplayAPI'
 
 /**
  * One of the fundamental element in BaTr
@@ -23,7 +24,7 @@ import BlockState from './BlockState'
  * TODO: 【2023-09-24 18:42:16】这玩意儿也要参与序列化吗？
  */
 export default class Block<BS extends BlockState | null = BlockState | null>
-	implements IDisplayable, IJSObjectifiable<Block<BS>>
+	implements IDisplayable<IDisplayDataBlock>, IJSObjectifiable<Block<BS>>
 {
 	// JS对象 //
 
@@ -223,17 +224,15 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	/** 可显示 */
 	public readonly i_displayable = true as const
 
-	/** 初始化：无 */
-	public displayInit(shape: IShape): void {}
-
-	/** 默认实现：重绘图形 */
-	public shapeRefresh(shape: IShape): void {
-		this.displayDestruct(shape)
-		this.displayInit(shape)
+	getDisplayDataInit(): IDisplayDataBlock<IDisplayDataBlockState | null> {
+		return {
+			id: this.id,
+			state: this.state?.generateDisplayData() ?? null,
+		}
 	}
 
-	/** 默认实现：删除绘图数据 */
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
+	getDisplayDataRefresh(): IDisplayDataBlock<IDisplayDataBlockState | null> {
+		// TODO: 暂时是「所有数据都需要更新」
+		return this.getDisplayDataInit()
 	}
 }

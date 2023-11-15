@@ -1,5 +1,4 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import EffectPlayerLike from './EffectPlayerLike'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
@@ -56,25 +55,26 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 	}
 
 	//============Instance Functions============//
-	/** 实现：绘制玩家轮廓 */
-	public displayInit(shape: IShape): void {
-		// 先绘制形状
-		shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color)
-		EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值
-		// 然后绘制玩家标记
-		this.drawDecoration(shape)
-		// 这时才停止
-		shape.graphics.endFill()
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /** 实现：绘制玩家轮廓 */
+	// public displayInit(shape: IShape): void {
+	// 	// 先绘制形状
+	// 	shape.graphics.lineStyle(EffectPlayerLike.LINE_SIZE, this._color)
+	// 	EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值
+	// 	// 然后绘制玩家标记
+	// 	this.drawDecoration(shape)
+	// 	// 这时才停止
+	// 	shape.graphics.endFill()
+	// }
 
-	/** 覆盖：尺寸放大/缩小 */
-	override shapeRefresh(shape: IShape): void {
-		super.shapeRefresh(shape)
-		// ! ↓因为前面已经通过「是否倒放」设置了`shape.alpha`，而这里直接使用该值，以避免再次判断「是否倒放」
-		shape.scaleX = shape.scaleY =
-			EffectPlayerDeathLight.MIN_SCALE +
-			(EffectPlayerDeathLight.MAX_SCALE -
-				EffectPlayerDeathLight.MIN_SCALE) *
-				(1 - shape.alpha)
-	}
+	// /** 覆盖：尺寸放大/缩小 */
+	// override shapeRefresh(shape: IShape): void {
+	// 	super.shapeRefresh(shape)
+	// 	// ! ↓因为前面已经通过「是否倒放」设置了`shape.alpha`，而这里直接使用该值，以避免再次判断「是否倒放」
+	// 	shape.scaleX = shape.scaleY =
+	// 		EffectPlayerDeathLight.MIN_SCALE +
+	// 		(EffectPlayerDeathLight.MAX_SCALE -
+	// 			EffectPlayerDeathLight.MIN_SCALE) *
+	// 			(1 - shape.alpha)
+	// }
 }

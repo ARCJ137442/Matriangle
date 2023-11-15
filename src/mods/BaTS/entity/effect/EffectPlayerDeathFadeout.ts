@@ -1,5 +1,4 @@
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
@@ -46,7 +45,8 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 	}
 
 	//============Display Implements============//
-	public displayInit(shape: IShape): void {
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	/* public displayInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color, EffectPlayerDeathFadeout.ALPHA)
 		EffectPlayerLike.moveToPlayerShape(shape.graphics) // 尺寸用默认值
@@ -54,5 +54,5 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 		this.drawDecoration(shape)
 		// 这时才停止
 		shape.graphics.endFill()
-	}
+	} */
 }

@@ -1,8 +1,6 @@
 import { mRot, toOpposite_M } from 'matriangle-api/server/general/GlobalRot'
 import { TPS, FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape, DisplayLevel } from 'matriangle-api/display/DisplayInterfaces'
-import Entity from 'matriangle-api/server/entity/Entity'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { intMin } from 'matriangle-common/exMath'
 import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
@@ -30,13 +28,37 @@ import {
 	NativePlayerEvent,
 } from './controller/PlayerEvent'
 import { omega } from 'matriangle-common'
-import { IDisplayProxyEntity } from './../../../../api/display/remoteDisplayAPI'
+import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+
+/**
+ * 有关玩家的「自定义显示数据」
+ *
+ * !【2023-11-15 20:45:57】注意：其本质无需继承`IDisplayDataEntity`接口
+ * * 简略缘由：其内属性被极度泛化，导致「字符串键取值约束」失效
+ * * 详见方法{@link IDisplayProxyEntity.storeState}
+ *
+ * ?【2023-11-15 20:49:20】似乎若后续显示端要用到（通过「玩家显示数据」更新玩家Shape）的话，可能需要将其独立在一个地方以避免全部导入
+ */
+export interface IDisplayDataEntityStatePlayerV1
+	extends IDisplayDataEntityState {
+	customName: string
+	fillColor: uint
+	lineColor: uint
+	decorationLabel: NativeDecorationLabel
+}
 
 /**
  * 玩家第一版
  * * 作为{@link IPlayer}的最小实现
  */
-export default class Player_V1 extends Entity implements IPlayer {
+export default class Player_V1<
+		// !【2023-11-15 23:23:18】查明原因了：不是泛型约束出了问题，而是「带多个`keyof`的泛型函数」出了问题
+		PlayerStateT extends IDisplayDataEntityStatePlayerV1,
+	>
+	extends EntityDisplayable<PlayerStateT>
+	implements IPlayer
+{
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	// 判断「是玩家」标签
@@ -67,7 +89,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 		super()
 		this._isActive = isActive
 
-		// 有方向实体 & 格点实体 //
+		// 有方向实体 & 格点实体 // ! 这里统一使用内部变量，不使用setter
 		this._position.copyFrom(position)
 		this._direction = direction
 
@@ -76,6 +98,17 @@ export default class Player_V1 extends Entity implements IPlayer {
 		this._lineColor = lineColor
 
 		// ! 控制器不在这里留有引用
+
+		// 显示初始化 // ! 不需要初始化「透明度」这些「一开始就没有特别修改」的变量
+		this._proxy.position = this._position
+		this._proxy.direction = this._direction
+		this._proxy.storeStates({
+			fillColor,
+			lineColor,
+			customName: this.customName,
+			decorationLabel: this.decorationLabel,
+		} as PlayerStateT)
+		// !【2023-11-15 20:50:57】现在明确类型，一定是`IDisplayDataEntityStatePlayerV1`的子类型，TS无关你个鬼头
 	}
 
 	/**
@@ -105,7 +138,9 @@ export default class Player_V1 extends Entity implements IPlayer {
 	set customName(value: string) {
 		if (value !== this._customName) {
 			this._customName = value
-			// this._GUI.updateName(); // TODO: 显示更新
+			// * 显示更新
+			// !【2023-11-15 22:44:30】似乎使用泛型类型时，因为「用其它子类型实例化」无法正确推导并约束字符串⇒所以有时还是需要特别指定泛型参数
+			this._proxy.storeState('customName', this._customName)
 		}
 	}
 
@@ -170,6 +205,7 @@ export default class Player_V1 extends Entity implements IPlayer {
 
 	turnTo(host: IMatrix, direction: number): void {
 		this._direction = direction
+		this._proxy.direction = direction
 		// TODO: 显示更新
 	}
 
@@ -583,7 +619,10 @@ export default class Player_V1 extends Entity implements IPlayer {
 		return this._direction
 	}
 	set direction(value: mRot) {
+		// ! 在setter里进行
 		this._direction = value
+		// * 显示更新
+		this._proxy.direction = this._direction
 	}
 
 	// 格点实体
@@ -604,6 +643,8 @@ export default class Player_V1 extends Entity implements IPlayer {
 				'不建议「先变更位置」，再`setPosition`的「先斩后奏」方法'
 			)
 		this._position.copyFrom(position)
+		// 显示更新
+		this._proxy.position = this._position
 		// 位置更改后
 		if (needHook) this.onLocationChanged(host, this._position)
 	}
@@ -826,24 +867,13 @@ export default class Player_V1 extends Entity implements IPlayer {
 	get lineColor(): uint {
 		return this._lineColor
 	}
-	/** 填充颜色1 */
+
+	/** 填充颜色 */ // ! 填充颜色2不再使用
 	protected _fillColor: uint = 0xffffff
 	get fillColor(): uint {
 		return this._fillColor
 	}
+
 	/** 用于判断「装饰类型」的标记 */
 	decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY
-
-	displayInit(shape: IShape, ...params: unknown[]): void {}
-	shapeRefresh(shape: IShape): void {}
-	displayDestruct(shape: IShape): void {}
-
-	/** 堆叠覆盖层级：默认是「玩家」层级 */
-	protected _zIndex: uint = DisplayLevel.PLAYER
-	get zIndex(): uint {
-		return this._zIndex
-	}
-	set zIndex(value: uint) {
-		this._zIndex = value
-	}
 }

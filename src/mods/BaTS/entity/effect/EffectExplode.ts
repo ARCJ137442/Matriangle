@@ -1,6 +1,5 @@
 import { fPoint } from 'matriangle-common/geometricTools'
 import { uintToPercent } from 'matriangle-common/utils'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
@@ -44,23 +43,24 @@ export default class EffectExplode extends Effect {
 	/** 默认线条粗细 */
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 25
 
-	public displayInit(shape: IShape): void {
-		shape.graphics.clear()
-		shape.graphics.lineStyle(
-			EffectExplode.LINE_SIZE,
-			this.color,
-			uintToPercent(EffectExplode.LINE_ALPHA)
-		)
-		shape.graphics.beginFill(
-			this.color,
-			uintToPercent(EffectExplode.FILL_ALPHA)
-		)
-		shape.graphics.drawCircle(0, 0, logical2Real(this.radius))
-		shape.graphics.endFill()
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// public displayInit(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// 	shape.graphics.lineStyle(
+	// 		EffectExplode.LINE_SIZE,
+	// 		this.color,
+	// 		uintToPercent(EffectExplode.LINE_ALPHA)
+	// 	)
+	// 	shape.graphics.beginFill(
+	// 		this.color,
+	// 		uintToPercent(EffectExplode.FILL_ALPHA)
+	// 	)
+	// 	shape.graphics.drawCircle(0, 0, logical2Real(this.radius))
+	// 	shape.graphics.endFill()
+	// }
 
-	/** 实现：透明度跟随生命周期百分比 */
-	public shapeRefresh(shape: IShape): void {
-		shape.alpha = this.lifePercent
-	}
+	// /** 实现：透明度跟随生命周期百分比 */
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.alpha = this.lifePercent
+	// }
 }

@@ -1,5 +1,7 @@
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
-import BlockState from 'matriangle-api/server/block/BlockState'
+import BlockState, {
+	IDisplayDataBlockState,
+} from 'matriangle-api/server/block/BlockState'
 import { OptionalRecursive, randomBoolean2 } from 'matriangle-common/utils'
 import { int$MIN_VALUE, uint, int } from 'matriangle-legacy/AS3Legacy'
 
@@ -100,4 +102,16 @@ export default class BSGate extends BlockState {
 		return this._temp_fullAttr
 	}
 	protected _temp_fullAttr?: BlockAttributes
+
+	/** @implements 生成显示数据 */
+	generateDisplayData(): IDisplayDataBSGate {
+		return {
+			open: this._open,
+		}
+	}
+}
+
+/** 对接显示端的「门」数据 */
+export interface IDisplayDataBSGate extends IDisplayDataBlockState {
+	open: boolean
 }

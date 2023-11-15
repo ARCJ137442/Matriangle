@@ -1,5 +1,4 @@
 import { fPoint, iPoint, floatPoint } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint } from 'matriangle-legacy/AS3Legacy'
@@ -174,44 +173,45 @@ export default abstract class Bullet
 	 * ? 或许在设置的时候，也需要更新：不再由Flash管理
 	 */
 
-	/**
-	 * 初始化：绘制基本的子弹轮廓
-	 * * 三角外形
-	 * * （已弃用）渐变填充
-	 *
-	 * @param shape 初始化要绘制到的图形
-	 */
-	public displayInit(shape: IShape): void {
-		const realRadiusX: number = Bullet.SIZE / 2
-		const realRadiusY: number = Bullet.SIZE / 2
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 初始化：绘制基本的子弹轮廓
+	//  * * 三角外形
+	//  * * （已弃用）渐变填充
+	//  *
+	//  * @param shape 初始化要绘制到的图形
+	//  */
+	// public displayInit(shape: IShape): void {
+	// 	const realRadiusX: number = Bullet.SIZE / 2
+	// 	const realRadiusY: number = Bullet.SIZE / 2
 
-		shape.graphics.lineStyle(Bullet.LINE_SIZE, this.ownerLineColor)
-		shape.graphics.beginFill(this.ownerColor)
-		/* GRADIENT-FILL REMOVED
-		let m:Matrix=new Matrix()
-		m.createGradientBox(SIZE,
-							SIZE,0,-realRadiusX,-realRadiusX)
-		beginGradientFill(GradientType.LINEAR,
-		[this.ownerColor,ownerLineColor],
-		[1,1],
-		[63,255],
-		m,
-		SpreadMethod.PAD,
-		InterpolationMethod.RGB,
-		1)
-		*/
-		shape.graphics.moveTo(-realRadiusX, -realRadiusY)
-		shape.graphics.lineTo(realRadiusX, 0)
-		shape.graphics.lineTo(-realRadiusX, realRadiusY)
-		shape.graphics.lineTo(-realRadiusX, -realRadiusY)
-		shape.graphics.endFill()
-	}
+	// 	shape.graphics.lineStyle(Bullet.LINE_SIZE, this.ownerLineColor)
+	// 	shape.graphics.beginFill(this.ownerColor)
+	// 	/* GRADIENT-FILL REMOVED
+	// 	let m:Matrix=new Matrix()
+	// 	m.createGradientBox(SIZE,
+	// 						SIZE,0,-realRadiusX,-realRadiusX)
+	// 	beginGradientFill(GradientType.LINEAR,
+	// 	[this.ownerColor,ownerLineColor],
+	// 	[1,1],
+	// 	[63,255],
+	// 	m,
+	// 	SpreadMethod.PAD,
+	// 	InterpolationMethod.RGB,
+	// 	1)
+	// 	*/
+	// 	shape.graphics.moveTo(-realRadiusX, -realRadiusY)
+	// 	shape.graphics.lineTo(realRadiusX, 0)
+	// 	shape.graphics.lineTo(-realRadiusX, realRadiusY)
+	// 	shape.graphics.lineTo(-realRadiusX, -realRadiusY)
+	// 	shape.graphics.endFill()
+	// }
 
-	public shapeRefresh(shape: IShape): void {}
+	// public shapeRefresh(shape: IShape): void {}
 
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 
 	//============World Mechanics============//
 	/**

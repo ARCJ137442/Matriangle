@@ -1,4 +1,8 @@
-import { IJSObjectifiable, JSObjectifyMap } from '../../../common/JSObjectify'
+import {
+	IJSObjectifiable,
+	JSObject,
+	JSObjectifyMap,
+} from '../../../common/JSObjectify'
 import { OptionalRecursive, key } from '../../../common/utils'
 import { uint } from '../../../legacy/AS3Legacy'
 import BlockAttributes from './BlockAttributes'
@@ -103,4 +107,16 @@ export default abstract class BlockState
 	public calculatePixelAlpha(attributes: BlockAttributes): uint {
 		return attributes.defaultPixelAlpha
 	}
+
+	// * 对接「显示端」 * //
+	/**
+	 * 获取「显示数据」
+	 * * 本来这些「显示数据」就没多复杂。。。
+	 *
+	 * !【2023-11-15 21:11:43】本来要限制这里返回值的类型（以便匹配其自身属性）的，但现在：不是太行
+	 */
+	public abstract generateDisplayData(): IDisplayDataBlockState
 }
+
+/** 对接显示端的「门」数据 */
+export interface IDisplayDataBlockState extends JSObject {}

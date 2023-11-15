@@ -1,9 +1,4 @@
 import { iPoint, intPoint } from 'matriangle-common/geometricTools'
-import {
-	IShape,
-	IGraphicContext,
-} from 'matriangle-api/display/DisplayInterfaces'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	IEntityInGrid,
@@ -221,59 +216,60 @@ export default abstract class Laser
 	public onPositedBlockUpdate(host: IMatrix): void {}
 
 	//============Display Implements============//
-	/**
-	 * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
-	 * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
-	 */
-	public displayInit(shape: IShape): void {
-		shape.scaleX = this._length
-	}
-	/**
-	 * 刷新：（暂时只）更新激光长度
-	 *
-	 * ? 是否需要重绘图形，以便（每次显示更新时）响应玩家颜色
-	 * * 可能的性能开销
-	 */
-	public shapeRefresh(shape: IShape): void {
-		// this.shapeDestruct(shape);
-		// this.shapeInit(shape);
-		shape.scaleX = this._length
-	}
-	/** 析构：清空图形上下文 */
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
+	//  * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
+	//  */
+	// public displayInit(shape: IShape): void {
+	// 	shape.scaleX = this._length
+	// }
+	// /**
+	//  * 刷新：（暂时只）更新激光长度
+	//  *
+	//  * ? 是否需要重绘图形，以便（每次显示更新时）响应玩家颜色
+	//  * * 可能的性能开销
+	//  */
+	// public shapeRefresh(shape: IShape): void {
+	// 	// this.shapeDestruct(shape);
+	// 	// this.shapeInit(shape);
+	// 	shape.scaleX = this._length
+	// }
+	// /** 析构：清空图形上下文 */
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 
-	/**
-	 * 绘制一个「Beam」
-	 * @param graphics 2D绘画上下文
-	 * @param y1 以x轴为横轴的「起始垂直坐标」
-	 * @param y2 以x轴为横轴的「终止垂直坐标」
-	 * @param color 绘制的颜色
-	 * @param alpha 绘制的不透明度
-	 */
-	protected drawLine(
-		graphics: IGraphicContext,
-		y1: number,
-		y2: number,
-		color: uint = 16777215,
-		alpha: number = 1
-	): void {
-		const yStart: number = Math.min(y1, y2)
-		graphics.beginFill(color, alpha)
-		graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
-		graphics.endFill()
-	}
+	// /**
+	//  * 绘制一个「Beam」
+	//  * @param graphics 2D绘画上下文
+	//  * @param y1 以x轴为横轴的「起始垂直坐标」
+	//  * @param y2 以x轴为横轴的「终止垂直坐标」
+	//  * @param color 绘制的颜色
+	//  * @param alpha 绘制的不透明度
+	//  */
+	// protected drawLine(
+	// 	graphics: IGraphicContext,
+	// 	y1: number,
+	// 	y2: number,
+	// 	color: uint = 16777215,
+	// 	alpha: number = 1
+	// ): void {
+	// 	const yStart: number = Math.min(y1, y2)
+	// 	graphics.beginFill(color, alpha)
+	// 	graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
+	// 	graphics.endFill()
+	// }
 
-	protected drawOwnerLine(
-		graphics: IGraphicContext,
-		y1: number,
-		y2: number,
-		alpha: number = 1
-	): void {
-		const yStart: number = Math.min(y1, y2)
-		graphics.beginFill(this.ownerColor, alpha)
-		graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
-		graphics.endFill()
-	}
+	// protected drawOwnerLine(
+	// 	graphics: IGraphicContext,
+	// 	y1: number,
+	// 	y2: number,
+	// 	alpha: number = 1
+	// ): void {
+	// 	const yStart: number = Math.min(y1, y2)
+	// 	graphics.beginFill(this.ownerColor, alpha)
+	// 	graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
+	// 	graphics.endFill()
+	// }
 }

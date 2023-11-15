@@ -1,13 +1,8 @@
 import { fPoint } from 'matriangle-common/geometricTools'
-import {
-	IGraphicContext,
-	IShape,
-} from 'matriangle-api/display/DisplayInterfaces'
 import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import BulletBasic from './BulletBasic'
 import Bullet from './Bullet'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
@@ -74,16 +69,17 @@ export default class BulletNuke extends Bullet {
 	}
 
 	//============Display Implements============//
-	/** 先绘制基本轮廓，再绘制特殊标记 */
-	override displayInit(shape: IShape): void {
-		super.displayInit(shape)
-		this.drawNukeMark(shape.graphics)
-		shape.scaleX = shape.scaleY = BulletNuke.SIZE / BulletBasic.SIZE
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /** 先绘制基本轮廓，再绘制特殊标记 */
+	// override displayInit(shape: IShape): void {
+	// 	super.displayInit(shape)
+	// 	this.drawNukeMark(shape.graphics)
+	// 	shape.scaleX = shape.scaleY = BulletNuke.SIZE / BulletBasic.SIZE
+	// }
 
-	protected drawNukeMark(graphics: IGraphicContext): void {
-		graphics.beginFill(this.ownerLineColor)
-		graphics.drawCircle(0, 0, BulletBasic.SIZE * 0.125)
-		graphics.endFill()
-	}
+	// protected drawNukeMark(graphics: IGraphicContext): void {
+	// 	graphics.beginFill(this.ownerLineColor)
+	// 	graphics.drawCircle(0, 0, BulletBasic.SIZE * 0.125)
+	// 	graphics.endFill()
+	// }
 }

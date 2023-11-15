@@ -1,6 +1,8 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { randInt } from 'matriangle-common/exMath'
-import BlockState from 'matriangle-api/server/block/BlockState'
+import BlockState, {
+	IDisplayDataBlockState,
+} from 'matriangle-api/server/block/BlockState'
 import { OptionalRecursive } from 'matriangle-common/utils'
 
 /**
@@ -63,4 +65,16 @@ export default class BSColored extends BlockState {
 	override calculatePixelColor(): uint {
 		return this._color
 	}
+
+	/** @implements 生成显示数据 */
+	generateDisplayData(): IDisplayDataBSColored {
+		return {
+			color: this._color,
+		}
+	}
+}
+
+/** 对接显示端的「有颜色状态」数据 */
+export interface IDisplayDataBSColored extends IDisplayDataBlockState {
+	color: uint
 }

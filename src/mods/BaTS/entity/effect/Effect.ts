@@ -1,14 +1,21 @@
 import { fPoint } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityActiveLite,
-	IEntityDisplayable,
 	IEntityFixedLived,
 	IEntityOutGrid,
 	IEntityShortLived,
 } from 'matriangle-api/server/entity/EntityInterfaces'
+import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+
+/**
+ * 特效通用的「附加显示状态」
+ */
+export interface IDisplayDataStateEffect extends IDisplayDataEntityState {
+	// TODO: 有待扩充
+}
 
 /**
  * * 【20230913 23:18:15】现在将原本独立的「特效」也归入「实体」范畴了
@@ -24,9 +31,9 @@ import {
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量
  */
 export default abstract class Effect
-	extends Entity
+	extends EntityDisplayable<IDisplayDataStateEffect>
+	// IEntityDisplayable<IDisplayDataStateEffect>,
 	implements
-		IEntityDisplayable,
 		IEntityShortLived,
 		IEntityFixedLived,
 		IEntityOutGrid,
@@ -116,15 +123,5 @@ export default abstract class Effect
 	public set zIndex(value: uint) {
 		this._zIndex = value
 		// TODO: 增加回调事件，更新显示对象（💭需要一种「响应式更新，不能全靠显示端自己主动」）
-	}
-
-	// 可显示 //
-	public readonly i_displayable = true as const
-
-	public abstract displayInit(shape: IShape, ...params: unknown[]): void
-	public abstract shapeRefresh(shape: IShape): void
-	/** */
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
 	}
 }

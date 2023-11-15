@@ -1,5 +1,5 @@
 /**
- * 用于「远程WS交换信息」的显示
+ * 用于「远程交换信息」的显示
  * * 只用于「统一规定『方块呈现要什么数据』『实体呈现要什么数据』」
  * * 不用于规定「具体的『呈现者』对象」
  *
@@ -29,22 +29,24 @@
  * 3. 推导要更新对象的哪些属性
  * 4. 具体去更改图形对象的属性（部分地，比如「透明度不变就不用更新」）
  *
- * TODO: 有待和`DisplayInterfaces.ts`整合
+ * ? 或许需要`DisplayInterfaces.ts`整合
  */
 
-import { OptionalRecursive2 } from 'matriangle-common'
+import { JSObject } from 'matriangle-common/JSObjectify'
+import { Optional, OptionalRecursive2 } from 'matriangle-common/utils'
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import BlockState from '../server/block/BlockState'
+import { IDisplayDataBlockState } from '../server/block/BlockState'
 import { typeID } from '../server/registry/IWorldRegistry'
-import { key } from 'matriangle-common/utils'
 
 /**
  * 状态数据 / 显示数据
  * * 一切「用于初始化、更新图形呈现的数据」的基类
  * * 用于存储一个Shape通用的东西
  *   * 目前对于「位置」还不知道要如何处理
+ *
+ * !【2023-11-15 23:20:57】目前对于「{[k:string]: XXX}」的继承，不会引发歧义（是泛型函数出了问题）
  */
-export interface IDisplayStateData {}
+export interface IDisplayStateData extends JSObject {}
 
 /**
  * 显示状态加载包
@@ -62,7 +64,7 @@ export interface DisplayStateInitPackage extends IDisplayStateData {
  * * 这样也不用「为每个状态都写一个对应的『更新包』类型」了
  */
 export interface DisplayStateRefreshPackage extends IDisplayStateData {
-	[proxyID: string]: OptionalRecursive2<IDisplayStateData>
+	[proxyID: string]: OptionalRecursive2<IDisplayStateData> & JSObject
 }
 
 /**
@@ -127,11 +129,13 @@ export function locationStrToPoint<T extends int[] = int[]>(
  * 方块状态数据（全有）
  */
 export interface IDisplayDataBlock<
-	StateType extends BlockState | null = BlockState | null,
+	StateType extends
+		IDisplayDataBlockState | null = IDisplayDataBlockState | null,
 > extends IDisplayStateData {
 	// ! 这里所有的变量都是「全可选」或「全必选」的
-	blockID: typeID
-	blockState: StateType
+	id: typeID
+	// 方块状态中「是JS对象一部分」的属性（排除了其中的「非JS对象部分」如函数）
+	state: StateType
 }
 
 /**
@@ -161,8 +165,17 @@ export interface IDisplayDataMap extends IDisplayStateData {
 }
 
 /**
- * 存储所有实体列表的数据
+ * 存储「所有需要更新的实体」的数据
+ * * 使用`id: IDisplayDataEntity`
+ *   * 理由：`id`在更新时是绝对不能省略的，这相当于指针地址
+ *
+ * @argument id 记录实体用于更新的「唯一识别码」
+ * * 用于在「逻辑端实体」和「显示端实体」间建立连接
+ *   * 如：指派「哪个『实体呈现者』需要被更新」
  */
+export interface IDisplayDataEntities {
+	[id: string]: IDisplayDataEntity<IDisplayDataEntityState> // ! 这里因「实体类型」的不同而不同
+}
 
 /**
  * 实体的「显示数据」
@@ -173,16 +186,11 @@ export interface IDisplayDataMap extends IDisplayStateData {
  *   * 使用「显示代理」的getter/setter，将「修改属性」转换成「更新数据」
  *   * 这里「显示代理」类似一种「待更新数据缓冲区」的角色
  *
- * !【2023-11-15 18:15:39】这里的`id`应该作为「字典键」的形式被
+ * !【2023-11-15 18:15:39】这里的`id`应该作为「地址」而不应该作为「数据」
  */
-export interface IDisplayDataEntity extends IDisplayStateData {
-	/**
-	 * 记录实体用于更新的「唯一识别码」
-	 * * 用于在「逻辑端实体」和「显示端实体」间建立连接
-	 *   * 如：指派「哪个『实体呈现者』需要被更新」
-	 */
-	id: string
-
+export interface IDisplayDataEntity<
+	EntityStateT extends IDisplayDataEntityState,
+> extends IDisplayStateData {
 	/**
 	 * 记录实体的「类型」
 	 * * 用于显示端结合状态进行绘图
@@ -192,13 +200,17 @@ export interface IDisplayDataEntity extends IDisplayStateData {
 
 	/**
 	 * 记录实体的「附加状态」
+	 * * 这个「附加状态」是可自定义的
 	 */
-	state: IEntityState
+	state: EntityStateT
 }
 
 /**
  * 所有实体通用的「实体状态」类型
  * * 此处的「实体状态」直接作为数据进行传输
+ *
+ * !【2023-11-15 22:10:50】目前的情况是：这个接口作为一个`any`类型，其实际上并不常用
+ *
  * @example 想法笔记
  * 实体将使用一个uuid作为其标识符，并且这不由「实体」本身存储——实体自身的「实体状态」，即为「实体」这个「具有能动的方法的类」本身存储，
  * 类似 entities: {
@@ -207,8 +219,14 @@ export interface IDisplayDataEntity extends IDisplayStateData {
  *     state: {customName: XXX, ...}
  * }
  */
-export interface IEntityState {
-	[stateName: key]: unknown
+export interface IDisplayDataEntityState extends JSObject {
+	// [stateName: key]: JSObjectValue // !【2023-11-15 22:28:22】与其说「作为一个『any类型』」，倒不如禁用它作为一个基类（以兼容基本的`scaleX`、`scaleY`这些）
+	scaleX: number
+	scaleY: number
+	isVisible: boolean
+	position: number[]
+	direction: number /* mRot */
+	alpha: number
 }
 
 /**
@@ -216,7 +234,9 @@ export interface IEntityState {
  * * 定义了一套修改「实体状态」的方法
  * * 允许实体将自身自定义数据存入「实体状态」中
  */
-export interface IDisplayProxyEntity {
+export interface IDisplayProxyEntity<
+	EntityStateT extends IDisplayDataEntityState, // !【2023-11-15 22:20:58】我们一直都被「附加状态」搞错了方向
+> {
 	// * 面向「可视化」：显示端负责获取、呈递、清洗（并传输）数据 * //
 
 	/**
@@ -224,7 +244,7 @@ export interface IDisplayProxyEntity {
 	 * * 面向「可视化」：数据由此转换为JSON，并最后传递给显示端显示
 	 * * 用于实体显示的「初始化」
 	 */
-	get displayDataFull(): IDisplayDataEntity
+	get displayDataFull(): IDisplayDataEntity<EntityStateT>
 
 	/**
 	 * 获取**用于更新**的「显示数据」
@@ -236,7 +256,9 @@ export interface IDisplayProxyEntity {
 	 *
 	 * @returns 返回「待更新显示数据」（作为「显示数据」的部分）
 	 */
-	get displayDataToRefresh(): OptionalRecursive2<IDisplayDataEntity>
+	get displayDataToRefresh(): OptionalRecursive2<
+		IDisplayDataEntity<EntityStateT>
+	>
 
 	/**
 	 * 清洗「待更新显示数据」
@@ -300,24 +322,104 @@ export interface IDisplayProxyEntity {
 	 */
 	get alpha(): number
 	set alpha(value: number)
+
+	// * 自定义「实体状态」支持 * //
+
+	/**
+	 * 向「实体状态」中存储自定义数据
+	 *
+	 * // @template State 用于「检验stateName是否合法」并「自动推导value的类型」的类型
+	 * ! ↑ 现在直接在接口上用`EntityStateT`指代这时的「自定义实体状态」类型
+	 * @param stateName 自定义数据名称
+	 * @param {Primitive} value 自定义数据 // ! 只能是「可被JS对象化」的类型
+	 * @returns value
+	 *
+	 * !【2023-11-15 20:44:55】注意：这里`extends IEntityState`非必要的缘由：`IEntityState包含了所有的key，所以限定了无法标记类型`
+	 * ?【2023-11-15 22:44:53】↑但其实现在的`JSObject`也一样
+	 *
+	 * 📝Typescript避免「重构属性以后，直接使用`.`访问的属性改了，但使用`[key]`访问的属性没改
+	 * * 🔎问题起因：`key`是个自面量，不会被一般的「重构」重命名
+	 * * 📌实现思路：键值对模板公示 + `keyof`限定 + `typeof name`约束
+	 *   * 使用一个类型`StateTemplate`规定「这个状态里应该只有哪些『字符串自面量』可访问」
+	 *   * 使用`keyof`限定`name`的类型，确保`name`是`StateTemplate`中定义的键名
+	 *   * 使用`typeof name`约束`data`的类型，确保`data`是`StateTemplate`中`name`对应的值类型
+	 * * 📌【2023-11-15 23:11:27】血泪教训：使用多个`key of`会导致「几个地方的`key of`指代不同」
+	 *   * 从而导致「看似能用`Keys[typeof k]`去指代『`Keys[k]`对应的类型』，但实际上报错『可以使用无关的子类实例化』」问题
+	 *   * 📍SOLUTION: 使用一个统一（自动推断）的类型参数<K extends keyof Keys>去预先指定`k: K`，
+	 *     * 以保证整个类型的统一性
+	 *
+	 * !【2023-11-15 22:44:30】似乎使用泛型类型时，因为「用其它子类型实例化」无法正确推导并约束字符串⇒所以有时还是需要特别指定泛型参数
+	 *
+	 * @example 实现这种「键名合法性检测」的示例代码
+	 *
+	 * type StateTemplate = {
+     *     name?: string
+     * }
+     *
+     * class State<T> {
+     *     setState<K extends keyof T>(name: K, data: T[K]): void {
+     *     	console.log(`this[${String(name)}] = ${String(data)}`)
+     *     }
+     * }
+     *
+     * const s = new State<StateTemplate>()
+     * s.setState('name', 'string')
+     * s.setState('name', undefined) // 这个被允许，是因为它是「可选」的
+     * s.setState('any', '这个现在不可能发生了') // ! 取消注释，就会报错「类型"any””的参数不能赋给类型“"name””的参数。 ts(2345)」
+
+	 */
+	storeState<K extends keyof EntityStateT>(
+		/* <State extends IEntityState=EntityStateT> */
+		stateName: K,
+		value: EntityStateT[K]
+	): EntityStateT[K]
+
+	/** 这次是一次性设置多个对象 */
+	storeStates(state: Optional<EntityStateT>): void
+
+	/**
+	 * 查询「实体状态」中的自定义数据
+	 * * 查询范围是「当前实体数据」而非「待更新实体数据」
+	 *
+	 * ! 这里因为`keyof EntityStateT`没有复用需求，所以无需提取成「函数类型参数」
+	 *
+	 * @template State 用于「检验stateName是否合法」并「自动推导value的类型」的类型
+	 * @param stateName 自定义数据名称
+	 * @returns 「当前实体状态」中是否有「自定义数据」
+	 */
+	hasState(stateName: keyof EntityStateT): boolean
+
+	/**
+	 * 查询「实体状态」中的自定义数据
+	 * * 查询范围是「待更新实体数据」而非「当前实体数据」
+	 *
+	 * ! 这里因为`keyof EntityStateT`没有复用需求，所以无需提取成「函数类型参数」
+	 *
+	 * @template State 用于「检验stateName是否合法」并「自动推导value的类型」的类型
+	 * @param stateName 自定义数据名称
+	 * @returns 「待更新实体数据」中是否有「自定义数据」
+	 */
+	hasStateToRefresh(stateName: keyof EntityStateT): boolean
 }
 
 /**
  * 所有实体通用的「显示代理」类型
+ * * 标准实现
  * * 复合了相应的「显示数据」和「实体状态」
  */
-export class DisplayProxyEntity implements IDisplayProxyEntity {
+export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState> // !【2023-11-15 22:17:48】绕圈圈半天，其实这里应该是「自定义『附加数据』类型」而不是「自定义『实体/方块』数据类型」
+	implements IDisplayProxyEntity<EntityStateT>
+{
 	/**
 	 * 用于存储「当前的实体数据」
 	 * * 主要用于「初始化」
 	 */
-	protected _data: IDisplayDataEntity = {
-		id: '',
+	protected _data: IDisplayDataEntity<EntityStateT> = {
 		type: '',
-		state: {},
+		state: {} as EntityStateT, // !【2023-11-15 22:20:11】都必定包含空对象`{}`
 	}
 
-	get displayDataFull(): IDisplayDataEntity {
+	get displayDataFull(): IDisplayDataEntity<EntityStateT> {
 		return this._data
 	}
 
@@ -326,18 +428,20 @@ export class DisplayProxyEntity implements IDisplayProxyEntity {
 	 *
 	 * ! 与{@link _data.state}不同的对象，这样其键值对不会相互干扰——因为后续需要删除
 	 */
-	protected _stateToRefresh: IEntityState = {}
+	protected _stateToRefresh: EntityStateT = {} as EntityStateT // !【2023-11-15 22:27:19】这里的「空对象」一定是JS对象
 	/**
 	 * 用于存储「更新时会传递的实体数据」
 	 * * 主要用于「部分化更新」
 	 */
-	protected _dataToRefresh: OptionalRecursive2<IDisplayDataEntity> = {
-		id: '',
-		type: '',
-		state: this._stateToRefresh as OptionalRecursive2<IEntityState>, // ! 这里保证「一定有」，但不保证「有东西」
-	}
+	protected _dataToRefresh: OptionalRecursive2<
+		IDisplayDataEntity<EntityStateT>
+	> = {
+		state: this._stateToRefresh, // ! 这里保证「一定有」，但不保证「有东西」
+	} as OptionalRecursive2<IDisplayDataEntity<EntityStateT>> // !【2023-11-15 22:16:03】这里保证「一定是这个类型」
 
-	get displayDataToRefresh(): OptionalRecursive2<IDisplayDataEntity> {
+	get displayDataToRefresh(): OptionalRecursive2<
+		IDisplayDataEntity<EntityStateT>
+	> {
 		return this._dataToRefresh
 	}
 
@@ -362,11 +466,61 @@ export class DisplayProxyEntity implements IDisplayProxyEntity {
 		},
 	}) */
 
+	// * 实现「显示代理」接口：对「自定义实体状态」进行修改 * //
+	storeState<K extends keyof EntityStateT>(
+		/* <State extends IEntityState=EntityStateT> */
+		stateName: K,
+		value: EntityStateT[K]
+	): EntityStateT[K] {
+		// * 存储自身两个「显示数据」的值 // ! 这里的`State`是`IEntityState`类型
+		this._data.state[stateName] = this._stateToRefresh[stateName] = value
+		// 返回设置的值
+		return value
+	}
+
+	storeStates(state: EntityStateT): void {
+		for (const key in state) {
+			this.storeState(
+				key,
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+				state[key] as any // !【2023-11-15 21:00:14】这里实在不清楚为啥对不上，也实在没法as到一个合适的类型
+			)
+		}
+	}
+
+	hasState /* <State extends IEntityState> */(
+		stateName: keyof EntityStateT
+	): boolean {
+		return stateName in this._data.state
+	}
+
+	hasStateToRefresh /* <State extends IEntityState> */(
+		stateName: keyof EntityStateT
+	): boolean {
+		return stateName in this._stateToRefresh
+	}
+
+	getState /* <State extends IEntityState> */(
+		stateName: keyof EntityStateT // ! 这里的`& key`是为了能用`stateName`索引`IEntityState`类型
+	): EntityStateT[typeof stateName] | undefined {
+		return this._data.state?.[stateName] as
+			| EntityStateT[typeof stateName]
+			| undefined
+	}
+
+	getStateToRefresh /* <State extends IEntityState> */(
+		stateName: keyof EntityStateT
+	): EntityStateT[typeof stateName] | undefined {
+		return this._stateToRefresh?.[stateName] as
+			| EntityStateT[typeof stateName]
+			| undefined
+	}
+
 	// * 实现「显示代理」接口：代理修改，将其全部视作「更新状态」 * //
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get scaleX(): number {
-		return (this._data.state?.scaleX as number) ?? (this.scaleX = 1)
+		return this._data.state?.scaleX ?? (this.scaleX = 1)
 	}
 	set scaleX(value: number) {
 		// * 存储自身两个「显示数据」的值
@@ -374,41 +528,43 @@ export class DisplayProxyEntity implements IDisplayProxyEntity {
 	}
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get scaleY(): number {
-		return (this._data.state?.scaleY as number) ?? (this.scaleY = 1)
+		return this._data.state?.scaleY ?? (this.scaleY = 1)
 	}
 	set scaleY(value: number) {
 		// * 存储自身两个「显示数据」的值
 		this._data.state.scaleY = this._stateToRefresh.scaleY = value
 	}
+
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get isVisible(): boolean {
-		return (
-			(this._data.state?.isVisible as boolean) ?? (this.isVisible = true)
-		)
+		return this._data.state?.isVisible ?? (this.isVisible = true)
 	}
 	set isVisible(value: boolean) {
 		// * 存储自身两个「显示数据」的值
 		this._data.state.isVisible = this._stateToRefresh.isVisible = value
 	}
+
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get position(): number[] {
-		return (this._data.state?.position as number[]) ?? (this.position = [])
+		return this._data.state?.position ?? (this.position = [])
 	}
 	set position(value: number[]) {
 		// * 存储自身两个「显示数据」的值
 		this._data.state.position = this._stateToRefresh.position = value
 	}
+
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get direction(): uint {
-		return (this._data.state?.direction as uint) ?? (this.direction = 0)
+		return this._data.state?.direction ?? (this.direction = 0)
 	}
 	set direction(value: uint) {
 		// * 存储自身两个「显示数据」的值
 		this._data.state.direction = this._stateToRefresh.direction = value
 	}
+
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get alpha(): number {
-		return (this._data.state?.alpha as number) ?? (this.alpha = 1)
+		return this._data.state?.alpha ?? (this.alpha = 1)
 	}
 	set alpha(value: number) {
 		// * 存储自身两个「显示数据」的值

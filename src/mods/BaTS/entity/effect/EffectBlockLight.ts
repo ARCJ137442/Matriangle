@@ -2,8 +2,6 @@ import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Block from 'matriangle-api/server/block/Block'
 import Effect from './Effect'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
-import { uintToPercent } from 'matriangle-common/utils'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
@@ -97,10 +95,10 @@ export default class EffectBlockLight extends Effect {
 	}
 
 	//============Display Implements============//
-	public displayInit(shape: IShape): void {
+	// TODO: 亟待移植到显示端
+	/* public displayInit(shape: IShape): void {
 		const realRadiusX: number = EffectBlockLight.SIZE / 2
 		const realRadiusY: number = EffectBlockLight.SIZE / 2
-		shape.graphics.beginFill(this._color, uintToPercent(this._alpha))
 		shape.graphics.drawRect(
 			-realRadiusX,
 			-realRadiusY,
@@ -122,5 +120,5 @@ export default class EffectBlockLight extends Effect {
 			EffectBlockLight.MIN_SCALE +
 			(EffectBlockLight.MAX_SCALE - EffectBlockLight.MIN_SCALE) *
 				(1 - shape.alpha)
-	}
+	} */
 }

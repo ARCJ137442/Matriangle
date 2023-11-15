@@ -3,7 +3,6 @@ import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Projectile from '../Projectile'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import { fPoint, iPoint, iPointRef } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import {
@@ -117,28 +116,29 @@ export default class ShockWaveDrone
 	public onPositedBlockUpdate(host: IMatrix): void {}
 
 	//============Display Implements============//
-	public displayInit(shape: IShape): void {
-		shape.graphics.beginFill(this.ownerColor, 0.5)
-		shape.graphics.drawRect(
-			-ShockWaveDrone.BLOCK_RADIUS,
-			-ShockWaveDrone.BLOCK_RADIUS,
-			ShockWaveDrone.BLOCK_RADIUS * 2,
-			ShockWaveDrone.BLOCK_RADIUS * 2
-		)
-		shape.graphics.drawRect(
-			-ShockWaveDrone.BLOCK_RADIUS / 2,
-			-ShockWaveDrone.BLOCK_RADIUS / 2,
-			ShockWaveDrone.BLOCK_RADIUS,
-			ShockWaveDrone.BLOCK_RADIUS
-		)
-		shape.graphics.endFill()
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// public displayInit(shape: IShape): void {
+	// 	shape.graphics.beginFill(this.ownerColor, 0.5)
+	// 	shape.graphics.drawRect(
+	// 		-ShockWaveDrone.BLOCK_RADIUS,
+	// 		-ShockWaveDrone.BLOCK_RADIUS,
+	// 		ShockWaveDrone.BLOCK_RADIUS * 2,
+	// 		ShockWaveDrone.BLOCK_RADIUS * 2
+	// 	)
+	// 	shape.graphics.drawRect(
+	// 		-ShockWaveDrone.BLOCK_RADIUS / 2,
+	// 		-ShockWaveDrone.BLOCK_RADIUS / 2,
+	// 		ShockWaveDrone.BLOCK_RADIUS,
+	// 		ShockWaveDrone.BLOCK_RADIUS
+	// 	)
+	// 	shape.graphics.endFill()
+	// }
 
-	/** 刷新：无 */
-	public shapeRefresh(shape: IShape): void {}
+	// /** 刷新：无 */
+	// public shapeRefresh(shape: IShape): void {}
 
-	/** 实现：清除绘图 */
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// /** 实现：清除绘图 */
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 }

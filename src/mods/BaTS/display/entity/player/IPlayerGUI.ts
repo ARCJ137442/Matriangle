@@ -1,5 +1,4 @@
-﻿import { IShape } from 'matriangle-api/display/DisplayInterfaces'
-import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+﻿import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 /**
  * 一个与玩家显示高度绑定的「玩家悬浮指示器」（简称「玩家GUI」）

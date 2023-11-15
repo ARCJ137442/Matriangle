@@ -1,10 +1,7 @@
 import { halfBrightnessTo } from 'matriangle-common/color'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import Entity from 'matriangle-api/server/entity/Entity'
 import {
 	IEntityActive,
-	IEntityDisplayable,
 	IEntityShortLived,
 	IEntityWithDirection,
 } from 'matriangle-api/server/entity/EntityInterfaces'
@@ -15,7 +12,12 @@ import Weapon from '../../tool/Weapon'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import IPlayerHasTeam from '../player/IPlayerHasTeam'
 import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
+import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 
+export interface IDisplayDataStateProjectile extends IDisplayDataEntityState {
+	// TODO: 有待扩充
+}
 /**
  * 「抛射体」是
  * * 生命周期短的
@@ -28,11 +30,11 @@ import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
  * ! 【2023-09-22 22:46:10】现在不再「默认绑定某种工具（武器）」
  */
 export default abstract class Projectile
-	extends Entity
+	extends EntityDisplayable<IDisplayDataStateProjectile>
 	implements
 		IEntityActive,
 		IEntityWithDirection,
-		IEntityDisplayable,
+		// IEntityDisplayable<IDisplayDataStateProjectile>,
 		IEntityShortLived
 {
 	//============Basic Properties============//
@@ -191,9 +193,10 @@ export default abstract class Projectile
 		this._zIndex = value
 	}
 
-	public abstract displayInit(shape: IShape, ...params: unknown[]): void
-	public abstract shapeRefresh(shape: IShape): void
-	public abstract displayDestruct(shape: IShape): void
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// public abstract displayInit(shape: IShape, ...params: unknown[]): void
+	// public abstract shapeRefresh(shape: IShape): void
+	// public abstract displayDestruct(shape: IShape): void
 
 	/**
 	 * （显示端）获取所有者（玩家）的填充颜色

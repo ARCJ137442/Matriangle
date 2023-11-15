@@ -8,16 +8,18 @@
  */
 
 import { fPoint, iPoint, xPoint } from '../../../common/geometricTools'
-import {
-	IDisplayable,
-	IDisplayableContainer,
-} from '../../display/DisplayInterfaces'
+import { IDisplayable } from '../../display/DisplayInterfaces'
 import { uint } from '../../../legacy/AS3Legacy'
 import IMatrix from '../main/IMatrix'
 import { mRot } from '../general/GlobalRot'
 import { CommonIO_IR } from '../io/CommonIO'
 import Entity from './Entity'
-import { IDisplayProxyEntity } from '../../display/remoteDisplayAPI'
+import {
+	IDisplayDataEntity,
+	IDisplayDataEntityState,
+	IDisplayProxyEntity,
+} from '../../display/RemoteDisplayAPI'
+import { JSObject } from 'matriangle-common'
 
 /**
  * 「有坐标实体」是
@@ -164,28 +166,23 @@ export function i_hasDirection(e: Entity): e is IEntityWithDirection {
  *
  * 典例：
  * * 几乎一切原生实体
+ *
+ * @template EntityStateT 实体「自定义显示状态」类型
  */
-export interface IEntityDisplayable extends Entity, IDisplayable {
+export interface IEntityDisplayable<
+	EntityStateT extends IDisplayDataEntityState,
+> extends Entity,
+		IDisplayable<IDisplayDataEntity<EntityStateT>> {
 	/**
 	 * 相对应的「实体显示代理」
 	 * // * 可空（这时候无需更新「显示状态」）
 	 * * ↑暂时还是不可空好些（因为没有）
+	 * *【2023-11-15 19:37:33】目前只需要被读取
 	 */
-	proxy: IDisplayProxyEntity /* | null */
+	get proxy(): IDisplayProxyEntity<EntityStateT> /* | null */
 }
 
-/**
- * 「容器可显示实体」是
- * * 需要使用「图形容器」而非一般「图形」的
- * 可显示实体
- *
- * 典例：
- * * 特效/重生
- * * 特效/传送
- */
-export interface IEntityDisplayableContainer
-	extends Entity,
-		IDisplayableContainer {}
+// !【2023-11-15 23:41:34】「容器可显示实体」退役
 
 /**
  * 「活跃实体」是指

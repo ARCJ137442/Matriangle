@@ -17,7 +17,7 @@ export type JSObjectValue =
 	| string
 	| boolean
 	| null
-	| Array<any>
+	| Array<any> // !【2023-11-15 20:37:05】改成`JSObjectValue`会出现「实例化过深」，改成`unknown`会在`MatrixRules_Batr.ts`报错
 	| JSObject
 
 /**
@@ -27,6 +27,15 @@ export type JSObjectValue =
  */
 export type JSObject = {
 	[key: string]: JSObjectValue
+}
+
+/**
+ * 过滤掉所有「非JSObject键」的类型
+ */
+export type JSObjectFiltered<T> = {
+	[k: key]: T[typeof k & keyof T] extends JSObject
+		? JSObjectFiltered<T>
+		: never
 }
 
 /**

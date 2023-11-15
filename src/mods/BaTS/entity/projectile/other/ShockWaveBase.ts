@@ -6,7 +6,6 @@ import {
 	IEntityFixedLived,
 	IEntityInGrid,
 } from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
 	fPoint,
@@ -230,33 +229,33 @@ export default class ShockWaveBase
 	}
 
 	//============Display Implements============//
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /** 实现：大方形盖掉小方形 */
+	// public displayInit(shape: IShape): void {
+	// 	shape.graphics.beginFill(this.ownerColor)
+	// 	shape.graphics.drawRect(
+	// 		-ShockWaveBase.BLOCK_RADIUS,
+	// 		-ShockWaveBase.BLOCK_RADIUS,
+	// 		ShockWaveBase.BLOCK_RADIUS * 2,
+	// 		ShockWaveBase.BLOCK_RADIUS * 2
+	// 	)
+	// 	shape.graphics.drawRect(
+	// 		-ShockWaveBase.BLOCK_RADIUS / 2,
+	// 		-ShockWaveBase.BLOCK_RADIUS / 2,
+	// 		ShockWaveBase.BLOCK_RADIUS,
+	// 		ShockWaveBase.BLOCK_RADIUS
+	// 	)
+	// 	shape.graphics.endFill()
+	// }
 
-	/** 实现：大方形盖掉小方形 */
-	public displayInit(shape: IShape): void {
-		shape.graphics.beginFill(this.ownerColor)
-		shape.graphics.drawRect(
-			-ShockWaveBase.BLOCK_RADIUS,
-			-ShockWaveBase.BLOCK_RADIUS,
-			ShockWaveBase.BLOCK_RADIUS * 2,
-			ShockWaveBase.BLOCK_RADIUS * 2
-		)
-		shape.graphics.drawRect(
-			-ShockWaveBase.BLOCK_RADIUS / 2,
-			-ShockWaveBase.BLOCK_RADIUS / 2,
-			ShockWaveBase.BLOCK_RADIUS,
-			ShockWaveBase.BLOCK_RADIUS
-		)
-		shape.graphics.endFill()
-	}
+	// /** 实现：更新尺寸和不透明度 */
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.scaleX = shape.scaleY = 1 - this.lifePercent
+	// 	shape.alpha = 0.5 + this.lifePercent / 2
+	// }
 
-	/** 实现：更新尺寸和不透明度 */
-	public shapeRefresh(shape: IShape): void {
-		shape.scaleX = shape.scaleY = 1 - this.lifePercent
-		shape.alpha = 0.5 + this.lifePercent / 2
-	}
-
-	/** 实现：清除绘图 */
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// /** 实现：清除绘图 */
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 }

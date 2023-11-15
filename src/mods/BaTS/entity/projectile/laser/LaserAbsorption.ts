@@ -3,7 +3,6 @@ import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Laser from './Laser'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { iPoint } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import LaserBasic from './LaserBasic'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
@@ -80,38 +79,39 @@ export default class LaserAbsorption extends Laser {
 	}
 
 	//============Display Implements============//
-	override displayInit(shape: IShape): void {
-		// Left
-		this.drawOwnerLine(
-			shape.graphics,
-			-LaserAbsorption.SIZE / 2,
-			-LaserAbsorption.SIZE / 4,
-			0.6
-		)
-		this.drawOwnerLine(
-			shape.graphics,
-			-LaserAbsorption.SIZE / 2,
-			-LaserAbsorption.SIZE / 8,
-			0.5
-		)
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// override displayInit(shape: IShape): void {
+	// 	// Left
+	// 	this.drawOwnerLine(
+	// 		shape.graphics,
+	// 		-LaserAbsorption.SIZE / 2,
+	// 		-LaserAbsorption.SIZE / 4,
+	// 		0.6
+	// 	)
+	// 	this.drawOwnerLine(
+	// 		shape.graphics,
+	// 		-LaserAbsorption.SIZE / 2,
+	// 		-LaserAbsorption.SIZE / 8,
+	// 		0.5
+	// 	)
 
-		// Right
-		this.drawOwnerLine(
-			shape.graphics,
-			LaserAbsorption.SIZE / 4,
-			LaserAbsorption.SIZE / 2,
-			0.6
-		)
-		this.drawOwnerLine(
-			shape.graphics,
-			LaserAbsorption.SIZE / 8,
-			LaserAbsorption.SIZE / 2,
-			0.5
-		)
-		super.displayInit(shape) // ! 超类逻辑：处理形状初始化
-	}
+	// 	// Right
+	// 	this.drawOwnerLine(
+	// 		shape.graphics,
+	// 		LaserAbsorption.SIZE / 4,
+	// 		LaserAbsorption.SIZE / 2,
+	// 		0.6
+	// 	)
+	// 	this.drawOwnerLine(
+	// 		shape.graphics,
+	// 		LaserAbsorption.SIZE / 8,
+	// 		LaserAbsorption.SIZE / 2,
+	// 		0.5
+	// 	)
+	// 	super.displayInit(shape) // ! 超类逻辑：处理形状初始化
+	// }
 
-	public shapeRefresh(shape: IShape): void {
-		shape.scaleY = this.scaleY // ! 同步纵轴缩放
-	}
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.scaleY = this.scaleY // ! 同步纵轴缩放
+	// }
 }

@@ -1,8 +1,4 @@
 import { fPoint } from 'matriangle-common/geometricTools'
-import {
-	IShape,
-	IShapeContainer,
-} from 'matriangle-api/display/DisplayInterfaces'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import Entity from 'matriangle-api/server/entity/Entity'
@@ -50,20 +46,21 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	// }
 
 	//============Instance Functions============//
-	override displayInit(
-		shape: IShapeContainer,
-		block1: IShape,
-		block2: IShape
-	): void {
-		super.displayInit(shape, block1, block2)
-		this.drawBlocks(
-			EffectSpawn.DEFAULT_COLOR,
-			EffectSpawn.SIZE,
-			EffectSpawn.LINE_SIZE,
-			EffectSpawn.LINE_ALPHA,
-			EffectSpawn.FILL_ALPHA
-		)
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// override displayInit(
+	// 	shape: IShapeContainer,
+	// 	block1: IShape,
+	// 	block2: IShape
+	// ): void {
+	// 	super.displayInit(shape, block1, block2)
+	// 	this.drawBlocks(
+	// 		EffectSpawn.DEFAULT_COLOR,
+	// 		EffectSpawn.SIZE,
+	// 		EffectSpawn.LINE_SIZE,
+	// 		EffectSpawn.LINE_ALPHA,
+	// 		EffectSpawn.FILL_ALPHA
+	// 	)
+	// }
 
 	/**
 	 * 覆盖：生命周期正常进行，但会根据其值大小进入不同阶段
@@ -91,37 +88,38 @@ export default class EffectSpawn extends Effect2BlockContainer {
 		super.onTick(remove)
 	}
 
-	/** 实现：根据「动画阶段」更新状态 */
-	public shapeRefresh(shape: IShapeContainer): void {
-		switch (this._animationStage) {
-			// 第一阶段：逐渐变大
-			case 0:
-				shape.scaleX = shape.scaleY =
-					(this._tempLife /
-						(this.LIFE - EffectSpawn.STAGE_1_START_TIME)) *
-					this.maxScale
-				break
-			// 第二阶段：两方块交错旋转90°
-			case 1:
-				;(this._block1 as IShape).rot =
-					-(
-						this._tempLife /
-						(EffectSpawn.STAGE_1_START_TIME -
-							EffectSpawn.STAGE_2_START_TIME)
-					) * EffectSpawn.ROTATE_ANGLE
-				;(this._block2 as IShape).rot =
-					45 +
-					(this._tempLife /
-						(EffectSpawn.STAGE_1_START_TIME -
-							EffectSpawn.STAGE_2_START_TIME)) *
-						EffectSpawn.ROTATE_ANGLE
-				break
-			// 第三阶段：缩小消失
-			case 2:
-				shape.scaleX = shape.scaleY =
-					(this._tempLife / EffectSpawn.STAGE_2_START_TIME) *
-					this.maxScale
-				break
-		}
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /** 实现：根据「动画阶段」更新状态 */
+	// public shapeRefresh(shape: IShapeContainer): void {
+	// 	switch (this._animationStage) {
+	// 		// 第一阶段：逐渐变大
+	// 		case 0:
+	// 			shape.scaleX = shape.scaleY =
+	// 				(this._tempLife /
+	// 					(this.LIFE - EffectSpawn.STAGE_1_START_TIME)) *
+	// 				this.maxScale
+	// 			break
+	// 		// 第二阶段：两方块交错旋转90°
+	// 		case 1:
+	// 			;(this._block1 as IShape).rot =
+	// 				-(
+	// 					this._tempLife /
+	// 					(EffectSpawn.STAGE_1_START_TIME -
+	// 						EffectSpawn.STAGE_2_START_TIME)
+	// 				) * EffectSpawn.ROTATE_ANGLE
+	// 			;(this._block2 as IShape).rot =
+	// 				45 +
+	// 				(this._tempLife /
+	// 					(EffectSpawn.STAGE_1_START_TIME -
+	// 						EffectSpawn.STAGE_2_START_TIME)) *
+	// 					EffectSpawn.ROTATE_ANGLE
+	// 			break
+	// 		// 第三阶段：缩小消失
+	// 		case 2:
+	// 			shape.scaleX = shape.scaleY =
+	// 				(this._tempLife / EffectSpawn.STAGE_2_START_TIME) *
+	// 				this.maxScale
+	// 			break
+	// 	}
+	// }
 }

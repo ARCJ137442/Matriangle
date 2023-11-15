@@ -41,7 +41,7 @@ import {
 	IDisplayDataMap,
 	IDisplayDataMapBlocks,
 	pointToLocationStr,
-} from 'matriangle-api/display/remoteDisplayAPI'
+} from 'matriangle-api/display/RemoteDisplayAPI'
 
 /** 现在由于使用ESLint，直接抽象到最外面当函数库 */
 function _temp_copyContent_F(
@@ -728,8 +728,9 @@ export default class MapStorageSparse implements IMapStorage {
 			block = this.getBlock(p)
 			// 生成方块
 			result[pointToLocationStr(p)] = {
-				blockID: block.id,
-				blockState: block.state,
+				id: block.id,
+				// !【2023-11-15 21:18:36】现在不再直接使用（逻辑上的）「方块状态」了——现在使用「方块状态的显示数据」
+				state: block.state?.generateDisplayData() ?? null,
 			}
 		})
 		return result

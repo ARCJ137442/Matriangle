@@ -1,7 +1,6 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Effect from './Effect'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { fPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 
@@ -31,40 +30,41 @@ export default class EffectPlayerLevelup extends Effect {
 
 	//============Display Implements============//
 	protected _color: uint = EffectPlayerLevelup.DEFAULT_COLOR
-	/**
-	 * 实现：淡出+移动坐标
-	 *
-	 * ! 【2023-09-17 0:25:38】现在「向上移动」仅作用于显示端，逻辑端不会移动
-	 */
-	public shapeRefresh(shape: IShape): void {
-		shape.alpha = this.lifePercent
-		shape.y -= (EffectPlayerLevelup.GRID_SIZE / 4) * (1 - this.lifePercent)
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 实现：淡出+移动坐标
+	//  *
+	//  * ! 【2023-09-17 0:25:38】现在「向上移动」仅作用于显示端，逻辑端不会移动
+	//  */
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.alpha = this.lifePercent
+	// 	shape.y -= (EffectPlayerLevelup.GRID_SIZE / 4) * (1 - this.lifePercent)
+	// }
 
-	public displayInit(shape: IShape): void {
-		// 设置颜色
-		shape.graphics.lineStyle(
-			EffectPlayerLevelup.LINE_SIZE,
-			this._color,
-			EffectPlayerLevelup.LINE_ALPHA
-		)
-		shape.graphics.beginFill(this._color, EffectPlayerLevelup.FILL_ALPHA)
-		// 移动绘制
-		shape.graphics.moveTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1
-		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T2
-		shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, 0) // B1
-		shape.graphics.lineTo(
-			EffectPlayerLevelup.GRID_SIZE / 2,
-			EffectPlayerLevelup.GRID_SIZE * 1.5
-		) // B2
-		shape.graphics.lineTo(
-			-EffectPlayerLevelup.GRID_SIZE / 2,
-			EffectPlayerLevelup.GRID_SIZE * 1.5
-		) // B3
-		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, 0) // B4
-		shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T3
-		shape.graphics.lineTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1
-		// 结束绘制
-		shape.graphics.endFill()
-	}
+	// public displayInit(shape: IShape): void {
+	// 	// 设置颜色
+	// 	shape.graphics.lineStyle(
+	// 		EffectPlayerLevelup.LINE_SIZE,
+	// 		this._color,
+	// 		EffectPlayerLevelup.LINE_ALPHA
+	// 	)
+	// 	shape.graphics.beginFill(this._color, EffectPlayerLevelup.FILL_ALPHA)
+	// 	// 移动绘制
+	// 	shape.graphics.moveTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1
+	// 	shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T2
+	// 	shape.graphics.lineTo(EffectPlayerLevelup.GRID_SIZE / 2, 0) // B1
+	// 	shape.graphics.lineTo(
+	// 		EffectPlayerLevelup.GRID_SIZE / 2,
+	// 		EffectPlayerLevelup.GRID_SIZE * 1.5
+	// 	) // B2
+	// 	shape.graphics.lineTo(
+	// 		-EffectPlayerLevelup.GRID_SIZE / 2,
+	// 		EffectPlayerLevelup.GRID_SIZE * 1.5
+	// 	) // B3
+	// 	shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE / 2, 0) // B4
+	// 	shape.graphics.lineTo(-EffectPlayerLevelup.GRID_SIZE * 1.5, 0) // T3
+	// 	shape.graphics.lineTo(0, -EffectPlayerLevelup.GRID_SIZE * 1.5) // T1
+	// 	// 结束绘制
+	// 	shape.graphics.endFill()
+	// }
 }

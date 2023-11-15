@@ -3,14 +3,9 @@ import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Effect from './Effect'
 import { IEntityWithDirection } from 'matriangle-api/server/entity/EntityInterfaces'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
-import {
-	IGraphicContext,
-	IShape,
-} from 'matriangle-api/display/DisplayInterfaces'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import { fPoint } from 'matriangle-common/geometricTools'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
-import { drawShapeDecoration } from '../../display/NativeDisplayImplements'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 
 /**
@@ -96,39 +91,40 @@ export default abstract class EffectPlayerLike
 		return 1 - effect.lifePercent
 	}
 
-	/**
-	 * 静态工具方法：绘制一个玩家形状
-	 *
-	 * ! 只有笔触指令，无线条、填充
-	 *
-	 * ! 无`endFill`
-	 *
-	 * @param graphics 绘图上下文
-	 * @param color 颜色
-	 * @param alpha 不透明度
-	 * @param size 尺寸（绘图的长宽）
-	 */
-	public static moveToPlayerShape(
-		graphics: IGraphicContext,
-		sizeX: number = EffectPlayerLike.SIZE,
-		sizeY: number = EffectPlayerLike.SIZE
-	): void {
-		const realRadiusX: number = sizeX / 2
-		const realRadiusY: number = sizeY / 2
-		graphics.moveTo(-realRadiusX, -realRadiusY)
-		graphics.lineTo(realRadiusX, 0)
-		graphics.lineTo(-realRadiusX, realRadiusY)
-		graphics.lineTo(-realRadiusX, -realRadiusY)
-		// graphics.endFill();
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 静态工具方法：绘制一个玩家形状
+	//  *
+	//  * ! 只有笔触指令，无线条、填充
+	//  *
+	//  * ! 无`endFill`
+	//  *
+	//  * @param graphics 绘图上下文
+	//  * @param color 颜色
+	//  * @param alpha 不透明度
+	//  * @param size 尺寸（绘图的长宽）
+	//  */
+	// public static moveToPlayerShape(
+	// 	graphics: IGraphicContext,
+	// 	sizeX: number = EffectPlayerLike.SIZE,
+	// 	sizeY: number = EffectPlayerLike.SIZE
+	// ): void {
+	// 	const realRadiusX: number = sizeX / 2
+	// 	const realRadiusY: number = sizeY / 2
+	// 	graphics.moveTo(-realRadiusX, -realRadiusY)
+	// 	graphics.lineTo(realRadiusX, 0)
+	// 	graphics.lineTo(-realRadiusX, realRadiusY)
+	// 	graphics.lineTo(-realRadiusX, -realRadiusY)
+	// 	// graphics.endFill();
+	// }
 
-	protected drawDecoration(shape: IShape): void {
-		if (this._decorationLabel !== null)
-			drawShapeDecoration(shape.graphics, this._decorationLabel)
-	}
+	// protected drawDecoration(shape: IShape): void {
+	// 	if (this._decorationLabel !== null)
+	// 		drawShapeDecoration(shape.graphics, this._decorationLabel)
+	// }
 
-	/** 实现接口：更新不透明度 */
-	public shapeRefresh(shape: IShape): void {
-		shape.alpha = this._alphaFunction(this)
-	}
+	// /** 实现接口：更新不透明度 */
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.alpha = this._alphaFunction(this)
+	// }
 }

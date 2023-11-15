@@ -6,7 +6,6 @@ import {
 	IEntityFixedLived,
 	IEntityOutGrid,
 } from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { fPoint } from 'matriangle-common/geometricTools'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { waveHurtPlayers } from '../../../mechanics/BatrMatrixMechanics'
@@ -120,45 +119,46 @@ export default class Wave
 
 	//============Display Implements============//
 
-	/**
-	 * 一个默认朝向为「x+」侧（右侧）的月牙形，如`)>`这样
-	 * * 使用三次贝塞尔曲线绘制月牙形状
-	 * @param shape 目标图形
-	 */
-	override displayInit(shape: IShape): void {
-		const realRadius: number = Wave.SIZE / 2
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 一个默认朝向为「x+」侧（右侧）的月牙形，如`)>`这样
+	//  * * 使用三次贝塞尔曲线绘制月牙形状
+	//  * @param shape 目标图形
+	//  */
+	// override displayInit(shape: IShape): void {
+	// 	const realRadius: number = Wave.SIZE / 2
 
-		shape.graphics.beginFill(this.ownerColor, Wave.ALPHA)
-		// Final:At last use three bezier curve
-		shape.graphics.moveTo(-realRadius, realRadius)
+	// 	shape.graphics.beginFill(this.ownerColor, Wave.ALPHA)
+	// 	// Final:At last use three bezier curve
+	// 	shape.graphics.moveTo(-realRadius, realRadius)
 
-		shape.graphics.curveTo(realRadius, realRadius, realRadius, 0)
+	// 	shape.graphics.curveTo(realRadius, realRadius, realRadius, 0)
 
-		shape.graphics.curveTo(
-			realRadius,
-			-realRadius,
-			-realRadius,
-			-realRadius
-		)
-		shape.graphics.cubicCurveTo(
-			realRadius / 2,
-			-realRadius,
-			realRadius / 2,
-			realRadius,
-			-realRadius,
-			realRadius
-		)
-		shape.graphics.endFill()
-	}
+	// 	shape.graphics.curveTo(
+	// 		realRadius,
+	// 		-realRadius,
+	// 		-realRadius,
+	// 		-realRadius
+	// 	)
+	// 	shape.graphics.cubicCurveTo(
+	// 		realRadius / 2,
+	// 		-realRadius,
+	// 		realRadius / 2,
+	// 		realRadius,
+	// 		-realRadius,
+	// 		realRadius
+	// 	)
+	// 	shape.graphics.endFill()
+	// }
 
-	/** 实现：除了尺寸变大，基本没有什么要刷新的 */ // TODO: 【2023-09-20 23:45:06】除了坐标？这个还需要处理一下，可能需要在显示端的图形那边进行「一对一绑定」
-	public shapeRefresh(shape: IShape): void {
-		shape.scaleX = shape.scaleY = this._nowScale
-	}
+	// /** 实现：除了尺寸变大，基本没有什么要刷新的 */ // TODO: 【2023-09-20 23:45:06】除了坐标？这个还需要处理一下，可能需要在显示端的图形那边进行「一对一绑定」
+	// public shapeRefresh(shape: IShape): void {
+	// 	shape.scaleX = shape.scaleY = this._nowScale
+	// }
 
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 
 	//====Tick Function====//
 	override onTick(host: IMatrix): void {

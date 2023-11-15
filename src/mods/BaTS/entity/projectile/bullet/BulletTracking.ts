@@ -1,8 +1,4 @@
 ﻿import { fPoint } from 'matriangle-common/geometricTools'
-import {
-	IGraphicContext,
-	IShape,
-} from 'matriangle-api/display/DisplayInterfaces'
 import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import {
@@ -11,7 +7,6 @@ import {
 } from 'matriangle-api/server/general/GlobalRot'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import BulletBasic from './BulletBasic'
 import Bullet from './Bullet'
 import {
 	projectileCanHurtOther,
@@ -224,19 +219,20 @@ export default class BulletTracking extends Bullet {
 	}
 
 	//============Display Implements============//
-	override displayInit(shape: IShape): void {
-		super.displayInit(shape)
-		this.drawTrackingSign(shape.graphics)
-		shape.scaleX = shape.scaleY = BulletTracking.SIZE / BulletBasic.SIZE
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// override displayInit(shape: IShape): void {
+	// 	super.displayInit(shape)
+	// 	this.drawTrackingSign(shape.graphics)
+	// 	shape.scaleX = shape.scaleY = BulletTracking.SIZE / BulletBasic.SIZE
+	// }
 
-	protected drawTrackingSign(graphics: IGraphicContext): void {
-		graphics.beginFill(this.ownerLineColor)
-		const radius: number = BulletTracking.SIZE * 0.125
-		graphics.moveTo(-radius, -radius)
-		graphics.lineTo(radius, 0)
-		graphics.lineTo(-radius, radius)
-		graphics.lineTo(-radius, -radius)
-		graphics.endFill()
-	}
+	// protected drawTrackingSign(graphics: IGraphicContext): void {
+	// 	graphics.beginFill(this.ownerLineColor)
+	// 	const radius: number = BulletTracking.SIZE * 0.125
+	// 	graphics.moveTo(-radius, -radius)
+	// 	graphics.lineTo(radius, 0)
+	// 	graphics.lineTo(-radius, radius)
+	// 	graphics.lineTo(-radius, -radius)
+	// 	graphics.endFill()
+	// }
 }

@@ -609,13 +609,14 @@ export type DictionaryLikeObject<V = any> = {
  *
  * ! 浅拷贝：只会合并一层引用
  *
- * @param from 合并的数据来源（对象）
- * @param to 要合并到的对象
+ * @template T 一般保证「合并双方是同一类型」
+ * @param {T} from 合并的数据来源（对象）
+ * @param {T} to 要合并到的对象
  * @returns 合并后的数据对象
  */
-export function mergeObject(from: any, to: any): any {
+export function mergeObject<T>(from: T, to: T): T {
 	for (const i in from) {
-		if (from.hasOwnProperty(i)) {
+		if ((from as any).hasOwnProperty(i)) {
 			to[i] = from[i]
 		}
 	}
@@ -747,8 +748,11 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): T[] {
 /** 可以用来索引对象值的索引类型 */
 export type key = string | number /*  | symbol */ // ? 【2023-10-07 21:24:37】是否要加入symbol，待定
 
-/** 可空对象 */ // ! 【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
+/** 可空对象 */ // !【2023-09-20 20:42:40】目前不启用：这种类型会徒增很多耦合
 export type Nullable<T> = T | null
+
+/** 可未定义对象 */ // !【2023-11-15 19:48:38】目前不启用：这种类型会徒增很多耦合
+export type Undefinable<T> = T | undefined
 
 /**
  * 明确标识「引用类型」
@@ -994,3 +998,22 @@ export function dictionaryPatternReplaceHead<V>(
 export function chainApply<T>(obj: T, ...fs: ((t: T) => T)[]): T {
 	return fs.length === 0 ? obj : chainApply(fs[0](obj), ...fs.slice(1))
 }
+
+/**
+ * 检查上下文中「使用字符串访问属性」的键是否有重构过
+ * * 核心原理：使用`eval`获取当前上下文的变量名，对比
+ * * 应用缘起：「函数的局部变量名/自身属性」可能会因后期重构被重命名，但「包含该变量名称的字符串」不会被重命名
+ *   * ⚠️若该情况发生，则可能导致其它地方发生「变量未定义」的错误
+ *   * 🎯避免这样的隐患，要在「试运行」时就报告隐患
+ *
+ * !【2023-11-15 20:06:30】弃用：无论是实名函数还是匿名函数，上下文都暂时无法从「这个函数」跳转到「调用它的函数」
+ *
+ * @template T 变量类型
+ * @param variableName 变量名
+ * @param variable 这个变量名应该对应的变量值
+ * @returns 变量名是否被重构过，以导致原先「使用字符串引用的变量」失效
+export const isVariableRenamed = <T>(
+	variableName: string,
+	variable: T
+): boolean => eval(variableName) === variable
+ */

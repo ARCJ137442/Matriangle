@@ -5,7 +5,6 @@ import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { iPoint } from 'matriangle-common/geometricTools'
 import LaserBasic from './LaserBasic'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import {
 	mRot,
 	mRot2axis,
@@ -96,34 +95,35 @@ export default class LaserPulse extends Laser {
 	protected _temp_movePlayer_pointerL?: int
 
 	//============Display Implements============//
-	/**
-	 * 实现：
-	 * @param shape 绘制的目标
-	 */
-	override displayInit(shape: IShape): void {
-		for (let i: uint = 0; i < 2; i++) {
-			// 0,1
-			this.drawOwnerLine(
-				shape.graphics,
-				-LaserPulse.SIZE / Math.pow(2, i + 1),
-				LaserPulse.SIZE / Math.pow(2, i + 1),
-				i * 0.1 + 0.2
-			)
-		}
-		super.displayInit(shape) // 调用超类，计算长度
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 实现：
+	//  * @param shape 绘制的目标
+	//  */
+	// override displayInit(shape: IShape): void {
+	// 	for (let i: uint = 0; i < 2; i++) {
+	// 		// 0,1
+	// 		this.drawOwnerLine(
+	// 			shape.graphics,
+	// 			-LaserPulse.SIZE / Math.pow(2, i + 1),
+	// 			LaserPulse.SIZE / Math.pow(2, i + 1),
+	// 			i * 0.1 + 0.2
+	// 		)
+	// 	}
+	// 	super.displayInit(shape) // 调用超类，计算长度
+	// }
 
-	/**
-	 * 覆盖：根据自身「y尺寸」调整纵向缩放
-	 */
-	override shapeRefresh(shape: IShape): void {
-		super.shapeRefresh(shape)
-		if (this.isPull) {
-			shape.scaleY = 1 + this.life / LaserPulse.LIFE
-			shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
-		} else {
-			shape.scaleY = 2 - this.life / LaserPulse.LIFE
-			shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
-		}
-	}
+	// /**
+	//  * 覆盖：根据自身「y尺寸」调整纵向缩放
+	//  */
+	// override shapeRefresh(shape: IShape): void {
+	// 	super.shapeRefresh(shape)
+	// 	if (this.isPull) {
+	// 		shape.scaleY = 1 + this.life / LaserPulse.LIFE
+	// 		shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
+	// 	} else {
+	// 		shape.scaleY = 2 - this.life / LaserPulse.LIFE
+	// 		shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
+	// 	}
+	// }
 }

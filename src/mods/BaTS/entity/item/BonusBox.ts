@@ -1,15 +1,7 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import {
-	DisplayLevel,
-	IShape,
-	IShapeContainer,
-} from 'matriangle-api/display/DisplayInterfaces'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Entity from 'matriangle-api/server/entity/Entity'
-import {
-	IEntityDisplayableContainer,
-	IEntityInGrid,
-} from 'matriangle-api/server/entity/EntityInterfaces'
+import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
 import { BonusType } from '../../registry/BonusRegistry'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
@@ -22,10 +14,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
  * * 用于在世界机制中被玩家拾取的
  * 实体
  */
-export default class BonusBox
-	extends Entity
-	implements IEntityInGrid, IEntityDisplayableContainer
-{
+export default class BonusBox extends Entity implements IEntityInGrid {
 	public static readonly LINE_COLOR: uint = 0x777777
 	public static readonly FILL_COLOR: uint = 0xdddddd
 
@@ -98,60 +87,61 @@ export default class BonusBox
 	public static readonly BORDER_SPACE: number =
 		(DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
 
-	public displayInit(shape: IShapeContainer, symbol: IShape): void {
-		// 绘制盒子
-		this.drawBox(shape)
-		// 初始化符号
-		/* this._symbol.type = this._bonusType;
-		this._symbol.shapeInit(shape);
-		symbol.x = symbol.y = DEFAULT_SIZE / 2; // 将「符号」置于中心
-		shape.addChild(symbol); // 添加子元素 */
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// public displayInit(shape: IShapeContainer, symbol: IShape): void {
+	// 	// 绘制盒子
+	// 	this.drawBox(shape)
+	// 	// 初始化符号
+	// 	/* this._symbol.type = this._bonusType;
+	// 	this._symbol.shapeInit(shape);
+	// 	symbol.x = symbol.y = DEFAULT_SIZE / 2; // 将「符号」置于中心
+	// 	shape.addChild(symbol); // 添加子元素 */
+	// }
 
-	public shapeRefresh(shape: IShapeContainer): void {
-		// ? 待定
-	}
+	// public shapeRefresh(shape: IShapeContainer): void {
+	// 	// ? 待定
+	// }
 
-	public displayDestruct(shape: IShapeContainer): void {
-		// 遍历（唯一的一个）子元素
-		for (const symbol of shape.children) {
-			symbol.graphics.clear()
-		}
-	}
+	// public displayDestruct(shape: IShapeContainer): void {
+	// 	// 遍历（唯一的一个）子元素
+	// 	for (const symbol of shape.children) {
+	// 		symbol.graphics.clear()
+	// 	}
+	// }
 
-	protected _zIndex: uint = DisplayLevel.BONUS_BOX
-	get zIndex(): uint {
-		return this._zIndex
-	}
-	set zIndex(value: uint) {
-		this._zIndex = value
-		// this.shapeRefresh(this.shape); // TODO: 请求更新
-	}
+	// protected _zIndex: uint = DisplayLevel.BONUS_BOX
+	// get zIndex(): uint {
+	// 	return this._zIndex
+	// }
+	// set zIndex(value: uint) {
+	// 	this._zIndex = value
+	// 	// this.shapeRefresh(this.shape); // TODO: 请求更新
+	// }
 
-	protected drawBox(shape: IShape): void {
-		// Define
-		// let radius:Number=DEFAULT_SIZE/2;
-		// Line
-		shape.graphics.beginFill(BonusBox.LINE_COLOR)
-		shape.graphics.drawRoundRect(
-			BonusBox.BORDER_SPACE,
-			BonusBox.BORDER_SPACE,
-			BonusBox.BOX_SIZE,
-			BonusBox.BOX_SIZE,
-			BonusBox.BOX_ELLIPSE_SIZE,
-			BonusBox.BOX_ELLIPSE_SIZE
-		)
-		shape.graphics.endFill()
-		// Fill
-		shape.graphics.beginFill(BonusBox.FILL_COLOR)
-		shape.graphics.drawRoundRect(
-			BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE,
-			BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE,
-			BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE,
-			BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE,
-			BonusBox.BOX_ELLIPSE_SIZE,
-			BonusBox.BOX_ELLIPSE_SIZE
-		)
-		shape.graphics.endFill()
-	}
+	// protected drawBox(shape: IShape): void {
+	// 	// Define
+	// 	// let radius:Number=DEFAULT_SIZE/2;
+	// 	// Line
+	// 	shape.graphics.beginFill(BonusBox.LINE_COLOR)
+	// 	shape.graphics.drawRoundRect(
+	// 		BonusBox.BORDER_SPACE,
+	// 		BonusBox.BORDER_SPACE,
+	// 		BonusBox.BOX_SIZE,
+	// 		BonusBox.BOX_SIZE,
+	// 		BonusBox.BOX_ELLIPSE_SIZE,
+	// 		BonusBox.BOX_ELLIPSE_SIZE
+	// 	)
+	// 	shape.graphics.endFill()
+	// 	// Fill
+	// 	shape.graphics.beginFill(BonusBox.FILL_COLOR)
+	// 	shape.graphics.drawRoundRect(
+	// 		BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE,
+	// 		BonusBox.BORDER_SPACE + BonusBox.LINE_SIZE,
+	// 		BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE,
+	// 		BonusBox.BOX_SIZE - 2 * BonusBox.LINE_SIZE,
+	// 		BonusBox.BOX_ELLIPSE_SIZE,
+	// 		BonusBox.BOX_ELLIPSE_SIZE
+	// 	)
+	// 	shape.graphics.endFill()
+	// }
 }

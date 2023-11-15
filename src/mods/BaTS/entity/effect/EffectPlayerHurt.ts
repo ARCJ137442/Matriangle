@@ -1,5 +1,4 @@
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
@@ -49,7 +48,8 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		super(position, rot, color, decorationLabel, reverse, life)
 	}
 
-	public displayInit(shape: IShape): void {
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	/* public displayInit(shape: IShape): void {
 		// 先绘制形状
 		shape.graphics.beginFill(this._color)
 		EffectPlayerLike.moveToPlayerShape(shape.graphics)
@@ -57,5 +57,5 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		this.drawDecoration(shape)
 		// 停止绘制
 		shape.graphics.endFill()
-	}
+	} */
 }

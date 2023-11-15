@@ -6,8 +6,8 @@ import {
 	IStateDisplayer,
 	IDisplayDataMapBlocks,
 	locationStrToPoint,
-} from 'matriangle-api/display/remoteDisplayAPI'
-import BlockState from 'matriangle-api/server/block/BlockState'
+} from 'matriangle-api/display/RemoteDisplayAPI'
+import { IDisplayDataBlockState } from 'matriangle-api/server/block/BlockState'
 import {
 	iPoint,
 	iPointRef,
@@ -15,7 +15,11 @@ import {
 	unfoldProject2D,
 	unfoldProjectPadBlockLength,
 } from 'matriangle-common/geometricTools'
-import { OptionalRecursive2, inplaceMapIn } from 'matriangle-common/utils'
+import {
+	OptionalRecursive2,
+	inplaceMapIn,
+	mergeObject,
+} from 'matriangle-common/utils'
 import {
 	typeID,
 	typeIDMap,
@@ -63,7 +67,9 @@ export abstract class ZimShapeDisplayer<StateDataT extends IDisplayStateData>
 /**
  * 「根据『方块数据』绘制方块」的函数
  */
-export type ZimDrawF_Block = <BS extends BlockState | null = BlockState | null>(
+export type ZimDrawF_Block = <
+	BS extends IDisplayDataBlockState | null = IDisplayDataBlockState | null,
+>(
 	shape: Shape,
 	stateData: BS
 ) => Shape
@@ -75,7 +81,8 @@ export type ZimDrawF_Block = <BS extends BlockState | null = BlockState | null>(
  * @template BSType 内部方块状态的类型
  */
 export class ZimDisplayerBlock<
-	BSType extends BlockState | null = BlockState | null,
+	BSType extends
+		IDisplayDataBlockState | null = IDisplayDataBlockState | null,
 > extends ZimShapeDisplayer<IDisplayDataBlock<BSType>> {
 	/**
 	 * 存储「当前方块id」
@@ -119,9 +126,9 @@ export class ZimDisplayerBlock<
 	override shapeInit(data: IDisplayDataBlock<BSType>): void {
 		super.shapeInit(data)
 		// 赋值ID
-		this._currentId = data.blockID
+		this._currentId = data.id
 		// 赋值状态（新旧这可能是不同类型）
-		this._currentState = data.blockState
+		this._currentState = data.state
 		// 调用「绘图函数」
 		this.initShape()
 	}
@@ -130,11 +137,16 @@ export class ZimDisplayerBlock<
 		data: OptionalRecursive2<IDisplayDataBlock<BSType>>
 	): void {
 		// ID
-		if (data?.blockID !== undefined) this._currentId = data.blockID
+		if (data?.id !== undefined) this._currentId = data.id
 		// 状态
-		if (data?.blockState !== undefined)
-			// 使用方块状态的「更新」方法
-			this._currentState?.updateFrom(data.blockState)
+		if (data?.state !== undefined)
+			// !【2023-11-15 21:26:54】将「方块状态显示数据」看作object，用以模拟「有状态⇒设置状态」「无状态⇒不更改」的「软更新」
+			mergeObject(data.state, this._currentState) // * 从`data.state`到`this._currentState`
+		/* this._currentState = {
+			...this._currentState,
+			// * 然后用新的数据直接覆盖
+			...data.state,
+		} */
 		// 根据ID、状态重绘图形
 		this.shapeDestruct() // 先销毁
 		this.initShape()

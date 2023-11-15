@@ -4,7 +4,6 @@ import PlayerStats from './stat/PlayerStats'
 import BonusBox from '../item/BonusBox'
 import { fPoint, iPoint, iPointRef } from 'matriangle-common/geometricTools'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import PlayerAttributes from './attributes/PlayerAttributes'
 import Tool from '../../tool/Tool'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
@@ -25,12 +24,28 @@ import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/P
 import EffectPlayerHurt from '../effect/EffectPlayerHurt'
 import IPlayerBatr from './IPlayerBatr'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from './BatrPlayerEvent'
-import Player_V1 from 'matriangle-mod-native/entities/player/Player_V1'
+import Player_V1, {
+	IDisplayDataEntityStatePlayerV1,
+} from 'matriangle-mod-native/entities/player/Player_V1'
 import { EnumBatrPlayerAction } from './control/BatrPlayerAction'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import EffectPlayerDeathLight from '../effect/EffectPlayerDeathLight'
 import EffectSpawn from '../effect/EffectSpawn'
 import EffectTeleport from '../effect/EffectTeleport'
+
+/**
+ * 有关玩家的「自定义显示数据」
+ *
+ * !【2023-11-15 20:45:57】注意：其本质无需继承`IDisplayDataEntity`接口
+ * * 简略缘由：其内属性被极度泛化，导致「字符串键取值约束」失效
+ * * 详见方法{@link IDisplayProxyEntity.storeState}
+ *
+ * ?【2023-11-15 20:49:20】似乎若后续显示端要用到（通过「玩家显示数据」更新玩家Shape）的话，可能需要将其独立在一个地方以避免全部导入
+ */
+export interface IDisplayDataEntityStatePlayerBatr
+	extends IDisplayDataEntityStatePlayerV1 {
+	// TODO: 暂时还没内容，有待扩充（例如「更新队伍⇒更新颜色。。。」）
+}
 
 /**
  * 「Batr玩家」的主类
@@ -39,7 +54,10 @@ import EffectTeleport from '../effect/EffectTeleport'
  *
  * !【2023-10-08 17:19:26】现在「从接口实现的属性/方法」不再外加访问修饰符，以便和「非接口实现」的属性/方法区分
  */
-export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
+export default class PlayerBatr
+	extends Player_V1<IDisplayDataEntityStatePlayerBatr>
+	implements IPlayerBatr
+{
 	// **独有属性** //
 
 	public readonly i_batrPlayer = true as const
@@ -254,57 +272,7 @@ export default class PlayerBatr extends Player_V1 implements IPlayerBatr {
 	/** 所持有方块（若工具有🤔）的透明度 */
 	static readonly CARRIED_BLOCK_ALPHA: number = 1 / 4
 
-	// TODO: 继续思考&处理「显示依赖」的事。。。
-	// protected _GUI: IPlayerGUI;
-	// get gui(): IPlayerGUI { return this._GUI; }
-	// /** 用于实现玩家的GUI显示 */ // TODO: 留给日后显示？实际上就是个「通知更新」的翻版？存疑。。。
-	// get guiShape(): IPlayerGUI { return this._GUI };
-
-	// TODO: 这个有些过于涉及显示实现了，到底要不要尾大不掉地放在这儿？本身跟逻辑毫无关系的代码，为什么还要有这样的冗余。。。
-	override displayInit(shape: IShape): void {
-		super.displayInit(shape)
-
-		const realRadiusX: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2
-		const realRadiusY: number = (PlayerBatr.SIZE - PlayerBatr.LINE_SIZE) / 2
-		shape.graphics.clear()
-		shape.graphics.lineStyle(PlayerBatr.LINE_SIZE, this._lineColor)
-		shape.graphics.beginFill(this._fillColor, 1.0)
-		// TODO: 渐变填充
-		// !【2023-09-28 20:14:05】暂时不使用渐变填充，使用普通填充代替
-		/* let m: Matrix = new Matrix();
-		m.createGradientBox(
-			DEFAULT_SIZE, DEFAULT_SIZE,
-			0,
-			-realRadiusX, -realRadiusX
-		);
-		shape.graphics.beginGradientFill(GradientType.LINEAR,
-			[this._fillColor, this._fillColor2],
-			[1.0, 1.0], // 透明度完全填充
-			[63, 255], // 亮度渐变：1/4~1
-			m,
-			SpreadMethod.PAD,
-			InterpolationMethod.RGB,
-			1
-		); */
-		shape.graphics.moveTo(-realRadiusX, -realRadiusY)
-		shape.graphics.lineTo(realRadiusX, 0)
-		shape.graphics.lineTo(-realRadiusX, realRadiusY)
-		shape.graphics.lineTo(-realRadiusX, -realRadiusY)
-		// shape.graphics.drawCircle(0,0,10);
-		shape.graphics.endFill()
-	}
-
-	/** TODO: 待实现的「更新」函数 */
-	override shapeRefresh(shape: IShape): void {
-		super.shapeRefresh(shape)
-		throw new Error('Method not implemented.')
-	}
-
-	/** TODO: 待实现的「析构」函数 */
-	override displayDestruct(shape: IShape): void {
-		super.displayDestruct(shape)
-		throw new Error('Method not implemented.')
-	}
+	// ! 现在包括「GUI」在内的一切东西，都放到「显示数据」中，而非在此直接操作
 
 	//============Instance Getter And Setter============//
 

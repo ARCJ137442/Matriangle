@@ -1,7 +1,6 @@
 import {
 	IEntityInGrid,
 	IEntityActive,
-	IEntityDisplayable,
 	IEntityWithDirection,
 	IEntityHasHPAndHeal,
 	IEntityHasHPAndLives,
@@ -32,6 +31,9 @@ import PlayerController from './controller/PlayerController'
  * * 📌钩子
  * * 🎨显示
  *
+ * ! 【2023-11-15 23:29:21】现在的「显示」不再以「对接显示接口」的形式出现，只是归纳总结出一些通用的「显示信息」
+ * TODO: 或许后续还要考虑通过「泛型类型」继续泛化对接（但也是大工程）
+ *
  * 以上六大功能作为一种「最小实现」用于通用目的，其中五种功能均可定制化乃至弃用：
  * * 🏷️名称：使用常量而非名称做标识
  * * 🕹️控制：不连接到任何控制器
@@ -42,7 +44,7 @@ import PlayerController from './controller/PlayerController'
 export default interface IPlayer
 	extends IEntityInGrid,
 		IEntityActive,
-		IEntityDisplayable,
+		// IEntityDisplayable, // !【2023-11-15 23:29:19】现在不适合放在这里
 		IEntityWithDirection,
 		IEntityHasHPAndHeal,
 		IEntityHasHPAndLives,

@@ -29,8 +29,6 @@ import {
 } from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { ZimDisplayerMap } from './DisplayInterfacesClient_Zim'
-import Block from 'matriangle-api/server/block/Block'
-import { IDisplayDataBlock } from 'matriangle-api/display/remoteDisplayAPI'
 import IMap from 'matriangle-api/server/map/IMap'
 import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
 import { generateArray, randomIn } from 'matriangle-common'
@@ -534,13 +532,7 @@ export function test_draw(shape_constructor: () => Shape): Shape[] {
 	)
 }
 
-/** 方块原型⇒初始化「显示状态」 */
-export const blockStateFromPrototype = (
-	prototype: Block
-): IDisplayDataBlock => ({
-	blockID: prototype.id,
-	blockState: prototype.state,
-})
+/** 方块原型⇒初始化「显示状态」 */ // !【2023-11-15 22:00:42】现在移动到「方块」的内部方法中
 /**
  * 测试新的「地图呈现者」
  */

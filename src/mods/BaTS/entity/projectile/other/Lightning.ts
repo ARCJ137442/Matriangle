@@ -1,6 +1,5 @@
 import { iPoint, intPoint } from 'matriangle-common/geometricTools'
 import { uint, int, int$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import Projectile from '../Projectile'
 import {
@@ -8,10 +7,8 @@ import {
 	IEntityInGrid,
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
-import { IShape } from 'matriangle-api/display/DisplayInterfaces'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { mRot, toOpposite_M } from 'matriangle-api/server/general/GlobalRot'
-import { intAbs, intMin } from 'matriangle-common/exMath'
 import { playerCanHurtOther } from '../../../mechanics/BatrMatrixMechanics'
 import {
 	getHitEntity_I_Grid,
@@ -260,54 +257,55 @@ export default class Lightning
 
 	/** 临时变量：用于「只绘制一次」 */
 	protected _isDrawComplete: boolean = false
-	/**
-	 * 每次都更新图形的不透明度，但只绘制一次闪电
-	 *
-	 * ? 第一次更新，第一个世界刻……联动耦合地太紧了
-	 * * 第一次计算完成之后就应该绘制（且只绘制一次图）
-	 */
-	public shapeRefresh(shape: IShape): void {
-		// 更新不透明度
-		shape.alpha = this._life / Lightning.LIFE
-		// 尝试绘制闪电
-		if (this._isDrawComplete) return
-		this.drawLightning(shape)
-		this._isDrawComplete = this.isCalculated
-	}
+	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
+	// /**
+	//  * 每次都更新图形的不透明度，但只绘制一次闪电
+	//  *
+	//  * ? 第一次更新，第一个世界刻……联动耦合地太紧了
+	//  * * 第一次计算完成之后就应该绘制（且只绘制一次图）
+	//  */
+	// public shapeRefresh(shape: IShape): void {
+	// 	// 更新不透明度
+	// 	shape.alpha = this._life / Lightning.LIFE
+	// 	// 尝试绘制闪电
+	// 	if (this._isDrawComplete) return
+	// 	this.drawLightning(shape)
+	// 	this._isDrawComplete = this.isCalculated
+	// }
 
-	override displayInit(shape: IShape): void {
-		// ! 这时候可能路径还没计算好，所以不能绘制……
-	}
+	// override displayInit(shape: IShape): void {
+	// 	// ! 这时候可能路径还没计算好，所以不能绘制……
+	// }
 
-	public displayDestruct(shape: IShape): void {
-		shape.graphics.clear()
-	}
+	// public displayDestruct(shape: IShape): void {
+	// 	shape.graphics.clear()
+	// }
 
-	protected drawLightning(shape: IShape): void {
-		if (this._wayPoints.length < 1) return
-		// These points uses local grid,for example the initial point instanceof (0,0)
-		let point: iPoint = this._wayPoints[0],
-			pointH: iPoint = this._wayPoints[0]
-		// drawLines
-		for (let i: uint = 1; i < this._wayPoints.length; i++) {
-			point = pointH
-			pointH = this._wayPoints[i]
-			// Head
-			shape.graphics.beginFill(this.ownerColor, Lightning.LIGHT_ALPHA)
-			shape.graphics.drawRect(
-				DEFAULT_SIZE *
-					(intMin(point.x, pointH.x) - Lightning.LIGHT_BLOCK_WIDTH),
-				DEFAULT_SIZE *
-					(intMin(point.y, pointH.y) - Lightning.LIGHT_BLOCK_WIDTH),
-				DEFAULT_SIZE *
-					(intAbs(point.x - pointH.x) +
-						Lightning.LIGHT_BLOCK_WIDTH * 2),
-				DEFAULT_SIZE *
-					(intAbs(point.y - pointH.y) +
-						Lightning.LIGHT_BLOCK_WIDTH * 2)
-			)
-			shape.graphics.endFill()
-			// console.log('drawPoint at ',point,pointH);
-		}
-	}
+	// protected drawLightning(shape: IShape): void {
+	// 	if (this._wayPoints.length < 1) return
+	// 	// These points uses local grid,for example the initial point instanceof (0,0)
+	// 	let point: iPoint = this._wayPoints[0],
+	// 		pointH: iPoint = this._wayPoints[0]
+	// 	// drawLines
+	// 	for (let i: uint = 1; i < this._wayPoints.length; i++) {
+	// 		point = pointH
+	// 		pointH = this._wayPoints[i]
+	// 		// Head
+	// 		shape.graphics.beginFill(this.ownerColor, Lightning.LIGHT_ALPHA)
+	// 		shape.graphics.drawRect(
+	// 			DEFAULT_SIZE *
+	// 				(intMin(point.x, pointH.x) - Lightning.LIGHT_BLOCK_WIDTH),
+	// 			DEFAULT_SIZE *
+	// 				(intMin(point.y, pointH.y) - Lightning.LIGHT_BLOCK_WIDTH),
+	// 			DEFAULT_SIZE *
+	// 				(intAbs(point.x - pointH.x) +
+	// 					Lightning.LIGHT_BLOCK_WIDTH * 2),
+	// 			DEFAULT_SIZE *
+	// 				(intAbs(point.y - pointH.y) +
+	// 					Lightning.LIGHT_BLOCK_WIDTH * 2)
+	// 		)
+	// 		shape.graphics.endFill()
+	// 		// console.log('drawPoint at ',point,pointH);
+	// 	}
+	// }
 }
