@@ -104,7 +104,7 @@ const plot = new Plot(
 
 // 网络
 const resetButton = document.getElementById('reset')
-const otherInfMessage = 'entities'
+const otherInfMessage = 'other-information'
 
 /** 格式约定：「实体列表」+要显示的字符 */
 const isEntityListSignal = text => text.startsWith('实体列表')

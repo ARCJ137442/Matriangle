@@ -60,7 +60,7 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 	 */
 	public static getVisionSignal(matrix: IMatrix, typeFlag: TypeFlag): string {
 		switch (typeFlag) {
-			case 'entities':
+			case 'other-information':
 				return entityLV实体列表可视化(matrix.entities)
 			default:
 				// 数值⇒地图可视化

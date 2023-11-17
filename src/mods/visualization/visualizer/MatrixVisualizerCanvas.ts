@@ -51,8 +51,8 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	 */
 	public getVisionSignal(matrix: IMatrix, showInf: string): string {
 		switch (showInf) {
-			case 'entities':
-				// 以纯文本方式返回「实体列表」
+			case 'other-information':
+				// （保留）以纯文本方式返回「实体列表」
 				return entityLV实体列表可视化(matrix.entities)
 			default:
 				// player前缀⇒玩家可视化

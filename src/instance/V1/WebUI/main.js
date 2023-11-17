@@ -25,7 +25,7 @@ let socketControl
 
 // 网络
 const resetButton = document.getElementById('reset')
-const otherInfMessage = 'entities'
+const otherInfMessage = 'other-information'
 
 const isEntityListSignal = text => text.startsWith('实体列表')
 
@@ -69,13 +69,13 @@ const reconnectScreenTimeoutID = { value: undefined }
 const softSetTimeout = (id, callback, delay, ...args) => {
 	return id.value === undefined
 		? (id.value = setTimeout(
-				(...args) => {
-					callback(...args)
-					id.value = undefined
-				},
-				delay,
-				...args
-		  ))
+			(...args) => {
+				callback(...args)
+				id.value = undefined
+			},
+			delay,
+			...args
+		))
 		: undefined
 }
 /**
@@ -274,13 +274,11 @@ function handleKeyboardControlCenter(event, isDown) {
 	// 阻止默认操作
 	event.preventDefault()
 	// 生成特定消息
-	_temp_callKeyboardControlCenter_message = `|${isDown ? '+' : ''}${
-		event.code
-	}`
+	_temp_callKeyboardControlCenter_message = `|${isDown ? '+' : ''}${event.code
+		}`
 	// 呈现
-	controlMessage.innerText = `${
-		isDown ? '↓' : '↑'
-	} message = ${_temp_callKeyboardControlCenter_message}`
+	controlMessage.innerText = `${isDown ? '↓' : '↑'
+		} message = ${_temp_callKeyboardControlCenter_message}`
 	// 发送
 	sendMessage(socketControl, _temp_callKeyboardControlCenter_message)
 }

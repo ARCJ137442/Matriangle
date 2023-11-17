@@ -64,7 +64,5 @@ export * from './registry/MapRegistry'
 export * from './registry/Registry_Batr'
 export * from './registry/ToolRegistry'
 export * from './rule/MatrixRules_Batr'
-export * from './stat/MatrixResult.WIP'
-// export * from './stat/MatrixStats';
 export * from './tool/Tool'
 export * from './tool/Weapon'

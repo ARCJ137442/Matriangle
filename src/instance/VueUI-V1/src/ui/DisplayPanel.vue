@@ -117,7 +117,7 @@ const getMSfromFPS = (fps: number): number => 1000 / fps
 /** 不管其类型，只要调用合法 */
 let FPSRefreshIntervalID: any = undefined
 /** 发送「附加信息」用的消息 */
-const otherInfMessage: string = 'entities'
+const otherInfMessage: string = 'other-information'
 /** 当通过文本框更新FPS时 */
 function onUpdateFPS(e: KeyboardEvent): void {
 	if (e.key === 'Enter') onFPSRefresh(parseFloat(screenFPS.value))
