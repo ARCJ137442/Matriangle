@@ -7,6 +7,7 @@ import {
 } from '../../display/RemoteDisplayAPI'
 import Entity from './Entity'
 import { IEntityDisplayable } from './EntityInterfaces'
+import { typeID } from '../registry/IWorldRegistry'
 
 /**
  * 「可显示实体」的一个默认实现
@@ -22,6 +23,13 @@ export default abstract class EntityDisplayable<
 	// 实现「可显示实体」接口：有特定「自定义实体状态」的接口
 	implements IEntityDisplayable<EntityStateT>
 {
+	/**
+	 * 构造函数
+	 */
+	public constructor(id: typeID) {
+		super(id)
+		this._proxy = new DisplayProxyEntity<EntityStateT>(id)
+	}
 	/** @implements 直接调用自身的「代理对象」进行实现 */
 	getDisplayDataInit(): IDisplayDataEntity<EntityStateT> {
 		return this._proxy.displayDataFull
@@ -35,8 +43,7 @@ export default abstract class EntityDisplayable<
 	}
 
 	/** 内部的「实体显示代理」 */
-	protected _proxy: IDisplayProxyEntity<EntityStateT> =
-		new DisplayProxyEntity<EntityStateT>()
+	protected _proxy: IDisplayProxyEntity<EntityStateT>
 
 	get proxy(): IDisplayProxyEntity<EntityStateT> {
 		return this._proxy

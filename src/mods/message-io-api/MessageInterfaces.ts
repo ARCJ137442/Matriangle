@@ -2,6 +2,35 @@ import { voidF } from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /**
+ * 一个「消息地址」的类型
+ * * 通常是包含「主机地址」「服务端口」
+ */
+export type MessageServiceAddress = {
+	/** 服务连接的主机地址 */
+	host: string
+	/** 服务连接的端口 */
+	port: uint
+}
+
+/** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
+export type MessageServiceConstructor = (
+	host: string,
+	port: uint,
+	messageCallback: MessageCallback
+) => IMessageService
+
+/**
+ * 一个「消息服务」的配置
+ * * 除了「地址配置」外，还包括一个「消息构造函数」
+ *
+ * !【2023-11-18 17:40:18】这里使用「接口」是因为其可继承以复用代码（type不行）
+ */
+export interface MessageServiceConfig extends MessageServiceAddress {
+	/** 服务连接的构造函数（与地址无关） */
+	constructor: MessageServiceConstructor
+}
+
+/**
  * 一个「消息回调」的类型
  */
 export type MessageCallback<M = string> = (message: M) => string | undefined
@@ -183,6 +212,8 @@ export interface IMessageService {
 	messageCallback: MessageCallback
 }
 
+// * 一些实用函数 * //
+
 /**
  * 判断对象是否为「消息服务」
  * * 判断依据：是否有「消息回调函数」{@link IMessageService.messageCallback}
@@ -192,4 +223,88 @@ export interface IMessageService {
  */
 export function i_IMessageService(obj: unknown): obj is IMessageService {
 	return (obj as IMessageService).messageCallback !== undefined
+}
+
+/**
+ * 以指定IP、端口连接到「消息路由器」
+ * * 与「开设服务器」不同的是：所有逻辑由自身决定
+ *
+ * !【2023-10-12 21:33:49】暂时不进行通用化（IMessageRouter）处理
+ *
+ * @type {MessageServiceType}
+ * @param {string} host 开放的主机地址
+ * @param {uint} port 开放的服务端口
+ * @param {MessageRouter} router 所连接的「消息路由器」
+ */
+export function linkToRouter(
+	router: IMessageRouter,
+	host: string,
+	port: uint,
+	messageCallback: MessageCallback,
+	serviceF: (messageCallback: MessageCallback) => IMessageService
+): boolean {
+	if (router.hasServiceAt(host, port)) return false
+	else {
+		const service: IMessageService = serviceF(messageCallback)
+		return router.registerService(service, (): void => {
+			console.log(
+				`MatrixVisualizer@linkToRouter: 与路由器成功在 ${service.addressFull} 建立连接！`
+			)
+		})
+	}
+}
+
+export function linkToRouterLazy(
+	router: IMessageRouter,
+	config: MessageServiceConfig,
+	messageCallback: MessageCallback,
+	launchCallback: voidF
+): boolean
+
+export function linkToRouterLazy(
+	router: IMessageRouter,
+	config: MessageServiceConfig,
+	messageCallback: MessageCallback,
+	registerSuccessPrefix: string
+): boolean
+
+export function linkToRouterLazy(
+	router: IMessageRouter,
+	config: MessageServiceConfig,
+	messageCallback: MessageCallback
+): boolean
+
+/**
+ * 根据配置与「消息回调函数」连接到指定「消息服务」
+ *
+ * @param router 连接到的路由器
+ * @param config 消息服务配置
+ * @param messageCallback 消息回调函数
+ * @param registerSuccessPrefix_or_launchCallback 注册成功后控制台消息的前缀 | 启动回调函数
+ * @returns 是否注册成功（注册前无地址占用）
+ */
+export function linkToRouterLazy(
+	router: IMessageRouter,
+	config: MessageServiceConfig,
+	messageCallback: MessageCallback,
+	registerSuccessPrefix_or_launchCallback?: string | voidF
+): boolean {
+	if (router.hasServiceAt(config.host, config.port)) return false
+	else {
+		const service: IMessageService = config.constructor(
+			config.host,
+			config.port,
+			messageCallback
+		)
+		return router.registerService(service, (): void => {
+			if (typeof registerSuccessPrefix_or_launchCallback === 'string')
+				console.log(
+					registerSuccessPrefix_or_launchCallback === ''
+						? `与路由器成功在 ${service.addressFull} 建立连接！`
+						: `${registerSuccessPrefix_or_launchCallback}: 与路由器成功在 ${service.addressFull} 建立连接！`
+				)
+			else if (registerSuccessPrefix_or_launchCallback !== undefined)
+				registerSuccessPrefix_or_launchCallback()
+		})
+	}
 }

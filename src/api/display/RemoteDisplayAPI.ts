@@ -161,7 +161,8 @@ export interface IDisplayDataMap extends IDisplayData {
  *   * 如：指派「哪个『实体呈现者』需要被更新」
  */
 export interface IDisplayDataEntities {
-	[id: string]: IDisplayDataEntity<IDisplayDataEntityState> // ! 这里因「实体类型」的不同而不同
+	// ! 这里因「实体类型」的不同而不同
+	[uuid: string | uint]: IDisplayDataEntity<IDisplayDataEntityState> | null
 }
 
 /**
@@ -183,7 +184,7 @@ export interface IDisplayDataEntity<
 	 * * 用于显示端结合状态进行绘图
 	 *   * 如：「id=玩家」⇒绘制玩家图形，「id=奖励箱」⇒绘制奖励箱图形
 	 */
-	type: typeID
+	id: typeID
 
 	/**
 	 * 记录实体的「附加状态」
@@ -195,19 +196,20 @@ export interface IDisplayDataEntity<
 /**
  * 所有实体通用的「实体状态」类型
  * * 此处的「实体状态」直接作为数据进行传输
- *
- * !【2023-11-15 22:10:50】目前的情况是：这个接口作为一个`any`类型，其实际上并不常用
+ * * 目前该类型作为一个通用类型
  *
  * @example 想法笔记
  * 实体将使用一个uuid作为其标识符，并且这不由「实体」本身存储——实体自身的「实体状态」，即为「实体」这个「具有能动的方法的类」本身存储，
  * 类似 entities: {
- *     id: string
- *     type: string
- *     state: {customName: XXX, ...}
+ *     [id: string|uint]: {
+ *         type: string
+ *         state: {scaleX: XXX, scaleY: XXX, ...}
+ *     }
  * }
  */
 export interface IDisplayDataEntityState extends JSObject {
 	// [stateName: key]: JSObjectValue // !【2023-11-15 22:28:22】与其说「作为一个『any类型』」，倒不如禁用它作为一个基类（以兼容基本的`scaleX`、`scaleY`这些）
+	// * 下面这些似乎是作为一个「有位置实体」才需要操作的，但实际上只要「可显示」就必须这么做
 	scaleX: number
 	scaleY: number
 	isVisible: boolean
@@ -398,13 +400,25 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState> //
 	implements IDisplayProxyEntity<EntityStateT>
 {
 	/**
+	 * 构造函数
+	 * * 用于初始化`id`值
+	 */
+	public constructor(id: typeID) {
+		// 初始化数据
+		this._data = {
+			id,
+			state: {} as EntityStateT, // !【2023-11-15 22:20:11】都必定包含空对象`{}`
+		}
+		this._dataToRefresh = {
+			// !【2023-11-15 22:27:19】这里的「空对象」一定是JS对象——保证「一定有」，但不保证「有东西」
+			state: (this._stateToRefresh = {} as EntityStateT),
+		} // !【2023-11-15 22:16:03】这里保证「一定是这个类型」
+	}
+	/**
 	 * 用于存储「当前的实体数据」
 	 * * 主要用于「初始化」
 	 */
-	protected _data: IDisplayDataEntity<EntityStateT> = {
-		type: '',
-		state: {} as EntityStateT, // !【2023-11-15 22:20:11】都必定包含空对象`{}`
-	}
+	protected _data: IDisplayDataEntity<EntityStateT>
 
 	get displayDataFull(): IDisplayDataEntity<EntityStateT> {
 		return this._data
@@ -415,16 +429,14 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState> //
 	 *
 	 * ! 与{@link _data.state}不同的对象，这样其键值对不会相互干扰——因为后续需要删除
 	 */
-	protected _stateToRefresh: EntityStateT = {} as EntityStateT // !【2023-11-15 22:27:19】这里的「空对象」一定是JS对象
+	protected _stateToRefresh: EntityStateT
 	/**
 	 * 用于存储「更新时会传递的实体数据」
 	 * * 主要用于「部分化更新」
 	 */
 	protected _dataToRefresh: OptionalRecursive2<
 		IDisplayDataEntity<EntityStateT>
-	> = {
-		state: this._stateToRefresh, // ! 这里保证「一定有」，但不保证「有东西」
-	} as OptionalRecursive2<IDisplayDataEntity<EntityStateT>> // !【2023-11-15 22:16:03】这里保证「一定是这个类型」
+	>
 
 	get displayDataToRefresh(): OptionalRecursive2<
 		IDisplayDataEntity<EntityStateT>
@@ -435,7 +447,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState> //
 	/** @implements 清除`_dataToRefresh`在`type`的值，并清除`state`上的所有属性 */
 	flushDisplayData(): void {
 		// 清除`type`的值
-		delete this._dataToRefresh.type
+		delete this._dataToRefresh.id
 		// 清除`state`上所有属性
 		for (const key in this._stateToRefresh) {
 			delete this._stateToRefresh[key]

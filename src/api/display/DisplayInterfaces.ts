@@ -3,7 +3,8 @@ import { OptionalRecursive2, Ref } from 'matriangle-common/utils'
 import { JSObject } from 'matriangle-common/JSObjectify'
 
 /**
- * 一个面对逻辑对象的接口，使逻辑对象可以操纵其显示状态
+ * 可（传输）显示（数据的）对象
+ * * 一个面对逻辑对象的接口，使逻辑对象可以操纵其显示状态
  * * 它将操作一个与自己对应的「显示数据/显示代理」，并负责输出：
  *   * 「完全显示数据」（用于初始化）
  *   * 「待更新显示数据」（用于显示更新）

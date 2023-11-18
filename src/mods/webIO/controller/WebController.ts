@@ -4,6 +4,8 @@ import {
 	IMessageRouter,
 	IMessageService,
 	MessageCallback,
+	MessageServiceConfig,
+	linkToRouterLazy,
 } from '../../message-io-api/MessageInterfaces'
 import MultiKeyController from './MultiKeyController'
 
@@ -52,11 +54,11 @@ export default class WebController extends MultiKeyController {
 	 * * 会暴露自身的「内部消息接收接口」以便「为『消息服务』绑定『消息回调函数』」
 	 * * 与「开设服务器」不同的是：所有逻辑由自身决定
 	 *
-	 * @type {MessageServiceType}
+	 * @param {MessageRouter} router 所连接的「消息路由器」
 	 * @param {string} host 主机地址
 	 * @param {uint} port 服务端口
 	 * @param {(messageCallback: MessageCallback) => IMessageService} serviceF 用于注册的「服务构造函数」
-	 * @param {MessageRouter} router 所连接的「消息路由器」
+	 * @returns {boolean} 是否注册成功（先前未有注册）
 	 */
 	public linkToRouterLazy(
 		router: IMessageRouter,
@@ -71,6 +73,24 @@ export default class WebController extends MultiKeyController {
 				console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
 			})
 		}
+	}
+
+	/**
+	 * 以指定服务连接到「消息路由器」，但是「懒懒注册」
+	 * * 直接使用「消息服务配置」进行连接
+	 * * 📌这里的「消息回调函数」直接向内指向自身{@link onMessage}方法
+	 *
+	 * !【2023-11-18 18:04:14】这里直接使用「消息服务接口」提供的方法，但在此传递内部函数{@link onMessage}以便进行封装
+	 *
+	 * @param {MessageRouter} router 所连接的「消息路由器」
+	 * @param {MessageServiceConfig} config 消息服务配置
+	 * @returns {boolean} 是否注册成功（先前未有注册）
+	 */
+	public linkToRouterLLazy(
+		router: IMessageRouter,
+		config: MessageServiceConfig
+	): boolean {
+		return linkToRouterLazy(router, config, this.onMessage.bind(this))
 	}
 
 	/**

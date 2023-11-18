@@ -68,14 +68,10 @@ import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
 import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 import { MatrixRules_Batr } from 'matriangle-mod-bats/rule/MatrixRules_Batr'
-import { WebSocketServiceServer } from 'matriangle-mod-message-io-node/services'
-import { MessageCallback } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import { linkToRouterLazy } from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 // 超参数/常量 //
-const CONTROL_SERVICE_HOST = '127.0.0.1'
-const CONTROL_SERVICE_PORT = 3002
-const DISPLAY_SERVICE_HOST = '127.0.0.1'
-const DISPLAY_SERVICE_PORT = 8080
+import config from './startupConfig.config'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -187,17 +183,7 @@ function setupPlayers(host: IMatrix): void {
 	const ctlWeb: WebController = new WebController()
 	ctlWeb.addConnection(p2, 'p2')
 	ctlWeb.addConnection(p, 'p')
-	ctlWeb.linkToRouterLazy(
-		router,
-		CONTROL_SERVICE_HOST,
-		CONTROL_SERVICE_PORT,
-		(messageCallback: MessageCallback) =>
-			new WebSocketServiceServer(
-				CONTROL_SERVICE_HOST,
-				CONTROL_SERVICE_PORT,
-				messageCallback
-			)
-	) // 连接到消息路由器
+	ctlWeb.linkToRouterLLazy(router, config.connections.control) // 连接到消息路由器
 	const kcc: KeyboardControlCenter = new KeyboardControlCenter()
 	// 三号机没有控制器
 	// 添加p2的按键绑定
@@ -214,23 +200,19 @@ function setupPlayers(host: IMatrix): void {
 		)
 	)
 	// 连接：键控中心 - 消息路由器
-	router.registerService(
-		new WebSocketServiceServer(
-			CONTROL_SERVICE_HOST,
-			CONTROL_SERVICE_PORT,
-			// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
-			// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
-			(message: string): undefined => {
-				if (message[0] !== '|') return
-				// * 有加号⇒按下
-				if (message[1] === '+') kcc.onPress(message.slice(2))
-				// * 无加号⇒释放
-				else kcc.onRelease(message.slice(1))
-			}
-		),
-		(): void => {
-			console.log('键控中心连接成功！')
-		}
+	linkToRouterLazy(
+		router,
+		config.connections.control,
+		// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
+		// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
+		(message: string): undefined => {
+			if (message[0] !== '|') return
+			// * 有加号⇒按下
+			if (message[1] === '+') kcc.onPress(message.slice(2))
+			// * 无加号⇒释放
+			else kcc.onRelease(message.slice(1))
+		},
+		'键控中心'
 	)
 
 	// *添加实体
@@ -242,19 +224,9 @@ function setupPlayers(host: IMatrix): void {
 /** 配置可视化 */
 function setupVisualization(host: IMatrix): void {
 	// 可视化信号
-	const visualizer: MatrixVisualizerText = new MatrixVisualizerText(matrix)
+	const visualizer: MatrixVisualizerText = new MatrixVisualizerText(host)
 	// 连接
-	visualizer.linkToRouter(
-		router,
-		DISPLAY_SERVICE_HOST,
-		DISPLAY_SERVICE_PORT,
-		(messageCallback: MessageCallback) =>
-			new WebSocketServiceServer(
-				DISPLAY_SERVICE_HOST,
-				DISPLAY_SERVICE_PORT,
-				messageCallback
-			)
-	)
+	visualizer.linkToRouter(router, config.connections.visualization)
 
 	// *添加实体
 	host.addEntities(visualizer)

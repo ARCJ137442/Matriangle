@@ -7,6 +7,7 @@ import {
 } from 'matriangle-common/exMath'
 import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import {
+	OptionalRecursive2,
 	generateArray,
 	identity,
 	key,
@@ -716,6 +717,7 @@ export default class MapStorageSparse implements IMapStorage {
 	}
 
 	//============Display Implements============//
+	readonly i_displayable = true as const
 
 	protected generateBlocksData(): IDisplayDataMapBlocks {
 		/** 返回值 */
@@ -736,7 +738,23 @@ export default class MapStorageSparse implements IMapStorage {
 		return result
 	}
 
-	toDisplayData(): IDisplayDataMap {
+	/**
+	 * @implements 获取显示对象
+	 *
+	 * TODO: 目前还不完善——还需要生成新对象并返回（或许需要类似「实体状态代理」一类的操作）
+	 */
+	getDisplayDataInit(): IDisplayDataMap {
+		return {
+			blocks: this.generateBlocksData(),
+			size: this.size,
+		}
+	}
+
+	/**
+	 * @implements 获取所有方块的显示数据
+	 * TODO:【2023-11-18 16:37:51】目前还不完善，总是会更新所有对象
+	 */
+	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMap> {
 		return {
 			blocks: this.generateBlocksData(),
 			size: this.size,

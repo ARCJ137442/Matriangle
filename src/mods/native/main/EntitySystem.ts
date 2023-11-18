@@ -4,14 +4,12 @@ import {
 	IEntityDisplayable,
 	i_active,
 	i_activeLite,
+	i_displayable,
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import CommonSystem from 'matriangle-api/server/template/CommonSystem'
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import {
-	IDisplayable,
-	i_displayable,
-} from 'matriangle-api/display/DisplayInterfaces'
+import { IDisplayable } from 'matriangle-api/display/DisplayInterfaces'
 import {
 	IDisplayDataEntities,
 	IDisplayDataEntityState,
@@ -89,7 +87,9 @@ export default class EntitySystem
 			(this._temp_eIndex = this.entriesActiveLite.indexOf(entry)) >= 0
 		)
 			this.entriesActiveLite.splice(this._temp_eIndex, 1)
-		// 注销实体显示数据
+		// * 可显示⇒注销实体显示数据
+		if (i_displayable<IDisplayDataEntityState>(entry))
+			this.removeEntityDisplayData(this.getEntryUUID(entry))
 		// 超类逻辑
 		return super.remove(entry)
 	}
@@ -108,6 +108,7 @@ export default class EntitySystem
 	 * * 目前可能的解决办法：使用`null`占位符，作为「需要删除」的信号（`undefined`无法被传输）
 	 */
 	protected _displayDataInit: IDisplayDataEntities = {}
+
 	/**
 	 * 待更新实体数据
 	 * * 动态引用其它实体的数据
@@ -138,9 +139,19 @@ export default class EntitySystem
 		uuid: uint,
 		entity: IEntityDisplayable<StateT>
 	): void {
-		this._displayDataInit[uuid] = {
-			type: entity.id, // TODO: 【2023-11-18 10:59:56】断点
-			state: entity.getDisplayDataInit(), // ?
-		}
+		this._displayDataInit[uuid] = entity.getDisplayDataInit()
+	}
+
+	// !【2023-11-18 16:26:46】「刷新实体数据」的功能已经被「实体」本身所包含了
+
+	/**
+	 * 删除实体数据
+	 * * 置空而非删除
+	 *
+	 * ! 不能使用`delete`：这样没法让「显示端」知道「数据被删除」（「被删除」暂时是无法检测到的，只有「覆写」能检测到）
+	 */
+	public removeEntityDisplayData(uuid: uint): void {
+		// delete this._displayDataInit[uuid]
+		this._displayDataInit[uuid] = this._displayDataToRefresh[uuid] = null
 	}
 }

@@ -127,6 +127,24 @@ export function countIn<T>(P: (item: T) => boolean, array: T[]): uint {
 }
 
 /**
+ * 数组元素计数（返回Map）
+ */
+export function countElementsIn<T, C>(
+	array: T[],
+	classifyF: (item: T) => C
+): Map<C, uint> {
+	const result: Map<C, uint> = new Map<C, uint>()
+	let classifiedItem: C
+	for (const item of array) {
+		classifiedItem = classifyF(item)
+		if (result.has(classifiedItem))
+			result.set(classifiedItem, result.get(classifiedItem)! + 1)
+		else result.set(classifiedItem, 1)
+	}
+	return result
+}
+
+/**
  * 原地映射
  *
  * @param arr 待映射的数组
@@ -157,6 +175,7 @@ export function randomWithout<T>(array: T[], excepts: T): T {
 /**
  * 从一个数组经过一定运算得到一个「累计分布」
  * * 例如：求一个数组中所有数的「和数组」，其中和的分布从0开始依次增大
+ * * 性质@长度相等：「累积」后的数组长度=原数组长度
  *
  * @param array 被累积的函数
  * @param cumulateF 将两个值进行合并累积的函数
@@ -198,56 +217,77 @@ export function randomByWeight(weights: number[]): uint {
 		cumulatedWeights[cumulatedWeights.length - 1]
 	)
 
-	// 基于区间的二分查找（区分三个区间，优先看「是否等于」）
+	// * 基于区间的二分查找（区分三个区间，优先看「是否等于」） * //
 	/**
-	 * 返回值
-	 * * 初值：取中点
+	 * 返回值对应
 	 * * 最终情况：`cumulatedWeights[result-1] ?? 0 < randomProbe < cumulatedWeights[result]`
 	 *   * 这时候`weights[result]`正好对应于`randomProbe`
 	 */
-	let result: uint = weights.length >> 1
-	/**
-	 * 区间左端点
-	 * * 若`result===0`，其为`0`
-	 * * 否则为`cumulatedWeights[result-1]`
-	 */
-	let left: number, right: number
-	/** 返回值对应 */
-	while (0 <= result && result < weights.length) {
-		/* console.log(
-			'while',
-			cumulatedWeights,
-			result,
-			`(${left}, ${right}]`,
-			randomProbe
-		) */
-		// * 计算区间左右端点
-		left = result === 0 ? 0 : cumulatedWeights[result - 1]
-		right = cumulatedWeights[result]
-		// * 比「左端点」还左⇒左边切半
-		if (randomProbe < left) {
-			// * `result = (result + 0) / 2`等价的「移位写法」
-			result >>= 1
-		}
-		// * 比「右端点」还右⇒右边切半
-		else if (randomProbe >= right) {
-			// ! 这里是「大于等于」，因为「随机探针」生成的区间是`[0, sum(weights))`不包含右边
-			// * `result = (result + sum(weights)) / 2`等价的写法
-			result += (cumulatedWeights.length - result) >> 1
-		}
-		// * 在区间内⇒返回
-		else return result
-	}
-	/* let lo: uint = 0 // ? 「两个范围中间夹」和「一个指针到处走」可能是等价的
-	let hi: uint = cumulatedWeights.length - 1
-	while (lo < hi) {
-		const mid: uint = (lo + hi) >> 1
-		if (cumulatedWeights[mid] < randomProbe) lo = mid + 1
-		else hi = mid
-	} */
+	const index: uint = binarySearchInRanges(
+		cumulatedWeights,
+		randomProbe,
+		0,
+		cumulatedWeights.length
+	)
+	if (index >= 0) return index
 
 	console.error(weights, cumulatedWeights)
 	throw new Error('加权随机：未正常随机到结果！')
+}
+
+/**
+ * 基于区间的二分查找
+ * * 算法概要：区分三个区间，优先看「是否等于」
+ * * 最终情况：`cumulatedWeights[result-1] ?? 0 < randomProbe < cumulatedWeights[result]`
+ *   * 这时候`weights[result]`正好对应于`randomProbe`
+ *
+ * !【2023-11-18 18:35:11】最终还是采用了「两边区间夹」的方法
+ * * 因为在使用「探针移动」时，探针和边界的同时移动是非必要的
+ * * 此时不如直接用左右边界计算出「探针」
+ *
+ * @param cumulatedValues 经过「累积」的值序列（n个单调递增的值组成(n-1)个区间）
+ * @param target 要寻找的值（是否在「某个区间内」）
+ * @param leftEdge 查找的左边界
+ * @param rightEdge 查找的右边界
+ * @returns 查找到的区间的右端点（半开半闭区间[leftEdge, rightEdge)，不存在⇒返回`-1`）
+ */
+export function binarySearchInRanges(
+	cumulatedValues: number[],
+	// 需要查找的「目标值」
+	target: number,
+	// 查找左右の边界
+	leftEdge: uint = 0,
+	rightEdge: uint = cumulatedValues.length
+): uint | -1 {
+	/** 区间索引中点 */
+	let mid: uint
+	/**
+	 * 区间左端点
+	 * * 若`mid===0`，其为`0`
+	 * * 否则为`cumulatedValues[mid-1]`
+	 */
+	let left: number, right: number
+	while (leftEdge < rightEdge) {
+		// * 计算中点处区间索引
+		mid = (leftEdge + rightEdge) >> 1
+		// * 计算区间左右端点
+		left = mid === 0 ? 0 : cumulatedValues[mid - 1]
+		right = cumulatedValues[mid]
+		// * 比「左端点」还左⇒左边切半
+		if (target < left) {
+			// * 边界移动
+			leftEdge = mid
+		}
+		// * 比「右端点」还右⇒右边切半
+		else if (target >= right) {
+			// ! 这里是「大于等于」，因为「目标」生成的区间是`[0, sum(weights))`不包含右边
+			// * 边界移动
+			rightEdge = mid
+		}
+		// * 在区间内⇒返回
+		else return mid
+	}
+	return -1
 }
 
 /**

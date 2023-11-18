@@ -8,7 +8,10 @@
  */
 
 import { fPoint, iPoint, xPoint } from 'matriangle-common/geometricTools'
-import { IDisplayable } from '../../display/DisplayInterfaces'
+import {
+	IDisplayable,
+	i_displayable as i_displayableInterface,
+} from '../../display/DisplayInterfaces'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import IMatrix from '../main/IMatrix'
 import { mRot } from '../general/GlobalRot'
@@ -178,6 +181,19 @@ export interface IEntityDisplayable<
 	 * *【2023-11-15 19:37:33】目前只需要被读取
 	 */
 	get proxy(): IDisplayProxyEntity<EntityStateT> /* | null */
+}
+
+/**
+ * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
+ * *【2023-11-18 16:15:03】目前和「可显示对象」有一定区别
+ */
+export function i_displayable<StateT extends IDisplayDataEntityState>(
+	e: Entity
+): e is IEntityDisplayable<StateT> {
+	return (
+		i_displayableInterface(e) &&
+		(e as IEntityDisplayable<StateT>)?.proxy !== undefined
+	)
 }
 
 // !【2023-11-15 23:41:34】「容器可显示实体」退役

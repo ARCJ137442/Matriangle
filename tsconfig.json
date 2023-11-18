@@ -18,6 +18,6 @@
 		"deprecated/[to-be-migrated]BlockShapeFunctions.deprecated.ts",
 		"deprecated/programs",
 		"deprecated/KeyListener.deprecated.ts",
-		"src/instance/V1/multiDimMaps.ts"
+		"src/instance/BaTS-Server/multiDimMaps.ts"
 	]
 }

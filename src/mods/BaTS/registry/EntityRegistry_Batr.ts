@@ -38,133 +38,133 @@ import Wave from '../entity/projectile/other/Wave'
  *
  */
 export module BatrEntityTypes {
-	//============Registry============//
+	//============Registry============// ! 现在名称直接取自对应类的静态常量
 
-	// 子弹 // ! 现在统一「名称」与其对应类名相同（虽然后续可以改）
+	// 子弹
 	export const BULLET_BASIC: EntityType = new EntityType(
-		'BulletBasic',
+		BulletBasic.ID,
 		BulletBasic,
 		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_NUKE: EntityType = new EntityType(
-		'BulletNuke',
+		BulletNuke.ID,
 		BulletNuke,
 		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_BOMBER: EntityType = new EntityType(
-		'BulletBomber',
+		BulletBomber.ID,
 		BulletBomber,
 		DisplayLevel.PROJECTILE
 	)
 	export const BULLET_TRACKING: EntityType = new EntityType(
-		'BulletTracking',
+		BulletTracking.ID,
 		BulletTracking,
 		DisplayLevel.PROJECTILE
 	)
 
 	// 激光
 	export const LASER_BASIC: EntityType = new EntityType(
-		'LaserBasic',
+		LaserBasic.ID,
 		LaserBasic,
 		DisplayLevel.PROJECTILE
 	)
 	export const LASER_PULSE: EntityType = new EntityType(
-		'LaserPulse',
+		LaserPulse.ID,
 		LaserPulse,
 		DisplayLevel.PROJECTILE
 	)
 	export const LASER_TELEPORT: EntityType = new EntityType(
-		'LaserTeleport',
+		LaserTeleport.ID,
 		LaserTeleport,
 		DisplayLevel.PROJECTILE
 	)
 	export const LASER_ABSORPTION: EntityType = new EntityType(
-		'LaserAbsorption',
+		LaserAbsorption.ID,
 		LaserAbsorption,
 		DisplayLevel.PROJECTILE
 	)
 
 	// 其它抛射物
 	export const WAVE: EntityType = new EntityType(
-		'Wave',
+		Wave.ID,
 		Wave,
 		DisplayLevel.PROJECTILE
 	)
 	export const THROWN_BLOCK: EntityType = new EntityType(
-		'ThrownBlock',
+		ThrownBlock.ID,
 		ThrownBlock,
 		DisplayLevel.PROJECTILE
 	)
 	export const LIGHTNING: EntityType = new EntityType(
-		'Lightning',
+		Lightning.ID,
 		Lightning,
 		DisplayLevel.PROJECTILE
 	)
 
 	// 冲击波（子机）相关
 	export const SHOCKWAVE_BASE: EntityType = new EntityType(
-		'ShockWaveBase',
+		ShockWaveBase.ID,
 		ShockWaveBase,
 		DisplayLevel.PROJECTILE
 	)
 	export const SHOCKWAVE_DRONE: EntityType = new EntityType(
-		'ShockWaveDrone',
+		ShockWaveDrone.ID,
 		ShockWaveDrone,
 		DisplayLevel.PROJECTILE
 	)
 
 	// 奖励箱
 	export const BONUS_BOX: EntityType = new EntityType(
-		'BonusBox',
+		BonusBox.ID,
 		BonusBox,
 		DisplayLevel.BONUS_BOX
 	)
 
 	// 玩家
 	export const PLAYER: EntityType = new EntityType(
-		'Player',
+		PlayerBatr.ID,
 		PlayerBatr,
 		DisplayLevel.PLAYER
 	)
 
 	// 特效
 	export const EFFECT_EXPLODE: EntityType = new EntityType(
-		'EffectExplode',
+		EffectExplode.ID,
 		EffectExplode,
 		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_SPAWN: EntityType = new EntityType(
-		'EffectSpawn',
+		EffectSpawn.ID,
 		EffectSpawn,
 		DisplayLevel.EFFECT_BOTTOM
 	)
 	export const EFFECT_TELEPORT: EntityType = new EntityType(
-		'EffectTeleport',
+		EffectTeleport.ID,
 		EffectTeleport,
 		DisplayLevel.EFFECT_BOTTOM
 	)
 	export const EFFECT_PLAYER_DEATH_LIGHT: EntityType = new EntityType(
-		'EffectPlayerDeathLight',
+		EffectPlayerDeathLight.ID,
 		EffectPlayerDeathLight,
 		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_PLAYER_DEATH_FADEOUT: EntityType = new EntityType(
-		'EffectPlayerDeathFadeout',
+		EffectPlayerDeathFadeout.ID,
 		EffectPlayerDeathFadeout,
 		DisplayLevel.EFFECT_MIDDLE
 	)
 	export const EFFECT_PLAYER_HURT: EntityType = new EntityType(
-		'EffectPlayerHurt',
+		EffectPlayerHurt.ID,
 		EffectPlayerHurt,
 		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_PLAYER_LEVELUP: EntityType = new EntityType(
-		'EffectPlayerLevelup',
+		EffectPlayerLevelup.ID,
 		EffectPlayerLevelup,
 		DisplayLevel.EFFECT_TOP
 	)
 	export const EFFECT_BLOCK_LIGHT: EntityType = new EntityType(
-		'EffectBlockLight',
+		EffectBlockLight.ID,
 		EffectBlockLight,
 		DisplayLevel.EFFECT_TOP
 	)
@@ -204,6 +204,8 @@ export module BatrEntityTypes {
 		EFFECT_PLAYER_LEVELUP,
 		EFFECT_BLOCK_LIGHT,
 	]
+
+	// TODO: 💭后续或许还是少点用「类型对象」好
 
 	/** 自动过滤：BULLETS */
 	export const _BULLETS: EntityType[] = _ALL_ENTITY.filter(

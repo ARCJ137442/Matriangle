@@ -32,7 +32,7 @@ import { ZimDisplayerMap } from './DisplayInterfacesClient_Zim'
 import IMap from 'matriangle-api/server/map/IMap'
 import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
 import { generateArray, randomIn } from 'matriangle-common'
-import { stackMaps } from './../../../../V1/stackedMaps'
+import { stackMaps } from '../../../../BaTS-Server/stackedMaps'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 
@@ -570,7 +570,7 @@ export function test_mapDisplayer(frame: Frame): ZimDisplayerMap {
 		)
 	)
 	// console.log('test_mapDisplayer', MAP.name)
-	mapDisplayer.shapeInit(MAP.storage.toDisplayData())
+	mapDisplayer.shapeInit(MAP.storage.getDisplayDataInit())
 	// .wiggle({ baseAmount: 10, property: 'x' }) /* .center().drag() */
 	// 必须添加进舞台
 	frame.stage.addChild(mapDisplayer as unknown as DisplayObject)

@@ -8,7 +8,7 @@
 		"WebUI-V1": "start src/instance/V1/WebUI/index.html",
 		"client-nars": "npm run WebUI-NARS",
 		"client": "npm run WebUI-V1",
-		"server-batr": "npx ts-node src/instance/V1/MatriangleServer_V1.ts",
+		"server-batr": "npx ts-node src/instance/BaTS-Server/MatriangleServer_BaTS.ts",
 		"server-nars-car": "npx ts-node src/instance/NARS-experiment-car-collision/server.ts",
 		"batr": "start src/instance/V1/WebUI/index.html & npm run server-batr",
 		"nars-car": "start src/instance/NARS-experiment-UI/index.html & npm run server-nars-car",

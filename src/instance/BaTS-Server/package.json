@@ -1,10 +1,10 @@
 {
-	"name": "matriangle-instance-v1",
+	"name": "matriangle-instance-bats-server",
 	"version": "0.1.0",
-	"description": "Matriangle第一代实例，尚处测试阶段",
-	"main": "MatriangleServer_V1.ts",
+	"description": "Matriangle初代实例，亦为BaTS的初代实例",
+	"main": "MatriangleServer_BaTS.ts",
 	"scripts": {
-		"test": "npx ts-node MatriangleServer_V1.ts"
+		"test": "npx ts-node MatriangleServer_BaTS.ts"
 	},
 	"keywords": [
 		"matriangle",

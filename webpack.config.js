@@ -11,7 +11,7 @@ module.exports = {
 	mode: 'none',
 	// 入口文件 // !【2023-10-18 12:35:07】目前是服务端
 	entry: {
-		'BaTS-server': './src/instance/V1/MatriangleServer_V1.ts',
+		'BaTS-server': './src/instance/BaTS-Server/MatriangleServer_BaTS.ts',
 		'NARS-car-server': './src/instance/NARS-experiment-car-collision/server.ts'
 	},
 	// 开发者工具：内联源码映射

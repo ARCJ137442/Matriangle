@@ -33,56 +33,57 @@ export interface CanvasData_V1 {
  * 第一代画板可视化
  *
  * @param canvas 浏览器环境的画板元素
- * @param inf 用于控制画板的显示信息
+ * @param message 用于控制画板的显示信息
  * @param gridSize_px 格子大小（像素）
  */
 export function canvasVisualize_V1(
 	canvas: HTMLCanvasElement,
-	inf: string,
+	message: string,
 	gridSize_px: number = 15
 ): void {
-	console.log('canvas可视化！', canvas, inf, gridSize_px)
-	// 解析数据：过滤掉不合法的地方
-	try {
-		const data = JSON.parse(inf) as CanvasData_V1
-		const { size, blocks, entities } = data
-		if (size && blocks && entities) {
-			// 调整尺寸
-			canvas.width = size[0] * gridSize_px
-			canvas.height = size[1] * gridSize_px
-			// 绘制画板
-			const ctx = canvas.getContext('2d')
-			if (ctx) {
-				// 绘制背景
-				ctx.fillStyle = '#000'
-				ctx.fillRect(0, 0, canvas.width, canvas.height)
-				// 绘制方块
-				for (const [pos, color] of Object.entries(blocks)) {
-					//  空⇒跳过
-					if (color === undefined) continue
-					else {
-						// 暂时还只是二维的 // TODO: 多维平铺 & 分离功能
-						const [x, y] = pos.split('_').map(v => parseInt(v))
-						ctx.fillStyle = '#' + color.toString(16) // 也就一个井号
-						ctx.fillRect(
-							x * gridSize_px,
-							y * gridSize_px,
-							gridSize_px,
-							gridSize_px
-						)
-					}
-				}
-				// 绘制实体
-				/* for (const entity of entities) {
-					if (entity) {
-						const { x, y, width, height, color } = entity
-						ctx.fillStyle = `rgb(${color}, ${color}, ${color})`
-						ctx.fillRect(x, y, width, height)
-					}
-				} */
-			}
-		}
-	} catch (e) {
-		console.error('canvas可视化失败！', e)
-	}
+	console.log('canvas可视化！', canvas, message, gridSize_px)
+	// TODO: 接收传回来的数据
+	// // 解析数据：过滤掉不合法的地方
+	// try {
+	// 	const data = JSON.parse(message) as CanvasData_V1
+	// 	const { size, blocks, entities } = data
+	// 	if (size && blocks && entities) {
+	// 		// 调整尺寸
+	// 		canvas.width = size[0] * gridSize_px
+	// 		canvas.height = size[1] * gridSize_px
+	// 		// 绘制画板
+	// 		const ctx = canvas.getContext('2d')
+	// 		if (ctx) {
+	// 			// 绘制背景
+	// 			ctx.fillStyle = '#000'
+	// 			ctx.fillRect(0, 0, canvas.width, canvas.height)
+	// 			// 绘制方块
+	// 			for (const [pos, color] of Object.entries(blocks)) {
+	// 				//  空⇒跳过
+	// 				if (color === undefined) continue
+	// 				else {
+	// 					// 暂时还只是二维的 // TODO: 多维平铺 & 分离功能
+	// 					const [x, y] = pos.split('_').map(v => parseInt(v))
+	// 					ctx.fillStyle = '#' + color.toString(16) // 也就一个井号
+	// 					ctx.fillRect(
+	// 						x * gridSize_px,
+	// 						y * gridSize_px,
+	// 						gridSize_px,
+	// 						gridSize_px
+	// 					)
+	// 				}
+	// 			}
+	// 			// 绘制实体
+	// 			/* for (const entity of entities) {
+	// 				if (entity) {
+	// 					const { x, y, width, height, color } = entity
+	// 					ctx.fillStyle = `rgb(${color}, ${color}, ${color})`
+	// 					ctx.fillRect(x, y, width, height)
+	// 				}
+	// 			} */
+	// 		}
+	// 	}
+	// } catch (e) {
+	// 	console.error('canvas可视化失败！', e)
+	// }
 }

@@ -39,29 +39,25 @@ export default class Matrix_V1 implements IMatrix {
 		// this.isActive = active; // ? 【2023-10-04 23:22:21】为何要「是否激活」呢
 	}
 
+	//============Display Implementation========//
+
 	// 可显示：呈递显示数据 //
 	readonly i_displayable = true as const
 
 	getDisplayDataInit(): IDisplayDataMatrix {
 		return {
-			map: this.map.getDisplayDataInit(),
+			// ! 此处获取的是「存储结构」的「初始数据」
+			map: this.map.storage.getDisplayDataInit(),
+			// * 使用「实体系统」代理
 			entities: this._entitySystem.getDisplayDataInit(),
 		}
 	}
+
+	/**
+	 * @implements // TODO: 暂时还是直接用「初始化数据」
+	 */
 	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
-		throw new Error('Method not implemented.')
-	}
-
-	reset(): boolean {
-		throw new Error('Method not implemented.')
-	}
-
-	restart(rule: IMatrixRule, becomeActive?: boolean | undefined): void {
-		throw new Error('Method not implemented.')
-	}
-
-	forceStart(rule: IMatrixRule, becomeActive?: boolean | undefined): boolean {
-		throw new Error('Method not implemented.')
+		return this.getDisplayDataInit()
 	}
 
 	//========🎛️规则部分：规则加载、规则读写========//
@@ -121,7 +117,7 @@ export default class Matrix_V1 implements IMatrix {
 		// return this._entitySystem.remove(entity);
 	}
 
-	//========🕹️控制部分：主循环========//
+	//========🕹️控制部分：主循环/重置/重启========//
 	tick(): void {
 		// 实体刻 // !【2023-10-12 17:36:58】现在只需遍历其中的「（轻量级）活跃实体」
 		// !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
@@ -182,5 +178,17 @@ export default class Matrix_V1 implements IMatrix {
 	/** @implements 实现：直接加入列表 */
 	insertFinalExecution(exe: voidF): void {
 		this._tick_finalExecutions.push(exe)
+	}
+
+	reset(): boolean {
+		throw new Error('Method not implemented.')
+	}
+
+	restart(rule: IMatrixRule): void {
+		// ?【2023-11-18 16:42:15】原有实现中`becomeActive`似乎已无意义
+	}
+
+	forceStart(rule: IMatrixRule): boolean {
+		throw new Error('Method not implemented.')
 	}
 }

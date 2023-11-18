@@ -12,29 +12,9 @@ import {
 	NARSOperationRecordFull,
 	NARSOperationResult,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
-import {
-	IMessageService,
-	MessageCallback,
-} from 'matriangle-mod-message-io-api/MessageInterfaces'
+import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
-
-/** 一个「消息服务」基于传入主机地址、服务端口、消息回调的构造函数 */
-export type MessageServiceConstructor = (
-	host: string,
-	port: uint,
-	messageCallback: MessageCallback
-) => IMessageService
-
-/** 一个「消息服务」的配置 */
-export type ServiceConfig = {
-	/** 服务连接的主机地址 */
-	host: string
-	/** 服务连接的端口 */
-	port: uint
-	/** 服务连接的构造函数（与地址无关） */
-	constructor: MessageServiceConstructor
-}
 
 /**
  * NARS玩家配置
@@ -69,9 +49,9 @@ export type NARSPlayerConfig = {
 	/** 连接参数 */
 	connections: {
 		/** 对应的「NARS的消息服务」 */
-		NARS: ServiceConfig
+		NARS: MessageServiceConfig
 		/** 对应的「数据显示服务」 */
-		dataShow: ServiceConfig
+		dataShow: MessageServiceConfig
 		/** 用于「多按键控制器」的连接，来自{@link WebController} */
 		controlKey: string
 	}
@@ -337,9 +317,9 @@ export type NARSEnvConfig = {
 	/** 网络连接 */
 	connections: {
 		/** 统一的「Web控制服务」 */
-		controlService: ServiceConfig
+		controlService: MessageServiceConfig
 		/** 统一的「屏显服务」 */
-		displayService: ServiceConfig
+		displayService: MessageServiceConfig
 	}
 
 	/** 绘图参数 */

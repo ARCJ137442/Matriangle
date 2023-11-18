@@ -7,6 +7,7 @@ import Block from '../block/Block'
 import { IJSObjectifiable } from 'matriangle-common/JSObjectify'
 import { typeID } from '../registry/IWorldRegistry'
 import { IDisplayDataMap } from '../../display/RemoteDisplayAPI'
+import { IDisplayable } from '../../display/DisplayInterfaces'
 
 /**
  * 通用类型：用于「ID⇒零参构造函数」的映射表
@@ -18,8 +19,12 @@ export type BlockConstructorMap = Map<typeID, () => Block>
  * * 用于「增删改查」地图中的方块信息
  */
 export default interface IMapStorage
+	// 自修改迭代生成
 	extends ISelfModifyingGenerator<IMapStorage>,
-		IJSObjectifiable<IMapStorage> {
+		// 可JS对象化
+		IJSObjectifiable<IMapStorage>,
+		// 可（传输）显示（数据）
+		IDisplayable<IDisplayDataMap> {
 	//============Interface Functions============//
 
 	/** 决定地图「一般意义上的宽度」，对应地图在x方向的尺寸 */
@@ -282,13 +287,5 @@ export default interface IMapStorage
 
 	//============Display Implements============//
 
-	// TODO: 有待对接「刷新」逻辑
-	/**
-	 * 将地图数据转换为「显示数据」
-	 *
-	 * @returns 地图数据对应的「显示数据」
-	 *
-	 * !【2023-11-13 22:20:02】目前只需获取引用，因为后续将直接转换成JSON
-	 */
-	toDisplayData(): IDisplayDataMap
+	// * 对接「显示数据」的工作留给了{@link IDisplayable}
 }

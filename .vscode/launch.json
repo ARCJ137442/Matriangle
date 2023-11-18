@@ -21,12 +21,12 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Matriangle Instance V1",
+			"name": "Matriangle Instance V1 - BaTS",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
 			// "program": "${workspaceFolder}\\test\\test.ts",
-			"program": "src/instance/V1/MatriangleServer_V1.ts",
+			"program": "src/instance/BaTS-Server/MatriangleServer_BaTS.ts",
 			// "outFiles": [
 			//     "${workspaceFolder}/**/*.js"
 			// ],
