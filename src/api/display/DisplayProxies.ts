@@ -2,10 +2,124 @@
  * 本文件存储一些「显示代理」类型
  * * 用于最大化分离「逻辑功能」与「显示更新」
  */
-import { Optional, OptionalRecursive2 } from 'matriangle-common/utils'
+import {
+	Optional,
+	OptionalRecursive2,
+	clearObjectKeys,
+} from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { typeID } from '../server/registry/IWorldRegistry'
-import { IDisplayDataEntityState, IDisplayDataEntity } from './RemoteDisplayAPI'
+import {
+	IDisplayDataEntityState,
+	IDisplayDataEntity,
+	IDisplayData,
+	IDisplayDataMap,
+	pointToLocationStr,
+} from './RemoteDisplayAPI'
+import { iPoint, iPointRef } from 'matriangle-common'
+import { IDisplayable } from './DisplayInterfaces'
+import Block from '../server/block/Block'
+import BlockState from '../server/block/BlockState'
+import IMapStorage from '../server/map/IMapStorage'
+
+// * 整体代理 * //
+/**
+ * 所有「显示代理」所实现的总接口
+ * * 均实现「可显示对象」
+ */
+export interface IDisplayProxy<DisplayDataT extends IDisplayData>
+	extends IDisplayable<DisplayDataT> {}
+
+// * 地图代理 * //
+
+/**
+ * 所有地图通用的「代理接口」
+ * * 实质上只需是「存储结构」接口
+ */
+export interface IDisplayProxyMap extends IDisplayProxy<IDisplayDataMap> {
+	/** 更新尺寸 */
+	updateSize(size: uint[]): void
+	/** 更新方块 */
+	updateBlock(location: iPoint, block: Block): void
+}
+
+/**
+ * 「地图代理」的标准实现
+ */
+export class DisplayProxyMap implements IDisplayProxyMap {
+	readonly i_displayable = true as const
+
+	// * 自身数据构造 * //
+
+	/** 完整显示数据 */
+	protected _data: IDisplayDataMap = {
+		blocks: {},
+	} as IDisplayDataMap // ! 一定会在构造函数中补完
+
+	/** 待更新显示数据 */
+	protected _dataToRefresh: OptionalRecursive2<IDisplayDataMap> = {
+		blocks: {},
+	}
+
+	/** 构造函数 */
+	public constructor(storage: IMapStorage) {
+		// 尺寸更新
+		this.updateSize(storage.size)
+		// 遍历所有位置，存储方块
+		storage.forEachValidPositions((p: iPointRef): void => {
+			this.updateBlock(
+				p, // 获取方块
+				storage.getBlock(p)
+			)
+		})
+	}
+
+	/** @implements 直接更新 */
+	updateSize(size: uint[]): void {
+		this._data.size = this._dataToRefresh.size = size
+	}
+	/**
+	 * @implements 直接使用「方块」对象更新
+	 * TODO: 目前一个问题——方块状态被其它地方改变（如「门の开关」）后，无法及时进行更新
+	 */
+	updateBlock(
+		location: iPointRef,
+		block: Block<BlockState | null> | null
+	): void {
+		const locationStr: string = pointToLocationStr(location)
+		this._data.blocks[locationStr] = this._dataToRefresh.blocks![
+			locationStr
+		] =
+			block === null
+				? null
+				: {
+						id: block.id,
+						// !【2023-11-15 21:18:36】现在不再直接使用（逻辑上的）「方块状态」了——现在使用「方块状态的显示数据」
+						state: block.state?.generateDisplayData() ?? null,
+				  }
+	}
+
+	// * 标准显示接口 * //
+
+	getDisplayDataInit(): IDisplayDataMap {
+		return this._data
+	}
+
+	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMap> {
+		return this._dataToRefresh
+	}
+
+	/** @implements 删除`size`属性，删除`blocks`中的所有内容 */
+	flushDisplayData(): void {
+		// -size
+		delete this._dataToRefresh.size
+		// -blocks.*
+		for (const key in this._dataToRefresh.blocks)
+			delete this._dataToRefresh.blocks[key]
+	}
+}
+
+// * 实体代理 * //
 
 /**
  * 所有实体通用的「显示代理」接口
@@ -14,42 +128,7 @@ import { IDisplayDataEntityState, IDisplayDataEntity } from './RemoteDisplayAPI'
  */
 export interface IDisplayProxyEntity<
 	EntityStateT extends IDisplayDataEntityState,
-> {
-	// * 面向「可视化」：显示端负责获取、呈递、清洗（并传输）数据 * //
-	/**
-	 * 获取完整的「显示数据」
-	 * * 面向「可视化」：数据由此转换为JSON，并最后传递给显示端显示
-	 * * 用于实体显示的「初始化」
-	 */
-	get displayDataFull(): IDisplayDataEntity<EntityStateT>
-
-	/**
-	 * 获取**用于更新**的「显示数据」
-	 * * 面向「可视化」：数据由此转换为JSON，并最后传递给显示端显示
-	 * * 用于实体显示的「更新」
-	 * * 与{@link flushDisplayData}搭配使用
-	 *
-	 * ! 无副作用：若需要「获取并清洗」则需要调用{@link flushDisplayData}
-	 *
-	 * @returns 返回「待更新显示数据」（作为「显示数据」的部分）
-	 */
-	get displayDataToRefresh(): OptionalRecursive2<
-		IDisplayDataEntity<EntityStateT>
-	>
-
-	/**
-	 * 清洗「待更新显示数据」
-	 * * 清除「需要被传递到『显示端』以便更新」的数据
-	 *   * 以此实现「部分化更新」
-	 * *【2023-11-15 18:27:34】现在无需纠结「从何处调用」和「何时调用」的问题
-	 *   * 应用：在通过{@link displayDataToRefresh}获取「待更新数据」、转换成JSON后，再执行此方法进行清除
-	 *
-	 * ! 副作用：调用以后，从{@link displayDataToRefresh}将无法获得有作用的「待更新显示数据」
-	 *
-	 * @returns 返回「待更新显示数据」
-	 */
-	flushDisplayData(): void
-
+> extends IDisplayProxy<IDisplayDataEntity<EntityStateT>> {
 	// * 面向「逻辑端」：逻辑端负责读写属性 * //
 	/**
 	 * 决定图形x轴上的「缩放尺寸」
@@ -185,6 +264,8 @@ export interface IDisplayProxyEntity<
 export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	implements IDisplayProxyEntity<EntityStateT>
 {
+	i_displayable = true as const
+
 	/**
 	 * 构造函数
 	 * * 用于初始化`id`值
@@ -206,7 +287,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	 */
 	protected _data: IDisplayDataEntity<EntityStateT>
 
-	get displayDataFull(): IDisplayDataEntity<EntityStateT> {
+	getDisplayDataInit(): IDisplayDataEntity<EntityStateT> {
 		return this._data
 	}
 
@@ -219,7 +300,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 		IDisplayDataEntity<EntityStateT>
 	>
 
-	get displayDataToRefresh(): OptionalRecursive2<
+	getDisplayDataRefresh(): OptionalRecursive2<
 		IDisplayDataEntity<EntityStateT>
 	> {
 		return this._dataToRefresh
@@ -230,9 +311,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 		// 清除`type`的值
 		delete this._dataToRefresh.id
 		// 清除`state`上所有属性
-		for (const key in this._stateToRefresh) {
-			delete this._stateToRefresh[key]
-		}
+		clearObjectKeys(this._stateToRefresh)
 	}
 
 	/* // !【2023-11-15 17:41:23】Proxy暂时还用不熟练

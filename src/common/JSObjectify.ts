@@ -7,7 +7,14 @@
  * 一个轻量级「JS对象化」库，用于各类对象到JS对象（再到JSON）的序列化
  */
 import { Class } from '../legacy/AS3Legacy'
-import { addNReturnKey, getClass, identity, key, safeMerge } from './utils'
+import {
+	addNReturnKey,
+	getClass,
+	identity,
+	isEmptyObject,
+	key,
+	safeMerge,
+} from './utils'
 
 /**
  *  ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
@@ -547,4 +554,76 @@ export function fastAddJSObjectifyMapProperty_dashP(
 		identity,
 		loadRecursiveCriterion_false
 	)
+}
+
+/**
+ * JS对象值简化（原地操作）
+ * * 同{@link trimmedEmptyObjIn}，但会改变参数obj及其内部所有的值
+ *
+ * ! 破坏性操作：可能改变内部引用的数据
+ *
+ * @param obj 待简化的对象
+ * @returns 简化后的同一对象
+ *
+ * @example // 测试样例 log结果：`{} {} { a: { a: 1 }, b: { d: 1 } }`
+ * console.log(
+ *     trimEmptyObjIn({}),
+ *     trimEmptyObjIn({ a: {} }),
+ *     trimEmptyObjIn({
+ *         a: { a: 1 },
+ *         b: { c: {}, d: 1 },
+ *         e: {},
+ *         f: { g: {}, h: {} },
+ *         i: { j: {}, k: { l: {} } },
+ *     })
+ * )
+ */
+export function trimEmptyObjIn(obj: JSObject): JSObject {
+	// 临时变量
+	let value: JSObjectValue
+	for (const key in obj) {
+		value = obj[key]
+		// * 对象⇒额外判断
+		if (typeof value === 'object' && value !== null) {
+			// 肯定要简化一次的
+			trimEmptyObjIn(value as JSObject)
+			// * 被简化后是空对象⇒删除
+			if (isEmptyObject(value)) delete obj[key]
+		}
+		// * 其它值⇒跳过
+	}
+	// 返回自身
+	return obj
+}
+
+/**
+ * JS对象值简化
+ * * 核心逻辑：返回一个新对象，这个对象中所有「值为空对象」的键值对都被省去
+ * * 用于「显示更新」中的字符省略
+ *
+ * @param obj 需要简化的JS对象
+ * @returns 简化后的新JS对象，不会对原有JS对象造成任何影响
+ */
+export function trimmedEmptyObjIn(obj: JSObject): JSObject {
+	const result: JSObject = {}
+	// 临时变量
+	let value: JSObjectValue, trimmedObj: JSObject
+	for (const key in obj) {
+		value = obj[key]
+		// * `undefined`⇒直接跳过（面向更一般的object类型）
+		if (value === undefined) continue
+		// * 对象⇒额外判断
+		else if (typeof value === 'object' && value !== null) {
+			// 肯定要简化一次的
+			trimmedObj = trimmedEmptyObjIn(value as JSObject)
+			// * 被简化后是空对象⇒跳过
+			if (isEmptyObject(trimmedObj)) continue
+			// * 其它对象⇒递归深入
+			else result[key] = trimmedObj
+		}
+		// * 其它值⇒直接设定
+		else result[key] = value
+	}
+	// 返回结果
+	return result
 }

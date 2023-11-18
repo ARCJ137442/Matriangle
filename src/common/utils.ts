@@ -848,6 +848,9 @@ export type OptionalRecursive<T> = { [K in keyof T]?: OptionalRecursive<T[K]> }
  * * 和{@link OptionalRecursive}的唯一区别：
  *   * 递归不会影响到原始类型，并且不会让数组变得「可选」
  *   * 编写的初衷：让数组元素不再变成`(T|undefined)[]`
+ * * 应用：部分化显示更新
+ *   * 多出来的属性「无需管」
+ *   * 少掉了的属性「不用管」
  */
 export type OptionalRecursive2<T> = {
 	[K in keyof T]?: T[K] extends unknown[] ? T[K] : OptionalRecursive2<T[K]>
@@ -918,6 +921,39 @@ export function mapObjectKey<V>(
 			moveObjectValue<key, V>(obj, oldKey, newKey)
 	}
 	return obj
+}
+
+/**
+ * 对象键清除
+ * * 核心逻辑：删除对象的所有键
+ * * 用于「显示更新」中「刷新『待更新显示数据』」的过程
+ *
+ * @param obj 待删除所有键的对象
+ * @returns 删除后的对象
+ */
+export function clearObjectKeys<T>(obj: T): T {
+	for (const key in obj) delete obj[key]
+	return obj
+}
+
+/**
+ * 计算对象的键（值对）数量
+ * @param obj 被计算的对象
+ * @returns 对象中键（值对）的数量
+ */
+export function numKeysOf<T extends object>(obj: T): uint {
+	return Reflect.ownKeys(obj).length
+}
+
+/**
+ * 判断对象是否为空对象
+ * * 核心逻辑：其「键值对数目」是否为零
+ *
+ * @param obj 被计算的对象
+ * @returns 对象中键（值对）的数量
+ */
+export function isEmptyObject(obj: object): obj is Record<string, never> {
+	return numKeysOf(obj) === 0
 }
 
 /**

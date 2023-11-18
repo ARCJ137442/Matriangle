@@ -20,7 +20,6 @@ import {
 	IDisplayDataEntity,
 	IDisplayDataEntityState,
 } from '../../display/RemoteDisplayAPI'
-import { IDisplayProxyEntity } from '../../display/DisplayProxies'
 
 /**
  * 「有坐标实体」是
@@ -179,8 +178,9 @@ export interface IEntityDisplayable<
 	 * // * 可空（这时候无需更新「显示状态」）
 	 * * ↑暂时还是不可空好些（因为没有）
 	 * *【2023-11-15 19:37:33】目前只需要被读取
+	 get proxy(): IDisplayProxyEntity<EntityStateT> // | null
 	 */
-	get proxy(): IDisplayProxyEntity<EntityStateT> /* | null */
+	// !【2023-11-18 22:54:21】不再必须要求有`proxy`属性（无需对外暴露）
 }
 
 /**
@@ -192,7 +192,7 @@ export function i_displayable<StateT extends IDisplayDataEntityState>(
 ): e is IEntityDisplayable<StateT> {
 	return (
 		i_displayableInterface(e) &&
-		(e as IEntityDisplayable<StateT>)?.proxy !== undefined
+		(e as IEntityDisplayable<StateT>)?.isActive !== undefined
 	)
 }
 

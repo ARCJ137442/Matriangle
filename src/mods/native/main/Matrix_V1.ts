@@ -39,35 +39,6 @@ export default class Matrix_V1 implements IMatrix {
 		// this.isActive = active; // ? 【2023-10-04 23:22:21】为何要「是否激活」呢
 	}
 
-	//============Display Implementation========//
-
-	// 可显示：呈递显示数据 //
-	readonly i_displayable = true as const
-
-	/**
-	 * @implements 直接传递
-	 */
-	getDisplayDataInit(): IDisplayDataMatrix {
-		return {
-			// ! 此处获取的是「存储结构」的「初始数据」
-			map: this.map.storage.getDisplayDataInit(),
-			// * 使用「实体系统」代理
-			entities: this._entitySystem.getDisplayDataInit(),
-		}
-	}
-
-	/**
-	 * @implements 直接传递
-	 */
-	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
-		return {
-			// ! 此处获取的是「存储结构」的「初始数据」
-			map: this.map.storage.getDisplayDataRefresh(),
-			// * 使用「实体系统」代理
-			entities: this._entitySystem.getDisplayDataRefresh(),
-		}
-	}
-
 	//========🎛️规则部分：规则加载、规则读写========//
 	// 规则 //
 	protected _rule: IMatrixRule
@@ -199,5 +170,45 @@ export default class Matrix_V1 implements IMatrix {
 
 	forceStart(rule: IMatrixRule): boolean {
 		throw new Error('Method not implemented.')
+	}
+
+	//============Display Implementation========//
+
+	// 可显示：呈递显示数据 //
+	readonly i_displayable = true as const
+
+	/**
+	 * @implements 直接传递
+	 * * 后续最好也整个「显示代理」
+	 */
+	getDisplayDataInit(): IDisplayDataMatrix {
+		return {
+			// ! 此处获取的是「存储结构」的「初始数据」
+			map: this.map.storage.getDisplayDataInit(),
+			// * 使用「实体系统」代理
+			entities: this._entitySystem.getDisplayDataInit(),
+		}
+	}
+
+	/**
+	 * @implements 直接传递
+	 * * 后续最好也整个「显示代理」
+	 */
+	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
+		return {
+			// ! 此处获取的是「存储结构」的「初始数据」
+			map: this.map.storage.getDisplayDataRefresh(),
+			// * 使用「实体系统」代理
+			entities: this._entitySystem.getDisplayDataRefresh(),
+		}
+	}
+
+	/**
+	 * @implements 直接传递到「地图」「实体」
+	 * * 后续最好也整个「显示代理」
+	 */
+	flushDisplayData(): void {
+		this.map.storage.flushDisplayData()
+		this._entitySystem.flushDisplayData()
 	}
 }

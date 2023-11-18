@@ -49,6 +49,13 @@ export default class EntitySystem
 	public readonly entriesActiveLite: IEntityActiveLite[] = []
 
 	/**
+	 * 轻量级活跃实体列表
+	 * * 便于自身遍历（显示帧率高的时候需要频繁使用）
+	 */
+	public readonly entriesDisplayable: IEntityDisplayable<IDisplayDataEntityState>[] =
+		[]
+
+	/**
 	 * @override 覆盖：增加特别的「活跃实体管理」选项
 	 */
 	override add(entry: Entity): boolean {
@@ -56,16 +63,20 @@ export default class EntitySystem
 		if (i_active(entry)) this.entriesActive.push(entry)
 		// 不可能同为「活跃实体」与「轻量级活跃实体」
 		else if (i_activeLite(entry)) this.entriesActiveLite.push(entry)
-		// 超类逻辑 //
-		// 超类添加成功
+		// 可显示实体
 		if (super.add(entry)) {
+			// 超类逻辑 //
+			// 超类添加成功
 			// * 可显示⇒注册UUID数据
-			if (i_displayable<IDisplayDataEntityState>(entry))
+			if (i_displayable<IDisplayDataEntityState>(entry)) {
+				// 加入「可显示实体」列表
+				this.entriesDisplayable.push(entry)
 				// 录入
 				this.addEntityDisplayData<IDisplayDataEntityState>(
 					this.getEntryUUID(entry),
 					entry
 				)
+			}
 			return true
 		}
 		return false
@@ -117,7 +128,8 @@ export default class EntitySystem
 	 * ?【2023-11-18 09:37:25】问题是：如何处理「实体被删除」的情况
 	 * * 目前可能的解决办法：使用`null`占位符，作为「需要删除」的信号（`undefined`无法被传输）
 	 */
-	protected _displayDataToRefresh: IDisplayDataEntities = {}
+	protected _displayDataToRefresh: OptionalRecursive2<IDisplayDataEntities> =
+		{}
 
 	/**
 	 * @implements 给出一个「UUID-实体数据」字典
@@ -129,18 +141,29 @@ export default class EntitySystem
 
 	/**
 	 * @implements 收集
-	 */ // TODO: 后续有待「动态清除」「待更新实体数据」
+	 */
 	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataEntities> {
 		return this._displayDataToRefresh
 	}
 
+	/** @implements 遍历所有可显示实体，递归清洗数据 */
+	flushDisplayData(): void {
+		// ? 如果直接清除了引用，那后面更新又怎么办呢？冒泡吗？
+		for (const entity of this.entriesDisplayable) entity.flushDisplayData()
+		// * 清除「待更新显示数据」中的null（清除之前已经拿走了数据，所以这之后不再需要）
+		for (const key in this._displayDataToRefresh)
+			if (this._displayDataToRefresh[key] === null)
+				delete this._displayDataToRefresh[key]
+		// ? 但按上面这样做了之后，还是需要同步一堆空对象。。。
+	}
+
 	/** 录入实体数据 */
-	public addEntityDisplayData<StateT extends IDisplayDataEntityState>(
+	protected addEntityDisplayData<StateT extends IDisplayDataEntityState>(
 		uuid: uint,
 		entity: IEntityDisplayable<StateT>
 	): void {
-		this._displayDataInit[uuid] = this._displayDataToRefresh[uuid] =
-			entity.getDisplayDataInit()
+		this._displayDataInit[uuid] = entity.getDisplayDataInit()
+		this._displayDataToRefresh[uuid] = entity.getDisplayDataRefresh()
 	}
 
 	// !【2023-11-18 16:26:46】「刷新实体数据」的功能已经被「实体」本身所包含了

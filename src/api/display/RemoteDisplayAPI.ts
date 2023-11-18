@@ -127,7 +127,7 @@ export interface IDisplayDataBlock<
  * 存储其中的「位置-方块数据」键值对
  */
 export interface IDisplayDataMapBlocks {
-	[location: string]: IDisplayDataBlock
+	[location: string]: IDisplayDataBlock | null // ! ←此处的`null`意味着「显示端需要移除多余的方块对象」
 }
 
 /**

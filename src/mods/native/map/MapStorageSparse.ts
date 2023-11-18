@@ -43,6 +43,10 @@ import {
 	IDisplayDataMapBlocks,
 	pointToLocationStr,
 } from 'matriangle-api/display/RemoteDisplayAPI'
+import {
+	DisplayProxyMap,
+	IDisplayProxyMap,
+} from 'matriangle-api/display/DisplayProxies'
 
 /** 现在由于使用ESLint，直接抽象到最外面当函数库 */
 function _temp_copyContent_F(
@@ -302,6 +306,8 @@ export default class MapStorageSparse implements IMapStorage {
 		// ! 特别初始化「边界长度」（因为它不是个临时变量）
 		this._borderMax = new iPoint(this._nDim)
 		this._borderMin = new iPoint(this._nDim)
+		//初始化代理
+		this._proxy = new DisplayProxyMap(this)
 	}
 
 	protected _temp_size: iPointVal = new iPoint() // ! 现在因为`xPoint`中的`copy`方法改良，无需带维数初始化
@@ -532,6 +538,8 @@ export default class MapStorageSparse implements IMapStorage {
 		const nStorage: MapStorageSparse = new MapStorageSparse(this._nDim)
 		// 复制其它信息
 		nStorage.copyFrom(this, false, deep)
+		// * 显示呈现：清除「待更新数据」
+		nStorage.flushDisplayData()
 		// 返回
 		return nStorage
 	}
@@ -678,6 +686,9 @@ export default class MapStorageSparse implements IMapStorage {
 		this._dict[MapStorageSparse.pointToIndex(p)] = block
 		// 更新边界
 		this.updateBorder(p)
+		// * 更新显示
+		this._proxy.updateBlock(p, block)
+		// 返回
 		return this
 	}
 
@@ -700,7 +711,11 @@ export default class MapStorageSparse implements IMapStorage {
 	 * @param y y坐标
 	 */
 	public setVoid(p: iPointRef): IMapStorage {
+		// 直接删除
 		delete this._dict[MapStorageSparse.pointToIndex(p)]
+		// * 更新显示
+		this._proxy.updateBlock(p, this.getBlock(p))
+		// 返回
 		return this
 	}
 
@@ -718,6 +733,9 @@ export default class MapStorageSparse implements IMapStorage {
 
 	//============Display Implements============//
 	readonly i_displayable = true as const
+
+	/** 显示代理 */
+	protected readonly _proxy: IDisplayProxyMap
 
 	protected generateBlocksData(): IDisplayDataMapBlocks {
 		/** 返回值 */
@@ -739,26 +757,21 @@ export default class MapStorageSparse implements IMapStorage {
 	}
 
 	/**
-	 * @implements 获取显示对象
-	 *
-	 * TODO: 目前还不完善——还需要生成新对象并返回（或许需要类似「实体状态代理」一类的操作）
+	 * @implements 委托到「地图代理」中
 	 */
 	getDisplayDataInit(): IDisplayDataMap {
-		return {
-			blocks: this.generateBlocksData(),
-			size: this.size,
-		}
+		return this._proxy.getDisplayDataInit()
 	}
 
 	/**
-	 * @implements 获取所有方块的显示数据
-	 * TODO:【2023-11-18 16:37:51】目前还不完善，总是会更新所有对象
+	 * @implements 委托到「地图代理」中
 	 */
 	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMap> {
-		return {
-			blocks: this.generateBlocksData(),
-			size: this.size,
-		}
+		return this._proxy.getDisplayDataRefresh()
+	}
+
+	flushDisplayData(): void {
+		this._proxy.flushDisplayData()
 	}
 
 	// public setDisplayTo(target: IMapDisplayer): void {

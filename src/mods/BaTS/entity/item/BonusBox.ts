@@ -1,11 +1,17 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import Entity from 'matriangle-api/server/entity/Entity'
 import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
 import { BonusType } from '../../registry/BonusRegistry'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { typeID } from 'matriangle-api'
+import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+
+export interface IDisplayDataEntityStateBonusBox
+	extends IDisplayDataEntityState {
+	bonusType: BonusType
+}
 
 /**
  * 「奖励箱」是
@@ -15,7 +21,10 @@ import { typeID } from 'matriangle-api'
  * * 用于在世界机制中被玩家拾取的
  * 实体
  */
-export default class BonusBox extends Entity implements IEntityInGrid {
+export default class BonusBox
+	extends EntityDisplayable<IDisplayDataEntityStateBonusBox>
+	implements IEntityInGrid
+{
 	/** ID */
 	public static readonly ID: typeID = 'BonusBox'
 
@@ -29,13 +38,15 @@ export default class BonusBox extends Entity implements IEntityInGrid {
 	//============Static Functions============//
 
 	//============Instance Variables============//
-	protected _bonusType: string
+	protected _bonusType: BonusType
 	public get bonusType(): BonusType {
 		return this._bonusType
 	}
 	public set bonusType(value: BonusType) {
 		this._bonusType = value
-		// this._symbol.shapeInit(shape: IBatrShape); // TODO: 请求更新
+		// * 显示更新
+		this.proxy.storeState('bonusType', value)
+		// this._symbol.shapeInit(shape: IBatrShape);
 	}
 
 	// protected _symbol: BonusBoxSymbol; // !【2023-10-04 21:58:22】现在显示端不能再用了
@@ -85,11 +96,10 @@ export default class BonusBox extends Entity implements IEntityInGrid {
 
 	//============Display Implements============//
 	public readonly i_displayable = true as const
-	public readonly i_displayableContainer = true as const
 
 	/** 边缘的空白 */
-	public static readonly BORDER_SPACE: number =
-		(DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
+	// public static readonly BORDER_SPACE: number =
+	// 	(DEFAULT_SIZE - BonusBox.BOX_SIZE) / 2
 
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// public displayInit(shape: IShapeContainer, symbol: IShape): void {

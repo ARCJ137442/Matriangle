@@ -32,16 +32,21 @@ export default abstract class EntityDisplayable<
 		super(id)
 		this._proxy = new DisplayProxyEntity<EntityStateT>(id)
 	}
-	/** @implements 直接调用自身的「代理对象」进行实现 */
+	/** @implements 直接委托自身的「代理对象」 */
 	getDisplayDataInit(): IDisplayDataEntity<EntityStateT> {
-		return this._proxy.displayDataFull
+		return this._proxy.getDisplayDataInit()
 	}
 
-	/** @implements 直接调用自身的「代理对象」进行实现 */
+	/** @implements 直接委托自身的「代理对象」 */
 	getDisplayDataRefresh(): OptionalRecursive2<
 		IDisplayDataEntity<EntityStateT>
 	> {
-		return this._proxy.displayDataToRefresh
+		return this._proxy.getDisplayDataRefresh()
+	}
+
+	/** @implements 直接委托自身的「代理对象」 */
+	flushDisplayData(): void {
+		this._proxy.flushDisplayData()
 	}
 
 	/** 内部的「实体显示代理」 */

@@ -40,8 +40,6 @@ export default abstract class Effect2BlockContainer extends Effect {
 	// protected _block1: IShape | null = null
 	// /** 子元素：方块2（纵），保留引用以便快速更新 */
 	// protected _block2: IShape | null = null
-	// /** 标明这个对象需要一个「图形容器」 */
-	// public readonly i_displayableContainer = true as const
 
 	// /** 实现：要求两个「普通图形」对象作为其子元素 */
 	// public displayInit(

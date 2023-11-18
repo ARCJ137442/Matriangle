@@ -226,7 +226,7 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 
 	getDisplayDataInit(): IDisplayDataBlock<IDisplayDataBlockState | null> {
 		return {
-			id: this.id,
+			id: this.id, // !属性`id`是只读的
 			state: this.state?.generateDisplayData() ?? null,
 		}
 	}
@@ -234,5 +234,9 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 	getDisplayDataRefresh(): IDisplayDataBlock<IDisplayDataBlockState | null> {
 		// TODO: 暂时是「所有数据都需要更新」
 		return this.getDisplayDataInit()
+	}
+
+	flushDisplayData(): void {
+		// TODO: 暂时还需解决「状态显示更新」问题
 	}
 }

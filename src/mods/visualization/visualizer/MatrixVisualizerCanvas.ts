@@ -9,6 +9,7 @@ import {
 } from '../logic/abstractVisualization.type'
 import { typeID } from 'matriangle-api'
 import MatrixVisualizerText from './MatrixVisualizerText'
+import { JSObject, trimmedEmptyObjIn } from 'matriangle-common/JSObjectify'
 
 /**
  * 「文本母体可视化者」是
@@ -44,7 +45,7 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 		matrix: IMatrix,
 		typeFlag: string
 	): [VisualizationOutputMessagePrefix, string] {
-		let JSONDisplayData: unknown
+		let JSONDisplayData: string
 		switch (typeFlag) {
 			case NativeVisualizationTypeFlag.OTHER_INFORMATION:
 				// （保留）以纯文本方式返回「实体列表」
@@ -55,17 +56,30 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 			// * 全新的「显示数据传递」
 			case NativeVisualizationTypeFlag.INIT:
 				// 转换为JSON
-				JSONDisplayData = matrix.getDisplayDataInit()
+				JSONDisplayData = JSON.stringify(
+					trimmedEmptyObjIn(matrix.getDisplayDataInit())
+				)
+				// 刷新已更新数据
+				matrix.flushDisplayData()
+				// 返回
 				return [
 					VisualizationOutputMessagePrefix.CANVAS_DATA,
-					JSON.stringify(JSONDisplayData),
+					JSONDisplayData,
 				]
 			case NativeVisualizationTypeFlag.REFRESH:
 				// 转换为JSON
-				JSONDisplayData = matrix.getDisplayDataRefresh()
+				JSONDisplayData = JSON.stringify(
+					// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
+					trimmedEmptyObjIn(
+						matrix.getDisplayDataRefresh() as JSObject
+					)
+				)
+				// 刷新已更新数据
+				matrix.flushDisplayData()
+				// 返回
 				return [
 					VisualizationOutputMessagePrefix.CANVAS_DATA,
-					JSON.stringify(JSONDisplayData),
+					JSONDisplayData,
 				]
 			default:
 				console.warn(
