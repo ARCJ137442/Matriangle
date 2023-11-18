@@ -44,6 +44,9 @@ export default class Matrix_V1 implements IMatrix {
 	// 可显示：呈递显示数据 //
 	readonly i_displayable = true as const
 
+	/**
+	 * @implements 直接传递
+	 */
 	getDisplayDataInit(): IDisplayDataMatrix {
 		return {
 			// ! 此处获取的是「存储结构」的「初始数据」
@@ -54,10 +57,15 @@ export default class Matrix_V1 implements IMatrix {
 	}
 
 	/**
-	 * @implements // TODO: 暂时还是直接用「初始化数据」
+	 * @implements 直接传递
 	 */
 	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
-		return this.getDisplayDataInit()
+		return {
+			// ! 此处获取的是「存储结构」的「初始数据」
+			map: this.map.storage.getDisplayDataRefresh(),
+			// * 使用「实体系统」代理
+			entities: this._entitySystem.getDisplayDataRefresh(),
+		}
 	}
 
 	//========🎛️规则部分：规则加载、规则读写========//
@@ -101,6 +109,7 @@ export default class Matrix_V1 implements IMatrix {
 		projectEntity(this.map, entity)
 		// 委托添加
 		this._entitySystem.add(entity)
+		// 添加成功
 		return true
 	}
 

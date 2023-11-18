@@ -8,12 +8,7 @@
 
 <script setup lang="ts">
 import { Ref, ref } from 'vue'
-
-// 类型定义
-type TextDisplayData = {
-	screen?: string
-	otherInf?: string
-}
+import { VisualizationOutputMessagePrefix } from 'matriangle-mod-visualization/logic/abstractVisualization.type'
 
 // 变量引用
 /** 屏显文本 */
@@ -26,11 +21,24 @@ defineExpose({
 	/**
 	 * 根据数据更新
 	 *
-	 * @param data 数据
+	 * @param {[VisualizationOutputMessagePrefix, string] | null} data 数据
 	 */
-	update(data: TextDisplayData): void {
-		if (data?.screen !== undefined) screenText.value = data.screen
-		if (data?.otherInf !== undefined) otherInfText.value = data.otherInf
+	update(data: [VisualizationOutputMessagePrefix, string] | null): void {
+		if (data === null) return
+		// 非空
+		switch (data[0]) {
+			// * 附加信息
+			case VisualizationOutputMessagePrefix.OTHER_INFORMATION:
+				otherInfText.value = data[1]
+				break
+			// * 其它⇒都等同于「文本」
+			case VisualizationOutputMessagePrefix.TEXT:
+				screenText.value = data[1]
+				break
+			default:
+				console.warn('未知的消息类型！', data)
+				screenText.value = data[1]
+		}
 	},
 })
 </script>

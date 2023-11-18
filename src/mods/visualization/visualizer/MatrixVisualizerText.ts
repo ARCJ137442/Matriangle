@@ -6,9 +6,12 @@ import {
 	matrixV母体可视化,
 } from '../logic/textVisualizations'
 import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
-import MatrixVisualizer, {
+import MatrixVisualizer from './MatrixVisualizer'
+import {
 	NativeVisualizationTypeFlag,
-} from './MatrixVisualizer'
+	VisualizationOutputMessagePrefix,
+	packDisplayData,
+} from '../logic/abstractVisualization.type'
 import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
@@ -61,21 +64,34 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 	 *
 	 * @param matrix 母体
 	 * @param typeFlag 整数时是「地图每一格字符串长度」，字符串时回传其它特定信号
-	 * @returns 可视化信号（以文本形式表征）
+	 *
+	 * @returns {[string,string]} [可视化信号类型（文本/附加信息）, 可视化信号]
 	 */
-	public static getVisionSignal(matrix: IMatrix, typeFlag: TypeFlag): string {
+	public static getVisionSignal(
+		matrix: IMatrix,
+		typeFlag: TypeFlag
+	): [VisualizationOutputMessagePrefix, string] {
 		// ?【2023-11-18 17:09:40】可能以后还是要传递JSON，现在只是在偷懒
 		switch (typeFlag) {
 			// 附加信息
 			case NativeVisualizationTypeFlag.OTHER_INFORMATION:
-				return entityLV实体列表可视化(matrix.entities)
+				return [
+					VisualizationOutputMessagePrefix.OTHER_INFORMATION,
+					entityLV实体列表可视化(matrix.entities),
+				]
 			// 初始化、刷新都直接传输地图数据
 			case NativeVisualizationTypeFlag.INIT:
 			case NativeVisualizationTypeFlag.REFRESH:
-				return this.getVisionSignalMatrix(matrix, 6 /* 硬编码 */)
+				return [
+					VisualizationOutputMessagePrefix.TEXT,
+					this.getVisionSignalMatrix(matrix, 6 /* 硬编码 */),
+				]
 			// * 更复杂的数据解析
 			default:
-				return this.getVisionSignalMatrix(matrix, typeFlag)
+				return [
+					VisualizationOutputMessagePrefix.TEXT,
+					this.getVisionSignalMatrix(matrix, typeFlag),
+				]
 		}
 	}
 
@@ -85,13 +101,14 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 	 *   * 而非「附加信息」（此类信息往往不需要复杂的回应逻辑）
 	 *
 	 * @param matrix 母体
-	 * @param typeFlag 特定的「母体显示信号」
+	 * @param typeFlag 特定的「母体显示类型标签」
+	 * @returns 纯文本的「母体显示信号」
 	 */
 	public static getVisionSignalMatrix(
 		matrix: IMatrix,
 		typeFlag: TypeFlag
 	): string {
-		// 数值⇒地图可视化
+		// 数值/数值形式的字符串⇒地图可视化
 		if (typeof typeFlag === 'number')
 			return matrixV母体可视化(
 				matrix.map.storage,
@@ -133,10 +150,13 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 	 * * 未连接母体⇒空字串
 	 */
 	getSignal(message: string): string {
-		if (this.linkedMatrix === null) return ''
-		return MatrixVisualizerText.getVisionSignal(
-			this.linkedMatrix,
-			MatrixVisualizerText.parseTypeFlag(message)
-		)
+		return this.linkedMatrix === null
+			? ''
+			: packDisplayData(
+					...MatrixVisualizerText.getVisionSignal(
+						this.linkedMatrix,
+						MatrixVisualizerText.parseTypeFlag(message)
+					)
+			  )
 	}
 }

@@ -7,7 +7,6 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { int, uint, uint$MAX_VALUE, Class } from '../legacy/AS3Legacy'
-import { DisplayObject, DisplayObjectContainer } from '../legacy/flash/display'
 import * as exMath from './exMath'
 
 //============Math Methods============//
@@ -40,20 +39,6 @@ export function uintToPercent(value: uint): number {
  */
 export function percentToUint(value: number): uint {
 	return uint(value * uint$MAX_VALUE)
-}
-
-//============Display Methods============//
-export function removeChildIfContains(
-	parent: DisplayObjectContainer,
-	child: DisplayObject
-): void {
-	if (child !== null && parent.contains(child)) parent.removeChild(child)
-}
-
-export function clearChildren(container: DisplayObjectContainer): void {
-	while (container.numChildren > 0) {
-		container.removeChildAt(0)
-	}
 }
 
 //============Boolean Methods============//

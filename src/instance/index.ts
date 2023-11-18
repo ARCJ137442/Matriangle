@@ -1,2 +1,1 @@
-export * from './NARS-experiment';
-export * from './BaTS-Server';
+export * from './BaTS-Server'

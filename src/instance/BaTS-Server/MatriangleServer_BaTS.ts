@@ -37,7 +37,6 @@ import {
 	BonusType,
 } from 'matriangle-mod-bats/registry/BonusRegistry'
 import { iPoint } from 'matriangle-common/geometricTools'
-import MatrixVisualizerText from 'matriangle-mod-visualization/visualizer/MatrixVisualizerText'
 import BlockRandomTickDispatcher from 'matriangle-mod-bats/mechanics/programs/BlockRandomTickDispatcher'
 import { BATR_BLOCK_EVENT_MAP } from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
@@ -71,7 +70,8 @@ import { MatrixRules_Batr } from 'matriangle-mod-bats/rule/MatrixRules_Batr'
 import { linkToRouterLazy } from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 // 超参数/常量 //
-import config from './startupConfig.config'
+import config from './startup-BaTS.config'
+import MatrixVisualizer from 'matriangle-mod-visualization/visualizer/MatrixVisualizer'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -224,7 +224,7 @@ function setupPlayers(host: IMatrix): void {
 /** 配置可视化 */
 function setupVisualization(host: IMatrix): void {
 	// 可视化信号
-	const visualizer: MatrixVisualizerText = new MatrixVisualizerText(host)
+	const visualizer: MatrixVisualizer = config.visualizationConstructor(host)
 	// 连接
 	visualizer.linkToRouter(router, config.connections.visualization)
 

@@ -18,9 +18,15 @@
 			placeholder="输入FPS"
 			@keydown="onUpdateFPS"
 		/>
+		<button
+			@click="(): boolean => (isCustomDisplayCode = !isCustomDisplayCode)"
+		>
+			{{ isCustomDisplayCode ? '显示代码→' : '内置显示码' }}
+		</button>
 		<input
 			type="text"
 			v-model="displayCode"
+			v-show="isCustomDisplayCode"
 			placeholder="输入显示码(6 | player6@P2)"
 		/>
 	</div>
@@ -36,17 +42,27 @@ import ScreenCanvas from './ScreenCanvas.vue' // 需要被template引用
 // import { default as Screen } from './ScreenText.vue'
 // import ScreenText from './ScreenText.vue' // 需要被template引用
 import { VueElementRefNullable } from '../lib/common'
-import { NativeVisualizationTypeFlag } from '../../../../mods/visualization/visualizer/MatrixVisualizer'
+import {
+	NativeVisualizationTypeFlag,
+	unpackDisplayData,
+} from 'matriangle-mod-visualization/logic/abstractVisualization.type'
 
 // 屏显 //
 const screen: VueElementRefNullable<typeof Screen> = ref(null)
 
 // 控制参数 //
+/** 显示服务地址 */
 const displayAddress: Ref<string> = ref('127.0.0.1:8080')
+/** 上一次的地址 */
 let _lastAddress: string = displayAddress.value
+/** 屏显更新频率 */
 const screenFPS: Ref<string> = ref('10')
+/** （自定义）显示代码 */
 const displayCode: Ref<string> = ref('6')
+/** 心跳频率 */
 const HEART_BEAT_INTERVAL = 2000 // ! 太快的连接会导致频繁重连，发生连不上的情况
+/** 屏显「自定义显示代码/固定显示代码」 */
+const isCustomDisplayCode: Ref<boolean> = ref(false)
 // let screenIntervalID: any // 没法确认到底是Timeout、number还是其它什么类型
 
 /** 持续连接建立（只需一次） */
@@ -63,21 +79,7 @@ function requestAliveLink(): void {
 		displayAddress.value,
 		HEART_BEAT_INTERVAL,
 		/** 消息回调函数 */
-		(message: string): undefined => {
-			// console.log('displayMessageCallback_text: 收到消息', message)
-			// 若为「实体列表」⇒更新「附加信息」
-			if (message.startsWith('实体列表'))
-				self.updateDisplayScreen({
-					// screen:
-					otherInf: message,
-				})
-			// 否则⇒更新「屏显」
-			else
-				self.updateDisplayScreen({
-					screen: message,
-				})
-			return undefined
-		},
+		self.updateDisplayScreen,
 		/** 当屏显连接开启时 */
 		(): void => {
 			// 更新状态
@@ -134,8 +136,29 @@ function onFPSRefresh(newFPS: number): void {
 	if (FPSRefreshIntervalID !== undefined) clearInterval(FPSRefreshIntervalID)
 	// 更新
 	FPSRefreshIntervalID = setInterval((): void => {
-		// 先发一次「屏显更新」
-		emit('refresh', displayAddress.value, displayCode.value)
+		// 自定义显示码⇒使用`displayCode.value`
+		if (isCustomDisplayCode.value)
+			// 先发一次「屏显更新」
+			emit('refresh', displayAddress.value, displayCode.value)
+		// 否则⇒依据「显示屏是否已初始化」进行「初始化⇒更新」逻辑
+		else {
+			// 已初始化⇒更新
+			if (self.isScreenInited)
+				emit(
+					'refresh',
+					displayAddress.value,
+					NativeVisualizationTypeFlag.REFRESH
+				)
+			// 未初始化⇒初始化
+			else {
+				self.isScreenInited = true
+				emit(
+					'refresh',
+					displayAddress.value,
+					NativeVisualizationTypeFlag.INIT
+				)
+			}
+		}
 		// 再发一次「附加信息更新」
 		emit('refresh', displayAddress.value, otherInfMessage)
 	}, getMSfromFPS(newFPS))
@@ -150,10 +173,17 @@ const messageServiceConnectedText: Ref<string> = ref('未连接')
 const emit = defineEmits(['link-start', 'link-change', 'refresh'])
 const self = {
 	/**
-	 * 更新（文本）屏显
+	 * 显示屏是否已初始化
 	 */
-	updateDisplayScreen(data: { [key: string]: unknown }): void {
-		if (screen.value !== null) screen.value.update(data)
+	isScreenInited: false,
+	/**
+	 * 更新屏显
+	 * * 现在使用「抽象显示接口」统一进行解包操作
+	 */
+	updateDisplayScreen(message: string): void {
+		if (screen.value !== null)
+			// 自动解包
+			screen.value.update(unpackDisplayData(message))
 		else console.warn('屏显对象不存在！')
 	},
 	/**
@@ -191,3 +221,5 @@ input[type='text']::placeholder {
 	/* 文字颜色 */
 }
 </style>
+import { NativeVisualizationTypeFlag } from
+'matriangle-mod-visualization/visualizer/NativeVisualizationTypeFlag'

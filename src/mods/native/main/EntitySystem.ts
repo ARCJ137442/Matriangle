@@ -129,7 +129,7 @@ export default class EntitySystem
 
 	/**
 	 * @implements 收集
-	 */
+	 */ // TODO: 后续有待「动态清除」「待更新实体数据」
 	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataEntities> {
 		return this._displayDataToRefresh
 	}
@@ -139,7 +139,8 @@ export default class EntitySystem
 		uuid: uint,
 		entity: IEntityDisplayable<StateT>
 	): void {
-		this._displayDataInit[uuid] = entity.getDisplayDataInit()
+		this._displayDataInit[uuid] = this._displayDataToRefresh[uuid] =
+			entity.getDisplayDataInit()
 	}
 
 	// !【2023-11-18 16:26:46】「刷新实体数据」的功能已经被「实体」本身所包含了

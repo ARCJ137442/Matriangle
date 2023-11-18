@@ -1,9 +1,13 @@
 <!-- 用于旧有「纯文本显示」的功能 -->
 <template>
-	<!-- 文本屏显 -->
+	<!-- 画板屏显 -->
 	<canvas ref="canvas" id="canvas"></canvas>
+	<!-- 文本屏显 -->
+	<p class="screenText" v-show="screenText.length > 0">{{ screenText }}</p>
 	<!-- 附加信息 -->
-	<p class="otherInfText">{{ otherInfText }}</p>
+	<p class="otherInfText" v-show="otherInfText.length > 0">
+		{{ otherInfText }}
+	</p>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +23,7 @@ import {
 	test_draw,
 	test_mapDisplayer,
 } from '../lib/zim/DisplayImplementsClient_Zim'
+import { VisualizationOutputMessagePrefix } from 'matriangle-mod-visualization/logic/abstractVisualization.type'
 
 let frame: Frame
 let shapes: Shape[]
@@ -98,15 +103,11 @@ function updateCanvasSize(W: number, H: number): void {
 	console.log('画板尺寸更新：', [W, H])
 }
 
-// 类型定义
-type CanvasDisplayData = {
-	screen?: string
-	otherInf?: string
-}
-
 // 变量引用
 /** 屏显canvas */
 const canvas: Ref<HTMLCanvasElement | null> = ref(null)
+/** 「文本屏显」文本 */
+const screenText: Ref<string> = ref('') // ! 默认关
 /** 「附加信息」文本 */
 const otherInfText: Ref<string> = ref('附加信息：无信号。。。')
 
@@ -115,19 +116,45 @@ defineExpose({
 	/**
 	 * 根据数据更新
 	 *
-	 * @param data 数据
+	 * @param {[VisualizationOutputMessagePrefix, string] | null} data 数据
 	 */
-	update(data: CanvasDisplayData): void {
-		if (data?.screen !== undefined)
-			if (canvas.value === null)
-				console.warn('Canvas屏幕：未找到canvas！')
-			else canvasVisualize(canvas.value, data.screen)
-		if (data?.otherInf !== undefined) otherInfText.value = data.otherInf
+	update(data: [VisualizationOutputMessagePrefix, string] | null): void {
+		if (data === null) return
+		// 非空
+		switch (data[0]) {
+			// * 附加信息
+			case VisualizationOutputMessagePrefix.OTHER_INFORMATION:
+				otherInfText.value = data[1]
+				break
+			// * 画板
+			case VisualizationOutputMessagePrefix.CANVAS_DATA:
+				if (canvas.value === null)
+					console.warn('Canvas屏幕：未找到canvas！')
+				else if (frame === null)
+					console.warn('Canvas屏幕：未找到frame！')
+				else canvasVisualize(frame, /* canvas.value, */ data[1])
+				break
+			// * 文本……也支持
+			case VisualizationOutputMessagePrefix.TEXT:
+				screenText.value = data[1]
+				break
+			// * 其它
+			default:
+				console.warn('未知的消息类型！', data)
+		}
 	},
 })
 </script>
 
 <style scoped>
+/* 文本屏显 */
+.screenText {
+	/* 保留空格 */
+	white-space: pre;
+	/* 等宽字体 */
+	font-family: Consolas, Monaco, 'Courier New', monospace;
+	font-size: smaller;
+}
 /* 附加信息 */
 .otherInfText {
 	/* 保留空格 */

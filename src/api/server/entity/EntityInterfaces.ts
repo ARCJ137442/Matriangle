@@ -19,8 +19,8 @@ import Entity from './Entity'
 import {
 	IDisplayDataEntity,
 	IDisplayDataEntityState,
-	IDisplayProxyEntity,
 } from '../../display/RemoteDisplayAPI'
+import { IDisplayProxyEntity } from '../../display/DisplayProxies'
 
 /**
  * 「有坐标实体」是

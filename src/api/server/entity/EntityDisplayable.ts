@@ -1,13 +1,15 @@
 import { OptionalRecursive2 } from 'matriangle-common'
 import {
-	DisplayProxyEntity,
 	IDisplayDataEntity,
 	IDisplayDataEntityState,
-	IDisplayProxyEntity,
 } from '../../display/RemoteDisplayAPI'
 import Entity from './Entity'
 import { IEntityDisplayable } from './EntityInterfaces'
 import { typeID } from '../registry/IWorldRegistry'
+import {
+	DisplayProxyEntity,
+	IDisplayProxyEntity,
+} from '../../display/DisplayProxies'
 
 /**
  * 「可显示实体」的一个默认实现
