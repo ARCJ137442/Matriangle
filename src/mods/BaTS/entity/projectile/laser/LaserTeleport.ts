@@ -8,6 +8,7 @@ import LaserBasic from './LaserBasic'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { spreadPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「传送激光」
@@ -16,7 +17,9 @@ import { spreadPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechan
  * * + 传送处于其上的「非所有者实体」到地图随机地点
  */
 export default class LaserTeleport extends Laser {
-	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'LaserTeleport'
+
 	public static readonly LIFE: number = FIXED_TPS * 0.5
 	public static readonly SIZE: number = DEFAULT_SIZE / 4
 
@@ -32,6 +35,7 @@ export default class LaserTeleport extends Laser {
 		extraDamageCoefficient: uint
 	) {
 		super(
+			LaserTeleport.ID,
 			owner,
 			position,
 			direction,

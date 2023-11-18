@@ -5,6 +5,7 @@ import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
 import Effect from './Effect'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { typeID } from 'matriangle-api'
 
 /**
  * 爆炸特效
@@ -12,6 +13,8 @@ import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
  * * 用于表现（子弹的）爆炸
  */
 export default class EffectExplode extends Effect {
+	/** ID */
+	public static readonly ID: typeID = 'EffectExplode'
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Constructor & Destructor============//
@@ -30,7 +33,7 @@ export default class EffectExplode extends Effect {
 		 */
 		public readonly color: uint = EffectExplode.DEFAULT_COLOR
 	) {
-		super(position, TPS * 0.25)
+		super(EffectExplode.ID, position, TPS * 0.25)
 	}
 
 	//============Display Implements============//

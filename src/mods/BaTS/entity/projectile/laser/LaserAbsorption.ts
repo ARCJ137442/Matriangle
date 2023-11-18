@@ -7,6 +7,7 @@ import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import LaserBasic from './LaserBasic'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「吸收激光」
@@ -17,6 +18,9 @@ import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
  */
 export default class LaserAbsorption extends Laser {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'LaserAbsorption'
+
 	public static readonly LIFE: number = 2 * FIXED_TPS // 生命周期：2s
 	public static readonly SIZE: number = DEFAULT_SIZE / 4
 	public static readonly SCALE_V: number = 1 / 4
@@ -43,6 +47,7 @@ export default class LaserAbsorption extends Laser {
 		extraDamageCoefficient: uint
 	) {
 		super(
+			LaserAbsorption.ID,
 			owner,
 			position,
 			direction,

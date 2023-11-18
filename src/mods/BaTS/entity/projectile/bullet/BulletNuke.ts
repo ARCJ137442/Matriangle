@@ -7,6 +7,7 @@ import Bullet from './Bullet'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「核弹」
@@ -16,6 +17,9 @@ import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
  */
 export default class BulletNuke extends Bullet {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'BulletNuke'
+
 	public static readonly SIZE: number = logical2Real(1 / 2)
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00
@@ -38,6 +42,7 @@ export default class BulletNuke extends Bullet {
 		finalExplodeRadius: number
 	) {
 		super(
+			BulletNuke.ID,
 			owner,
 			position,
 			direction,

@@ -8,6 +8,7 @@ import {
 import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { BlockEventType_Batr } from '../../registry/BlockEventRegistry_Batr'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「方块随机刻分派者」是
@@ -23,6 +24,8 @@ export default class BlockRandomTickDispatcher
 	extends MatrixProgram
 	implements IEntityActive
 {
+	/** ID */
+	public static readonly ID: typeID = 'BlockRandomTickDispatcher'
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'BlockRandomTickDispatch'
 
@@ -30,7 +33,7 @@ export default class BlockRandomTickDispatcher
 	public constructor(
 		label: MatrixProgramLabel = BlockRandomTickDispatcher.LABEL
 	) {
-		super(label)
+		super(BlockRandomTickDispatcher.ID, label)
 	}
 
 	/**

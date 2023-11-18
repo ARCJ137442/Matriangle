@@ -12,12 +12,16 @@ import {
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import Tool from '../../../tool/Tool'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 export default class ShockWaveDrone
 	extends Projectile
 	implements IEntityInGrid
 {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'ShockWaveDrone'
+
 	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE / 2
 
@@ -52,7 +56,13 @@ export default class ShockWaveDrone
 		toolExtraDamageCoefficient: uint,
 		toolChargePercent: number
 	) {
-		super(owner, toolDamage, toolExtraDamageCoefficient, moveDirection)
+		super(
+			ShockWaveDrone.ID,
+			owner,
+			toolDamage,
+			toolExtraDamageCoefficient,
+			moveDirection
+		)
 		this._position.copyFrom(position)
 		this._tool = tool
 		this._weaponChargePercent = toolChargePercent

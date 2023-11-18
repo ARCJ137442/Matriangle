@@ -30,11 +30,8 @@ import {
 import Block from 'matriangle-api/server/block/Block'
 import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import Entity from 'matriangle-api/server/entity/Entity'
-import {
-	IEntityDisplayable,
-	IEntityInGrid,
-} from 'matriangle-api/server/entity/EntityInterfaces'
-import { IShape, DisplayLevel } from 'matriangle-api'
+import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
+import { DisplayLevel, typeID } from 'matriangle-api'
 import {
 	getPlayers,
 	hitTestEntity_between_Grid,
@@ -45,6 +42,8 @@ import {
 	isActionMoveForward,
 	toRotFromActionMoveForward,
 } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
+import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -98,7 +97,7 @@ export const info = (config: NARSEnvConfig): string => `
  */
 export const WALL: Block<null> = new Block(
 	'Wall',
-	new BlockAttributes(0).asSolid,
+	new BlockAttributes(0).loadAsSolid(),
 	null // 无特殊方块状态
 )
 
@@ -106,9 +105,14 @@ export const WALL: Block<null> = new Block(
  * 实验所用的「能量包」
  */
 export class Powerup
-	extends Entity
-	implements IEntityInGrid, IEntityDisplayable
+	extends EntityDisplayable<IDisplayDataEntityState>
+	// *【2023-11-18 10:43:14】现在直接继承，无需直接处理细节
+	implements IEntityInGrid
 {
+	// TODO: 后续完善泛型类型（实体显示状态）
+	/** ID */
+	public static readonly ID: typeID = 'Powerup'
+
 	/**
 	 * 构造函数
 	 * @param position 所处的位置
@@ -123,7 +127,7 @@ export class Powerup
 		 */
 		public good: boolean
 	) {
-		super()
+		super(Powerup.ID)
 		this.position.copyFrom(position)
 	}
 
@@ -203,16 +207,6 @@ export class Powerup
 	}
 
 	// 可显示
-	i_displayableContainer = true as const
-	displayInit(shape: IShape): void {
-		// !【2023-11-06 16:10:28】暂不实现
-	}
-	shapeRefresh(shape: IShape): void {
-		// !【2023-11-06 16:10:28】暂不实现
-	}
-	displayDestruct(shape: IShape): void {
-		// !【2023-11-06 16:10:28】暂不实现
-	}
 	i_displayable = true as const
 	/** @implements 显示层级 = 奖励箱 */
 	zIndex: int = DisplayLevel.BONUS_BOX

@@ -6,6 +6,7 @@ import Laser from './Laser'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「基础激光」
@@ -15,6 +16,9 @@ import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
  */
 export default class LaserBasic extends Laser {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'LaserBasic'
+
 	public static readonly LIFE: number = FIXED_TPS // ! 默认存活时间：1s
 	public static readonly WIDTH: number = DEFAULT_SIZE / 2 // ! 默认宽度：半格
 	public static readonly LENGTH: uint = 32 // ! 默认长度：32格
@@ -32,6 +36,7 @@ export default class LaserBasic extends Laser {
 		chargePercent: number = 1
 	) {
 		super(
+			LaserBasic.ID,
 			owner,
 			position,
 			direction,

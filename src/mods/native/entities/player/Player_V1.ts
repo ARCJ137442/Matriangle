@@ -30,6 +30,7 @@ import {
 import { omega } from 'matriangle-common'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+import { typeID } from 'matriangle-api'
 
 /**
  * 有关玩家的「自定义显示数据」
@@ -60,6 +61,11 @@ export default class Player_V1<
 	implements IPlayer
 {
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
+	/**
+	 * 非共用ID
+	 * * 其它特定类型的「玩家」统一前缀「Player」即可
+	 */
+	public static readonly ID: typeID = 'Player'
 
 	// 判断「是玩家」标签
 	public readonly i_isPlayer = true as const
@@ -72,21 +78,33 @@ export default class Player_V1<
 	 * * 填充颜色：渐变（1x亮度→3/4*亮度）
 	 * * 线条颜色：0.5/亮度
 	 *
-	 * @param position 整数位置
-	 * @param direction 方向
-	 * @param team 队伍
-	 * @param isActive （创建时是否已激活）
-	 * @param fillColor 填充颜色（默认为队伍颜色）
-	 * @param lineColor 线条颜色（默认从队伍颜色中产生）
+	 * !【2023-11-18 10:33:11】现在使用配置作为可选参数
+	 *
+	 * @param id 实体ID（默认为'Player'，一般只在子类的`super`中调用）
+	 * @param position 整数位置（必选）
+	 * @param direction 方向（默认为x+）
+	 * @param isActive （创建时是否已激活（默认已激活）
+	 * @param fillColor 填充颜色（默认为白色）
+	 * @param lineColor 线条颜色（默认为50%灰）
 	 */
-	public constructor(
-		position: iPoint,
-		direction: mRot,
-		isActive: boolean,
-		fillColor: number,
-		lineColor: number
-	) {
-		super()
+	public constructor(args: {
+		id?: typeID // * 默认值即为'Player'，一般是在其子类的构造函数中传入
+		position: iPoint
+		direction?: mRot
+		isActive?: boolean
+		fillColor?: uint
+		lineColor?: uint
+	}) {
+		const {
+			id = Player_V1.ID,
+			position,
+			direction = 0,
+			isActive = true,
+			fillColor = 0xffffff,
+			lineColor = 0x808080,
+		} = args
+
+		super(id)
 		this._isActive = isActive
 
 		// 有方向实体 & 格点实体 // ! 这里统一使用内部变量，不使用setter

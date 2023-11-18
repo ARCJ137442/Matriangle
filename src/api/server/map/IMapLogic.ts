@@ -3,9 +3,9 @@ import {
 	fPointRef,
 	iPoint,
 	iPointRef,
-} from '../../../common/geometricTools'
+} from 'matriangle-common/geometricTools'
 import { mRot } from '../general/GlobalRot'
-import { int, uint } from '../../../legacy/AS3Legacy'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import BlockAttributes from '../block/BlockAttributes'
 import IMapStorage from './IMapStorage'
 import { IEntityInGrid, IEntityOutGrid } from '../entity/EntityInterfaces'

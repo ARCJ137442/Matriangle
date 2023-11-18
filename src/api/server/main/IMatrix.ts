@@ -2,7 +2,9 @@
 import Entity from '../entity/Entity'
 import IMatrixRule from '../rule/IMatrixRule'
 import IWorldRegistry from '../registry/IWorldRegistry'
-import { voidF } from '../../../common/utils'
+import { voidF } from 'matriangle-common/utils'
+import { IDisplayable } from '../../display/DisplayInterfaces'
+import { IDisplayDataMatrix } from '../../display/RemoteDisplayAPI'
 
 /**
  * 母体：承载并控制所有「世界运行」有关的事物
@@ -18,7 +20,7 @@ import { voidF } from '../../../common/utils'
  * * 客户端：类似Minecraft，世界只有一部分机制运行于此上（仅为流畅考虑）
  *   * 用于「呈现远程服务端运行结果」「与服务端进行交互同步」
  */
-export default interface IMatrix {
+export default interface IMatrix extends IDisplayable<IDisplayDataMatrix> {
 	/**
 	 * 持有一个「注册表引用」，用于在分派事件时查表
 	 */

@@ -6,11 +6,15 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import Bullet from './Bullet'
+import { typeID } from 'matriangle-api'
 
 /**
  * 普通子弹
  */
 export default class BulletBasic extends Bullet {
+	/** ID */
+	public static readonly ID: typeID = 'BulletBasic'
+
 	/** 默认的子弹飞行速度（格/秒） */
 	public static readonly DEFAULT_SPEED: number = 16 / FIXED_TPS
 	/** 默认的子弹爆炸半径（格） */
@@ -38,6 +42,7 @@ export default class BulletBasic extends Bullet {
 		finalExplodeRadius: number = BulletBasic.DEFAULT_EXPLODE_RADIUS
 	) {
 		super(
+			BulletBasic.ID,
 			owner,
 			position,
 			direction,

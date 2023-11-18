@@ -1,5 +1,5 @@
-import I18nText from './I18nText.ts_depreceted'
-import I18ns from './I18ns.ts_depreceted'
+import I18nText from './I18nText.ts_deprecated'
+import I18ns from './I18ns.ts_deprecated'
 
 /**
  * ...

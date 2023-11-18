@@ -11,6 +11,7 @@ import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
 import Entity from 'matriangle-api/server/entity/Entity'
+import { typeID } from 'matriangle-api'
 
 /**
  * 返回的类型标识
@@ -26,8 +27,10 @@ type TypeFlag = uint | string
  * TODO: 或许需要把「实体列表」独立出来，并且封装出一个可用的「服务器对象」以便复用WS服务
  */
 export default class MatrixVisualizerText extends MatrixVisualizer {
+	/** ID */
+	public static readonly ID: typeID = 'MatrixVisualizerText'
 	/** 标签 */
-	public static readonly LABEL: MatrixProgramLabel = 'Visualizer:Matrix'
+	public static readonly LABEL: MatrixProgramLabel = 'Visualizer:Matrix@text'
 
 	// 构造函数&析构函数 //
 	public constructor(
@@ -36,7 +39,7 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 		 */
 		public linkedMatrix: IMatrix | null = null
 	) {
-		super(MatrixVisualizerText.LABEL)
+		super(MatrixVisualizerText.ID, MatrixVisualizerText.LABEL)
 	}
 
 	// 母体可视化部分 //

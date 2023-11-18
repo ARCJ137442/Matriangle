@@ -5,8 +5,14 @@ import IMap from 'matriangle-api/server/map/IMap'
 import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
-import { Val, isDefined, voidF } from 'matriangle-common/utils'
+import {
+	OptionalRecursive2,
+	Val,
+	isDefined,
+	voidF,
+} from 'matriangle-common/utils'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
+import { IDisplayDataMatrix } from 'matriangle-api/display/RemoteDisplayAPI'
 
 /**
  * 母体的第一代实现
@@ -31,6 +37,19 @@ export default class Matrix_V1 implements IMatrix {
 		// 第一个地图 // !【2023-10-08 22:30:51】现在对地图进行深拷贝，而非复用原先的地图
 		this._currentMap = initialMap
 		// this.isActive = active; // ? 【2023-10-04 23:22:21】为何要「是否激活」呢
+	}
+
+	// 可显示：呈递显示数据 //
+	readonly i_displayable = true as const
+
+	getDisplayDataInit(): IDisplayDataMatrix {
+		return {
+			map: this.map.getDisplayDataInit(),
+			entities: this._entitySystem.getDisplayDataInit(),
+		}
+	}
+	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
+		throw new Error('Method not implemented.')
 	}
 
 	reset(): boolean {
@@ -104,7 +123,9 @@ export default class Matrix_V1 implements IMatrix {
 
 	//========🕹️控制部分：主循环========//
 	tick(): void {
-		// 实体刻 // !【2023-10-12 17:36:58】现在只需遍历其中的「（轻量级）活跃实体」 // !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
+		// 实体刻 // !【2023-10-12 17:36:58】现在只需遍历其中的「（轻量级）活跃实体」
+		// !【2023-10-07 21:10:37】目前删除了「方块随机刻」，交给其中一个「程序」管理
+		// !【2023-11-18 09:29:58】不能将其内置到「实体系统」中：这样会**循环导入**的
 		for (const entity of this._entitySystem.entriesActive)
 			if (entity.isActive) entity.onTick(this)
 		for (const entity of this._entitySystem.entriesActiveLite)

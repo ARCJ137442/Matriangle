@@ -13,6 +13,7 @@ import Projectile from '../Projectile'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「子弹」是
@@ -48,6 +49,7 @@ export default abstract class Bullet
 
 	//============Constructor & Destructor============//
 	public constructor(
+		id: typeID,
 		owner: IPlayer | null,
 		position: fPoint,
 		direction: mRot,
@@ -56,7 +58,7 @@ export default abstract class Bullet
 		speed: number,
 		finalExplodeRadius: number
 	) {
-		super(owner, attackerDamage, extraDamageCoefficient, direction)
+		super(id, owner, attackerDamage, extraDamageCoefficient, direction)
 		this.speed = speed
 		this._position.copyFrom(position)
 

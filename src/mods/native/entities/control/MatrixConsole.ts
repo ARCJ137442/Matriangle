@@ -1,4 +1,4 @@
-import { MatrixProgram, MatrixProgramLabel } from 'matriangle-api'
+import { MatrixProgram, MatrixProgramLabel, typeID } from 'matriangle-api'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 
 type CmdExecuter = (...params: string[]) => unknown
@@ -13,7 +13,9 @@ type CmdExecuter = (...params: string[]) => unknown
  * !【2023-11-10 20:29:01】指令中可能包含`eval`，若不明其效果可能造成运行时错误
  */
 export default class ProgramMatrixConsole extends MatrixProgram {
-	/** 程序标签 */
+	/** ID */
+	public static readonly ID: typeID = 'MatrixConsole'
+	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'MatrixConsole'
 
 	/**
@@ -26,7 +28,7 @@ export default class ProgramMatrixConsole extends MatrixProgram {
 		public readonly host: IMatrix
 	) {
 		// 超类初始化 //
-		super(ProgramMatrixConsole.LABEL)
+		super(ProgramMatrixConsole.ID, ProgramMatrixConsole.LABEL)
 		// 内置指令集 //
 		this.cmdOperationSet = new Map([
 			// * 元指令：定义「指令处理函数」

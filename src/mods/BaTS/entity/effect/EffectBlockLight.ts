@@ -5,6 +5,7 @@ import Effect from './Effect'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
+import { typeID } from 'matriangle-api'
 
 /**
  * 方块光效
@@ -12,6 +13,8 @@ import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
  * * 用于提示方块的变化
  */
 export default class EffectBlockLight extends Effect {
+	/** ID */
+	public static readonly ID: typeID = 'EffectBlockLight'
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
@@ -86,7 +89,7 @@ export default class EffectBlockLight extends Effect {
 		reverse: boolean = false,
 		LIFE: uint = EffectBlockLight.MAX_LIFE
 	) {
-		super(position, LIFE)
+		super(EffectBlockLight.ID, position, LIFE)
 		this._color = color
 		this._alpha = alpha
 		this._alphaFunction = reverse

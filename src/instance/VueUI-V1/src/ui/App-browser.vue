@@ -48,7 +48,7 @@ import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { voidF } from '../../../../common'
+import { voidF } from 'matriangle-common'
 import { DirectService } from 'matriangle-mod-message-io-api/services/DirectService'
 
 // diff //

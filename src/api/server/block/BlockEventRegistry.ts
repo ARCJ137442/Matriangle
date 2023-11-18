@@ -4,7 +4,7 @@
 	BlockEventType,
 } from './BlockEventTypes'
 import { typeID } from '../registry/IWorldRegistry'
-import { mergeObject } from '../../../common/utils'
+import { mergeObject } from 'matriangle-common/utils'
 
 /**
  * 方块事件注册表

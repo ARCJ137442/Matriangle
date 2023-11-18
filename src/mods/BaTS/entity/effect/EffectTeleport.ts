@@ -3,6 +3,7 @@ import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import Effect2BlockContainer from './Effect2BlockContainer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 传送
@@ -11,11 +12,14 @@ import Effect2BlockContainer from './Effect2BlockContainer'
  */
 export default class EffectTeleport extends Effect2BlockContainer {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'EffectTeleport'
+
 	public static readonly LIFE: uint = FIXED_TPS
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, scale: number = EffectTeleport.SCALE) {
-		super(position, EffectTeleport.LIFE, scale)
+		super(EffectTeleport.ID, position, EffectTeleport.LIFE, scale)
 		this.maxScale = scale
 	}
 

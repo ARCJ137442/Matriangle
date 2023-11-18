@@ -54,7 +54,7 @@ import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { voidF } from '../../../../common'
+import { voidF } from 'matriangle-common'
 
 // diff //
 const router: VueElementRefNullable<typeof MessageCenter> = ref(null)

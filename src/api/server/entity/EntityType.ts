@@ -1,5 +1,5 @@
 ﻿import { DisplayLevel } from '../../display/DisplayInterfaces'
-import { Class, int } from '../../../legacy/AS3Legacy'
+import { Class, int } from 'matriangle-legacy/AS3Legacy'
 import TypeCommon from '../template/TypeCommon'
 
 /**

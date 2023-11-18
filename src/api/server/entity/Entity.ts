@@ -1,4 +1,4 @@
-import { getClass } from '../../../common/utils'
+import { typeID } from '../registry/IWorldRegistry'
 
 /**
  * @author ARCJ137442
@@ -29,11 +29,25 @@ export default abstract class Entity {
 
 	// 对接JS API //
 	public toString(): string {
-		return `[Entity ${getClass(this)?.name} isActive=${this._isActive}]`
+		return `[Entity ${this._id} isActive=${this._isActive}]`
+	}
+
+	// id化 //
+	/**
+	 * 「实体ID/实体类型」
+	 * * 用于确定不同类实现的实体
+	 *   * 📌类构造中的体现：抽象传递，具体定值
+	 *     * 抽象类的构造函数需要`id`作为参数向下传递
+	 *     * 具体类的构造函数直接传递**固定常量**
+	 * * 和「方块」不同，复用逻辑代码较多的实体，仍然采用「类继承」的结构
+	 * * 「实体ID」在此和「实体类型的名称」是一个意思，不同于`EntityType`对象
+	 */
+	public get id(): typeID {
+		return this._id
 	}
 
 	//============Constructor & Destructor============//
-	public constructor() {
+	public constructor(protected readonly _id: typeID /*  = '#undef' */) {
 		// 构造时自动激活（可被覆盖）
 		this._isActive = true
 	}

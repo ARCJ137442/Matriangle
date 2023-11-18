@@ -1,3 +1,4 @@
+import { typeID } from 'matriangle-api'
 import {
 	MatrixProgram,
 	MatrixProgramLabel,
@@ -25,6 +26,8 @@ export default class ProgramAgent
 	extends MatrixProgram
 	implements IEntityActive
 {
+	/** ID */
+	public static readonly ID: typeID = 'ProgramAgent' // ? 是否要统一加上「Program」前缀
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'AGENT' as const
 
@@ -70,7 +73,7 @@ export default class ProgramAgent
 			target: Entity
 		) => void = ProgramAgent.DEFAULT_WEAPON
 	) {
-		super(ProgramAgent.LABEL)
+		super(ProgramAgent.ID, ProgramAgent.LABEL)
 	}
 
 	// 活跃实体 //

@@ -21,7 +21,7 @@ import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import {
 	listE列举实体,
 	matrixV母体可视化,
-} from '../../mods/visualization/logic/textVisualizations'
+} from 'matriangle-mod-visualization/logic/textVisualizations'
 import {
 	TICK_TIME_MS,
 	TPS,
@@ -37,7 +37,7 @@ import {
 	BonusType,
 } from 'matriangle-mod-bats/registry/BonusRegistry'
 import { iPoint } from 'matriangle-common/geometricTools'
-import MatrixVisualizerText from '../../mods/visualization/visualizer/MatrixVisualizerText'
+import MatrixVisualizerText from 'matriangle-mod-visualization/visualizer/MatrixVisualizerText'
 import BlockRandomTickDispatcher from 'matriangle-mod-bats/mechanics/programs/BlockRandomTickDispatcher'
 import { BATR_BLOCK_EVENT_MAP } from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
@@ -54,14 +54,14 @@ import IMap from 'matriangle-api/server/map/IMap'
 import { stackMaps } from './stackedMaps'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import { ProgramMessageRouter } from 'matriangle-mod-message-io-api/MessageRouter'
-import WebController from '../../mods/webIO/controller/WebController'
+import WebController from 'matriangle-mod-web-io/controller/WebController'
 import KeyboardControlCenter, {
 	generateBehaviorFromPlayerConfig,
 } from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
 import ProgramAgent from '../../mods/TMatrix/program/Agent'
+import ProgramMerovingian from '../../mods/TMatrix/program/Merovingian'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { i_hasPosition } from 'matriangle-api/server/entity/EntityInterfaces'
-import ProgramMerovingian from '../../mods/TMatrix/program/Merovingian'
 import { isPlayer } from 'matriangle-mod-native/entities/player/IPlayer'
 import { MatrixProgram } from 'matriangle-api/server/control/MatrixProgram'
 import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'

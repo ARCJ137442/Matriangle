@@ -9,6 +9,7 @@ import {
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+import { typeID } from 'matriangle-api'
 
 /**
  * 特效通用的「附加显示状态」
@@ -46,6 +47,7 @@ export default abstract class Effect
 	 * @param LIFE 最大生命时长
 	 */
 	public constructor(
+		id: typeID,
 		position: fPoint,
 		/**
 		 * 当前的「初始/最大 生命时长」
@@ -54,7 +56,7 @@ export default abstract class Effect
 		 */
 		public readonly LIFE: uint
 	) {
-		super()
+		super(id)
 		this._position.copyFrom(position)
 		this._life = this.LIFE
 	}

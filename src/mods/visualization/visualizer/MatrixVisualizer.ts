@@ -8,6 +8,7 @@ import {
 	IMessageService,
 	MessageCallback,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「母体可视化者」是
@@ -17,8 +18,8 @@ import {
  */
 export default abstract class MatrixVisualizer extends MatrixProgram {
 	// 构造函数&析构函数 //
-	public constructor(label: MatrixProgramLabel) {
-		super(label)
+	public constructor(id: typeID, label: MatrixProgramLabel) {
+		super(id, label)
 	}
 
 	// 可视化部分 //

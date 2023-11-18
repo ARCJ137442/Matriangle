@@ -14,6 +14,7 @@ import IPlayerHasTeam from '../player/IPlayerHasTeam'
 import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+import { typeID } from 'matriangle-api'
 
 export interface IDisplayDataStateProjectile extends IDisplayDataEntityState {
 	// TODO: 有待扩充
@@ -133,12 +134,13 @@ export default abstract class Projectile
 
 	//============Constructor & Destructor============//
 	public constructor(
+		id: typeID,
 		owner: IPlayer | null,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint,
 		direction: mRot
 	) {
-		super()
+		super(id)
 		this._owner = owner
 		this._attackerDamage = attackerDamage
 		this._extraResistanceCoefficient = extraDamageCoefficient

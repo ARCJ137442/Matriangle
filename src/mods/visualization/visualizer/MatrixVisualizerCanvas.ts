@@ -10,6 +10,7 @@ import {
 	canvasV母体数据可视化_全局,
 	canvasV母体数据可视化_视角,
 } from '../logic/canvasVisualizations'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「文本母体可视化者」是
@@ -20,8 +21,11 @@ import {
  * TODO: 或许需要把「实体列表」独立出来，并且封装出一个可用的「服务器对象」以便复用WS服务
  */
 export default class MatrixVisualizerCanvas extends MatrixVisualizer {
+	/** ID */
+	public static readonly ID: typeID = 'MatrixVisualizerCanvas'
 	/** 标签 */
-	public static readonly LABEL: MatrixProgramLabel = 'Visualizer:Matrix'
+	public static readonly LABEL: MatrixProgramLabel =
+		'Visualizer:Matrix@canvas'
 
 	// 用于区分「消息用途」的前缀
 	/** 「附加信息」的前缀 */
@@ -36,7 +40,7 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 		 */
 		public linkedMatrix: IMatrix | null = null
 	) {
-		super(MatrixVisualizerCanvas.LABEL)
+		super(MatrixVisualizerCanvas.ID, MatrixVisualizerCanvas.LABEL)
 	}
 
 	// 母体可视化部分 //

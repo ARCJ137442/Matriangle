@@ -1,4 +1,4 @@
-import { IJSObjectifiable } from '../../../common/JSObjectify'
+import { IJSObjectifiable } from 'matriangle-common/JSObjectify'
 import IMapLogic from './IMapLogic'
 import IMapStorage from './IMapStorage'
 

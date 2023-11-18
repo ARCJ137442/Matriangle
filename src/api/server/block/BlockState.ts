@@ -2,9 +2,9 @@ import {
 	IJSObjectifiable,
 	JSObject,
 	JSObjectifyMap,
-} from '../../../common/JSObjectify'
-import { OptionalRecursive, key } from '../../../common/utils'
-import { uint } from '../../../legacy/AS3Legacy'
+} from 'matriangle-common/JSObjectify'
+import { OptionalRecursive, key } from 'matriangle-common/utils'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import BlockAttributes from './BlockAttributes'
 
 /**

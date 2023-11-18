@@ -19,6 +19,7 @@ import {
 import Tool from '../../../tool/Tool'
 import { i_hasAttributes } from '../../player/IPlayerHasAttributes'
 import Projectile from '../Projectile'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「激光」是
@@ -44,6 +45,7 @@ export default abstract class Laser
 
 	//============Constructor & Destructor============//
 	public constructor(
+		id: typeID,
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
@@ -54,6 +56,7 @@ export default abstract class Laser
 		chargePercent: number = 1 // * 没有「充能机制」就是「完全充能」
 	) {
 		super(
+			id,
 			owner,
 			uint(attackerDamage * chargePercent), // ?【2023-10-15 12:39:29】这里的计算可能会被`initFromToolNAttributes`覆盖掉
 			extraDamageCoefficient,

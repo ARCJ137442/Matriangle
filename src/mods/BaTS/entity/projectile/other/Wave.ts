@@ -11,6 +11,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { waveHurtPlayers } from '../../../mechanics/BatrMatrixMechanics'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「波浪」
@@ -25,6 +26,9 @@ export default class Wave
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'Wave'
+
 	public static readonly SIZE: number = DEFAULT_SIZE
 	public static readonly ALPHA: number = 0.64
 	public static readonly DEFAULT_SPEED: number = 24 / FIXED_TPS
@@ -100,6 +104,7 @@ export default class Wave
 		const tempScale =
 			Wave.MIN_SCALE + (Wave.MAX_SCALE - Wave.MIN_SCALE) * chargePercent
 		super(
+			Wave.ID,
 			owner,
 			attackerDamage * (tempScale / Wave.MAX_SCALE),
 			toolExtraDamageCoefficient,

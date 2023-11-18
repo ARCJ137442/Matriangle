@@ -4,7 +4,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
 import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
-import { sparseMapMV稀疏地图母体可视化 } from '../../mods/visualization/logic/textVisualizations'
+import { sparseMapMV稀疏地图母体可视化 } from 'matriangle-mod-visualization/logic/textVisualizations'
 
 /**
  * 用于测试「一个母体，异维地图」

@@ -3,10 +3,10 @@ import EntityType from '../server/registry/EntityRegistry'
 import Tool from '../server/registry/Tool'
 import GameModeType from '../../../server/rule/WorldModeType'
 import {MatrixRules_Batr} from '../../../server/mods/native/rule/MatrixRuleBatr'
-import { uint } from '../../../legacy/AS3Legacy'
-import ForcedI18nText from './ForcedI18nText.ts_depreceted'
+import { uint } from 'matriangle-AS3Legacy'
+import ForcedI18nText from './ForcedI18nText.ts_deprecated'
 import I18nKey from './I18nKey'
-import I18ns from './I18ns.ts_depreceted'
+import I18ns from './I18ns.ts_deprecated'
 
 export default class I18nText {
 	//============Static Variables============//

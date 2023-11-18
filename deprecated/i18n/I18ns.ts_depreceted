@@ -1,6 +1,6 @@
-import { int, uint } from '../../../legacy/AS3Legacy'
-import * as DefaultNativeI18ns from './DefaultNativeI18ns.ts_depreceted'
-import * as getDefaultI18n from './getDefaultI18n.ts_depreceted'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
+import * as DefaultNativeI18ns from './DefaultNativeI18ns.ts_deprecated'
+import * as getDefaultI18n from './getDefaultI18n.ts_deprecated'
 
 export default class I18ns {
 	//============Static Variables============//

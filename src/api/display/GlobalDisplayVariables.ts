@@ -1,6 +1,6 @@
 // import MainFont from './fonts.deprecated/MainFont'
-import { uint } from '../../legacy/AS3Legacy'
-// import { Font } from '../../legacy/flash/text'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+// import { Font } from 'matriangle-legacy/flash/text'
 
 // export const MAIN_FONT: Font = new MainFont()
 

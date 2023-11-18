@@ -11,6 +11,7 @@ import {
 	toOpposite_M,
 } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「脉冲激光」
@@ -20,6 +21,9 @@ import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
  */
 export default class LaserPulse extends Laser {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'LaserPulse'
+
 	public static readonly LIFE: number = FIXED_TPS * 0.25
 	public static readonly SIZE: number = DEFAULT_SIZE / 4
 	public static readonly ALPHA: number = 1 / 0.75
@@ -42,6 +46,7 @@ export default class LaserPulse extends Laser {
 		isPull: boolean
 	) {
 		super(
+			LaserPulse.ID,
 			owner,
 			position,
 			direction,

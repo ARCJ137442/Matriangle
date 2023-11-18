@@ -1,5 +1,5 @@
-﻿import { IJSObjectifiable } from '../../../common/JSObjectify'
-import { key } from '../../../common/utils'
+﻿import { IJSObjectifiable } from 'matriangle-common/JSObjectify'
+import { key } from 'matriangle-common/utils'
 
 /**
  * 定义统一、可扩展的「世界规则」接口

@@ -14,6 +14,7 @@ import {
 	PlayerAction,
 } from '../../entities/player/controller/PlayerAction'
 import IPlayer from '../../entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 有关「按下一个按键对应的行为」
@@ -293,6 +294,8 @@ export default class KeyboardControlCenter
 	extends MatrixProgram
 	implements IEntityActiveLite
 {
+	/** ID */
+	public static readonly ID: typeID = 'KeyboardController'
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'KeyboardController'
 
@@ -356,7 +359,7 @@ export default class KeyboardControlCenter
 	 * 构造函数
 	 */
 	public constructor(behaviors?: IKeyBehaviorRecords) {
-		super(KeyboardControlCenter.LABEL)
+		super(KeyboardControlCenter.ID, KeyboardControlCenter.LABEL)
 		if (behaviors !== undefined) this.addKeyBehaviors(behaviors)
 	}
 

@@ -32,6 +32,7 @@ import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import EffectPlayerDeathLight from '../effect/EffectPlayerDeathLight'
 import EffectSpawn from '../effect/EffectSpawn'
 import EffectTeleport from '../effect/EffectTeleport'
+import { typeID } from 'matriangle-api'
 
 /**
  * 有关玩家的「自定义显示数据」
@@ -61,6 +62,9 @@ export default class PlayerBatr
 	// **独有属性** //
 
 	public readonly i_batrPlayer = true as const
+
+	/** ID */
+	public static readonly ID: typeID = Player_V1.ID + 'Batr' // *【2023-11-18 10:44:40】直接使用前缀，保证名称稳定
 
 	// 队伍 //
 
@@ -207,7 +211,16 @@ export default class PlayerBatr
 		fillColor: number = team.color,
 		lineColor: number = halfBrightnessTo(fillColor)
 	) {
-		super(position, direction, isActive, fillColor, lineColor)
+		super({
+			// * 特化ID
+			id: PlayerBatr.ID,
+			// * 其它参数照写
+			position,
+			direction,
+			isActive,
+			fillColor,
+			lineColor,
+		})
 
 		// 独有属性 //
 		this._team = team

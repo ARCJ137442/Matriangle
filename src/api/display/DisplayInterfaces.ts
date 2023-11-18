@@ -1,5 +1,6 @@
-import { uint } from '../../legacy/AS3Legacy'
-import { JSObject, OptionalRecursive2 } from 'matriangle-common'
+import { uint } from 'matriangle-legacy/AS3Legacy'
+import { OptionalRecursive2, Ref } from 'matriangle-common/utils'
+import { JSObject } from 'matriangle-common/JSObjectify'
 
 /**
  * 一个面对逻辑对象的接口，使逻辑对象可以操纵其显示状态
@@ -20,14 +21,17 @@ export interface IDisplayable<DisplayDataT extends JSObject> {
 
 	/**
 	 * 获取「初始化」时所需的「实体数据」即「完全显示数据」
+	 * * 这里的数据是一个只读引用
+	 *   * 这意味着：当数据本身发生改变时，这个函数返回后的结果也会改变
+	 *   * 因此禁止对其返回值进行修改
 	 */
-	getDisplayDataInit(): DisplayDataT
+	getDisplayDataInit(): Ref<DisplayDataT>
 
 	/**
 	 * 获取「初始化」时所需的「实体数据」即「待更新显示数据」
 	 * * 这里的「待更新显示数据」是「部分化」的
 	 */
-	getDisplayDataRefresh(): OptionalRecursive2<DisplayDataT>
+	getDisplayDataRefresh(): Ref<OptionalRecursive2<DisplayDataT>>
 }
 
 /**

@@ -3,6 +3,7 @@ import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Effect from './Effect'
 import { fPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
+import { typeID } from 'matriangle-api'
 
 /**
  * 玩家升级
@@ -11,6 +12,9 @@ import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
  */
 export default class EffectPlayerLevelup extends Effect {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'EffectPlayerLevelup'
+
 	public static readonly DEFAULT_COLOR: uint = 0x000000
 	public static readonly LINE_ALPHA: number = 0.8
 	public static readonly FILL_ALPHA: number = 0.75
@@ -24,7 +28,7 @@ export default class EffectPlayerLevelup extends Effect {
 		color: uint = EffectPlayerLevelup.DEFAULT_COLOR,
 		LIFE: uint = EffectPlayerLevelup.LIFE
 	) {
-		super(position, LIFE)
+		super(EffectPlayerLevelup.ID, position, LIFE)
 		this._color = color
 	}
 

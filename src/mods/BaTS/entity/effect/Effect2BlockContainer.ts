@@ -2,6 +2,7 @@ import { fPoint } from 'matriangle-common/geometricTools'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import Effect from './Effect'
+import { typeID } from 'matriangle-api'
 
 /**
  * 双方块容器
@@ -12,11 +13,12 @@ import Effect from './Effect'
 export default abstract class Effect2BlockContainer extends Effect {
 	//============Constructor & Destructor============//
 	public constructor(
+		id: typeID,
 		position: fPoint,
 		LIFE: uint,
 		scale: number = Effect2BlockContainer.SCALE
 	) {
-		super(position, LIFE)
+		super(id, position, LIFE)
 		this.maxScale = scale
 	}
 

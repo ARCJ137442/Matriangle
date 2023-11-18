@@ -13,6 +13,7 @@ import {
 	toolCreateExplode,
 } from '../../../mechanics/BatrMatrixMechanics'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 跟踪子弹
@@ -23,6 +24,9 @@ import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 
 export default class BulletTracking extends Bullet {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'BulletTracking'
+
 	public static readonly SIZE: number = logical2Real(3 / 8)
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffff00
@@ -50,6 +54,7 @@ export default class BulletTracking extends Bullet {
 		smartTrackingMode: boolean
 	) {
 		super(
+			BulletTracking.ID,
 			owner,
 			position,
 			direction,

@@ -4,6 +4,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectPlayerLike from './EffectPlayerLike'
+import { typeID } from 'matriangle-api'
 
 /**
  * 玩家死亡淡出
@@ -12,6 +13,9 @@ import EffectPlayerLike from './EffectPlayerLike'
  */
 export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'EffectPlayerDeathFadeout'
+
 	public static readonly ALPHA: number = 0.8
 	public static readonly MAX_LIFE: uint = TPS
 
@@ -41,7 +45,15 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 		reverse: boolean = false,
 		life: uint = EffectPlayerLike.MAX_LIFE
 	) {
-		super(position, rot, color, decorationLabel, reverse, life)
+		super(
+			EffectPlayerDeathFadeout.ID,
+			position,
+			rot,
+			color,
+			decorationLabel,
+			reverse,
+			life
+		)
 	}
 
 	//============Display Implements============//

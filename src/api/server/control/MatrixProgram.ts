@@ -1,4 +1,5 @@
 import Entity from '../entity/Entity'
+import { typeID } from '../registry/IWorldRegistry'
 
 /**
  * 母体程序的「标签」类型
@@ -31,6 +32,7 @@ export abstract class MatrixProgram extends Entity {
 	 * @constructor 构造函数
 	 */
 	public constructor(
+		id: typeID,
 		/**
 		 * 程序标签
 		 * * 应用：标识程序的身份与用途
@@ -38,6 +40,6 @@ export abstract class MatrixProgram extends Entity {
 		 */
 		public readonly label: MatrixProgramLabel
 	) {
-		super()
+		super(id)
 	}
 }

@@ -1,6 +1,6 @@
-import { float } from '../../../common/exMath'
-import { iPointRef, fPointRef } from '../../../common/geometricTools'
-import { int } from '../../../legacy/AS3Legacy'
+import { float } from 'matriangle-common/exMath'
+import { iPointRef, fPointRef } from 'matriangle-common/geometricTools'
+import { int } from 'matriangle-legacy/AS3Legacy'
 
 // /**
 //  * // 在方块环境下从「以左上角为缩放点」变成「以中心为缩放点」

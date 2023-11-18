@@ -9,6 +9,7 @@ import { MatrixProgramLabel } from 'matriangle-api/server/control/MatrixProgram'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from '../IPlayer'
 import { PlayerEventOptions } from './PlayerEvent'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「玩家控制器」
@@ -20,6 +21,9 @@ import { PlayerEventOptions } from './PlayerEvent'
  *
  */
 export default abstract class PlayerController extends MatrixEventDispatcher {
+	/** ID */
+	public static readonly ID: typeID = 'PlayerController'
+
 	/**
 	 * 构造函数
 	 */
@@ -33,7 +37,7 @@ export default abstract class PlayerController extends MatrixEventDispatcher {
 		 */
 		public readonly subscribers: IPlayer[] = []
 	) {
-		super(label, subscribers)
+		super(PlayerController.ID, label, subscribers)
 	}
 
 	// 重构：只接受玩家订阅者 //

@@ -1,4 +1,4 @@
-import { int } from '../../../legacy/AS3Legacy'
+import { int } from 'matriangle-legacy/AS3Legacy'
 import Block from '../../../api/server/block/Block'
 import IMapStorage from '../../../api/server/map/IMapStorage'
 

@@ -10,6 +10,7 @@ import {
 	getAddress,
 } from './MessageInterfaces'
 import { IMessageService } from './MessageInterfaces'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「网络消息路由器」是
@@ -241,6 +242,8 @@ export class ProgramMessageRouter
 	extends MatrixProgram
 	implements IMessageRouter
 {
+	/** ID */
+	public static readonly ID: typeID = 'MessageRouter'
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'MessageRouter'
 
@@ -249,7 +252,7 @@ export class ProgramMessageRouter
 		label: MatrixProgramLabel = ProgramMessageRouter.LABEL,
 		protected router: IMessageRouter = new MessageRouter()
 	) {
-		super(label)
+		super(ProgramMessageRouter.ID, label)
 	}
 
 	// 服务部分 //

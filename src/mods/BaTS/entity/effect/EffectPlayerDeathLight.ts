@@ -3,6 +3,7 @@ import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import EffectPlayerLike from './EffectPlayerLike'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 玩家死亡光效
@@ -10,6 +11,8 @@ import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
  * * 用于提示玩家的死亡
  */
 export default class EffectPlayerDeathLight extends EffectPlayerLike {
+	/** ID */
+	public static readonly ID: typeID = 'EffectPlayerDeathLight'
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
@@ -51,7 +54,15 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		reverse: boolean = false,
 		life: uint = EffectPlayerLike.MAX_LIFE
 	) {
-		super(position, direction, color, decorationLabel, reverse, life)
+		super(
+			EffectPlayerDeathLight.ID,
+			position,
+			direction,
+			color,
+			decorationLabel,
+			reverse,
+			life
+		)
 	}
 
 	//============Instance Functions============//

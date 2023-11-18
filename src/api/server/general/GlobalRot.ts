@@ -1,8 +1,7 @@
-import * as exMath from '../../../common/exMath'
-import { iPoint } from '../../../common/geometricTools'
-import { int, uint, uint$MAX_VALUE } from '../../../legacy/AS3Legacy'
+import * as exMath from 'matriangle-common/exMath'
+import { iPoint } from 'matriangle-common/geometricTools'
+import { int, uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
 
-// TODO: 后续解决「Rot🆚Direction」的历史遗留问题
 /**
  * 「π/4⇔1」机制的角度（整数值）
  */

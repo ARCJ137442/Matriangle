@@ -7,19 +7,17 @@
  *
  */
 
-import { fPoint, iPoint, xPoint } from '../../../common/geometricTools'
+import { fPoint, iPoint, xPoint } from 'matriangle-common/geometricTools'
 import { IDisplayable } from '../../display/DisplayInterfaces'
-import { uint } from '../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import IMatrix from '../main/IMatrix'
 import { mRot } from '../general/GlobalRot'
-import { CommonIO_IR } from '../io/CommonIO'
 import Entity from './Entity'
 import {
 	IDisplayDataEntity,
 	IDisplayDataEntityState,
 	IDisplayProxyEntity,
 } from '../../display/RemoteDisplayAPI'
-import { JSObject } from 'matriangle-common'
 
 /**
  * 「有坐标实体」是
@@ -252,54 +250,6 @@ export interface IEntityActiveLite extends Entity {
  */
 export function i_activeLite(e: Entity): e is IEntityActiveLite {
 	return (e as IEntityActiveLite)?.i_activeLite !== undefined
-}
-
-/**
- * 「需IO实体」是
- * * 接受并响应世界IO操作（键盘等）的
- * 实体
- *
- * ! 【20230915 0:02:18】「AI玩家」的「AI逻辑」将由AI作为「活跃实体」的`onTick`世界刻调用
- *
- * ? 【2023-09-23 10:49:35】目前认为，不再需要这类标识：外界IO将自行缓冲在实体内部，等待实体自行处理
- *
- * 典例：
- * * 玩家
- */
-export interface IEntityNeedsIO extends Entity {
-	// !【2023-10-09 21:35:53】现在因为使用「类型断言」和「检查变量是否!==undefined」，不再需要一个「固定的目标值」
-	// readonly i_needsIO: true;
-
-	/**
-	 * 响应世界IO
-	 *
-	 * 世界IO操作（键盘等）会触发此方法
-	 *
-	 * * 不用担心「循环导入」问题：TS的接口在编译后会被删除，对编译后的执行毫无影响
-	 *
-	 * @param host 调用它的母体
-	 */
-	onIO(host: IMatrix, inf: CommonIO_IR): void
-
-	/**
-	 * 获取实体的IO缓冲区
-	 * * 逻辑：当世界调用实体时，可以从中得到目前缓存的IO信息
-	 * * 应用：在世界逻辑中获取并在「主体侧」执行玩家动作（如移动、使用等）
-	 */
-	get IOBuffer(): CommonIO_IR[]
-
-	/**
-	 * 清除实体的IO缓冲区
-	 * * 如名
-	 */
-	clearIOBuffer(): void
-}
-
-/**
- * 使用「接口定义的变量是否有定义」快速获取「是否实现了接口」
- */
-export function i_needsIO(e: Entity): e is IEntityNeedsIO {
-	return (e as IEntityNeedsIO)?.onIO !== undefined
 }
 
 /**

@@ -4,6 +4,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import Effect2BlockContainer from './Effect2BlockContainer'
+import { typeID } from 'matriangle-api'
 
 /**
  * 重生
@@ -12,6 +13,9 @@ import Effect2BlockContainer from './Effect2BlockContainer'
  */
 export default class EffectSpawn extends Effect2BlockContainer {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'EffectSpawn'
+
 	public static readonly DEFAULT_COLOR: uint = 0x6666ff
 	public static readonly LINE_ALPHA: number = 0.6
 	public static readonly FILL_ALPHA: number = 0.5
@@ -34,7 +38,7 @@ export default class EffectSpawn extends Effect2BlockContainer {
 
 	//============Constructor & Destructor============//
 	public constructor(position: fPoint, scale: number = EffectSpawn.SCALE) {
-		super(position, EffectSpawn.MAX_LIFE, scale)
+		super(EffectSpawn.ID, position, EffectSpawn.MAX_LIFE, scale)
 		this._animationStage = 0
 		this._tempLife = this.LIFE - this.life
 	}

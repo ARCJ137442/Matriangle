@@ -1,4 +1,4 @@
-import { uint } from '../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /**
  * Use for manage entries in world.
@@ -123,7 +123,7 @@ export default class CommonSystem<T> {
 	 * @param entry 要检查的元素
 	 * @returns 元素的UUID（无⇒-1）
 	 */
-	public indexOf(entry: T): uint {
+	public getEntryUUID(entry: T): uint {
 		return this._entries.indexOf(entry)
 	}
 

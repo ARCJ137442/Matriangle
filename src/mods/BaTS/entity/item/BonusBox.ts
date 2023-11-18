@@ -5,6 +5,7 @@ import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import { iPoint, iPointRef, intPoint } from 'matriangle-common/geometricTools'
 import { BonusType } from '../../registry/BonusRegistry'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「奖励箱」是
@@ -15,6 +16,9 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
  * 实体
  */
 export default class BonusBox extends Entity implements IEntityInGrid {
+	/** ID */
+	public static readonly ID: typeID = 'BonusBox'
+
 	public static readonly LINE_COLOR: uint = 0x777777
 	public static readonly FILL_COLOR: uint = 0xdddddd
 
@@ -38,7 +42,7 @@ export default class BonusBox extends Entity implements IEntityInGrid {
 
 	//============Constructor & Destructor============//
 	public constructor(position: iPointRef, type: BonusType) {
-		super()
+		super(BonusBox.ID)
 		this._position.copyFrom(position)
 		this._bonusType = type
 		// this._symbol = new BonusBoxSymbol(this._bonusType);

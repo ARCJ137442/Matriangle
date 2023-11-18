@@ -2,7 +2,7 @@ import { Container, Shape, Stage } from 'zimjs'
 import {
 	IDisplayDataBlock,
 	IDisplayDataMap,
-	IDisplayStateData,
+	IDisplayData,
 	IStateDisplayer,
 	IDisplayDataMapBlocks,
 	locationStrToPoint,
@@ -35,7 +35,7 @@ import { formatHEX } from 'matriangle-common'
 /**
  * 所有需要接收「更新信息」的图形都继承该类
  */
-export abstract class ZimShapeDisplayer<StateDataT extends IDisplayStateData>
+export abstract class ZimShapeDisplayer<StateDataT extends IDisplayData>
 	extends Shape
 	implements IStateDisplayer<StateDataT>
 {

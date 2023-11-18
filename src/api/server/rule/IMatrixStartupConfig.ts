@@ -1,5 +1,5 @@
-import { JSObjectValue } from '../../../common/JSObjectify'
-import { key } from '../../../common/utils'
+import { JSObjectValue } from 'matriangle-common/JSObjectify'
+import { key } from 'matriangle-common/utils'
 
 /**
  * 一个通用的「母体启动配置」

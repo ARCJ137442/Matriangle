@@ -6,7 +6,7 @@
 TODO: 或许「更正确的用法」在于——选择一些「有特定加载模式的世界」，类似于Matrix中可随意加载的「训练程序」
 
 import { NULL } from "../general/GlobalRot";
-import { uint } from "../../legacy/AS3Legacy";
+import { uint } from 'matriangle-legacy/AS3Legacy";
 import TypeCommon from "../api/template/TypeCommon";
 
 export default class WorldModeType extends TypeCommon {

@@ -7,6 +7,7 @@ import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import { fPoint } from 'matriangle-common/geometricTools'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
+import { typeID } from 'matriangle-api'
 
 /**
  * （抽象）类玩家特效
@@ -54,6 +55,7 @@ export default abstract class EffectPlayerLike
 
 	//============Constructor & Destructor============//
 	public constructor(
+		id: typeID,
 		position: fPoint,
 		rot: uint = 0,
 		color: uint = 0xffffff,
@@ -61,7 +63,7 @@ export default abstract class EffectPlayerLike
 		reverse: boolean = false,
 		life: uint = EffectPlayerLike.MAX_LIFE
 	) {
-		super(position, life)
+		super(id, position, life)
 		this._color = color
 		this._direction = rot
 		this._decorationLabel = decorationLabel

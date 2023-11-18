@@ -1,7 +1,7 @@
 import PlayerStats from '../../../server/mods/BaTS/entity/player/stat/PlayerStats'
-import { uint } from '../../../legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import I18nText from './I18nText'
-import I18ns from './I18ns.ts_depreceted'
+import I18ns from './I18ns.ts_deprecated'
 
 /**
  * ...

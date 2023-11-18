@@ -38,34 +38,17 @@ import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import { IDisplayDataBlockState } from '../server/block/BlockState'
 import { typeID } from '../server/registry/IWorldRegistry'
 
+// * 通用显示接口 * //
+
 /**
- * 状态数据 / 显示数据
+ * 显示状态数据
  * * 一切「用于初始化、更新图形呈现的数据」的基类
  * * 用于存储一个Shape通用的东西
  *   * 目前对于「位置」还不知道要如何处理
  *
  * !【2023-11-15 23:20:57】目前对于「{[k:string]: XXX}」的继承，不会引发歧义（是泛型函数出了问题）
  */
-export interface IDisplayStateData extends JSObject {}
-
-/**
- * 显示状态加载包
- * * 其中的「显示状态数据」都是「必选的」，以实现「显示状态初始化」
- */
-export interface DisplayStateInitPackage extends IDisplayStateData {
-	[proxyID: string]: IDisplayStateData
-}
-
-/**
- * 显示状态更新包
- * * 其中的所有「显示状态数据」都是「可选的」，以实现「部分更新」机制
- *   * 这种「可选性」是**递归**的，不受「键层次」的影响
- *   * 故每次更新时，都需要进行「非空判断」
- * * 这样也不用「为每个状态都写一个对应的『更新包』类型」了
- */
-export interface DisplayStateRefreshPackage extends IDisplayStateData {
-	[proxyID: string]: OptionalRecursive2<IDisplayStateData> & JSObject
-}
+export interface IDisplayData extends JSObject {}
 
 /**
  * 所有「数据呈现者」的统一接口
@@ -73,7 +56,7 @@ export interface DisplayStateRefreshPackage extends IDisplayStateData {
  *   * 分别对应「初始化」「更新」「销毁」三个阶段
  *   * 同时与显示API相互对接
  */
-export interface IStateDisplayer<StateDataT extends IDisplayStateData> {
+export interface IStateDisplayer<StateDataT extends IDisplayData> {
 	/**
 	 * （图形）初始化
 	 * * 使用完整的「显示数据」
@@ -94,6 +77,8 @@ export interface IStateDisplayer<StateDataT extends IDisplayStateData> {
 	 */
 	shapeDestruct(...otherArgs: any[]): void
 }
+
+// * 地图/方块显示 * //
 
 /** 作为常量的「坐标分隔符」 */
 export const LOCATION_COORD_SEPARATOR: string = ' '
@@ -131,7 +116,7 @@ export function locationStrToPoint<T extends int[] = int[]>(
 export interface IDisplayDataBlock<
 	StateType extends
 		IDisplayDataBlockState | null = IDisplayDataBlockState | null,
-> extends IDisplayStateData {
+> extends IDisplayData {
 	// ! 这里所有的变量都是「全可选」或「全必选」的
 	id: typeID
 	// 方块状态中「是JS对象一部分」的属性（排除了其中的「非JS对象部分」如函数）
@@ -148,7 +133,7 @@ export interface IDisplayDataMapBlocks {
 /**
  * 地图的「显示数据」
  */
-export interface IDisplayDataMap extends IDisplayStateData {
+export interface IDisplayDataMap extends IDisplayData {
 	/**
 	 * 尺寸：整数数组
 	 * * 用于显示时调整「地图大小」
@@ -163,6 +148,8 @@ export interface IDisplayDataMap extends IDisplayStateData {
 	 */
 	blocks: IDisplayDataMapBlocks
 }
+
+// * 实体显示 * //
 
 /**
  * 存储「所有需要更新的实体」的数据
@@ -190,7 +177,7 @@ export interface IDisplayDataEntities {
  */
 export interface IDisplayDataEntity<
 	EntityStateT extends IDisplayDataEntityState,
-> extends IDisplayStateData {
+> extends IDisplayData {
 	/**
 	 * 记录实体的「类型」
 	 * * 用于显示端结合状态进行绘图
@@ -571,3 +558,28 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState> //
 		this._data.state.alpha = this._stateToRefresh.alpha = value
 	}
 }
+
+// * 整体显示对象 * //
+
+/**
+ * 总体环境的「显示数据」对象
+ * * 定义了「逻辑端」和「显示端」之间需要同步的对象类型
+ */
+export interface IDisplayDataMatrix extends IDisplayData {
+	/**
+	 * 地图数据
+	 * * 存储所有方块的显示状态，以及地图自身的状态数据
+	 *
+	 * ! 只会存储「影响显示呈现」的部分
+	 * * 其它「纯逻辑数据」如「地图破坏等级」不会也无需存储
+	 */
+	map: IDisplayDataMap
+
+	/**
+	 * 实体数据
+	 * * 以「UUID」为索引，存储所有被追踪的实体
+	 */
+	entities: IDisplayDataEntities
+}
+
+// !【2023-11-18 09:05:28】原先的「更新包」现只需使用`OptionalRecursive2<IDisplayDataMatrix>`表示

@@ -34,6 +34,9 @@ export default class Lightning
 	extends Projectile
 	implements IEntityFixedLived, IEntityInGrid
 {
+	/** ID */
+	public static readonly ID: string = 'Lightning'
+
 	protected _position: iPoint = new iPoint()
 	protected _life: uint = Lightning.LIFE
 
@@ -66,7 +69,13 @@ export default class Lightning
 		extraDamageCoefficient: uint,
 		energy: int
 	) {
-		super(owner, attackerDamage, extraDamageCoefficient, direction)
+		super(
+			Lightning.ID,
+			owner,
+			attackerDamage,
+			extraDamageCoefficient,
+			direction
+		)
 		this._position.copyFrom(position)
 		this._initialEnergy = this._energy = energy
 	}

@@ -6,6 +6,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { getRandomMap } from '../BatrMatrixMechanics'
 import MapSwitcher from './MapSwitcher'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「地图切换者」是
@@ -18,12 +19,14 @@ export default class MapSwitcherRandom
 	extends MapSwitcher
 	implements IEntityActive
 {
+	/** ID */
+	public static readonly ID: typeID = 'MapSwitcherRandom'
 	/** 标签 */
 	public static readonly LABEL: MatrixProgramLabel = 'MapSwitch:Random'
 
 	// 构造&析构 //
 	public constructor(switchInterval: uint) {
-		super(MapSwitcherRandom.LABEL)
+		super(MapSwitcherRandom.ID, MapSwitcherRandom.LABEL)
 		this._mapSwitchTick = this.mapSwitchInterval = switchInterval
 	}
 

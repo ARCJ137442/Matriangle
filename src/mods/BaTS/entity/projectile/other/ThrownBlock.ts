@@ -20,6 +20,7 @@ import {
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
 import { BlockAttributes_Native } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import { typeID } from 'matriangle-api'
 
 /**
  * 「掷出的方块」是
@@ -29,6 +30,9 @@ import { BlockAttributes_Native } from 'matriangle-mod-native/registry/BlockRegi
  */
 export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'ThrownBlock'
+
 	public static readonly MAX_SPEED: number = 15 / FIXED_TPS
 	public static readonly MIN_SPEED: number = (1 / 3) * ThrownBlock.MAX_SPEED
 
@@ -108,8 +112,9 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		toolExtraDamageCoefficient: uint
 	) {
 		super(
+			ThrownBlock.ID,
 			owner,
-			attackerDamage, // ? ↑不知道上面那个在做什么😂
+			attackerDamage,
 			toolExtraDamageCoefficient,
 			direction
 		)

@@ -10,6 +10,10 @@
 		"matriangle",
 		"api"
 	],
+	"dependencies": {
+		"matriangle-common": "^0.1.0",
+		"matriangle-legacy": "^0.1.0"
+	},
 	"author": "ARCJ137442",
 	"license": "LGPL-3.0-or-later"
 }

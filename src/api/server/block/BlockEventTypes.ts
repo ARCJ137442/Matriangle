@@ -1,4 +1,4 @@
-import { iPoint } from '../../../common/geometricTools'
+import { iPoint } from 'matriangle-common/geometricTools'
 import IMatrix from '../main/IMatrix'
 import { typeID } from '../registry/IWorldRegistry'
 

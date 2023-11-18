@@ -4,6 +4,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectPlayerLike from './EffectPlayerLike'
+import { typeID } from 'matriangle-api'
 
 /**
  * 玩家受伤害
@@ -14,6 +15,8 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'EffectPlayerHurt'
 	/** 颜色：固定红色 */
 	public static readonly FILL_COLOR: number = 0xff0000
 	/** 生命周期时长：0.25秒 */
@@ -45,7 +48,15 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		reverse: boolean = false,
 		life: uint = EffectPlayerHurt.LIFE
 	) {
-		super(position, rot, color, decorationLabel, reverse, life)
+		super(
+			EffectPlayerHurt.ID,
+			position,
+			rot,
+			color,
+			decorationLabel,
+			reverse,
+			life
+		)
 	}
 
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端

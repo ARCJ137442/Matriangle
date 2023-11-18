@@ -17,7 +17,7 @@ import {
 	randomIn,
 } from 'matriangle-common/utils'
 import { iPoint } from 'matriangle-common/geometricTools'
-import MatrixVisualizer from 'matriangle-mod-visualization/web/MatrixVisualizer'
+import MatrixVisualizerCanvas from 'matriangle-mod-visualization/visualizer/MatrixVisualizerCanvas'
 import BlockEventRegistry from 'matriangle-api/server/block/BlockEventRegistry'
 import { NATIVE_BLOCK_CONSTRUCTOR_MAP } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
@@ -65,6 +65,7 @@ import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { normalShannonEntropy } from 'matriangle-common'
 import ProgramMatrixConsole from 'matriangle-mod-native/entities/control/MatrixConsole'
+import MatrixVisualizer from 'matriangle-mod-visualization/visualizer/MatrixVisualizer'
 
 /**
  * !【2023-10-30 14:53:21】现在使用一个类封装这些「内部状态」，让整个服务端变得更为「可配置化」
@@ -175,13 +176,12 @@ export class NARSEnv {
 		kcc: KeyboardControlCenter
 	): void {
 		// 玩家
-		const p: IPlayer = new Player_V1(
-			this.matrix.map.storage.randomPoint,
-			0,
-			true,
-			config.attributes.appearance.fillColor,
-			config.attributes.appearance.lineColor
-		)
+		const p: IPlayer = new Player_V1({
+			position: this.matrix.map.storage.randomPoint,
+			isActive: true,
+			fillColor: config.attributes.appearance.fillColor,
+			lineColor: config.attributes.appearance.lineColor,
+		})
 		// 名字
 		p.customName = config.attributes.name
 
@@ -210,8 +210,10 @@ export class NARSEnv {
 
 	/** 配置可视化 */
 	setupVisualization(host: IMatrix): void {
-		// 可视化信号
-		const visualizer: MatrixVisualizer = new MatrixVisualizer(this.matrix)
+		// 可视化信号 // !【2023-11-18 10:39:56】现在使用Canvas
+		const visualizer: MatrixVisualizer = new MatrixVisualizerCanvas(
+			this.matrix
+		)
 		// 连接
 		visualizer.linkToRouter(
 			this.router,

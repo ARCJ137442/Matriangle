@@ -24,6 +24,7 @@ import {
 } from 'matriangle-api/server/general/GlobalRot'
 import Tool from '../../../tool/Tool'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import { typeID } from 'matriangle-api'
 
 /**
  * ...
@@ -34,6 +35,9 @@ export default class ShockWaveBase
 	implements IEntityInGrid, IEntityFixedLived
 {
 	//============Static Variables============//
+	/** ID */
+	public static readonly ID: typeID = 'ShockWaveBase'
+
 	public static readonly BLOCK_RADIUS: number = DEFAULT_SIZE * 1.2
 
 	/**
@@ -74,6 +78,7 @@ export default class ShockWaveBase
 		mode: uint
 	) {
 		super(
+			ShockWaveBase.ID,
 			owner,
 			toolAttackerDamage,
 			toolExtraDamageCoefficient, // ! 自身无伤害，但一般用「其所含武器的伤害」（就如玩家扩展了一种「使用武器的方式」）
