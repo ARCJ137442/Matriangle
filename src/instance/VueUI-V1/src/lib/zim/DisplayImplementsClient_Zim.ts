@@ -536,7 +536,10 @@ export function test_draw(shape_constructor: () => Shape): Shape[] {
 /**
  * 测试新的「地图呈现者」
  */
-export function test_mapDisplayer(frame: Frame): ZimDisplayerMap {
+export function test_mapDisplayer(
+	frame: Frame,
+	preview: boolean = true
+): ZimDisplayerMap {
 	const mapDisplayer = new ZimDisplayerMap(BLOCK_DRAW_DICT_BATR)
 	/* mapDisplayer.shapeInit({
 		size: [4, 4],
@@ -554,23 +557,26 @@ export function test_mapDisplayer(frame: Frame): ZimDisplayerMap {
 			),
 		},
 	}) */
-	const MAP: IMap = new Map_V1(
-		'zim_test',
-		stackMaps(
-			/* generateArray(
+	// * 预览：两个随机地图堆叠
+	if (preview) {
+		const MAP: IMap = new Map_V1(
+			'zim_test',
+			stackMaps(
+				/* generateArray(
 				BatrDefaultMaps._ALL_MAPS.length,
 				i => BatrDefaultMaps._ALL_MAPS[i].storage as MapStorageSparse
 			) */
-			generateArray(
-				2,
-				() =>
-					randomIn(BatrDefaultMaps._ALL_MAPS)
-						.storage as MapStorageSparse
+				generateArray(
+					2,
+					() =>
+						randomIn(BatrDefaultMaps._ALL_MAPS)
+							.storage as MapStorageSparse
+				)
 			)
 		)
-	)
-	// console.log('test_mapDisplayer', MAP.name)
-	mapDisplayer.shapeInit(MAP.storage.getDisplayDataInit())
+		// console.log('test_mapDisplayer', MAP.name)
+		mapDisplayer.shapeInit(MAP.storage.getDisplayDataInit())
+	}
 	// .wiggle({ baseAmount: 10, property: 'x' }) /* .center().drag() */
 	// 必须添加进舞台
 	frame.stage.addChild(mapDisplayer as unknown as DisplayObject)

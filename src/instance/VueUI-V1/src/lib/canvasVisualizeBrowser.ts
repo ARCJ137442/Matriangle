@@ -1,6 +1,12 @@
-import { DictionaryLikeObject } from 'matriangle-common/utils'
+import {
+	DictionaryLikeObject,
+	OptionalRecursive2,
+} from 'matriangle-common/utils'
 import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import { Frame } from 'zimjs/ts-src/typings/zim'
+import { ZimDisplayerMap } from './zim/DisplayInterfacesClient_Zim'
+import { IDisplayDataMatrix } from 'matriangle-api/display/RemoteDisplayAPI'
+import { JSObject } from 'matriangle-common'
 
 /**
  * 第一代可视化的canvas数据
@@ -39,15 +45,17 @@ export interface CanvasData_V1 {
 export function canvasVisualize_V1(
 	// canvas: HTMLCanvasElement,
 	frame: Frame,
+	mapDisplayer: ZimDisplayerMap,
 	message: string
 	// gridSize_px: number = 15
 ): void {
-	console.log('canvas可视化！', /* canvas,  */ frame, message)
+	// console.log('canvas可视化！', /* canvas,  */ frame, message)
 	// TODO: 处理传回来的数据
 	// 解析数据：过滤掉不合法的地方
 	try {
-		const data = JSON.parse(message) as CanvasData_V1
-		console.log('已接受到JSON数据！\ndata =', data)
+		const data = JSON.parse(message) as JSObject
+		// TODO: 需要考虑「在显示端形成一个『JSON数据镜像』」如「对象更新函数」
+		visualize_Matrix(data, mapDisplayer)
 	} catch (e) {
 		console.error('canvas可视化失败！', e)
 	}
@@ -55,7 +63,15 @@ export function canvasVisualize_V1(
 
 // 各个层次的「显示数据更新」 //
 
-export function visualize_Matrix(): void {}
+export function visualize_Matrix(
+	data: OptionalRecursive2<IDisplayDataMatrix>,
+	mapDisplayer: ZimDisplayerMap
+): void {
+	console.log('母体可视化！', data, mapDisplayer)
+	// 更新地图
+	if (data?.map !== undefined) mapDisplayer.shapeRefresh(data.map)
+	// TODO: 更新实体
+}
 
 // ! @deprecated ↓旧代码
 // if (size && blocks && entities) {

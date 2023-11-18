@@ -957,6 +957,20 @@ export function isEmptyObject(obj: object): obj is Record<string, never> {
 }
 
 /**
+ * 判断对象是否为「真对象」
+ * * typeof是'object'
+ * * 不是null
+ * * 不是数组
+ */
+export function isTrueObject(obj: unknown): obj is object {
+	return (
+		typeof obj === 'object' &&
+		!Array.isArray(obj) && // 数组不能被视作对象
+		obj !== null
+	)
+}
+
+/**
  * 用于表征一个对象「具体路径」的图式
  * * 支持使用`null`作为通配符
  */

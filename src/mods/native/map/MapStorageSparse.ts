@@ -553,12 +553,12 @@ export default class MapStorageSparse implements IMapStorage {
 	 * @param border_max 各维度最大值之引用
 	 * @returns 自身
 	 */
-	public setBorder(
-		border_min: iPointRef,
-		border_max: iPointRef
-	): IMapStorage {
+	public setBorder(border_min: iPointRef, border_max: iPointRef): this {
 		this._borderMax.copyFrom(border_max)
 		this._borderMin.copyFrom(border_min)
+		// * 显示更新
+		this._proxy.updateSize(this.size)
+		// 返回自身
 		return this
 	}
 
@@ -569,9 +569,10 @@ export default class MapStorageSparse implements IMapStorage {
 	 * @param source 源「稀疏地图」
 	 * @returns 自身
 	 */
-	public copyBorderFrom(source: MapStorageSparse): IMapStorage {
-		this._borderMax.copyFrom(source._borderMax)
-		this._borderMin.copyFrom(source._borderMin)
+	public copyBorderFrom(source: MapStorageSparse): this {
+		// 内含显示更新
+		this.setBorder(source._borderMin, source._borderMax)
+		// 返回自身
 		return this
 	}
 
@@ -579,7 +580,7 @@ export default class MapStorageSparse implements IMapStorage {
 		source: IMapStorage,
 		clearSelf: boolean = false,
 		deep: boolean = false
-	): IMapStorage {
+	): this {
 		if (clearSelf) {
 			this.clearBlocks()
 			this.clearSpawnPoints()
@@ -679,6 +680,8 @@ export default class MapStorageSparse implements IMapStorage {
 				// 现在需要检查是否为空
 				this._borderMin[i] = pi
 		}
+		// * 显示更新
+		this._proxy.updateSize(this.size)
 	}
 
 	public setBlock(p: iPointRef, block: Block): IMapStorage {

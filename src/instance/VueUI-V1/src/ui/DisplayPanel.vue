@@ -45,7 +45,7 @@ import { VueElementRefNullable } from '../lib/common'
 import {
 	NativeVisualizationTypeFlag,
 	unpackDisplayData,
-} from 'matriangle-mod-visualization/logic/abstractVisualization.type'
+} from 'matriangle-api/display/RemoteDisplayAPI'
 
 // 屏显 //
 const screen: VueElementRefNullable<typeof Screen> = ref(null)
@@ -56,7 +56,7 @@ const displayAddress: Ref<string> = ref('127.0.0.1:8080')
 /** 上一次的地址 */
 let _lastAddress: string = displayAddress.value
 /** 屏显更新频率 */
-const screenFPS: Ref<string> = ref('10')
+const screenFPS: Ref<string> = ref('5')
 /** （自定义）显示代码 */
 const displayCode: Ref<string> = ref('6')
 /** 心跳频率 */
@@ -84,6 +84,8 @@ function requestAliveLink(): void {
 		(): void => {
 			// 更新状态
 			messageServiceConnectedText.value = '已连接'
+			// 重置「已初始化」状态
+			self.isScreenInited = false
 			// 开始屏显消息请求
 			onFPSRefresh(parseFloat(screenFPS.value))
 		},

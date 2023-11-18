@@ -12,6 +12,7 @@ import {
 	getClass,
 	identity,
 	isEmptyObject,
+	isTrueObject,
 	key,
 	safeMerge,
 } from './utils'
@@ -583,10 +584,14 @@ export function trimEmptyObjIn(obj: JSObject): JSObject {
 	let value: JSObjectValue
 	for (const key in obj) {
 		value = obj[key]
+		// * 数组⇒提前对元素进行过滤（不会让数组元素消失）
+		if (Array.isArray(value))
+			for (let i = value.length - 1; i >= 0; i--)
+				value[i] = _temp_trimmedEmptyObjIn_arr(value[i])
 		// * 对象⇒额外判断
-		if (typeof value === 'object' && value !== null) {
+		else if (typeof value === 'object' && value !== null) {
 			// 肯定要简化一次的
-			trimEmptyObjIn(value as JSObject)
+			trimEmptyObjIn(value)
 			// * 被简化后是空对象⇒删除
 			if (isEmptyObject(value)) delete obj[key]
 		}
@@ -612,10 +617,13 @@ export function trimmedEmptyObjIn(obj: JSObject): JSObject {
 		value = obj[key]
 		// * `undefined`⇒直接跳过（面向更一般的object类型）
 		if (value === undefined) continue
+		// * 数组⇒提前对元素进行过滤（不会让数组元素消失）
+		else if (Array.isArray(value))
+			result[key] = value.map(_temp_trimmedEmptyObjIn_arr)
 		// * 对象⇒额外判断
 		else if (typeof value === 'object' && value !== null) {
 			// 肯定要简化一次的
-			trimmedObj = trimmedEmptyObjIn(value as JSObject)
+			trimmedObj = trimmedEmptyObjIn(value)
 			// * 被简化后是空对象⇒跳过
 			if (isEmptyObject(trimmedObj)) continue
 			// * 其它对象⇒递归深入
@@ -627,3 +635,5 @@ export function trimmedEmptyObjIn(obj: JSObject): JSObject {
 	// 返回结果
 	return result
 }
+const _temp_trimmedEmptyObjIn_arr = (value: JSObjectValue): JSObjectValue =>
+	isTrueObject(value) ? trimmedEmptyObjIn(value as JSObject) : value

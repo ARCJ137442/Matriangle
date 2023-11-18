@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { Ref, ref } from 'vue'
-import { VisualizationOutputMessagePrefix } from 'matriangle-mod-visualization/logic/abstractVisualization.type'
+import { VisualizationOutputMessagePrefix } from 'matriangle-api/display/RemoteDisplayAPI'
 
 // 变量引用
 /** 屏显文本 */

@@ -48,10 +48,7 @@ import BonusBoxGenerator from 'matriangle-mod-bats/mechanics/programs/BonusBoxGe
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
 import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
-import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
 import IMap from 'matriangle-api/server/map/IMap'
-import { stackMaps } from './stackedMaps'
-import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import { ProgramMessageRouter } from 'matriangle-mod-message-io-api/MessageRouter'
 import WebController from 'matriangle-mod-web-io/controller/WebController'
 import KeyboardControlCenter, {
@@ -79,18 +76,7 @@ function initMatrixRule(): IMatrixRule {
 	loadAsBackgroundRule(rule)
 
 	// 设置等权重的随机地图 // !【2023-10-05 19:45:58】不设置会「随机空数组」出错！
-	// const MAPS = [...MULTI_DIM_TEST_MAPS, ...BatrDefaultMaps._ALL_MAPS]; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
-	const MAPS = [
-		new Map_V1(
-			'stacked',
-			stackMaps(
-				BatrDefaultMaps._ALL_MAPS.map(
-					(map: IMap): MapStorageSparse =>
-						map.storage as MapStorageSparse
-				)
-			)
-		),
-	] // 【2023-10-12 13:01:50】目前是「堆叠地图」测试
+	const MAPS = config.maps // 直接引用数组
 	rule.setRule<Map<IMap, number>>(
 		MatrixRules_Native.key_mapRandomPotentials,
 		new Map()

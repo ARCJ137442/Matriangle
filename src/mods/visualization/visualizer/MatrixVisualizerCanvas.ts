@@ -6,7 +6,7 @@ import {
 	NativeVisualizationTypeFlag,
 	VisualizationOutputMessagePrefix,
 	packDisplayData,
-} from '../logic/abstractVisualization.type'
+} from 'matriangle-api/display/RemoteDisplayAPI'
 import { typeID } from 'matriangle-api'
 import MatrixVisualizerText from './MatrixVisualizerText'
 import { JSObject, trimmedEmptyObjIn } from 'matriangle-common/JSObjectify'

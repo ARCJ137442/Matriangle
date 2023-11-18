@@ -1,4 +1,4 @@
-import { Container, Shape, Stage } from 'zimjs'
+import { Container, MovieClip, Shape, Stage } from 'zimjs'
 import {
 	IDisplayDataBlock,
 	IDisplayDataMap,
@@ -6,6 +6,7 @@ import {
 	IStateDisplayer,
 	IDisplayDataMapBlocks,
 	locationStrToPoint,
+	pointToLocationStr,
 } from 'matriangle-api/display/RemoteDisplayAPI'
 import { IDisplayDataBlockState } from 'matriangle-api/server/block/BlockState'
 import {
@@ -460,11 +461,17 @@ export class ZimDisplayerMap
 		protected background: ZimMapBackground = new ZimMapBackground(
 			0,
 			0 // 两个零当默认值
-		)
+		),
+		/**
+		 * 存储用于显示「背景」的图形
+		 */
+		protected blockContainer: MovieClip = new MovieClip()
 	) {
 		super()
 		// 添加背景
 		this.addChildAt(background, 0)
+		// 添加方块容器
+		this.addChildAt(blockContainer, 1)
 	}
 
 	// 实现接口 //
@@ -485,13 +492,14 @@ export class ZimDisplayerMap
 	 */
 	protected initBlocks(data: IDisplayDataMapBlocks): void {
 		/** 每个位置的方块数据 */
-		let blockData: IDisplayDataBlock
+		let blockData: IDisplayDataBlock | null
 		/** 复用的「当前位置」指针 */
 		const locationPointer: iPoint = new iPoint()
 		// 遍历所有位置
 		for (const locationStr in data) {
 			blockData = data[locationStr]
 			this.setBlockSoft(
+				// 包括了`null`的情况
 				locationStrToPoint(locationStr, locationPointer),
 				blockData
 			)
@@ -500,9 +508,9 @@ export class ZimDisplayerMap
 
 	shapeRefresh(data: OptionalRecursive2<IDisplayDataMap>): void {
 		// * 尺寸
-		if (data.size !== undefined) this.refreshSize(data.size)
+		if (data?.size !== undefined) this.refreshSize(data.size)
 		// * 方块
-		if (data.blocks !== undefined) this.refreshBlocks(data.blocks)
+		if (data?.blocks !== undefined) this.refreshBlocks(data.blocks)
 	}
 
 	/**
@@ -517,6 +525,7 @@ export class ZimDisplayerMap
 	protected refreshSize(size: int[]): void {
 		// 尺寸拷贝
 		this.size.copyFrom(size)
+		console.log('地图尺寸更新！', size, '->', this.size)
 		// 绘制网格
 		this.background.updateWithWH(...this.unfoldedBlockSize2D)
 		// !【2023-11-13 22:52:04】有关「画布大小」的「尺寸控制」现在交给外部进行
@@ -531,6 +540,7 @@ export class ZimDisplayerMap
 	protected refreshBlocks(
 		blocks: OptionalRecursive2<IDisplayDataMapBlocks>
 	): void {
+		console.log('更新方块！blocks =', blocks)
 		// 临时变量（指针）
 		const locationPointer = new iPoint()
 		let blockDataPatch: OptionalRecursive2<IDisplayDataBlock>
@@ -543,6 +553,13 @@ export class ZimDisplayerMap
 				locationStrToPoint(location, locationPointer),
 				blockDataPatch
 			)
+			console.log(
+				'更新方块！',
+				location,
+				'=>',
+				locationPointer,
+				blockDataPatch
+			)
 		}
 	}
 
@@ -552,8 +569,9 @@ export class ZimDisplayerMap
 			// 销毁子对象
 			blockDisplayer.shapeDestruct()
 			// 移除子对象
-			this.removeChild(blockDisplayer)
+			this.blockContainer.removeChild(blockDisplayer)
 		}
+		this.removeAllChildren()
 		// 清除所有键
 		for (const key in this.blocks) delete this.blocks[key]
 		// 清除`this.size`的元素
@@ -566,14 +584,14 @@ export class ZimDisplayerMap
 	 * 获取「是否有『方块显示者』」
 	 */
 	public hasBlockDisplayerAt(pos: iPointRef): boolean {
-		return this.blocks[pos.toString()] !== undefined
+		return this.blocks[pointToLocationStr(pos)] !== undefined
 	}
 
 	/**
 	 * 获取指定位置的「方块显示者」
 	 */
 	public getBlockDisplayerAt(pos: iPointRef): ZimDisplayerBlock | null {
-		return this.blocks[pos.toString()] ?? null
+		return this.blocks[pointToLocationStr(pos)] ?? null
 	}
 
 	/**
@@ -584,13 +602,20 @@ export class ZimDisplayerMap
 	 * @param pos 要设置的方块的位置
 	 * @param blockData 要设置的方块的数据
 	 */
-	public setBlockSoft(pos: iPointRef, blockData: IDisplayDataBlock): void {
-		this._temp_pos_index = pos.toString()
-		// 有⇒更新
-		if (this._temp_pos_index in this.blocks)
-			this.blocks[this._temp_pos_index].shapeRefresh(blockData)
-		// 无⇒创建
-		else this.setBlockHard(pos, blockData)
+	public setBlockSoft(
+		pos: iPointRef,
+		blockData: IDisplayDataBlock | null
+	): void {
+		this._temp_pos_index = pointToLocationStr(pos)
+		// null⇒清除
+		if (blockData === null) this.removeBlock(pos, this._temp_pos_index)
+		else {
+			// 有⇒更新
+			if (this._temp_pos_index in this.blocks)
+				this.blocks[this._temp_pos_index].shapeRefresh(blockData)
+			// 无⇒创建
+			else this.setBlockHard(pos, blockData)
+		}
 	}
 	protected _temp_pos_index: string = ''
 
@@ -601,28 +626,49 @@ export class ZimDisplayerMap
 	 *
 	 * @param pos 要设置的方块的位置
 	 * @param blockData 要设置的方块的数据
+	 * @returns 返回新的呈现者
 	 */
-	public setBlockHard(pos: iPointRef, blockData: IDisplayDataBlock): void {
+	public setBlockHard(
+		pos: iPointRef,
+		blockData: IDisplayDataBlock
+	): ZimDisplayerBlock {
 		/** 创建新的「方块显示器」 */
 		const block: ZimDisplayerBlock = new ZimDisplayerBlock(
 			blockData,
 			this.blockDrawDict
 		)
+		console.log('[ZimDisplayer] 硬设置方块', pos, blockData)
 		/** 把高维坐标投影到两个「地图坐标」 */
 		const [x, y] = this.projectTo2D(
 			pos,
 			[0, 0],
 			this.padAxis /* 暂且用y轴 */
 		)
+
 		// !【2023-11-13 17:51:37】暂时直接乘以「默认尺寸」
 		block.pos(x * DEFAULT_SIZE, y * DEFAULT_SIZE)
-		// 添加进自身
-		this.addChild(block)
+		// 添加进容器
+		this.blockContainer.addChild(block)
+		console.log('[ZimDisplayer] 硬设置方块成功', x, y, block, blockData)
+		return block
+	}
+
+	/**
+	 * 删除某个位置的方块
+	 */
+	public removeBlock(
+		pos: iPointRef,
+		_temp_pos_index: string = pointToLocationStr(pos)
+	): void {
+		// 移出child
+		this.blockContainer.removeChild(this.blocks[this._temp_pos_index])
+		// 删除索引
+		delete this.blocks[this._temp_pos_index]
 	}
 
 	/**
 	 * 更新某个位置的方块
-	 * * 位置无方块⇒失败
+	 * * 位置无方块⇒是否有`id`属性？创建新的「方块呈现者」：失败
 	 * * 位置有方块⇒刷新方块
 	 *
 	 * @returns 更新是否起效
@@ -632,7 +678,14 @@ export class ZimDisplayerMap
 		blockData: OptionalRecursive2<IDisplayDataBlock>
 	): boolean {
 		/** 尝试获取方块 */
-		const block: ZimDisplayerBlock | null = this.getBlockDisplayerAt(pos)
+		const block: ZimDisplayerBlock | null =
+			this.getBlockDisplayerAt(pos) ??
+			(blockData?.id === undefined
+				? null
+				: this.setBlockHard(
+						pos,
+						blockData as unknown as IDisplayDataBlock
+				  ))
 		// * 无方块⇒返回「失败」
 		if (block === null) return false
 		// * 有方块

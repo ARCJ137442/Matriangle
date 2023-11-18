@@ -23,10 +23,12 @@ import {
 	test_draw,
 	test_mapDisplayer,
 } from '../lib/zim/DisplayImplementsClient_Zim'
-import { VisualizationOutputMessagePrefix } from 'matriangle-mod-visualization/logic/abstractVisualization.type'
+import { VisualizationOutputMessagePrefix } from 'matriangle-api/display/RemoteDisplayAPI'
+import { ZimDisplayerMap } from '../lib/zim/DisplayInterfacesClient_Zim'
 
 let frame: Frame
 let shapes: Shape[]
+let mapDisplayer: ZimDisplayerMap
 
 /**
  * 加载时初始化
@@ -48,10 +50,9 @@ onMounted((): void => {
 			// 添加测试用新形状
 			shapes = test_draw((): Shape => new Zim.Shape())
 			// 添加测试用地图呈现者
-			const mapDisplayer = test_mapDisplayer(frame)
+			mapDisplayer = test_mapDisplayer(frame, false)
 			// 调整尺寸 // ! 尺寸调不了，frame.remakeCanvas报错用不了
 			const aSize = mapDisplayer.unfoldedDisplaySize2D
-
 			// frame.remakeCanvas(aSize[0] * 0.32, aSize[1] * 0.32)
 			updateCanvasSize(aSize[0] * 0.32, aSize[1] * 0.32)
 			// 重定位
@@ -132,7 +133,16 @@ defineExpose({
 					console.warn('Canvas屏幕：未找到canvas！')
 				else if (frame === null)
 					console.warn('Canvas屏幕：未找到frame！')
-				else canvasVisualize(frame, /* canvas.value, */ data[1])
+				else
+					canvasVisualize(
+						// TODO: 似乎还缺少一个识别「是否为初始化」的机制
+						frame,
+						mapDisplayer,
+						// TODO: 实体呈现者
+						/* canvas.value, */ data[1]
+					)
+				// 更新尺寸
+				mapDisplayer.relocateInFrame(frame.stage)
 				break
 			// * 文本……也支持
 			case VisualizationOutputMessagePrefix.TEXT:

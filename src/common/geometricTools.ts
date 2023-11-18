@@ -943,8 +943,10 @@ export function unfoldProject2D<T extends number = number>(
 	result: [T, T] = [target[0], target[1]]
 ): [T, T] {
 	// * 处理平凡情况：目标和尺寸不足二维
-	if (sizes.length < 2 || target.length < 2)
+	if (sizes.length < 2 || target.length < 2) {
+		console.error('unfoldProject2D: 目标和尺寸维数不足二维', sizes, target)
 		throw new Error('unfoldProject2D: 目标和尺寸维数不足二维')
+	}
 	// * 处理平凡情况：目标和尺寸维数相同且为2维
 	else if (sizes.length === target.length && sizes.length == 2) {
 		// 直接等于

@@ -11,7 +11,7 @@ import {
 	NativeVisualizationTypeFlag,
 	VisualizationOutputMessagePrefix,
 	packDisplayData,
-} from '../logic/abstractVisualization.type'
+} from 'matriangle-api/display/RemoteDisplayAPI'
 import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'

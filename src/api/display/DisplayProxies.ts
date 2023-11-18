@@ -76,7 +76,7 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 
 	/** @implements 直接更新 */
 	updateSize(size: uint[]): void {
-		this._data.size = this._dataToRefresh.size = size
+		this._data.size = this._dataToRefresh.size = [...size] // !【2023-11-19 02:40:57】复制一个，避免转换成
 	}
 	/**
 	 * @implements 直接使用「方块」对象更新
