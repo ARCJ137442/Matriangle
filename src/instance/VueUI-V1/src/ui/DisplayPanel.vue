@@ -36,6 +36,7 @@ import ScreenCanvas from './ScreenCanvas.vue' // 需要被template引用
 // import { default as Screen } from './ScreenText.vue'
 // import ScreenText from './ScreenText.vue' // 需要被template引用
 import { VueElementRefNullable } from '../lib/common'
+import { NativeVisualizationTypeFlag } from '../../../../mods/visualization/visualizer/MatrixVisualizer'
 
 // 屏显 //
 const screen: VueElementRefNullable<typeof Screen> = ref(null)
@@ -117,7 +118,7 @@ const getMSfromFPS = (fps: number): number => 1000 / fps
 /** 不管其类型，只要调用合法 */
 let FPSRefreshIntervalID: any = undefined
 /** 发送「附加信息」用的消息 */
-const otherInfMessage: string = 'other-information'
+const otherInfMessage: string = NativeVisualizationTypeFlag.OTHER_INFORMATION // 详情参考`src\mods\visualization\visualizer\MatrixVisualizer.ts`
 /** 当通过文本框更新FPS时 */
 function onUpdateFPS(e: KeyboardEvent): void {
 	if (e.key === 'Enter') onFPSRefresh(parseFloat(screenFPS.value))

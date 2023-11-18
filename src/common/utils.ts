@@ -204,6 +204,25 @@ export function cumulate<T>(array: T[], cumulateF: (t1: T, t2: T) => T): T[] {
  *
  * @param weights 权重随机的权重
  * @returns 权重的选定索引，概率分布如上述公式
+ *
+ * @example // 测试用代码
+ * const L: uint = 10, // 样本空间大小
+ *       weights: number[] = generateArray(L, identity),
+ *       results: number[] = [],
+ *       N = 10 ** 7
+ * for (let i = 0; i < N; i++) {
+ *     results.push(randomByWeight(weights)) // 随机一个索引
+ * }
+ * const resultMap = countElementsIn(results, identity) // 计算出现次数
+ * const ratios: number[] = new Array<number>(L)
+ * resultMap.forEach((value, key) => (ratios[key] = value / resultMap.get(1)!))
+ *
+ * console.log(resultMap, ratios)
+ *
+ * ratios.forEach((element, index) => { // 检查
+ *     if (Math.abs(element - index) < 0.1) console.log(`${index}✓`)
+ *     else throw Math.abs(element - index)
+ * })
  */
 export function randomByWeight(weights: number[]): uint {
 	// 处理「长度过短」的情况
@@ -212,6 +231,7 @@ export function randomByWeight(weights: number[]): uint {
 
 	/** 对数组进行累积 */
 	const cumulatedWeights: number[] = cumulate(weights, exMath.plus)
+
 	/** 随机探针：在「0~sum(weights)」之间取一个随机数 */
 	const randomProbe: number = exMath.randomFloat(
 		cumulatedWeights[cumulatedWeights.length - 1]
@@ -231,7 +251,16 @@ export function randomByWeight(weights: number[]): uint {
 	)
 	if (index >= 0) return index
 
-	console.error(weights, cumulatedWeights)
+	console.error(
+		'weights =',
+		weights,
+		'\ncumulatedWeights =',
+		cumulatedWeights,
+		'\nrandomProbe =',
+		randomProbe,
+		'\nindex =',
+		index
+	)
 	throw new Error('加权随机：未正常随机到结果！')
 }
 
@@ -273,16 +302,16 @@ export function binarySearchInRanges(
 		// * 计算区间左右端点
 		left = mid === 0 ? 0 : cumulatedValues[mid - 1]
 		right = cumulatedValues[mid]
-		// * 比「左端点」还左⇒左边切半
+		// * 比「左端点」还左⇒右边区间切半，取左边区间
 		if (target < left) {
 			// * 边界移动
-			leftEdge = mid
+			rightEdge = mid
 		}
-		// * 比「右端点」还右⇒右边切半
+		// * 比「右端点」还右⇒左边区间切半，取右边区间
 		else if (target >= right) {
 			// ! 这里是「大于等于」，因为「目标」生成的区间是`[0, sum(weights))`不包含右边
 			// * 边界移动
-			rightEdge = mid
+			leftEdge = mid
 		}
 		// * 在区间内⇒返回
 		else return mid

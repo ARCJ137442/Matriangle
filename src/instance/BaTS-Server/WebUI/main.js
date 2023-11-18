@@ -25,7 +25,7 @@ let socketControl
 
 // 网络
 const resetButton = document.getElementById('reset')
-const otherInfMessage = 'other-information'
+const otherInfMessage = 'otherInf' // 详情参考`src\mods\visualization\visualizer\MatrixVisualizer.ts`
 
 const isEntityListSignal = text => text.startsWith('实体列表')
 
