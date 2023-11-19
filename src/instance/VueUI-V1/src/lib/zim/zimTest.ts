@@ -20,8 +20,8 @@ import {
 	drawSpawnPointMark,
 	drawSupplyPoint,
 } from './implements/zim_client_block'
-import { center_drags } from './zimUtils'
-import { drawPlayer } from './implements/zim_client_entity'
+import { drawTriangleRightGradient, center_drags } from './zimUtils'
+import PlayerBatr from 'matriangle-mod-bats/entity/player/PlayerBatr'
 
 /**
  * 测试旧BaTr的图形绘制
@@ -63,7 +63,12 @@ export function test_draw(shape_constructor: () => Shape): Shape[] {
 		drawSupplyPoint(shape_constructor()),
 		// 实体 //
 		// 玩家
-		drawPlayer(shape_constructor())
+		drawTriangleRightGradient(
+			shape_constructor(),
+			PlayerBatr.SIZE,
+			PlayerBatr.LINE_SIZE
+		)
+		// !【2023-11-20 00:18:50 】后续可能不在更新
 	)
 }
 

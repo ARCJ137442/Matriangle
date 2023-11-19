@@ -1,6 +1,4 @@
 import { fPoint, iPoint, floatPoint } from 'matriangle-common/geometricTools'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import Block from 'matriangle-api/server/block/Block'
 import {
@@ -9,11 +7,20 @@ import {
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { ProjectileOutGrid } from '../Projectile'
+import { IDisplayDataStateProjectile, ProjectileOutGrid } from '../Projectile'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import { typeID } from 'matriangle-api'
+
+/** 子弹的显示数据 */
+export interface IDisplayDataEntityStateBullet
+	extends IDisplayDataStateProjectile {
+	/** 子弹的填充颜色 */
+	fillColor: uint
+	/** 子弹的线条颜色 */
+	lineColor: uint
+}
 
 /**
  * 「子弹」是
@@ -22,7 +29,7 @@ import { typeID } from 'matriangle-api'
  * 抛射体
  */
 export default abstract class Bullet
-	extends ProjectileOutGrid
+	extends ProjectileOutGrid<IDisplayDataEntityStateBullet>
 	implements IEntityOutGrid, IEntityFixedLived
 {
 	/** 子弹飞行的速度（每个世界刻） */
@@ -71,7 +78,11 @@ export default abstract class Bullet
 
 		// this.finalExplodeRadius = (owner === null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = finalExplodeRadius
-		// TODO: ↑这个「computeFinalRadius」似乎是要放进某个「世界逻辑」对象中访问，而非「放在玩家的类里」任由其与世界耦合
+		// * 显示初始化
+		this._proxy.position = this._position
+		this._proxy.direction = this._direction
+		this._proxy.storeState('fillColor', this.ownerColor)
+		this._proxy.storeState('lineColor', this.ownerLineColor)
 	}
 
 	/**
@@ -98,9 +109,6 @@ export default abstract class Bullet
 	 */
 	get position(): floatPoint {
 		return this._position
-	}
-	set position(value: floatPoint) {
-		this._position.copyFrom(value)
 	}
 
 	// 活跃 //
@@ -168,9 +176,6 @@ export default abstract class Bullet
 	}
 
 	// 显示 //
-	public static readonly LINE_SIZE: number = DEFAULT_SIZE / 80
-	public static readonly SIZE: number = logical2Real(3 / 8)
-
 	readonly i_displayable = true as const
 	/** （二维）显示覆盖优先级 */
 	protected _zIndex: uint = 0

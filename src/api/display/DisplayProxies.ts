@@ -278,6 +278,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 			state: {} as EntityStateT, // !【2023-11-15 22:20:11】都必定包含空对象`{}`
 		}
 		this._dataToRefresh = {
+			id, // !【2023-11-20 01:08:41】谁说一开始不要ID？？？这个「在母体更新时无法『局部初始化』」的问题困扰了我一个小时！！！
 			// !【2023-11-15 22:27:19】这里的「空对象」一定是JS对象——保证「一定有」，但不保证「有东西」
 			state: (this._stateToRefresh = {} as EntityStateT),
 		} // !【2023-11-15 22:16:03】这里保证「一定是这个类型」
@@ -307,9 +308,9 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 		return this._dataToRefresh
 	}
 
-	/** @implements 清除`_dataToRefresh`在`type`的值，并清除`state`上的所有属性 */
+	/** @implements 清除`_dataToRefresh`在`id`的值，并清除`state`上的所有属性 */
 	flushDisplayData(): void {
-		// 清除`type`的值
+		// 清除`id`的值
 		delete this._dataToRefresh.id
 		// 清除`state`上所有属性
 		clearObjectKeys(this._stateToRefresh)

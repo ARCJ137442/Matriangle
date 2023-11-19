@@ -1720,8 +1720,8 @@ export const BATR_DEFAULT_PLAYER_CONTROL_CONFIGS: Record<
  */
 export function initBasicPlayerTeams(
 	parent: PlayerTeam[],
-	coloredTeamCount: uint,
-	grayscaleTeamCount: uint
+	grayscaleTeamCount: uint,
+	coloredTeamCount: uint
 ): PlayerTeam[] {
 	// let parent: PlayerTeam[] = new Array<PlayerTeam>();
 	clearArray(parent)

@@ -32,12 +32,15 @@ export interface IDisplayDataStateProjectile extends IDisplayDataEntityState {
  *
  * ! 【2023-09-22 22:46:10】现在不再「默认绑定某种工具（武器）」
  */
-export default abstract class Projectile
-	extends EntityDisplayable<IDisplayDataStateProjectile>
+export default abstract class Projectile<
+		ESType extends
+			IDisplayDataStateProjectile = IDisplayDataStateProjectile,
+	>
+	extends EntityDisplayable<ESType>
 	implements
 		IEntityActive,
 		IEntityWithDirection,
-		// IEntityDisplayable<IDisplayDataStateProjectile>,
+		// IEntityDisplayable<ESType>,
 		IEntityShortLived
 {
 	//============Basic Properties============//
@@ -224,8 +227,12 @@ export default abstract class Projectile
  * 具有「位置」的抛射体
  * * 为统一集中方法而存在
  */
-export abstract class ProjectileHasPosition<Pos extends number>
-	extends Projectile
+export abstract class ProjectileHasPosition<
+		Pos extends number,
+		ESType extends
+			IDisplayDataStateProjectile = IDisplayDataStateProjectile,
+	>
+	extends Projectile<ESType>
 	implements IEntityHasPosition
 {
 	protected _position: xPoint<Pos>
@@ -282,7 +289,9 @@ export abstract class ProjectileHasPosition<Pos extends number>
 }
 
 /** 在格点上的「有坐标抛射体」 */
-export abstract class ProjectileInGrid extends ProjectileHasPosition<int> {
+export abstract class ProjectileInGrid<
+	ESType extends IDisplayDataStateProjectile = IDisplayDataStateProjectile,
+> extends ProjectileHasPosition<int, ESType> {
 	/** @implements 实现——分派{@link IMatrix.towardWithRot_II}方法 */
 	public moveToward(
 		host: IMatrix,
@@ -299,7 +308,9 @@ export abstract class ProjectileInGrid extends ProjectileHasPosition<int> {
 }
 
 /** 不在格点上的「有坐标抛射体」 */
-export abstract class ProjectileOutGrid extends ProjectileHasPosition<uint> {
+export abstract class ProjectileOutGrid<
+	ESType extends IDisplayDataStateProjectile = IDisplayDataStateProjectile,
+> extends ProjectileHasPosition<uint, ESType> {
 	/** @implements 实现——分派{@link IMatrix.towardWithRot_FF}方法 */
 	public moveToward(
 		host: IMatrix,

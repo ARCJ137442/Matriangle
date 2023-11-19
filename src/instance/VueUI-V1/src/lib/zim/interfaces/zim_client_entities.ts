@@ -27,9 +27,6 @@ export class ZimDisplayerEntity<
 	/** 当前持有的「实体显示数据」 */
 	protected _currentEntityState: ESType = undefined as unknown as ESType // ! 一定会在构造函数的`shapeInit`中初始化
 
-	/** 「实体id→实体状态更新函数」对象 */
-	protected _entityStateUpdateFunctions: EntityDrawDict = {}
-
 	/**
 	 * 构造函数
 	 *
@@ -106,11 +103,15 @@ export class ZimDisplayerEntity<
 				this._currentEntityState
 			) === undefined
 		) {
+			// * ID都没有，肯定是大忌
+			if (this._currentEntityID === undefined) {
+				console.error('实体ID未初始化！', this)
+				throw new Error('实体ID未初始化！')
+			}
 			console.warn(
 				'图形初始化失败：',
 				this._currentEntityID,
 				this._currentEntityState,
-				this.drawDict,
 				this
 			)
 		}
@@ -123,11 +124,15 @@ export class ZimDisplayerEntity<
 				this._currentEntityState
 			) === undefined
 		) {
+			// * ID都没有，肯定是大忌
+			if (this._currentEntityID === undefined) {
+				console.error('实体ID未初始化！', this)
+				throw new Error('实体ID未初始化！')
+			}
 			console.warn(
 				'图形刷新失败：',
 				this._currentEntityID,
 				this._currentEntityState,
-				this.drawDict,
 				this
 			)
 		}
@@ -192,6 +197,7 @@ export class ZimDisplayerEntities
 	}
 
 	// 核心显示更新函数 //
+	// ! 【2023-11-20 00:46:13】不要尝试把这俩循环抽象成一个函数，那样会让类型过度复杂化
 	shapeInit(data: IDisplayDataEntities): void {
 		let entityData: IDisplayDataEntity<IDisplayDataEntityState> | null
 		let entityDisplayer: ZimDisplayerEntity | undefined
@@ -208,6 +214,9 @@ export class ZimDisplayerEntities
 					// 有⇒更新
 					else entityDisplayer.shapeInit(entityData)
 				} else if (entityData !== null) {
+					if (entityData?.id === undefined) {
+						throw new Error('尝试在实体ID未提供时进行初始化！')
+					}
 					entityDisplayer = this.addEntity(
 						uuid,
 						// !【2023-11-19 15:04:37】这里默认「设置了空地方的数据」都是「需要初始化的数据」
@@ -215,7 +224,14 @@ export class ZimDisplayerEntities
 					)
 				}
 			} catch (e) {
-				console.error('初始化实体出现错误！', e, uuid, data, this)
+				console.error(
+					'初始化实体出现错误！',
+					e,
+					uuid,
+					data,
+					this._entities,
+					this
+				)
 			}
 		}
 	}
@@ -238,6 +254,10 @@ export class ZimDisplayerEntities
 					// 有⇒更新
 					else entityDisplayer.shapeRefresh(entityData)
 				} else if (entityData !== null) {
+					// ! 不能说「既要申请一个新的『实体呈现者』又不一开始就拿到id初始化」
+					if (entityData?.id === undefined) {
+						throw new Error('尝试在实体ID未提供时进行初始化！')
+					}
 					entityDisplayer = this.addEntity(
 						uuid,
 						// !【2023-11-19 15:04:37】这里默认「设置了空地方的数据」都是「需要初始化的数据」
@@ -245,7 +265,14 @@ export class ZimDisplayerEntities
 					)
 				}
 			} catch (e) {
-				console.error('更新实体出现错误！', e, uuid, data, this)
+				console.error(
+					'更新实体出现错误！',
+					e,
+					uuid,
+					data,
+					this._entities,
+					this
+				)
 			}
 		}
 	}

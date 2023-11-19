@@ -965,33 +965,30 @@ export function unfoldProject2D<T extends number = number>(
 	result: [T, T] = [target[0], target[1]]
 ): [T, T] {
 	// * 处理平凡情况：目标维数不超二维⇒原样返回/补零
-	if (target.length <= 2)
-		switch (target.length) {
-			// * 零维：全零
-			case 0:
-				result[0] = result[1] = 0 as T // ! 肯定是数字类型
-				break
-			// * 一维：被平铺的轴向
-			case 1:
-				result[padAxis] = target[0]
-				result[padAxis ^ 1] = 0 as T // 用异或快速运算
-				break
-			// * 二维：直接一一对应
-			case 2:
-				// ! 这里实际上并不需要「目标和尺寸都相同」，因为这时候其与尺寸几无关系
-				result[0] = target[0]
-				result[1] = target[1]
-				break
-			// * 一般情况
-			default:
-				// 从自身位置开始
-				result[0] = target[0]
-				result[1] = target[1]
-				// * 然后将「高维信息」转换为「低维的『盒子之外的展开』的长度增量」
-				;(result[padAxis] as number) +=
-					unfoldProjectPadBlockLength(sizes, target) * sizes[padAxis]
-		}
-	else {
+	switch (target.length) {
+		// * 零维：全零
+		case 0:
+			result[0] = result[1] = 0 as T // ! 肯定是数字类型
+			break
+		// * 一维：被平铺的轴向
+		case 1:
+			result[padAxis] = target[0]
+			result[padAxis ^ 1] = 0 as T // 用异或快速运算
+			break
+		// * 二维：直接一一对应
+		case 2:
+			// ! 这里实际上并不需要「目标和尺寸都相同」，因为这时候其与尺寸几无关系
+			result[0] = target[0]
+			result[1] = target[1]
+			break
+		// * 一般情况
+		default:
+			// 从自身位置开始
+			result[0] = target[0]
+			result[1] = target[1]
+			// * 然后将「高维信息」转换为「低维的『盒子之外的展开』的长度增量」
+			;(result[padAxis] as number) +=
+				unfoldProjectPadBlockLength(sizes, target) * sizes[padAxis]
 	}
 	// 返回结果
 	return result

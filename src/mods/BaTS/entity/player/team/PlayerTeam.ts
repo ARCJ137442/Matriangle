@@ -87,7 +87,7 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 	//============Constructor & Destructor============//
 	public constructor(
 		color: uint = 0x000000,
-		id: string = `0x${color.toString(16)}`,
+		id: string = `0x${color.toString(16).padStart(6, '0')}`,
 		name: string = `#${id}`
 	) {
 		this._id = id
@@ -101,5 +101,9 @@ export default class PlayerTeam implements IJSObjectifiable<PlayerTeam> {
 
 	public clone(): PlayerTeam {
 		return new PlayerTeam(this._color, this._id, this._name)
+	}
+
+	public toString(): string {
+		return `[PlayerTeam "${this._name}" id=${this._id} color=${this._color}]`
 	}
 }

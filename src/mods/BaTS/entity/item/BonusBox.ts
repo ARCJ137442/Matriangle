@@ -57,6 +57,9 @@ export default class BonusBox
 		this._position.copyFrom(position)
 		this._bonusType = type
 		// this._symbol = new BonusBoxSymbol(this._bonusType);
+		// * 显示更新
+		this._proxy.position = this._position
+		this._proxy.storeState('bonusType', this._bonusType)
 	}
 
 	override destructor(): void {

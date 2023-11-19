@@ -1,5 +1,4 @@
 import { fPoint } from 'matriangle-common/geometricTools'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
@@ -23,6 +22,7 @@ export default class BulletBomber extends Bullet {
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 2
 	public static readonly MAX_BOMB_TICK: uint = FIXED_TPS * 0.125
+	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00
 
 	//============Instance Variables============//
 
@@ -87,8 +87,6 @@ export default class BulletBomber extends Bullet {
 	}
 
 	//============Display Implements============//
-	public static readonly SIZE: number = 0.4 * DEFAULT_SIZE
-	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00
 
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// override displayInit(shape: IShape): void {

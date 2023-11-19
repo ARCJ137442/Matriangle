@@ -1,5 +1,4 @@
 import { fPoint } from 'matriangle-common/geometricTools'
-import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
@@ -20,7 +19,6 @@ export default class BulletNuke extends Bullet {
 	/** ID */
 	public static readonly ID: typeID = 'BulletNuke'
 
-	public static readonly SIZE: number = logical2Real(1 / 2)
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffcc00
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 6.4

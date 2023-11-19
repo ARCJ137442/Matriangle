@@ -1,5 +1,4 @@
 ﻿import { fPoint } from 'matriangle-common/geometricTools'
-import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { uint, int } from 'matriangle-legacy/AS3Legacy'
 import {
 	comparePosition_I,
@@ -27,7 +26,6 @@ export default class BulletTracking extends Bullet {
 	/** ID */
 	public static readonly ID: typeID = 'BulletTracking'
 
-	public static readonly SIZE: number = logical2Real(3 / 8)
 	public static readonly DEFAULT_SPEED: number = 12 / FIXED_TPS
 	public static readonly DEFAULT_EXPLODE_COLOR: uint = 0xffff00
 	public static readonly DEFAULT_EXPLODE_RADIUS: number = 0.875
