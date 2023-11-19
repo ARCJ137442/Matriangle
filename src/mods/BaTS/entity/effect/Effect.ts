@@ -15,7 +15,8 @@ import { typeID } from 'matriangle-api'
  * 特效通用的「附加显示状态」
  */
 export interface IDisplayDataStateEffect extends IDisplayDataEntityState {
-	// TODO: 有待扩充
+	/** 生命周期百分比（一般的特效都只需这个百分比） */
+	lifePercent: number
 }
 
 /**
@@ -31,8 +32,11 @@ export interface IDisplayDataStateEffect extends IDisplayDataEntityState {
  * ```
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量
  */
-export default abstract class Effect
-	extends EntityDisplayable<IDisplayDataStateEffect>
+export default abstract class Effect<
+		// TODO: 为需要增加「显示数据」如「玩家升级特效の颜色」的地方完善
+		StateT extends IDisplayDataStateEffect = IDisplayDataStateEffect,
+	>
+	extends EntityDisplayable<StateT>
 	// IEntityDisplayable<IDisplayDataStateEffect>,
 	implements
 		IEntityShortLived,
@@ -71,9 +75,12 @@ export default abstract class Effect
 	 * @param remove 调用`remove(this)`即可通知母体删除自身
 	 */
 	public onTick(remove: (entity: Entity) => void): void {
-		if (--this._life <= 0) {
+		// * deal life
+		// 减之前更新（百分比范围：0~1）
+		this._proxy.storeState('lifePercent', this.lifePercent)
+		if (this._life-- <= 0)
+			// * 先自减，再对比
 			remove(this)
-		}
 		// this._life--; // * 与内置「--」的差别在于：它一定会让实体的「生命周期」停留于`0`
 	}
 

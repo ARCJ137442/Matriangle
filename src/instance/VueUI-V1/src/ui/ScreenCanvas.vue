@@ -13,22 +13,34 @@
 <script setup lang="ts">
 // Matriangle API
 import { DISPLAY_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import { canvasVisualize_V1 as canvasVisualize } from '../lib/canvasVisualizeBrowser'
 // Vue
 import { Ref, ref, onMounted, onBeforeUnmount } from 'vue'
 // 外部库
 import { Frame, Shape } from 'zimjs'
 import Zim from 'zimjs'
+
 import {
-	test_draw,
-	test_mapDisplayer,
-} from '../lib/zim/DisplayImplementsClient_Zim'
-import { VisualizationOutputMessagePrefix } from 'matriangle-api/display/RemoteDisplayAPI'
-import { ZimDisplayerMap } from '../lib/zim/DisplayInterfacesClient_Zim'
+	IDisplayDataMatrix,
+	VisualizationOutputMessagePrefix,
+} from 'matriangle-api/display/RemoteDisplayAPI'
+import { test_draw } from '../lib/zim/zimTest'
+import {
+	BLOCK_DRAW_DICT_BATR,
+	BLOCK_DRAW_DICT_NATIVE,
+} from '../lib/zim/implements/zim_client_block'
+import {
+	ZimDisplayerMatrix,
+	addEmptyMatrixDisplayer,
+} from '../lib/zim/interfaces/zim_client_matrix'
+import { JSObject, OptionalRecursive2 } from '../../../../common'
+import {
+	ENTITY_DRAW_DICT_BATR,
+	ENTITY_DRAW_DICT_NATIVE,
+} from '../lib/zim/implements/zim_client_entity'
 
 let frame: Frame
 let shapes: Shape[]
-let mapDisplayer: ZimDisplayerMap
+let matrixDisplayer: ZimDisplayerMatrix
 
 /**
  * 加载时初始化
@@ -49,14 +61,24 @@ onMounted((): void => {
 		ready: (): void => {
 			// 添加测试用新形状
 			shapes = test_draw((): Shape => new Zim.Shape())
-			// 添加测试用地图呈现者
-			mapDisplayer = test_mapDisplayer(frame, false)
+			// 添加新的地图呈现者
+			matrixDisplayer = addEmptyMatrixDisplayer(
+				frame,
+				{
+					...BLOCK_DRAW_DICT_NATIVE,
+					...BLOCK_DRAW_DICT_BATR,
+				},
+				{
+					...ENTITY_DRAW_DICT_NATIVE,
+					...ENTITY_DRAW_DICT_BATR,
+				}
+			)
 			// 调整尺寸 // ! 尺寸调不了，frame.remakeCanvas报错用不了
-			const aSize = mapDisplayer.unfoldedDisplaySize2D
+			const aSize = matrixDisplayer.map.unfoldedDisplaySize2D
 			// frame.remakeCanvas(aSize[0] * 0.32, aSize[1] * 0.32)
 			updateCanvasSize(aSize[0] * 0.32, aSize[1] * 0.32)
 			// 重定位
-			mapDisplayer.relocateInFrame(frame.stage).drag()
+			matrixDisplayer.relocateInFrame(frame.stage).drag()
 			// 更新场景
 			frame.stage.update()
 		},
@@ -99,9 +121,12 @@ function updateCanvasSize(W: number, H: number): void {
 		console.error('未找到画板元素！')
 		return
 	}
-	canvas.value.width = W
-	canvas.value.height = H
-	console.log('画板尺寸更新：', [W, H])
+	// 防止NaN
+	if (!isNaN(W) && !isNaN(H)) {
+		canvas.value.width = W
+		canvas.value.height = H
+		console.log('画板尺寸更新：', [W, H])
+	}
 }
 
 // 变量引用
@@ -128,21 +153,35 @@ defineExpose({
 				otherInfText.value = data[1]
 				break
 			// * 画板
-			case VisualizationOutputMessagePrefix.CANVAS_DATA:
+			case VisualizationOutputMessagePrefix.CANVAS_DATA_INIT:
+			case VisualizationOutputMessagePrefix.CANVAS_DATA_REFRESH:
 				if (canvas.value === null)
 					console.warn('Canvas屏幕：未找到canvas！')
 				else if (frame === null)
 					console.warn('Canvas屏幕：未找到frame！')
-				else
-					canvasVisualize(
-						// TODO: 似乎还缺少一个识别「是否为初始化」的机制
-						frame,
-						mapDisplayer,
-						// TODO: 实体呈现者
-						/* canvas.value, */ data[1]
+				try {
+					const displayData = JSON.parse(data[1]) as JSObject
+					// TODO: 需要考虑「在显示端形成一个『JSON数据镜像』」如「对象更新函数」
+					if (
+						// 若为「初始化」
+						data[0] ===
+						VisualizationOutputMessagePrefix.CANVAS_DATA_INIT
 					)
-				// 更新尺寸
-				mapDisplayer.relocateInFrame(frame.stage)
+						// ! 假定：这时的数据一定是「完整数据」
+						matrixDisplayer.shapeInit(
+							displayData as unknown as IDisplayDataMatrix
+						)
+					else
+						matrixDisplayer.shapeRefresh(
+							displayData as unknown as OptionalRecursive2<IDisplayDataMatrix>
+						)
+					// ! 记得帧也要更新一次
+					frame?.stage?.update()
+				} catch (e) {
+					console.error('canvas可视化失败！', e)
+				}
+				// 更新尺寸 // !【2023-11-19 12:16:11】现在重新在内部进行更新
+				// mapDisplayer.relocateInFrame(frame.stage)
 				break
 			// * 文本……也支持
 			case VisualizationOutputMessagePrefix.TEXT:

@@ -663,17 +663,34 @@ export type DictionaryLikeObject<V = any> = {
  *
  * ! 浅拷贝：只会合并一层引用
  *
+ * ! 出于性能考虑，不会检查是否为空
+ *
  * @template T 一般保证「合并双方是同一类型」
  * @param {T} from 合并的数据来源（对象）
  * @param {T} to 要合并到的对象
  * @returns 合并后的数据对象
  */
-export function mergeObject<T>(from: T, to: T): T {
-	for (const i in from) {
-		if ((from as any).hasOwnProperty(i)) {
-			to[i] = from[i]
+export function mergeObject<T extends Exclude<object, null>>(
+	from: T,
+	to: T
+): T {
+	// 数据相等⇒无意义
+	if (from === to) return to
+	// 数据为空/未定义⇒无意义
+	/* else if (
+		from === null ||
+		to === null ||
+		from === undefined ||
+		to === undefined
+	)
+		return to */
+	// 正式开始
+	else
+		for (const i in from) {
+			if ((from as any).hasOwnProperty(i)) {
+				to[i] = from[i]
+			}
 		}
-	}
 	return to
 }
 

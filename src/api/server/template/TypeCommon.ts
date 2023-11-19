@@ -20,7 +20,7 @@ export default class TypeCommon {
 		types: T[]
 	): T | null {
 		for (const type of types) {
-			if (type.name == str) return type
+			if (type.id == str) return type
 		}
 		return null
 	}
@@ -32,7 +32,7 @@ export default class TypeCommon {
 		/**
 		 * 只读名称：只需设置一次
 		 */
-		public readonly name: string,
+		public readonly id: string,
 		/**
 		 * 只读的「所属标签」：用于在「国际化接口」中的「唯一所指ID」
 		 */

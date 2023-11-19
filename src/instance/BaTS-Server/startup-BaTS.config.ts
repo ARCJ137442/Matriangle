@@ -8,13 +8,9 @@ import {
 	MessageServiceConfig,
 } from 'matriangle-mod-message-io-api'
 import { WebSocketServiceServer } from 'matriangle-mod-message-io-node'
-import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
-import Map_V1 from 'matriangle-mod-native/map/Map_V1'
 import MatrixVisualizer from 'matriangle-mod-visualization/visualizer/MatrixVisualizer'
 import MatrixVisualizerCanvas from 'matriangle-mod-visualization/visualizer/MatrixVisualizerCanvas'
 import MatrixVisualizerText from 'matriangle-mod-visualization/visualizer/MatrixVisualizerText'
-import { stackMaps } from './stackedMaps'
-import { randInt, randomBoolean2 } from 'matriangle-common'
 
 const visualizationConstructors = {
 	canvas: (host: IMatrix): MatrixVisualizer =>
@@ -80,21 +76,29 @@ const config: IMatrixStartupConfigBaTS = {
 	// 地图
 	// [...MULTI_DIM_TEST_MAPS, ...BatrDefaultMaps._ALL_MAPS]; // 【2023-10-09 21:12:37】目前是「多维度地图」测试
 	maps: [
-		new Map_V1(
-			'stacked',
-			stackMaps(
-				(randomBoolean2()
-					? BatrDefaultMaps._ALL_MAPS
-					: BatrDefaultMaps._ALL_MAPS.slice(
-							1,
-							randInt(BatrDefaultMaps._ALL_MAPS.length) + 1
-					  )
-				).map(
-					(map: IMap): MapStorageSparse =>
-						map.storage as MapStorageSparse
-				)
-			)
-		),
+		// !【2023-11-19 11:52:13】现在只需单个地图
+		BatrDefaultMaps.MAP_H,
+		/* randomBoolean2(1)
+			? // 随机1：单一地图
+			  randomIn(BatrDefaultMaps._ALL_MAPS)
+			: new Map_V1(
+					'stacked',
+					stackMaps(
+						(randomBoolean2()
+							? // 随机2：所有地图的堆叠
+							  BatrDefaultMaps._ALL_MAPS
+							: // 随机3：部分地图的堆叠
+							  BatrDefaultMaps._ALL_MAPS.slice(
+									1,
+									randInt(BatrDefaultMaps._ALL_MAPS.length) +
+										1
+							  )
+						).map(
+							(map: IMap): MapStorageSparse =>
+								map.storage as MapStorageSparse
+						)
+					)
+			  ), */
 	],
 	// 其它配置
 	playerCount: 1,

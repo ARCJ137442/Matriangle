@@ -217,19 +217,19 @@ export default class Player_V1<
 				true
 			)
 		// !【2023-10-04 22:55:35】原`onPlayerMove`已被取消
-		// TODO: 显示更新
+
+		// ! 显示更新已在`setPosition`中内置
 	}
 	protected _temp_moveForward: iPoint = new iPoint()
 
 	turnTo(host: IMatrix, direction: number): void {
-		this._direction = direction
-		this._proxy.direction = direction
-		// TODO: 显示更新
+		this.direction = direction
+		// ! 显示更新已内置到setter中
 	}
 
 	turnBack(host: IMatrix): void {
 		this.direction = toOpposite_M(this._direction)
-		// TODO: 显示更新
+		// ! 显示更新已内置到setter中
 	}
 
 	// 可选

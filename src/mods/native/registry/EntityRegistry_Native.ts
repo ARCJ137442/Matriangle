@@ -10,6 +10,8 @@ import EntityType from 'matriangle-api/server/entity/EntityType'
  *
  * !【2023-10-01 16:18:46】这不应该在「所有实体类加载完成前」被导入
  *
+ * TODO: 这个module有待重构——EntityType还有无必要？
+ *
  */
 export module NativeEntityTypes {
 	//============Registry============//
@@ -18,7 +20,7 @@ export module NativeEntityTypes {
 	export const PLAYER: EntityType = new EntityType(
 		Player_V1.ID,
 		Player_V1,
-		DisplayLevel.PROJECTILE
+		DisplayLevel.PLAYER
 	)
 
 	/**

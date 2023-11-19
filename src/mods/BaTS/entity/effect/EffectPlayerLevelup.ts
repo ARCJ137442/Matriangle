@@ -25,10 +25,10 @@ export default class EffectPlayerLevelup extends Effect {
 	//============Constructor & Destructor============//
 	public constructor(
 		position: fPoint,
-		color: uint = EffectPlayerLevelup.DEFAULT_COLOR,
-		LIFE: uint = EffectPlayerLevelup.LIFE
+		color: uint = EffectPlayerLevelup.DEFAULT_COLOR
+		// LIFE: uint = EffectPlayerLevelup.LIFE
 	) {
-		super(EffectPlayerLevelup.ID, position, LIFE)
+		super(EffectPlayerLevelup.ID, position, EffectPlayerLevelup.LIFE)
 		this._color = color
 	}
 

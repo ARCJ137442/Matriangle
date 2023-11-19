@@ -183,10 +183,10 @@ const self = {
 	 * * 现在使用「抽象显示接口」统一进行解包操作
 	 */
 	updateDisplayScreen(message: string): void {
-		if (screen.value !== null)
+		if (screen.value !== null) {
 			// 自动解包
 			screen.value.update(unpackDisplayData(message))
-		else console.warn('屏显对象不存在！')
+		} else console.warn('屏显对象不存在！')
 	},
 	/**
 	 * 获取刷新速率（整数）

@@ -35,8 +35,9 @@ export abstract class xPoint<T extends number = number>
 
 	/**
 	 * 根据指定的类型检验数组中的值
+	 * * 若无参数⇒检查自身所有值
 	 */
-	public checkType(value: unknown): boolean {
+	public checkType(value?: unknown): boolean {
 		return false
 	}
 
@@ -459,13 +460,30 @@ export abstract class xPoint<T extends number = number>
 	/**
 	 * 判断两个点「坐标是否相等」
 	 * ! 技术细节：逐一比对其是否**全等**
+	 * * 即使用`===`
 	 *
 	 * @param p 比对的目标点
 	 * @returns 两个点的坐标是否相等
 	 */
-	public isEqual(p: xPoint<T>): boolean {
+	public isEqual(p: T[]): boolean {
 		for (let i: uint = 0; i < p.length; i++) {
 			if (this[i] !== p[i]) return false
+		}
+		return true
+	}
+
+	/**
+	 * 判断两个点「坐标是否相等」
+	 *
+	 * ! 技术细节：逐一比对其是否**相等**
+	 * * 即使用`==`
+	 *
+	 * @param p 比对的目标点
+	 * @returns 两个点的坐标是否相等
+	 */
+	public isEqualWide(p: T[]): boolean {
+		for (let i: uint = 0; i < p.length; i++) {
+			if (this[i] != p[i]) return false
 		}
 		return true
 	}
@@ -477,7 +495,7 @@ export abstract class xPoint<T extends number = number>
 	 * @param p 比对的目标点
 	 * @returns 两个点的坐标是否有一处相等
 	 */
-	public isAnyAxisEqual(p: xPoint<T>): boolean {
+	public isAnyAxisEqual(p: T[]): boolean {
 		for (let i: uint = 0; i < p.length; i++) {
 			if (this[i] === p[i]) return true
 		}
@@ -509,8 +527,10 @@ export class intPoint extends xPoint<int> {
 	}
 
 	/** 实现：检测是否为整数 */
-	public checkType(value: number): boolean {
-		return Number.isInteger(value)
+	public checkType(value?: number): boolean {
+		return value === undefined
+			? this.every(this.checkType.bind(this))
+			: Number.isInteger(value)
 	}
 }
 
@@ -520,8 +540,10 @@ export class intPoint extends xPoint<int> {
  */
 export class floatPoint extends xPoint<number> {
 	/** 实现：检测是否为数值 */
-	public checkType(value: number): boolean {
-		return typeof value === 'number'
+	public checkType(value?: number): boolean {
+		return value === undefined
+			? this.every(this.checkType.bind(this))
+			: typeof value === 'number'
 	}
 }
 
@@ -937,30 +959,39 @@ void function unfoldProject<T extends number = number>(
  */
 export function unfoldProject2D<T extends number = number>(
 	// ! 需要提供所有维度上的尺寸，以便为「切片展开」奠定边界
-	sizes: xPoint<T>,
-	target: xPoint<T>,
+	sizes: T[],
+	target: T[],
 	padAxis: uint = 1, // 默认y轴
 	result: [T, T] = [target[0], target[1]]
 ): [T, T] {
-	// * 处理平凡情况：目标和尺寸不足二维
-	if (sizes.length < 2 || target.length < 2) {
-		console.error('unfoldProject2D: 目标和尺寸维数不足二维', sizes, target)
-		throw new Error('unfoldProject2D: 目标和尺寸维数不足二维')
-	}
-	// * 处理平凡情况：目标和尺寸维数相同且为2维
-	else if (sizes.length === target.length && sizes.length == 2) {
-		// 直接等于
-		result[0] = target[0]
-		result[1] = target[1]
-	}
-	// * 一般情况
+	// * 处理平凡情况：目标维数不超二维⇒原样返回/补零
+	if (target.length <= 2)
+		switch (target.length) {
+			// * 零维：全零
+			case 0:
+				result[0] = result[1] = 0 as T // ! 肯定是数字类型
+				break
+			// * 一维：被平铺的轴向
+			case 1:
+				result[padAxis] = target[0]
+				result[padAxis ^ 1] = 0 as T // 用异或快速运算
+				break
+			// * 二维：直接一一对应
+			case 2:
+				// ! 这里实际上并不需要「目标和尺寸都相同」，因为这时候其与尺寸几无关系
+				result[0] = target[0]
+				result[1] = target[1]
+				break
+			// * 一般情况
+			default:
+				// 从自身位置开始
+				result[0] = target[0]
+				result[1] = target[1]
+				// * 然后将「高维信息」转换为「低维的『盒子之外的展开』的长度增量」
+				;(result[padAxis] as number) +=
+					unfoldProjectPadBlockLength(sizes, target) * sizes[padAxis]
+		}
 	else {
-		// 从自身位置开始
-		result[0] = target[0]
-		result[1] = target[1]
-		// * 然后将「高维信息」转换为「低维的『盒子之外的展开』的长度增量」
-		;(result[padAxis] as number) +=
-			unfoldProjectPadBlockLength(sizes, target) * sizes[padAxis]
 	}
 	// 返回结果
 	return result
@@ -974,12 +1005,15 @@ export function unfoldProject2D<T extends number = number>(
  *   * `target_i`代表「高维溢出的部分」
  *   * `∏^i_{j=1} (size_j / size_2)`代表「累积乘积」
  *
- * ! 注意：「L值」的计算结果是「地图长度的倍数**增量**」，在实际使用时
+ * ! 注意：「L值」的计算结果是「地图长度的倍数**增量**」，在实际「显示端」使用时需要乘以显示倍数
+ * * 逻辑端尺寸≠显示端尺寸
+ *
+ * ! 同为「二维」时不会进行展开
  */
 export function unfoldProjectPadBlockLength<T extends number = number>(
 	// ! 需要提供所有维度上的尺寸，以便为「切片展开」奠定边界
-	sizes: xPoint<T>,
-	target: xPoint<T>
+	sizes: T[],
+	target: T[]
 ): uint {
 	/** 目标值 */
 	let L: uint = 0
@@ -987,7 +1021,7 @@ export function unfoldProjectPadBlockLength<T extends number = number>(
 	let prod_size: uint = 1
 	// 遍历，边计算乘积边累积 //
 	// 处理`i=2`的「特殊情况」
-	L += target[2]
+	if (target.length > 2) L += target[2] // !【2023-11-19 12:00:55】注意「维数同为二维」的情况
 	// 从`i=3`开始，类似「进位制遍历」
 	for (let i = 3; i < target.length; i++) {
 		// 计算「尺寸乘积系数」

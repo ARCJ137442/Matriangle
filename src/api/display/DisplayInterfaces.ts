@@ -1,6 +1,7 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { OptionalRecursive2, Ref } from 'matriangle-common/utils'
 import { JSObject } from 'matriangle-common/JSObjectify'
+import { IDisplayData } from './RemoteDisplayAPI'
 
 /**
  * 可（传输）显示（数据的）对象
@@ -13,7 +14,7 @@ import { JSObject } from 'matriangle-common/JSObjectify'
  *
  * !【2023-11-15 22:03:43】现在的重定位：不再只输出必要的「显示数据」而不做其它事情
  */
-export interface IDisplayable<DisplayDataT extends JSObject> {
+export interface IDisplayable<DisplayDataT extends IDisplayData> {
 	// * 面向「可视化」：显示端负责获取、呈递、清洗（并传输）数据 * //
 
 	/**

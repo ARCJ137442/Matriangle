@@ -1,69 +1,38 @@
-import { Container, MovieClip, Shape, Stage } from 'zimjs'
+import {
+	DEFAULT_SIZE,
+	DISPLAY_GRIDS,
+	DISPLAY_SIZE,
+} from 'matriangle-api/display/GlobalDisplayVariables'
 import {
 	IDisplayDataBlock,
-	IDisplayDataMap,
-	IDisplayData,
 	IStateDisplayer,
+	IDisplayDataMap,
 	IDisplayDataMapBlocks,
 	locationStrToPoint,
 	pointToLocationStr,
 } from 'matriangle-api/display/RemoteDisplayAPI'
-import { IDisplayDataBlockState } from 'matriangle-api/server/block/BlockState'
-import {
-	iPoint,
-	iPointRef,
-	iPointVal,
-	unfoldProject2D,
-	unfoldProjectPadBlockLength,
-} from 'matriangle-common/geometricTools'
 import {
 	OptionalRecursive2,
-	inplaceMapIn,
 	mergeObject,
-} from 'matriangle-common/utils'
+	formatHEX,
+	iPoint,
+	unfoldProject2D,
+	iPointVal,
+	iPointRef,
+	unfoldProjectPadBlockLength,
+	inplaceMapIn,
+} from 'matriangle-common'
+import { uint, int } from 'matriangle-legacy'
+import { Shape, Container, MovieClip } from 'zimjs'
+import { ZimShapeDisplayer } from './zim_client_common'
+import { graphicsLineStyle } from '../zimUtils'
 import {
 	typeID,
 	typeIDMap,
 } from 'matriangle-api/server/registry/IWorldRegistry'
-import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import {
-	DEFAULT_SIZE,
-	DISPLAY_GRIDS,
-} from 'matriangle-api/display/GlobalDisplayVariables'
-import { graphicsLineStyle } from './zimUtils'
-import { formatHEX } from 'matriangle-common'
-
-/**
- * 所有需要接收「更新信息」的图形都继承该类
- */
-export abstract class ZimShapeDisplayer<StateDataT extends IDisplayData>
-	extends Shape
-	implements IStateDisplayer<StateDataT>
-{
-	// ! 这下面仨函数对应着「可显示对象」的「初始化」「刷新」「销毁」的方法 ! //
-	shapeInit(_data: StateDataT, ..._otherArgs: any[]): void {
-		// console.log('ZimDisplayShape.shapeInit', data)
-	}
-
-	/**
-	 * @implements （部分化）刷新图形
-	 * * 即便基于「完整数据」可以很方便地「销毁再初始化」，但这应该是子类需要做的事情
-	 *
-	 * @abstract 作为一个抽象方法，因为并非总是「完整数据」
-	 * @param data 更新用的「数据补丁」
-	 */
-	abstract shapeRefresh(
-		data: OptionalRecursive2<StateDataT>,
-		...otherArgs: any[]
-	): void
-
-	/**
-	 * 图形销毁
-	 */
-	shapeDestruct(..._otherArgs: any[]): void {
-		this.graphics.clear()
-	}
-}
+import { IDisplayDataBlockState } from 'matriangle-api/server/block/BlockState'
+import { ZimDisplayerMatrix } from './zim_client_matrix'
+import { alignToGridCenter } from 'matriangle-api/server/general/PosTransform'
 
 /**
  * 「根据『方块数据』绘制方块」的函数
@@ -94,7 +63,7 @@ export class ZimDisplayerBlock<
 	 *
 	 * !【2023-11-13 00:31:16】 目前强制需要统一，因为会在构造函数中间接设置
 	 */
-	protected _currentState: BSType = undefined as unknown as BSType
+	protected _currentState: BSType | null = undefined as unknown as BSType
 
 	/**
 	 * 构造方法
@@ -109,14 +78,6 @@ export class ZimDisplayerBlock<
 		super()
 		// 设置当前状态
 		this.shapeInit(initialData)
-	}
-
-	// 接口属性对接
-	get blockID(): string {
-		return this._currentId
-	}
-	get blockState(): BSType {
-		return this._currentState
 	}
 
 	/**
@@ -141,36 +102,48 @@ export class ZimDisplayerBlock<
 		if (data?.id !== undefined) this._currentId = data.id
 		// 状态
 		if (data?.state !== undefined)
+			if (this._currentState === null || data.state === null)
+				// 任一为空⇒直接赋值
+				this._currentState = data.state as unknown as BSType | null
+			// 二者皆非空⇒合并对象
 			// !【2023-11-15 21:26:54】将「方块状态显示数据」看作object，用以模拟「有状态⇒设置状态」「无状态⇒不更改」的「软更新」
-			mergeObject(data.state, this._currentState) // * 从`data.state`到`this._currentState`
+			else mergeObject(data.state, this._currentState) // * 从`data.state`到`this._currentState`
 		/* this._currentState = {
 			...this._currentState,
 			// * 然后用新的数据直接覆盖
 			...data.state,
 		} */
+
 		// 根据ID、状态重绘图形
 		this.shapeDestruct() // 先销毁
 		this.initShape()
 	}
 
-	override shapeDestruct(..._otherArgs: any[]): void {
+	override shapeDestruct(): void {
 		// 清除绘图
 		this.graphics.clear()
 	}
 
 	/**
-	 * 根据自身ID、状态重绘图形
+	 * 根据自身ID、状态绘制图形
 	 */
 	protected initShape(): void {
 		// * 利用方法本身返回`Shape`的特性，判断是否失败
+		console.log(
+			'方块初始化！',
+			this,
+			this._currentId,
+			this._currentState,
+			this.blockDrawDict
+		)
 		if (
 			this.blockDrawDict?.[this._currentId]?.(
 				this,
 				this._currentState
 			) === undefined
 		) {
-			console.log(
-				'绘制失败',
+			console.warn(
+				'图形初始化失败：',
 				this._currentId,
 				this._currentState,
 				this.blockDrawDict
@@ -185,7 +158,7 @@ export class ZimDisplayerBlock<
  * * （默认不包括）地图的「底座」
  * * 包括特别颜色的边线（Flash版本遗留）
  */
-class ZimMapBackground extends Shape {
+class ZimDisplayerMapBackground extends Shape {
 	// 常量池（从Flash版本复刻） //
 	public static readonly BACKGROUND_COLOR: uint = 0xdddddd
 	public static readonly GRID_COLOR: uint = 0xd6d6d6
@@ -298,7 +271,9 @@ class ZimMapBackground extends Shape {
 	 * @return {void} This function does not return anything.
 	 */
 	protected drawGround(width: uint, height: uint): void {
-		this.graphics.beginFill(formatHEX(ZimMapBackground.BACKGROUND_COLOR))
+		this.graphics.beginFill(
+			formatHEX(ZimDisplayerMapBackground.BACKGROUND_COLOR)
+		)
 		this.graphics.drawRect(
 			0,
 			0,
@@ -328,8 +303,8 @@ class ZimMapBackground extends Shape {
 			my: int = beginY + height
 		graphicsLineStyle(
 			this.graphics,
-			ZimMapBackground.GRID_SIZE,
-			ZimMapBackground.GRID_COLOR
+			ZimDisplayerMapBackground.GRID_SIZE,
+			ZimDisplayerMapBackground.GRID_COLOR
 		)
 		// V
 		while (dx <= mx) {
@@ -353,11 +328,11 @@ class ZimMapBackground extends Shape {
 	protected drawBorder(width: uint, height: uint): void {
 		graphicsLineStyle(
 			this.graphics,
-			ZimMapBackground.FRAME_LINE_SIZE,
-			ZimMapBackground.FRAME_LINE_COLOR
+			ZimDisplayerMapBackground.FRAME_LINE_SIZE,
+			ZimDisplayerMapBackground.FRAME_LINE_COLOR
 		)
 		// * 新版重在「不要溢出地图的方块本身」
-		const halfLineSize = ZimMapBackground.FRAME_LINE_SIZE / 2,
+		const halfLineSize = ZimDisplayerMapBackground.FRAME_LINE_SIZE / 2,
 			halfLineSizeMax_W = width * DEFAULT_SIZE - halfLineSize,
 			halfLineSizeMax_H = height * DEFAULT_SIZE - halfLineSize
 		// V
@@ -418,13 +393,62 @@ export class ZimDisplayerMap
 	/**
 	 * 将高维坐标投影到二维
 	 * * 参考的是「几何工具」中的函数
+	 * * 使用「方块坐标」而非「显示坐标」
+	 *
+	 * ! 会修改其中的result参数，若无则创建
 	 */
 	public projectTo2D(
-		pos: iPoint,
-		result: [int, int],
-		padAxis: uint
-	): [int, int] {
+		pos: number[],
+		result: [number, number] = [0, 0],
+		padAxis: uint = this.padAxis
+	): [number, number] {
 		return unfoldProject2D(this.size, pos, padAxis, result)
+	}
+
+	/**
+	 * 将高维坐标投影到二维
+	 * * 参考的是「几何工具」中的函数
+	 * * 使用「显示坐标」
+	 *
+	 * ! 会修改其中的result参数，若无则创建
+	 */
+	public projectTo2D_display(
+		pos: number[],
+		result: [number, number] = [0, 0],
+		padAxis: uint = this.padAxis
+	): [number, number] {
+		// 投影
+		this.projectTo2D(pos, result, padAxis)
+		// 倍乘
+		result[0] *= DEFAULT_SIZE
+		result[1] *= DEFAULT_SIZE
+		// 返回
+		return result
+	}
+
+	/**
+	 * 将高维坐标投影到二维，并对齐网格中心
+	 * * 参考的是「几何工具」中的函数
+	 * * 使用「显示坐标」
+	 * * 面向「实体显示」，以便实体使用「rotation」以自身为中心旋转
+	 *
+	 * ! 会修改其中的result参数，若无则创建
+	 */
+	public projectTo2D_display_center(
+		pos: number[],
+		result: [number, number] = [0, 0],
+		padAxis: uint = this.padAxis
+	): [number, number] {
+		// 投影
+		this.projectTo2D(pos, result, padAxis)
+		// 对齐 // !【2023-11-19 21:25:18】↓下面这个是等于不是增加
+		result[0] = alignToGridCenter(result[0])
+		result[1] = alignToGridCenter(result[1])
+		// 倍乘
+		result[0] *= DEFAULT_SIZE
+		result[1] *= DEFAULT_SIZE
+		// 返回
+		return result
 	}
 
 	/**
@@ -452,13 +476,18 @@ export class ZimDisplayerMap
 	 */
 	public constructor(
 		/**
+		 * 存储对「母体呈现者」的引用
+		 * * 用于通知「母体呈现者」更新位置
+		 */
+		public readonly host: ZimDisplayerMatrix,
+		/**
 		 * 存储对「方块绘图字典」的**引用**
 		 */
 		public blockDrawDict: typeIDMap<ZimDrawF_Block>,
 		/**
 		 * 存储用于显示「背景」的图形
 		 */
-		protected background: ZimMapBackground = new ZimMapBackground(
+		protected background: ZimDisplayerMapBackground = new ZimDisplayerMapBackground(
 			0,
 			0 // 两个零当默认值
 		),
@@ -468,6 +497,8 @@ export class ZimDisplayerMap
 		protected blockContainer: MovieClip = new MovieClip()
 	) {
 		super()
+		// !【2023-11-19 12:10:24】不能设置舞台引用，因为`stage`属性是只读的
+
 		// 添加背景
 		this.addChildAt(background, 0)
 		// 添加方块容器
@@ -478,6 +509,13 @@ export class ZimDisplayerMap
 
 	/** @implements 分别初始化尺寸和方块 */
 	shapeInit(data: IDisplayDataMap): void {
+		// 检验合法性
+		if (data.size === undefined || data.blocks === undefined)
+			throw new Error(
+				`ZimDisplayerMap: 数据不合法！${String(data.size)}, ${String(
+					data.blocks
+				)}`
+			)
 		// 尺寸
 		this.refreshSize(data.size)
 		// 方块
@@ -497,12 +535,22 @@ export class ZimDisplayerMap
 		const locationPointer: iPoint = new iPoint()
 		// 遍历所有位置
 		for (const locationStr in data) {
-			blockData = data[locationStr]
-			this.setBlockSoft(
-				// 包括了`null`的情况
-				locationStrToPoint(locationStr, locationPointer),
-				blockData
-			)
+			try {
+				blockData = data[locationStr]
+				this.setBlockSoft(
+					// 包括了`null`的情况
+					locationStrToPoint(locationStr, locationPointer),
+					blockData
+				)
+			} catch (e) {
+				console.error(
+					'初始化方块出现错误！',
+					e,
+					locationStr,
+					data,
+					this
+				)
+			}
 		}
 	}
 
@@ -523,44 +571,61 @@ export class ZimDisplayerMap
 	 * @param size 地图尺寸
 	 */
 	protected refreshSize(size: int[]): void {
+		const isSizeEqual = this.size.isEqualWide(size)
+		if (isSizeEqual) return console.debug('尺寸相同，不更新')
 		// 尺寸拷贝
 		this.size.copyFrom(size)
-		console.log('地图尺寸更新！', size, '->', this.size)
+		console.debug('地图尺寸更新！', size, '->', this.size)
 		// 绘制网格
 		this.background.updateWithWH(...this.unfoldedBlockSize2D)
 		// !【2023-11-13 22:52:04】有关「画布大小」的「尺寸控制」现在交给外部进行
+		// !【2023-11-19 12:15:27】现在有了舞台的引用，可以试着在内部进行更新
+		// 通知母体进行更新
+		this.host.relocateInFrame()
 	}
 
 	/**
 	 * 刷新方块数据
 	 * * 遍历其中的所有坐标，通知每个「方块呈现者」进行刷新
 	 *
-	 * @param blocks 方块数据补丁
+	 * @param data_blocks 方块数据补丁
 	 */
 	protected refreshBlocks(
-		blocks: OptionalRecursive2<IDisplayDataMapBlocks>
+		data_blocks: OptionalRecursive2<IDisplayDataMapBlocks>
 	): void {
-		console.log('更新方块！blocks =', blocks)
+		console.group('更新方块！')
+		console.log('blocks =', data_blocks)
 		// 临时变量（指针）
 		const locationPointer = new iPoint()
-		let blockDataPatch: OptionalRecursive2<IDisplayDataBlock>
+		let blockDataPatch: OptionalRecursive2<IDisplayDataBlock> | null
 		// 遍历要更新的每个位置
-		for (const location in blocks) {
-			blockDataPatch = blocks[location]!
-			// 更新方块
-			this.updateBlock(
-				// 转换坐标
-				locationStrToPoint(location, locationPointer),
-				blockDataPatch
-			)
-			console.log(
-				'更新方块！',
-				location,
-				'=>',
-				locationPointer,
-				blockDataPatch
-			)
+		for (const locationStr in data_blocks) {
+			try {
+				blockDataPatch = data_blocks[locationStr] ?? null
+				// 更新方块
+				this.updateBlock(
+					// 转换坐标
+					locationStrToPoint(locationStr, locationPointer),
+					blockDataPatch
+				)
+				console.log(
+					'更新方块！',
+					locationStr,
+					'=>',
+					locationPointer,
+					blockDataPatch
+				)
+			} catch (e) {
+				console.error(
+					'更新方块出现错误！',
+					e,
+					locationStr,
+					data_blocks,
+					this
+				)
+			}
 		}
+		console.groupEnd()
 	}
 
 	shapeDestruct(): void {
@@ -611,7 +676,7 @@ export class ZimDisplayerMap
 		if (blockData === null) this.removeBlock(pos, this._temp_pos_index)
 		else {
 			// 有⇒更新
-			if (this._temp_pos_index in this.blocks)
+			if (this.hasBlockDisplayerAt(pos))
 				this.blocks[this._temp_pos_index].shapeRefresh(blockData)
 			// 无⇒创建
 			else this.setBlockHard(pos, blockData)
@@ -632,24 +697,40 @@ export class ZimDisplayerMap
 		pos: iPointRef,
 		blockData: IDisplayDataBlock
 	): ZimDisplayerBlock {
+		// 预先检查
+		if (pos.checkInvalid())
+			throw new Error(`[ZimDisplayer] 无效坐标：${pos.join(',')}`)
+		if (!pos.checkType())
+			throw new Error(`[ZimDisplayer] 无效类型：${pos.join(',')}`)
 		/** 创建新的「方块显示器」 */
 		const block: ZimDisplayerBlock = new ZimDisplayerBlock(
 			blockData,
 			this.blockDrawDict
 		)
-		console.log('[ZimDisplayer] 硬设置方块', pos, blockData)
-		/** 把高维坐标投影到两个「地图坐标」 */
-		const [x, y] = this.projectTo2D(
+		/** 把高维坐标投影到两个「显示坐标」 */
+		const [dX, dY] = this.projectTo2D_display(
 			pos,
 			[0, 0],
 			this.padAxis /* 暂且用y轴 */
 		)
 
 		// !【2023-11-13 17:51:37】暂时直接乘以「默认尺寸」
-		block.pos(x * DEFAULT_SIZE, y * DEFAULT_SIZE)
+		block.pos(dX, dY)
 		// 添加进容器
 		this.blockContainer.addChild(block)
-		console.log('[ZimDisplayer] 硬设置方块成功', x, y, block, blockData)
+
+		console.debug(
+			'[ZimDisplayer] 硬设置方块！',
+			pos,
+			'=>',
+			[uint(dX / DISPLAY_SIZE), uint(dY / DISPLAY_SIZE)],
+			block,
+			blockData,
+			this.blocks
+		)
+		// 添加进记忆
+		this.blocks[pointToLocationStr(pos)] = block
+		// 返回创建的「方块呈现者」
 		return block
 	}
 
@@ -675,23 +756,25 @@ export class ZimDisplayerMap
 	 */
 	public updateBlock(
 		pos: iPointRef,
-		blockData: OptionalRecursive2<IDisplayDataBlock>
+		blockData: OptionalRecursive2<IDisplayDataBlock> | null
 	): boolean {
 		/** 尝试获取方块 */
 		const block: ZimDisplayerBlock | null =
-			this.getBlockDisplayerAt(pos) ??
+			this.getBlockDisplayerAt(pos) /* ??
 			(blockData?.id === undefined
 				? null
 				: this.setBlockHard(
 						pos,
 						blockData as unknown as IDisplayDataBlock
-				  ))
+				  )) */
 		// * 无方块⇒返回「失败」
 		if (block === null) return false
 		// * 有方块
 		else {
-			// 刷新方块
-			block.shapeRefresh(blockData)
+			// * 数据为null⇒删除方块
+			if (blockData === null) this.removeBlock(pos)
+			// * 否则⇒刷新方块
+			else block.shapeRefresh(blockData)
 			// 返回「成功」
 			return true
 		}
@@ -743,32 +826,4 @@ export class ZimDisplayerMap
 		return this._temp_borderMax.copyFrom(this.size).addFromSingle(-1)
 	}
 	protected _temp_borderMax: iPointVal = new iPoint()
-
-	/**
-	 * 在「舞台」中进行「重定位」
-	 * * 呈现效果：将自身通过「适度缩放&平移」置于「帧」中央
-	 */
-	public relocateInFrame(stage: Stage): this {
-		if (stage === null) throw new Error('居然是空的舞台！')
-		const [actualW, actualH] = this.unfoldedDisplaySize2D
-		// this.fit(0, 0, stage.width, stage.height, true)
-		// this.scaleTo(stage)
-		// 保持纵横比的缩放
-		this.scaleX = this.scaleY = Math.min(
-			stage.height / actualH,
-			stage.width / actualW
-		)
-		// 居中（适应边框） // * 要点：地图以左上角为原点
-		this.x = (stage.width - actualW * this.scaleX) / 2
-		this.y = (stage.height - actualH * this.scaleY) / 2
-		console.log(
-			'relocateInFrame',
-			[stage.width, stage.height],
-			[this.width, this.height],
-			[actualW, actualH],
-			[this.scaleX, this.scaleY],
-			[this.x, this.y]
-		)
-		return this
-	}
 }

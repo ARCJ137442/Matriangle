@@ -78,6 +78,7 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 	updateSize(size: uint[]): void {
 		this._data.size = this._dataToRefresh.size = [...size] // !【2023-11-19 02:40:57】复制一个，避免转换成
 	}
+
 	/**
 	 * @implements 直接使用「方块」对象更新
 	 * TODO: 目前一个问题——方块状态被其它地方改变（如「门の开关」）后，无法及时进行更新
@@ -148,8 +149,8 @@ export interface IDisplayProxyEntity<
 	 * 图形「是否可见」
 	 * ! 覆盖alpha属性：不可见时alpha属性无意义
 	 */
-	get isVisible(): boolean
-	set isVisible(value: boolean)
+	get visible(): boolean
+	set visible(value: boolean)
 
 	/**
 	 * 图形的「方块坐标」
@@ -393,16 +394,17 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
-	get isVisible(): boolean {
-		return this._data.state?.isVisible ?? (this.isVisible = true)
+	get visible(): boolean {
+		return this._data.state?.visible ?? (this.visible = true)
 	}
-	set isVisible(value: boolean) {
+	set visible(value: boolean) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.isVisible = this._stateToRefresh.isVisible = value
+		this._data.state.visible = this._stateToRefresh.visible = value
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get position(): number[] {
+		// !【2023-11-19 20:44:14】坐标为「空数组」，有可能是「玩家正在重生」等情形
 		return this._data.state?.position ?? (this.position = [])
 	}
 	set position(value: number[]) {

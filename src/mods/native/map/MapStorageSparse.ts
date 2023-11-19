@@ -38,11 +38,7 @@ import {
 	NATIVE_BLOCK_CONSTRUCTOR_MAP,
 	NativeBlockIDs,
 } from '../registry/BlockRegistry_Native'
-import {
-	IDisplayDataMap,
-	IDisplayDataMapBlocks,
-	pointToLocationStr,
-} from 'matriangle-api/display/RemoteDisplayAPI'
+import { IDisplayDataMap } from 'matriangle-api/display/RemoteDisplayAPI'
 import {
 	DisplayProxyMap,
 	IDisplayProxyMap,
@@ -661,7 +657,7 @@ export default class MapStorageSparse implements IMapStorage {
 	 * @returns 返回的方块id（一定有值）
 	 */
 	public getBlockID(p: iPointRef): typeID {
-		return this.getBlock(p).id // TODO: 具体的「.type」属性能否工作，还有待验证
+		return this.getBlock(p).id
 	}
 
 	/**
@@ -740,25 +736,6 @@ export default class MapStorageSparse implements IMapStorage {
 	/** 显示代理 */
 	protected readonly _proxy: IDisplayProxyMap
 
-	protected generateBlocksData(): IDisplayDataMapBlocks {
-		/** 返回值 */
-		const result: IDisplayDataMapBlocks = {}
-		// 临时指针
-		let block: Block
-		// 遍历所有位置，转换数据
-		this.forEachValidPositions((p: iPointRef): void => {
-			// 获取方块
-			block = this.getBlock(p)
-			// 生成方块
-			result[pointToLocationStr(p)] = {
-				id: block.id,
-				// !【2023-11-15 21:18:36】现在不再直接使用（逻辑上的）「方块状态」了——现在使用「方块状态的显示数据」
-				state: block.state?.generateDisplayData() ?? null,
-			}
-		})
-		return result
-	}
-
 	/**
 	 * @implements 委托到「地图代理」中
 	 */
@@ -776,35 +753,4 @@ export default class MapStorageSparse implements IMapStorage {
 	flushDisplayData(): void {
 		this._proxy.flushDisplayData()
 	}
-
-	// public setDisplayTo(target: IMapDisplayer): void {
-	// 	target.clearBlock();
-	// 	let ix: int, iy: int, iBlock: Block;
-	// 	for (let index in this._Content) {
-	// 		iBlock = this.storage.getBlock(ix, iy);
-	// 		target.setBlock(ix, iy, iBlock);
-	// 	}
-	// }
-
-	// public forceDisplayToLayers(targetBottom: IMapDisplayer, targetMiddle: IMapDisplayer, targetTop: IMapDisplayer): void {
-	// 	targetBottom.clearBlock();
-	// 	targetMiddle.clearBlock();
-	// 	targetTop.clearBlock();
-	// 	let ix: int, iy: int, iBlock: Block, iLayer: int;
-
-	// 	for (let index in this._Content) {
-	// 		ix = Map_V1.indexToPoint(index).x;
-
-	// 		iy = Map_V1.indexToPoint(index).y;
-
-	// 		iBlock = this._getBlock(ix, iy);
-
-	// 		if (iBlock === null)
-	// 			continue;
-
-	// 		iLayer = iBlock.attributes.drawLayer;
-
-	// 		NativeMapCommon.getTargetByLayer(iLayer, targetTop, targetBottom, targetMiddle).setBlock(ix, iy, iBlock);
-	// 	}
-	// }
 }

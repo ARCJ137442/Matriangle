@@ -9,7 +9,7 @@ import {
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { alignToGrid_P } from 'matriangle-api/server/general/PosTransform'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import Projectile from '../Projectile'
+import { ProjectileOutGrid } from '../Projectile'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
@@ -22,7 +22,7 @@ import { typeID } from 'matriangle-api'
  * 抛射体
  */
 export default abstract class Bullet
-	extends Projectile
+	extends ProjectileOutGrid
 	implements IEntityOutGrid, IEntityFixedLived
 {
 	/** 子弹飞行的速度（每个世界刻） */
@@ -58,7 +58,14 @@ export default abstract class Bullet
 		speed: number,
 		finalExplodeRadius: number
 	) {
-		super(id, owner, attackerDamage, extraDamageCoefficient, direction)
+		super(
+			id,
+			owner,
+			attackerDamage,
+			extraDamageCoefficient,
+			new fPoint(), //给父类初始化
+			direction
+		)
 		this.speed = speed
 		this._position.copyFrom(position)
 
@@ -80,8 +87,8 @@ export default abstract class Bullet
 	// 坐标 //
 	public readonly i_outGrid = true as const
 
-	/** 内部定义的坐标 */
-	protected readonly _position: fPoint = new fPoint()
+	/** 内部定义的坐标 */ // 现在父类已经有了
+	// protected readonly _position: fPoint = new fPoint()
 	/** （缓存用）现在所在的网格位置（整数点） */
 	protected readonly _position_I: iPoint = new iPoint()
 	/**
@@ -122,6 +129,7 @@ export default abstract class Bullet
 				this.nowBlock !== null &&
 				this.nowBlock.attributes.rotateWhenMoveIn
 			) {
+				// ! setter处自带显示更新
 				this.direction = host.map.storage.randomRotateDirectionAt(
 					this._position_I,
 					this._direction,
@@ -132,8 +140,8 @@ export default abstract class Bullet
 			// 更新「上一个方块」
 			this.lastBlock = this.nowBlock
 		}
-		// 移动
-		host.map.towardWithRot_FF(this._position, this._direction, this.speed)
+		// 移动 // ! `moveToward`自带显示更新
+		this.moveToward(host, this.speed)
 		// 更新整数坐标
 		alignToGrid_P(this._position, this._position_I)
 		// 移动进去之后
@@ -149,14 +157,11 @@ export default abstract class Bullet
 				getPlayers(host)
 			)
 		) {
+			// 更新所处方块
 			this.lastBlock = this.nowBlock
 		} else {
 			// 反向前进，不要「墙里炸」
-			host.map.towardWithRot_FF(
-				this._position,
-				this._direction,
-				-this.speed
-			)
+			this.moveToward(host, -this.speed)
 			// 爆炸
 			this.explode(host)
 		}

@@ -85,8 +85,6 @@ export default interface IMapLogic {
 	 */
 	isInMap_I(p: iPointRef): boolean
 
-	// TODO: 更多「2d/通用」分离
-
 	/**
 	 * 从某位置向某方向「前进」，获取「前进到的坐标」
 	 *
@@ -118,8 +116,6 @@ export default interface IMapLogic {
 	 * @param step 前进的步长（整数）
 	 */
 	towardWithRot_II(p: iPointRef, rot: mRot, step?: int /* = 1*/): iPoint
-
-	// TODO: 有待移植
 
 	/**
 	 * 判断一个地方「是否可通过」

@@ -1,118 +1,31 @@
 /**
- * Zim绘制部分
- * * 包含诸多绘图函数
+ * 所有方块的绘制函数
+ * * 可能「一个显示状态，一个方块状态」会让程序更有效率，但从工程上这不一定是个节省时间和精力的好方案
+ *
+ * !【2023-11-19 12:06:04】下面的函数**只管绘制不管清除**
+ * * 也就是说需要另外（从「方块呈现者」）调用`graphics.clear`
+ *
+ * !【2023-11-19 11:51:11】不知为何，直接从`matriangle-api`导入的`DEFAULT_SIZE`是`undefined`
  */
-import { DisplayObject, Frame, Shape } from 'zimjs'
-import {
-	formatHEX,
-	formatHEX_A,
-	halfBrightnessTo,
-	turnBrightnessTo,
-} from 'matriangle-common/color'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import { NativeBlockIDs } from 'matriangle-mod-native/registry/BlockRegistry_Native'
-import BSColored from 'matriangle-mod-native/block/BSColored'
-import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { formatHEX, formatHEX_A } from 'matriangle-common'
+import { uint } from 'matriangle-legacy'
 import BSBiColored from 'matriangle-mod-bats/block/BSBiColored'
 import BSGate from 'matriangle-mod-bats/block/BSGate'
 import {
-	center_drags,
+	BatrBlockPrototypes,
+	BatrBlockIDs,
+} from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
+import BSColored from 'matriangle-mod-native/block/BSColored'
+import { NativeBlockIDs } from 'matriangle-mod-native/registry/BlockRegistry_Native'
+import { Shape } from 'zimjs/ts-src/typings/zim'
+import {
+	fillSquareBiColored,
+	drawSquareFrameOrigin,
 	drawDiamond,
 	drawSquareAndDiamond,
-	drawSquareFrameOrigin,
-	fillSquareBiColored,
-	graphicsLineStyle,
-} from './zimUtils'
-import {
-	BatrBlockIDs,
-	BatrBlockPrototypes,
-} from 'matriangle-mod-bats/registry/BlockRegistry_Batr'
-import { uint } from 'matriangle-legacy/AS3Legacy'
-import { ZimDisplayerMap } from './DisplayInterfacesClient_Zim'
-import IMap from 'matriangle-api/server/map/IMap'
-import { BatrDefaultMaps } from 'matriangle-mod-bats/registry/MapRegistry'
-import { generateArray, randomIn } from 'matriangle-common'
-import { stackMaps } from '../../../../BaTS-Server/stackedMaps'
-import Map_V1 from 'matriangle-mod-native/map/Map_V1'
-import MapStorageSparse from 'matriangle-mod-native/map/MapStorageSparse'
-
-/**
- * 临时定义的「Player」常量
- * * 用于测试「玩家显示」复原
- */
-const PlayerBatr = {
-	SIZE: 1 * DEFAULT_SIZE,
-	LINE_SIZE: DEFAULT_SIZE / 96,
-}
-
-/**
- * 测试：绘制玩家形状
- * * 摘自旧AS3代码 @ src\mods\BaTS\entity\player\PlayerBatr.ts
- *
- * @param
- */
-export function drawPlayerShape(
-	shape: Shape,
-	fillColor: uint = 0xffffff,
-	lineColor: uint = halfBrightnessTo(fillColor),
-	size: number = PlayerBatr.SIZE,
-	lineSize: number = PlayerBatr.LINE_SIZE
-): Shape {
-	// 新 //
-	const fillColor2 = turnBrightnessTo(fillColor, 0.75)
-	// 先前逻辑复刻 //
-	const realRadiusX: number = (size - lineSize) / 2
-	const realRadiusY: number = (size - lineSize) / 2
-	shape.graphics.clear()
-	// shape.graphics.lineStyle(lineSize, lineColor) // ! 有一些地方还是不一致的
-	graphicsLineStyle(shape.graphics, lineSize, lineColor) // lineColor
-	// shape.graphics.beginFill(fillColor, 1.0)
-	/* let m: Matrix = new Matrix() // 📌Zim不再需要矩阵！
-	m.createGradientBox(
-		DEFAULT_SIZE,
-		DEFAULT_SIZE,
-		0,
-		-realRadiusX,
-		-realRadiusX
-	)
-	shape.graphics.beginGradientFill(
-		GradientType.LINEAR,
-		[fillColor, fillColor2],
-		[1.0, 1.0], // 透明度完全填充
-		[63, 255], // 亮度渐变：1/4~1
-		m,
-		SpreadMethod.PAD,
-		InterpolationMethod.RGB,
-		1
-	) */
-	shape.graphics
-		.beginFill('#' + fillColor.toString(16))
-		.beginLinearGradientFill(
-			[`#${fillColor.toString(16)}`, `#${fillColor2.toString(16)}`],
-			// [1.0, 1.0], // 透明度完全填充
-			[1 / 4, 1], // 亮度(比例)渐变：1/4~1
-			-realRadiusX / 2,
-			0,
-			realRadiusX,
-			0
-			/* m,
-		SpreadMethod.PAD,
-		InterpolationMethod.RGB */
-		)
-		.moveTo(-realRadiusX, -realRadiusY)
-		.lineTo(realRadiusX, 0)
-		.lineTo(-realRadiusX, realRadiusY)
-		.lineTo(-realRadiusX, -realRadiusY)
-		// shape.graphics.drawCircle(0,0,10);
-		.endFill()
-		.endStroke()
-	return shape
-}
-
-/**
- * 所有方块的绘制函数
- * * 可能「一个显示状态，一个方块状态」会让程序更有效率，但从工程上这不一定是个节省时间和精力的好方案
- */
+} from '../zimUtils'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /** 颜色方块 */
 export function drawColoredBlock(shape: Shape, state: BSColored): Shape {
@@ -413,32 +326,19 @@ export function drawXTrap(
 	return shape
 }
 
-// 绘制实体 //
+// 注册表 //
 
-// TODO: 有待实现
-
-/*
-? 实体的绘图方法似乎被限制在其自身中，并且很多地方都需要抽象出一个「实体状态」以避免直接的数据传输
-  * 不同于方块，实体的数据量相对较大，不适合高速更新显示流
-
-* 因此，有可能：
-  * 逻辑端：挑选特定的一些（影响显示的状态）形成「实体状态代理」，以便通过JSON传输给客户端
-  * 显示端：通过这些指定的「实体状态代理」JSON对象，结合**自身一套**「显示逻辑」，将状态展开成「要显示的Shape对象」
-
-! 这可能导致：
-  * 需要对原先基于Flash的「显示端逻辑」（`shapeXXX`方法）进行重构，将「逻辑处理」和「显示呈现」完全剥离（只剩下一个「显示状态代理」）
-  * 需要搭建一个「完全键值对（所有必要的键值对都有）初始化，部分键值对用于更新」的「动态更新系统」（并且「位置」这类信息，也需要一个绑定）
-  * 亟待构思好「响应式更新」的总体逻辑（何时调用更新，这些更新又该如何收集并传递给显示端）
-*/
+export type BlockDrawDict = {
+	// !【2023-11-12 15:11:11】放弃在这里推导类型，因为「根据ID导出对应的『状态类型』机制不成熟，使用起来非常复杂，且不利于维护」
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[key: typeID]: (shape: Shape, state: any) => Shape
+	// !【2023-11-19 17:07:54】放弃使用`typeIDMap<ZimDrawF_Block>`
+}
 
 /**
  * 根据方块ID进行绘制映射的绘图函数 @ 原生
  */
-export const BLOCK_DRAW_DICT_NATIVE: {
-	// !【2023-11-12 15:11:11】放弃在这里推导类型，因为「根据ID导出对应的『状态类型』机制不成熟，使用起来非常复杂，且不利于维护」
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[key: typeID]: (shape: Shape, stateData: any) => Shape
-} = {
+export const BLOCK_DRAW_DICT_NATIVE: BlockDrawDict = {
 	/**
 	 * 空
 	 */
@@ -454,15 +354,10 @@ export const BLOCK_DRAW_DICT_NATIVE: {
 }
 
 /**
- * 根据方块ID进行绘制映射的绘图函数 @ BaTr（完整版）
+ * 根据方块ID进行绘制映射的绘图函数 @ BaTr（独有）
  */
-export const BLOCK_DRAW_DICT_BATR: {
-	// !【2023-11-12 15:11:11】放弃在这里推导类型，因为「根据ID导出对应的『状态类型』机制不成熟，使用起来非常复杂，且不利于维护」
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[key: typeID]: (shape: Shape, stateData: any) => Shape
-} = {
-	/** 扩展自原生 */
-	...BLOCK_DRAW_DICT_NATIVE,
+export const BLOCK_DRAW_DICT_BATR: BlockDrawDict = {
+	// ! 尽可能不要在这扩展绘图函数，关注「独有的」以便解耦，最后再在使用者处mixin
 	/** 使用同样的方法 */
 	[BatrBlockIDs.WALL]: drawWall,
 	[BatrBlockIDs.WATER]: drawWater,
@@ -486,100 +381,4 @@ export const BLOCK_DRAW_DICT_BATR: {
 		drawSpawnPointMark(shape),
 	[BatrBlockIDs.SUPPLY_POINT]: (shape: Shape, _state: null): Shape =>
 		drawSupplyPoint(shape),
-}
-
-/**
- * 测试旧BaTr的图形绘制
- */
-export function test_draw(shape_constructor: () => Shape): Shape[] {
-	return center_drags(
-		// 方块 //
-		// 颜色方块
-		drawColoredBlock(shape_constructor(), new BSColored(0x66ccff)),
-		// 水
-		drawWater(shape_constructor(), BatrBlockPrototypes.WATER.state),
-		// 墙
-		drawWall(shape_constructor(), BatrBlockPrototypes.WALL.state),
-		// 基岩（特殊颜色的墙）
-		drawWall(shape_constructor(), BatrBlockPrototypes.BEDROCK.state),
-		// 金属（特殊图案的墙）
-		drawMetal(shape_constructor(), BatrBlockPrototypes.METAL.state),
-		// 可移动墙（特殊图案的墙）
-		drawMoveableWall(
-			shape_constructor(),
-			BatrBlockPrototypes.MOVEABLE_WALL.state
-		),
-		// 三种X陷阱
-		drawXTrap(shape_constructor(), 0xff8000),
-		drawXTrap(shape_constructor(), 0xff0000),
-		drawXTrap(shape_constructor(), 0x0000ff),
-		// 玻璃（特殊透明度的墙）
-		drawGlass(shape_constructor(), BatrBlockPrototypes.GLASS.state),
-		// 门
-		drawGate(shape_constructor(), BatrBlockPrototypes.GATE_CLOSE.state),
-		drawGate(shape_constructor(), BatrBlockPrototypes.GATE_OPEN.state),
-		// 激光陷阱
-		drawLaserTrap(shape_constructor()),
-		// 颜色生成器
-		drawColorSpawner(shape_constructor()),
-		// 重生点标记
-		drawSpawnPointMark(shape_constructor()),
-		// 供应点 // ? 标记？
-		drawSupplyPoint(shape_constructor()),
-		// 实体 //
-		// 玩家
-		drawPlayerShape(shape_constructor())
-	)
-}
-
-/** 方块原型⇒初始化「显示状态」 */ // !【2023-11-15 22:00:42】现在移动到「方块」的内部方法中
-/**
- * 测试新的「地图呈现者」
- */
-export function test_mapDisplayer(
-	frame: Frame,
-	preview: boolean = true
-): ZimDisplayerMap {
-	const mapDisplayer = new ZimDisplayerMap(BLOCK_DRAW_DICT_BATR)
-	/* mapDisplayer.shapeInit({
-		size: [4, 4],
-		blocks: {
-			[pointToLocationStr([0, 0])]: {
-				blockID: NativeBlockIDs.COLORED,
-				blockState: new BSColored(0x0000ff),
-			},
-			[pointToLocationStr([1, 1])]: {
-				blockID: NativeBlockIDs.COLORED,
-				blockState: new BSColored(0xff0000),
-			},
-			[pointToLocationStr([1, 2])]: blockStateFromPrototype(
-				BatrBlockPrototypes.WALL
-			),
-		},
-	}) */
-	// * 预览：两个随机地图堆叠
-	if (preview) {
-		const MAP: IMap = new Map_V1(
-			'zim_test',
-			stackMaps(
-				/* generateArray(
-				BatrDefaultMaps._ALL_MAPS.length,
-				i => BatrDefaultMaps._ALL_MAPS[i].storage as MapStorageSparse
-			) */
-				generateArray(
-					2,
-					() =>
-						randomIn(BatrDefaultMaps._ALL_MAPS)
-							.storage as MapStorageSparse
-				)
-			)
-		)
-		// console.log('test_mapDisplayer', MAP.name)
-		mapDisplayer.shapeInit(MAP.storage.getDisplayDataInit())
-	}
-	// .wiggle({ baseAmount: 10, property: 'x' }) /* .center().drag() */
-	// 必须添加进舞台
-	frame.stage.addChild(mapDisplayer as unknown as DisplayObject)
-	// 回传「地图呈现者」
-	return mapDisplayer
 }

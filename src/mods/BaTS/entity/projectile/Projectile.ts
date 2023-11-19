@@ -1,7 +1,8 @@
 import { halfBrightnessTo } from 'matriangle-common/color'
-import { uint } from 'matriangle-legacy/AS3Legacy'
+import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import {
 	IEntityActive,
+	IEntityHasPosition,
 	IEntityShortLived,
 	IEntityWithDirection,
 } from 'matriangle-api/server/entity/EntityInterfaces'
@@ -15,6 +16,7 @@ import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { typeID } from 'matriangle-api'
+import { Ref, Val, xPoint } from 'matriangle-common'
 
 export interface IDisplayDataStateProjectile extends IDisplayDataEntityState {
 	// TODO: 有待扩充
@@ -137,13 +139,13 @@ export default abstract class Projectile
 		id: typeID,
 		owner: IPlayer | null,
 		attackerDamage: uint,
-		extraDamageCoefficient: uint,
+		extraResistanceCoefficient: uint,
 		direction: mRot
 	) {
 		super(id)
 		this._owner = owner
 		this._attackerDamage = attackerDamage
-		this._extraResistanceCoefficient = extraDamageCoefficient
+		this._extraResistanceCoefficient = extraResistanceCoefficient
 		this._direction = direction
 	}
 
@@ -169,14 +171,15 @@ export default abstract class Projectile
 	protected _direction: mRot
 	/**
 	 * 对外暴露的方向属性
-	 *
-	 * ? 可能会在「被修改」时调用显示更新（因为这再也不是Flash内置的了）
+	 * * 在「被修改」时调用显示更新（现在需要手动调用了）
 	 */
 	get direction(): mRot {
 		return this._direction
 	}
 	set direction(value: mRot) {
 		this._direction = value
+		// * 显示更新
+		this._proxy.direction = value
 	}
 
 	// 显示 //
@@ -194,11 +197,6 @@ export default abstract class Projectile
 	public set zIndex(value: uint) {
 		this._zIndex = value
 	}
-
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// public abstract displayInit(shape: IShape, ...params: unknown[]): void
-	// public abstract shapeRefresh(shape: IShape): void
-	// public abstract displayDestruct(shape: IShape): void
 
 	/**
 	 * （显示端）获取所有者（玩家）的填充颜色
@@ -220,4 +218,99 @@ export default abstract class Projectile
 
 	// 短周期 //
 	readonly i_shortLive = true as const
+}
+
+/**
+ * 具有「位置」的抛射体
+ * * 为统一集中方法而存在
+ */
+export abstract class ProjectileHasPosition<Pos extends number>
+	extends Projectile
+	implements IEntityHasPosition
+{
+	protected _position: xPoint<Pos>
+
+	/**
+	 * 构造函数
+	 *
+	 * @param newPosition 坐标 // ! 必须传入一个全新值，因为`_position`无法根据泛型类型初始化
+	 */
+	public constructor(
+		id: typeID,
+		owner: IPlayer | null,
+		attackerDamage: uint,
+		extraResistanceCoefficient: uint,
+		newPosition: Val<xPoint<Pos>>,
+		direction: mRot
+	) {
+		super(id, owner, attackerDamage, extraResistanceCoefficient, direction)
+		// 设置坐标
+		this._position = newPosition
+	}
+
+	/** @implements 直接返回对应实体坐标 */
+	get position(): xPoint<Pos> {
+		return this._position
+	}
+
+	/**
+	 * 设置实体坐标
+	 * * 核心逻辑：拷贝&自动通知显示代理（后者是构造此类的初衷）
+	 *
+	 * @param newPosition 新的坐标（引用）
+	 */
+	public setPosition(newPosition: Ref<xPoint<Pos>>): this {
+		// 拷贝坐标
+		this._position.copyFrom(newPosition)
+		// 显示更新
+		this._proxy.position = this._position
+		// 返回自身
+		return this
+	}
+
+	/**
+	 * 步进坐标
+	 * * 核心逻辑：依照母体与指定方向（默认为自身方向）前进指定距离
+	 *
+	 * @abstract 抽象方法：根据{@link Pos}的不同类型分派不同方法
+	 */
+	public abstract moveToward(
+		host: IMatrix,
+		distance: Pos,
+		direction?: mRot /*  = this._direction */
+	): this
+}
+
+/** 在格点上的「有坐标抛射体」 */
+export abstract class ProjectileInGrid extends ProjectileHasPosition<int> {
+	/** @implements 实现——分派{@link IMatrix.towardWithRot_II}方法 */
+	public moveToward(
+		host: IMatrix,
+		distance: int,
+		direction: mRot = this._direction
+	): this {
+		// 移动
+		host.map.towardWithRot_II(this._position, direction, distance)
+		// 更新
+		this._proxy.position = this._position
+		// 返回自身
+		return this
+	}
+}
+
+/** 不在格点上的「有坐标抛射体」 */
+export abstract class ProjectileOutGrid extends ProjectileHasPosition<uint> {
+	/** @implements 实现——分派{@link IMatrix.towardWithRot_FF}方法 */
+	public moveToward(
+		host: IMatrix,
+		distance: number,
+		direction: mRot = this._direction
+	): this {
+		// 移动
+		host.map.towardWithRot_FF(this._position, direction, distance)
+		// 更新
+		this._proxy.position = this._position
+		// 返回自身
+		return this
+	}
 }

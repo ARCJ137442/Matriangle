@@ -107,7 +107,6 @@ export default interface IMapStorage
 	 * * 用于地图的复制等
 	 * * 或将用于显示模块的非密集型处理
 	 *
-	 * TODO: 兼容性能的同时，完全使用通用系统
 	 * * 原则：能不`new`就尽可能不`new`
 	 *
 	 * @param f ：用于在每个遍历到的坐标中调用（会附加上调用到的坐标）

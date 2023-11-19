@@ -162,8 +162,6 @@ function getControlMessage(event, isDown) {
 /**
  * 根据键盘事件返回「玩家行动」
  *
- * TODO: 这些代码计划内迁入TS中，变成原先AS3那样可配置的一部分
- *
  * @param {KeyboardEvent} keyboardEvent 键盘事件
  * @param {boolean} isDown 是否按下
  * @returns 对应的「玩家行动」值

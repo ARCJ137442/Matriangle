@@ -121,7 +121,7 @@ export module BatrEntityTypes {
 	)
 
 	// 玩家
-	export const PLAYER: EntityType = new EntityType(
+	export const PLAYER_BATR: EntityType = new EntityType(
 		PlayerBatr.ID,
 		PlayerBatr,
 		DisplayLevel.PLAYER
@@ -191,7 +191,7 @@ export module BatrEntityTypes {
 		SHOCKWAVE_DRONE,
 		LIGHTNING,
 		// 玩家
-		PLAYER,
+		PLAYER_BATR,
 		// 奖励箱
 		BONUS_BOX,
 		// 特效

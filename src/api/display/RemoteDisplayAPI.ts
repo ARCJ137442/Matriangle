@@ -31,8 +31,6 @@
  *
  * ? 或许需要`DisplayInterfaces.ts`整合
  */
-
-import { JSObject } from 'matriangle-common/JSObjectify'
 import { OptionalRecursive2 } from 'matriangle-common/utils'
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import { IDisplayDataBlockState } from '../server/block/BlockState'
@@ -48,7 +46,11 @@ import { typeID } from '../server/registry/IWorldRegistry'
  *
  * !【2023-11-15 23:20:57】目前对于「{[k:string]: XXX}」的继承，不会引发歧义（是泛型函数出了问题）
  */
-export interface IDisplayData extends JSObject {}
+export interface IDisplayData /* extends JSObject */ {
+	// [stateName: key]: JSObjectValue // !【2023-11-15 22:28:22】与其说「作为一个『any类型』」，倒不如禁用它作为一个基类（以兼容基本的`scaleX`、`scaleY`这些）
+	// !【2023-11-19 16:16:54】然而继承来源`JSObject`还是一个「any类型」（只是限制了值的类型），这导致后面约束没法变强烈
+	// !【2023-11-19 16:19:51】现在不再继承「any类型」`JSObject`，其内部值的类型由其它方式约束
+}
 
 /**
  * 所有「数据呈现者」的统一接口
@@ -60,22 +62,27 @@ export interface IStateDisplayer<StateDataT extends IDisplayData> {
 	/**
 	 * （图形）初始化
 	 * * 使用完整的「显示数据」
+	 *
+	 * !【2023-11-19 14:41:02】不再使用`...otherArgs`，初始化数据全都在「data」中了
 	 */
-	shapeInit(data: StateDataT, ...otherArgs: any[]): void
+	shapeInit(data: StateDataT): void
+
 	/**
 	 * 图形更新
 	 * * 使用部分的「显示数据」（补丁形式）
+	 *
+	 * !【2023-11-19 14:41:02】不再使用`...otherArgs`，初始化数据全都在「data」中了
 	 * @param data 需要更新的「显示数据补丁」
 	 */
-	shapeRefresh(
-		data: OptionalRecursive2<StateDataT>,
-		...otherArgs: any[]
-	): void
+	shapeRefresh(data: OptionalRecursive2<StateDataT>): void
+
 	/**
 	 * 图形销毁
 	 * * 不使用任何「显示数据」
+	 *
+	 * !【2023-11-19 14:41:02】不再使用`...otherArgs`，初始化数据全都在「data」中了
 	 */
-	shapeDestruct(...otherArgs: any[]): void
+	shapeDestruct(): void
 }
 
 // * 地图/方块显示 * //
@@ -207,12 +214,11 @@ export interface IDisplayDataEntity<
  *     }
  * }
  */
-export interface IDisplayDataEntityState extends JSObject {
-	// [stateName: key]: JSObjectValue // !【2023-11-15 22:28:22】与其说「作为一个『any类型』」，倒不如禁用它作为一个基类（以兼容基本的`scaleX`、`scaleY`这些）
+export interface IDisplayDataEntityState extends IDisplayData {
 	// * 下面这些似乎是作为一个「有位置实体」才需要操作的，但实际上只要「可显示」就必须这么做
 	scaleX: number
 	scaleY: number
-	isVisible: boolean
+	visible: boolean
 	position: number[]
 	direction: number /* mRot */
 	alpha: number
@@ -268,8 +274,10 @@ export enum VisualizationOutputMessagePrefix {
 	OTHER_INFORMATION = 'i',
 	/** 「文本信息」的前缀 */
 	TEXT = 't',
-	/** 「canvas显示数据」的前缀 */
-	CANVAS_DATA = '@',
+	/** 「画板显示数据初始化」的前缀 */
+	CANVAS_DATA_INIT = '@',
+	/** 「画板显示数据更新」的前缀 */
+	CANVAS_DATA_REFRESH = '#',
 }
 
 /**

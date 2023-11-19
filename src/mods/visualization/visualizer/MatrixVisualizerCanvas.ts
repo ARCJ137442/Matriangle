@@ -57,13 +57,16 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 			case NativeVisualizationTypeFlag.INIT:
 				// 转换为JSON
 				JSONDisplayData = JSON.stringify(
-					trimmedEmptyObjIn(matrix.getDisplayDataInit())
+					trimmedEmptyObjIn(
+						// ! 假定：遵循JSObject约定
+						matrix.getDisplayDataInit() as unknown as JSObject
+					)
 				)
 				// 刷新已更新数据
 				matrix.flushDisplayData()
 				// 返回
 				return [
-					VisualizationOutputMessagePrefix.CANVAS_DATA,
+					VisualizationOutputMessagePrefix.CANVAS_DATA_INIT,
 					JSONDisplayData,
 				]
 			case NativeVisualizationTypeFlag.REFRESH:
@@ -78,7 +81,7 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 				matrix.flushDisplayData()
 				// 返回
 				return [
-					VisualizationOutputMessagePrefix.CANVAS_DATA,
+					VisualizationOutputMessagePrefix.CANVAS_DATA_REFRESH,
 					JSONDisplayData,
 				]
 			default:

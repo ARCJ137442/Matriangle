@@ -440,8 +440,7 @@ export function playerPickupBonusBox(
 				temp_playerPickupBonusBox_effectP
 					.copyFrom(player.position)
 					.addFromSingle(0.5),
-				buffColor,
-				0.75
+				buffColor
 			)
 		)
 	// 有统计⇒加入统计
@@ -1300,7 +1299,7 @@ export function handlePlayerLevelup(
 				// 获取一个不重复、但又在角落的位置（高维化）
 				effP[j] += player.position[j] + ((i >> j) & 1)
 			}
-			host.addEntity(new EffectPlayerLevelup(effP, color, 0.75))
+			host.addEntity(new EffectPlayerLevelup(effP, color))
 		}
 	}
 }
