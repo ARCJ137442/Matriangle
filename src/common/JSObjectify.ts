@@ -6,7 +6,8 @@
 /**
  * 一个轻量级「JS对象化」库，用于各类对象到JS对象（再到JSON）的序列化
  */
-import { Class } from '../legacy/AS3Legacy'
+import { Class, uint } from '../legacy/AS3Legacy'
+import { intMin } from './exMath'
 import {
 	addNReturnKey,
 	getClass,
@@ -14,19 +15,27 @@ import {
 	isEmptyObject,
 	isTrueObject,
 	key,
+	numKeysOf,
 	safeMerge,
+	uniqueIntersectArray,
 } from './utils'
 
 /**
  *  ! 对object值的限制：只能为数值、字符串、布尔值、null、数组与其它object（且数值不考虑精度）
  */
-export type JSObjectValue =
+export type JSObjectValue<RecursiveObject = JSObject, RecurseArray = JSArray> =
 	| number
+	| bigint
 	| string
 	| boolean
 	| null
-	| Array<any> // !【2023-11-15 20:37:05】改成`JSObjectValue`会出现「实例化过深」，改成`unknown`会在`MatrixRules_Batr.ts`报错
-	| JSObject
+	| RecurseArray // !【2023-11-15 20:37:05】改成`JSObjectValue`会出现「实例化过深」，改成`unknown`会在`MatrixRules_Batr.ts`报错
+	| RecursiveObject
+
+/**
+ * JS数组类型
+ */
+export type JSArray = JSObjectValue[]
 
 /**
  * 可转换为JSON的JS对象类型
@@ -35,6 +44,28 @@ export type JSObjectValue =
  */
 export type JSObject = {
 	[key: string]: JSObjectValue
+}
+
+/**
+ * JS对象值 | undefined
+ * * 可递归包含undefined
+ * * 应用：JS对象对比中用「不可能存在的值」undefined表示「值被删除/值相同」
+ */
+export type JSObjectValueWithUndefined =
+	| JSObjectValue<JSObjectWithUndefined, JSObjectValueWithUndefined[]>
+	| undefined
+
+/**
+ * 内部可含有undefined的JS数组类型
+ */
+export type JSArrayWithUndefined = JSObjectValueWithUndefined[]
+
+/**
+ * 内部可含有undefined的JS对象类型
+ * * 可能会被JSON处理失真
+ */
+export type JSObjectWithUndefined = {
+	[key: string]: JSObjectValueWithUndefined
 }
 
 /**
@@ -189,7 +220,7 @@ export function uniSaveJSObject<T extends IJSObjectifiable<T>>(
 	// 返回前检查：如果检查失败，则报错
 	if (!verifyJSObject(target)) {
 		console.error(this_, target)
-		throw new Error(target.toString() + '不是JS对象')
+		throw new Error(String(target) + '不是JS对象')
 	}
 	// 返回以作管道操作
 	return target
@@ -362,16 +393,61 @@ export function uniLoadJSON<T extends IJSObjectifiable<T>>(
 
 /**
  * 检查一个「对象化后的JS对象」是否满足对「键」「值」的要求
- * @param jso 待检查的JS对象（值）
+ * * 必须是一个object对象，数组不满足要求
+ *
+ * @param value 待检查的JS对象（值）
  * @returns 是否合法
  */
-export function verifyJSObject(jso: any): boolean {
-	for (const key in jso) {
-		if (!verifyJSObjectKey(key) || !verifyJSObjectValue(jso[key]))
+export function verifyJSObject(value: any): value is JSObject {
+	if (
+		// * 先检查是否为null：为null⇒不合法
+		value === null ||
+		// * 再使用typeof检查：不是object⇒不合法
+		typeof value !== 'object' ||
+		// * 先检查其原型是否为对象：非对象⇒不合法
+		Object.getPrototypeOf(value) !== Object.prototype ||
+		// * 再检查是否为数组：为数组⇒非「对象」
+		Array.isArray(value)
+	)
+		return false
+	// * 最后对每个键值对进行检查：逐个点名
+	for (const key in value) {
+		if (!verifyJSObjectKey(key) || !verifyJSObjectValue(value[key]))
 			return false
 	}
 	return true
 }
+/** @alias {@link verifyJSObject} */
+export const isJSObject = verifyJSObject
+
+/**
+ * 检查一个「对象化后的JS数组」是否满足对「值」的要求
+ * * 必须是JS数组数组不满足要求
+ *
+ * @param value 待检查的JS数组（值）
+ * @returns 是否合法
+ */
+export function verifyJSArray(value: unknown): value is JSArray {
+	if (
+		// * 先检查是否为null：为null⇒不合法
+		value === null ||
+		// * 再使用typeof检查：不是object⇒不合法
+		typeof value !== 'object' ||
+		// * 再检查是否为数组：非数组⇒不合法
+		!Array.isArray(value) ||
+		// * 先检查其原型是否为数组：非数组⇒不合法
+		Object.getPrototypeOf(value) !== Array.prototype
+	)
+		return false
+	// * 最后对每个值进行检查：逐个点名
+	for (const v of value) {
+		// * 有一个不是⇒不合法
+		if (!verifyJSObjectValue(v)) return false
+	}
+	return true
+}
+/** @alias {@link verifyJSArray} */
+export const isJSArray = verifyJSArray
 
 /**
  * 检查一个「对象化后的JS对象」的键是否合法
@@ -380,26 +456,37 @@ export function verifyJSObject(jso: any): boolean {
  * @param key 待检查的键
  * @returns 是否合法
  */
-export function verifyJSObjectKey(key: any): boolean {
+export function verifyJSObjectKey(key: unknown): key is string | number {
 	switch (typeof key) {
+		// ! 只有字符串和数字才算
 		case 'string':
 		case 'number':
 			return true
+		// ! symbol就不算
 		default:
 			return false
 	}
 }
+/** @alias {@link verifyJSObjectKey} */
+export const isJSObjectKey = verifyJSObjectKey
 
 /**
  * 检查一个「对象化后的JS对象」的键是否合法
  * * 原理：检查其是否为数字/字符串
  *
+ * ! 必须用`any`的理由：元素隐式具有 "any" 类型，因为类型为 "string" 的表达式不能用于索引类型 "{}"。
+ *
  * @param value 待检查的值
  * @returns 是否合法
  */
-export function verifyJSObjectValue(value: any): boolean {
+export function verifyJSObjectValue(
+	value: any,
+	log: boolean = false
+): value is JSObjectValue {
+	// * 检查是否为`null`
 	if (value === null) return true
-	switch (typeof value) {
+	// * 剩余的检查类型
+	root: switch (typeof value) {
 		// case 'symbol':
 		// case 'undefined':
 		// case 'function':
@@ -410,28 +497,466 @@ export function verifyJSObjectValue(value: any): boolean {
 			return true
 		// ! 针对「对象」：继续以「JS对象」的形式判断
 		case 'object':
-			// 有构造器就非法
-			if (
-				(Object.getPrototypeOf(value) === Object.prototype ||
-					Object.getPrototypeOf(value) === Array.prototype) &&
-				verifyJSObject(value)
-			)
-				return true
-			console.error(value, '不是JS对象')
-			console.log(
-				value,
-				verifyJSObject(value),
-				Object.getPrototypeOf(value),
-				Object.getPrototypeOf(value) === Object.prototype,
-				Object.getPrototypeOf(value) === Array.prototype
-			)
+			// * 检查是否为数组，并且原型对象直接是原生数组（数组的子类型不能算）
+			if (Array.isArray(value))
+				if (Object.getPrototypeOf(value) === Array.prototype) {
+					// * 逐一检查数组元素
+					for (let i: uint = 0; i < value.length; i++)
+						// * 只要有一个不是，就算不合法
+						if (!verifyJSObjectValue(value[i])) break root // ! 从根部退出（switch也可加标签）
+				}
+				// * 若非直接以数组为原型⇒不合法
+				else break root
+			// * 数组之外：若为真正的「JS对象」
+			else if (Object.getPrototypeOf(value) === Object.prototype) {
+				// * 逐一检查对象元素
+				for (const key in value)
+					if (
+						!verifyJSObjectKey(key) ||
+						!verifyJSObjectValue(value[key])
+					)
+						break root // ! 从根部退出（switch也可加标签）
+			}
+			// * 并非真正的「JS对象」⇒不合法
+			else break root //! 从根部退出（switch也可加标签）
+			return true
+		// * 默认为否
+		default:
 			return false
+	}
+	// * 若中途没return，说明不合法（为了统一log）
+	log &&
+		console.error(
+			value,
+			'不是JS对象值！',
+			verifyJSObject(value),
+			Object.getPrototypeOf(value),
+			Object.getPrototypeOf(value) === Object.prototype,
+			Object.getPrototypeOf(value) === Array.prototype
+		)
+	return false
+}
+/** @alias {@link verifyJSObjectValue} */
+export const isJSObjectValue = verifyJSObjectValue
+
+/**
+ * 深判等JS对象值
+ * * 逻辑：主要使用「负相等」策略
+ *   * 对「全等」会提前检查
+ *   * 若前面的「不相等判断」都未命中，则认为其相等
+ *
+ * ! 实际上也兼容`undefined`
+ *
+ * @param v1 待比对值1
+ * @param v2 待比对值2
+ * @returns 是否值相等
+ */
+export function isJSObjectValueEqual_deep(
+	v1: JSObjectValueWithUndefined,
+	v2: JSObjectValueWithUndefined
+): boolean {
+	// * 直接全等⇒返回`true`（包括`null`）
+	if (v1 === v2) return true
+	// * null不等⇒返回`false`
+	if (v1 === null || v2 === null) return false
+	// * 若不是全等，则进行typeof // 基础类型这时候都等完了
+	if (typeof v1 !== typeof v2) return false
+	// * 确保typeof相等后⇒分类型判断
+	switch (typeof v1) {
+		// * 数组/对象（null前边比过了）
+		case 'object':
+			// * 对「是数组」都有分歧⇒不等
+			if (Array.isArray(v1) !== Array.isArray(v2)) return false
+			// * 数组：开始逐个扫描
+			else if (Array.isArray(v1))
+				if (v1.length !== (v2 as any[]).length)
+					// * 长度不一致⇒不等
+					return false
+				else {
+					// * 长度一致：逐个扫描⇒一个不等，整体不等
+					for (let i: uint = 0; i < v1.length; ++i)
+						if (!isJSObjectValueEqual_deep(v1[i], (v2 as any[])[i]))
+							return false
+				}
+			// * 对象：键值对数目+遍历键值对
+			else {
+				// * 键值对数目不一致⇒不等
+				if (numKeysOf(v1) !== numKeysOf(v2 as object)) return false
+				// * 遍历v1的所有键值对
+				for (const key in v1)
+					if (!(key in (v2 as object)))
+						// * 若v2中没有该键⇒不等
+						return false
+					// * 若v2中有该键，则继续判断
+					else {
+						// * 若v1和v2的值不等⇒不等
+						if (
+							!isJSObjectValueEqual_deep(
+								v1[key],
+								(v2 as any)[key]
+							)
+						)
+							return false
+					}
+			}
+			// * 默认相等
+			return true
+		// * 默认：直接不等（基础类型相等前边比过了）
 		default:
 			return false
 	}
 }
 
+/**
+ * 深拷贝JS对象
+ * * 创造一个与JS对象值相同的拷贝
+ *
+ * !【2023-11-20 23:48:44】偷懒：直接使用JSON类的方法
+ */
+export function copyJSObjectValue_deep<T extends JSObjectValue>(v: T): T {
+	return JSON.parse(JSON.stringify(v)) as T
+}
+
+/**
+ * 深拷贝JS对象，但带有`undefined`值
+ * * 创造一个与JS对象值相同的拷贝
+ * * 纯手写算法
+ *   * 因为`JSON.stringify`会处理掉`undefined`
+ */
+export function copyJSObjectValueWithUndefined_deep<
+	T extends JSObjectValueWithUndefined,
+>(v: T): T {
+	// * 是数组
+	if (Array.isArray(v)) {
+		// * 遍历复制每个值（直接调用`map`方法）
+		return v.map(copyJSObjectValueWithUndefined_deep) as T
+	}
+	// * 是对象
+	if (isTrueObject(v)) {
+		const result: T = {} as T
+		// * 遍历复制每个值
+		for (const k in v)
+			(result as any)[k] = copyJSObjectValueWithUndefined_deep(v[k])
+		return result
+	}
+	// * 是其它类型值⇒返回自身
+	return v
+}
+
+/**
+ * 比对JS对象，返回一个「比对结果」对象
+ * * 因「逐层对比」的逻辑，每一层都会将对象复制
+ *   * 最终的对象值相当于对`compare`的部分化拷贝
+ * * 核心逻辑：`diff`中的值作为「有差异/要更新」的diff
+ *   * `undefined`⇒删除：`diff`中值为`undefined`的键，表示「被删除」
+ *     * 即「该值在`base`中存在，但在`compare`中不存在」
+ *   * 其它值⇒覆盖：`diff`中值为其它值的键，表示「被覆盖」
+ *     * 即「该值在`base`、`compare`中都存在，但值不相等」
+ *     * 此时取`compare`的值作为`diff`的值
+ *
+ * ! 本质上保证严格的「对象被复制」
+ * * 「更多权衡」的结果是：为保证后续diff结果不被「量子纠缠」修改，
+ *   * 需要对所有「本来直接返回`compare`」的地方进行复制
+ *
+ * @param base 基准对象
+ * @param compare 对比对象
+ * @returns {JSObjectValueWithUndefined} diff对象
+ */
+export function diffJSObjectValue(
+	base: JSObjectValue,
+	compare: JSObjectValue
+): JSObjectValueWithUndefined {
+	// * 全等⇒undefined
+	if (base === compare) return undefined
+	// * 类型不等⇒直接返回对比对象 // ? 是否要真正复制？【2023-11-22 00:18:25】现在的答案：保证「引用无关」，需要复制（为后续同步不出bug做准备）
+	if (typeof base !== typeof compare) return copyJSObjectValue_deep(compare)
+	// * 分类型
+	switch (typeof base) {
+		// * 数组/对象（null前边比过了）
+		case 'object':
+			// * 同为JS数组⇒使用数组的diff
+			if (isJSArray(base) && isJSArray(compare))
+				return diffJSArray(base, compare)
+			// * 同为JS对象⇒使用对象的diff
+			else if (isJSObject(base) && isJSObject(compare))
+				return diffJSObject(base, compare)
+			// * 若都不符⇒复制后返回`compare`
+			return copyJSObjectValue_deep(compare)
+		// * 其它类型：复制后直接返回对比对象
+		default:
+			return copyJSObjectValue_deep(compare)
+	}
+}
+
+/**
+ * 特异于数组的diff方法
+ * * 核心逻辑：一个不同⇒整体不同&指明不同之处
+ * * 参考{@link diffJSObjectValue}
+ *
+ * ! 保证整个过程不会从compare中复制引用——换句话说，返回值和compare不会共用任何引用
+ *
+ * ! 保证第一层数组中没有`undefined`作为元素
+ */
+export function diffJSArray(
+	base: JSObjectValue[],
+	compare: JSObjectValue[]
+): Exclude<JSObjectValueWithUndefined, undefined>[] | undefined {
+	// * 全等⇒undefined
+	if (base === compare) return undefined
+	// * 长度相等⇒逐个对比：一个不同⇒整体不同
+	if (base.length === compare.length) {
+		/** 要返回的替换点（undefined⇒compare中的对象本身） */
+		const result: Exclude<JSObjectValueWithUndefined, undefined>[] = []
+		let diff: JSObjectValueWithUndefined
+		let hasDiff: boolean = false
+		for (let i: uint = 0; i < base.length; ++i) {
+			// * 逐个对比
+			diff = diffJSObjectValue(base[i], compare[i])
+			if (diff === undefined) {
+				// * 若没有不同⇒追加`compare`的元素
+				result.push(copyJSObjectValue_deep(compare[i]))
+			} else {
+				// * 若有不同⇒整体不同
+				hasDiff = true
+				// * 追加
+				result.push(diff)
+			}
+		}
+		// * 整体不同？返回「无直属undefined的diff」 | 返回undefined
+		return hasDiff ? result : undefined
+	}
+	// * 长度不等⇒复制后返回compare
+	else return copyJSObjectValue_deep(compare)
+}
+
+/**
+ * 特异于对象的diff方法
+ * * 核心逻辑：一个不同⇒整体不同&指明不同之处
+ * * 参考{@link diffJSObjectValue}
+ *
+ * ! 保证整个过程不会从compare中复制引用——换句话说，返回值和compare不会共用任何引用
+ */
+export function diffJSObject(
+	base: JSObject,
+	compare: JSObject
+): JSObjectWithUndefined | undefined {
+	// * 全等⇒undefined
+	if (base === compare) return undefined
+	// 预置变量
+	const result: JSObjectWithUndefined = {}
+	let diff: JSObjectValueWithUndefined
+	let hasDiff: boolean = false
+	let key: keyof JSObject
+	/** [共有的键, `base`中存在但`compare`中不存在的键, `compare`中存在但`base`中不存在的键] */
+	const [intersect, baseMinusCompare, compareMinusBase] =
+		uniqueIntersectArray(Object.keys(base), Object.keys(compare))
+	// * 共有键⇒逐个键进行对比
+	for (key of intersect) {
+		diff = diffJSObjectValue(base[key], compare[key])
+		// * 若无不同⇒继续
+		if (diff === undefined) continue
+		// * 若有不同⇒整体不同，记录
+		else {
+			hasDiff = true
+			result[key] = diff
+		}
+	}
+	// * 差集有键⇒整体不同，开始比对
+	if (baseMinusCompare.length > 0 || compareMinusBase.length > 0) {
+		hasDiff = true
+		// * `base`有值但`compare`无对应值⇒「删除」操作
+		for (key of baseMinusCompare) {
+			result[key] = undefined
+		}
+		// * `compare`有值但`base`无对应值⇒「新增」操作
+		for (key of compareMinusBase) {
+			result[key] = copyJSObjectValue_deep(compare[key])
+		}
+	}
+	// * 最后看「是否有差异」返回
+	return hasDiff ? result : undefined
+}
+
+/**
+ * 「差异对象」合并入「基对象」
+ * * 相当于git中的`merge`操作
+ *
+ * @param base 要合并入的JS对象值
+ * @param diff 要合并进的差异（undefined⇒删除属性）
+ * @returns 合并后的JS对象值
+ */
+export function mergeJSObjectValue(
+	base: JSObjectValue,
+	diff: JSObjectValueWithUndefined
+): JSObjectValue {
+	// * 均为JS数组⇒扫描合并 | `diff`因为「可能有`undefined`」不一定为JS数组 | 这里的`diff`若是数组，则其长度一定与`base`相等）
+	if (isJSArray(base) && Array.isArray(diff)) {
+		// ! 不能单用`isJSArray(diff)`，因为`diff`可能不完整
+		if (base.length === diff.length)
+			for (let i: uint = 0; i < base.length; i++)
+				base[i] = mergeJSObjectValue(base[i], diff[i])
+		else throw new Error(`JSObjectify.mergeJSObjectValue: 数组长度不一致`)
+		// * 合并完毕
+		return base
+	}
+	// * 均为JS对象⇒逐键合并 | 注意：`diff`因为「可能有`undefined`」不能用`isJSObject`
+	else if (isJSObject(base) && isTrueObject(diff)) {
+		// * 不能使用`uniqueIntersectArray`，因为`diff`可能不完整
+		let value: JSObjectValue
+		for (const key in diff) {
+			value = (diff as JSObject)[key]
+			// * undefined⇒删除属性
+			if (value === undefined) delete base[key]
+			// * 存在值（修改）/不存在值（新增） & 是JS对象值⇒递归合并
+			else if (isJSObjectValue(value) || isTrueObject(value))
+				// ! 不能单用`isJSObjectValue`，因为`value`可能不完整
+				base[key] = mergeJSObjectValue(base[key], value)
+			// ! 不存在⇒不要理睬
+		}
+		// * 合并完毕
+		return base
+	}
+	// * 类型不同|基础类型等其它情况⇒返回diff的值
+	if (diff === undefined)
+		throw new Error(`JSObjectify: 类型不匹配，无法合并。`)
+	return diff as JSObjectValue
+}
+
+/**
+ * 挖去diff对象中的`undefined`值
+ * * 参照自JSON.stringify的处理方式
+ * * 数组中的`undefined`：使用`replaceWithUndefined`进行处理（替换/删除）
+ * * 对象中的`undefined`：使用`delete`进行处理（删除）
+ *
+ * ! 原地操作：会改变`valueWithUndefined`对象
+ *
+ * ! 不会尝试在运行时拷贝`replaceWithUndefined`
+ *
+ * @param valueWithUndefined 带有`undefined`的JS对象值
+ * @param replaceWhenUndefined 在处理值时，当值为`undefined`时的处理方式（数组|自身⇒替换）
+ * * 默认为`null`：采自`JSON.stringify`的默认行为
+ */
+export function removeUndefinedInJSObjectValueWithUndefined(
+	valueWithUndefined: JSObjectValueWithUndefined,
+	replaceWhenUndefined: JSObjectValue | undefined = null
+): JSObjectValue {
+	// * 排除直接undefined的选项
+	if (valueWithUndefined === undefined) {
+		if (replaceWhenUndefined === undefined)
+			// * 「要替换undefined的值」还是undefined⇒报错（相当于「报错模式」）
+			throw new Error(
+				`JSObjectify: 传入的对象为undefined，要替换undefined的还是undefined，这怎么移除？`
+			)
+		// * 否则⇒正常返回
+		else return replaceWhenUndefined
+	}
+	// * 数组
+	else if (Array.isArray(valueWithUndefined)) {
+		// * 遍历数组，替换`undefined`为`replaceWithUndefined` / `replaceWithUndefined===undefined`⇒删除元素
+		for (let i = valueWithUndefined.length - 1; i >= 0; i--) {
+			// * 数组元素是`undefined`⇒删除/替换元素
+			if (valueWithUndefined[i] === undefined)
+				if (replaceWhenUndefined === undefined)
+					valueWithUndefined.splice(i, 1)
+				else valueWithUndefined[i] = replaceWhenUndefined
+			// * 否则⇒递归深入
+			else
+				valueWithUndefined[i] =
+					removeUndefinedInJSObjectValueWithUndefined(
+						valueWithUndefined[i],
+						replaceWhenUndefined
+					)
+		}
+		// * 最终返回自身
+		return valueWithUndefined as JSObjectValue
+	}
+	// * 对象
+	else if (isTrueObject(valueWithUndefined)) {
+		// * 遍历对象
+		let value: JSObjectValueWithUndefined
+		for (const key in valueWithUndefined) {
+			value = valueWithUndefined[key]
+			// * 值为`undefined`⇒删除
+			if (value === undefined) delete valueWithUndefined[key]
+			// * 否则⇒递归深入
+			else
+				valueWithUndefined[key] =
+					removeUndefinedInJSObjectValueWithUndefined(
+						value,
+						replaceWhenUndefined
+					)
+		}
+		// * 最终返回自身
+		return valueWithUndefined as JSObjectValue
+	}
+	// * 否则（其它基础类型）⇒返回自身
+	return valueWithUndefined as JSObjectValue
+}
+
 // 一些增进易用性的工具函数 //
+
+/**
+ * 测试在同一位置的共享引用
+ * * 这样的引用意味着两个对象可能会量子纠缠
+ *
+ * ! 不完备：可能在不同的位置共享相同引用
+ *
+ * @returns 第一个找到的「共享引用对象」，若无则为`undefined`
+ */
+export function getSharedReference(
+	base: JSObjectValue,
+	compare: JSObjectValue
+): JSObjectValue | undefined {
+	// * 其中一个为`null`⇒`false`
+	if (base === null || compare === null) return undefined
+	// * 若typeof='object' & 全等⇒肯定有共享引用（就是它们自身）
+	if (typeof base === 'object' && base === compare) return base // ! ←只有这里是直接返回的
+	// 临时变量
+	let sharedRef: JSObjectValue | undefined
+	// * 若为数组
+	if (isJSArray(base)) {
+		// * 同为数组
+		if (isJSArray(compare)) {
+			for (let i: uint = 0; i < intMin(base.length, compare.length); ++i)
+				// * 相同索引上有共享引用⇒总体有
+				if (
+					(sharedRef = getSharedReference(base[i], compare[i])) !==
+					undefined
+				)
+					return sharedRef
+		}
+	}
+	// * 若为对象
+	else if (isJSObject(base)) {
+		// * 同为对象
+		if (isJSObject(compare)) {
+			// * 共同键上相同位置有共享引用⇒总体有
+			for (const key in base)
+				if (
+					key in compare &&
+					(sharedRef = getSharedReference(
+						base[key],
+						compare[key]
+					)) !== undefined
+				)
+					return sharedRef
+		}
+	}
+	// 默认没有共享引用
+	return undefined
+}
+/** @alias getSharedReference */
+export const getSharedRef = getSharedReference
+
+/**
+ * 判断「是否有共享引用」
+ * * 原理：「第一个找到的共享引用」是否存在
+ */
+export function hasSharedReference(base: any, compare: any): boolean {
+	return getSharedReference(base, compare) !== undefined
+}
+/** @alias hasSharedReference */
+export const hasSharedRef = hasSharedReference
 
 /** 判断「是否继续递归加载」恒真 */
 export const loadRecursiveCriterion_true: (v: JSObjectValue) => boolean = (

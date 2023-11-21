@@ -45,8 +45,11 @@ export class ZimDisplayerEntity<
 	override shapeInit(data: IDisplayDataEntity<ESType>): void {
 		super.shapeInit(data)
 		// ! 直接赋值（这里赋值的来源归根结底是`JSON.parse`，所以不用担心「共用引用」的问题）
-		this._currentEntityID = data.id
-		this._currentEntityState = data.state
+		// !【2023-11-20 02:54:05】为避免部分实体更新时「数据不完整」的问题，这里需要先检查数据
+		if (data.id !== undefined) this._currentEntityID = data.id
+		else console.error('shapeInit: 数据`id`不完整！data =', data)
+		if (data.state !== undefined) this._currentEntityState = data.state
+		else console.error('shapeInit: 数据`state`不完整！data =', data)
 		// 初始化 // !【2023-11-19 18:07:22】💭总不能旋转下玩家都重置吧
 		this.initShapeByID()
 	}

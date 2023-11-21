@@ -816,6 +816,44 @@ export function generateArray<T>(length: uint, f: (index: uint) => T): T[] {
 	return arr
 }
 
+/**
+ * 两个数组进行「集合式相交」变成`[交集, arr1-arr2, arr2-arr1]`
+ * * `arr1`同`arr2`相同的部分⇒不重复
+ *   * 判断「相同」的标准：`===`
+ * * `arr1`不同于`arr2`的部分⇒并入`arr1-arr2` | `arr2-arr1`
+ * * 应用：两个对象相互间的键值比对
+ *   * 参见{@link JSObjectify.diffJSObject}
+ *   * 此时两个对象不会有重复的值
+ * * 计算复杂度：$O(arr1.length * arr2.length)$
+ *
+ * ! 不会检查两个数组是否有重复值
+ *
+ * @returns {[K[], K[], K[]]}合并后的数组`[交集, arr1-arr2, arr2-arr1]`
+ * * 最先一个是交集，然后附带两个差集
+ */
+export function uniqueIntersectArray<K>(arr1: K[], arr2: K[]): [K[], K[], K[]] {
+	// 返回值
+	const result: [K[], K[], K[]] = [[], [], []]
+	// * 核心计算：两次冒泡遍历
+	for (let i: uint = 0; i < arr2.length; i++) {
+		// * 在'target-source'里⇒对应差集++
+		if (arr1.indexOf(arr2[i]) === -1) result[2].push(arr2[i])
+		// * 在交集里⇒交集新增
+		else result[0].push(arr2[i])
+	}
+	for (let i: uint = 0; i < arr1.length; i++) {
+		// * 在'source-target'里⇒对应差集++，target增长为并集
+		if (arr2.indexOf(arr1[i]) === -1) {
+			result[1].push(arr1[i])
+			// ! 为何`target`必须后遍历呢？这需要考虑先前遍历对`target`的影响
+			arr2.push(arr1[i])
+		}
+		// * 在交集里⇒上次计算过，不用了
+	}
+	// 返回值
+	return result
+}
+
 /** 可以用来索引对象值的索引类型 */
 export type key = string | number /*  | symbol */ // ? 【2023-10-07 21:24:37】是否要加入symbol，待定
 
