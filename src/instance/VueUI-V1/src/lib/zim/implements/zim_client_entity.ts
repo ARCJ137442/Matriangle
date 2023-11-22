@@ -683,6 +683,8 @@ export const ENTITY_DRAW_DICT_NATIVE: EntityDrawDict = {
 						// 线条断续
 						shape.graphics
 							.endStroke()
+							.endFill()
+							.beginFill(formatHEX(state.lineColor))
 							.beginStroke(formatHEX(state.lineColor))
 						// * 绘制装饰
 						drawPlayerDecoration(shape, state.decorationLabel)
@@ -734,7 +736,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			drawTriangleRight(
 				displayer,
 				BULLET_DRAW_DATAS.basic.radius,
-				state.lineColor
+				BULLET_DRAW_DATAS.globalLineSize
 			)
 			displayer.graphics.endFill().endStroke()
 			return commonUpdate_all(
@@ -743,17 +745,6 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 				false // 非格点实体
 			)
 		},
-		// 更新
-		refresh: (
-			displayer: ZimDisplayerEntity,
-			state: OptionalRecursive2<IDisplayDataEntityState>
-		): ZimDisplayerEntity =>
-			// 直接调用「通用更新」
-			commonUpdate_all(
-				displayer,
-				state,
-				false // 非格点实体
-			),
 	},
 	/** 核弹 */
 	[BatrEntityTypes.BULLET_NUKE.id]: {
