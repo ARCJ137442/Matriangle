@@ -94,6 +94,7 @@ export default class Player_V1<
 		isActive?: boolean
 		fillColor?: uint
 		lineColor?: uint
+		decorationLabel?: string
 	}) {
 		const {
 			id = Player_V1.ID,
@@ -118,15 +119,22 @@ export default class Player_V1<
 		// ! 控制器不在这里留有引用
 
 		// 显示初始化 // ! 不需要初始化「透明度」这些「一开始就没有特别修改」的变量
+		this.syncDisplayProxy()
+		// !【2023-11-15 20:50:57】现在明确类型，一定是`IDisplayDataEntityStatePlayerV1`的子类型，TS无关你个鬼头
+	}
+
+	/**
+	 * 同步自身数据到「实体代理」中
+	 */
+	syncDisplayProxy(): void {
 		this._proxy.position = this._position
 		this._proxy.direction = this._direction
 		this._proxy.storeStates({
-			fillColor,
-			lineColor,
+			fillColor: this.fillColor,
+			lineColor: this.lineColor,
 			customName: this.customName,
 			decorationLabel: this.decorationLabel,
 		} as PlayerStateT)
-		// !【2023-11-15 20:50:57】现在明确类型，一定是`IDisplayDataEntityStatePlayerV1`的子类型，TS无关你个鬼头
 	}
 
 	/**

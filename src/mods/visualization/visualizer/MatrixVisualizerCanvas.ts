@@ -215,6 +215,7 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 		matrix: IMatrix,
 		host: string,
 		port: uint // ?【2023-11-22 21:46:12】问题来了：这里的服务是「可视化者所在的服务」，并不能区分「同一地址下的不同连接」 // 其中一个思路是：使用「首次连接时的时间戳`Number(new Date())`」进行区分
+		// *【2023-11-22 21:54:22】↑似乎这个「主机端口不能保障『单主机多地址』」也不是那么严重：一个「可视化者」完全可以用几个不同的地址去`linkToRouter`
 	): JSObjectValue | undefined {
 		/** 获取地址 */
 		const address: string = getAddress(host, port)

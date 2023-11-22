@@ -165,8 +165,16 @@ export function drawTriangleRight<S extends Shape>(
  * 绘制一个向右（默认方向）的带渐变填充三角形
  * * 摘自旧AS3代码 @ src\mods\BaTS\entity\player\PlayerBatr.ts
  */
-export function drawTriangleRightGradient<S extends Shape>(
+export function drawPlayerGradient<S extends Shape>(
 	shape: S,
+	/** 使用回调函数把「填充」与「绘图」分开 */
+	drawCallback: (
+		shape: S,
+		size: number,
+		lineSize: number,
+		realRadiusX: number,
+		realRadiusY: number
+	) => void,
 	size: number,
 	lineSize: number,
 	fillColor: uint = 0xffffff,
@@ -191,8 +199,9 @@ export function drawTriangleRightGradient<S extends Shape>(
 		SpreadMethod.PAD,
 		InterpolationMethod.RGB */
 		)
-	// 绘制三角
-	drawTriangleRight(shape, size, lineSize, realRadiusX, realRadiusY)
+	// 绘制图形
+	drawCallback(shape, size, lineSize, realRadiusX, realRadiusY)
+	// drawTriangleRight(shape, size, lineSize, realRadiusX, realRadiusY)
 	// 结束绘制
 	shape.graphics
 		// shape.graphics.drawCircle(0,0,10);

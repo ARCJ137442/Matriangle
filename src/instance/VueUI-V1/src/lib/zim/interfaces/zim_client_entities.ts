@@ -22,10 +22,18 @@ export class ZimDisplayerEntity<
 	implements IStateDisplayer<IDisplayDataEntity<ESType>>
 {
 	/** 当前持有的「实体id/实体类型」 */
-	protected _currentEntityID: typeID = undefined as unknown as typeID // ! 一定会在构造函数的`shapeInit`中初始化
+	protected _currentID: typeID = undefined as unknown as typeID // ! 一定会在构造函数的`shapeInit`中初始化
+	/** 当前持有的「实体id/实体类型」 */
+	public get currentID(): typeID {
+		return this._currentID
+	}
 
 	/** 当前持有的「实体显示数据」 */
-	protected _currentEntityState: ESType = undefined as unknown as ESType // ! 一定会在构造函数的`shapeInit`中初始化
+	protected _currentState: ESType = undefined as unknown as ESType // ! 一定会在构造函数的`shapeInit`中初始化
+	/** 当前持有的「实体显示数据」 */
+	public get currentState(): ESType {
+		return this._currentState
+	}
 
 	/**
 	 * 构造函数
@@ -46,9 +54,9 @@ export class ZimDisplayerEntity<
 		super.shapeInit(data)
 		// ! 直接赋值（这里赋值的来源归根结底是`JSON.parse`，所以不用担心「共用引用」的问题）
 		// !【2023-11-20 02:54:05】为避免部分实体更新时「数据不完整」的问题，这里需要先检查数据
-		if (data.id !== undefined) this._currentEntityID = data.id
+		if (data.id !== undefined) this._currentID = data.id
 		else console.error('shapeInit: 数据`id`不完整！data =', data)
-		if (data.state !== undefined) this._currentEntityState = data.state
+		if (data.state !== undefined) this._currentState = data.state
 		else console.error('shapeInit: 数据`state`不完整！data =', data)
 		// 初始化 // !【2023-11-19 18:07:22】💭总不能旋转下玩家都重置吧
 		this.initShapeByID()
@@ -60,33 +68,30 @@ export class ZimDisplayerEntity<
 		// TODO: 这里逻辑有些混乱
 		if (data?.id !== undefined) {
 			// id「变化为非undefined」（原有对象复用）⇒预先销毁
-			if (data?.id !== this._currentEntityID) {
+			if (data?.id !== this._currentID) {
 				// 合并数据
 				if (data.state !== undefined) {
-					if (
-						this._currentEntityState === null ||
-						data.state === null
-					)
+					if (this._currentState === null || data.state === null)
 						throw new Error(
 							`在初始化的时候，理论上实体显示数据不可能为null！${String(
-								this._currentEntityState
+								this._currentState
 							)}, ${String(data.state)}`
 						)
-					mergeObject(data.state, this._currentEntityState)
+					mergeObject(data.state, this._currentState)
 				}
 				// 更新id
-				this._currentEntityID = data.id
+				this._currentID = data.id
 				// 重新加载
 				this.shapeDestruct()
 			}
 			// 更新id
-			else this._currentEntityID = data.id
+			else this._currentID = data.id
 		}
 		// 仅状态更新：根据ID更新状态 //
 		// 通用更新
 		if (data?.state !== undefined)
 			// 更新状态
-			mergeObject(data.state, this._currentEntityState)
+			mergeObject(data.state, this._currentState)
 		// 专用更新
 		this.refreshShapeByID()
 	}
@@ -101,20 +106,20 @@ export class ZimDisplayerEntity<
 	/** 根据ID调用相应「初始化」函数 */
 	public initShapeByID(): void {
 		if (
-			this.drawDict?.[this._currentEntityID]?.init?.(
+			this.drawDict?.[this._currentID]?.init?.(
 				this,
-				this._currentEntityState
+				this._currentState
 			) === undefined
 		) {
 			// * ID都没有，肯定是大忌
-			if (this._currentEntityID === undefined) {
+			if (this._currentID === undefined) {
 				console.error('实体ID未初始化！', this)
 				throw new Error('实体ID未初始化！')
 			}
 			console.warn(
 				'图形初始化失败：',
-				this._currentEntityID,
-				this._currentEntityState,
+				this._currentID,
+				this._currentState,
 				this
 			)
 		}
@@ -122,20 +127,20 @@ export class ZimDisplayerEntity<
 	/** 根据ID调用相应「初始化」函数 */
 	public refreshShapeByID(): void {
 		if (
-			this.drawDict?.[this._currentEntityID]?.refresh?.(
+			this.drawDict?.[this._currentID]?.refresh?.(
 				this,
-				this._currentEntityState
+				this._currentState
 			) === undefined
 		) {
 			// * ID都没有，肯定是大忌
-			if (this._currentEntityID === undefined) {
+			if (this._currentID === undefined) {
 				console.error('实体ID未初始化！', this)
 				throw new Error('实体ID未初始化！')
 			}
 			console.warn(
 				'图形刷新失败：',
-				this._currentEntityID,
-				this._currentEntityState,
+				this._currentID,
+				this._currentState,
 				this
 			)
 		}

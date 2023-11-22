@@ -32,10 +32,7 @@ export interface IDisplayDataStateEffect extends IDisplayDataEntityState {
  * ```
  * ? 参考Minecraft的「粒子效果」或许「独立出去」也值得考量
  */
-export default abstract class Effect<
-		// TODO: 为需要增加「显示数据」如「玩家升级特效の颜色」的地方完善
-		StateT extends IDisplayDataStateEffect = IDisplayDataStateEffect,
-	>
+export default abstract class Effect<StateT extends IDisplayDataStateEffect>
 	extends EntityDisplayable<StateT>
 	// IEntityDisplayable<IDisplayDataStateEffect>,
 	implements
@@ -63,7 +60,11 @@ export default abstract class Effect<
 		super(id)
 		this._position.copyFrom(position)
 		this._life = this.LIFE
+		// * 显示状态更新
+		this._proxy.position = this._position
 	}
+
+	syncDisplayProxy(): void {}
 
 	// 轻量级活跃 //
 	public readonly i_activeLite = true as const

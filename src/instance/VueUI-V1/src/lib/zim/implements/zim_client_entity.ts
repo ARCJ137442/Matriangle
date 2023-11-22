@@ -4,7 +4,6 @@ import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { NativeEntityTypes } from 'matriangle-mod-native/registry/EntityRegistry_Native'
-import { IDisplayDataEntityStatePlayerBatr } from 'matriangle-mod-bats/entity/player/PlayerBatr'
 import { IDisplayDataEntityStatePlayerV1 } from 'matriangle-mod-native/entities/player/Player_V1'
 import { BatrEntityTypes } from 'matriangle-mod-bats/registry/EntityRegistry_Batr'
 import { ZimDisplayerEntity } from '../interfaces/zim_client_entities'
@@ -12,7 +11,7 @@ import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI
 import {
 	drawRoundRectBox,
 	drawTriangleRight,
-	drawTriangleRightGradient,
+	drawPlayerGradient,
 	graphicsLineStyle,
 } from '../zimUtils'
 import { IDisplayDataEntityStateBullet } from 'matriangle-mod-bats/entity/projectile/bullet/Bullet'
@@ -20,6 +19,9 @@ import { formatHEX, formatHEX_A } from 'matriangle-common'
 import { IDisplayDataEntityStateBonusBox } from 'matriangle-mod-bats/entity/item/BonusBox'
 import { NativeBonusTypes as BonusTypes_Batr } from 'matriangle-mod-bats/registry/BonusRegistry'
 import { uint } from 'matriangle-legacy/AS3Legacy'
+import { IDisplayDataStateEffectExplode } from 'matriangle-mod-bats/entity/effect/EffectExplode'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
+import { IDisplayDataStateEffectPlayerShape } from 'matriangle-mod-bats/entity/effect/EffectPlayerShape'
 
 // 抽象接口 //
 
@@ -83,7 +85,17 @@ export function commonUpdate_position<ESType extends IDisplayDataEntityState>(
 	inGrid: boolean
 ): ZimDisplayerEntity<ESType> {
 	if (state?.position !== undefined) {
-		// 直接投影到屏幕上，并以自身中心为中心
+		// * 状态の维数 < 地图の维数：隐形 | 如：零维点在二维空间是隐形的
+		if (state.position.length < displayer.host.map.size.length) {
+			displayer.visible = false
+			// 直接返回
+			return displayer
+		}
+		// * 否则直接显示
+		else {
+			displayer.visible = true
+		}
+		// * 直接投影到屏幕上，并以自身中心为中心
 		;[displayer.x, displayer.y] = inGrid
 			? // 格点实体若不进行「中央对齐」，则其坐标会落在格点上（而非「便于使用旋转转向」的中央位置）
 			  displayer.host.map.projectTo2D_display_center(state.position)
@@ -130,12 +142,55 @@ export function commonUpdate_AVS<ESType extends IDisplayDataEntityState>(
 // 玩家 //
 
 /**
- * 临时定义的「Player」常量
- * * 用于测试「玩家显示」复原
+ * 玩家显示数据
  */
-const PlayerBatr = {
+const PLAYER_DRAW_DATAS = {
 	SIZE: logical2Real(1),
 	LINE_SIZE: logical2Real(1 / 96),
+	DECORATION_SIZE: logical2Real(1 / 10),
+}
+
+/** 绘制玩家的装饰图案 */
+export function drawPlayerDecoration(
+	shape: ZimDisplayerEntity,
+	label: string,
+	decorationRadius: number = PLAYER_DRAW_DATAS.DECORATION_SIZE
+): void {
+	// console.warn('shape.graphics.', label) // !【2023-11-23 00:35:08】正常了，TODO: 但无法在填充时镂空
+	switch (label) {
+		case NativeDecorationLabel.EMPTY:
+			break
+		case NativeDecorationLabel.CIRCLE:
+			shape.graphics.drawCircle(0, 0, decorationRadius)
+			break
+		case NativeDecorationLabel.SQUARE:
+			shape.graphics.drawRect(
+				-decorationRadius,
+				-decorationRadius,
+				decorationRadius * 2,
+				decorationRadius * 2
+			)
+			break
+		case NativeDecorationLabel.TRIANGLE:
+			shape.graphics
+				.moveTo(-decorationRadius, -decorationRadius)
+				.lineTo(decorationRadius, 0)
+				.lineTo(-decorationRadius, decorationRadius)
+				.lineTo(-decorationRadius, -decorationRadius)
+			break
+		case NativeDecorationLabel.DIAMOND:
+			shape.graphics
+				.moveTo(-decorationRadius, 0)
+				.lineTo(0, decorationRadius)
+				.lineTo(decorationRadius, 0)
+				.lineTo(0, -decorationRadius)
+				.lineTo(-decorationRadius, -0)
+			break
+		default:
+			console.warn('未知的装饰符号：', label)
+			break
+	}
+	// graphics.endFill();
 }
 
 // 子弹 //
@@ -158,7 +213,7 @@ const BULLET_DRAW_DATAS = {
 	},
 	tracking: {
 		radius: logical2Real(3 / 8),
-		radiusDecoration: logical2Real(3 / 20),
+		radiusDecoration: logical2Real(1 / 10),
 	},
 	commonDrawFs: {
 		/** 所有子弹共用的绘制函数 */
@@ -169,27 +224,6 @@ const BULLET_DRAW_DATAS = {
 		): ZimDisplayerEntity =>
 			// 直接调用「通用更新」
 			commonUpdate_all(displayer, state, false /* 非格点实体 */),
-	},
-}
-
-// 特效 //
-
-const EFFECT_DRAW_DATAS = {
-	spawn: {
-		DEFAULT_COLOR: 0x6666ff,
-		LINE_ALPHA: 0.6,
-		FILL_ALPHA: 0.5,
-		LINE_SIZE: logical2Real(1 / 25),
-		SIZE: uint(logical2Real(1.6)),
-		SCALE: 1,
-		STAGE_1_START_TIME: uint(FIXED_TPS * (3 / 4)),
-		STAGE_2_START_TIME: uint(FIXED_TPS / 4),
-	},
-	teleport: {
-		DEFAULT_COLOR: 0x44ff44,
-		LINE_ALPHA: 0.6,
-		FILL_ALPHA: 0.5,
-		LINE_SIZE: logical2Real(1 / 25),
 	},
 }
 
@@ -244,7 +278,6 @@ export function drawBonusBox(
 	shape: ZimDisplayerEntity,
 	state: IDisplayDataEntityStateBonusBox
 ): ZimDisplayerEntity {
-	console.warn('奖励箱初始化！', shape, state)
 	// * 绘制盒子 * //
 	drawRoundRectBox(
 		shape,
@@ -256,6 +289,67 @@ export function drawBonusBox(
 	)
 	// * 绘制标识 * // // 返回自身
 	return drawBonusBoxSymbol(shape, state)
+}
+
+// 特效 //
+
+/** 所有特效的「公用绘图数据库」 */
+const EFFECT_DRAW_DATAS = {
+	spawn: {
+		DEFAULT_COLOR: 0x6666ff,
+		LINE_ALPHA: 0.6,
+		FILL_ALPHA: 0.5,
+		LINE_SIZE: logical2Real(1 / 25),
+		SIZE: uint(logical2Real(1.6)),
+		SCALE: 1,
+		STAGE_1_START_TIME: uint(FIXED_TPS * (3 / 4)),
+		STAGE_2_START_TIME: uint(FIXED_TPS / 4),
+	},
+	teleport: {
+		DEFAULT_COLOR: 0x44ff44,
+		LINE_ALPHA: 0.6,
+		FILL_ALPHA: 0.5,
+		LINE_SIZE: logical2Real(1 / 25),
+	},
+	explode: {
+		LINE_ALPHA: 5 / 8,
+		FILL_ALPHA: 2 / 5,
+		LINE_SIZE: logical2Real(1 / 25),
+	},
+	playerShape: {
+		SIZE: logical2Real(1),
+		LINE_SIZE: logical2Real(1 / 16),
+	},
+	playerHurt: {
+		/** 颜色：固定红色 */
+		FILL_COLOR: 0xff0000,
+	},
+	playerDeathLight: {
+		/** 尺寸过渡的最大值 */
+		MAX_SCALE: 2,
+		/** 尺寸过渡的最小值 */
+		MIN_SCALE: 1,
+	},
+}
+
+/** 爆炸特效：简单的圆 */
+export function drawEffectExplode(
+	shape: ZimDisplayerEntity,
+	state: IDisplayDataStateEffectExplode
+): ZimDisplayerEntity {
+	// shape.graphics.clear()
+	graphicsLineStyle(
+		shape.graphics,
+		EFFECT_DRAW_DATAS.explode.LINE_SIZE,
+		state.color,
+		EFFECT_DRAW_DATAS.explode.LINE_ALPHA
+	)
+		.beginFill(
+			formatHEX_A(state.color, EFFECT_DRAW_DATAS.explode.FILL_ALPHA)
+		)
+		.drawCircle(0, 0, logical2Real(state.radius))
+		.endFill()
+	return shape
 }
 
 /**
@@ -569,10 +663,32 @@ export const ENTITY_DRAW_DICT_NATIVE: EntityDrawDict = {
 		): ZimDisplayerEntity =>
 			// 填充颜色&粗细
 			commonUpdate_all(
-				drawTriangleRightGradient(
+				drawPlayerGradient(
 					displayer,
-					PlayerBatr.SIZE,
-					PlayerBatr.LINE_SIZE,
+					function (
+						shape: ZimDisplayerEntity,
+						size: number,
+						lineSize: number,
+						realRadiusX: number,
+						realRadiusY: number
+					): void {
+						// * 绘制底座
+						drawTriangleRight(
+							shape,
+							size,
+							lineSize,
+							realRadiusX,
+							realRadiusY
+						)
+						// 线条断续
+						shape.graphics
+							.endStroke()
+							.beginStroke(formatHEX(state.lineColor))
+						// * 绘制装饰
+						drawPlayerDecoration(shape, state.decorationLabel)
+					},
+					PLAYER_DRAW_DATAS.SIZE,
+					PLAYER_DRAW_DATAS.LINE_SIZE,
 					state.fillColor,
 					state.lineColor
 				),
@@ -598,36 +714,8 @@ export const ENTITY_DRAW_DICT_NATIVE: EntityDrawDict = {
  */
 export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 	/** BaTr玩家 */
-	[BatrEntityTypes.PLAYER_BATR.id]: {
-		// 初始化
-		init: (
-			displayer: ZimDisplayerEntity,
-			state: IDisplayDataEntityStatePlayerBatr
-		): ZimDisplayerEntity =>
-			// 填充颜色&粗细
-			commonUpdate_all(
-				drawTriangleRightGradient(
-					displayer,
-					PlayerBatr.SIZE,
-					PlayerBatr.LINE_SIZE,
-					state.fillColor,
-					state.lineColor
-				),
-				state,
-				true // 格点实体
-			),
-		// 更新
-		refresh: (
-			displayer: ZimDisplayerEntity,
-			state: OptionalRecursive2<IDisplayDataEntityStatePlayerBatr>
-		): ZimDisplayerEntity =>
-			// 直接调用「通用更新」
-			commonUpdate_all(
-				displayer,
-				state,
-				true // 格点实体
-			),
-	},
+	[BatrEntityTypes.PLAYER_BATR.id]:
+		ENTITY_DRAW_DICT_NATIVE[NativeEntityTypes.PLAYER.id],
 	/** 基础子弹 */
 	[BatrEntityTypes.BULLET_BASIC.id]: {
 		...BULLET_DRAW_DATAS.commonDrawFs,
@@ -684,7 +772,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			// 绘制形状
 			drawTriangleRight(
 				displayer,
-				BULLET_DRAW_DATAS.basic.radius,
+				BULLET_DRAW_DATAS.nuke.radius,
 				BULLET_DRAW_DATAS.globalLineSize
 			)
 			// 停止填充
@@ -780,6 +868,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 		},
 	},
+	// 静物 //
 	/** 奖励箱 */
 	[BatrEntityTypes.BONUS_BOX.id]: {
 		// 初始化
@@ -804,5 +893,203 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 				state,
 				true // 格点实体
 			),
+	},
+	// 特效 //
+	/** 爆炸 */
+	[BatrEntityTypes.EFFECT_EXPLODE.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataStateEffectExplode
+		): ZimDisplayerEntity =>
+			// 填充颜色&粗细
+			commonUpdate_all(
+				drawEffectExplode(displayer, state),
+				state,
+				false // 非格点实体
+			),
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataStateEffectExplode>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 更新透明度
+			if (state?.lifePercent !== undefined)
+				displayer.alpha = state.lifePercent
+			// 返回自身
+			return displayer
+		},
+	},
+	/** 伤害 */
+	[BatrEntityTypes.EFFECT_PLAYER_HURT.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// 填充颜色&粗细
+			displayer.graphics.beginFill(formatHEX(state.color))
+			drawTriangleRight(
+				displayer,
+				PLAYER_DRAW_DATAS.SIZE,
+				PLAYER_DRAW_DATAS.LINE_SIZE
+			)
+			drawPlayerDecoration(
+				displayer,
+				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
+					.decorationLabel
+			)
+			displayer.graphics.endFill()
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 更新透明度
+			if (state?.lifePercent !== undefined)
+				displayer.alpha = (
+					displayer.currentState as IDisplayDataStateEffectPlayerShape
+				)?.reverse
+					? 1 - state.lifePercent
+					: state.lifePercent
+			// 返回自身
+			return displayer
+		},
+	},
+	/** 死亡淡出：共用 */
+	[BatrEntityTypes.EFFECT_PLAYER_DEATH_FADEOUT.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// 填充颜色&粗细
+			displayer.graphics.beginFill(formatHEX(state.color))
+			drawTriangleRight(
+				displayer,
+				PLAYER_DRAW_DATAS.SIZE,
+				PLAYER_DRAW_DATAS.LINE_SIZE
+			)
+			drawPlayerDecoration(
+				displayer,
+				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
+					.decorationLabel
+			)
+			displayer.graphics.endFill()
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 更新透明度
+			if (state?.lifePercent !== undefined)
+				displayer.alpha = (
+					displayer.currentState as IDisplayDataStateEffectPlayerShape
+				)?.reverse
+					? 1 - state.lifePercent
+					: state.lifePercent
+			// 返回自身
+			return displayer
+		},
+	},
+	/** 死亡光效：描边 */
+	[BatrEntityTypes.EFFECT_PLAYER_DEATH_LIGHT.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// * 绘制框架
+			graphicsLineStyle(
+				displayer.graphics,
+				EFFECT_DRAW_DATAS.playerShape.LINE_SIZE,
+				state.color
+			)
+			drawTriangleRight(
+				displayer,
+				PLAYER_DRAW_DATAS.SIZE,
+				PLAYER_DRAW_DATAS.LINE_SIZE
+			)
+			// * 绘制装饰
+			displayer.graphics.endStroke()
+			graphicsLineStyle(
+				displayer.graphics,
+				EFFECT_DRAW_DATAS.playerShape.LINE_SIZE,
+				state.color
+			)
+			drawPlayerDecoration(
+				displayer,
+				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
+					.decorationLabel
+			)
+			displayer.graphics.endStroke()
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 更新透明度&尺寸
+			if (state?.lifePercent !== undefined) {
+				displayer.alpha = (
+					displayer.currentState as IDisplayDataStateEffectPlayerShape
+				)?.reverse
+					? 1 - state.lifePercent
+					: state.lifePercent
+				displayer.scaleX = displayer.scaleY =
+					EFFECT_DRAW_DATAS.playerDeathLight.MIN_SCALE +
+					(EFFECT_DRAW_DATAS.playerDeathLight.MAX_SCALE -
+						EFFECT_DRAW_DATAS.playerDeathLight.MIN_SCALE) *
+						((
+							displayer.currentState as IDisplayDataStateEffectPlayerShape
+						)?.reverse
+							? state.lifePercent
+							: 1 - state.lifePercent)
+				console.log('DeathLight', displayer.scaleX)
+			}
+			// 返回自身
+			return displayer
+		},
 	},
 }

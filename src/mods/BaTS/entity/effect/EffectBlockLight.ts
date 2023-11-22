@@ -1,18 +1,33 @@
-import { uint, uint$MAX_VALUE } from 'matriangle-legacy/AS3Legacy'
+import { uint } from 'matriangle-legacy/AS3Legacy'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Block from 'matriangle-api/server/block/Block'
-import Effect from './Effect'
+import Effect, { IDisplayDataStateEffect } from './Effect'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import { typeID } from 'matriangle-api'
+import { uintToPercent } from 'matriangle-common'
+
+/** 专用的显示状态数据 */
+export interface IDisplayDataStateEffectBlockLight
+	extends IDisplayDataStateEffect {
+	/** 特效颜色 */
+	color: uint
+
+	/**
+	 * 是否反转播放
+	 * ?【2023-11-22 22:08:42】似乎这一点其实可以不用，因为「反转」的特效可以通过「反向传输『生命周期百分比』」实现（从而节省一个变量）
+	 * * 但……这样就破坏了「生命周期百分比」的统一性——不推荐使用
+	 */
+	reverse: boolean
+}
 
 /**
  * 方块光效
  * * 呈现一个快速淡出/淡入的正方形光圈
  * * 用于提示方块的变化
  */
-export default class EffectBlockLight extends Effect {
+export default class EffectBlockLight extends Effect<IDisplayDataStateEffectBlockLight> {
 	/** ID */
 	public static readonly ID: typeID = 'EffectBlockLight'
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
@@ -24,13 +39,13 @@ export default class EffectBlockLight extends Effect {
 	public static readonly MAX_SCALE: number = 2
 	public static readonly MIN_SCALE: number = 1
 
-	public static defaultAlpha(effect: EffectBlockLight): number {
-		return effect.lifePercent
-	}
+	// public static defaultAlpha(effect: EffectBlockLight): number {
+	// 	return effect.lifePercent
+	// }
 
-	public static reversedAlpha(effect: EffectBlockLight): number {
-		return 1 - effect.lifePercent
-	}
+	// public static reversedAlpha(effect: EffectBlockLight): number {
+	// 	return 1 - effect.lifePercent
+	// }
 
 	/**
 	 * 快捷方式：根据方块构造特效
@@ -59,16 +74,16 @@ export default class EffectBlockLight extends Effect {
 	}
 
 	//============Instance Variables============//
-	/** 方块的显示颜色 */
-	protected _color: uint = 0x000000
-	/** 外部只读的「方块颜色」 */
-	public get color(): uint {
-		return this._color
-	}
+	// /** 方块的显示颜色 */
+	// protected _color: uint = 0x000000
+	// /** 外部只读的「方块颜色」 */
+	// public get color(): uint {
+	// 	return this._color
+	// }
 
 	/** 方块不透明度「正整数值」 */ // ? 或许日后需要摒弃这种方法，因为这样「在需要时转换」造成「转换时间的性能损失」
-	protected _alpha: uint
-	protected _alphaFunction: (effect: EffectBlockLight) => number
+	// protected _alpha: uint
+	// protected _alphaFunction: (effect: EffectBlockLight) => number
 
 	//============Constructor & Destructor============//
 	/**
@@ -78,23 +93,29 @@ export default class EffectBlockLight extends Effect {
 	 *
 	 * @param position 引用位置（无需值）
 	 * @param color 特效的主色
-	 * @param alpha 特效的不透明度
+	 * @param alpha_uint 特效的不透明度（以AS3类型uint存储）
 	 * @param reverse 是否反向播放
 	 * @param LIFE 生命周期时长
 	 */
 	public constructor(
 		position: fPoint,
-		color: uint = 0xffffff,
-		alpha: uint = uint$MAX_VALUE,
-		reverse: boolean = false,
+		// ? 后续如果是「有方向方块」，可能还需要增加「方向」参数
+		// public readonly direction: mRot = 0,
+		public readonly color: uint = 0xffffff,
+		public readonly alpha_uint: uint = 0xffffff,
+		public readonly reverse: boolean = false,
 		LIFE: uint = EffectBlockLight.MAX_LIFE
 	) {
 		super(EffectBlockLight.ID, position, LIFE)
-		this._color = color
-		this._alpha = alpha
-		this._alphaFunction = reverse
-			? EffectBlockLight.reversedAlpha.bind(this)
-			: EffectBlockLight.defaultAlpha.bind(this)
+		// this._color = color
+		// this._alpha = alpha
+		// this._alphaFunction = reverse
+		// 	? EffectBlockLight.reversedAlpha.bind(this)
+		// 	: EffectBlockLight.defaultAlpha.bind(this)
+		// * 显示状态初始化
+		this._proxy.storeState('color', color)
+		this._proxy.storeState('alpha', uintToPercent(alpha_uint))
+		this._proxy.storeState('reverse', reverse)
 	}
 
 	//============Display Implements============//

@@ -1,6 +1,6 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
-import EffectPlayerLike from './EffectPlayerLike'
+import EffectPlayerShape from './EffectPlayerShape'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { typeID } from 'matriangle-api'
@@ -10,16 +10,10 @@ import { typeID } from 'matriangle-api'
  * * 呈现一个与玩家方向相同的、迅速变大并淡出的空心三角型框架
  * * 用于提示玩家的死亡
  */
-export default class EffectPlayerDeathLight extends EffectPlayerLike {
+export default class EffectPlayerDeathLight extends EffectPlayerShape {
 	/** ID */
 	public static readonly ID: typeID = 'EffectPlayerDeathLight'
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
-
-	//============Static Variables============//
-	/** 尺寸过渡的最大值 */
-	public static readonly MAX_SCALE: number = 2
-	/** 尺寸过渡的最小值 */
-	public static readonly MIN_SCALE: number = 1
 
 	//============Static Functions============//
 	/**
@@ -34,7 +28,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		player: IPlayer,
 		reverse: boolean = false
 	): EffectPlayerDeathLight {
-		return EffectPlayerLike.alignToCenter(
+		return EffectPlayerShape.alignToCenter(
 			new EffectPlayerDeathLight(
 				position,
 				player.direction, //
@@ -52,7 +46,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerLike {
 		color: uint = 0xffffff,
 		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false,
-		life: uint = EffectPlayerLike.MAX_LIFE
+		life: uint = EffectPlayerShape.MAX_LIFE
 	) {
 		super(
 			EffectPlayerDeathLight.ID,

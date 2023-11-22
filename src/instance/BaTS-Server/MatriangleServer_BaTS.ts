@@ -69,6 +69,7 @@ import { linkToRouterLazy } from 'matriangle-mod-message-io-api/MessageInterface
 // 超参数/常量 //
 import config from './startup-BaTS.config'
 import MatrixVisualizer from 'matriangle-mod-visualization/visualizer/MatrixVisualizer'
+import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -151,6 +152,8 @@ function setupPlayers(host: IMatrix): void {
 	p.customName = 'Player初号机'
 	p2.customName = 'Player二号机'
 	p3.customName = '三号靶机'
+	// 装饰
+	p.decorationLabel = NativeDecorationLabel.CIRCLE
 	// 生命数不减少
 	p.lifeNotDecay = p2.lifeNotDecay = p3.lifeNotDecay = true
 	// 武器

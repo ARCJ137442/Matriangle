@@ -1,8 +1,34 @@
 import { fPoint } from 'matriangle-common/geometricTools'
 import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import Effect from './Effect'
+import Effect, { IDisplayDataStateEffect } from './Effect'
 import { typeID } from 'matriangle-api'
+
+// /**
+//  * 「2方块容器特效」的「动画模式」枚举
+//  */
+// export enum Effect2BlockAnimationMode {
+// 	spawn = 'spawn',
+// 	teleport = 'teleport',
+// }
+// !【2023-11-22 22:26:00】↑暂时废弃这样的表征——为何不用「新实体类型」去扩展呢？
+
+/** 「2方块容器特效」的显示状态接口 */
+export interface IDisplayDataStateEffect2BlockContainer
+	extends IDisplayDataStateEffect {
+	/**
+	 * 颜色（十六进制整数）
+	 */
+	color: uint
+	/**
+	 * 动画模式
+	 * * 目前是个枚举
+	 *   * 'spawn'：特效「重生」
+	 *   * 'teleport'：特效「传送」
+	 *   * 💭后续还可能添加其它类型的特效动画
+	 */
+	// animationMode: Effect2BlockAnimationMode
+}
 
 /**
  * 双方块容器
@@ -10,16 +36,24 @@ import { typeID } from 'matriangle-api'
  *
  * TODO: 【2023-11-15 17:10:20】现在拟将「生命周期百分比」作为「实体数据」传递，以便终结「单独图形还是多图形容器」——全部由「显示端」自行决定
  */
-export default abstract class Effect2BlockContainer extends Effect {
+export default abstract class Effect2BlockContainer<
+	StateT extends
+		IDisplayDataStateEffect2BlockContainer = IDisplayDataStateEffect2BlockContainer,
+> extends Effect<StateT> {
 	//============Constructor & Destructor============//
 	public constructor(
 		id: typeID,
 		position: fPoint,
 		LIFE: uint,
-		scale: number = Effect2BlockContainer.SCALE
+		// scale: number = Effect2BlockContainer.SCALE // ! 这个移动到显示端去
+		// public readonly animationMode: Effect2BlockAnimationMode // ! 这个废弃
+		public readonly color: uint
 	) {
 		super(id, position, LIFE)
-		this.maxScale = scale
+		// this.maxScale = scale
+		// * 显示数据
+		this._proxy.storeState('color', color)
+		// this._proxy.storeState('animationMode', animationMode)
 	}
 
 	override destructor(): void {
@@ -33,8 +67,8 @@ export default abstract class Effect2BlockContainer extends Effect {
 	public static readonly SIZE: uint = DEFAULT_SIZE * 2
 	public static readonly SCALE: number = 1
 
-	/** 指示特效在显示大小最大时的尺寸（倍数） */
-	protected maxScale: number
+	// /** 指示特效在显示大小最大时的尺寸（倍数） */
+	// protected maxScale: number // ! 有待迁移到显示端
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// /** 子元素：方块1（横），保留引用以便快速更新 */
 	// protected _block1: IShape | null = null

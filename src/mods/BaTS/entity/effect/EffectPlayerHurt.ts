@@ -3,7 +3,7 @@ import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/Dec
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import EffectPlayerLike from './EffectPlayerLike'
+import EffectPlayerShape from './EffectPlayerShape'
 import { typeID } from 'matriangle-api'
 
 /**
@@ -11,14 +11,14 @@ import { typeID } from 'matriangle-api'
  * * 呈现一个覆盖在玩家之上、方向一致但位置滞留的、快速淡出的红色三角形
  * * 用于提示玩家受到伤害
  */
-export default class EffectPlayerHurt extends EffectPlayerLike {
+export default class EffectPlayerHurt extends EffectPlayerShape {
 	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
 	//============Static Variables============//
 	/** ID */
 	public static readonly ID: typeID = 'EffectPlayerHurt'
-	/** 颜色：固定红色 */
-	public static readonly FILL_COLOR: number = 0xff0000
+	/** 默认颜色：红色 */
+	public static readonly DEFAULT_COLOR: uint = 0xff0000
 	/** 生命周期时长：0.25秒 */
 	public static readonly LIFE: uint = FIXED_TPS * 0.25
 
@@ -28,11 +28,10 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 		player: IPlayer,
 		reverse: boolean = false
 	): EffectPlayerHurt {
-		return EffectPlayerLike.alignToCenter(
+		return EffectPlayerShape.alignToCenter(
 			new EffectPlayerHurt(
 				position,
 				player.direction,
-				player.fillColor,
 				player.decorationLabel, // player instanceof AIPlayer ? (player as AIPlayer).decorationLabel : null,
 				reverse
 			)
@@ -43,7 +42,6 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 	public constructor(
 		position: fPoint,
 		rot: uint = 0,
-		color: uint = EffectPlayerHurt.FILL_COLOR,
 		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false,
 		life: uint = EffectPlayerHurt.LIFE
@@ -52,7 +50,7 @@ export default class EffectPlayerHurt extends EffectPlayerLike {
 			EffectPlayerHurt.ID,
 			position,
 			rot,
-			color,
+			EffectPlayerHurt.DEFAULT_COLOR,
 			decorationLabel,
 			reverse,
 			life

@@ -32,15 +32,22 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	public static readonly ROTATE_ANGLE: uint = 45
 
 	//============Instance Variables============//
-	protected _animationStage: uint
+	// protected _animationStage: uint
 
-	protected _tempLife: uint
+	// protected _tempLife: uint
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, scale: number = EffectSpawn.SCALE) {
-		super(EffectSpawn.ID, position, EffectSpawn.MAX_LIFE, scale)
-		this._animationStage = 0
-		this._tempLife = this.LIFE - this.life
+	public constructor(
+		position: fPoint /* , scale: number = EffectSpawn.SCALE */
+	) {
+		super(
+			EffectSpawn.ID,
+			position,
+			EffectSpawn.MAX_LIFE,
+			EffectSpawn.DEFAULT_COLOR
+		)
+		// this._animationStage = 0
+		// this._tempLife = this.LIFE - this.life
 	}
 
 	// override destructor(): void {
@@ -70,6 +77,11 @@ export default class EffectSpawn extends Effect2BlockContainer {
 	 * 覆盖：生命周期正常进行，但会根据其值大小进入不同阶段
 	 */
 	override onTick(remove: (entity: Entity) => void): void {
+		// this.updateDisplayStage()
+		super.onTick(remove)
+	}
+
+	/* protected updateDisplayStage(): void {
 		if (this.life <= EffectSpawn.STAGE_2_START_TIME) {
 			this._animationStage = 2
 		} else if (this.life <= EffectSpawn.STAGE_1_START_TIME) {
@@ -89,8 +101,7 @@ export default class EffectSpawn extends Effect2BlockContainer {
 			case 2:
 				this._tempLife = this.life
 		}
-		super.onTick(remove)
-	}
+	} */
 
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// /** 实现：根据「动画阶段」更新状态 */

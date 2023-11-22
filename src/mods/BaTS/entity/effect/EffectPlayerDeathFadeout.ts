@@ -3,7 +3,7 @@ import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/Dec
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import EffectPlayerLike from './EffectPlayerLike'
+import EffectPlayerShape from './EffectPlayerShape'
 import { typeID } from 'matriangle-api'
 
 /**
@@ -11,7 +11,7 @@ import { typeID } from 'matriangle-api'
  * * 呈现一个线性淡出的纯色三角形
  * * 用于提示「先前有玩家死亡过」
  */
-export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
+export default class EffectPlayerDeathFadeout extends EffectPlayerShape {
 	//============Static Variables============//
 	/** ID */
 	public static readonly ID: typeID = 'EffectPlayerDeathFadeout'
@@ -25,7 +25,7 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 		player: IPlayer,
 		reverse: boolean = false
 	): EffectPlayerDeathFadeout {
-		return EffectPlayerLike.alignToCenter(
+		return EffectPlayerShape.alignToCenter(
 			new EffectPlayerDeathFadeout(
 				position,
 				player.direction,
@@ -43,7 +43,7 @@ export default class EffectPlayerDeathFadeout extends EffectPlayerLike {
 		color: uint = 0xffffff,
 		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
 		reverse: boolean = false,
-		life: uint = EffectPlayerLike.MAX_LIFE
+		life: uint = EffectPlayerShape.MAX_LIFE
 	) {
 		super(
 			EffectPlayerDeathFadeout.ID,

@@ -18,9 +18,16 @@ export default class EffectTeleport extends Effect2BlockContainer {
 	public static readonly LIFE: uint = FIXED_TPS
 
 	//============Constructor & Destructor============//
-	public constructor(position: fPoint, scale: number = EffectTeleport.SCALE) {
-		super(EffectTeleport.ID, position, EffectTeleport.LIFE, scale)
-		this.maxScale = scale
+	public constructor(
+		position: fPoint /* , scale: number = EffectTeleport.SCALE */
+	) {
+		super(
+			EffectTeleport.ID,
+			position,
+			EffectTeleport.LIFE,
+			EffectTeleport.DEFAULT_COLOR /* scale */
+		)
+		// this.maxScale = scale
 	}
 
 	//============Display Implements============//

@@ -33,8 +33,14 @@ export default abstract class EntityDisplayable<
 	}
 	/** @implements 直接委托自身的「代理对象」 */
 	getDisplayData(): IDisplayDataEntity<EntityStateT> {
+		// * 先尝试同步一次（可选）
+		this.syncDisplayProxy?.()
+		// * 再传出数据
 		return this._proxy.getDisplayData()
 	}
+
+	/** （暂且可选）抽象方法：同步自身数据到显示代理 */ // TODO: 为了后续数据同步严谨（不至于「构造函数设置之后，数据就不更新了」），是否需要推广到所有实体中？
+	protected abstract syncDisplayProxy?(): void
 
 	/** 内部的「实体显示代理」 */
 	protected _proxy: IDisplayProxyEntity<EntityStateT>
