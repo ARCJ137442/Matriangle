@@ -9,7 +9,16 @@ import {
 } from 'matriangle-api/display/RemoteDisplayAPI'
 import { typeID } from 'matriangle-api'
 import MatrixVisualizerText from './MatrixVisualizerText'
-import { JSObject, trimmedEmptyObjIn } from 'matriangle-common/JSObjectify'
+import {
+	JSObjectValue,
+	JSObjectValueWithUndefined,
+	copyJSObjectValue_deep,
+	diffJSObjectValue,
+	mergeJSObjectValue,
+	removeUndefinedInJSObjectValueWithUndefined,
+} from 'matriangle-common/JSObjectify'
+import { uint } from 'matriangle-legacy'
+import { getAddress } from 'matriangle-mod-message-io-api'
 
 /**
  * 「文本母体可视化者」是
@@ -24,6 +33,29 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	public static readonly LABEL: MatrixProgramLabel =
 		'Visualizer:Matrix@canvas'
 
+	/**
+	 * TODO: 基于先前「diff-merge」算法的基础，实现「一个可视化者，一个『母体显示数据』」
+	 * * 最终目标：让一个「Canvas可视化者」同时支持多个「Canvas客户端」
+	 * * 实现路径：特异于地址的「母体显示diff-merge」机制
+	 *   * 分地址维护一个「基准显示数据」
+	 *     * 从母体侧获取（未脱引用的）「母体显示数据」，复制后作为「基准显示数据」存入
+	 *     * 📌「母体显示数据」的特点：
+	 *       * 通常由「母体」「方块」「地图」「实体」各自的「显示代理」维护，引用由显示代理唯一持有
+	 *       * 随着母体运作而动态更新：母体、方块、地图、实体直接通过其「显示代理」更新数据，而不直接访问可视化者
+	 *       * 引用持有结构：母体（地图（方块），实体系统（实体））
+	 *       * 引用纠缠频繁：直接复制引用后，很可能会因「后续修改」导致「diff失真」
+	 *   * 当从该地址接收到一个「初始化」信号时
+	 *     * 将「母体显示数据」直接传输
+	 *     * 将「母体显示数据」录入「基准显示数据中」
+	 *   * 当从该地址接收到一个「更新」信号时
+	 *     * 将「母体显示数据」和「基准显示数据」进行diff
+	 *     * JSON化并传输diff对象
+	 *       * 显示端将直接通过「diff」来更新数据
+	 *     * 将diff对象merge入「基准显示数据」
+	 *   * // ! 不会再有从「显示端」传来的「flush」信号了
+	 *     * 这本来不是「显示端」能控制的
+	 */
+
 	// 构造函数&析构函数 //
 	public constructor(
 		/**
@@ -37,15 +69,16 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	// 母体可视化部分 //
 
 	/**
-	 * （静态）根据「类型标签」获取母体的可视化信号
+	 * 根据「类型标签」获取母体的可视化信号
 	 *
-	 * @returns {[string,string]} [可视化信号类型, 可视化信号]
+	 * @returns {[string,string] | undefined} [可视化信号类型, 可视化信号] or 无需回传
 	 */
-	public static getVisionSignalMatrix(
+	public getVisionSignalMatrix(
 		matrix: IMatrix,
-		typeFlag: string
-	): [VisualizationOutputMessagePrefix, string] {
-		let JSONDisplayData: string
+		typeFlag: string,
+		sourceHost: string,
+		sourcePort: uint
+	): [VisualizationOutputMessagePrefix, string] | undefined {
 		switch (typeFlag) {
 			case NativeVisualizationTypeFlag.OTHER_INFORMATION:
 				// （保留）以纯文本方式返回「实体列表」
@@ -53,37 +86,35 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 					VisualizationOutputMessagePrefix.OTHER_INFORMATION,
 					entityLV实体列表可视化(matrix.entities),
 				]
-			// * 全新的「显示数据传递」
+			// * 全新的「显示数据传递」 // 【2023-11-22 17:18:35】现在交给专门的函数去实现
 			case NativeVisualizationTypeFlag.INIT:
-				// 转换为JSON
-				JSONDisplayData = JSON.stringify(
-					trimmedEmptyObjIn(
-						// ! 假定：遵循JSObject约定
-						matrix.getDisplayDataInit() as unknown as JSObject
-					)
-				)
-				// 刷新已更新数据
-				matrix.flushDisplayData()
 				// 返回
 				return [
 					VisualizationOutputMessagePrefix.CANVAS_DATA_INIT,
-					JSONDisplayData,
+					// * 统一管理「JSON化」与「消息回复」的过程
+					JSON.stringify(
+						this.reactSignalRequest_init(
+							matrix,
+							sourceHost,
+							sourcePort
+						)
+					),
 				]
-			case NativeVisualizationTypeFlag.REFRESH:
-				// 转换为JSON
-				JSONDisplayData = JSON.stringify(
-					// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
-					trimmedEmptyObjIn(
-						matrix.getDisplayDataRefresh() as JSObject
+			case NativeVisualizationTypeFlag.REFRESH: {
+				const diff2refresh: JSObjectValue | undefined =
+					this.reactSignalRequest_refresh(
+						matrix,
+						sourceHost,
+						sourcePort
 					)
-				)
-				// 刷新已更新数据
-				matrix.flushDisplayData()
-				// 返回
-				return [
-					VisualizationOutputMessagePrefix.CANVAS_DATA_REFRESH,
-					JSONDisplayData,
-				]
+				return diff2refresh === undefined
+					? undefined
+					: [
+							VisualizationOutputMessagePrefix.CANVAS_DATA_REFRESH,
+							// * 统一管理「JSON化」与「消息回复」的过程
+							JSON.stringify(diff2refresh),
+					  ]
+			}
 			default:
 				console.warn(
 					`[${MatrixVisualizerCanvas.ID}] 未知的可视化类型「${typeFlag}」，已自动fallback到「文本可视化」中`
@@ -96,14 +127,159 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 		}
 	}
 
-	getSignal(message: string): string {
-		return this.linkedMatrix === null
-			? ''
-			: packDisplayData(
-					...MatrixVisualizerCanvas.getVisionSignalMatrix(
-						this.linkedMatrix,
-						message
-					)
-			  )
+	// * 全新的「显示信号缓存」系统 * //
+
+	/**
+	 * 显示信号缓存：「基准显示数据集」
+	 * * 这里边的「基准显示数据」在引用上与母体**完全不互通**
+	 * * 🎯让一个可视化者支持多个「Canvas客户端」
+	 * * 特异于地址：分不同的地址进行存储，作为地址的映射字典
+	 */
+	protected readonly _baseDisplayDatas: {
+		[address: string]: JSObjectValue
+	} = {}
+
+	/**
+	 * 从母体侧获取（未脱引用的）「母体显示数据」，复制后作为「基准显示数据」存入
+	 * * 📌「母体显示数据」的特点：
+	 *   * 通常由「母体」「方块」「地图」「实体」各自的「显示代理」维护，引用由显示代理唯一持有
+	 *   * 随着母体运作而动态更新：母体、方块、地图、实体直接通过其「显示代理」更新数据，而不直接访问可视化者
+	 *   * 引用持有结构：母体（地图（方块），实体系统（实体））
+	 *   * 引用纠缠频繁：直接复制引用后，很可能会因「后续修改」导致「diff失真」
+	 * * 📌「基准显示数据」的特点：
+	 *   * 引用完全脱钩：其内任意对象（的引用）都只被所属的「可视化者」持有
+	 *   * 更新脱敏：由于「引用完全脱钩」，其内对象的值不会随着母体运作而「量子纠缠式更新」
+	 *
+	 * @param matrix 需要录入「母体显示数据」的母体
+	 * @param address 对应客户端的地址
+	 * @returns 存入的「基准显示数据」
+	 */
+	protected saveMatrixDisplayDataAsBase(
+		matrix: IMatrix,
+		address: string
+	): JSObjectValue {
+		this._baseDisplayDatas[address] = copyJSObjectValue_deep(
+			// ! 这里假定 matrix.getDisplayDataInit() 一定为 JSObjectValue
+			matrix.getDisplayDataInit() as unknown as JSObjectValue
+		)
+		return this._baseDisplayDatas[address]
+	}
+
+	/**
+	 * 判断指定地址是否已有「基准显示数据」
+	 */
+	protected hasBaseDisplayData(address: string): boolean {
+		return address in this._baseDisplayDatas
+	}
+
+	/**
+	 * 获取指定地址的「基准显示数据」
+	 * * 无⇒返回undefined
+	 */
+	protected getBaseDisplayData(address: string): JSObjectValue | undefined {
+		return this._baseDisplayDatas?.[address]
+	}
+
+	/**
+	 * 响应「信号初始化请求」
+	 * * 当从该地址接收到一个「初始化」信号时
+	 *     * 将「母体显示数据」录入「基准显示数据」中，进行预处理
+	 *       * 如「去除其中的空对象」「删除`undefined`」等
+	 *     * 将「基准显示数据」直接JSON化并传输
+	 */
+	protected reactSignalRequest_init(
+		matrix: IMatrix,
+		host: string,
+		port: uint
+	): JSObjectValue {
+		// 录入「母体显示数据」为「基准显示数据」
+		return this.saveMatrixDisplayDataAsBase(matrix, getAddress(host, port))
+		/* // ! 旧代码
+		// 直接传出「基准显示数据」
+		this._temp_reactSignalRequest_init_data =
+			// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
+			trimmedEmptyObjIn(
+				// 调用「母体可视化者」的「响应可视化信号」
+				matrix.getDisplayDataInit() as unknown as JSObject
+			)
+		// 刷新已更新数据
+		matrix.flushDisplayData()
+		// 返回
+		return this._temp_reactSignalRequest_init_data */
+	}
+	// protected _temp_reactSignalRequest_init_data: JSObjectValue = null
+
+	/**
+	 * 响应「信号刷新」请求
+	 * * 指定有其它的矩阵，确保是从{@link this.linkedMatrix}中传入的
+	 *   * 这样不用检测是否为null
+	 * * 当从该地址接收到一个「更新」信号时
+	 *   * 将「母体显示数据」和「基准显示数据」进行diff
+	 *   * JSON化并传输diff对象
+	 *     * 显示端将直接通过「diff」来更新数据
+	 *     * 会抛掉其中的`undefined`
+	 *   * 将diff对象merge入「基准显示数据」
+	 *
+	 * @param matrix 所要更新的母体
+	 * @param host 信号来源的主机地址
+	 * @param host 信号来源的服务端口
+	 * @returns 需要更新的JS对象，或者`undefined`代表「无需更新」
+	 */
+	protected reactSignalRequest_refresh(
+		matrix: IMatrix,
+		host: string,
+		port: uint
+	): JSObjectValue | undefined {
+		/** 获取地址 */
+		const address: string = getAddress(host, port)
+		// * 预先判断「是否缓存有『基准显示数据』」
+		if (this.hasBaseDisplayData(address)) {
+			const base: JSObjectValue = this.getBaseDisplayData(address)!
+			// * 数据diff：自身「基准显示数据」 - 目标「母体显示数据」
+			const diff: JSObjectValueWithUndefined = diffJSObjectValue(
+				// * 这里的「基准」就是「基准」
+				base,
+				// !【2023-11-22 18:14:42】目前假定「母体显示数据」也是JS对象，并且可以直接用来diff（而无需再检查undefined之类的）
+				matrix.getDisplayDataInit() as unknown as JSObjectValue
+			)
+			// * 先merge（因为后续「移除`undefined」时会修改到diff）
+			mergeJSObjectValue(base, diff)
+			// * 返回需要传输的diff
+			// !【2023-11-22 18:24:42】需要检查并移除`undefined`，因为后续JSON.stringify会丢失这方面的信息
+			return removeUndefinedInJSObjectValueWithUndefined(
+				diff,
+				// ! 严格处理，必要时发出警告
+				undefined,
+				true
+			)
+		}
+		// * 无⇒当「初始化」处理
+		else {
+			return this.reactSignalRequest_init(matrix, host, port)
+		}
+
+		/* // ! 旧代码
+		this._temp_reactSignalRequest_refresh_data =
+			// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
+			trimmedEmptyObjIn(
+				// 调用「母体可视化者」的「响应可视化信号」
+				matrix.getDisplayDataRefresh() as JSObject
+			)
+		// 刷新已更新数据
+		matrix.flushDisplayData()
+		// 返回
+		return this._temp_reactSignalRequest_refresh_data */
+	}
+	protected _temp_reactSignalRequest_refresh_data: JSObjectValue = null
+
+	/** @implements 实现：根据不同的消息来源，进行不同的回应 */
+	getSignal(message: string, host: string, port: uint): string | undefined {
+		if (this.linkedMatrix === null) return undefined
+		const signal: [VisualizationOutputMessagePrefix, string] | undefined =
+			this.getVisionSignalMatrix(this.linkedMatrix, message, host, port)
+		return signal === undefined
+			? undefined
+			: // * 链接到了母体⇒打包从母体获得/缓存的「显示数据」
+			  packDisplayData(...signal)
 	}
 }

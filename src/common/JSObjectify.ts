@@ -658,6 +658,10 @@ export function copyJSObjectValueWithUndefined_deep<
  * * 「更多权衡」的结果是：为保证后续diff结果不被「量子纠缠」修改，
  *   * 需要对所有「本来直接返回`compare`」的地方进行复制
  *
+ * ! 本质上可能要权衡「`compare`是否一定得是JS对象」的问题
+ * * 实际应用中，需要直接使用{@link IDisplayDataMatrix}进行对比
+ *   * 至少为性能考虑，不希望从其中再复制一遍数据（这里会消耗大量内存）
+ *
  * @param base 基准对象
  * @param compare 对比对象
  * @returns {JSObjectValueWithUndefined} diff对象
@@ -674,12 +678,11 @@ export function diffJSObjectValue(
 	switch (typeof base) {
 		// * 数组/对象（null前边比过了）
 		case 'object':
-			// * 同为JS数组⇒使用数组的diff
-			if (isJSArray(base) && isJSArray(compare))
+			if (isJSArray(base) && Array.isArray(compare))
 				return diffJSArray(base, compare)
 			// * 同为JS对象⇒使用对象的diff
-			else if (isJSObject(base) && isJSObject(compare))
-				return diffJSObject(base, compare)
+			else if (isJSObject(base) && isTrueObject(compare))
+				return diffJSObject(base, compare as JSObject)
 			// * 若都不符⇒复制后返回`compare`
 			return copyJSObjectValue_deep(compare)
 		// * 其它类型：复制后直接返回对比对象
@@ -781,6 +784,9 @@ export function diffJSObject(
  * 「差异对象」合并入「基对象」
  * * 相当于git中的`merge`操作
  *
+ * ! 确保这里的`diff`对象是「引用无关」的
+ * * 不然会产生「量子纠缠赋值」现象
+ *
  * @param base 要合并入的JS对象值
  * @param diff 要合并进的差异（undefined⇒删除属性）
  * @returns 合并后的JS对象值
@@ -789,13 +795,22 @@ export function mergeJSObjectValue(
 	base: JSObjectValue,
 	diff: JSObjectValueWithUndefined
 ): JSObjectValue {
+	// * 若`diff`为`undefined`⇒无需合并
+	if (diff === undefined) return base
 	// * 均为JS数组⇒扫描合并 | `diff`因为「可能有`undefined`」不一定为JS数组 | 这里的`diff`若是数组，则其长度一定与`base`相等）
 	if (isJSArray(base) && Array.isArray(diff)) {
 		// ! 不能单用`isJSArray(diff)`，因为`diff`可能不完整
 		if (base.length === diff.length)
 			for (let i: uint = 0; i < base.length; i++)
 				base[i] = mergeJSObjectValue(base[i], diff[i])
-		else throw new Error(`JSObjectify.mergeJSObjectValue: 数组长度不一致`)
+		// * 长度不一致⇒按长度合并 | 要考虑「玩家重生」这样的情况
+		else {
+			// * 先清空
+			base.length = 0
+			// * 再填充
+			for (let i: uint = 0; i < diff.length; i++)
+				base.push(mergeJSObjectValue(base[i], diff[i]))
+		}
 		// * 合并完毕
 		return base
 	}
@@ -817,8 +832,6 @@ export function mergeJSObjectValue(
 		return base
 	}
 	// * 类型不同|基础类型等其它情况⇒返回diff的值
-	if (diff === undefined)
-		throw new Error(`JSObjectify: 类型不匹配，无法合并。`)
 	return diff as JSObjectValue
 }
 
@@ -834,14 +847,22 @@ export function mergeJSObjectValue(
  *
  * @param valueWithUndefined 带有`undefined`的JS对象值
  * @param replaceWhenUndefined 在处理值时，当值为`undefined`时的处理方式（数组|自身⇒替换）
+ * @param warnWhenUndefined 处理`undefined`时，是否输出警告
  * * 默认为`null`：采自`JSON.stringify`的默认行为
  */
 export function removeUndefinedInJSObjectValueWithUndefined(
 	valueWithUndefined: JSObjectValueWithUndefined,
-	replaceWhenUndefined: JSObjectValue | undefined = null
+	replaceWhenUndefined: JSObjectValue | undefined = null,
+	warnWhenUndefined: boolean = false
 ): JSObjectValue {
 	// * 排除直接undefined的选项
 	if (valueWithUndefined === undefined) {
+		// 警告
+		if (warnWhenUndefined)
+			console.warn(
+				'[JSObjectify]removeUndefinedInJSObjectValueWithUndefined: 传入的值为undefined'
+			)
+		// 处理
 		if (replaceWhenUndefined === undefined)
 			// * 「要替换undefined的值」还是undefined⇒报错（相当于「报错模式」）
 			throw new Error(
@@ -855,10 +876,19 @@ export function removeUndefinedInJSObjectValueWithUndefined(
 		// * 遍历数组，替换`undefined`为`replaceWithUndefined` / `replaceWithUndefined===undefined`⇒删除元素
 		for (let i = valueWithUndefined.length - 1; i >= 0; i--) {
 			// * 数组元素是`undefined`⇒删除/替换元素
-			if (valueWithUndefined[i] === undefined)
+			if (valueWithUndefined[i] === undefined) {
+				// 警告
+				if (warnWhenUndefined)
+					console.warn(
+						`[JSObjectify]removeUndefinedInJSObjectValueWithUndefined: 数组[${valueWithUndefined.join(
+							', '
+						)}]的元素valueWithUndefined[${i}] === undefined`
+					)
+				// 处理
 				if (replaceWhenUndefined === undefined)
 					valueWithUndefined.splice(i, 1)
 				else valueWithUndefined[i] = replaceWhenUndefined
+			}
 			// * 否则⇒递归深入
 			else
 				valueWithUndefined[i] =
@@ -877,7 +907,17 @@ export function removeUndefinedInJSObjectValueWithUndefined(
 		for (const key in valueWithUndefined) {
 			value = valueWithUndefined[key]
 			// * 值为`undefined`⇒删除
-			if (value === undefined) delete valueWithUndefined[key]
+			if (value === undefined) {
+				// 警告
+				if (warnWhenUndefined)
+					console.warn(
+						'[JSObjectify]removeUndefinedInJSObjectValueWithUndefined: 对象',
+						valueWithUndefined,
+						`在索引「${key}」处的值为undefined`
+					)
+				// 处理
+				delete valueWithUndefined[key]
+			}
 			// * 否则⇒递归深入
 			else
 				valueWithUndefined[key] =

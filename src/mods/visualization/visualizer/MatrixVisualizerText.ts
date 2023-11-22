@@ -148,8 +148,11 @@ export default class MatrixVisualizerText extends MatrixVisualizer {
 	/**
 	 * 获取母体可视化的信号
 	 * * 未连接母体⇒空字串
+	 *
+	 * @param message 传来的消息
+	 * @returns 回馈的消息
 	 */
-	getSignal(message: string): string {
+	getSignal(message: string, _host: string, _port: uint): string {
 		return this.linkedMatrix === null
 			? ''
 			: packDisplayData(
