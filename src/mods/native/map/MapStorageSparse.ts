@@ -7,7 +7,6 @@ import {
 } from 'matriangle-common/exMath'
 import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import {
-	OptionalRecursive2,
 	generateArray,
 	identity,
 	key,
@@ -272,7 +271,7 @@ export default class MapStorageSparse implements IMapStorage {
 						throw new Error(
 							`${jso}索引${i}处的${jso[i]}不是「任意维整数角」！`
 						)
-					result[i] = jso[i]
+					result[i] = jso[i] as number
 				}
 				return result
 			},
@@ -534,8 +533,6 @@ export default class MapStorageSparse implements IMapStorage {
 		const nStorage: MapStorageSparse = new MapStorageSparse(this._nDim)
 		// 复制其它信息
 		nStorage.copyFrom(this, false, deep)
-		// * 显示呈现：清除「待更新数据」
-		nStorage.flushDisplayData()
 		// 返回
 		return nStorage
 	}
@@ -739,18 +736,7 @@ export default class MapStorageSparse implements IMapStorage {
 	/**
 	 * @implements 委托到「地图代理」中
 	 */
-	getDisplayDataInit(): IDisplayDataMap {
-		return this._proxy.getDisplayDataInit()
-	}
-
-	/**
-	 * @implements 委托到「地图代理」中
-	 */
-	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMap> {
-		return this._proxy.getDisplayDataRefresh()
-	}
-
-	flushDisplayData(): void {
-		this._proxy.flushDisplayData()
+	getDisplayData(): IDisplayDataMap {
+		return this._proxy.getDisplayData()
 	}
 }

@@ -219,24 +219,13 @@ export default class Block<BS extends BlockState | null = BlockState | null>
 			: this._state.calculatePixelAlpha(this.attributes)
 	}
 
-	// TODO: 有待改进
-
 	/** 可显示 */
 	public readonly i_displayable = true as const
 
-	getDisplayDataInit(): IDisplayDataBlock<IDisplayDataBlockState | null> {
+	getDisplayData(): IDisplayDataBlock<IDisplayDataBlockState | null> {
 		return {
 			id: this.id, // !属性`id`是只读的
 			state: this.state?.generateDisplayData() ?? null,
 		}
-	}
-
-	getDisplayDataRefresh(): IDisplayDataBlock<IDisplayDataBlockState | null> {
-		// TODO: 暂时是「所有数据都需要更新」
-		return this.getDisplayDataInit()
-	}
-
-	flushDisplayData(): void {
-		// TODO: 暂时还需解决「状态显示更新」问题
 	}
 }

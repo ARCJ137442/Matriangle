@@ -14,7 +14,6 @@ import {
 	IDisplayDataEntities,
 	IDisplayDataEntityState,
 } from 'matriangle-api/display/RemoteDisplayAPI'
-import { OptionalRecursive2 } from 'matriangle-common'
 
 /**
  * Use for manage entities in world.
@@ -121,40 +120,11 @@ export default class EntitySystem
 	protected _displayDataInit: IDisplayDataEntities = {}
 
 	/**
-	 * 待更新实体数据
-	 * * 动态引用其它实体的数据
-	 *   * 这样能通过引用保证实体的「显示数据」总是最新的
-	 *
-	 * ?【2023-11-18 09:37:25】问题是：如何处理「实体被删除」的情况
-	 * * 目前可能的解决办法：使用`null`占位符，作为「需要删除」的信号（`undefined`无法被传输）
-	 */
-	protected _displayDataToRefresh: OptionalRecursive2<IDisplayDataEntities> =
-		{}
-
-	/**
 	 * @implements 给出一个「UUID-实体数据」字典
 	 * * 这个「UUID」有效的前提是：在整个实体周期内必须唯一
 	 */
-	getDisplayDataInit(): IDisplayDataEntities {
+	getDisplayData(): IDisplayDataEntities {
 		return this._displayDataInit
-	}
-
-	/**
-	 * @implements 收集
-	 */
-	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataEntities> {
-		return this._displayDataToRefresh
-	}
-
-	/** @implements 遍历所有可显示实体，递归清洗数据 */
-	flushDisplayData(): void {
-		// ? 如果直接清除了引用，那后面更新又怎么办呢？冒泡吗？
-		for (const entity of this.entriesDisplayable) entity.flushDisplayData()
-		// * 清除「待更新显示数据」中的null（清除之前已经拿走了数据，所以这之后不再需要）
-		for (const key in this._displayDataToRefresh)
-			if (this._displayDataToRefresh[key] === null)
-				delete this._displayDataToRefresh[key]
-		// ? 但按上面这样做了之后，还是需要同步一堆空对象。。。
 	}
 
 	/** 录入实体数据 */
@@ -162,8 +132,7 @@ export default class EntitySystem
 		uuid: uint,
 		entity: IEntityDisplayable<StateT>
 	): void {
-		this._displayDataInit[uuid] = entity.getDisplayDataInit()
-		this._displayDataToRefresh[uuid] = entity.getDisplayDataRefresh()
+		this._displayDataInit[uuid] = entity.getDisplayData()
 	}
 
 	// !【2023-11-18 16:26:46】「刷新实体数据」的功能已经被「实体」本身所包含了
@@ -176,6 +145,6 @@ export default class EntitySystem
 	 */
 	public removeEntityDisplayData(uuid: uint): void {
 		// delete this._displayDataInit[uuid]
-		this._displayDataInit[uuid] = this._displayDataToRefresh[uuid] = null
+		this._displayDataInit[uuid] = null
 	}
 }

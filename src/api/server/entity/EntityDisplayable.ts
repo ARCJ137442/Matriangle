@@ -1,4 +1,3 @@
-import { OptionalRecursive2 } from 'matriangle-common'
 import {
 	IDisplayDataEntity,
 	IDisplayDataEntityState,
@@ -33,20 +32,8 @@ export default abstract class EntityDisplayable<
 		this._proxy = new DisplayProxyEntity<EntityStateT>(id)
 	}
 	/** @implements 直接委托自身的「代理对象」 */
-	getDisplayDataInit(): IDisplayDataEntity<EntityStateT> {
-		return this._proxy.getDisplayDataInit()
-	}
-
-	/** @implements 直接委托自身的「代理对象」 */
-	getDisplayDataRefresh(): OptionalRecursive2<
-		IDisplayDataEntity<EntityStateT>
-	> {
-		return this._proxy.getDisplayDataRefresh()
-	}
-
-	/** @implements 直接委托自身的「代理对象」 */
-	flushDisplayData(): void {
-		this._proxy.flushDisplayData()
+	getDisplayData(): IDisplayDataEntity<EntityStateT> {
+		return this._proxy.getDisplayData()
 	}
 
 	/** 内部的「实体显示代理」 */

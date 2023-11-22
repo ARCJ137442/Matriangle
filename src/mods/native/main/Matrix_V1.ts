@@ -5,12 +5,7 @@ import IMap from 'matriangle-api/server/map/IMap'
 import IMatrixRule from 'matriangle-api/server/rule/IMatrixRule'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
-import {
-	OptionalRecursive2,
-	Val,
-	isDefined,
-	voidF,
-} from 'matriangle-common/utils'
+import { Val, isDefined, voidF } from 'matriangle-common/utils'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 import { IDisplayDataMatrix } from 'matriangle-api/display/RemoteDisplayAPI'
 
@@ -181,34 +176,12 @@ export default class Matrix_V1 implements IMatrix {
 	 * @implements 直接传递
 	 * * 后续最好也整个「显示代理」
 	 */
-	getDisplayDataInit(): IDisplayDataMatrix {
+	getDisplayData(): IDisplayDataMatrix {
 		return {
 			// ! 此处获取的是「存储结构」的「初始数据」
-			map: this.map.storage.getDisplayDataInit(),
+			map: this.map.storage.getDisplayData(),
 			// * 使用「实体系统」代理
-			entities: this._entitySystem.getDisplayDataInit(),
+			entities: this._entitySystem.getDisplayData(),
 		}
-	}
-
-	/**
-	 * @implements 直接传递
-	 * * 后续最好也整个「显示代理」
-	 */
-	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMatrix> {
-		return {
-			// ! 此处获取的是「存储结构」的「初始数据」
-			map: this.map.storage.getDisplayDataRefresh(),
-			// * 使用「实体系统」代理
-			entities: this._entitySystem.getDisplayDataRefresh(),
-		}
-	}
-
-	/**
-	 * @implements 直接传递到「地图」「实体」
-	 * * 后续最好也整个「显示代理」
-	 */
-	flushDisplayData(): void {
-		this.map.storage.flushDisplayData()
-		this._entitySystem.flushDisplayData()
 	}
 }

@@ -61,7 +61,8 @@ import {
 	MessageCallback,
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { NARSEnvConfig, NARSPlayerConfig, ServiceConfig } from './config/API'
+import { NARSEnvConfig, NARSPlayerConfig } from './config/API'
+import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { normalShannonEntropy } from 'matriangle-common'
 import ProgramMatrixConsole from 'matriangle-mod-native/entities/control/MatrixConsole'
@@ -166,7 +167,7 @@ export class NARSEnv {
 	}
 
 	/** 配置玩家过程中出现的NARS连接 */
-	readonly NARSMessageServices: ServiceConfig[] = []
+	readonly NARSMessageServices: MessageServiceConfig[] = []
 
 	/** 配置NARS玩家 */
 	setupNARSPlayer(
@@ -217,14 +218,7 @@ export class NARSEnv {
 		// 连接
 		visualizer.linkToRouter(
 			this.router,
-			this.config.connections.displayService.host,
-			this.config.connections.displayService.port,
-			(messageCallback: MessageCallback): IMessageService =>
-				this.config.connections.displayService.constructor(
-					this.config.connections.displayService.host,
-					this.config.connections.displayService.port,
-					messageCallback
-				)
+			this.config.connections.displayService
 		)
 
 		// *添加实体

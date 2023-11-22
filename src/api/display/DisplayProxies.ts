@@ -2,11 +2,7 @@
  * 本文件存储一些「显示代理」类型
  * * 用于最大化分离「逻辑功能」与「显示更新」
  */
-import {
-	Optional,
-	OptionalRecursive2,
-	clearObjectKeys,
-} from 'matriangle-common/utils'
+import { Optional } from 'matriangle-common/utils'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { typeID } from '../server/registry/IWorldRegistry'
 import {
@@ -56,11 +52,6 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 		blocks: {},
 	} as IDisplayDataMap // ! 一定会在构造函数中补完
 
-	/** 待更新显示数据 */
-	protected _dataToRefresh: OptionalRecursive2<IDisplayDataMap> = {
-		blocks: {},
-	}
-
 	/** 构造函数 */
 	public constructor(storage: IMapStorage) {
 		// 尺寸更新
@@ -76,7 +67,7 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 
 	/** @implements 直接更新 */
 	updateSize(size: uint[]): void {
-		this._data.size = this._dataToRefresh.size = [...size] // !【2023-11-19 02:40:57】复制一个，避免转换成
+		this._data.size = [...size] // !【2023-11-19 02:40:57】复制一个，避免转换成
 	}
 
 	/**
@@ -88,9 +79,7 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 		block: Block<BlockState | null> | null
 	): void {
 		const locationStr: string = pointToLocationStr(location)
-		this._data.blocks[locationStr] = this._dataToRefresh.blocks![
-			locationStr
-		] =
+		this._data.blocks[locationStr] =
 			block === null
 				? null
 				: {
@@ -102,21 +91,8 @@ export class DisplayProxyMap implements IDisplayProxyMap {
 
 	// * 标准显示接口 * //
 
-	getDisplayDataInit(): IDisplayDataMap {
+	getDisplayData(): IDisplayDataMap {
 		return this._data
-	}
-
-	getDisplayDataRefresh(): OptionalRecursive2<IDisplayDataMap> {
-		return this._dataToRefresh
-	}
-
-	/** @implements 删除`size`属性，删除`blocks`中的所有内容 */
-	flushDisplayData(): void {
-		// -size
-		delete this._dataToRefresh.size
-		// -blocks.*
-		for (const key in this._dataToRefresh.blocks)
-			delete this._dataToRefresh.blocks[key]
 	}
 }
 
@@ -243,18 +219,6 @@ export interface IDisplayProxyEntity<
 	 * @returns 「当前实体状态」中是否有「自定义数据」
 	 */
 	hasState(stateName: keyof EntityStateT): boolean
-
-	/**
-	 * 查询「实体状态」中的自定义数据
-	 * * 查询范围是「待更新实体数据」而非「当前实体数据」
-	 *
-	 * ! 这里因为`keyof EntityStateT`没有复用需求，所以无需提取成「函数类型参数」
-	 *
-	 * @template State 用于「检验stateName是否合法」并「自动推导value的类型」的类型
-	 * @param stateName 自定义数据名称
-	 * @returns 「待更新实体数据」中是否有「自定义数据」
-	 */
-	hasStateToRefresh(stateName: keyof EntityStateT): boolean
 }
 
 /**
@@ -277,11 +241,6 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 			id,
 			state: {} as EntityStateT, // !【2023-11-15 22:20:11】都必定包含空对象`{}`
 		}
-		this._dataToRefresh = {
-			id, // !【2023-11-20 01:08:41】谁说一开始不要ID？？？这个「在母体更新时无法『局部初始化』」的问题困扰了我一个小时！！！
-			// !【2023-11-15 22:27:19】这里的「空对象」一定是JS对象——保证「一定有」，但不保证「有东西」
-			state: (this._stateToRefresh = {} as EntityStateT),
-		} // !【2023-11-15 22:16:03】这里保证「一定是这个类型」
 	}
 	/**
 	 * 用于存储「当前的实体数据」
@@ -289,43 +248,10 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	 */
 	protected _data: IDisplayDataEntity<EntityStateT>
 
-	getDisplayDataInit(): IDisplayDataEntity<EntityStateT> {
+	getDisplayData(): IDisplayDataEntity<EntityStateT> {
 		return this._data
 	}
 
-	protected _stateToRefresh: EntityStateT
-	/**
-	 * 用于存储「更新时会传递的实体数据」
-	 * * 主要用于「部分化更新」
-	 */
-	protected _dataToRefresh: OptionalRecursive2<
-		IDisplayDataEntity<EntityStateT>
-	>
-
-	getDisplayDataRefresh(): OptionalRecursive2<
-		IDisplayDataEntity<EntityStateT>
-	> {
-		return this._dataToRefresh
-	}
-
-	/** @implements 清除`_dataToRefresh`在`id`的值，并清除`state`上的所有属性 */
-	flushDisplayData(): void {
-		// 清除`id`的值
-		delete this._dataToRefresh.id
-		// 清除`state`上所有属性
-		clearObjectKeys(this._stateToRefresh)
-	}
-
-	/* // !【2023-11-15 17:41:23】Proxy暂时还用不熟练
-	protected _dataStateProxy = new Proxy(this._data.state, {
-		get<T>(target: IDisplayDataEntity, key: string, receiver: any): T {
-			return (this._data.state?.[key] as T) ?? (this._dataStateProxy[key] = 1)
-		},
-		set(target: IDisplayDataEntity, key: string, receiver: any): boolean {
-			target[key] =  value
-			return true
-		},
-	}) */
 	// * 实现「显示代理」接口：对「自定义实体状态」进行修改 * //
 	storeState<K extends keyof EntityStateT>(
 		/* <State extends IEntityState=EntityStateT> */
@@ -333,7 +259,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 		value: EntityStateT[K]
 	): EntityStateT[K] {
 		// * 存储自身两个「显示数据」的值 // ! 这里的`State`是`IEntityState`类型
-		this._data.state[stateName] = this._stateToRefresh[stateName] = value
+		this._data.state[stateName] = value
 		// 返回设置的值
 		return value
 	}
@@ -354,24 +280,10 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 		return stateName in this._data.state
 	}
 
-	hasStateToRefresh /* <State extends IEntityState> */(
-		stateName: keyof EntityStateT
-	): boolean {
-		return stateName in this._stateToRefresh
-	}
-
 	getState /* <State extends IEntityState> */(
 		stateName: keyof EntityStateT // ! 这里的`& key`是为了能用`stateName`索引`IEntityState`类型
 	): EntityStateT[typeof stateName] | undefined {
 		return this._data.state?.[stateName] as
-			| EntityStateT[typeof stateName]
-			| undefined
-	}
-
-	getStateToRefresh /* <State extends IEntityState> */(
-		stateName: keyof EntityStateT
-	): EntityStateT[typeof stateName] | undefined {
-		return this._stateToRefresh?.[stateName] as
 			| EntityStateT[typeof stateName]
 			| undefined
 	}
@@ -383,7 +295,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set scaleX(value: number) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.scaleX = this._stateToRefresh.scaleX = value
+		this._data.state.scaleX = value
 	}
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
 	get scaleY(): number {
@@ -391,7 +303,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set scaleY(value: number) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.scaleY = this._stateToRefresh.scaleY = value
+		this._data.state.scaleY = value
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
@@ -400,7 +312,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set visible(value: boolean) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.visible = this._stateToRefresh.visible = value
+		this._data.state.visible = value
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
@@ -410,7 +322,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set position(value: number[]) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.position = this._stateToRefresh.position = value
+		this._data.state.position = value
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
@@ -419,7 +331,7 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set direction(value: uint) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.direction = this._stateToRefresh.direction = value
+		this._data.state.direction = value
 	}
 
 	/** @implements 有属性⇒直接返回；无属性⇒undefined⇒初始化+返回 */
@@ -428,6 +340,6 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	}
 	set alpha(value: number) {
 		// * 存储自身两个「显示数据」的值
-		this._data.state.alpha = this._stateToRefresh.alpha = value
+		this._data.state.alpha = value
 	}
 }

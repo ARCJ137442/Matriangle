@@ -52,7 +52,6 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	 *     * JSON化并传输diff对象
 	 *       * 显示端将直接通过「diff」来更新数据
 	 *     * 将diff对象merge入「基准显示数据」
-	 *   * // ! 不会再有从「显示端」传来的「flush」信号了
 	 *     * 这本来不是「显示端」能控制的
 	 */
 
@@ -159,8 +158,8 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 		address: string
 	): JSObjectValue {
 		this._baseDisplayDatas[address] = copyJSObjectValue_deep(
-			// ! 这里假定 matrix.getDisplayDataInit() 一定为 JSObjectValue
-			matrix.getDisplayDataInit() as unknown as JSObjectValue
+			// ! 这里假定 matrix.getDisplayData() 一定为 JSObjectValue
+			matrix.getDisplayData() as unknown as JSObjectValue
 		)
 		return this._baseDisplayDatas[address]
 	}
@@ -190,24 +189,11 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	protected reactSignalRequest_init(
 		matrix: IMatrix,
 		host: string,
-		port: uint
+		port: uint // ?【2023-11-22 21:44:12】这里似乎在「同客户端多主机」的情况下不好用……
 	): JSObjectValue {
 		// 录入「母体显示数据」为「基准显示数据」
 		return this.saveMatrixDisplayDataAsBase(matrix, getAddress(host, port))
-		/* // ! 旧代码
-		// 直接传出「基准显示数据」
-		this._temp_reactSignalRequest_init_data =
-			// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
-			trimmedEmptyObjIn(
-				// 调用「母体可视化者」的「响应可视化信号」
-				matrix.getDisplayDataInit() as unknown as JSObject
-			)
-		// 刷新已更新数据
-		matrix.flushDisplayData()
-		// 返回
-		return this._temp_reactSignalRequest_init_data */
 	}
-	// protected _temp_reactSignalRequest_init_data: JSObjectValue = null
 
 	/**
 	 * 响应「信号刷新」请求
@@ -228,7 +214,7 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 	protected reactSignalRequest_refresh(
 		matrix: IMatrix,
 		host: string,
-		port: uint
+		port: uint // ?【2023-11-22 21:46:12】问题来了：这里的服务是「可视化者所在的服务」，并不能区分「同一地址下的不同连接」 // 其中一个思路是：使用「首次连接时的时间戳`Number(new Date())`」进行区分
 	): JSObjectValue | undefined {
 		/** 获取地址 */
 		const address: string = getAddress(host, port)
@@ -240,35 +226,27 @@ export default class MatrixVisualizerCanvas extends MatrixVisualizer {
 				// * 这里的「基准」就是「基准」
 				base,
 				// !【2023-11-22 18:14:42】目前假定「母体显示数据」也是JS对象，并且可以直接用来diff（而无需再检查undefined之类的）
-				matrix.getDisplayDataInit() as unknown as JSObjectValue
+				matrix.getDisplayData() as unknown as JSObjectValue
 			)
 			// * 先merge（因为后续「移除`undefined」时会修改到diff）
 			mergeJSObjectValue(base, diff)
 			// * 返回需要传输的diff
 			// !【2023-11-22 18:24:42】需要检查并移除`undefined`，因为后续JSON.stringify会丢失这方面的信息
-			return removeUndefinedInJSObjectValueWithUndefined(
-				diff,
-				// ! 严格处理，必要时发出警告
-				undefined,
-				true
-			)
+			return diff === undefined
+				? // 无变化⇒不传输
+				  undefined
+				: // 移除其中的undefined
+				  removeUndefinedInJSObjectValueWithUndefined(
+						diff,
+						// ! 严格处理，必要时发出警告
+						undefined,
+						true
+				  )
 		}
 		// * 无⇒当「初始化」处理
 		else {
 			return this.reactSignalRequest_init(matrix, host, port)
 		}
-
-		/* // ! 旧代码
-		this._temp_reactSignalRequest_refresh_data =
-			// ! 下面这个仍然是合理的：`undefined`会被后面的`stringify`忽略掉
-			trimmedEmptyObjIn(
-				// 调用「母体可视化者」的「响应可视化信号」
-				matrix.getDisplayDataRefresh() as JSObject
-			)
-		// 刷新已更新数据
-		matrix.flushDisplayData()
-		// 返回
-		return this._temp_reactSignalRequest_refresh_data */
 	}
 	protected _temp_reactSignalRequest_refresh_data: JSObjectValue = null
 

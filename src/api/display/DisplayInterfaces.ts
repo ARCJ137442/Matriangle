@@ -1,5 +1,5 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import { OptionalRecursive2, Ref } from 'matriangle-common/utils'
+import { Ref } from 'matriangle-common/utils'
 import { JSObject } from 'matriangle-common/JSObjectify'
 import { IDisplayData } from './RemoteDisplayAPI'
 
@@ -33,33 +33,7 @@ export interface IDisplayable<DisplayDataT extends IDisplayData> {
 	 *
 	 * @returns 返回「完全显示数据」（作为「显示数据」的整体）
 	 */
-	getDisplayDataInit(): Ref<DisplayDataT>
-
-	/**
-	 * 获取「初始化」时所需的「实体数据」即「待更新显示数据」
-	 * * 这里的「待更新显示数据」是「部分化」的
-	 *   * 用于显示的「更新」
-	 *   * 与{@link flushDisplayData}搭配使用
-	 * * 面向「可视化」：数据由此转换为JSON，并最后传递给显示端显示
-	 *
-	 * ! 无副作用：若需要「获取并清洗」则需要调用{@link flushDisplayData}
-	 *
-	 * @returns 返回「待更新显示数据」（作为「显示数据」的部分）
-	 */
-	getDisplayDataRefresh(): Ref<OptionalRecursive2<DisplayDataT>>
-
-	/**
-	 * 清洗「待更新显示数据」
-	 * * 清除「需要被传递到『显示端』以便更新」的数据
-	 *   * 以此实现「部分化更新」
-	 * * 【2023-11-15 18:27:34】现在无需纠结「从何处调用」和「何时调用」的问题
-	 *   * 应用：在通过{@link getDisplayDataRefresh}获取「待更新数据」、转换成JSON后，再执行此方法进行清除
-	 *
-	 * ! 副作用：调用以后，从{@link getDisplayDataRefresh}将无法获得有作用的「待更新显示数据」
-	 *
-	 * @returns 返回「待更新显示数据」
-	 */
-	flushDisplayData(): void
+	getDisplayData(): Ref<DisplayDataT>
 }
 
 /**
