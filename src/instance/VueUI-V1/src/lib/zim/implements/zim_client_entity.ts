@@ -15,6 +15,7 @@ import {
 	graphicsLineStyle,
 	drawSquareFrameCenter,
 	CreateGraphics,
+	drawSingleCenteredSquareWithRotation,
 } from '../zimUtils'
 import { IDisplayDataEntityStateBullet } from 'matriangle-mod-bats/entity/projectile/bullet/Bullet'
 import { formatHEX, formatHEX_A } from 'matriangle-common'
@@ -366,6 +367,7 @@ const BONUS_BOX_DRAW_DATAS = {
 
 		// Attributes
 		ATTRIBUTES_LINE_SIZE: 4,
+		ATTRIBUTES_LINE_ALPHA: 1,
 		ATTRIBUTES_FILL_ALPHA: 3 / 4,
 
 		EXPERIENCE_COLOR: 0xcc88ff,
@@ -412,21 +414,20 @@ export function drawBonusBox(
 
 /** 所有特效的「公用绘图数据库」 */
 const EFFECT_DRAW_DATAS = {
-	spawn: {
-		DEFAULT_COLOR: 0x6666ff,
+	/** 「重生」「传送」的共用数据 */
+	block2: {
 		LINE_ALPHA: 0.6,
 		FILL_ALPHA: 0.5,
 		LINE_SIZE: logical2Real(1 / 25),
 		SIZE: uint(logical2Real(1.6)),
-		SCALE: 1,
+	},
+	spawn: {
+		DEFAULT_COLOR: 0x6666ff,
 		STAGE_1_START_TIME: uint(FIXED_TPS * (3 / 4)),
 		STAGE_2_START_TIME: uint(FIXED_TPS / 4),
 	},
 	teleport: {
 		DEFAULT_COLOR: 0x44ff44,
-		LINE_ALPHA: 0.6,
-		FILL_ALPHA: 0.5,
-		LINE_SIZE: logical2Real(1 / 25),
 	},
 	explode: {
 		LINE_ALPHA: 5 / 8,
@@ -446,6 +447,12 @@ const EFFECT_DRAW_DATAS = {
 		MAX_SCALE: 2,
 		/** 尺寸过渡的最小值 */
 		MIN_SCALE: 1,
+	},
+	playerLevelup: {
+		LINE_ALPHA: 0.8,
+		FILL_ALPHA: 0.75,
+		LINE_SIZE: logical2Real(1 / 25),
+		GRID_SIZE: logical2Real(3 / 16),
 	},
 	blockLight: {
 		/** 尺寸1时的大小 */
@@ -477,6 +484,90 @@ export function drawEffectExplode(
 }
 
 /**
+ * 重生/传送 特效：两个以一定角度交叠的方块
+ *
+ * @param shape 图形绘制上下文
+ * @param color 总颜色
+ * @param a 边长
+ * @param rotation1 第一个方块的倾角（默认0°）
+ * @param rotation2 第二个方块的倾角（默认45°）
+ */
+export function draw2BlockEffect(
+	graphics: CreateGraphics,
+	color: uint,
+	a: number = EFFECT_DRAW_DATAS.block2.SIZE,
+	rotation1: number = 0,
+	rotation2: number = Math.PI / 4
+): CreateGraphics {
+	// 1
+	drawSingleCenteredSquareWithRotation(
+		graphicsLineStyle(
+			graphics,
+			EFFECT_DRAW_DATAS.block2.LINE_SIZE,
+			color,
+			EFFECT_DRAW_DATAS.block2.LINE_ALPHA
+		).beginFill(formatHEX_A(color, EFFECT_DRAW_DATAS.block2.FILL_ALPHA)),
+		a * Math.SQRT1_2,
+		rotation1
+	)
+		.endFill()
+		.endStroke()
+	// 2
+	drawSingleCenteredSquareWithRotation(
+		graphicsLineStyle(
+			graphics,
+			EFFECT_DRAW_DATAS.block2.LINE_SIZE,
+			color,
+			EFFECT_DRAW_DATAS.block2.LINE_ALPHA
+		).beginFill(formatHEX_A(color, EFFECT_DRAW_DATAS.block2.FILL_ALPHA)),
+		a * Math.SQRT1_2,
+		rotation2
+	)
+		.endFill()
+		.endStroke()
+	return graphics
+}
+
+/** 特效：绘制上箭头（用于「玩家升级」/奖励箱符号） */
+export function drawUpArrow(
+	graphics: CreateGraphics,
+	color: uint,
+	alpha: number = EFFECT_DRAW_DATAS.playerLevelup.FILL_ALPHA,
+	lineSize: number = EFFECT_DRAW_DATAS.playerLevelup.LINE_SIZE,
+	lineAlpha: number = EFFECT_DRAW_DATAS.playerLevelup.LINE_ALPHA,
+	gridSize: number = EFFECT_DRAW_DATAS.playerLevelup.GRID_SIZE
+): CreateGraphics {
+	// Colored Rectangle
+	/*graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
+		graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
+		graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
+		graphics.endFill();*/
+	// Colored Arrow
+	// Top
+	return (
+		graphicsLineStyle(graphics, lineSize, color, lineAlpha)
+			.beginFill(formatHEX_A(color, alpha))
+			.moveTo(0, -gridSize * 1.5) // T1
+			.lineTo(gridSize * 1.5, 0) // T2
+			.lineTo(gridSize / 2, 0)
+			// B1
+			.lineTo(gridSize / 2, gridSize * 1.5)
+			// B2
+			.lineTo(-gridSize / 2, gridSize * 1.5)
+			// B3
+			.lineTo(-gridSize / 2, 0)
+			// B4
+			.lineTo(-gridSize * 1.5, 0) // T3
+			.lineTo(0, -gridSize * 1.5) // T1
+			.endFill()
+			.endStroke()
+	)
+	// Bottom
+}
+
+// 奖励箱 //
+
+/**
  * 绘制奖励箱标识
  */
 export function drawBonusBoxSymbol(
@@ -500,39 +591,63 @@ export function drawBonusBoxSymbol(
 			break
 		// Attributes
 		case BonusTypes_Batr.BUFF_RANDOM:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RANDOM_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RANDOM_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		case BonusTypes_Batr.BUFF_DAMAGE:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.BUFF_DAMAGE_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.BUFF_DAMAGE_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		case BonusTypes_Batr.BUFF_CD:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.BUFF_CD_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.BUFF_CD_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		case BonusTypes_Batr.BUFF_RESISTANCE:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RESISTANCE_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RESISTANCE_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		case BonusTypes_Batr.BUFF_RADIUS:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RADIUS_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.BUFF_RADIUS_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		case BonusTypes_Batr.ADD_EXPERIENCE:
-			drawAttributesSymbol(
-				shape,
-				BONUS_BOX_DRAW_DATAS.symbol.EXPERIENCE_COLOR
+			drawUpArrow(
+				shape.graphics,
+				BONUS_BOX_DRAW_DATAS.symbol.EXPERIENCE_COLOR,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
+				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_ALPHA,
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 			)
 			break
 		// Team
@@ -550,7 +665,12 @@ export function drawBonusBoxSymbol(
 		// 	break;
 		// Other
 		case BonusTypes_Batr.RANDOM_TELEPORT:
-			drawRandomTeleportSymbol(shape)
+			draw2BlockEffect(
+				shape.graphics,
+				EFFECT_DRAW_DATAS.teleport.DEFAULT_COLOR,
+				// 两倍尺寸
+				BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 2
+			)
 			break
 	}
 	// 返回自身
@@ -634,50 +754,7 @@ export function drawToolSymbol(shape: ZimDisplayerEntity): void {
 }
 
 //====Attributes====//
-export function drawAttributesSymbol(
-	shape: ZimDisplayerEntity,
-	color: uint
-): void {
-	// Colored Rectangle
-	/*graphics.lineStyle(ATTRIBUTES_LINE_SIZE,color);
-		graphics.beginFill(color,ATTRIBUTES_FILL_ALPHA);
-		graphics.drawRect(-GRID_SIZE*7/8,-GRID_SIZE*7/8,GRID_SIZE*7/4,GRID_SIZE*7/4);
-		graphics.endFill();*/
-	// Colored Arrow
-	// Top
-	graphicsLineStyle(
-		shape.graphics,
-		BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_LINE_SIZE,
-		color
-	)
-		.beginFill(
-			formatHEX_A(
-				color,
-				BONUS_BOX_DRAW_DATAS.symbol.ATTRIBUTES_FILL_ALPHA
-			)
-		)
-		.moveTo(0, -BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5) // T1
-		.lineTo(BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5, 0) // T2
-		.lineTo(BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE / 2, 0)
-		// B1
-		.lineTo(
-			BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE / 2,
-			BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5
-		)
-		// B2
-		.lineTo(
-			-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE / 2,
-			BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5
-		)
-		// B3
-		.lineTo(-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE / 2, 0)
-		// B4
-		.lineTo(-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5, 0) // T3
-		.lineTo(0, -BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 1.5) // T1
-		.endFill()
-		.endStroke()
-	// Bottom
-}
+// ! 参见
 
 //====Team====//
 export function drawTeamSymbol(shape: ZimDisplayerEntity, color: uint): void {
@@ -699,52 +776,6 @@ export function drawTeamSymbol(shape: ZimDisplayerEntity, color: uint): void {
 			-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE,
 			-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE
 		)
-		.endStroke()
-}
-
-//====Other====//
-export function drawRandomTeleportSymbol(shape: ZimDisplayerEntity): void {
-	// Teleport Effect
-	// 1
-	graphicsLineStyle(
-		shape.graphics,
-		EFFECT_DRAW_DATAS.teleport.LINE_SIZE,
-		EFFECT_DRAW_DATAS.teleport.DEFAULT_COLOR,
-		EFFECT_DRAW_DATAS.teleport.LINE_ALPHA
-	)
-		.beginFill(
-			formatHEX_A(
-				EFFECT_DRAW_DATAS.teleport.DEFAULT_COLOR,
-				EFFECT_DRAW_DATAS.teleport.FILL_ALPHA
-			)
-		)
-		.drawRect(
-			-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE,
-			-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE,
-			BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 2,
-			BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * 2
-		)
-		.endFill()
-		.endStroke()
-	// 2
-	graphicsLineStyle(
-		shape.graphics,
-		EFFECT_DRAW_DATAS.teleport.LINE_SIZE,
-		EFFECT_DRAW_DATAS.teleport.DEFAULT_COLOR,
-		EFFECT_DRAW_DATAS.teleport.LINE_ALPHA
-	)
-		.beginFill(
-			formatHEX_A(
-				EFFECT_DRAW_DATAS.teleport.DEFAULT_COLOR,
-				EFFECT_DRAW_DATAS.teleport.FILL_ALPHA
-			)
-		)
-		.moveTo(0, -BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * Math.SQRT2)
-		.lineTo(BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * Math.SQRT2, 0)
-		.lineTo(0, BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * Math.SQRT2)
-		.lineTo(-BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * Math.SQRT2, 0)
-		.lineTo(0, -BONUS_BOX_DRAW_DATAS.symbol.GRID_SIZE * Math.SQRT2)
-		.endFill()
 		.endStroke()
 }
 
@@ -1146,14 +1177,14 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			state: IDisplayDataEntityStateLaser
 		): ZimDisplayerEntity => {
 			// * 绘制函数
-			for (let i: uint = 0; i < 2; i++) {
-				// 0,1
+			for (let i: uint = 0; i < 3; i++) {
+				// 0,1,2
 				drawLaserLine(
 					displayer.graphics,
-					-LASER_DRAW_DATAS.pulse.WIDTH / (4 << i), // 原：`Math.pow(2, i + 1)`
-					LASER_DRAW_DATAS.pulse.WIDTH / (4 << i), // 原：`Math.pow(2, i + 1)`
+					-LASER_DRAW_DATAS.pulse.WIDTH / (2 << i), // 原：`Math.pow(2, i + 1)`
+					LASER_DRAW_DATAS.pulse.WIDTH / (2 << i), // 原：`Math.pow(2, i + 1)`
 					state.color,
-					i * 0.1 + 0.2
+					i * 0.1 + 0.3
 				)
 			}
 			// 通用逻辑
@@ -1366,6 +1397,39 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			return displayer
 		},
 	},
+	/** 玩家升级 */
+	[BatrEntityTypes.EFFECT_PLAYER_LEVELUP.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// * 绘制中央上箭头
+			drawUpArrow(displayer.graphics, state.color)
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
+			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」，但不包括坐标、朝向（本身特效无甚朝向）
+			commonUpdate_AVS(displayer, state)
+			// * 淡出+移动坐标
+			if (state?.lifePercent !== undefined) {
+				displayer.alpha = state.lifePercent
+				displayer.y -=
+					(EFFECT_DRAW_DATAS.playerLevelup.GRID_SIZE / 4) *
+					(1 - state.lifePercent)
+			}
+			// 返回自身
+			return displayer
+		},
+	},
 	/** 死亡光效：描边 */
 	[BatrEntityTypes.EFFECT_PLAYER_DEATH_LIGHT.id]: {
 		// 初始化
@@ -1480,5 +1544,107 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			return displayer
 		},
 	},
-	// TODO: 重生、传送
+	/** 传送 */
+	[BatrEntityTypes.EFFECT_TELEPORT.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// * 绘制方块（双交叠）
+			draw2BlockEffect(displayer.graphics, state.color)
+			// 通用设置，返回
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectBlockLight>,
+			state: OptionalRecursive2<IDisplayDataStateEffectBlockLight>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 旋转&缩小
+			if (state?.lifePercent !== undefined) {
+				displayer.scaleX = displayer.scaleY = state.lifePercent
+				displayer.rotation = (1 - state.lifePercent) * 360
+			}
+			// 返回自身
+			return displayer
+		},
+	},
+	/** 重生 */
+	[BatrEntityTypes.EFFECT_SPAWN.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
+			state: IDisplayDataStateEffectPlayerShape
+		): ZimDisplayerEntity => {
+			// * 绘制方块（双交叠）
+			draw2BlockEffect(displayer.graphics, state.color)
+			// * 尺寸设置为0（后续会渐渐放大）
+			displayer.scaleX = displayer.scaleY = 0
+			// 通用设置，返回
+			return commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectBlockLight>,
+			state: OptionalRecursive2<IDisplayDataStateEffectBlockLight>
+		): ZimDisplayerEntity => {
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				false // 非格点实体
+			)
+			// * 分阶段：放大⇒内交错旋转⇒缩小
+			if (state?.lifePercent !== undefined) {
+				// !【2023-11-24 18:14:09】这里直接偷了个懒，使用「1/3周期」作为分界
+				switch (uint(state.lifePercent * 3)) {
+					// * 阶段1：放大
+					case 2:
+						displayer.scaleX = displayer.scaleY =
+							// 1~2/3 → 0~1
+							3 * (1 - state.lifePercent)
+						break
+					// * 阶段2：内交错旋转
+					case 1:
+						// 不断重绘
+						displayer.graphics.clear()
+						draw2BlockEffect(
+							displayer.graphics,
+							displayer.currentState.color,
+							EFFECT_DRAW_DATAS.block2.SIZE,
+							// 2/3~1/3 → 0~Math.PI/4
+							(2 - state.lifePercent * 3) * (Math.PI / 4),
+							// 2/3~1/3 → Math.PI/4~0
+							(state.lifePercent * 3 - 1) * (Math.PI / 4)
+						)
+						// 正常尺寸
+						// displayer.scaleX = displayer.scaleY = 1
+						break
+					// * 阶段3：缩小
+					case 0:
+						displayer.scaleX = displayer.scaleY =
+							// 1/3~0 → 1~0
+							3 * state.lifePercent
+						break
+				}
+			}
+			// 返回自身
+			return displayer
+		},
+	},
 }

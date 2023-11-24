@@ -142,6 +142,35 @@ export function drawSquareFrameCenter(
 }
 
 /**
+ * 绘制一个中心在原点、边长为r、倾角为rot的正n边形
+ * * 初始点即`(r cos rot, r sin rot)`
+ *
+ * ! 只包含绘制函数
+ *
+ * @param graphics 绘图上下文
+ * @param r 半径
+ * @param rot_arc 倾角（弧度制）
+ * @param n 边数（默认为4「正方形」）
+ *
+ * @returns 上下文自身
+ */
+export function drawSingleCenteredSquareWithRotation(
+	graphics: CreateGraphics,
+	r: number,
+	rot_arc: number,
+	n: uint = 4
+): CreateGraphics {
+	graphics.moveTo(r * Math.cos(rot_arc), r * Math.sin(rot_arc))
+	for (let i = 0; i < n; i++) {
+		graphics.lineTo(
+			r * Math.cos(rot_arc + i * ((2 * Math.PI) / n)),
+			r * Math.sin(rot_arc + i * ((2 * Math.PI) / n))
+		)
+	}
+	return graphics
+}
+
+/**
  * 绘制菱形
  * @param graphics 绘图上下文
  * @param cX 中心X
@@ -176,8 +205,13 @@ export function drawSquareAndDiamond(
 	cY: number,
 	a: number
 ): CreateGraphics {
-	graphics.drawRect(cX - a / 2, cY - a / 2, a, a)
-	return drawDiamond(graphics, cX, cY, a * Math.SQRT1_2)
+	return drawDiamond(
+		// 先绘制方形
+		graphics.drawRect(cX - a / 2, cY - a / 2, a, a),
+		cX,
+		cY,
+		a * Math.SQRT1_2
+	)
 }
 /**
  * 绘制一个向右（默认方向）的三角形

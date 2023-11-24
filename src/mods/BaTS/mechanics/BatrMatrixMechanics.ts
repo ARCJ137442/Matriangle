@@ -437,9 +437,11 @@ export function playerPickupBonusBox(
 	if (buffColor >= 0)
 		host.addEntity(
 			new EffectPlayerLevelup(
-				temp_playerPickupBonusBox_effectP
-					.copyFrom(player.position)
-					.addFromSingle(0.5),
+				// 先对齐
+				alignToGridCenter_P(
+					player.position,
+					temp_playerPickupBonusBox_effectP
+				).addFromSingle(0.5), // 对齐之后才算
 				buffColor
 			)
 		)
