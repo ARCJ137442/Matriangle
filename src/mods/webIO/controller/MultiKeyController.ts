@@ -13,8 +13,6 @@ import KeyboardControlCenter from 'matriangle-mod-native/mechanics/program/Keybo
  * * 使用「控制密钥」机制，以实现「一个服务器运行，指挥多个玩家」（需要在query中提供）的
  *   * 「控制密钥」相同的玩家会被同时分派相同的动作
  * 玩家控制器
- *
- * TODO: 📌承继{@link KeyboardControlCenter}键盘控制器，还原其中的键控逻辑
  */
 export default abstract class MultiKeyController extends PlayerController {
 	// 基于「控制密钥」的动作分派系统 //

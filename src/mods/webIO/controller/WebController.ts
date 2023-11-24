@@ -50,9 +50,10 @@ export default class WebController extends MultiKeyController {
 
 	/**
 	 * 以指定服务连接到「消息路由器」，但是「懒注册」
-	 * * 只有在「可以注册」（路由器地址未注册）时构造路由器
 	 * * 会暴露自身的「内部消息接收接口」以便「为『消息服务』绑定『消息回调函数』」
 	 * * 与「开设服务器」不同的是：所有逻辑由自身决定
+	 *
+	 * ! 现在不再检查「地址是否已注册」，留给「真正注册时」消息路由器自行检查（目前可以追加）
 	 *
 	 * @param {MessageRouter} router 所连接的「消息路由器」
 	 * @param {string} host 主机地址
@@ -66,13 +67,10 @@ export default class WebController extends MultiKeyController {
 		port: uint,
 		serviceF: (messageCallback: MessageCallback) => IMessageService
 	): boolean {
-		if (router.hasServiceAt(host, port)) return false
-		else {
-			const service: IMessageService = serviceF(this.onMessage.bind(this))
-			return router.registerService(service, (): void => {
-				console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
-			})
-		}
+		const service: IMessageService = serviceF(this.onMessage.bind(this))
+		return router.registerService(service, (): void => {
+			console.log(`与路由器成功在 ${service.addressFull} 建立连接！`)
+		})
 	}
 
 	/**
