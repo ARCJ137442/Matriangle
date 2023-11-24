@@ -102,8 +102,11 @@ export default class BulletTracking extends Bullet {
 					this._cachedTargets.splice(i, 1)
 					continue
 				}
-				// 若「值得追踪」，则开始追踪
-				if (this.getTargetRotWeak(player) !== -1) {
+				// 若「位置合法」&「值得转向」，则开始追踪
+				if (
+					this.isWorthToChangeDirection(host) &&
+					this.getTargetRotWeak(player) !== -1
+				) {
 					this._target = player
 					this.direction = this.getTargetRot(player)
 					this.speed =
@@ -119,12 +122,38 @@ export default class BulletTracking extends Bullet {
 		) {
 			this._target = null
 		}
-		// 如果目标还在，那就继续追踪目标
-		else {
+		// 如果目标还在且「值得转向」，那就继续追踪目标
+		else if (this.isWorthToChangeDirection(host)) {
 			this.direction = tempRot
 		}
 		// * 之后才开始父类逻辑（移动）
 		super.onTick(host)
+	}
+
+	/**
+	 * 判断其位置是否适合「开始追踪目标」
+	 * * 逻辑：是否处于方块网格的「中间一半」部分
+	 * * 🎯避免「在边边就开始『擦边追踪』」
+	 *
+	 * @param host 所属母体
+	 * @returns 其位置是否适合「开始追踪目标」
+	 */
+	protected isWorthToChangeDirection(_host: IMatrix): boolean {
+		// 负向过滤
+		for (const pos of this._position) {
+			// ! 算法：计算其所属的「四分位区间」
+			switch (uint(pos * 4) & 3 /* 取模⇔按位与 */) {
+				// 0、3「边缘」：筛去
+				case 0:
+				case 3:
+					return false
+				// 默认：通过
+				default:
+					break
+			}
+		}
+		// 默认为真
+		return true
 	}
 
 	protected checkTargetInvalid(player: IPlayer): boolean {
@@ -220,22 +249,4 @@ export default class BulletTracking extends Bullet {
 		// 超类逻辑：移除自身
 		super.explode(host)
 	}
-
-	//============Display Implements============//
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// override displayInit(shape: IShape): void {
-	// 	super.displayInit(shape)
-	// 	this.drawTrackingSign(shape.graphics)
-	// 	shape.scaleX = shape.scaleY = BulletTracking.SIZE / BulletBasic.SIZE
-	// }
-
-	// protected drawTrackingSign(graphics: IGraphicContext): void {
-	// 	graphics.beginFill(this.ownerLineColor)
-	// 	const radius: number = BulletTracking.SIZE * 0.125
-	// 	graphics.moveTo(-radius, -radius)
-	// 	graphics.lineTo(radius, 0)
-	// 	graphics.lineTo(-radius, radius)
-	// 	graphics.lineTo(-radius, -radius)
-	// 	graphics.endFill()
-	// }
 }

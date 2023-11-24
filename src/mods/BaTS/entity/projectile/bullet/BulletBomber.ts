@@ -85,23 +85,4 @@ export default class BulletBomber extends Bullet {
 			1 // 边缘百分比
 		)
 	}
-
-	//============Display Implements============//
-
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// override displayInit(shape: IShape): void {
-	// 	super.displayInit(shape)
-	// 	this.drawBomberSign(shape.graphics)
-	// 	shape.scaleX = shape.scaleY = BulletBomber.SIZE / BulletBasic.SIZE
-	// }
-
-	// protected drawBomberSign(graphics: IGraphicContext): void {
-	// 	const realRadius: number = BulletBasic.SIZE * 0.15
-	// 	graphics.beginFill(this.ownerLineColor)
-	// 	graphics.moveTo(-realRadius, -realRadius)
-	// 	graphics.lineTo(realRadius, 0)
-	// 	graphics.lineTo(-realRadius, realRadius)
-	// 	graphics.lineTo(-realRadius, -realRadius)
-	// 	graphics.endFill()
-	// }
 }

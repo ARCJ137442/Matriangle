@@ -1,10 +1,8 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Laser from './Laser'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { iPoint } from 'matriangle-common/geometricTools'
-import LaserBasic from './LaserBasic'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { spreadPlayer } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
@@ -21,7 +19,6 @@ export default class LaserTeleport extends Laser {
 	public static readonly ID: typeID = 'LaserTeleport'
 
 	public static readonly LIFE: number = FIXED_TPS * 0.5
-	public static readonly SIZE: number = DEFAULT_SIZE / 4
 
 	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
 
@@ -30,7 +27,7 @@ export default class LaserTeleport extends Laser {
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
-		length: uint = LaserBasic.LENGTH,
+		length: uint,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint
 	) {
@@ -70,39 +67,4 @@ export default class LaserTeleport extends Laser {
 		)
 			spreadPlayer(host, player)
 	}
-
-	//============Display Implements============//
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// override displayInit(shape: IShape): void {
-	// 	// Middle
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		-LaserTeleport.SIZE / 2,
-	// 		LaserTeleport.SIZE / 2,
-	// 		0.25
-	// 	)
-	// 	// Side
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		-LaserTeleport.SIZE / 2,
-	// 		-LaserTeleport.SIZE / 4,
-	// 		0.6
-	// 	)
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		LaserTeleport.SIZE / 4,
-	// 		LaserTeleport.SIZE / 2,
-	// 		0.6
-	// 	)
-	// 	super.displayInit(shape)
-	// }
-
-	// public shapeRefresh(shape: IShape): void {
-	// 	shape.alpha = (this.life & 7) < 2 ? 0.75 : 1
-	// 	if (this.life < (1 / 4) * LaserTeleport.LIFE)
-	// 		shape.scaleY =
-	// 			((1 / 4) * LaserTeleport.LIFE - this.life) /
-	// 			((1 / 4) * LaserTeleport.LIFE)
-	// 	super.shapeRefresh(shape)
-	// }
 }

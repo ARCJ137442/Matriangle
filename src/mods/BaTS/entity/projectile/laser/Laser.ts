@@ -18,9 +18,20 @@ import {
 } from '../../../mechanics/BatrMatrixMechanics'
 import Tool from '../../../tool/Tool'
 import { i_hasAttributes } from '../../player/IPlayerHasAttributes'
-import Projectile from '../Projectile'
+import Projectile, { IDisplayDataStateProjectile } from '../Projectile'
 import { typeID } from 'matriangle-api'
 
+export interface IDisplayDataEntityStateLaser
+	extends IDisplayDataStateProjectile {
+	/** 「激光」长度 */
+	length: uint
+	/** 「激光」生命周期总长度 */
+	LIFE: uint
+	/** 「激光」生命周期剩余长度 */
+	life: uint
+	/** 「激光」的颜色（一般为所有者颜色） */
+	color: uint
+}
 /**
  * 「激光」是
  * * 在网格之内的（逻辑上从一格的方块**直线**延伸到另一格，属于「格点实体」）的
@@ -28,18 +39,14 @@ import { typeID } from 'matriangle-api'
  * * 生成后在一固定周期内结束的
  * 抛射体
  */
-
-export default abstract class Laser
-	extends Projectile
+export default abstract class Laser<
+		StateT extends
+			IDisplayDataEntityStateLaser = IDisplayDataEntityStateLaser,
+	>
+	extends Projectile<StateT>
 	implements IEntityInGrid, IEntityFixedLived
 {
 	//============Instance Variables============//
-	/** 激光的长度 */
-	public _length: uint
-	/** 对外只读的「激光长度」 */
-	public get length(): number {
-		return this._length
-	}
 	/** 先前是否已对实体造成伤害 */
 	public hasDamaged: boolean = false
 
@@ -49,7 +56,8 @@ export default abstract class Laser
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
-		length: uint,
+		/** 只读的「激光长度」 */
+		public readonly length: uint,
 		LIFE: uint,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint,
@@ -63,10 +71,11 @@ export default abstract class Laser
 			direction
 		)
 		this._position.copyFrom(position)
-		this._length = length
 		this._temp_chargePercent = chargePercent // !【2023-10-15 12:39:19】临时缓存，以便在`initFromToolNAttributes`中调用
 		this._LIFE = LIFE
 		this._life = uint(LIFE * chargePercent)
+		// * 显示更新
+		this.syncDisplayProxy()
 	}
 	protected _temp_chargePercent: number = 1
 
@@ -122,6 +131,8 @@ export default abstract class Laser
 		if (--this._life <= 0)
 			// ! 一到0便移除，避免多余的一次世界刻处理
 			host.removeEntity(this) // TODO: 有待「实体系统」的修缮
+		// * 显示更新
+		else this._proxy.storeState('life', this._life)
 	}
 
 	/**
@@ -219,60 +230,13 @@ export default abstract class Laser
 	public onPositedBlockUpdate(host: IMatrix): void {}
 
 	//============Display Implements============//
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// /**
-	//  * 唯一做的一件事，就是「缩放图形长度使其与激光长度一致」
-	//  * * 原理：图形上下文中只绘制「一格内激光的样子」（并且是类条形码横纹），再由图像拉伸机制把图形拉长
-	//  */
-	// public displayInit(shape: IShape): void {
-	// 	shape.scaleX = this._length
-	// }
-	// /**
-	//  * 刷新：（暂时只）更新激光长度
-	//  *
-	//  * ? 是否需要重绘图形，以便（每次显示更新时）响应玩家颜色
-	//  * * 可能的性能开销
-	//  */
-	// public shapeRefresh(shape: IShape): void {
-	// 	// this.shapeDestruct(shape);
-	// 	// this.shapeInit(shape);
-	// 	shape.scaleX = this._length
-	// }
-	// /** 析构：清空图形上下文 */
-	// public displayDestruct(shape: IShape): void {
-	// 	shape.graphics.clear()
-	// }
-
-	// /**
-	//  * 绘制一个「Beam」
-	//  * @param graphics 2D绘画上下文
-	//  * @param y1 以x轴为横轴的「起始垂直坐标」
-	//  * @param y2 以x轴为横轴的「终止垂直坐标」
-	//  * @param color 绘制的颜色
-	//  * @param alpha 绘制的不透明度
-	//  */
-	// protected drawLine(
-	// 	graphics: IGraphicContext,
-	// 	y1: number,
-	// 	y2: number,
-	// 	color: uint = 16777215,
-	// 	alpha: number = 1
-	// ): void {
-	// 	const yStart: number = Math.min(y1, y2)
-	// 	graphics.beginFill(color, alpha)
-	// 	graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
-	// 	graphics.endFill()
-	// }
-
-	// protected drawOwnerLine(
-	// 	graphics: IGraphicContext,
-	// 	y1: number,
-	// 	y2: number,
-	// 	alpha: number = 1
-	// ): void {
-	// 	const yStart: number = Math.min(y1, y2)
-	// 	graphics.beginFill(this.ownerColor, alpha)
-	// 	graphics.drawRect(0, yStart, DEFAULT_SIZE, Math.max(y1, y2) - yStart)
-	// 	graphics.endFill()
-	// }
+	/** @implements 实现：坐标、朝向、尺寸 */
+	syncDisplayProxy(): void {
+		this._proxy.position = this._position
+		this._proxy.direction = this._direction
+		this._proxy.storeState('length', this.length)
+		this._proxy.storeState('color', this.ownerColor) // ! 颜色跟从所有者
+		this._proxy.storeState('LIFE', this._LIFE) // ! 颜色跟从所有者
+		this._proxy.storeState('life', this._life) // ! 颜色跟从所有者
+	}
 }

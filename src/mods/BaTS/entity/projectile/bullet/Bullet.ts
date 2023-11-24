@@ -79,6 +79,10 @@ export default abstract class Bullet
 		// this.finalExplodeRadius = (owner === null) ? defaultExplodeRadius : owner.computeFinalRadius(defaultExplodeRadius);
 		this.finalExplodeRadius = finalExplodeRadius
 		// * 显示初始化
+		this.syncDisplayProxy()
+	}
+
+	syncDisplayProxy(): void {
 		this._proxy.position = this._position
 		this._proxy.direction = this._direction
 		this._proxy.storeState('fillColor', this.ownerColor)

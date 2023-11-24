@@ -73,7 +73,7 @@ export module BatrTools {
 		TOOL_ID_LASER_PULSE,
 		0.5,
 		0.5,
-		5,
+		2, // !【2023-11-24 12:16:05】因现在「脉冲激光」推拉能力的增强，降低其伤害
 		true
 	).setExtraProperty(3, 3)
 

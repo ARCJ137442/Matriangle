@@ -6,7 +6,10 @@ import { logical2Real } from 'matriangle-api/display/PosTransform'
 import { NativeEntityTypes } from 'matriangle-mod-native/registry/EntityRegistry_Native'
 import { IDisplayDataEntityStatePlayerV1 } from 'matriangle-mod-native/entities/player/Player_V1'
 import { BatrEntityTypes } from 'matriangle-mod-bats/registry/EntityRegistry_Batr'
-import { ZimDisplayerEntity } from '../interfaces/zim_client_entities'
+import {
+	CreateGraphics,
+	ZimDisplayerEntity,
+} from '../interfaces/zim_client_entities'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import {
 	drawRoundRectBox,
@@ -22,6 +25,8 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import { IDisplayDataStateEffectExplode } from 'matriangle-mod-bats/entity/effect/EffectExplode'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { IDisplayDataStateEffectPlayerShape } from 'matriangle-mod-bats/entity/effect/EffectPlayerShape'
+import { IDisplayDataEntityStateLaser } from 'matriangle-mod-bats/entity/projectile/laser/Laser'
+import { IDisplayDataEntityStateLaserPulse } from 'matriangle-mod-bats/entity/projectile/laser/LaserPulse'
 
 // 抽象接口 //
 
@@ -225,6 +230,121 @@ const BULLET_DRAW_DATAS = {
 			// 直接调用「通用更新」
 			commonUpdate_all(displayer, state, false /* 非格点实体 */),
 	},
+}
+
+// 激光 //
+
+const LASER_DRAW_DATAS = {
+	/** 所有激光共用的绘制数据 */
+	common: {
+		/**
+		 * 通用逻辑：拉伸，回缩
+		 * * 初始化更新通用
+		 */
+		update(
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataEntityStateLaser>
+		): void {
+			// 通用更新
+			commonUpdate_all(
+				displayer,
+				state,
+				true // 格点实体
+			)
+			// 长度
+			if (state?.length !== undefined) displayer.scaleX = state.length
+			// 半格回缩
+			LASER_DRAW_DATAS.common.halfBlockShrink(displayer)
+		},
+		/**
+		 * 通用逻辑：「半格回缩」
+		 * * 🎯核心目的：作为格点实体，匹配方块边缘
+		 */
+		halfBlockShrink(displayer: ZimDisplayerEntity): void {
+			displayer.x -=
+				Math.cos((displayer.rotation / 180) * Math.PI) *
+				logical2Real(0.5)
+			displayer.y -=
+				Math.sin((displayer.rotation / 180) * Math.PI) *
+				logical2Real(0.5)
+		},
+	},
+	/** 基础激光绘制数据 */
+	basic: {
+		/**
+		 *  默认宽度：0.75格
+		 *
+		 * !【2023-11-24 11:28:36】现在改成0.75格，并且绘图上也更细致
+		 */
+		WIDTH: logical2Real(0.75),
+	},
+	/** 传送激光绘制数据 */
+	teleport: {
+		/**
+		 * 默认宽度：1/2格
+		 *
+		 * !【2023-11-24 11:38:11】现在全部增大了一倍
+		 */
+		WIDTH: logical2Real(1 / 2),
+	},
+	/** 吸收激光绘制数据 */
+	absorption: {
+		/**
+		 * 默认宽度：1/2格
+		 *
+		 * !【2023-11-24 11:38:11】现在全部增大了一倍
+		 */
+		WIDTH: logical2Real(1 / 2),
+		/**
+		 * 伤害周期
+		 * * 用于复现AS3版本中「伤害、动画与周期高度相关」的逻辑
+		 * * AS3の约定：在动画到「宽度回满」时造成伤害
+		 */
+		DAMAGE_PERIOD: FIXED_TPS >> 3,
+	},
+	/** 脉冲激光绘制数据 */
+	pulse: {
+		/**
+		 * 默认宽度：1/2格
+		 *
+		 * !【2023-11-24 11:38:11】现在全部增大了一倍
+		 */
+		WIDTH: logical2Real(1 / 2),
+		/** 默认不透明度：0.75 */
+		ALPHA: 0.75,
+	},
+}
+
+/**
+ * 绘制一个「Beam」
+ * @param graphics 绘画上下文
+ * @param y1 以x轴为横轴的「起始垂直坐标」
+ * @param y2 以x轴为横轴的「终止垂直坐标」
+ * @param color 绘制的颜色
+ * @param alpha 绘制的不透明度
+ */
+function drawLaserLine(
+	graphics: CreateGraphics,
+	y1: number,
+	y2: number,
+	color: uint,
+	alpha: number = 1
+): void {
+	// console.log('drawLaserLine', y1, y2, color, alpha)
+	/** 以最小值作为起始点 */
+	const yStart: number = Math.min(y1, y2)
+	graphics
+		.beginFill(formatHEX_A(color, alpha))
+		.drawRect(
+			// ! ↓这里需要「退后半格」以从「网格中心」对齐玩家前方
+			// -logical2Real(0.5),
+			0,
+			yStart,
+			// ! ↓下面只绘制激光在一格中的大小
+			logical2Real(1),
+			Math.max(y1, y2) - yStart
+		)
+		.endFill()
 }
 
 // 奖励箱 //
@@ -633,7 +753,8 @@ export type EntityDrawDict = {
 		 * * 一般包括矢量图绘制
 		 */
 		init: (
-			displayer: ZimDisplayerEntity,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			displayer: ZimDisplayerEntity<any>,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			state: any
 		) => ZimDisplayerEntity
@@ -643,7 +764,8 @@ export type EntityDrawDict = {
 		 * * 可能没有
 		 */
 		refresh: (
-			displayer: ZimDisplayerEntity,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			displayer: ZimDisplayerEntity<any>,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			state: OptionalRecursive2<any>
 		) => ZimDisplayerEntity
@@ -859,6 +981,203 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 		},
 	},
+	// 激光 //
+	/** 基础激光 */
+	[BatrEntityTypes.LASER_BASIC.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataEntityStateLaser
+		): ZimDisplayerEntity => {
+			// * 绘制函数
+			for (let i: uint = 0; i < 5; i++) {
+				// 0,1,2,3,4
+				drawLaserLine(
+					displayer.graphics,
+					-LASER_DRAW_DATAS.basic.WIDTH / (2 << i), // ! 2的幂次可转换成移位，源代码为`Math.pow(2, i + 1)`
+					LASER_DRAW_DATAS.basic.WIDTH / (2 << i), // ! 2的幂次可转换成移位，源代码为`Math.pow(2, i + 1)`
+					state.color,
+					i * 0.1 + 0.2
+				)
+			}
+			// 通用逻辑
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 返回
+			return displayer
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataEntityStateLaser>,
+			state: OptionalRecursive2<IDisplayDataEntityStateLaser>
+		): ZimDisplayerEntity => {
+			// 激光通用
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 专用：宽度渐小
+			if (state?.life !== undefined)
+				displayer.scaleY = state.life / displayer.currentState.LIFE
+			// 返回
+			return displayer
+		},
+	},
+	/** 传送激光 */
+	[BatrEntityTypes.LASER_TELEPORT.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataEntityStateLaser
+		): ZimDisplayerEntity => {
+			// * 绘制函数
+			drawLaserLine(
+				displayer.graphics,
+				-LASER_DRAW_DATAS.teleport.WIDTH / 2,
+				LASER_DRAW_DATAS.teleport.WIDTH / 2,
+				state.color,
+				0.25
+			)
+			// Side
+			drawLaserLine(
+				displayer.graphics,
+				-LASER_DRAW_DATAS.teleport.WIDTH / 2,
+				-LASER_DRAW_DATAS.teleport.WIDTH / 4,
+				state.color,
+				0.6
+			)
+			drawLaserLine(
+				displayer.graphics,
+				LASER_DRAW_DATAS.teleport.WIDTH / 4,
+				LASER_DRAW_DATAS.teleport.WIDTH / 2,
+				state.color,
+				0.6
+			)
+			// 通用逻辑
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 返回
+			return displayer
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataEntityStateLaser>,
+			state: OptionalRecursive2<IDisplayDataEntityStateLaser>
+		): ZimDisplayerEntity => {
+			// 激光通用
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 专用：闪烁3/4周期，然后渐小
+			if (state?.life !== undefined) {
+				displayer.alpha = (state.life & 7) < 2 ? 0.75 : 1
+				if (
+					state.life <
+					displayer.currentState.LIFE >> 2 // ! 除以2的幂次，可以使用移位运算
+				)
+					displayer.scaleY =
+						1 - state.life / (displayer.currentState.LIFE >> 2) // ! 除以2的幂次，可以使用移位运算
+			}
+			// 返回
+			return displayer
+		},
+	},
+	/** 吸收激光 */
+	[BatrEntityTypes.LASER_ABSORPTION.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataEntityStateLaser
+		): ZimDisplayerEntity => {
+			// * 绘制函数
+			// 左右相隔的两臂
+			for (const i of [-1, 1]) {
+				// 外侧
+				drawLaserLine(
+					displayer.graphics,
+					(i * LASER_DRAW_DATAS.absorption.WIDTH) / 2,
+					(i * LASER_DRAW_DATAS.absorption.WIDTH) / 4,
+					state.color,
+					0.75
+				)
+				// 内侧
+				drawLaserLine(
+					displayer.graphics,
+					(i * LASER_DRAW_DATAS.absorption.WIDTH) / 4,
+					(i * LASER_DRAW_DATAS.absorption.WIDTH) / 8,
+					state.color,
+					0.5
+				)
+			}
+			// 通用逻辑
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 返回
+			return displayer
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataEntityStateLaser>
+		): ZimDisplayerEntity => {
+			// 激光通用
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 专用：以周期为由转圈圈
+			if (state?.life !== undefined) {
+				state.scaleY = Math.abs(
+					// ! ↓使用cos而非sin，是为了尺寸从1开始
+					Math.cos(
+						// 一个周期转半圈
+						(state.life /
+							LASER_DRAW_DATAS.absorption.DAMAGE_PERIOD) *
+							Math.PI
+					)
+				)
+			}
+			// 返回
+			return displayer
+		},
+	},
+	/** 脉冲激光 */
+	[BatrEntityTypes.LASER_PULSE.id]: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataEntityStateLaser
+		): ZimDisplayerEntity => {
+			// * 绘制函数
+			for (let i: uint = 0; i < 2; i++) {
+				// 0,1
+				drawLaserLine(
+					displayer.graphics,
+					-LASER_DRAW_DATAS.pulse.WIDTH / (4 << i), // 原：`Math.pow(2, i + 1)`
+					LASER_DRAW_DATAS.pulse.WIDTH / (4 << i), // 原：`Math.pow(2, i + 1)`
+					state.color,
+					i * 0.1 + 0.2
+				)
+			}
+			// 通用逻辑
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 返回
+			return displayer
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity<IDisplayDataEntityStateLaserPulse>,
+			state: OptionalRecursive2<IDisplayDataEntityStateLaserPulse>
+		): ZimDisplayerEntity => {
+			// 激光通用
+			LASER_DRAW_DATAS.common.update(displayer, state)
+			// 专用：以周期为由转圈圈
+			if (state?.life !== undefined) {
+				if (displayer.currentState.isPull) {
+					displayer.scaleY =
+						1 + state.life / displayer.currentState.LIFE
+					displayer.alpha =
+						(2 - displayer.scaleY) * LASER_DRAW_DATAS.pulse.ALPHA
+				} else {
+					displayer.scaleY =
+						2 - state.life / displayer.currentState.LIFE
+					displayer.alpha =
+						(2 - displayer.scaleY) * LASER_DRAW_DATAS.pulse.ALPHA
+				}
+			}
+			// 返回
+			return displayer
+		},
+	},
 	// 静物 //
 	/** 奖励箱 */
 	[BatrEntityTypes.BONUS_BOX.id]: {
@@ -921,7 +1240,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 	[BatrEntityTypes.EFFECT_PLAYER_HURT.id]: {
 		// 初始化
 		init: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: IDisplayDataStateEffectPlayerShape
 		): ZimDisplayerEntity => {
 			// 填充颜色&粗细
@@ -933,8 +1252,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			drawPlayerDecoration(
 				displayer,
-				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
-					.decorationLabel
+				displayer.currentState.decorationLabel
 			)
 			displayer.graphics.endFill()
 			return commonUpdate_all(
@@ -945,7 +1263,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 		},
 		// 更新
 		refresh: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
 		): ZimDisplayerEntity => {
 			// 直接调用「通用更新」
@@ -956,9 +1274,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			// * 更新透明度
 			if (state?.lifePercent !== undefined)
-				displayer.alpha = (
-					displayer.currentState as IDisplayDataStateEffectPlayerShape
-				)?.reverse
+				displayer.alpha = displayer.currentState?.reverse
 					? 1 - state.lifePercent
 					: state.lifePercent
 			// 返回自身
@@ -969,7 +1285,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 	[BatrEntityTypes.EFFECT_PLAYER_DEATH_FADEOUT.id]: {
 		// 初始化
 		init: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: IDisplayDataStateEffectPlayerShape
 		): ZimDisplayerEntity => {
 			// 填充颜色&粗细
@@ -981,8 +1297,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			drawPlayerDecoration(
 				displayer,
-				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
-					.decorationLabel
+				displayer.currentState.decorationLabel
 			)
 			displayer.graphics.endFill()
 			return commonUpdate_all(
@@ -993,7 +1308,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 		},
 		// 更新
 		refresh: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
 		): ZimDisplayerEntity => {
 			// 直接调用「通用更新」
@@ -1004,9 +1319,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			// * 更新透明度
 			if (state?.lifePercent !== undefined)
-				displayer.alpha = (
-					displayer.currentState as IDisplayDataStateEffectPlayerShape
-				)?.reverse
+				displayer.alpha = displayer.currentState?.reverse
 					? 1 - state.lifePercent
 					: state.lifePercent
 			// 返回自身
@@ -1017,7 +1330,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 	[BatrEntityTypes.EFFECT_PLAYER_DEATH_LIGHT.id]: {
 		// 初始化
 		init: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: IDisplayDataStateEffectPlayerShape
 		): ZimDisplayerEntity => {
 			// * 绘制框架
@@ -1040,8 +1353,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			drawPlayerDecoration(
 				displayer,
-				(displayer.currentState as IDisplayDataStateEffectPlayerShape)
-					.decorationLabel
+				displayer.currentState.decorationLabel
 			)
 			displayer.graphics.endStroke()
 			return commonUpdate_all(
@@ -1052,7 +1364,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 		},
 		// 更新
 		refresh: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataStateEffectPlayerShape>,
 			state: OptionalRecursive2<IDisplayDataStateEffectPlayerShape>
 		): ZimDisplayerEntity => {
 			// 直接调用「通用更新」
@@ -1063,18 +1375,14 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			)
 			// * 更新透明度&尺寸
 			if (state?.lifePercent !== undefined) {
-				displayer.alpha = (
-					displayer.currentState as IDisplayDataStateEffectPlayerShape
-				)?.reverse
+				displayer.alpha = displayer.currentState?.reverse
 					? 1 - state.lifePercent
 					: state.lifePercent
 				displayer.scaleX = displayer.scaleY =
 					EFFECT_DRAW_DATAS.playerDeathLight.MIN_SCALE +
 					(EFFECT_DRAW_DATAS.playerDeathLight.MAX_SCALE -
 						EFFECT_DRAW_DATAS.playerDeathLight.MIN_SCALE) *
-						((
-							displayer.currentState as IDisplayDataStateEffectPlayerShape
-						)?.reverse
+						(displayer.currentState?.reverse
 							? state.lifePercent
 							: 1 - state.lifePercent)
 				console.log('DeathLight', displayer.scaleX)
@@ -1083,4 +1391,5 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			return displayer
 		},
 	},
+	/** TODO: 方块光效、移动的方块 */
 }

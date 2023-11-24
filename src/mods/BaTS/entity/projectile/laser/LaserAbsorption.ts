@@ -1,10 +1,8 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
 import Laser from './Laser'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { iPoint } from 'matriangle-common/geometricTools'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
-import LaserBasic from './LaserBasic'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { typeID } from 'matriangle-api'
@@ -21,28 +19,21 @@ export default class LaserAbsorption extends Laser {
 	/** ID */
 	public static readonly ID: typeID = 'LaserAbsorption'
 
-	public static readonly LIFE: number = 2 * FIXED_TPS // 生命周期：2s
-	public static readonly SIZE: number = DEFAULT_SIZE / 4
-	public static readonly SCALE_V: number = 1 / 4
+	public static readonly LIFE: uint = uint(FIXED_TPS) // 生命周期：2s // !【2023-11-24 12:13:27】从两秒改成一秒，因为当前测试中实际「生命周期长度」变成了两倍（原因不明）
+	/**
+	 * 每1/4秒对其上可伤害实体造成伤害
+	 * * 其动画（自AS3版本参考）将与此高度相关
+	 */
+	public static readonly DAMAGE_PERIOD: uint = FIXED_TPS >> 3
 
 	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
-
-	//============Instance Variables============//
-	/** 纵轴的「尺寸」（用于控制动画与同步伤害） */
-	protected scaleY: number = 1
-	/** 用于控制「尺寸」的增速（可负） */
-	protected scaleV: number = LaserAbsorption.SCALE_V
-	/**
-	 * 反转「尺寸」的增长
-	 */
-	protected scaleReverse: boolean = true
 
 	//============Constructor & Destructor============//
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
-		length: uint = LaserBasic.LENGTH,
+		length: uint,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint
 	) {
@@ -61,11 +52,9 @@ export default class LaserAbsorption extends Laser {
 
 	//============World Mechanics============//
 	override onTick(host: IMatrix): void {
-		this.scaleY += LaserAbsorption.SCALE_V * (this.scaleReverse ? -1 : 1)
-		if (this.scaleY >= 1) {
-			this.scaleReverse = true
+		// 每个固定周期伤害一次
+		if (this._life % LaserAbsorption.DAMAGE_PERIOD == 0)
 			this.hurtPlayers(host)
-		} else if (this.scaleY <= -1) this.scaleReverse = false
 		super.onTick(host) // ! 超类逻辑：处理生命周期
 	}
 
@@ -86,33 +75,6 @@ export default class LaserAbsorption extends Laser {
 	//============Display Implements============//
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// override displayInit(shape: IShape): void {
-	// 	// Left
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		-LaserAbsorption.SIZE / 2,
-	// 		-LaserAbsorption.SIZE / 4,
-	// 		0.6
-	// 	)
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		-LaserAbsorption.SIZE / 2,
-	// 		-LaserAbsorption.SIZE / 8,
-	// 		0.5
-	// 	)
-
-	// 	// Right
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		LaserAbsorption.SIZE / 4,
-	// 		LaserAbsorption.SIZE / 2,
-	// 		0.6
-	// 	)
-	// 	this.drawOwnerLine(
-	// 		shape.graphics,
-	// 		LaserAbsorption.SIZE / 8,
-	// 		LaserAbsorption.SIZE / 2,
-	// 		0.5
-	// 	)
 	// 	super.displayInit(shape) // ! 超类逻辑：处理形状初始化
 	// }
 

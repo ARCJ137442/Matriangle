@@ -73,7 +73,7 @@ export default abstract class Projectile<
 	 * * 武器「基础伤害」与玩家「伤害加成」叠加形成的「攻击方伤害」
 	 * * 「攻击方伤害」在伤害玩家时，被受害者抗性减免后形成的「受害方伤害」（实际伤害/最终伤害）
 	 *
-	 * TODO: 日后要计算「攻击方伤害」时，「攻击者一侧的『造成伤害』数据」应全部来自于抛射体
+	 * ! 计算「攻击方伤害」时，「攻击者一侧的『造成伤害』数据」应全部来自于抛射体
 	 * * 例如：伤害应该预先计算好，然后再用于构造抛射体
 	 * * 抛射体不负责计算玩家伤害——这应该是「玩家使用工具」时做的事情
 	 */
@@ -150,6 +150,8 @@ export default abstract class Projectile<
 		this._attackerDamage = attackerDamage
 		this._extraResistanceCoefficient = extraResistanceCoefficient
 		this._direction = direction
+		// * 显示更新
+		this._proxy.direction = direction
 	}
 
 	override destructor(): void {

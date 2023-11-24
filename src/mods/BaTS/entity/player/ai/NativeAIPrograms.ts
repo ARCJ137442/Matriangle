@@ -13,6 +13,7 @@ import { getPlayerActionFromTurn } from 'matriangle-mod-native/entities/player/c
 import { i_hasTool } from '../IPlayerHasTool'
 import { AIPlayerEvent } from 'matriangle-mod-native/entities/player/controller/AIController'
 import { EnumBatrPlayerAction } from '../control/BatrPlayerAction'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 
 /**
  * AI的「微行为」
@@ -54,7 +55,11 @@ export module MicroAIBehaviors {
 			if (
 				moveSum >= moveMaxSum ||
 				!controller._temp_currentPlayer.testCanGoForward(
-					controller._temp_currentHost
+					controller._temp_currentHost,
+					controller._temp_currentPlayer.direction,
+					true,
+					true,
+					getPlayers(controller._temp_currentHost)
 				)
 			) {
 				// 重置「移动总数」

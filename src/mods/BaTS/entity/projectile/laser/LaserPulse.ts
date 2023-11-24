@@ -1,9 +1,7 @@
 ﻿import { int, uint } from 'matriangle-legacy/AS3Legacy'
-import { DEFAULT_SIZE } from 'matriangle-api/display/GlobalDisplayVariables'
-import Laser from './Laser'
+import Laser, { IDisplayDataEntityStateLaser } from './Laser'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { iPoint } from 'matriangle-common/geometricTools'
-import LaserBasic from './LaserBasic'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import {
 	mRot,
@@ -13,37 +11,40 @@ import {
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { typeID } from 'matriangle-api'
 
+/** 特有的「显示数据」：增加`isPull`属性 */
+export interface IDisplayDataEntityStateLaserPulse
+	extends IDisplayDataEntityStateLaser {
+	/** 决定是「回拽」还是「前推」 */
+	isPull: boolean
+}
+
 /**
  * 「脉冲激光」
  * * + 控制玩家位置「拉/推」
  * * + 分为「回拽激光」与「前推激光」
  *   * 其中「前推激光」可以把受伤害实体一路推到不能推为止，并且**每次前推都会造成伤害**
  */
-export default class LaserPulse extends Laser {
+export default class LaserPulse extends Laser<IDisplayDataEntityStateLaserPulse> {
 	//============Static Variables============//
 	/** ID */
 	public static readonly ID: typeID = 'LaserPulse'
 
 	public static readonly LIFE: number = FIXED_TPS * 0.25
-	public static readonly SIZE: number = DEFAULT_SIZE / 4
-	public static readonly ALPHA: number = 1 / 0.75
 
 	//============Instance Variables============//
 
 	// 类型注册 //	// !【2023-10-01 16:14:36】现在不再因「需要获取实体类型」而引入`NativeEntityTypes`：这个应该在最后才提供「实体类-id」的链接（并且是给母体提供的）
-
-	/** 决定这个激光是「回拽激光」还是「前推激光」 */
-	public isPull: boolean = false
 
 	//============Constructor & Destructor============//
 	public constructor(
 		owner: IPlayer | null,
 		position: iPoint,
 		direction: mRot,
-		length: uint = LaserBasic.LENGTH,
+		length: uint,
 		attackerDamage: uint,
 		extraDamageCoefficient: uint,
-		isPull: boolean
+		/** 决定这个激光是「回拽激光」还是「前推激光」 */
+		public isPull: boolean
 	) {
 		super(
 			LaserPulse.ID,
@@ -56,7 +57,27 @@ export default class LaserPulse extends Laser {
 			extraDamageCoefficient,
 			1 // ! 「充能百分比」仅用于「决定子类型」而不用于决定伤害/生命周期
 		)
-		this.isPull = isPull
+		/**
+		 * 📝必须自己更新显示数据，不能仅通过「覆盖`syncDisplayProxy`方法」
+		 * * 构造函数参数中的「实例属性」在super之后才初始化
+		 * * （属性）初始化顺序
+		 *   * 1. 父类构造函数
+		 * 	 * 2. 父类构造函数中的方法
+		 *   * 3. 子类构造函数的方法（取决于其中`super`的位置）
+		 *   * 4. 子类构造函数的属性
+		 *   * 5. 子类构造函数（super后的部分）
+		 */
+		// * 附加显示更新
+		this._proxy.storeState('isPull', this.isPull)
+	}
+
+	/** @override 增加一个状态的更新 */
+	syncDisplayProxy(): void {
+		// 超类逻辑
+		super.syncDisplayProxy()
+		// 附加更新 // ! 这时isPull可能还没初始化（在构造时）
+		if (this.isPull !== undefined)
+			this._proxy.storeState('isPull', this.isPull)
 	}
 
 	//============Instance Getter And Setter============//
@@ -98,37 +119,4 @@ export default class LaserPulse extends Laser {
 	}
 	protected _temp_movePlayer_mRotAxis?: mRot
 	protected _temp_movePlayer_pointerL?: int
-
-	//============Display Implements============//
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// /**
-	//  * 实现：
-	//  * @param shape 绘制的目标
-	//  */
-	// override displayInit(shape: IShape): void {
-	// 	for (let i: uint = 0; i < 2; i++) {
-	// 		// 0,1
-	// 		this.drawOwnerLine(
-	// 			shape.graphics,
-	// 			-LaserPulse.SIZE / Math.pow(2, i + 1),
-	// 			LaserPulse.SIZE / Math.pow(2, i + 1),
-	// 			i * 0.1 + 0.2
-	// 		)
-	// 	}
-	// 	super.displayInit(shape) // 调用超类，计算长度
-	// }
-
-	// /**
-	//  * 覆盖：根据自身「y尺寸」调整纵向缩放
-	//  */
-	// override shapeRefresh(shape: IShape): void {
-	// 	super.shapeRefresh(shape)
-	// 	if (this.isPull) {
-	// 		shape.scaleY = 1 + this.life / LaserPulse.LIFE
-	// 		shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
-	// 	} else {
-	// 		shape.scaleY = 2 - this.life / LaserPulse.LIFE
-	// 		shape.alpha = (2 - shape.scaleY) * LaserPulse.ALPHA
-	// 	}
-	// }
 }
