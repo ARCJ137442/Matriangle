@@ -5,6 +5,9 @@ import IWorldRegistry from '../registry/IWorldRegistry'
 import { voidF } from 'matriangle-common/utils'
 import { IDisplayable } from '../../display/DisplayInterfaces'
 import { IDisplayDataMatrix } from '../../display/RemoteDisplayAPI'
+import { iPointRef } from 'matriangle-common/geometricTools'
+import Block from '../block/Block'
+import IMapStorage from '../map/IMapStorage'
 
 /**
  * 母体：承载并控制所有「世界运行」有关的事物
@@ -92,11 +95,27 @@ export default interface IMatrix extends IDisplayable<IDisplayDataMatrix> {
 	 */
 	get map(): IMap
 	set map(value: IMap)
-	// get mapIndex(): uint; // !【2023-10-02 23:26:35】现在讨论「索引」无意义
-	// get mapWidth(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
-	// get mapHeight(): uint; // !【2023-10-02 22:46:28】高维化现在不再需要
-	// get mapTransformPeriod(): uint // !【2023-10-16 23:50:36】地图的「变换周期」现在也外置了
-	// set mapVisible(value: boolean); // !【2023-10-02 22:36:32】弃用：不再涉及「显示呈现」
+
+	// ! 代理地图中「修改方块」的方法 ! //
+
+	/**
+	 * （代理方法）设置地图上某位置的方块
+	 * * 🎯代理地图中「设置方块」类功能 // ! 用于截获设置，并引发钩子如`onPositionedBlockUpdate`
+	 * @param x x坐标
+	 * @param y y坐标
+	 * @param block 方块对象
+	 */
+	setBlock(p: iPointRef, block: Block): IMapStorage
+
+	/**
+	 * （代理方法）【快捷方式】将地图上某个位置设置成「空」
+	 * * 🎯代理地图中「置空方块」类功能 // ! 用于截获设置，并引发钩子如`onPositionedBlockUpdate`
+	 * * 对应原生方块类型的「Void」
+	 * ! 应该等同于`setBlock(x, y, BLOCK_VOID)`
+	 * @param x x坐标
+	 * @param y y坐标
+	 */
+	setVoid(p: iPointRef): IMapStorage
 
 	//========🎯规则部分：规则加载、规则读写========//
 	/**

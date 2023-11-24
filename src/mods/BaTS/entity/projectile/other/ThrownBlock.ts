@@ -220,7 +220,7 @@ export default class ThrownBlock
 			host.map.isBlockBreakable(_temp_iPoint, BlockAttributes_Native.VOID)
 		) {
 			// 放置
-			host.map.storage.setBlock(_temp_iPoint, this._block)
+			host.setBlock(_temp_iPoint, this._block)
 		}
 		// 特效
 		// ! 会更改自身坐标：复用自身坐标，更改为「将要生成的特效坐标」
@@ -234,35 +234,4 @@ export default class ThrownBlock
 		// 移除自身
 		host.removeEntity(this)
 	}
-
-	//============Display Implements============//
-	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// /**
-	//  * 实现：初始化方块的位置
-	//  *
-	//  * ! 【2023-09-22 22:27:00】现在其显示直接复用相应方块的显示
-	//  * * 坐标系统也一并对齐（采用「左上角布局」）
-	//  */
-	// public displayInit(blockShape: IShape): void {
-	// 	// 内部方块的显示
-	// // TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
-	// 	return this._carriedBlock?.displayInit(blockShape)
-	// 	/* if (this._carriedBlock !== null) {
-	// 		// ↓ 现在采用了新坐标系统
-	// 		// this._carriedBlock.x = -this._carriedBlock.width / 2;
-	// 		// this._carriedBlock.y = -this._carriedBlock.height / 2;
-	// 		// shape.addChild(blockShape);
-	// 	} */
-	// }
-
-	// /**
-	//  * 💭一般情况下不会再更新了
-	//  * * 除非「位置」
-	//  */
-	// public shapeRefresh(shape: IShape): void {}
-
-	// /** 实现：清除图形 */
-	// public displayDestruct(shape: IShape): void {
-	// 	shape.graphics.clear()
-	// }
 }

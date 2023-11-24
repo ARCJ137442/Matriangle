@@ -176,8 +176,8 @@ export default interface IPlayer
 	/** 实现：所处位置方块更新⇒传递更新（忽略延时、是位置改变） */
 	onPositedBlockUpdate(
 		host: IMatrix,
-		ignoreDelay: boolean,
-		isLocationChange: boolean
+		ignoreDelay?: boolean /* = true */,
+		isLocationChange?: boolean /* = false */
 	): void
 
 	/**

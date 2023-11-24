@@ -7,6 +7,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { typeID } from 'matriangle-api'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
+import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 
 export interface IDisplayDataEntityStateBonusBox
 	extends IDisplayDataEntityState {
@@ -58,6 +59,11 @@ export default class BonusBox
 		this._bonusType = type
 		// this._symbol = new BonusBoxSymbol(this._bonusType);
 		// * 显示更新
+		this.syncDisplayProxy()
+	}
+
+	/** @implements 实现 */
+	syncDisplayProxy(): void {
 		this._proxy.position = this._position
 		this._proxy.storeState('bonusType', this._bonusType)
 	}
@@ -81,8 +87,8 @@ export default class BonusBox
 
 	//============World Mechanics============//
 
-	/** 实现：如果更新后自身位置被遮挡，则通知母体移除自身 */
-	public onPositedBlockUpdate(host: IMatrix): void {
+	/** @override 实现：如果更新后自身位置被遮挡，则通知母体移除自身 */
+	onPositedBlockUpdate(host: IMatrix): void {
 		if (
 			!host.map.testCanPass_I(
 				this._position,
@@ -90,7 +96,8 @@ export default class BonusBox
 				false,
 				false,
 				false,
-				true
+				true,
+				getPlayers(host)
 			)
 		) {
 			host.removeEntity(this)

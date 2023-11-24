@@ -8,6 +8,10 @@ import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
 import { Val, isDefined, voidF } from 'matriangle-common/utils'
 import { projectEntity } from '../mechanics/NativeMatrixMechanics'
 import { IDisplayDataMatrix } from 'matriangle-api/display/RemoteDisplayAPI'
+import { iPointRef, intPoint } from 'matriangle-common'
+import IMapStorage from 'matriangle-api/server/map/IMapStorage'
+import Block from 'matriangle-api/server/block/Block'
+import { i_inGrid } from 'matriangle-api'
 
 /**
  * 母体的第一代实现
@@ -60,6 +64,33 @@ export default class Matrix_V1 implements IMatrix {
 	}
 	set map(value: IMap) {
 		this._currentMap = value
+	}
+
+	protected broadcastPositedBlockUpdate(p: iPointRef): void {
+		for (const entity of this.entities) {
+			// 判断格点实体
+			if (i_inGrid(entity)) entity.onPositedBlockUpdate(this)
+		}
+	}
+
+	/** 代理：设置方块 */
+	setBlock(p: iPointRef, block: Block): IMapStorage {
+		// * 原方法执行
+		const result = this.map.storage.setBlock(p, block)
+		// * （仅向「格点实体」）分派事件「所处方块变更」
+		this.broadcastPositedBlockUpdate(p)
+		// * 代理返回值
+		return result
+	}
+
+	/** 代理：置空方块 */
+	setVoid(p: intPoint): IMapStorage {
+		// * 原方法执行
+		const result = this.map.storage.setVoid(p)
+		// * （仅向「格点实体」）分派事件「所处方块变更」
+		this.broadcastPositedBlockUpdate(p)
+		// * 代理返回值
+		return result
 	}
 
 	//========🌟实体部分：实体管理、实体事件等========//

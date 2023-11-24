@@ -880,8 +880,8 @@ export default class Player_V1<
 	}
 	onPositedBlockUpdate(
 		host: IMatrix,
-		ignoreDelay: boolean,
-		isLocationChange: boolean
+		ignoreDelay: boolean = true,
+		isLocationChange: boolean = false
 	): void {}
 
 	// 🎨显示 //

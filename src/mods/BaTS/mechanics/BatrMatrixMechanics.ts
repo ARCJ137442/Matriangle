@@ -1356,7 +1356,7 @@ export function randomTick_MoveableWall(
 		)
 	else return
 	// 清空自身位置 //
-	host.map.storage.setVoid(position)
+	host.setVoid(position)
 	// 所谓「病毒模式」就是「可能会传播的模式」，这个只会生成一次 // !【2023-10-07 19:24:47】因最新的「方块状态重写」「变量用途不明」等原因，废弃之
 	// if (!(block.state as MoveableWall)?.virus)
 }
@@ -1391,10 +1391,7 @@ export function randomTick_ColorSpawner(
 		const newBlock: Block<BSColored> =
 			NativeBlockPrototypes.COLORED.softCopy().randomizeState()
 		// 放置
-		host.map.storage.setBlock(
-			_temp_randomTick_ColorSpawner_blockP,
-			newBlock
-		) // * 后续世界需要处理「方块更新事件」
+		host.setBlock(_temp_randomTick_ColorSpawner_blockP, newBlock) // * 后续世界需要处理「方块更新事件」
 		host.addEntity(
 			EffectBlockLight.fromBlock(
 				_temp_randomTick_ColorSpawner_blockP,

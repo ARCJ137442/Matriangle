@@ -415,8 +415,8 @@ export default class PlayerBatr
 
 	override onPositedBlockUpdate(
 		host: IMatrix,
-		ignoreDelay: boolean,
-		isLocationChange: boolean
+		ignoreDelay: boolean = true,
+		isLocationChange: boolean = false
 	): void {
 		super.onPositedBlockUpdate(host, ignoreDelay, isLocationChange)
 		this.dealMoveInTest(host, ignoreDelay, isLocationChange)

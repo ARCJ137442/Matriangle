@@ -89,6 +89,8 @@ export interface IEntityInGrid extends IEntityHasPosition<iPoint> {
 	 * 当「所处位置方块更新」时调用
 	 * * 应用：玩家的「窒息伤害/陷阱伤害/随机旋转」，奖励箱的「窒息消失」
 	 *
+	 * ! args中的参数必须为可选（包含默认值）
+	 *
 	 * @param host 调用它的母体
 	 */
 	onPositedBlockUpdate(host: IMatrix, ...args: unknown[]): void
@@ -192,7 +194,7 @@ export function i_displayable<StateT extends IDisplayDataEntityState>(
 ): e is IEntityDisplayable<StateT> {
 	return (
 		i_displayableInterface(e) &&
-		(e as IEntityDisplayable<StateT>)?.isActive !== undefined
+		(e as unknown as IEntityDisplayable<StateT>)?.isActive !== undefined
 	)
 }
 

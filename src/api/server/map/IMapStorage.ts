@@ -237,7 +237,11 @@ export default interface IMapStorage
 
 	/**
 	 * 删除地图上的所有方块
-	 * ! 对其中的「方块对象」调用析构函数，可能会因「改变其引用」而导致难以预料的后果
+	 *
+	 * ! 可能会对其中的「方块对象」调用析构函数，可能会因「改变其引用」而导致难以预料的后果
+	 *
+	 * ! 不被「世界母体」代理，不建议在内部方法外调用
+	 *
 	 * @param deleteBlock 是否在方块对象上调用析构函数
 	 */
 	clearBlocks(deleteBlock?: boolean /* = true*/): IMapStorage

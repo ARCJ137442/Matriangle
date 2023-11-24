@@ -62,7 +62,8 @@ export default class LaserTeleport extends Laser {
 		super.hitAPlayer(host, player, canHurt, finalDamage)
 		// 再尝试传送
 		if (
-			canHurt /* 不会传送自身 */ &&
+			// ! 若使用了canHurt，则无法传送队友
+			// !【2023-11-24 16:50:07】现在不管「是否会伤害」，都会传送🔥（可用于自身随机瞬移）
 			!player.isRespawning /* 不会传送已死亡玩家 */
 		)
 			spreadPlayer(host, player)
