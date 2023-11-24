@@ -180,8 +180,8 @@ export class NARSEnv {
 		const p: IPlayer = new Player_V1({
 			position: this.matrix.map.storage.randomPoint,
 			isActive: true,
-			fillColor: config.attributes.appearance.fillColor,
-			lineColor: config.attributes.appearance.lineColor,
+			fillColor: config.attributes.appearance.normal.fillColor,
+			lineColor: config.attributes.appearance.normal.lineColor,
 		})
 		// 名字
 		p.customName = config.attributes.name
@@ -462,6 +462,7 @@ export interface NARSAgentStats {
  * !【2023-10-30 22:23:01】注意：不是也不会是「玩家」
  *
  * TODO: 是否需要「继承玩家」然后「让所有配置都实现一遍『NARS智能体』」才罢休？
+ * TODO: 💭现在有了图形化显示端，或许可以尝试真的「继承玩家」然后做一些「特色显示」？
  */
 export class NARSPlayerAgent {
 	// NARS相关
@@ -787,6 +788,15 @@ export class NARSPlayerAgent {
 		): NARSOperationResult => {
 			// !【2023-11-07 01:00:20】（新）设置一个「背景状态」：把「该操作（作为『上一个操作』）是否自主」存到「NARS智能体」中
 			this._lastOperationSpontaneous = spontaneous
+			// * 显示反映：自发⇒绿色，非自发⇒原色
+			player.setColor(
+				spontaneous
+					? selfConfig.attributes.appearance.active.lineColor
+					: selfConfig.attributes.appearance.babble.lineColor,
+				spontaneous
+					? selfConfig.attributes.appearance.active.fillColor
+					: selfConfig.attributes.appearance.babble.fillColor
+			)
 			// 执行操作，返回结果
 			_temp_lastOperationResult = config.behavior.operate(
 				env,

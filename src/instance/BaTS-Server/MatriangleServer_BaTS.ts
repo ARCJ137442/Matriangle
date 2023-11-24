@@ -64,12 +64,16 @@ import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
 import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
 import { MatrixRules_Batr } from 'matriangle-mod-bats/rule/MatrixRules_Batr'
-import { linkToRouterLazy } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import {
+	IMessageService,
+	linkToRouterLazy,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 
 // 超参数/常量 //
 import config from './startup-BaTS.config'
 import MatrixVisualizer from 'matriangle-mod-visualization/visualizer/MatrixVisualizer'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
+import ProgramMatrixConsole from 'matriangle-mod-native/entities/control/MatrixConsole'
 
 // 规则 //
 function initMatrixRule(): IMatrixRule {
@@ -310,6 +314,52 @@ matrix.initByRule()
 setupEntities(matrix)
 // ! 必要的坐标投影
 projectEntities(matrix.map, matrix.entities)
+
+// 控制台 // TODO: 【2023-11-25 01:21:10】后续似乎要反向学习`NARSEnv.ts`的布局方式😂
+
+/** 配置控制台 */
+export function setupConsole(host: IMatrix): void {
+	/** 新建实体 */
+	const matrixConsole: ProgramMatrixConsole = new ProgramMatrixConsole(host)
+	/** 连接 */
+	const service: IMessageService =
+		// * 通过「控制服务」建立连接
+		config.connections.control.constructor(
+			config.connections.control.host,
+			config.connections.control.port,
+			// !【2023-11-10 22:32:43】直接执行指令，拆分等任务交给客户端
+			(message: string): string | undefined => {
+				// 空消息⇒不受理
+				if (message.length === 0) return undefined
+				// 按开头字符区分
+				switch (message[0]) {
+					// * 以`/`开头⇒运行指令并返回输出
+					case '/': {
+						const result = matrixConsole.executeCmd(
+							message.slice(1)
+						)
+						return (
+							// * 以`/`开头，以便被识别为「指令输出」
+							'/' +
+							// 不显示「undefined」
+							(result === undefined ? '' : String(result))
+							// 截掉开头的`/`
+						)
+					}
+					default:
+						return undefined
+				}
+			}
+		)
+	router.registerService(service, (): void => {
+		console.log(
+			`MatriangleServer_BaTS@setupConsole: 与路由器成功在 ${service.addressFull} 建立连接！`
+		)
+	})
+	/** 注入 */
+	host.addEntity(matrixConsole)
+}
+
 /*
  * 地址：http://127.0.0.1:3001
  * 示例@前进：http://127.0.0.1:3001/?key=p2&action=moveForward

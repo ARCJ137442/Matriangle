@@ -6,8 +6,18 @@ import { OptionalRecursive2 } from 'matriangle-common'
 import { Container, DisplayObject, Frame, Stage } from 'zimjs'
 import { ZimDisplayerEntities } from './zim_client_entities'
 import { ZimDisplayerMap } from './zim_client_map'
-import { EntityDrawDict } from '../implements/zim_client_entity'
-import { BlockDrawDict } from '../implements/zim_client_block'
+import {
+	ENTITY_DRAW_DICT_BATR,
+	ENTITY_DRAW_DICT_NARS,
+	ENTITY_DRAW_DICT_NATIVE,
+	EntityDrawDict,
+} from '../implements/zim_client_entity'
+import {
+	BLOCK_DRAW_DICT_BATR,
+	BLOCK_DRAW_DICT_NARS,
+	BLOCK_DRAW_DICT_NATIVE,
+	BlockDrawDict,
+} from '../implements/zim_client_block'
 
 /**
  * 总体的「母体呈现者」入口
@@ -133,3 +143,20 @@ export function addEmptyMatrixDisplayer(
 	// 返回
 	return displayer
 }
+
+/**
+ * 默认的「大全集」显示配置
+ * * 🎯把「UI呈现文件」和「UI逻辑文件」更彻底地分离
+ */
+export const DEFAULT_DRAW_MAPS: [BlockDrawDict, EntityDrawDict] = [
+	{
+		...BLOCK_DRAW_DICT_NATIVE,
+		...BLOCK_DRAW_DICT_BATR,
+		...BLOCK_DRAW_DICT_NARS,
+	},
+	{
+		...ENTITY_DRAW_DICT_NATIVE,
+		...ENTITY_DRAW_DICT_BATR,
+		...ENTITY_DRAW_DICT_NARS,
+	},
+]

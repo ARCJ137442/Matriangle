@@ -383,3 +383,17 @@ export const BLOCK_DRAW_DICT_BATR: BlockDrawDict = {
 	[BatrBlockIDs.SUPPLY_POINT]: (shape: Shape, _state: null): Shape =>
 		drawSupplyPoint(shape),
 }
+
+/**
+ * 根据方块ID进行绘制映射的绘图函数 @ NARS（独有）
+ * * 用于模拟环境的方块配置
+ */
+export const BLOCK_DRAW_DICT_NARS: BlockDrawDict = {
+	// ! 记得防止命名冲突
+	AI_Wall: (shape: Shape, _state: null): Shape =>
+		drawWall(
+			shape,
+			// 直接使用原型の状态，无需任何变数
+			BatrBlockPrototypes.WALL.state
+		),
+}

@@ -82,9 +82,9 @@ export const info = (config: NARSEnvConfig): string => `
  * * 只起「阻挡」作用
  */
 export const WALL: Block<null> = new Block(
-	'Wall',
-	new BlockAttributes(0).asSolid,
-	null // 无特殊方块状态
+	'AI_Wall', // * 现在使用特殊的名称进行索引（已经在zim_client_block.ts中加入支持）
+	new BlockAttributes(0).loadAsSolid(),
+	null // 固定方块状态（取自并共用BaTS的数据结构）
 )
 
 /** 空白的构造器 */
@@ -223,8 +223,21 @@ const configConstructor = (
 					lifeNotDecay: true,
 				},
 				appearance: {
-					lineColor: 0,
-					fillColor: 0,
+					normal: {
+						// *【2023-11-24 23:54:35】现在是纯白色
+						lineColor: 0x808080,
+						fillColor: 0xffffff,
+					},
+					// *【2023-11-25 01:58:20】同图表线条
+					babble: {
+						lineColor: 0x7f6633,
+						fillColor: 0xffcc66,
+					},
+					// *【2023-11-25 01:58:20】同图表线条
+					active: {
+						lineColor: 0x337f66,
+						fillColor: 0x66ffcc,
+					},
 				},
 			},
 

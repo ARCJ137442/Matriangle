@@ -11,16 +11,21 @@ import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI
 import {
 	drawRoundRectBox,
 	drawTriangleRight,
-	drawPlayerGradient,
+	drawPlayerTriangleGradient,
 	graphicsLineStyle,
 	drawSquareFrameCenter,
 	CreateGraphics,
 	drawSingleCenteredSquareWithRotation,
+	drawPlayerTopBox,
+	drawPlayerBottomBox,
 } from '../zimUtils'
 import { IDisplayDataEntityStateBullet } from 'matriangle-mod-bats/entity/projectile/bullet/Bullet'
 import { formatHEX, formatHEX_A } from 'matriangle-common'
 import { IDisplayDataEntityStateBonusBox } from 'matriangle-mod-bats/entity/item/BonusBox'
-import { NativeBonusTypes as BonusTypes_Batr } from 'matriangle-mod-bats/registry/BonusRegistry'
+import {
+	BonusType,
+	NativeBonusTypes as BonusTypes_Batr,
+} from 'matriangle-mod-bats/registry/BonusRegistry'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { IDisplayDataStateEffectExplode } from 'matriangle-mod-bats/entity/effect/EffectExplode'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
@@ -40,8 +45,6 @@ export type ZimDrawF_Entity = (
 	displayer: ZimDisplayerEntity,
 	state: IDisplayDataEntityState
 ) => ZimDisplayerEntity
-
-// TODO: 有待实现
 
 /*
 ? 实体的绘图方法似乎被限制在其自身中，并且很多地方都需要抽象出一个「实体状态」以避免直接的数据传输
@@ -163,7 +166,7 @@ export function drawPlayerDecoration(
 	label: string,
 	decorationRadius: number = PLAYER_DRAW_DATAS.DECORATION_SIZE
 ): CreateGraphics {
-	// console.warn('shape.graphics.', label) // !【2023-11-23 00:35:08】正常了，TODO: 但无法在填充时镂空
+	// !【2023-11-23 00:35:08】正常了，但无法在填充时镂空，【2023-11-25 00:31:19】所以直接用线条颜色补上
 	switch (label) {
 		case NativeDecorationLabel.EMPTY:
 			return graphics
@@ -193,7 +196,83 @@ export function drawPlayerDecoration(
 			console.warn('未知的装饰符号：', label)
 			return graphics
 	}
-	// graphics.endFill();
+}
+
+/** 【2023-11-25 00:31:53】就应该有一个正式的「玩家绘制」函数 */
+export function drawPlayer(
+	displayer: ZimDisplayerEntity<IDisplayDataEntityStatePlayerV1>,
+	state: OptionalRecursive2<IDisplayDataEntityStatePlayerV1>
+): void {
+	// * 调用了，就默认需要更新了
+	const direction = state.direction ?? displayer.currentState.direction
+	// * 先清空已有的
+	displayer.graphics.clear()
+	// * xy
+	if (direction < 4) {
+		drawPlayerTriangleGradient(
+			displayer.graphics,
+			function (
+				graphics: CreateGraphics,
+				size: number,
+				lineSize: number,
+				realRadiusX: number,
+				realRadiusY: number
+			): void {
+				// * 绘制底座
+				drawTriangleRight(
+					graphics,
+					size,
+					lineSize,
+					realRadiusX,
+					realRadiusY
+				)
+					// 线条断续
+					.endStroke()
+					.endFill()
+					.beginFill(
+						formatHEX(
+							state?.lineColor ?? displayer.currentState.lineColor
+						)
+					)
+					.beginStroke(
+						formatHEX(
+							state?.lineColor ?? displayer.currentState.lineColor
+						)
+					)
+				// * 绘制装饰
+				drawPlayerDecoration(
+					displayer.graphics,
+					state.decorationLabel ??
+						displayer.currentState.decorationLabel
+				)
+			},
+			PLAYER_DRAW_DATAS.SIZE,
+			PLAYER_DRAW_DATAS.LINE_SIZE,
+			state.fillColor,
+			state.lineColor
+		)
+	}
+	// * 更高维的朝向
+	else {
+		if ((direction & 1) === 0)
+			// * z+
+			drawPlayerTopBox(
+				displayer.graphics,
+				PLAYER_DRAW_DATAS.SIZE,
+				PLAYER_DRAW_DATAS.LINE_SIZE,
+				state.fillColor,
+				state.lineColor
+			)
+		// * z-
+		else
+			drawPlayerBottomBox(
+				displayer.graphics,
+				PLAYER_DRAW_DATAS.SIZE,
+				PLAYER_DRAW_DATAS.LINE_SIZE,
+				state.fillColor,
+				state.lineColor
+			)
+	}
 }
 
 // 子弹 //
@@ -395,7 +474,7 @@ const BONUS_BOX_DRAW_DATAS = {
 
 export function drawBonusBox(
 	shape: ZimDisplayerEntity,
-	state: IDisplayDataEntityStateBonusBox
+	bonusType: BonusType
 ): ZimDisplayerEntity {
 	// * 绘制盒子 * //
 	drawRoundRectBox(
@@ -407,7 +486,7 @@ export function drawBonusBox(
 		BONUS_BOX_DRAW_DATAS.fillColor
 	)
 	// * 绘制标识 * // // 返回自身
-	return drawBonusBoxSymbol(shape, state)
+	return drawBonusBoxSymbol(shape, bonusType)
 }
 
 // 特效 //
@@ -572,9 +651,9 @@ export function drawUpArrow(
  */
 export function drawBonusBoxSymbol(
 	shape: ZimDisplayerEntity,
-	state: IDisplayDataEntityStateBonusBox
+	bonusType: BonusType
 ): ZimDisplayerEntity {
-	switch (state.bonusType) {
+	switch (bonusType) {
 		// HHL(HP,Heal&Life)
 		case BonusTypes_Batr.ADD_HP:
 			drawHPSymbol(shape)
@@ -809,49 +888,22 @@ export type EntityDrawDict = {
 
 /**
  * 根据实体ID、状态进行绘制映射的绘图函数 @ 原生
+ *
+ * TODO: 是否「实体状态」要从中分离？
+ * * 对「实体状态」的需求，导致显示端本身要带上逻辑端在「实体」方面的数据
+ *   * 而这本来最好是能被共享的
  */
 export const ENTITY_DRAW_DICT_NATIVE: EntityDrawDict = {
 	/** 目前只有「初代玩家」 */
 	[NativeEntityTypes.PLAYER.id]: {
 		// 初始化
 		init: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataEntityStatePlayerV1>,
 			state: IDisplayDataEntityStatePlayerV1
 		): ZimDisplayerEntity => {
-			drawPlayerGradient(
-				displayer.graphics,
-				function (
-					graphics: CreateGraphics,
-					size: number,
-					lineSize: number,
-					realRadiusX: number,
-					realRadiusY: number
-				): void {
-					// * 绘制底座
-					drawTriangleRight(
-						graphics,
-						size,
-						lineSize,
-						realRadiusX,
-						realRadiusY
-					)
-						// 线条断续
-						.endStroke()
-						.endFill()
-						.beginFill(formatHEX(state.lineColor))
-						.beginStroke(formatHEX(state.lineColor))
-					// * 绘制装饰
-					drawPlayerDecoration(
-						displayer.graphics,
-						state.decorationLabel
-					)
-				},
-				PLAYER_DRAW_DATAS.SIZE,
-				PLAYER_DRAW_DATAS.LINE_SIZE,
-				state.fillColor,
-				state.lineColor
-			)
-			// 填充颜色&粗细
+			// 绘图
+			drawPlayer(displayer, state)
+			// 通用更新&返回
 			return commonUpdate_all(
 				displayer,
 				state,
@@ -860,15 +912,23 @@ export const ENTITY_DRAW_DICT_NATIVE: EntityDrawDict = {
 		},
 		// 更新
 		refresh: (
-			displayer: ZimDisplayerEntity,
+			displayer: ZimDisplayerEntity<IDisplayDataEntityStatePlayerV1>,
 			state: OptionalRecursive2<IDisplayDataEntityStatePlayerV1>
-		): ZimDisplayerEntity =>
+		): ZimDisplayerEntity => {
+			// * 依据「方向/颜色 是否变化」进行更新（图形）
+			if (
+				state.direction !== undefined ||
+				state.fillColor !== undefined ||
+				state.lineColor !== undefined
+			)
+				drawPlayer(displayer, state)
 			// 直接调用「通用更新」
-			commonUpdate_all(
+			return commonUpdate_all(
 				displayer,
 				state,
 				true // 格点实体
-			),
+			)
+		},
 	},
 }
 
@@ -1261,7 +1321,7 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 		): ZimDisplayerEntity =>
 			// 填充颜色&粗细
 			commonUpdate_all(
-				drawBonusBox(displayer, state),
+				drawBonusBox(displayer, state.bonusType),
 				state,
 				true // 格点实体
 			),
@@ -1646,5 +1706,50 @@ export const ENTITY_DRAW_DICT_BATR: EntityDrawDict = {
 			// 返回自身
 			return displayer
 		},
+	},
+}
+
+/**
+ * 适用于NARS实验的「显示包」 @ NARS
+ */
+export const ENTITY_DRAW_DICT_NARS: EntityDrawDict = {
+	/** 能量包 */
+	AI_Powerup: {
+		// 初始化
+		init: (
+			displayer: ZimDisplayerEntity,
+			state: IDisplayDataEntityState
+		): ZimDisplayerEntity => {
+			// 填充颜色&粗细
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+			if ((state as any)?.good === undefined)
+				console.error('AI_Powerup: 缺失good属性')
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+			const good: boolean = (state as any)?.good ? true : false
+			return commonUpdate_all(
+				// 箭头
+				drawBonusBox(
+					displayer,
+					good
+						? // 正面⇒绿
+						  BonusTypes_Batr.BUFF_RESISTANCE
+						: // 负面⇒红
+						  BonusTypes_Batr.BUFF_DAMAGE
+				),
+				state,
+				true // 格点实体
+			)
+		},
+		// 更新
+		refresh: (
+			displayer: ZimDisplayerEntity,
+			state: OptionalRecursive2<IDisplayDataEntityState>
+		): ZimDisplayerEntity =>
+			// 直接调用「通用更新」
+			commonUpdate_all(
+				displayer,
+				state,
+				true // 格点实体
+			),
 	},
 }

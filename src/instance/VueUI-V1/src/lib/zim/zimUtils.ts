@@ -238,7 +238,7 @@ export function drawTriangleRight<G extends CreateGraphics>(
  * 绘制一个向右（默认方向）的带渐变填充三角形
  * * 摘自旧AS3代码 @ src\mods\BaTS\entity\player\PlayerBatr.ts
  */
-export function drawPlayerGradient<G extends CreateGraphics>(
+export function drawPlayerTriangleGradient<G extends CreateGraphics>(
 	graphics: G,
 	/** 使用回调函数把「填充」与「绘图」分开 */
 	drawCallback: (
@@ -282,6 +282,53 @@ export function drawPlayerGradient<G extends CreateGraphics>(
 			.endFill()
 			.endStroke() as G
 	)
+}
+
+/**
+ * 绘制一个类似`[X]`的矩形盒子
+ * * 用于绘制「向上z+」的玩家
+ */
+export function drawPlayerTopBox(
+	graphics: CreateGraphics,
+	size: number,
+	lineSize: number,
+	fillColor: uint = 0xffffff,
+	lineColor: uint = halfBrightnessTo(fillColor)
+): CreateGraphics {
+	return (
+		graphicsLineStyle(
+			// * 先绘制底座
+			drawPlayerBottomBox(graphics, size, lineSize, fillColor, lineColor),
+			lineSize,
+			lineColor,
+			1
+		)
+			// * 增加个「X」
+			.moveTo(-size / 2, -size / 2)
+			.lineTo(size / 2, size / 2)
+			.moveTo(-size / 2, size / 2)
+			.lineTo(size / 2, -size / 2)
+			// * 结束
+			.endStroke()
+	)
+}
+
+/**
+ * 绘制一个纯正方形盒子
+ * * 用于绘制「向下z-」的玩家
+ */
+export function drawPlayerBottomBox(
+	graphics: CreateGraphics,
+	size: number,
+	lineSize: number,
+	fillColor: uint = 0xffffff,
+	lineColor: uint = halfBrightnessTo(fillColor)
+): CreateGraphics {
+	return graphicsLineStyle(graphics, lineSize, lineColor, 1)
+		.beginFill(formatHEX(fillColor))
+		.drawRect(-size / 2, -size / 2, size, size)
+		.endFill()
+		.endStroke()
 }
 
 /**

@@ -96,22 +96,27 @@ export const info = (config: NARSEnvConfig): string => `
  * * 只起「阻挡」作用
  */
 export const WALL: Block<null> = new Block(
-	'Wall',
+	'AI_Wall', // * 现在使用特殊的名称进行索引（已经在zim_client_block.ts中加入支持）
 	new BlockAttributes(0).loadAsSolid(),
-	null // 无特殊方块状态
+	null // 固定方块状态（取自并共用BaTS的数据结构）
 )
+
+/** 奖励包的状态 */
+export interface IDisplayDataEntityStatePowerup
+	extends IDisplayDataEntityState {
+	good: boolean
+}
 
 /**
  * 实验所用的「能量包」
  */
 export class Powerup
-	extends EntityDisplayable<IDisplayDataEntityState>
+	extends EntityDisplayable<IDisplayDataEntityStatePowerup>
 	// *【2023-11-18 10:43:14】现在直接继承，无需直接处理细节
 	implements IEntityInGrid
 {
-	// TODO: 后续完善泛型类型（实体显示状态）
 	/** ID */
-	public static readonly ID: typeID = 'Powerup'
+	public static readonly ID: typeID = 'AI_Powerup' // * 不要轻易改，这在zim_client.entity.ts中有用
 
 	/**
 	 * 构造函数
@@ -129,6 +134,12 @@ export class Powerup
 	) {
 		super(Powerup.ID)
 		this.position.copyFrom(position)
+		this.syncDisplayProxy()
+	}
+	/** @implements 显示数据 */
+	protected syncDisplayProxy(): void {
+		this._proxy.storeState('good', this.good)
+		this._proxy.position = this.position
 	}
 
 	// 接口实现 //
@@ -452,8 +463,21 @@ const configConstructor = (
 					lifeNotDecay: true,
 				},
 				appearance: {
-					lineColor: 0,
-					fillColor: 0,
+					normal: {
+						// *【2023-11-24 23:54:35】现在是纯白色
+						lineColor: 0x808080,
+						fillColor: 0xffffff,
+					},
+					// *【2023-11-25 01:58:20】同图表线条
+					babble: {
+						lineColor: 0x7f6633,
+						fillColor: 0xffcc66,
+					},
+					// *【2023-11-25 01:58:20】同图表线条
+					active: {
+						lineColor: 0x337f66,
+						fillColor: 0x66ffcc,
+					},
 				},
 			},
 
@@ -469,7 +493,7 @@ const configConstructor = (
 					port: 3030,
 					constructor: BlankMessageServiceConstructor,
 				},
-				controlKey: 'AgentHai',
+				controlKey: 'Alpha', // * 为了和碰撞实验相吻合
 			},
 
 			// 数据显示

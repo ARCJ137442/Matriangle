@@ -329,6 +329,13 @@ export default interface IPlayer
 	/** 获取（缓存的）十六进制填充颜色 */
 	get fillColor(): uint
 
+	/**
+	 * 外部用于统一设置颜色的方法
+	 * * 统一设置线条颜色、填充颜色
+	 * * 🎯触发「显示数据更新」
+	 */
+	setColor(line: uint, fill: uint): void
+
 	/** 用于在GUI上显示的文本：生命值+最大生命值+储备生命值+剩余生命数（若生命数有限） */
 	get HPText(): string
 

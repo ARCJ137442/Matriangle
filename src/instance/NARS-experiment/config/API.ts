@@ -16,6 +16,14 @@ import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInter
 import Entity from 'matriangle-api/server/entity/Entity'
 import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 
+/** 统一存储玩家外观配置 */
+export type NARSPlayerAppearanceConfig = {
+	/** 线条颜色（承继自IPlayer） */
+	lineColor: uint
+	/** 填充颜色（承继自IPlayer） */
+	fillColor: uint
+}
+
 /**
  * NARS玩家配置
  */
@@ -39,10 +47,12 @@ export type NARSPlayerConfig = {
 		}
 		/** 外表相关 */
 		appearance: {
-			/** 线条颜色（承继自IPlayer） */
-			lineColor: uint
-			/** 填充颜色（承继自IPlayer） */
-			fillColor: uint
+			/** 在默认状态时的外观 */
+			normal: NARSPlayerAppearanceConfig
+			/** 在babble状态时（非自主操作后）的外观 */
+			babble: NARSPlayerAppearanceConfig
+			/** 在自发状态时（自主操作后）的外观 */
+			active: NARSPlayerAppearanceConfig
 		}
 	}
 

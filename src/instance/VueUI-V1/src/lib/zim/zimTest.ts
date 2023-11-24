@@ -20,7 +20,11 @@ import {
 	drawSpawnPointMark,
 	drawSupplyPoint,
 } from './implements/zim_client_block'
-import { drawPlayerGradient, center_drags, drawTriangleRight } from './zimUtils'
+import {
+	drawPlayerTriangleGradient,
+	center_drags,
+	drawTriangleRight,
+} from './zimUtils'
 import PlayerBatr from 'matriangle-mod-bats/entity/player/PlayerBatr'
 
 /**
@@ -65,7 +69,7 @@ export function test_draw(shape_constructor: () => Shape): Shape[] {
 		// 玩家
 		((): Shape => {
 			const p = shape_constructor()
-			drawPlayerGradient(
+			drawPlayerTriangleGradient(
 				p.graphics,
 				drawTriangleRight,
 				PlayerBatr.SIZE,

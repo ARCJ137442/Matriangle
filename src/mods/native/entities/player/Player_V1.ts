@@ -900,6 +900,16 @@ export default class Player_V1<
 		return this._fillColor
 	}
 
+	/** 设置颜色 */
+	setColor(line: number, fill: number): void {
+		// 设置颜色
+		this._lineColor = line
+		this._fillColor = fill
+		// * 存进「显示代理」中
+		this._proxy.storeState('lineColor', this._lineColor)
+		this._proxy.storeState('fillColor', this._fillColor)
+	}
+
 	/** 用于判断「装饰类型」的标记 */
 	decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY
 }

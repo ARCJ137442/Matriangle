@@ -25,18 +25,11 @@ import {
 } from 'matriangle-api/display/RemoteDisplayAPI'
 import { test_draw } from '../lib/zim/zimTest'
 import {
-	BLOCK_DRAW_DICT_BATR,
-	BLOCK_DRAW_DICT_NATIVE,
-} from '../lib/zim/implements/zim_client_block'
-import {
+	DEFAULT_DRAW_MAPS,
 	ZimDisplayerMatrix,
 	addEmptyMatrixDisplayer,
 } from '../lib/zim/interfaces/zim_client_matrix'
 import { JSObject, OptionalRecursive2 } from '../../../../common'
-import {
-	ENTITY_DRAW_DICT_BATR,
-	ENTITY_DRAW_DICT_NATIVE,
-} from '../lib/zim/implements/zim_client_entity'
 
 let frame: Frame
 let shapes: Shape[]
@@ -64,14 +57,7 @@ onMounted((): void => {
 			// 添加新的地图呈现者
 			matrixDisplayer = addEmptyMatrixDisplayer(
 				frame,
-				{
-					...BLOCK_DRAW_DICT_NATIVE,
-					...BLOCK_DRAW_DICT_BATR,
-				},
-				{
-					...ENTITY_DRAW_DICT_NATIVE,
-					...ENTITY_DRAW_DICT_BATR,
-				}
+				...DEFAULT_DRAW_MAPS
 			)
 			// 调整尺寸 // ! 尺寸调不了，frame.remakeCanvas报错用不了
 			const aSize = matrixDisplayer.map.unfoldedDisplaySize2D
