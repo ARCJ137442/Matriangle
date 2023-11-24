@@ -677,7 +677,10 @@ export class ZimDisplayerMap
 		else {
 			// 有⇒更新
 			if (this.hasBlockDisplayerAt(pos))
-				this.blocks[this._temp_pos_index].shapeRefresh(blockData)
+				// ! 不加上泛型类型「never」容易导致「实例化过深」错误
+				this.blocks[this._temp_pos_index].shapeRefresh(
+					blockData as IDisplayDataBlock<never>
+				)
 			// 无⇒创建
 			else this.setBlockHard(pos, blockData)
 		}

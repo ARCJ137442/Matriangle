@@ -66,6 +66,38 @@ export default class LaserPulse extends Laser<IDisplayDataEntityStateLaserPulse>
 		 *   * 3. 子类构造函数的方法（取决于其中`super`的位置）
 		 *   * 4. 子类构造函数的属性
 		 *   * 5. 子类构造函数（super后的部分）
+		 *
+		 * @example 测试样例
+		 * class A {
+		 *     constructor() {
+		 *         console.log('A');
+		 *         this.A()
+		 *     }
+		 *     A(){
+		 *         console.log('A.A');
+		 *     }
+		 * }
+		 *
+		 * class B extends A {
+		 *     constructor(
+		 *         public b: string
+		 *     ) {
+		 *         super();
+		 *         console.log('B',this.b);
+		 *     }
+		 *     override A(){
+		 *         super.A();
+		 *         console.log('B.A',this.b);
+		 *     }
+		 * }
+		 *
+		 * new B('1')
+		 *
+		 * `输出：
+		 * A
+		 * A.A
+		 * B.A undefined
+		 * B 1`
 		 */
 		// * 附加显示更新
 		this._proxy.storeState('isPull', this.isPull)

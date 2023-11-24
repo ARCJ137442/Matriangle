@@ -7,6 +7,9 @@ import {
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { Shape } from 'zimjs'
 
+/** 有关「绘图上下文」的类 */
+export type CreateGraphics = createjs.Graphics
+
 /** 中心化+可拖动 */
 export const center_drag = (shape: Shape): Shape =>
 	randomMove(shape.center()).drag()
@@ -75,19 +78,21 @@ export function fillSquareBiColored(
 
 /**
  * 绘制一个有指定内外径的正方形框
+ * * 用于绘制方块的边界：基于(0,0)开始的绘制起点
+ *
  * ! 只含`draw`函数，颜色需要预先指定
  *
- * @param shape 待绘制的图形
+ * @param graphics 待绘制的绘图上下文
  * @param a 边长
  * @param border_width 边框宽度
  * @returns 图形本身
  */
 export function drawSquareFrameOrigin(
-	shape: Shape,
+	graphics: CreateGraphics,
 	a: number,
 	border_width: number
-): Shape {
-	shape.graphics
+): CreateGraphics {
+	return graphics
 		.drawRect(0, 0, a, border_width)
 		.drawRect(0, a - border_width, a, border_width)
 		.drawRect(0, border_width, border_width, a - 2 * border_width)
@@ -97,23 +102,59 @@ export function drawSquareFrameOrigin(
 			border_width,
 			a - 2 * border_width
 		)
-	return shape
+}
+
+/**
+ * 绘制一个有指定内外径的正方形框
+ * ! 只含`draw`函数，颜色需要预先指定
+ *
+ * @param graphics 待绘制的绘图上下文
+ * @param r 半径（边长/2）
+ * @param border_width 边框宽度
+ * @returns 图形本身
+ */
+export function drawSquareFrameCenter(
+	graphics: CreateGraphics,
+	r: number,
+	border_width: number
+): CreateGraphics {
+	return (
+		graphics
+			// ↑
+			.drawRect(-r, -r, r * 2, border_width)
+			// ↓
+			.drawRect(-r, r - border_width, r * 2, border_width)
+			// ←
+			.drawRect(
+				-r,
+				border_width - r,
+				border_width,
+				(r - border_width) * 2
+			)
+			// →
+			.drawRect(
+				r - border_width,
+				border_width - r,
+				border_width,
+				(r - border_width) * 2
+			)
+	)
 }
 
 /**
  * 绘制菱形
- * @param shape 图形
+ * @param graphics 绘图上下文
  * @param cX 中心X
  * @param cY 中心Y
  * @param radius 半径（中心点到四角的距离）
  */
 export function drawDiamond(
-	shape: Shape,
+	graphics: CreateGraphics,
 	cX: number,
 	cY: number,
 	radius: number
-): void {
-	shape.graphics
+): CreateGraphics {
+	return graphics
 		.moveTo(cX - radius, cY)
 		.lineTo(cX, cY + radius)
 		.lineTo(cX + radius, cY)
@@ -124,52 +165,50 @@ export function drawDiamond(
 /**
  * 绘制一个边长为a的正方形，并叠加以一个边长相等的菱形（45°夹角）
  *
- * @param shape 图形
+ * @param graphics 绘图上下文
  * @param cX 中心x坐标
  * @param cY 中心y坐标
  * @param a 边长
  */
 export function drawSquareAndDiamond(
-	shape: Shape,
+	graphics: CreateGraphics,
 	cX: number,
 	cY: number,
 	a: number
-): void {
-	shape.graphics.drawRect(cX - a / 2, cY - a / 2, a, a)
-	drawDiamond(shape, cX, cY, a * Math.SQRT1_2)
+): CreateGraphics {
+	graphics.drawRect(cX - a / 2, cY - a / 2, a, a)
+	return drawDiamond(graphics, cX, cY, a * Math.SQRT1_2)
 }
 /**
  * 绘制一个向右（默认方向）的三角形
  * * 不包含填充控制代码
  * * 摘自旧AS3代码 @ src\mods\BaTS\entity\player\PlayerBatr.ts
  */
-export function drawTriangleRight<S extends Shape>(
-	shape: S,
+export function drawTriangleRight<G extends CreateGraphics>(
+	graphics: G,
 	size: number,
 	lineSize: number,
 	// 先前逻辑复刻
 	realRadiusX: number = (size - lineSize) / 2,
 	realRadiusY: number = (size - lineSize) / 2
-): S {
-	// 绘图即可
-	shape.graphics
+): G {
+	// 绘图即可，返回自身
+	return graphics
 		.moveTo(-realRadiusX, -realRadiusY)
 		.lineTo(realRadiusX, 0)
 		.lineTo(-realRadiusX, realRadiusY)
-		.lineTo(-realRadiusX, -realRadiusY)
-	// 返回自身
-	return shape
+		.lineTo(-realRadiusX, -realRadiusY) as G
 }
 
 /**
  * 绘制一个向右（默认方向）的带渐变填充三角形
  * * 摘自旧AS3代码 @ src\mods\BaTS\entity\player\PlayerBatr.ts
  */
-export function drawPlayerGradient<S extends Shape>(
-	shape: S,
+export function drawPlayerGradient<G extends CreateGraphics>(
+	graphics: G,
 	/** 使用回调函数把「填充」与「绘图」分开 */
 	drawCallback: (
-		shape: S,
+		graphics: G,
 		size: number,
 		lineSize: number,
 		realRadiusX: number,
@@ -179,13 +218,13 @@ export function drawPlayerGradient<S extends Shape>(
 	lineSize: number,
 	fillColor: uint = 0xffffff,
 	lineColor: uint = halfBrightnessTo(fillColor)
-): S {
+): G {
 	// 新 //
 	const fillColor2 = turnBrightnessTo(fillColor, 0.75),
 		realRadiusX: number = (size - lineSize) / 2,
 		realRadiusY: number = (size - lineSize) / 2
 	// 准备绘制
-	graphicsLineStyle(shape.graphics, lineSize, lineColor) // 从旧有Flash API迁移
+	graphicsLineStyle(graphics, lineSize, lineColor) // 从旧有Flash API迁移
 		.beginFill(formatHEX(fillColor))
 		.beginLinearGradientFill(
 			[formatHEX(fillColor), formatHEX(fillColor2)],
@@ -200,21 +239,22 @@ export function drawPlayerGradient<S extends Shape>(
 		InterpolationMethod.RGB */
 		)
 	// 绘制图形
-	drawCallback(shape, size, lineSize, realRadiusX, realRadiusY)
-	// drawTriangleRight(shape, size, lineSize, realRadiusX, realRadiusY)
+	drawCallback(graphics, size, lineSize, realRadiusX, realRadiusY)
+	// drawTriangleRight(graphics, size, lineSize, realRadiusX, realRadiusY)
 	// 结束绘制
-	shape.graphics
-		// shape.graphics.drawCircle(0,0,10);
-		.endFill()
-		.endStroke()
-	return shape
+	return (
+		graphics
+			// graphics.drawCircle(0,0,10);
+			.endFill()
+			.endStroke() as G
+	)
 }
 
 /**
  * 绘制一个圆角矩形盒子
  * * 参考自旧AS3代码 @ `BattleTriangle-Gamma\batr\game\entity\entities\BonusBox.as`
  *
- * @param shape 要绘制的图形
+ * @param graphics 要绘制的图形
  * @param blockSize 作为参照的「方块」大小
  * @param boxSize 盒子大小
  * @param boxLineSize 盒子外边界线粗细
@@ -223,36 +263,37 @@ export function drawPlayerGradient<S extends Shape>(
  * @param fillColor 盒子填充颜色
  * @returns 图形自身
  */
-export function drawRoundRectBox<S extends Shape>(
-	shape: S,
+export function drawRoundRectBox<G extends CreateGraphics>(
+	graphics: G,
 	boxSize: number,
 	boxLineSize: number,
 	boxRoundSize: number,
 	lineColor: uint,
 	fillColor: uint
-): S {
-	// Line
-	shape.graphics.beginFill(formatHEX(lineColor))
-	shape.graphics.drawRoundRect(
-		-boxSize / 2,
-		-boxSize / 2,
-		boxSize,
-		boxSize,
-		boxRoundSize // !【2023-11-19 23:52:20】Zim.js只需要一个半径
-		// boxRoundSize
+): G {
+	return (
+		graphics
+			// Line
+			.beginFill(formatHEX(lineColor))
+			.drawRoundRect(
+				-boxSize / 2,
+				-boxSize / 2,
+				boxSize,
+				boxSize,
+				boxRoundSize // !【2023-11-19 23:52:20】Zim.js只需要一个半径
+				// boxRoundSize
+			)
+			.endFill()
+			// Fill
+			.beginFill(formatHEX(fillColor))
+			.drawRoundRect(
+				boxLineSize - boxSize / 2,
+				boxLineSize - boxSize / 2,
+				boxSize - 2 * boxLineSize,
+				boxSize - 2 * boxLineSize,
+				boxRoundSize // !【2023-11-19 23:52:20】Zim.js只需要一个半径
+				// boxRoundSize
+			)
+			.endFill() as G
 	)
-	shape.graphics.endFill()
-	// Fill
-	shape.graphics.beginFill(formatHEX(fillColor))
-	shape.graphics.drawRoundRect(
-		boxLineSize - boxSize / 2,
-		boxLineSize - boxSize / 2,
-		boxSize - 2 * boxLineSize,
-		boxSize - 2 * boxLineSize,
-		boxRoundSize // !【2023-11-19 23:52:20】Zim.js只需要一个半径
-		// boxRoundSize
-	)
-	shape.graphics.endFill()
-	// 返回自身
-	return shape
 }

@@ -7,12 +7,10 @@ import {
 } from 'matriangle-api/display/RemoteDisplayAPI'
 import { OptionalRecursive2, mergeObject } from 'matriangle-common'
 import { uint } from 'matriangle-legacy'
-import { Container, Shape } from 'zimjs'
+import { Container } from 'zimjs'
 import { ZimShapeDisplayer } from './zim_client_common'
 import { ZimDisplayerMatrix } from './zim_client_matrix'
 import { EntityDrawDict } from '../implements/zim_client_entity'
-
-export type CreateGraphics = Shape['graphics']
 
 /**
  * 通用的实体呈现者

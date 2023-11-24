@@ -110,8 +110,8 @@ export function drawGlass(
 	shape.graphics
 		// 外框
 		.beginFill(formatHEX_A(state.lineColor, lineAlpha))
-	drawSquareFrameOrigin(shape, DEFAULT_SIZE, lineSize)
-		.graphics.endFill()
+	drawSquareFrameOrigin(shape.graphics, DEFAULT_SIZE, lineSize)
+		.endFill()
 		// !【2023-11-12 16:02:56】Create.js不再能像Flash那样「重复覆盖区域⇒擦除已绘制区域」
 		// 填充
 		.beginFill(formatHEX_A(state.color, fillAlpha))
@@ -138,7 +138,7 @@ export function drawGate(
 	if (state.open) {
 		// Line
 		shape.graphics.beginFill(formatHEX(lineColor))
-		drawSquareFrameOrigin(shape, DEFAULT_SIZE, lineSizeBorder)
+		drawSquareFrameOrigin(shape.graphics, DEFAULT_SIZE, lineSizeBorder)
 		shape.graphics.endFill()
 	}
 	// * 状态：关
@@ -180,25 +180,24 @@ export function drawLaserTrap(
 		.beginStroke(formatHEX(centerColor)) // ! 替代Flash中的`graphics.lineStyle`
 		.setStrokeStyle(lineSizeCenter)
 	drawDiamond(
-		shape,
+		shape.graphics,
 		DEFAULT_SIZE / 2,
 		DEFAULT_SIZE / 2,
 		(DEFAULT_SIZE * 2) / 12
 	)
 	drawDiamond(
-		shape,
+		shape.graphics,
 		DEFAULT_SIZE / 2,
 		DEFAULT_SIZE / 2,
 		(DEFAULT_SIZE * 3) / 12
 	)
 	drawDiamond(
-		shape,
+		shape.graphics,
 		DEFAULT_SIZE / 2,
 		DEFAULT_SIZE / 2,
 		(DEFAULT_SIZE * 4) / 12
 	)
-	// 中心点
-	shape.graphics
+		// 中心点
 		.beginFill(formatHEX(centerColor))
 		.drawCircle(DEFAULT_SIZE / 2, DEFAULT_SIZE / 2, DEFAULT_SIZE / 16)
 		.endFill()
@@ -251,11 +250,13 @@ export function drawSpawnPointMark(
 		.beginStroke(formatHEX(centerColor)) // ! 替代Flash中的`graphics.lineStyle`
 		.setStrokeStyle(lineSizeCenter)
 	drawSquareAndDiamond(
-		shape,
+		shape.graphics,
 		DEFAULT_SIZE / 2,
 		DEFAULT_SIZE / 2,
 		DEFAULT_SIZE / 2
 	)
+		.endFill()
+		.endStroke()
 	return shape
 }
 

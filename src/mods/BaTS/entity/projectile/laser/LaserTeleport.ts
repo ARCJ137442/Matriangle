@@ -58,7 +58,7 @@ export default class LaserTeleport extends Laser {
 		canHurt: boolean,
 		finalDamage: number
 	): void {
-		// 先伤害
+		// 先尝试伤害
 		super.hitAPlayer(host, player, canHurt, finalDamage)
 		// 再尝试传送
 		if (

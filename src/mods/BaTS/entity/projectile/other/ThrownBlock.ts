@@ -21,6 +21,16 @@ import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanic
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
 import { BlockAttributes_Native } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 import { typeID } from 'matriangle-api'
+import {
+	IDisplayDataBlock,
+	IDisplayDataEntityState,
+} from 'matriangle-api/display/RemoteDisplayAPI'
+
+export interface IDisplayDataEntityStateThrownBlock
+	extends IDisplayDataEntityState {
+	/** 内含的方块 */
+	block: IDisplayDataBlock
+}
 
 /**
  * 「掷出的方块」是
@@ -28,7 +38,10 @@ import { typeID } from 'matriangle-api'
  * * 承载一种「移动的方块」以便「把方块作为可移动对象/武器」的
  * 抛射体
  */
-export default class ThrownBlock extends Projectile implements IEntityOutGrid {
+export default class ThrownBlock
+	extends Projectile<IDisplayDataEntityStateThrownBlock>
+	implements IEntityOutGrid
+{
 	//============Static Variables============//
 	/** ID */
 	public static readonly ID: typeID = 'ThrownBlock'
@@ -54,9 +67,9 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 	}
 
 	/** 这个「掷出的方块」所包含的方块 */
-	protected _carriedBlock: Block // ! 【2023-09-22 22:28:28】你必需有一个方块，哪怕是「空」也好，都不要引入null，谢谢
+	protected _block: Block // ! 【2023-09-22 22:28:28】你必需有一个方块，哪怕是「空」也好，都不要引入null，谢谢
 	public get carriedBlock(): Block {
-		return this._carriedBlock
+		return this._block
 	}
 
 	/**
@@ -119,7 +132,7 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 			direction
 		)
 		// * 复制方块实例 //
-		this._carriedBlock = block.copy() // ! 会复制出一个新实例，而非沿用原先的实例
+		this._block = block.copy() // ! 会复制出一个新实例，而非沿用原先的实例
 		// * 位置、速度等物理变量 //
 		this._position.copyFrom(position)
 		// this.speed.copyFrom(speed); // ! 【2023-09-22 20:23:52】现在不再存储「速度」这个变量，而是在世界刻中直接使用方向进行即时计算
@@ -127,6 +140,15 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 		this._direction = direction
 		// ? ↑这里的设置仍然有「通用性」的牺牲：这使得「抛出的方块」无法沿任意方向移动
 		// this.shapeInit(shape: IBatrShape);
+		this.syncDisplayProxy()
+	}
+
+	/** @implements 实现：同步方块数据 */
+	syncDisplayProxy(): void {
+		// super.syncDisplayProxy() // ! 抽象方法
+		this._proxy.position = this._position
+		// ! direction已经在超类更新过了
+		this._proxy.storeState('block', this._block.getDisplayData())
 	}
 
 	//============Destructor Function============//
@@ -159,6 +181,8 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 				this._direction,
 				this._speed
 			)
+			// * 显示更新
+			this._proxy.position = this._position
 		}
 		// ! 只有「从未击中过」的方块才能进入「击中」流程
 		else if (!this._isHitAnything) {
@@ -196,14 +220,14 @@ export default class ThrownBlock extends Projectile implements IEntityOutGrid {
 			host.map.isBlockBreakable(_temp_iPoint, BlockAttributes_Native.VOID)
 		) {
 			// 放置
-			host.map.storage.setBlock(_temp_iPoint, this._carriedBlock)
+			host.map.storage.setBlock(_temp_iPoint, this._block)
 		}
 		// 特效
 		// ! 会更改自身坐标：复用自身坐标，更改为「将要生成的特效坐标」
 		host.addEntity(
 			EffectBlockLight.fromBlock(
 				alignToGridCenter_P(this._position, this._position),
-				this._carriedBlock,
+				this._block,
 				false
 			)
 		)
