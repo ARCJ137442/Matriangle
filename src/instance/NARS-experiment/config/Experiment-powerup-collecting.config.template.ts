@@ -636,13 +636,15 @@ const configConstructor = (
 					}
 					// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
 					const rl = ['right', 'left'] // 先右后左，先正后负
-					for (name of rl) {
-						// 遍历各个维度，产生操作
-						for (
-							let i = internalAtomicOperations.length >> 1; // !【2023-11-08 00:49:03】现在从「内置原始操作后的第一个维度」开始，若没有就作罢
-							i < host.map.storage.numDimension;
-							++i
-						) {
+					// 遍历各个维度，产生操作
+					for (
+						// !【2023-11-08 00:49:03】现在从「内置原始操作后的第一个维度」开始，若没有就作罢
+						let i = (internalAtomicOperations.length >> 1) + 1;
+						// *【2023-11-25 23:47:31】这里的「+1」现在是「内部操作」不够「n-1个维度维度」的情况下。。。因为原生的「left|right」已经够2d了
+						i < host.map.storage.numDimension;
+						++i
+					) {
+						for (name of rl) {
 							// 负/正方向 //
 							registerOperation([
 								// * 样例：['^left', '{SELF}', 'x']
