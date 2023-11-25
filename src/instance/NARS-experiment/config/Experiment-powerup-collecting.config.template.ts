@@ -2,9 +2,15 @@ import { iPoint, iPointRef, iPointVal } from 'matriangle-common/geometricTools'
 import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
+import IPlayer, {
+	isPlayer,
+} from 'matriangle-mod-native/entities/player/IPlayer'
 import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
-import { nameOfAxis_M } from 'matriangle-api/server/general/GlobalRot'
+import {
+	mRot,
+	nameOfAxis_M,
+	rotateInPlane_M,
+} from 'matriangle-api/server/general/GlobalRot'
 import {
 	IMessageService,
 	getAddress,
@@ -32,10 +38,7 @@ import BlockAttributes from 'matriangle-api/server/block/BlockAttributes'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { IEntityInGrid } from 'matriangle-api/server/entity/EntityInterfaces'
 import { DisplayLevel, typeID } from 'matriangle-api'
-import {
-	getPlayers,
-	hitTestEntity_between_Grid,
-} from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
+import { hitTestEntity_between_Grid } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import { NativeBlockPrototypes } from 'matriangle-mod-native/registry/BlockRegistry_Native'
 import {
 	PlayerAction,
@@ -156,11 +159,22 @@ export class Powerup
 		return Powerup.isSuitablePosition(host, this.position)
 	}
 
-	/** （静态）判断自身位置 */
+	/** （静态）判断自身位置是否适合 */
 	protected static isSuitablePosition(
 		host: IMatrix,
 		position: iPointRef
 	): boolean {
+		// 手动避免玩家和其它能量包
+		for (const entity of host.entities) {
+			if (
+				// 玩家 or 其它能量包
+				(isPlayer(entity) || entity instanceof Powerup) &&
+				// 坐标相等
+				entity.position.isEqual(position)
+			)
+				// 不可放置
+				return false
+		}
 		return host.map.testCanPass_I(
 			position,
 			// 作为「玩家」
@@ -168,10 +182,8 @@ export class Powerup
 			false,
 			false,
 			// 不会「避免伤害」（BaTr遗留产物）
-			false,
-			// 避免玩家
-			true,
-			getPlayers(host)
+			false
+			// 不用在此避免什么
 		)
 	}
 
@@ -536,7 +548,7 @@ const configConstructor = (
 			// 计时参数
 			timing: {
 				/** 单位执行速度:感知 */
-				unitAITickSpeed: 2,
+				unitAITickSpeed: 5,
 				/** 目标提醒相对倍率 */
 				goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
 
@@ -547,6 +559,8 @@ const configConstructor = (
 				babbleRate: 1,
 				/** 「长时间无操作⇒babble」的阈值 */
 				babbleThreshold: 3,
+				// babble概率（移植自SimNAR）
+				babbleProbability: 0.1,
 			},
 
 			// 词项常量池 & 词法模板
@@ -613,8 +627,8 @@ const configConstructor = (
 						// !【2023-11-10 18:45:17】操作参数还是不能省略（虽然ONA支持「零参乘积」但OpenNARS不支持）
 						['^right', selfConfig.NAL.SELF],
 						['^left', selfConfig.NAL.SELF],
-						['^down', selfConfig.NAL.SELF],
-						['^up', selfConfig.NAL.SELF],
+						// ['^down', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
+						// ['^up', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
 					]
 					// * 优先注册「内部原始操作」
 					for (const operation of internalAtomicOperations) {
@@ -670,13 +684,16 @@ const configConstructor = (
 								)
 									// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
 									send2NARS(
-										// 例句：`<{SELF} --> [x_powerup_seen]>. :|: %1.0;0.9%`
+										// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
 										generateCommonNarseseBinaryToCIN(
-											selfConfig.NAL.SELF, // 主词
-											NarseseCopulas.Inheritance, // 系词
-											`[${nameOfAxis_M(i)}_powerup_${
+											/**
+											 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+											 */
+											`{${nameOfAxis_M(i)}_powerup_${
 												entity.good ? 'good' : 'bad'
-											}_seen]`, // 谓词
+											}}`, // 主词
+											NarseseCopulas.Inheritance, // 系词
+											`[seen]`, // 谓词
 											NarsesePunctuation.Judgement, // 标点
 											NarseseTenses.Present, // 时态
 											// 真值
@@ -725,10 +742,10 @@ const configConstructor = (
 						posPointer[i]--
 					}
 					// * 运动：前进 * //
-					// 前进
-					agent.player.moveForward(host)
+					// 前进 // * 现在只在「上一次没操作」时前进（或许可以考虑解放出来「成为一个智能体操作」）
+					if (agent.lastNARSOperated > 0)
+						agent.player.moveForward(host)
 					// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
-					// TODO: 似乎这个应该交给「移动后触发」，也就是说「移动后」事件回传
 					testPowerupCollision(
 						env,
 						host,
@@ -748,6 +765,9 @@ const configConstructor = (
 				/**
 				 * @implements 根据操作移动
 				 * * 索引即方向
+				 * * 【2023-11-25 21:44:14】现在使用「0 => xy+, 1 => xy-, 2 => xOz+, ...」这样的旋转方式
+				 *   * 既能兼容「任意维地图」
+				 *   * 又能实现「一直同样操作≠状态一直不变」
 				 */
 				operate: (
 					env: NARSEnv,
@@ -761,24 +781,14 @@ const configConstructor = (
 					// 有操作⇒行动&反馈
 					if (operateI >= 0) {
 						// 玩家转向 // !【2023-11-07 00:32:16】行动「前进」在AITick中
-						agent.player.turnTo(host, operateI)
-						/** 否则⇒没撞墙⇒没有负反馈 */ // ! 目前不需要这个「边界检测」
+						const newDirection: mRot = rotateInPlane_M(
+							agent.player.direction,
+							0, // x+
+							operateI + 2, // 从y+开始
+							1
+						)
+						agent.player.turnTo(host, newDirection)
 						return undefined
-						/* // 否则⇒移动成功⇒「没撞墙」⇒「安全」⇒正反馈
-						else {
-							send2NARS(
-								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									SAFE, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present // 时态
-									// selfConfig.NAL.positiveTruth // ! 目标没有真值
-								)
-							)
-							return true
-						} */
 					} else
 						console.warn(
 							`未知的操作「${selfConfig.NAL.op_output(op)}」`

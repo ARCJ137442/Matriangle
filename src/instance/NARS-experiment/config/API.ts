@@ -116,18 +116,38 @@ export type NARSPlayerConfig = {
 
 	/** 计时参数 */
 	timing: {
-		/** 单位执行速度 */
+		/**
+		 * 单位执行速度
+		 * * 单位：AI刻/秒
+		 */
 		unitAITickSpeed: uint
-		/** 目标提醒相对倍率 */
+		/**
+		 * 目标提醒相对倍率
+		 * * 单位：AI刻
+		 */
 		goalRemindRate: uint
 
-		/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
+		/**
+		 * 教学时间（实验开始NARS操作「不阻塞Babble」的时间）
+		 * * 单位：AI刻
+		 */
 		teachingTime: uint
 
-		/** Babble相对倍率 */
+		/**
+		 * Babble相对倍率
+		 * * 单位：AI刻
+		 */
 		babbleRate: uint
-		/** 「长时间无操作⇒babble」的阈值 */
+		/**
+		 * 「长时间无操作⇒babble」的阈值
+		 * * 单位：AI刻
+		 */
 		babbleThreshold: uint
+		/**
+		 * （移植自SimNAR）每次「时刻已到」时「真正开始babble」的概率
+		 * @default 留空默认总是触发
+		 */
+		babbleProbability?: number
 	}
 
 	/** NAL常量池 & 词法模板 */

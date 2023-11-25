@@ -14,6 +14,7 @@ import {
 	mapObjectKey,
 	mergeMaps,
 	mergeMultiMaps,
+	randomBoolean2,
 	randomIn,
 } from 'matriangle-common/utils'
 import { iPoint } from 'matriangle-common/geometricTools'
@@ -194,20 +195,15 @@ export class NARSEnv {
 		p.lifeNotDecay = config.attributes.health.lifeNotDecay
 
 		// 注入智能体 // * 初始化控制器、路由器、连接和行为
-		const agent: NARSPlayerAgent = new NARSPlayerAgent(
-			this,
-			host,
-			p,
-			config,
-			this.router,
-			ctlWeb,
-			kcc
+		this.agents.push(
+			new NARSPlayerAgent(this, host, p, config, this.router, ctlWeb, kcc)
 		)
-		agent
 
 		// *添加实体
 		host.addEntities(p, this.router, ctlWeb, kcc)
 	}
+	/** 存储所有创建了的NARS智能体 */
+	protected agents: NARSPlayerAgent[] = []
 
 	/** 配置可视化 */
 	setupVisualization(host: IMatrix): void {
@@ -424,6 +420,11 @@ export class NARSEnv {
 		)
 		console.groupEnd()
 
+		// 连接完成后启动所有「NARS智能体」的「读秒时钟」 //
+		this.agents.forEach((agent: NARSPlayerAgent): void =>
+			agent.startTickSecond()
+		)
+
 		// 二次打印描述（避免错过） //
 		this.printInitDescription()
 
@@ -442,7 +443,7 @@ export class NARSEnv {
 /** NARS智能体的统计数据 */
 export interface NARSAgentStats {
 	// 统计数据 //
-	/** 总时间：实验全程总时长 */
+	/** 总时间：实验全程总时长（秒） */
 	总时间: uint
 	/** 总次数：实验全程小车的成功次数与失败次数之和 */
 	总次数: uint // * 即「总操作次数」
@@ -497,7 +498,7 @@ export class NARSPlayerAgent {
 	// 统计数据 //
 	/** 有关「NARS运行状态」「智能体表现状态」的统计数据 */
 	protected readonly stats: NARSAgentStats = {
-		/** 总时间：实验全程总时长 */
+		/** 总时间：实验全程总时长（AI刻） */
 		总时间: 0,
 		/** 总次数：实验全程小车的成功次数与失败次数之和 */
 		总次数: 0, // * 即「总操作次数」
@@ -685,14 +686,21 @@ export class NARSPlayerAgent {
 	 * *【2023-10-30 21:32:26】目前大多数参数都是从旧「NARSEnv」的全局变量引入的
 	 */
 	public constructor(
-		env: NARSEnv,
+		/** 所处在的NARS环境 */
+		public env: NARSEnv,
 		host: IMatrix,
+		/** 所控制的玩家 */
 		public player: IPlayer,
+		/** 所持有的「玩家配置」 */
 		public config: NARSPlayerConfig,
-		router: IMessageRouter,
+		/** 所连接的「消息路由器」 */
+		public router: IMessageRouter,
 		ctlWeb: WebController,
 		kcc: KeyboardControlCenter
 	) {
+		// 读秒时钟（用于统一「激活率」指标，并统一图表）
+
+		// 网络控制器：增加连接
 		ctlWeb.addConnection(
 			player,
 			// 用于「Web控制器」
@@ -714,13 +722,8 @@ export class NARSPlayerAgent {
 				env.config.connections.controlService.port,
 				// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
 				// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
-				(message: string): undefined => {
-					if (message[0] !== '|') return
-					// * 有加号⇒按下
-					if (message[1] === '+') kcc.onPress(message.slice(2))
-					// * 无加号⇒释放
-					else kcc.onRelease(message.slice(1))
-				}
+				(message: string): undefined =>
+					this.dealKeyboardCenterMessage(kcc, message)
 			),
 			(): void => {
 				console.log('键控中心连接成功！')
@@ -737,24 +740,8 @@ export class NARSPlayerAgent {
 				 * * 初始配置：
 				 *   * 消息格式：`JSON.stringify(NARSPlotData)`
 				 */
-				(message: string): string => {
-					// 具体「消息源」参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#L247`
-					switch (message) {
-						// 'request-config' => 图表配置
-						case 'request-config':
-							return JSON.stringify(env.config.plot.initialOption)
-						// 'request-info' => 基本信息
-						case 'request-info':
-							// ! `i`为前缀 // 可参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#175`
-							return 'i' + env.config.info(env.config)
-						// 否则 => 空信息 + 并控制台报错
-						default:
-							console.error(
-								`数据显示服务：无效的消息「${message}」`
-							)
-							return ''
-					}
-				}
+				(message: string): string =>
+					this.dealDataShowMessage(env, message)
 			)
 		)
 
@@ -763,155 +750,15 @@ export class NARSPlayerAgent {
 		const ctlFeedback: FeedbackController = new FeedbackController('NARS')
 		/** AI执行速度 = 单位执行速度 */
 		ctlFeedback.AIRunSpeed = config.timing.unitAITickSpeed
-		/** 距离「上一次NARS发送操作」所过的单位时间 */
-		let lastNARSOperated: uint = config.timing.babbleThreshold // * 默认一开始就进行babble
-		/** 当前教学「所剩时间」（Babble「不被NARS操作所抑制」的阶段） */
-		let teachingTimeLasting: uint = config.timing.teachingTime
 
-		// 对接NARS操作 //
-		/** 上一次操作的结果 */
-		let _temp_lastOperationResult: NARSOperationResult
-		/**
-		 * 对接配置中的操作
-		 *
-		 * @param self 当前玩家
-		 * @param host 世界母体
-		 * @param operation NARS操作
-		 * @param spontaneous 是否为「自主操作」
-		 */
-		const operateEnv = (
-			self: IPlayer,
-			selfConfig: NARSPlayerConfig,
-			host: IMatrix,
-			operation: NARSOperation,
-			spontaneous: boolean
-		): NARSOperationResult => {
-			// !【2023-11-07 01:00:20】（新）设置一个「背景状态」：把「该操作（作为『上一个操作』）是否自主」存到「NARS智能体」中
-			this._lastOperationSpontaneous = spontaneous
-			// * 显示反映：自发⇒绿色，非自发⇒原色
-			player.setColor(
-				spontaneous
-					? selfConfig.attributes.appearance.active.lineColor
-					: selfConfig.attributes.appearance.babble.lineColor,
-				spontaneous
-					? selfConfig.attributes.appearance.active.fillColor
-					: selfConfig.attributes.appearance.babble.fillColor
-			)
-			// 执行操作，返回结果
-			_temp_lastOperationResult = config.behavior.operate(
-				env,
-				this,
-				selfConfig,
-				host,
-				operation,
-				// 自动获取操作索引
-				this.registeredOperation_outputs.indexOf(
-					config.NAL.op_output(operation)
-				),
-				send2NARS
-			)
-			// * 计入「操作历史」
-			this._operationHistory.push([
-				operation,
-				_temp_lastOperationResult,
-				spontaneous,
-			])
-			// * 统计，只有在「有结果」的时候算入「总次数」或者「总触发次数」（必须只有「成功/失败」）
-			this.recordStat(_temp_lastOperationResult, spontaneous)
-			return _temp_lastOperationResult
-		}
-		// 接收消息 //
-		/**
-		 * 处理NARS传来的「操作」
-		 * *【2023-11-05 01:23:02】目前直接使用自BabelNAR包装好的「NARS操作」类型
-		 */
-		const exeHandler = (
-			self: IPlayer,
-			host: IMatrix,
-			operation: NARSOperation
-		): void => {
-			// 现在直接有NARSOperation对象
-			console.info(`操作「${config.NAL.op_output(operation)}」已被接收！`)
-			// 执行
-			switch (operateEnv(self, config, host, operation, true)) {
-				// 成功
-				case true:
-					console.info(
-						`自主操作「${config.NAL.op_output(
-							operation
-						)}」执行成功！`
-					)
-					break
-				// 失败
-				case false:
-					console.info(
-						`自主操作「${config.NAL.op_output(
-							operation
-						)}」执行失败！`
-					)
-					break
-				// 无结果：无需处理
-				default:
-					break
-			}
-			// 清空计时
-			lastNARSOperated = 0
-			/* // 数据收集统计 // !【2023-11-07 01:34:45】不再忠实反映「NARS的`EXE`数」
-			this.stats.自主操作次数++ */
-		}
 		// 消息接收
 		router.registerService(
 			config.connections.NARS.constructor(
 				config.connections.NARS.host,
 				config.connections.NARS.port,
 				// * 从NARS接收信息 * //
-				(message: string): undefined => {
-					// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
-					const output_datas: WebNARSOutputJSON = JSON.parse(
-						message
-					) as WebNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
-					// 处理
-					for (
-						let i: uint = 0, output_data: WebNARSOutput;
-						i < output_datas.length;
-						i++
-					) {
-						output_data = output_datas[i]
-						// console.log(
-						// 	`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
-						// 	output_data
-						// )
-						if (typeof output_data.output_type === 'string')
-							switch (output_data.output_type) {
-								case NARSOutputType.IN:
-									break
-								case NARSOutputType.OUT:
-									break
-								case NARSOutputType.ERROR:
-									break
-								case NARSOutputType.ANSWER:
-									break
-								case NARSOutputType.ACHIEVED:
-									break
-								case NARSOutputType.EXE:
-									if (
-										isNARSOperation(
-											output_data?.output_operation
-										)
-									)
-										exeHandler(
-											player,
-											host,
-											output_data.output_operation
-										)
-									break
-								// 跳过
-								case NARSOutputType.INFO:
-								case NARSOutputType.COMMENT:
-									break
-							}
-					}
-				}
+				(message: string): undefined =>
+					this.onNARSMessage(host, player, message)
 			),
 			(): void =>
 				console.log(
@@ -922,277 +769,521 @@ export class NARSPlayerAgent {
 				)
 		)
 
-		// 反馈控制器⇒消息路由 // * 事件反馈
-		// 辅助初始化工具
-		const posPointer: iPoint = new iPoint()
-		let experimentData
-		/** 发送消息 */
-		const send2NARS = (message: string): void => {
+		// 消息发送
+		this.send2NARS = (message: string): void => {
 			// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-			router.sendMessageTo(
-				config.connections.NARS.host,
-				config.connections.NARS.port,
+			this.router.sendMessageTo(
+				this.config.connections.NARS.host,
+				this.config.connections.NARS.port,
 				message
 			)
 			// * 向NARS发送Narsese * //
 			console.log(`Message sent: ${message}`)
 		}
-		// AI 初始化
-		ctlFeedback.on(
-			AIPlayerEvent.INIT,
-			(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
-				// 消息列表 //
-				const messages: string[] = []
-				// 消息生成
 
-				/** 生成一个回调函数，在配置中被调用，以实现「插入循环」的效果 */
-				const registerOperation = (op: [string, ...string[]]): void => {
-					// 注册操作符
-					if (!this.hasRegisteredOperator(op[0]))
-						messages.push(
-							// !【2023-11-05 02:29:18】现在开始接入NAVM的「REG」指令
-							config.NAL.generateOperatorRegToCIN(
-								op[0].slice(1) /* 去掉开头的尖号 */
-							)
-						) // 负/正 方向移动
-					// 注册内部状态
-					this.registeredOperations.push(op)
-					this.registeredOperation_outputs.push(
-						config.NAL.op_output(op)
-					)
-					// 将操作符与自身联系起来
-					messages.push(
-						config.NAL.generateNarseseToCIN(
-							// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
-							config.NAL.generateCommonNarseseBinary(
-								config.NAL.SELF,
-								NarseseCopulas.Inheritance,
-								config.NAL.op_input(op),
-								NarsesePunctuation.Judgement,
-								NarseseTenses.Eternal,
-								config.NAL.positiveTruth
-							)
-						)
-					)
-				}
-				// 调用配置
-				config.behavior.init(
-					env,
-					event,
-					self,
-					config,
-					host,
-					registerOperation
-				)
-				// 消息发送
-				for (let i = 0; i < messages.length; ++i) send2NARS(messages[i])
-				// 清空消息
-				messages.length = 0
-			}
-		)
+		// 反馈控制器⇒消息路由 // * 事件反馈
+		// AI 初始化
+		ctlFeedback.on(AIPlayerEvent.INIT, this.onAIEvent_Init.bind(this))
 		// AI 运作周期
-		let adaptationPassed: boolean = false
-		ctlFeedback.on(
-			AIPlayerEvent.AI_TICK,
-			(event: PlayerEvent, self: IPlayer, host: IMatrix): void => {
-				// 可配置的AI刻逻辑 //
-				config.behavior.AITick(
-					env,
-					event,
-					this,
-					config,
-					host,
-					posPointer,
-					send2NARS
-				)
-				// 提醒目标 //
-				if (this._goalRemindRate-- === 0) {
-					this._goalRemindRate = config.timing.goalRemindRate
-					// 先提醒正向目标
-					for (const goal of config.NAL.POSITIVE_GOALS)
-						send2NARS(
-							config.NAL.generateNarseseToCIN(
-								config.NAL.generateCommonNarseseBinary(
-									config.NAL.SELF,
-									NarseseCopulas.Inheritance,
-									goal,
-									NarsesePunctuation.Goal,
-									NarseseTenses.Present,
-									config.NAL.positiveTruth
-								)
-							)
-						)
-					// `<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.positiveTruth}`
-					// 再提醒负向目标
-					for (const goal of config.NAL.NEGATIVE_GOALS)
-						send2NARS(
-							config.NAL.generateNarseseToCIN(
-								config.NAL.generateCommonNarseseBinary(
-									config.NAL.SELF,
-									NarseseCopulas.Inheritance,
-									goal,
-									NarsesePunctuation.Goal,
-									NarseseTenses.Present,
-									config.NAL.negativeTruth
-								)
-							)
-						)
-					// ?【2023-10-30 21:51:57】是否要把目标的配置再细化一些，比如「不同目标不同周期/正负性」之类的
-				}
-				// Babble机制 //
-				if (
-					// 教学时间
-					teachingTimeLasting > 0 ||
-					// 无事babble
-					lastNARSOperated > config.timing.babbleThreshold
-				)
-					if (this._babbleRate-- === 0) {
-						this._babbleRate = config.timing.babbleRate
-						// 从函数（教法）中选一个操作⇒进行「无意识操作」
-						const babbleOp: NARSOperation = config.behavior.babble(
-							env,
-							this,
-							config,
-							host
-						)
-						// 让系统知道「自己做了操作」 // *形式：<(*, 【其它参数】) --> 【带尖号操作符】>. :|: 【正向真值】
-						send2NARS(
-							config.NAL.generateNarseseToCIN(
-								config.NAL.generateCommonNarseseBinary(
-									`(*, ${babbleOp.slice(1).join(', ')})`,
-									NarseseCopulas.Inheritance,
-									babbleOp[0],
-									NarsesePunctuation.Judgement,
-									NarseseTenses.Present,
-									config.NAL.positiveTruth
-								)
-							)
-						)
-						// 执行操作
-						operateEnv(self, config, host, babbleOp, false)
-					}
-				// 操作计数 //
-				lastNARSOperated++
-				// 教学时间流逝：减少到零就停止 //
-				if (teachingTimeLasting > 0) teachingTimeLasting--
-				// 图表数据绘制 //
-				// 生成
-				experimentData = {
-					x: this.stats.总时间,
-					成功率: this.stats.总成功次数 / this.stats.总次数,
-					教学成功率:
-						(this.stats.总成功次数 - this.stats.自主成功次数) /
-						(this.stats.总次数 - this.stats.自主操作次数),
-					自主成功率:
-						this.stats.自主成功次数 / this.stats.自主操作次数,
-					激活率:
-						countIn(
-							isOperationFullSpontaneous,
-							this._operationHistory
-						) / this.stats.总时间,
-					自主操作多样性:
-						this.calculateOperationHistoryDiversity(true),
-					教学操作多样性:
-						this.calculateOperationHistoryDiversity(false),
-				}
-				// 发送到「图表服务」
-				router.sendMessageTo(
-					config.connections.dataShow.host,
-					config.connections.dataShow.port,
-					JSON.stringify(
-						mapObjectKey(
-							experimentData,
-							config.dataShow.dataNameMap
-						)
-					)
-				)
-				router.sendMessageTo(
-					config.connections.dataShow.host,
-					config.connections.dataShow.port,
-					'|' +
-						this.visualizeOperationHistorySeparated(
-							config.dataShow.operationHistory.spontaneousPrefix,
-							config.dataShow.operationHistory.unconsciousPrefix
-						)
-				)
-				// 检测
-				if (
-					experimentData.自主成功率 > experimentData.教学成功率 &&
-					!adaptationPassed
-				) {
-					adaptationPassed = true
-					console.info(
-						'AI自主成功率超越教学成功率，自主学习能力测试通过！',
-						experimentData
-					)
-				}
-				// 时间推进 //
-				this.stats.总时间++
-			}
-		)
-		// 响应动作执行 // *【2023-11-10 19:24:19】最初被用于「键盘按键⇒无意识操作」的转换
+		ctlFeedback.on(AIPlayerEvent.AI_TICK, this.onAIEvent_Tick.bind(this))
+		// 响应动作执行 //
 		ctlFeedback.on(
 			NativePlayerEvent.PRE_ACTION,
-			(
-				event: PlayerEvent,
-				self: IPlayer,
-				host: IMatrix,
-				otherInf: NativePlayerEventOptions[NativePlayerEvent.PRE_ACTION]
-			): void => {
-				/**
-				 * 获取「行为映射」的回应
-				 * * `undefined`⇒「放行」，这时不会`operate`也不会触发其它行为
-				 * * `null`⇒「阻断」，这时不会执行「将执行的『玩家行为』」
-				 * * `NARSOperation`⇒「映射并（等同于）操作」，这时不执行「将执行的『玩家行为』」并用`operate(对应操作)`替代
-				 */
-				const reply: NARSOperation | null | undefined =
-					config.behavior.actionReplacementMap(
-						env,
-						event,
-						this,
-						config,
-						host,
-						otherInf.action
-					)
-				// * undefined⇒放行
-				if (reply === undefined) return
-				// * null⇒阻断
-				if (reply === null) {
-					// 修改「阻断」配置
-					otherInf.prevent = true
-					//返回
-					return
-				}
-				// * 否则即「玩家操作」⇒执行操作并阻断默认执行
-				else {
-					// 修改「阻断」配置
-					otherInf.prevent = true
-					// 执行返回的操作
-					operateEnv(
-						self,
-						config,
-						host,
-						reply,
-						false // ! 非自主操作
-					)
-				}
-			}
+			this.onAIEvent_PreAction.bind(this)
 		)
 		// 默认事件处理
-		ctlFeedback.on(
-			null,
-			(event: PlayerEvent, self: IPlayer, host: IMatrix): void =>
-				config.behavior.fallFeedback(
-					env,
-					event,
-					this,
-					config,
-					host,
-					send2NARS
-				)
-		)
+		ctlFeedback.on(null)
 
 		// 连接到控制器
 		player.connectController(ctlFeedback)
+	}
+
+	/**
+	 * 现实读秒
+	 */
+	protected tickSecond(router: IMessageRouter): void {
+		// 生成实验数据
+		const experimentData = {
+			x: this.stats.总时间,
+			成功率: this.stats.总成功次数 / this.stats.总次数,
+			教学成功率:
+				(this.stats.总成功次数 - this.stats.自主成功次数) /
+				(this.stats.总次数 - this.stats.自主操作次数),
+			自主成功率: this.stats.自主成功次数 / this.stats.自主操作次数,
+			激活率:
+				countIn(isOperationFullSpontaneous, this._operationHistory) /
+				this.stats.总时间,
+			自主操作多样性: this.calculateOperationHistoryDiversity(true),
+			教学操作多样性: this.calculateOperationHistoryDiversity(false),
+		}
+		// 发送到「图表服务」
+		router.sendMessageTo(
+			this.config.connections.dataShow.host,
+			this.config.connections.dataShow.port,
+			JSON.stringify(
+				mapObjectKey(experimentData, this.config.dataShow.dataNameMap)
+			)
+		)
+		router.sendMessageTo(
+			this.config.connections.dataShow.host,
+			this.config.connections.dataShow.port,
+			'|' +
+				this.visualizeOperationHistorySeparated(
+					this.config.dataShow.operationHistory.spontaneousPrefix,
+					this.config.dataShow.operationHistory.unconsciousPrefix
+				)
+		)
+		// 检测
+		let testPassed: boolean = false
+		if (
+			experimentData.自主成功率 > experimentData.教学成功率 &&
+			!testPassed
+		) {
+			testPassed = true
+			console.info(
+				'AI自主成功率超越教学成功率，自主学习能力测试通过！',
+				experimentData
+			)
+		}
+		// 时间推进 //
+		this.stats.总时间++
+	}
+	/**
+	 * 读秒时钟在接收setInterval时的ID
+	 * * 🎯让数据记录在「NARS连接成功」后方开始记录
+	 *
+	 * ! 这里ID「在浏览器端和在Node端类型不确定」是老问题了
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	protected _tickSecond_ID: any = undefined
+	/** 开始「读秒时钟」 */
+	public startTickSecond(): void {
+		// * 已启动就不会再启动一次
+		if (!this._tickSecond_ID)
+			this._tickSecond_ID = setInterval(
+				(): void => this.tickSecond(this.router),
+				1000
+			)
+	}
+	/** 停止「读秒时钟」 */
+	public stopTickSecond(): void {
+		// * 已停止就不会再停止一次
+		if (this._tickSecond_ID)
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			this._tickSecond_ID = clearInterval(this._tickSecond_ID)
+	}
+
+	/**
+	 * 处理键控中心消息
+	 * @param kcc 所连接的键控中心
+	 * @param message 从消息路由器处收到的消息
+	 */
+	protected dealKeyboardCenterMessage(
+		kcc: KeyboardControlCenter,
+		message: string
+	): undefined {
+		if (message[0] !== '|') return
+		// * 有加号⇒按下
+		if (message[1] === '+') kcc.onPress(message.slice(2))
+		// * 无加号⇒释放
+		else kcc.onRelease(message.slice(1))
+	}
+
+	/**
+	 * 处理「数据显示服务」消息
+	 */
+	protected dealDataShowMessage(env: NARSEnv, message: string): string {
+		// 具体「消息源」参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#L247`
+		switch (message) {
+			// 'request-config' => 图表配置
+			case 'request-config':
+				return JSON.stringify(env.config.plot.initialOption)
+			// 'request-info' => 基本信息
+			case 'request-info':
+				// ! `i`为前缀 // 可参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#175`
+				return 'i' + env.config.info(env.config)
+			// 否则 => 空信息 + 并控制台报错
+			default:
+				console.error(`数据显示服务：无效的消息「${message}」`)
+				return ''
+		}
+	}
+
+	// 对接NARS操作 //
+	/**
+	 * 对接配置中的操作
+	 *
+	 * @param self 当前玩家
+	 * @param host 世界母体
+	 * @param operation NARS操作
+	 * @param spontaneous 是否为「自主操作」
+	 */
+	protected operateEnv(
+		self: IPlayer,
+		host: IMatrix,
+		operation: NARSOperation,
+		spontaneous: boolean
+	): NARSOperationResult {
+		// !【2023-11-07 01:00:20】（新）设置一个「背景状态」：把「该操作（作为『上一个操作』）是否自主」存到「NARS智能体」中
+		this._lastOperationSpontaneous = spontaneous
+		// * 显示反映：自发⇒绿色，非自发⇒原色
+		self.setColor(
+			spontaneous
+				? this.config.attributes.appearance.active.lineColor
+				: this.config.attributes.appearance.babble.lineColor,
+			spontaneous
+				? this.config.attributes.appearance.active.fillColor
+				: this.config.attributes.appearance.babble.fillColor
+		)
+		// 执行操作，返回结果
+		this._temp_lastOperationResult = this.config.behavior.operate(
+			this.env,
+			this,
+			this.config,
+			host,
+			operation,
+			// 自动获取操作索引
+			this.registeredOperation_outputs.indexOf(
+				this.config.NAL.op_output(operation)
+			),
+			this.send2NARS
+		)
+		// * 计入「操作历史」
+		this._operationHistory.push([
+			operation,
+			this._temp_lastOperationResult,
+			spontaneous,
+		])
+		// * 统计，只有在「有结果」的时候算入「总次数」或者「总触发次数」（必须只有「成功/失败」）
+		this.recordStat(this._temp_lastOperationResult, spontaneous)
+		return this._temp_lastOperationResult
+	}
+	/** 上一次操作的结果 */
+	private _temp_lastOperationResult: NARSOperationResult
+
+	// 接收消息 //
+	/**
+	 * 从NARS接收信息
+	 * * 🚩处理NARS服务器（BabelNAR）回传的消息
+	 */
+	protected onNARSMessage(
+		host: IMatrix,
+		player: IPlayer,
+		message: string
+	): undefined {
+		// 解析JSON，格式：[{"interface_name": XXX, "output_type": XXX, "content": XXX}, ...]
+		const output_datas: WebNARSOutputJSON = JSON.parse(
+			message
+		) as WebNARSOutputJSON // !【2023-10-20 23:30:16】现在是一个数组的形式
+		// 处理
+		for (
+			let i: uint = 0, output_data: WebNARSOutput;
+			i < output_datas.length;
+			i++
+		) {
+			output_data = output_datas[i]
+			// console.log(
+			// 	`received> ${output_data?.interface_name}: [${output_data?.output_type}] ${output_data?.content}`,
+			// 	output_data
+			// )
+			if (typeof output_data.output_type === 'string')
+				switch (output_data.output_type) {
+					case NARSOutputType.IN:
+						break
+					case NARSOutputType.OUT:
+						break
+					case NARSOutputType.ERROR:
+						break
+					case NARSOutputType.ANSWER:
+						break
+					case NARSOutputType.ACHIEVED:
+						break
+					case NARSOutputType.EXE:
+						if (isNARSOperation(output_data?.output_operation))
+							this.exeHandler(
+								player,
+								host,
+								output_data.output_operation
+							)
+						break
+					// 跳过
+					case NARSOutputType.INFO:
+					case NARSOutputType.COMMENT:
+						break
+				}
+		}
+	}
+
+	// NARS参数 //
+	// ! 📝时刻注意：类内的初始化表达式比构造函数内初始化表达式早
+	protected _lastNARSOperated: uint = this.config.timing.babbleThreshold // * 默认一开始就进行babble
+	/** 距离「上一次NARS发送操作」所过的单位时间 */
+	public get lastNARSOperated(): uint {
+		return this._lastNARSOperated
+	}
+	/** 当前教学「所剩时间」（Babble「不被NARS操作所抑制」的阶段） */
+	protected teachingTimeLasting: uint = this.config.timing.teachingTime
+
+	/**
+	 * 处理NARS传来的「操作」
+	 * *【2023-11-05 01:23:02】目前直接使用自BabelNAR包装好的「NARS操作」类型
+	 */
+	protected exeHandler(
+		self: IPlayer,
+		host: IMatrix,
+		operation: NARSOperation
+	): void {
+		// 现在直接有NARSOperation对象
+		console.info(
+			`操作「${this.config.NAL.op_output(operation)}」已被接收！`
+		)
+		// 执行
+		switch (this.operateEnv(self, host, operation, true)) {
+			// 成功
+			case true:
+				console.info(
+					`自主操作「${this.config.NAL.op_output(
+						operation
+					)}」执行成功！`
+				)
+				break
+			// 失败
+			case false:
+				console.info(
+					`自主操作「${this.config.NAL.op_output(
+						operation
+					)}」执行失败！`
+				)
+				break
+			// 无结果：无需处理
+			default:
+				break
+		}
+		// 清空计时
+		this._lastNARSOperated = 0
+		/* // 数据收集统计 // !【2023-11-07 01:34:45】不再忠实反映「NARS的`EXE`数」
+			this.stats.自主操作次数++ */
+	}
+	/** 辅助初始化工具：坐标指针 */
+	protected posPointer: iPoint = new iPoint()
+
+	/** 发送消息 */
+	protected send2NARS: (message: string) => void
+
+	/** 处理控制器事件：AI初始化 */
+	protected onAIEvent_Init(
+		event: PlayerEvent,
+		self: IPlayer,
+		host: IMatrix
+	): void {
+		// 消息列表 //
+		const messages: string[] = []
+		// 消息生成
+
+		/** 生成一个回调函数，在配置中被调用，以实现「插入循环」的效果 */
+		const registerOperation = (op: [string, ...string[]]): void => {
+			// 注册操作符
+			if (!this.hasRegisteredOperator(op[0]))
+				messages.push(
+					// !【2023-11-05 02:29:18】现在开始接入NAVM的「REG」指令
+					this.config.NAL.generateOperatorRegToCIN(
+						op[0].slice(1) /* 去掉开头的尖号 */
+					)
+				) // 负/正 方向移动
+			// 注册内部状态
+			this.registeredOperations.push(op)
+			this.registeredOperation_outputs.push(this.config.NAL.op_output(op))
+			// 将操作符与自身联系起来
+			messages.push(
+				this.config.NAL.generateNarseseToCIN(
+					// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
+					this.config.NAL.generateCommonNarseseBinary(
+						this.config.NAL.SELF,
+						NarseseCopulas.Inheritance,
+						this.config.NAL.op_input(op),
+						NarsesePunctuation.Judgement,
+						NarseseTenses.Eternal,
+						this.config.NAL.positiveTruth
+					)
+				)
+			)
+		}
+		// 调用配置
+		this.config.behavior.init(
+			this.env,
+			event,
+			self,
+			this.config,
+			host,
+			registerOperation
+		)
+		// 消息发送
+		for (let i = 0; i < messages.length; ++i) this.send2NARS(messages[i])
+		// 清空消息
+		messages.length = 0
+	}
+
+	/** 处理控制器事件：AI刻 */
+	protected onAIEvent_Tick(
+		event: PlayerEvent,
+		self: IPlayer,
+		host: IMatrix
+	): void {
+		// 可配置的AI刻逻辑 //
+		this.config.behavior.AITick(
+			this.env,
+			event,
+			this,
+			this.config,
+			host,
+			this.posPointer,
+			this.send2NARS
+		)
+		// 提醒目标 //
+		if (this._goalRemindRate-- === 0) {
+			this._goalRemindRate = this.config.timing.goalRemindRate
+			// 先提醒正向目标
+			for (const goal of this.config.NAL.POSITIVE_GOALS)
+				this.send2NARS(
+					this.config.NAL.generateNarseseToCIN(
+						this.config.NAL.generateCommonNarseseBinary(
+							this.config.NAL.SELF,
+							NarseseCopulas.Inheritance,
+							goal,
+							NarsesePunctuation.Goal,
+							NarseseTenses.Present,
+							this.config.NAL.positiveTruth
+						)
+					)
+				)
+			// `<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.positiveTruth}`
+			// 再提醒负向目标
+			for (const goal of this.config.NAL.NEGATIVE_GOALS)
+				this.send2NARS(
+					this.config.NAL.generateNarseseToCIN(
+						this.config.NAL.generateCommonNarseseBinary(
+							this.config.NAL.SELF,
+							NarseseCopulas.Inheritance,
+							goal,
+							NarsesePunctuation.Goal,
+							NarseseTenses.Present,
+							this.config.NAL.negativeTruth
+						)
+					)
+				)
+			// ?【2023-10-30 21:51:57】是否要把目标的配置再细化一些，比如「不同目标不同周期/正负性」之类的
+		}
+		// Babble机制 //
+		if (
+			// 教学时间
+			this.teachingTimeLasting > 0 ||
+			// 无事babble
+			this._lastNARSOperated > this.config.timing.babbleThreshold
+		)
+			if (this._babbleRate-- === 0) {
+				// 重置rate
+				this._babbleRate = this.config.timing.babbleRate
+				// 概率触发
+				if (
+					this.config.timing.babbleProbability === undefined ||
+					// 非空则按概率触发
+					randomBoolean2(this.config.timing.babbleProbability)
+				) {
+					// 从函数（教法）中选一个操作⇒进行「无意识操作」
+					const babbleOp: NARSOperation = this.config.behavior.babble(
+						this.env,
+						this,
+						this.config,
+						host
+					)
+					// 让系统知道「自己做了操作」 // *形式：<(*, 【其它参数】) --> 【带尖号操作符】>. :|: 【正向真值】
+					this.send2NARS(
+						this.config.NAL.generateNarseseToCIN(
+							this.config.NAL.generateCommonNarseseBinary(
+								`(*, ${babbleOp.slice(1).join(', ')})`,
+								NarseseCopulas.Inheritance,
+								babbleOp[0],
+								NarsesePunctuation.Judgement,
+								NarseseTenses.Present,
+								this.config.NAL.positiveTruth
+							)
+						)
+					)
+					// 执行操作
+					this.operateEnv(self, host, babbleOp, false)
+				}
+			}
+		// 操作计数 //
+		this._lastNARSOperated++
+		// 教学时间流逝：减少到零就停止 //
+		if (this.teachingTimeLasting > 0) this.teachingTimeLasting--
+		// !【2023-11-25 20:39:05】现在变成按「绝对时间」读秒
+	}
+
+	/**
+	 * 处理控制器事件：响应AI执行前事件
+	 * * 【2023-11-10 19:24:19】最初被用于「键盘按键⇒无意识操作」的转换
+	 */
+	protected onAIEvent_PreAction(
+		event: PlayerEvent,
+		self: IPlayer,
+		host: IMatrix,
+		otherInf: NativePlayerEventOptions[NativePlayerEvent.PRE_ACTION]
+	): void {
+		/**
+		 * 获取「行为映射」的回应
+		 * * `undefined`⇒「放行」，这时不会`operate`也不会触发其它行为
+		 * * `null`⇒「阻断」，这时不会执行「将执行的『玩家行为』」
+		 * * `NARSOperation`⇒「映射并（等同于）操作」，这时不执行「将执行的『玩家行为』」并用`operate(对应操作)`替代
+		 */
+		const reply: NARSOperation | null | undefined =
+			this.config.behavior.actionReplacementMap(
+				this.env,
+				event,
+				this,
+				this.config,
+				host,
+				otherInf.action
+			)
+		// * undefined⇒放行
+		if (reply === undefined) return
+		// * null⇒阻断
+		if (reply === null) {
+			// 修改「阻断」配置
+			otherInf.prevent = true
+			//返回
+			return
+		}
+		// * 否则即「玩家操作」⇒执行操作并阻断默认执行
+		else {
+			// 修改「阻断」配置
+			otherInf.prevent = true
+			// 执行返回的操作
+			this.operateEnv(
+				self,
+				host,
+				reply,
+				false // ! 非自主操作
+			)
+		}
+	}
+
+	/**
+	 * 处理控制器事件：响应其它AI事件
+	 * * 【2023-11-10 19:24:19】最初被用于「键盘按键⇒无意识操作」的转换
+	 */
+	protected onAIEvent_Fallback(
+		event: PlayerEvent,
+		self: IPlayer,
+		host: IMatrix
+	): void {
+		return this.config.behavior.fallFeedback(
+			this.env,
+			event,
+			this,
+			this.config,
+			host,
+			this.send2NARS
+		)
 	}
 }
