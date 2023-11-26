@@ -10,6 +10,7 @@ import WorldRegistry_V1 from 'matriangle-mod-bats/registry/Registry_Batr'
 import Matrix_V1 from 'matriangle-mod-native/main/Matrix_V1'
 import { TPS as TPS_Matriangle } from 'matriangle-api/server/main/GlobalWorldVariables'
 import {
+	DictionaryLikeObject,
 	countIn,
 	mapObjectKey,
 	mergeMaps,
@@ -494,6 +495,19 @@ export class NARSPlayerAgent {
 	 * * 是否成功：`true`代表成功，`false`代表失败
 	 */
 	protected _operationHistory: NARSOperationRecordFull[] = []
+
+	// 自定义数据 //
+	/**
+	 * 存储「自定义数据」
+	 * * 🎯存储因具体实验而异，但的确需要「分智能体存储」的数据
+	 *   * 特别适合「需要在智能体上存储临时变量，但又不想给智能体加属性（修改这个文件）」的情况
+	 * * 例如：
+	 *   * 「能量包收集」实验中需要的「前进频率」时钟变量
+	 *   * 「能量包收集」实验中需要的「上一次奖励后所过时间颗粒数」时钟变量
+	 *
+	 * ! 其中各属性的「存在性」「类型」都需要自己去检查
+	 */
+	public customDatas: DictionaryLikeObject = {}
 
 	// 统计数据 //
 	/** 有关「NARS运行状态」「智能体表现状态」的统计数据 */

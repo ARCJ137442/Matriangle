@@ -15,6 +15,7 @@ import {
 import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
+import { DictionaryLikeObject } from 'matriangle-common'
 
 /** 统一存储玩家外观配置 */
 export type NARSPlayerAppearanceConfig = {
@@ -335,6 +336,11 @@ export type NARSPlayerConfig = {
  *   * 一些引用类值可能除外
  */
 export type NARSEnvConfig = {
+	/**
+	 * 配置时的附加参数/额外参数
+	 *  * 🎯用于在「生成配置文件」时传递引用的附加参数
+	 */
+	extraConfig: DictionaryLikeObject
 	/**
 	 * 根据自身输出 实验/配置 信息
 	 * @param config 环境配置（自身）

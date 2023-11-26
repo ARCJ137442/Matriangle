@@ -56,6 +56,8 @@ import { randomBoolean2, sgn } from 'matriangle-common'
 export const SAFE: string = '[safe]'
 /** 目标：充能 */
 export const POWERED: string = '[powered]'
+/** 目标：充满能量的 */
+export const POWERFUL: string = '[powerful]'
 
 /** 信息 */
 export const info = (config: NARSEnvConfig): string => `
@@ -281,8 +283,8 @@ function onPowerupCollected(
 ): void {
 	// 重定位
 	powerup.relocate(host)
-	// 玩家作为「NARS智能体」：奖励/惩罚
-	// 发送给NARS
+	// * 玩家作为「NARS智能体」：奖励/惩罚，发送「目标达成/未成」信息给NARS *
+	// 直接目标「POWERED」
 	send2NARS(
 		// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 		generateCommonNarseseBinaryToCIN(
@@ -298,6 +300,40 @@ function onPowerupCollected(
 				  playerConfig.NAL.negativeTruth
 		)
 	)
+
+	// 高阶目标「POWERFUL」
+	if (agent.config.NAL.POSITIVE_GOALS.indexOf(POWERFUL) >= 0) {
+		// 增加/清零数据
+		agent.customDatas.timePassedLastBad = powerup.good
+			? // 正面奖励：递增
+			  Number(agent.customDatas?.timePassedLastBad) + 1
+			: // 负面惩罚：清零
+			  0
+		// 满足一定程度开始奖励 | 负面立即惩罚 // * 此即「正面⇒奖励条件满足⇒奖励」
+		if (
+			!powerup.good ||
+			(
+				env.config.extraConfig as ExtraPCExperimentConfig
+			)?.powerfulCriterion(agent.customDatas.timePassedLastBad as number)
+		) {
+			// 高阶目标「POWERFUL」
+			send2NARS(
+				// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+				generateCommonNarseseBinaryToCIN(
+					playerConfig.NAL.SELF, // 主词
+					NarseseCopulas.Inheritance, // 系词
+					POWERFUL, // 谓词
+					NarsesePunctuation.Judgement, // 标点
+					NarseseTenses.Present, // 时态
+					powerup.good // 真值
+						? // 正向
+						  playerConfig.NAL.positiveTruth
+						: // 负向
+						  playerConfig.NAL.negativeTruth
+				)
+			)
+		}
+	}
 	// * 记录进统计数据
 	agent.recordStat(powerup.good, agent.lastOperationSpontaneous)
 }
@@ -376,6 +412,16 @@ export type ExtraPCExperimentConfig = {
 	}
 	/** 步进频率 */
 	stepProbability: uint
+	/**
+	 * 高阶目标
+	 * * 为`true`时启动类似SimNAR中「satisfy-healthy」的「双层目标系统」
+	 */
+	highOrderGoals: boolean
+	/**
+	 * 达到「高阶目标」（POWERFUL）的条件
+	 * @param timePassedLastBad 距离「最后一次『负面惩罚』」的奖励次数
+	 */
+	powerfulCriterion: (timePassedLastBad: uint) => boolean
 }
 
 /** 配置 */
@@ -383,6 +429,8 @@ const configConstructor = (
 	// 额外参数 //
 	extraConfig: ExtraPCExperimentConfig
 ): NARSEnvConfig => ({
+	// 额外参数
+	extraConfig,
 	// 根据自身输出 实验/配置 信息
 	info,
 	// 网络连接地址
@@ -572,7 +620,13 @@ const configConstructor = (
 			NAL: {
 				SELF: '{SELF}',
 				/** @implements 表示「正向目标」的词项组 */
-				POSITIVE_GOALS: [/* SAFE,  */ POWERED], // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」 // TODO: 可能多目标还会「分心干扰」一些
+				POSITIVE_GOALS: [
+					// SAFE, // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」
+					// ? 可能多目标还会「分心干扰」一些
+					POWERED,
+					// 存储是否附加「高阶目标」
+					...(extraConfig.highOrderGoals ? [POWERFUL] : []),
+				],
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
 				positiveTruth: '%1.0;0.9%',
