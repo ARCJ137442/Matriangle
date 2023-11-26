@@ -458,6 +458,31 @@ export abstract class xPoint<T extends number = number>
 	// }
 
 	/**
+	 * 判断两个点「是否在同一条直线上」，并返回「唯一坐标不相等的索引」
+	 *
+	 * ! 技术细节：逐一比对其是否**全等**
+	 * * 即使用`===`
+	 *
+	 * @param p 比对的目标点
+	 * @returns 和目标点「唯一相等」的距离
+	 */
+	public indexOfSameLine(p: T[]): uint | -1 {
+		let result: uint | -1 = -1
+		// 遍历以自身为准
+		for (let i: uint = 0; i < this.length; i++) {
+			// 是「坐标不相等」的索引
+			if (this[i] !== p[i])
+				if (result === -1)
+					// 第一次设置⇒赋值
+					result = i
+				// 非第一次⇒返回-1
+				else return -1
+		}
+		// 唯一不相等/没找到
+		return result
+	}
+
+	/**
 	 * 判断两个点「坐标是否相等」
 	 * ! 技术细节：逐一比对其是否**全等**
 	 * * 即使用`===`

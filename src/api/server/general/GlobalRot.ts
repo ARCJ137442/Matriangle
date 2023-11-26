@@ -217,14 +217,14 @@ export function rotateInPlane_M(
 					return rotate_M(
 						rotEnd,
 						rotStart >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「起始轴的正负向」纠正
-						(rotStart & 1) === 0 ? step : step + 2
+						(rotStart & 1) === 0 ? step + 2 : step // !【2023-11-26 12:43:02】调一个修正，反过来试试
 					)
 				// 待算角=-终止角⇒从终止角对面开始
 				case 1:
 					return rotate_M(
 						rotEnd,
 						rotStart >> 1, // ! 因为这和「协轴朝向」无关，所以需要根据「起始轴的正负向」纠正
-						(rotStart & 1) === 0 ? step + 2 : step
+						(rotStart & 1) === 0 ? step : step + 2 // !【2023-11-26 12:43:02】调一个修正，反过来试试
 					)
 				// 若与「终止角」还是不在一个轴⇒返回其自身
 				default:

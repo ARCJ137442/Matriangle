@@ -29,6 +29,8 @@ export function envConstructor(
 						numGood: 1,
 						numBad: 1,
 					},
+					// 每次以一半的概率步进
+					stepProbability: 0.5,
 				}
 			),
 			...modifiers

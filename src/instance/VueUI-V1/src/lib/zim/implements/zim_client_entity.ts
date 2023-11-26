@@ -156,7 +156,7 @@ export function commonUpdate_AVS<ESType extends IDisplayDataEntityState>(
  */
 const PLAYER_DRAW_DATAS = {
 	SIZE: logical2Real(1),
-	LINE_SIZE: logical2Real(1 / 96),
+	LINE_SIZE: logical2Real(1 / 48),
 	DECORATION_SIZE: logical2Real(1 / 10),
 }
 

@@ -8,6 +8,8 @@ import IPlayer, {
 import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import {
 	mRot,
+	mRot2axis,
+	mRot2increment,
 	nameOfAxis_M,
 	rotateInPlane_M,
 } from 'matriangle-api/server/general/GlobalRot'
@@ -47,6 +49,7 @@ import {
 } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
+import { randomBoolean2, sgn } from 'matriangle-common'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -371,6 +374,8 @@ export type ExtraPCExperimentConfig = {
 		/** 负向能量包数目 */
 		numBad: uint
 	}
+	/** 步进频率 */
+	stepProbability: uint
 }
 
 /** 配置 */
@@ -564,8 +569,6 @@ const configConstructor = (
 			},
 
 			// 词项常量池 & 词法模板
-
-			// 词项常量池 & 词法模板
 			NAL: {
 				SELF: '{SELF}',
 				/** @implements 表示「正向目标」的词项组 */
@@ -665,49 +668,98 @@ const configConstructor = (
 					posPointer: iPoint,
 					send2NARS: (message: string) => void
 				): void => {
-					// 指针归位
-					posPointer.copyFrom(agent.player.position)
-					// * 感知：能量包视野（单点无距离） * //
+					// * 感知：能量包视野 * //
 					for (const entity of host.entities) {
 						// 若为能量包
 						if (entity instanceof Powerup) {
-							let i = 0
-							// 逐个维度对比
-							for (
-								i = 0;
-								i < host.map.storage.numDimension;
-								++i
+							// * 正前方感知
+							const lineIndex = posPointer.indexOfSameLine(
+								entity.position
+							)
+							if (
+								// 在一条直线上
+								lineIndex ===
+									mRot2axis(agent.player.direction) &&
+								// 并且是前方： 轴向相等 & ("实体坐标>玩家坐标"&正方向 | "实体坐标<玩家坐标"&负方向)
+								sgn(
+									entity.position[lineIndex] -
+										agent.player.position[lineIndex]
+								) === mRot2increment(agent.player.direction)
 							) {
-								// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
-								// * 直接对每个维度进行判断，然后返回各自的「是否看见」
-								if (
-									entity.position[i] ===
-									agent.player.position[i]
+								agent.player.setColor(
+									// * 依照能量包正负，分别安排绿色/红色
+									entity.good ? 0x00ff00 : 0xff0000,
+									// 填充颜色保持默认
+									agent.player.fillColor
 								)
-									// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
-									send2NARS(
-										// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
-										generateCommonNarseseBinaryToCIN(
-											/**
-											 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
-											 */
-											`{${nameOfAxis_M(i)}_powerup_${
-												entity.good ? 'good' : 'bad'
-											}}`, // 主词
-											NarseseCopulas.Inheritance, // 系词
-											`[seen]`, // 谓词
-											NarsesePunctuation.Judgement, // 标点
-											NarseseTenses.Present, // 时态
-											// 真值
-											/* entity.position[i] === self.position[i]
+								// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
+								send2NARS(
+									// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
+									generateCommonNarseseBinaryToCIN(
+										/**
+										 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+										 */
+										`{powerup_${
+											entity.good ? 'good' : 'bad'
+										}_front}`, // 主词
+										NarseseCopulas.Inheritance, // 系词
+										`[seen]`, // 谓词
+										NarsesePunctuation.Judgement, // 标点
+										NarseseTenses.Present, // 时态
+										// 真值
+										/* entity.position[i] === self.position[i]
+									? selfConfig.NAL.positiveTruth
+									: selfConfig.NAL.negativeTruth */
+										selfConfig.NAL.positiveTruth
+									)
+								)
+							}
+							// 逐个维度对比
+							else
+								for (
+									let i = 0;
+									i < host.map.storage.numDimension;
+									++i
+								) {
+									// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
+									// * 直接对每个维度进行判断，然后返回各自的「是否看见」
+									if (
+										entity.position[i] ===
+										agent.player.position[i]
+									) {
+										agent.player.setColor(
+											// * 依照能量包正负，分别安排深绿色/红色
+											entity.good ? 0x007f00 : 0x7f0000,
+											// 填充颜色保持默认
+											agent.player.fillColor
+										)
+										// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
+										send2NARS(
+											// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
+											generateCommonNarseseBinaryToCIN(
+												/**
+												 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+												 */
+												`{${nameOfAxis_M(i)}_powerup_${
+													entity.good ? 'good' : 'bad'
+												}}`, // 主词
+												NarseseCopulas.Inheritance, // 系词
+												`[seen]`, // 谓词
+												NarsesePunctuation.Judgement, // 标点
+												NarseseTenses.Present, // 时态
+												// 真值
+												/* entity.position[i] === self.position[i]
 											? selfConfig.NAL.positiveTruth
 											: selfConfig.NAL.negativeTruth */
-											selfConfig.NAL.positiveTruth
+												selfConfig.NAL.positiveTruth
+											)
 										)
-									)
-							}
+									}
+								}
 						}
 					}
+					// * 指针归位 此时用于测试墙壁碰撞
+					posPointer.copyFrom(agent.player.position)
 					// * 感知：墙壁碰撞 * //
 					for (let i = 0; i < host.map.storage.numDimension; ++i) {
 						// 负半轴
@@ -744,17 +796,22 @@ const configConstructor = (
 						posPointer[i]--
 					}
 					// * 运动：前进 * //
-					// 前进 // * 现在只在「上一次没操作」时前进（或许可以考虑解放出来「成为一个智能体操作」）
-					if (agent.lastNARSOperated > 0)
+					// 前进 // * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
+					if (
+						agent.lastNARSOperated > 1 &&
+						// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
+						randomBoolean2(extraConfig.stepProbability)
+					) {
 						agent.player.moveForward(host)
-					// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
-					testPowerupCollision(
-						env,
-						host,
-						agent,
-						selfConfig,
-						send2NARS
-					)
+						// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
+						testPowerupCollision(
+							env,
+							host,
+							agent,
+							selfConfig,
+							send2NARS
+						)
+					}
 					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
 				},
 				/** @implements babble：取随机操作 */
@@ -780,6 +837,10 @@ const configConstructor = (
 					operateI: uint | -1,
 					send2NARS: (message: string) => void
 				): NARSOperationResult => {
+					// 软处理@ONA：没有索引时，有「left」「right」也算
+					if (operateI < 0)
+						if (op[0].indexOf('left') >= 0) operateI = 0 // y+
+						else if (op[0].indexOf('right') >= 0) operateI = 1 // y-
 					// 有操作⇒行动&反馈
 					if (operateI >= 0) {
 						// 玩家转向 // !【2023-11-07 00:32:16】行动「前进」在AITick中
