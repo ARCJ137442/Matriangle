@@ -7,8 +7,10 @@ import { ref, Ref } from 'vue'
 import { Plot, XYData } from '../lib/plot'
 import { EChartsOption } from 'echarts'
 
+/** echarts电子表格对象 */
 const eChart: Ref<HTMLDivElement | null> = ref<HTMLDivElement | null>(null)
 
+/** 基于外部库封装的Plot对象 */
 let plot: Plot | undefined = undefined
 
 // 暴露属性&方法
@@ -32,6 +34,10 @@ defineExpose({
 	/** 添加数据 */
 	append(xy_data: XYData): void {
 		plot?.addData(xy_data.x, xy_data)
+	},
+	/** 导出TSV数据 */
+	exportTSV(): string | null {
+		return plot?.toTSV() ?? null
 	},
 })
 </script>

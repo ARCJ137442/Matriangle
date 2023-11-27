@@ -27,6 +27,9 @@ pp<!--
 				isConnected ? '已连接' : '未连接'
 			}}）
 		</button>
+		<button type="button" @click="exportDataToClipboard">
+			复制图表数据到剪贴板
+		</button>
 		<div>
 			<!-- TODO: 控制图表数量 -->
 			<!-- * 这里使用`v-show`控制图表的展开与折叠 * -->
@@ -244,6 +247,45 @@ let _temp_cached_received_data: string[] = []
 function plotInit(): void {
 	// 图表初始化
 	plot.value?.init(null /* 用空数据初始化，后续配置会被发送过来填充 */)
+}
+
+/**
+ * 图表数据导出到剪贴板
+ * * 技术路线：优先使用`execCommand`，其次是`navigator.clipboard`
+ */
+async function exportDataToClipboard(): Promise<void> {
+	// 调用函数获取图表数据 //
+	const data = plot.value?.exportTSV() ?? null
+	// 非空检测
+	if (data === null) {
+		console.error('图表数据为空！')
+		return
+	}
+	// 正式开始存入剪贴板 //
+	console.info('已获得图表数据：', data)
+	// 优先execCommand
+	if (document.execCommand) {
+		// 核心原理：创建一个隐形文本框，设置文本，并执行命令复制其中的数据
+		// 此处操作参见<https://zhuanlan.zhihu.com/p/597944027>
+		const textArea: HTMLTextAreaElement = document.createElement(
+			'textArea'
+		) as HTMLTextAreaElement
+		textArea.style.width = '0px'
+		textArea.style.position = 'fixed'
+		textArea.style.left = '-999px'
+		textArea.style.top = '10px'
+		textArea.setAttribute('readonly', 'readonly')
+		textArea.value = data // 📌不能用`innerText`，会吃掉换行符
+		document.body.appendChild(textArea)
+
+		textArea.select()
+		document.execCommand('copy')
+		document.body.removeChild(textArea)
+	}
+	// 其次考虑navigator.clipboard
+	else if (navigator.clipboard) {
+		await navigator.clipboard.writeText(data)
+	}
 }
 
 /**

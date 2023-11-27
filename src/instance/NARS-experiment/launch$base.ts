@@ -33,10 +33,15 @@ export function envConstructor(
 					// 每次以一半的概率步进
 					stepProbability: 0.5,
 					// 高阶目标
-					highOrderGoals: true, // !【2023-11-27 00:27:39】目前启用
+					highOrderGoals: false, // !【2023-11-27 00:27:39】目前启用
 					// 高阶目标「有能量的」：一个阈值
 					powerfulCriterion: (timePassedLastBad: uint): boolean =>
 						timePassedLastBad > 3, // *【2023-11-27 00:37:31】暂时不要定太高，否则可能够不着
+					// 负触发目标
+					negatriggerGoals: true, // !【2023-11-27 00:27:39】目前启用
+					// 高阶目标「有能量的」：一个阈值
+					negatriggerCriterion: (timePassedLastGood: uint): boolean =>
+						timePassedLastGood > 3, // *【2023-11-27 00:37:31】暂时不要定太高，否则可能够不着
 				}
 			),
 			...modifiers

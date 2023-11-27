@@ -156,11 +156,13 @@ export class Plot<X = unknown> {
 	update(): void {
 		// 空配置⇒跳过
 		if (this.option === null) return
-		if (!Array.isArray(this.y_data_series))
+		if (!Array.isArray(this.y_data_series)) {
 			console.error(
 				'图表更新失败：y_data_series必须是数组',
 				this.y_data_series
 			)
+			return
+		}
 		// 决定所更新的
 		const toUpdate_series = []
 		for (const y_data_config of this.y_data_series) {
@@ -176,5 +178,49 @@ export class Plot<X = unknown> {
 			},
 			series: toUpdate_series,
 		})
+	}
+
+	/**
+	 * 图表导出：XSV
+	 *
+	 * ! 未加入「预先转义」功能
+	 */
+	public toXSV(
+		columnSeparator: string,
+		rowSeparator: string,
+		columnName: boolean = true,
+		rowIndex: boolean = true
+	): string {
+		const order = Object.keys(this.y_datas)
+		// eslint-disable-next-line prefer-rest-params
+		console.log('arguments', arguments)
+
+		let result =
+			// 列名/行索引
+			(rowIndex ? columnSeparator : '') +
+			(columnName ? order.join(columnSeparator) + rowSeparator : '')
+		// 长度上逐行遍历
+		for (let row = 0; row < this.x_datas.length; row++) {
+			// 行索引
+			if (rowIndex) result += String(row) + columnSeparator
+			// 宽度上逐列遍历
+			for (let col = 0; col < order.length; col++) {
+				// 分隔符
+				if (col > 0) result += columnSeparator
+				result += String(this.y_datas[order[col]][row])
+			}
+			result += rowSeparator
+		}
+		// 返回
+		return result
+	}
+
+	/**
+	 * 特化：TSV
+	 *
+	 * ! 未加入「预先转义」功能
+	 */
+	public toTSV(columnName: boolean = true, rowIndex: boolean = true): string {
+		return this.toXSV('\t', '\n', columnName, rowIndex)
 	}
 }

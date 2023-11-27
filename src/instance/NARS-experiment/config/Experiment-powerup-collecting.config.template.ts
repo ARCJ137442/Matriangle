@@ -301,22 +301,19 @@ function onPowerupCollected(
 		)
 	)
 
-	// 高阶目标「POWERFUL」
-	if (agent.config.NAL.POSITIVE_GOALS.indexOf(POWERFUL) >= 0) {
+	// * ✨高阶目标「POWERFUL」
+	if (
+		(env.config.extraConfig as ExtraPCExperimentConfig)?.highOrderGoals ===
+		true
+	) {
 		// 增加/清零数据
 		agent.customDatas.timePassedLastBad = powerup.good
 			? // 正面奖励：递增
 			  Number(agent.customDatas?.timePassedLastBad) + 1
 			: // 负面惩罚：清零
 			  0
-		// 满足一定程度开始奖励 | 负面立即惩罚 // * 此即「正面⇒奖励条件满足⇒奖励」
-		if (
-			!powerup.good ||
-			(
-				env.config.extraConfig as ExtraPCExperimentConfig
-			)?.powerfulCriterion(agent.customDatas.timePassedLastBad as number)
-		) {
-			// 高阶目标「POWERFUL」
+		// 负面⇒立即惩罚
+		if (!powerup.good)
 			send2NARS(
 				// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 				generateCommonNarseseBinaryToCIN(
@@ -325,15 +322,24 @@ function onPowerupCollected(
 					POWERFUL, // 谓词
 					NarsesePunctuation.Judgement, // 标点
 					NarseseTenses.Present, // 时态
-					powerup.good // 真值
-						? // 正向
-						  playerConfig.NAL.positiveTruth
-						: // 负向
-						  playerConfig.NAL.negativeTruth
+					playerConfig.NAL.negativeTruth
 				)
 			)
-		}
 	}
+
+	// 负触发目标
+	if (
+		(env.config.extraConfig as ExtraPCExperimentConfig)
+			?.negatriggerGoals === true
+	) {
+		// 增加/清零数据
+		agent.customDatas.timePassedLastGood = powerup.good
+			? // 正面奖励：清零
+			  0
+			: // 负面惩罚：递增
+			  Number(agent.customDatas?.timePassedLastGood) + 1
+	}
+
 	// * 记录进统计数据
 	agent.recordStat(powerup.good, agent.lastOperationSpontaneous)
 }
@@ -419,9 +425,20 @@ export type ExtraPCExperimentConfig = {
 	highOrderGoals: boolean
 	/**
 	 * 达到「高阶目标」（POWERFUL）的条件
-	 * @param timePassedLastBad 距离「最后一次『负面惩罚』」的奖励次数
+	 * @param timePassedLastBad 距离「最后一次『负能量包惩罚』」的奖励次数
 	 */
 	powerfulCriterion: (timePassedLastBad: uint) => boolean
+	/**
+	 * 负触发目标
+	 * * 为`true`时启动类似「长久不吃饭就会饿」的「负触发目标系统」
+	 * * 新词「negatrigger = negative + trigger」
+	 */
+	negatriggerGoals: boolean
+	/**
+	 * 达到「负触发目标」（-POWERED）的条件
+	 * @param timePassedLastBad 距离「最后一次『正能量包奖励』」的奖励次数
+	 */
+	negatriggerCriterion: (timePassedLastBad: uint) => boolean
 }
 
 /** 配置 */
@@ -593,8 +610,8 @@ const configConstructor = (
 						(record[1] ? '@' : '#') +
 						// 是否成功：成功Success，失败Failed
 						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
-					spontaneousPrefix: '自主操作：\n',
-					unconsciousPrefix: '教学操作：\n',
+					spontaneousPrefixName: '自主操作：\n',
+					unconsciousPrefixName: '教学操作：\n',
 				},
 			},
 
@@ -712,7 +729,11 @@ const configConstructor = (
 						}
 					}
 				},
-				/** @implements 实现：位置感知 */
+				/**
+				 * @implements 实现：位置感知+随机前进
+				 *
+				 * !【2023-11-27 19:51:34】目前还是「先运动，后感知」——因为「先感知」可能会存在「运动后感知错位」的毛病
+				 */
 				AITick: (
 					env: NARSEnv,
 					event: PlayerEvent,
@@ -722,6 +743,23 @@ const configConstructor = (
 					posPointer: iPoint,
 					send2NARS: (message: string) => void
 				): void => {
+					// * 运动：前进 * //
+					// 前进 // * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
+					if (
+						agent.lastNARSOperated > 1 &&
+						// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
+						randomBoolean2(extraConfig.stepProbability)
+					) {
+						agent.player.moveForward(host)
+						// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
+						testPowerupCollision(
+							env,
+							host,
+							agent,
+							selfConfig,
+							send2NARS
+						)
+					}
 					// * 感知：能量包视野 * //
 					for (const entity of host.entities) {
 						// 若为能量包
@@ -849,24 +887,52 @@ const configConstructor = (
 						// 归位⇒下一座标轴
 						posPointer[i]--
 					}
-					// * 运动：前进 * //
-					// 前进 // * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
-					if (
-						agent.lastNARSOperated > 1 &&
-						// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
-						randomBoolean2(extraConfig.stepProbability)
-					) {
-						agent.player.moveForward(host)
-						// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
-						testPowerupCollision(
-							env,
-							host,
-							agent,
-							selfConfig,
-							send2NARS
-						)
-					}
 					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
+					// * 持续性满足/持续性饥饿 机制 * //
+					// * 高阶目标：POWERFUL
+					if (extraConfig.highOrderGoals) {
+						// 满足一定程度开始奖励
+						if (
+							extraConfig.powerfulCriterion(
+								Number(agent.customDatas.timePassedLastBad)
+							)
+						) {
+							// 高阶目标「POWERFUL」
+							send2NARS(
+								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+								generateCommonNarseseBinaryToCIN(
+									agent.config.NAL.SELF, // 主词
+									NarseseCopulas.Inheritance, // 系词
+									POWERFUL, // 谓词
+									NarsesePunctuation.Judgement, // 标点
+									NarseseTenses.Present, // 时态
+									agent.config.NAL.positiveTruth
+								)
+							)
+						}
+					}
+					// * 负触发目标：POWERED
+					if (extraConfig.negatriggerGoals) {
+						// 满足一定程度开始惩罚
+						if (
+							extraConfig.powerfulCriterion(
+								Number(agent.customDatas.timePassedLastGood)
+							)
+						) {
+							// 负触发目标「POWERED」
+							send2NARS(
+								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+								generateCommonNarseseBinaryToCIN(
+									agent.config.NAL.SELF, // 主词
+									NarseseCopulas.Inheritance, // 系词
+									POWERED, // 谓词
+									NarsesePunctuation.Judgement, // 标点
+									NarseseTenses.Present, // 时态
+									agent.config.NAL.negativeTruth
+								)
+							)
+						}
+					}
 				},
 				/** @implements babble：取随机操作 */
 				babble: (

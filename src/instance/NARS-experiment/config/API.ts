@@ -103,15 +103,15 @@ export type NARSPlayerConfig = {
 				record: NARSOperationRecordFull
 			) => string
 			/**
-			 * 决定「自发性操作/自主操作」的前缀（需要带换行）
-			 * @example '自主操作：\n'
+			 * 决定「自发性操作/自主操作」的前缀（无需带换行）
+			 * @example '自主操作'
 			 */
-			spontaneousPrefix: string
+			spontaneousPrefixName: string
 			/**
-			 * 决定「无意识操作/教学操作」的前缀（需要带换行）
-			 * @example '教学操作：\n'
+			 * 决定「无意识操作/教学操作」的前缀（无需带换行）
+			 * @example '教学操作'
 			 */
-			unconsciousPrefix: string
+			unconsciousPrefixName: string
 		}
 	}
 

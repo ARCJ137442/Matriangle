@@ -456,6 +456,18 @@ export interface NARSAgentStats {
 	//  总失败次数: uint = 0 // * 总失败次数 = 总操作次数 - 总成功次数
 	/** 成功率：实验全程小车的成功次数与总次数之比 */
 	/** 激活率：实验全程 OpenNARS 持续运动的频率 */
+	/**
+	 * 🆕用于显示「最后一次自主操作」的发生时刻
+	 * * 🎯便于统计「首次激活时间」
+	 * * 📌具有累积性
+	 */
+	最后一次自主操作时刻: uint
+	/**
+	 * 🆕用于显示「最后一次教学操作」的发生时刻
+	 * * 🎯便于统计「末次教学时间」
+	 * * 📌具有累积性
+	 */
+	最后一次教学操作时刻: uint
 }
 
 /**
@@ -524,6 +536,8 @@ export class NARSPlayerAgent {
 		//  总失败次数:0, // * 总失败次数 = 总操作次数 - 总成功次数
 		/** 成功率：实验全程小车的成功次数与总次数之比 */
 		/** 激活率：实验全程 OpenNARS 持续运动的频率 */
+		最后一次自主操作时刻: 0,
+		最后一次教学操作时刻: 0,
 	}
 
 	/**
@@ -540,10 +554,17 @@ export class NARSPlayerAgent {
 		if (spontaneous) {
 			// 自主操作次数递增
 			this.stats.自主操作次数++ // ?【2023-11-07 01:33:29】这里所谓「自主操作」可能不再纯粹是「自己做出了操作」，有可能指「得到能量包的行为是自己做出的」而非「真实反应NARS的`EXE`数目」
+			// 记录时刻
+			this.stats.最后一次自主操作时刻 = this.stats.总时间
 			if (result === true) {
 				// 自主成功次数递增
 				this.stats.自主成功次数++
 			}
+		}
+		// 仅教学操作
+		else {
+			// 记录时刻
+			this.stats.最后一次教学操作时刻 = this.stats.总时间
 		}
 	}
 
@@ -571,7 +592,11 @@ export class NARSPlayerAgent {
 	 *   * 第一行为「自主」
 	 *   * 第二行为「非自主」
 	 *
-	 * @example left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_y-#F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_z-@S -> left_{SELF}_y-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@S -> left_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> left_{SELF}_z-#S -> left_{SELF}_y-@S -> left_{SELF}_y-@F -> right_{SELF}_x-#S -> left_{SELF}_y-@F -> left_{SELF}_y-@F -> right_{SELF}_z-@S -> left_{SELF}_z-#S -> right_{SELF}_z-@S -> right_{SELF}_z-#F -> right_{SELF}_x-@F -> left_{SELF}_z-#S
+	 * @example
+	 * 自主操作：
+	 * right_{SELF}(580) -> left_{SELF} -> right_{SELF}(41) -> left_{SELF} -> right_{SELF}(205) -> left_{SELF} -> right_{SELF}
+	 * 教学操作：
+	 * right_{SELF}(4) -> left_{SELF} -> right_{SELF}(3) -> left_{SELF} -> right_{SELF} -> left_{SELF}(3) -> right_{SELF}(4) -> left_{SELF} -> right_{SELF} -> left_{SELF}(3) -> right_{SELF} -> left_{SELF} -> right_{SELF}(2) -> left_{SELF}
 	 */
 	public visualizeOperationHistorySeparated(
 		spontaneousPrefix: string = '',
@@ -838,27 +863,21 @@ export class NARSPlayerAgent {
 				mapObjectKey(experimentData, this.config.dataShow.dataNameMap)
 			)
 		)
+		// 发送「文字信息」
 		router.sendMessageTo(
 			this.config.connections.dataShow.host,
 			this.config.connections.dataShow.port,
 			'|' +
+				`<${this.player.customName}>:\n` +
 				this.visualizeOperationHistorySeparated(
-					this.config.dataShow.operationHistory.spontaneousPrefix,
-					this.config.dataShow.operationHistory.unconsciousPrefix
+					this.config.dataShow.operationHistory
+						.spontaneousPrefixName +
+						` (t_last = ${this.stats.最后一次自主操作时刻}):\n`,
+					this.config.dataShow.operationHistory
+						.unconsciousPrefixName +
+						` (t_last = ${this.stats.最后一次教学操作时刻}):\n`
 				)
 		)
-		// 检测
-		let testPassed: boolean = false
-		if (
-			experimentData.自主成功率 > experimentData.教学成功率 &&
-			!testPassed
-		) {
-			testPassed = true
-			console.info(
-				'AI自主成功率超越教学成功率，自主学习能力测试通过！',
-				experimentData
-			)
-		}
 		// 时间推进 //
 		this.stats.总时间++
 	}
