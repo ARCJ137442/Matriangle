@@ -301,19 +301,21 @@ function onPowerupCollected(
 		)
 	)
 
+	// 自定义数据「上一次奖励/上一次惩罚」
+	if (powerup.good)
+		// 负面⇒清零「惩罚」数据
+		agent.customDatas.timePassedLastBad = 0
+	// 正面⇒清零「奖励」数据
+	else agent.customDatas.timePassedLastGood = 0
+
 	// * ✨高阶目标「POWERFUL」
 	if (
 		(env.config.extraConfig as ExtraPCExperimentConfig)?.highOrderGoals ===
 		true
 	) {
-		// 增加/清零数据
-		agent.customDatas.timePassedLastBad = powerup.good
-			? // 正面奖励：递增
-			  Number(agent.customDatas?.timePassedLastBad) + 1
-			: // 负面惩罚：清零
-			  0
 		// 负面⇒立即惩罚
-		if (!powerup.good)
+		if (!powerup.good) {
+			// 立即惩罚
 			send2NARS(
 				// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 				generateCommonNarseseBinaryToCIN(
@@ -325,19 +327,7 @@ function onPowerupCollected(
 					playerConfig.NAL.negativeTruth
 				)
 			)
-	}
-
-	// 负触发目标
-	if (
-		(env.config.extraConfig as ExtraPCExperimentConfig)
-			?.negatriggerGoals === true
-	) {
-		// 增加/清零数据
-		agent.customDatas.timePassedLastGood = powerup.good
-			? // 正面奖励：清零
-			  0
-			: // 负面惩罚：递增
-			  Number(agent.customDatas?.timePassedLastGood) + 1
+		}
 	}
 
 	// * 记录进统计数据
@@ -889,7 +879,7 @@ const configConstructor = (
 					}
 					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
 					// * 持续性满足/持续性饥饿 机制 * //
-					// * 高阶目标：POWERFUL
+					// * ✨高阶目标：POWERFUL
 					if (extraConfig.highOrderGoals) {
 						// 满足一定程度开始奖励
 						if (
@@ -911,11 +901,11 @@ const configConstructor = (
 							)
 						}
 					}
-					// * 负触发目标：POWERED
+					// * ✨负触发目标：POWERED
 					if (extraConfig.negatriggerGoals) {
 						// 满足一定程度开始惩罚
 						if (
-							extraConfig.powerfulCriterion(
+							extraConfig.negatriggerCriterion(
 								Number(agent.customDatas.timePassedLastGood)
 							)
 						) {
@@ -933,6 +923,11 @@ const configConstructor = (
 							)
 						}
 					}
+					// 更新递增数据
+					agent.customDatas.timePassedLastGood =
+						Number(agent.customDatas?.timePassedLastGood) + 1
+					agent.customDatas.timePassedLastBad =
+						Number(agent.customDatas?.timePassedLastBad) + 1
 				},
 				/** @implements babble：取随机操作 */
 				babble: (

@@ -9,7 +9,7 @@ import { NARSEnv } from './NARSEnv'
 	ExtraCCExperimentConfig,
 } from './config/Experiment-car-collision.config.template' */
 import envConstructorPC from './config/Experiment-powerup-collecting.config.template'
-import { chainApply } from 'matriangle-common/utils'
+import { chainApply, randomBoolean2 } from 'matriangle-common/utils'
 import { NARSEnvConfig } from './config/API'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 
@@ -36,12 +36,14 @@ export function envConstructor(
 					highOrderGoals: false, // !【2023-11-27 00:27:39】目前启用
 					// 高阶目标「有能量的」：一个阈值
 					powerfulCriterion: (timePassedLastBad: uint): boolean =>
-						timePassedLastBad > 3, // *【2023-11-27 00:37:31】暂时不要定太高，否则可能够不着
+						// *【2023-11-27 23:27:54】目前定高点没所谓，这和「时间颗粒」有关
+						timePassedLastBad > 30,
 					// 负触发目标
 					negatriggerGoals: true, // !【2023-11-27 00:27:39】目前启用
 					// 高阶目标「有能量的」：一个阈值
 					negatriggerCriterion: (timePassedLastGood: uint): boolean =>
-						timePassedLastGood > 3, // *【2023-11-27 00:37:31】暂时不要定太高，否则可能够不着
+						// *【2023-11-27 23:27:54】目前定高点没所谓，这和「时间颗粒」有关
+						timePassedLastGood > 30 && randomBoolean2(0.25), // 暂时不要定这么快，不然太饥饿了系统容易崩
 				}
 			),
 			...modifiers
