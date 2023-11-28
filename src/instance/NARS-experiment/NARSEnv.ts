@@ -831,7 +831,7 @@ export class NARSPlayerAgent {
 			this.onAIEvent_PreAction.bind(this)
 		)
 		// 默认事件处理
-		ctlFeedback.on(null)
+		ctlFeedback.on(null, this.onAIEvent_Fallback.bind(this))
 
 		// 连接到控制器
 		player.connectController(ctlFeedback)
@@ -1157,6 +1157,7 @@ export class NARSPlayerAgent {
 			self,
 			this.config,
 			host,
+			(message: string): void => void messages.push(message),
 			registerOperation
 		)
 		// 消息发送
@@ -1300,6 +1301,8 @@ export class NARSPlayerAgent {
 		else {
 			// 修改「阻断」配置
 			otherInf.prevent = true
+			// 阻断自然babble
+			this._babbleRate = this.config.timing.babbleThreshold
 			// 执行返回的操作
 			this.operateEnv(
 				self,

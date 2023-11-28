@@ -228,6 +228,7 @@ export type NARSPlayerConfig = {
 			self: IPlayer,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix,
+			send2NARS: (message: string) => void,
 			registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
 		) => void
 		/**

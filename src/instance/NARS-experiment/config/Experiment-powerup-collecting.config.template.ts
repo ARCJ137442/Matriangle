@@ -51,10 +51,9 @@ import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { sgn } from 'matriangle-common'
 import {
-	generateCommonNarseseBinaryToCIN,
 	simpleNAVMCmd,
-	generateCommonNarseseBinary,
-	generateCommonNarseseTruthValue,
+	generateCommonNarsese_Binary,
+	generateCommonNarsese_TruthValue,
 } from '../common/nal-lib'
 
 // 需复用的常量 //
@@ -293,17 +292,19 @@ function onPowerupCollected(
 	// 直接目标「POWERED」
 	send2NARS(
 		// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-		generateCommonNarseseBinaryToCIN(
-			playerConfig.NAL.SELF, // 主词
-			NarseseCopulas.Inheritance, // 系词
-			POWERED, // 谓词
-			NarsesePunctuation.Judgement, // 标点
-			NarseseTenses.Present, // 时态
-			powerup.good // 真值
-				? // 正向
-				  playerConfig.NAL.positiveTruth
-				: // 负向
-				  playerConfig.NAL.negativeTruth
+		agent.config.NAL.generateNarseseToCIN(
+			agent.config.NAL.generateCommonNarseseBinary(
+				playerConfig.NAL.SELF, // 主词
+				NarseseCopulas.Inheritance, // 系词
+				POWERED, // 谓词
+				NarsesePunctuation.Judgement, // 标点
+				NarseseTenses.Present, // 时态
+				powerup.good // 真值
+					? // 正向
+					  playerConfig.NAL.positiveTruth
+					: // 负向
+					  playerConfig.NAL.negativeTruth
+			)
 		)
 	)
 
@@ -324,13 +325,15 @@ function onPowerupCollected(
 			// 立即惩罚
 			send2NARS(
 				// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-				generateCommonNarseseBinaryToCIN(
-					playerConfig.NAL.SELF, // 主词
-					NarseseCopulas.Inheritance, // 系词
-					POWERFUL, // 谓词
-					NarsesePunctuation.Judgement, // 标点
-					NarseseTenses.Present, // 时态
-					playerConfig.NAL.negativeTruth
+				agent.config.NAL.generateNarseseToCIN(
+					agent.config.NAL.generateCommonNarseseBinary(
+						playerConfig.NAL.SELF, // 主词
+						NarseseCopulas.Inheritance, // 系词
+						POWERFUL, // 谓词
+						NarsesePunctuation.Judgement, // 标点
+						NarseseTenses.Present, // 时态
+						playerConfig.NAL.negativeTruth
+					)
 				)
 			)
 		}
@@ -404,9 +407,11 @@ export type ExtraPCExperimentConfig = {
 		 */
 		whatOperationItHas: boolean
 		/**
-		 * 告知「自身有什么感知器」
-		 * TODO: 待完善
+		 * 先天内置固定的「具体知识」
+		 * * 格式：CommonNarsese语句
+		 * * 不保证其在「先天知识」中添加的顺序
 		 */
+		initialKnowledge: string[]
 	}
 	/**
 	 * 运动系统
@@ -461,7 +466,567 @@ export type ExtraPCExperimentConfig = {
 	}
 }
 
-/** 配置 */
+/**
+ * 玩家配置：AgentHai/前进操作
+ * * 🎯统一「实际玩家前进」「能量包碰撞检测」「步数清零」
+ */
+export function AgentHai_moveForward(
+	env: NARSEnv,
+	agent: NARSPlayerAgent,
+	selfConfig: NARSPlayerConfig,
+	host: IMatrix,
+	send2NARS: (message: string) => void
+): void {
+	// 玩家实际前进
+	agent.player.moveForward(host)
+	// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
+	testPowerupCollision(env, host, agent, selfConfig, send2NARS)
+	// 自定义数据清零
+	agent.customDatas._stepTick = 0
+}
+
+/** 玩家配置：AgentHai/操作注册 */
+export const AgentHai_registerOperations = (
+	extraConfig: ExtraPCExperimentConfig,
+	env: NARSEnv,
+	self: IPlayer,
+	selfConfig: NARSPlayerConfig,
+	host: IMatrix,
+	send2NARS: (message: string) => void,
+	registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
+): void => {
+	// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
+	let name: string
+	/**
+	 * 内置的原子操作表
+	 * *【2023-11-08 00:46:18】鉴于先前实验和与他人的讨论，`移动(自身, 方向)`和`向左移动(自身)`不完全等价。
+	 * * 故在三维之前都使用`right|left|down|up`四个「原子操作」去（直接）让NARS执行
+	 */
+	const internalAtomicOperations: NARSOperation[] = [
+		// !【2023-11-10 18:45:17】操作参数还是不能省略（虽然ONA支持「零参乘积」但OpenNARS不支持）
+		['^right', selfConfig.NAL.SELF],
+		['^left', selfConfig.NAL.SELF],
+		// ['^down', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
+		// ['^up', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
+	]
+	// * 优先注册「内部原始操作」
+	for (const operation of internalAtomicOperations) {
+		registerOperation(
+			operation,
+			extraConfig.intrinsicKnowledge.whatOperationItHas
+		)
+	}
+	// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
+	const rl = ['right', 'left'] // 先右后左，先正后负
+	// 遍历各个维度，产生操作
+	for (
+		// !【2023-11-08 00:49:03】现在从「内置原始操作后的第一个维度」开始，若没有就作罢
+		let i = (internalAtomicOperations.length >> 1) + 1;
+		// *【2023-11-25 23:47:31】这里的「+1」现在是「内部操作」不够「n-1个维度维度」的情况下。。。因为原生的「left|right」已经够2d了
+		i < host.map.storage.numDimension;
+		++i
+	) {
+		for (name of rl) {
+			// 负/正方向 //
+			registerOperation(
+				[
+					// * 样例：['^left', '{SELF}', 'x']
+					'^' + name, // 朝负/正方向 // ! 不要忘记尖号
+					selfConfig.NAL.SELF,
+					nameOfAxis_M(i),
+				],
+				extraConfig.intrinsicKnowledge.whatOperationItHas
+			)
+		}
+	}
+	// 其它「固定的内置知识」
+	for (const narsese of extraConfig.intrinsicKnowledge.initialKnowledge)
+		send2NARS(narsese)
+}
+
+/** 玩家配置：AgentHai */
+export const AgentHai = (
+	extraConfig: ExtraPCExperimentConfig
+): NARSPlayerConfig => ({
+	// 属性参数（对接母体逻辑）
+	attributes: {
+		name: 'AgentHai',
+		health: {
+			initialHP: 100,
+			initialMaxHP: 100,
+			initialHeal: 0,
+			initialLives: 0,
+			lifeNotDecay: true,
+		},
+		appearance: {
+			normal: {
+				// *【2023-11-24 23:54:35】现在是纯白色
+				lineColor: 0x808080,
+				fillColor: 0xffffff,
+			},
+			// *【2023-11-25 01:58:20】同图表线条
+			babble: {
+				lineColor: 0x7f6633,
+				fillColor: 0xffcc66,
+			},
+			// *【2023-11-25 01:58:20】同图表线条
+			active: {
+				lineColor: 0x337f66,
+				fillColor: 0x66ffcc,
+			},
+		},
+	},
+
+	// 网络连接
+	connections: {
+		NARS: {
+			host: '127.0.0.1',
+			port: 8765,
+			constructor: BlankMessageServiceConstructor,
+		},
+		dataShow: {
+			host: '127.0.0.1',
+			port: 3030,
+			constructor: BlankMessageServiceConstructor,
+		},
+		controlKey: 'Alpha', // * 为了和碰撞实验相吻合
+	},
+
+	// 数据显示
+	dataShow: {
+		// * 无⇒保持原样
+		dataNameMap: {},
+		operationHistory: {
+			/**
+			 * @implements `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
+			 */
+			visualizeOperationRecord: (record: NARSOperationRecord): string =>
+				// 操作符&操作参数（截去前缀`^`）
+				record[0].join('_').slice(1) +
+				(record[1] === undefined
+					? '' // 无果⇒没有「进一步连接」
+					: '-' + // 「操作-状态」分隔符
+					  // 是否成功：成功Success，失败Failed
+					  (record[1] ? 'S' : 'F')),
+			/**
+			 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
+			 */
+			visualizeOperationRecordFull: (
+				record: NARSOperationRecordFull
+			): string =>
+				// 操作符&操作参数（截去前缀`^`）
+				record[0].join('_').slice(1) +
+				// 「操作-状态」分隔符
+				'-' +
+				// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
+				(record[1] ? '@' : '#') +
+				// 是否成功：成功Success，失败Failed
+				(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
+			spontaneousPrefixName: '自主操作',
+			unconsciousPrefixName: '教学操作',
+		},
+	},
+
+	// 计时参数
+	timing: {
+		/** 单位执行速度:感知 */
+		unitAITickSpeed: 5,
+		/** 目标提醒相对倍率 */
+		goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
+
+		/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
+		teachingTime: 30,
+
+		/** Babble相对倍率 */
+		babbleRate: 1,
+		/** 「长时间无操作⇒babble」的阈值 */
+		babbleThreshold: 10,
+		// babble概率（移植自SimNAR）
+		babbleProbability: 0.5, // *【2023-11-28 20:34:15】📌若为「全主动模式」可能就要调高点
+	},
+
+	// 词项常量池 & 词法模板
+	NAL: {
+		SELF: '{SELF}',
+		/** @implements 表示「正向目标」的词项组 */
+		POSITIVE_GOALS: [
+			// SAFE, // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」
+			// ? 可能多目标还会「分心干扰」一些
+			POWERED,
+			// 存储是否附加「高阶目标」
+			...(extraConfig.motivationSys.highOrderGoals ? [POWERFUL] : []),
+		],
+		/** @implements 暂时没有「负向目标」 */
+		NEGATIVE_GOALS: [],
+		positiveTruth: generateCommonNarsese_TruthValue(1.0, 0.9),
+		negativeTruth: generateCommonNarsese_TruthValue(0.0, 0.9),
+		/** @implements 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
+		op_output: (op: NARSOperation): string =>
+			`${op[0]}([${op.slice(1).join(', ')}])`,
+		/** @implements 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
+		op_input: (op: NARSOperation): string =>
+			`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`,
+		/** @implements 直接复用常量 */
+		generateNarseseToCIN: (narsese: string): string =>
+			simpleNAVMCmd(NAIRCmdTypes.NSE, narsese),
+		/** @implements 直接复用常量 */
+		generateOperatorRegToCIN: (operator_name: string): string =>
+			simpleNAVMCmd(NAIRCmdTypes.REG, operator_name),
+		/** @implements 直接复用常量 */
+		generateCommonNarseseBinary: (
+			subject: string,
+			copula: string,
+			prejudice: string,
+			punctuation: string = '.',
+			tense: string = '',
+			truth: string = ''
+		): string =>
+			generateCommonNarsese_Binary(
+				subject,
+				copula,
+				prejudice,
+				punctuation,
+				tense,
+				truth
+			),
+	},
+
+	// 行为参数
+	behavior: {
+		/** @implements 实现：初始化 */
+		init(
+			env: NARSEnv,
+			event: PlayerEvent,
+			self: IPlayer,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			send2NARS: (message: string) => void,
+			registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
+		): void {
+			// 注册操作
+			AgentHai_registerOperations(
+				extraConfig,
+				env,
+				self,
+				selfConfig,
+				host,
+				send2NARS,
+				registerOperation
+			)
+		},
+		/**
+		 * @implements 实现：位置感知+随机前进
+		 *
+		 * !【2023-11-27 19:51:34】目前还是「先运动，后感知」——因为「先感知」可能会存在「运动后感知错位」的毛病
+		 */
+		AITick: (
+			env: NARSEnv,
+			event: PlayerEvent,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			posPointer: iPoint,
+			send2NARS: (message: string) => void
+		): void => {
+			// * 运动：前进 * //
+			// 自定义数据更新
+			agent.customDatas._stepTick =
+				Number(agent.customDatas?._stepTick ?? 0) + 1
+			// 「被动模式」前进
+			if (
+				// * 仅在「被动模式」起效
+				extraConfig.motorSys.mode === PlayerMotorMode.PASSIVE &&
+				// * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
+				agent.lastNARSOperated > 1 &&
+				// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
+				extraConfig.motorSys.passiveStepCriterion(
+					agent.customDatas._stepTick as number
+				)
+			)
+				AgentHai_moveForward(env, agent, selfConfig, host, send2NARS)
+			// * 感知：能量包视野 * //
+			allEntity: for (const entity of host.entities) {
+				if (!(entity instanceof Powerup)) continue
+				// 若为能量包
+				// * 正前方感知
+				const lineIndex = agent.player.position.indexOfSameLine(
+					entity.position
+				)
+				if (
+					// 在一条直线上
+					lineIndex === mRot2axis(agent.player.direction) &&
+					// 并且是前方： 轴向相等 & ("实体坐标>玩家坐标"&正方向 | "实体坐标<玩家坐标"&负方向)
+					sgn(
+						entity.position[lineIndex] -
+							agent.player.position[lineIndex]
+					) === mRot2increment(agent.player.direction)
+				) {
+					agent.player.setColor(
+						// * 依照能量包正负，分别安排绿色/红色
+						entity.good ? 0x00ff00 : 0xff0000,
+						// 填充颜色保持默认
+						agent.player.fillColor
+					)
+					// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
+					send2NARS(
+						// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
+						agent.config.NAL.generateNarseseToCIN(
+							agent.config.NAL.generateCommonNarseseBinary(
+								/**
+								 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+								 */
+								NAL_powerupSubject(entity.good, 'front'), // 主词
+								NarseseCopulas.Inheritance, // 系词
+								NAL_SEEN, // 谓词
+								NarsesePunctuation.Judgement, // 标点
+								NarseseTenses.Present, // 时态
+								// 真值
+								/* entity.position[i] === self.position[i]
+							? selfConfig.NAL.positiveTruth
+							: selfConfig.NAL.negativeTruth */
+								selfConfig.NAL.positiveTruth
+							)
+						)
+					)
+					// 感知到就结束了
+					break allEntity
+				}
+				// 逐个维度对比
+				else
+					for (let i = 0; i < host.map.storage.numDimension; ++i) {
+						// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
+						// * 直接对每个维度进行判断，然后返回各自的「是否看见」
+						if (entity.position[i] !== agent.player.position[i])
+							continue
+						// 特殊颜色显示
+						agent.player.setColor(
+							// * 依照能量包正负，分别安排深绿色/红色
+							entity.good ? 0x007f00 : 0x7f0000,
+							// 填充颜色保持默认
+							agent.player.fillColor
+						)
+						// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
+						send2NARS(
+							// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
+							agent.config.NAL.generateNarseseToCIN(
+								agent.config.NAL.generateCommonNarseseBinary(
+									/**
+									 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+									 */
+									NAL_powerupSubject(
+										entity.good,
+										nameOfAxis_M(i) // ! 现在把「坐标轴信息」放在末尾
+									), // 主词
+									NarseseCopulas.Inheritance, // 系词
+									NAL_SEEN, // 谓词
+									NarsesePunctuation.Judgement, // 标点
+									NarseseTenses.Present, // 时态
+									// 真值
+									/* entity.position[i] === self.position[i]
+									? selfConfig.NAL.positiveTruth
+									: selfConfig.NAL.negativeTruth */
+									selfConfig.NAL.positiveTruth
+								)
+							)
+						)
+						// 感知到就结束了
+						break allEntity
+					}
+			}
+			// !【2023-11-28 19:43:49】现在移除有关「墙壁碰撞」的代码（小车碰撞遗留）
+			// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
+			// * 持续性满足/持续性饥饿 机制 * //
+			// * ✨高阶目标：POWERFUL
+			if (extraConfig.motivationSys.highOrderGoals) {
+				// 满足一定程度开始奖励
+				if (
+					extraConfig.motivationSys.powerfulCriterion(
+						Number(agent.customDatas?.timePassedLastBad ?? 0)
+					)
+				) {
+					// 高阶目标「POWERFUL」
+					send2NARS(
+						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+						agent.config.NAL.generateNarseseToCIN(
+							agent.config.NAL.generateCommonNarseseBinary(
+								agent.config.NAL.SELF, // 主词
+								NarseseCopulas.Inheritance, // 系词
+								POWERFUL, // 谓词
+								NarsesePunctuation.Judgement, // 标点
+								NarseseTenses.Present, // 时态
+								agent.config.NAL.positiveTruth
+							)
+						)
+					)
+				}
+			}
+			// * ✨负触发目标：POWERED
+			if (extraConfig.motivationSys.negatriggerGoals) {
+				// 满足一定程度开始惩罚
+				if (
+					extraConfig.motivationSys.negatriggerCriterion(
+						Number(agent.customDatas?.timePassedLastGood ?? 0)
+					)
+				) {
+					// 负触发目标「POWERED」
+					send2NARS(
+						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+						agent.config.NAL.generateNarseseToCIN(
+							agent.config.NAL.generateCommonNarseseBinary(
+								agent.config.NAL.SELF, // 主词
+								NarseseCopulas.Inheritance, // 系词
+								POWERED, // 谓词
+								NarsesePunctuation.Judgement, // 标点
+								NarseseTenses.Present, // 时态
+								// 真值
+								generateCommonNarsese_TruthValue(
+									...extraConfig.motivationSys.negatriggerTruthF(
+										Number(
+											agent.customDatas
+												?.timePassedLastGood ?? 0
+										)
+									)
+								)
+							)
+						)
+					)
+				}
+			}
+			// 更新递增数据
+			agent.customDatas.timePassedLastGood =
+				Number(agent.customDatas?.timePassedLastGood ?? 0) + 1
+			agent.customDatas.timePassedLastBad =
+				Number(agent.customDatas?.timePassedLastBad ?? 0) + 1
+		},
+		/** @implements babble：取随机操作 */
+		babble: (
+			env: NARSEnv,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix
+		): NARSOperation => agent.randomRegisteredOperation(),
+		/**
+		 * @implements 根据操作移动
+		 * * 索引即方向
+		 * * 【2023-11-25 21:44:14】现在使用「0 => xy+, 1 => xy-, 2 => xOz+, ...」这样的旋转方式
+		 *   * 既能兼容「任意维地图」
+		 *   * 又能实现「一直同样操作≠状态一直不变」
+		 */
+		operate: (
+			env: NARSEnv,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			op: NARSOperation,
+			operateI: uint | -1,
+			send2NARS: (message: string) => void
+		): NARSOperationResult => {
+			// 软处理@ONA：没有索引时，有「left」「right」也算
+			if (operateI < 0)
+				if (op[0].indexOf('left') >= 0) operateI = 0 // y+
+				else if (op[0].indexOf('right') >= 0) operateI = 1 // y-
+			// 有操作⇒行动&反馈
+			if (operateI >= 0)
+				// * 分模式处理
+				switch (extraConfig.motorSys.mode) {
+					// * 被动模式
+					case PlayerMotorMode.PASSIVE: {
+						// 玩家转向 // !【2023-11-07 00:32:16】行动「前进」在AITick中
+						const newDirection: mRot = rotateInPlane_M(
+							agent.player.direction,
+							0, // x+
+							operateI + 2, // 从y+开始
+							1
+						)
+						agent.player.turnTo(host, newDirection)
+						return undefined
+					}
+					// * 主动模式
+					case PlayerMotorMode.INITIATIVE:
+						// * 操作索引=0⇒前进
+						if (operateI === 0)
+							AgentHai_moveForward(
+								env,
+								agent,
+								selfConfig,
+								host,
+								send2NARS
+							)
+						// * 操作索引>0⇒转向
+						else {
+							const newDirection: mRot = rotateInPlane_M(
+								agent.player.direction,
+								0, // x+
+								operateI << 1, // 从y+开始，到z+、w+。。。足够遍历所有角度
+								1
+							)
+							agent.player.turnTo(host, newDirection)
+							return undefined
+						}
+						// 默认不返回任何东西
+						return undefined
+				}
+			else console.warn(`未知的操作「${selfConfig.NAL.op_output(op)}」`)
+			// 没执行⇒无结果
+			return undefined
+		},
+		fallFeedback: (
+			env: NARSEnv,
+			event: string,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			send2NARS: (message: string) => void
+		): void => {
+			// 预处理 //
+			switch (event) {
+				// 拒绝「世界刻」
+				case NativePlayerEvent.TICK:
+					break
+				// * 默认向NARS发送Narsese * //
+				default:
+					// ! 这里实际上是「以客户端为主体，借客户端发送消息」
+					// 例句：`<{SELF} --> [respawn]>. :|:`
+					send2NARS(
+						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+						agent.config.NAL.generateNarseseToCIN(
+							agent.config.NAL.generateCommonNarseseBinary(
+								selfConfig.NAL.SELF, // 主词
+								NarseseCopulas.Inheritance, // 系词
+								`[${event}]`, // 谓词
+								NarsesePunctuation.Judgement, // 标点
+								NarseseTenses.Present // 时态
+								// selfConfig.NAL.negativeTruth // 真值
+							)
+						)
+					)
+					break
+			}
+		},
+		/**
+		 * @implements 映射「前进」操作
+		 */
+		actionReplacementMap(
+			env: NARSEnv,
+			event: PlayerEvent,
+			agent: NARSPlayerAgent,
+			selfConfig: NARSPlayerConfig,
+			host: IMatrix,
+			action: PlayerAction
+		): NARSOperation | undefined | null {
+			// * 前进行为⇒执行操作
+			if (isActionMoveForward(action))
+				return agent.registeredOperations[
+					// * 直接翻译成「任意维整数角」⇒索引得到操作
+					toRotFromActionMoveForward(action)
+				]
+			// * 其它⇒放行
+			return undefined
+		},
+	},
+})
+
+/** 总配置 */
 const configConstructor = (
 	// 额外参数 //
 	extraConfig: ExtraPCExperimentConfig
@@ -553,543 +1118,7 @@ const configConstructor = (
 	// 玩家参数
 	players: [
 		// 第一个玩家AgentHai
-		{
-			// 属性参数（对接母体逻辑）
-			attributes: {
-				name: 'AgentHai',
-				health: {
-					initialHP: 100,
-					initialMaxHP: 100,
-					initialHeal: 0,
-					initialLives: 0,
-					lifeNotDecay: true,
-				},
-				appearance: {
-					normal: {
-						// *【2023-11-24 23:54:35】现在是纯白色
-						lineColor: 0x808080,
-						fillColor: 0xffffff,
-					},
-					// *【2023-11-25 01:58:20】同图表线条
-					babble: {
-						lineColor: 0x7f6633,
-						fillColor: 0xffcc66,
-					},
-					// *【2023-11-25 01:58:20】同图表线条
-					active: {
-						lineColor: 0x337f66,
-						fillColor: 0x66ffcc,
-					},
-				},
-			},
-
-			// 网络连接
-			connections: {
-				NARS: {
-					host: '127.0.0.1',
-					port: 8765,
-					constructor: BlankMessageServiceConstructor,
-				},
-				dataShow: {
-					host: '127.0.0.1',
-					port: 3030,
-					constructor: BlankMessageServiceConstructor,
-				},
-				controlKey: 'Alpha', // * 为了和碰撞实验相吻合
-			},
-
-			// 数据显示
-			dataShow: {
-				// * 无⇒保持原样
-				dataNameMap: {},
-				operationHistory: {
-					/**
-					 * @implements `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
-					 */
-					visualizeOperationRecord: (
-						record: NARSOperationRecord
-					): string =>
-						// 操作符&操作参数（截去前缀`^`）
-						record[0].join('_').slice(1) +
-						(record[1] === undefined
-							? '' // 无果⇒没有「进一步连接」
-							: '-' + // 「操作-状态」分隔符
-							  // 是否成功：成功Success，失败Failed
-							  (record[1] ? 'S' : 'F')),
-					/**
-					 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
-					 */
-					visualizeOperationRecordFull: (
-						record: NARSOperationRecordFull
-					): string =>
-						// 操作符&操作参数（截去前缀`^`）
-						record[0].join('_').slice(1) +
-						// 「操作-状态」分隔符
-						'-' +
-						// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
-						(record[1] ? '@' : '#') +
-						// 是否成功：成功Success，失败Failed
-						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
-					spontaneousPrefixName: '自主操作',
-					unconsciousPrefixName: '教学操作',
-				},
-			},
-
-			// 计时参数
-			timing: {
-				/** 单位执行速度:感知 */
-				unitAITickSpeed: 5,
-				/** 目标提醒相对倍率 */
-				goalRemindRate: 3, // 因子「教学目标」 3 5 10 0x100000000
-
-				/** 教学时间（实验开始NARS操作「不阻塞Babble」的时间） */
-				teachingTime: 30,
-
-				/** Babble相对倍率 */
-				babbleRate: 1,
-				/** 「长时间无操作⇒babble」的阈值 */
-				babbleThreshold: 3,
-				// babble概率（移植自SimNAR）
-				babbleProbability: 0.1,
-			},
-
-			// 词项常量池 & 词法模板
-			NAL: {
-				SELF: '{SELF}',
-				/** @implements 表示「正向目标」的词项组 */
-				POSITIVE_GOALS: [
-					// SAFE, // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」
-					// ? 可能多目标还会「分心干扰」一些
-					POWERED,
-					// 存储是否附加「高阶目标」
-					...(extraConfig.motivationSys.highOrderGoals
-						? [POWERFUL]
-						: []),
-				],
-				/** @implements 暂时没有「负向目标」 */
-				NEGATIVE_GOALS: [],
-				positiveTruth: generateCommonNarseseTruthValue(1.0, 0.9),
-				negativeTruth: generateCommonNarseseTruthValue(0.0, 0.9),
-				/** @implements 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
-				op_output: (op: NARSOperation): string =>
-					`${op[0]}([${op.slice(1).join(', ')}])`,
-				/** @implements 操作符带尖号，模板：语句`<(*, {SELF}, x) --> ^left>` */
-				op_input: (op: NARSOperation): string =>
-					`<(*, ${op.slice(1).join(', ')}) --> ${op[0]}>`,
-				/** @implements 直接复用常量 */
-				generateNarseseToCIN: (narsese: string): string =>
-					simpleNAVMCmd(NAIRCmdTypes.NSE, narsese),
-				/** @implements 直接复用常量 */
-				generateOperatorRegToCIN: (operator_name: string): string =>
-					simpleNAVMCmd(NAIRCmdTypes.REG, operator_name),
-				/** @implements 直接复用常量 */
-				generateCommonNarseseBinary: (
-					subject: string,
-					copula: string,
-					prejudice: string,
-					punctuation: string = '.',
-					tense: string = '',
-					truth: string = ''
-				): string =>
-					generateCommonNarseseBinary(
-						subject,
-						copula,
-						prejudice,
-						punctuation,
-						tense,
-						truth
-					),
-			},
-
-			// 行为参数
-			behavior: {
-				/** @implements 实现：初始化 */
-				init: (
-					env: NARSEnv,
-					event: PlayerEvent,
-					self: IPlayer,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix,
-					registerOperation: (
-						op: NARSOperation,
-						tellToNARS: boolean
-					) => void
-				): void => {
-					// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
-					let name: string
-					/**
-					 * 内置的原子操作表
-					 * *【2023-11-08 00:46:18】鉴于先前实验和与他人的讨论，`移动(自身, 方向)`和`向左移动(自身)`不完全等价。
-					 * * 故在三维之前都使用`right|left|down|up`四个「原子操作」去（直接）让NARS执行
-					 */
-					const internalAtomicOperations: NARSOperation[] = [
-						// !【2023-11-10 18:45:17】操作参数还是不能省略（虽然ONA支持「零参乘积」但OpenNARS不支持）
-						['^right', selfConfig.NAL.SELF],
-						['^left', selfConfig.NAL.SELF],
-						// ['^down', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
-						// ['^up', selfConfig.NAL.SELF], // ! 似乎「up」「down」又不是OpenNARS所存储的原子操作了
-					]
-					// * 优先注册「内部原始操作」
-					for (const operation of internalAtomicOperations) {
-						registerOperation(
-							operation,
-							extraConfig.intrinsicKnowledge.whatOperationItHas
-						)
-					}
-					// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
-					const rl = ['right', 'left'] // 先右后左，先正后负
-					// 遍历各个维度，产生操作
-					for (
-						// !【2023-11-08 00:49:03】现在从「内置原始操作后的第一个维度」开始，若没有就作罢
-						let i = (internalAtomicOperations.length >> 1) + 1;
-						// *【2023-11-25 23:47:31】这里的「+1」现在是「内部操作」不够「n-1个维度维度」的情况下。。。因为原生的「left|right」已经够2d了
-						i < host.map.storage.numDimension;
-						++i
-					) {
-						for (name of rl) {
-							// 负/正方向 //
-							registerOperation(
-								[
-									// * 样例：['^left', '{SELF}', 'x']
-									'^' + name, // 朝负/正方向 // ! 不要忘记尖号
-									selfConfig.NAL.SELF,
-									nameOfAxis_M(i),
-								],
-								extraConfig.intrinsicKnowledge
-									.whatOperationItHas
-							)
-						}
-					}
-				},
-				/**
-				 * @implements 实现：位置感知+随机前进
-				 *
-				 * !【2023-11-27 19:51:34】目前还是「先运动，后感知」——因为「先感知」可能会存在「运动后感知错位」的毛病
-				 */
-				AITick: (
-					env: NARSEnv,
-					event: PlayerEvent,
-					agent: NARSPlayerAgent,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix,
-					posPointer: iPoint,
-					send2NARS: (message: string) => void
-				): void => {
-					// * 运动：前进 * //
-					// 自定义数据更新
-					agent.customDatas._stepTick =
-						Number(agent.customDatas?._stepTick ?? 0) + 1
-					// 前进 // * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
-					if (
-						agent.lastNARSOperated > 1 &&
-						// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
-						extraConfig.motorSys.passiveStepCriterion(
-							agent.customDatas._stepTick as number
-						)
-					) {
-						agent.player.moveForward(host)
-						// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
-						testPowerupCollision(
-							env,
-							host,
-							agent,
-							selfConfig,
-							send2NARS
-						)
-						// 自定义数据清零
-						agent.customDatas._stepTick = 0
-					}
-					// * 感知：能量包视野 * //
-					for (const entity of host.entities) {
-						// 若为能量包
-						if (entity instanceof Powerup) {
-							// * 正前方感知
-							const lineIndex = posPointer.indexOfSameLine(
-								entity.position
-							)
-							if (
-								// 在一条直线上
-								lineIndex ===
-									mRot2axis(agent.player.direction) &&
-								// 并且是前方： 轴向相等 & ("实体坐标>玩家坐标"&正方向 | "实体坐标<玩家坐标"&负方向)
-								sgn(
-									entity.position[lineIndex] -
-										agent.player.position[lineIndex]
-								) === mRot2increment(agent.player.direction)
-							) {
-								agent.player.setColor(
-									// * 依照能量包正负，分别安排绿色/红色
-									entity.good ? 0x00ff00 : 0xff0000,
-									// 填充颜色保持默认
-									agent.player.fillColor
-								)
-								// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
-								send2NARS(
-									// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
-									generateCommonNarseseBinaryToCIN(
-										/**
-										 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
-										 */
-										NAL_powerupSubject(
-											entity.good,
-											'front'
-										), // 主词
-										NarseseCopulas.Inheritance, // 系词
-										NAL_SEEN, // 谓词
-										NarsesePunctuation.Judgement, // 标点
-										NarseseTenses.Present, // 时态
-										// 真值
-										/* entity.position[i] === self.position[i]
-									? selfConfig.NAL.positiveTruth
-									: selfConfig.NAL.negativeTruth */
-										selfConfig.NAL.positiveTruth
-									)
-								)
-							}
-							// 逐个维度对比
-							else
-								for (
-									let i = 0;
-									i < host.map.storage.numDimension;
-									++i
-								) {
-									// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
-									// * 直接对每个维度进行判断，然后返回各自的「是否看见」
-									if (
-										entity.position[i] ===
-										agent.player.position[i]
-									) {
-										agent.player.setColor(
-											// * 依照能量包正负，分别安排深绿色/红色
-											entity.good ? 0x007f00 : 0x7f0000,
-											// 填充颜色保持默认
-											agent.player.fillColor
-										)
-										// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
-										send2NARS(
-											// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
-											generateCommonNarseseBinaryToCIN(
-												/**
-												 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
-												 */
-												NAL_powerupSubject(
-													entity.good,
-													nameOfAxis_M(i) // ! 现在把「坐标轴信息」放在末尾
-												), // 主词
-												NarseseCopulas.Inheritance, // 系词
-												NAL_SEEN, // 谓词
-												NarsesePunctuation.Judgement, // 标点
-												NarseseTenses.Present, // 时态
-												// 真值
-												/* entity.position[i] === self.position[i]
-											? selfConfig.NAL.positiveTruth
-											: selfConfig.NAL.negativeTruth */
-												selfConfig.NAL.positiveTruth
-											)
-										)
-									}
-								}
-						}
-					}
-					// * 指针归位 此时用于测试墙壁碰撞
-					posPointer.copyFrom(agent.player.position)
-					// * 感知：墙壁碰撞 * //
-					for (let i = 0; i < host.map.storage.numDimension; ++i) {
-						// 负半轴
-						posPointer[i]--
-						if (!agent.player.testCanGoTo(host, posPointer)) {
-							send2NARS(
-								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									`[${nameOfAxis_M(i)}_l_blocked]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
-									selfConfig.NAL.positiveTruth // 真值
-								)
-							)
-						}
-						// 从负到正
-						posPointer[i] += 2
-						if (!agent.player.testCanGoTo(host, posPointer)) {
-							send2NARS(
-								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									`[${nameOfAxis_M(i)}_r_blocked]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
-									selfConfig.NAL.positiveTruth // 真值
-								)
-							)
-						}
-						// 归位⇒下一座标轴
-						posPointer[i]--
-					}
-					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
-					// * 持续性满足/持续性饥饿 机制 * //
-					// * ✨高阶目标：POWERFUL
-					if (extraConfig.motivationSys.highOrderGoals) {
-						// 满足一定程度开始奖励
-						if (
-							extraConfig.motivationSys.powerfulCriterion(
-								Number(
-									agent.customDatas?.timePassedLastBad ?? 0
-								)
-							)
-						) {
-							// 高阶目标「POWERFUL」
-							send2NARS(
-								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									agent.config.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									POWERFUL, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
-									agent.config.NAL.positiveTruth
-								)
-							)
-						}
-					}
-					// * ✨负触发目标：POWERED
-					if (extraConfig.motivationSys.negatriggerGoals) {
-						// 满足一定程度开始惩罚
-						if (
-							extraConfig.motivationSys.negatriggerCriterion(
-								Number(
-									agent.customDatas?.timePassedLastGood ?? 0
-								)
-							)
-						) {
-							// 负触发目标「POWERED」
-							send2NARS(
-								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									agent.config.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									POWERED, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
-									// 真值
-									generateCommonNarseseTruthValue(
-										...extraConfig.motivationSys.negatriggerTruthF(
-											Number(
-												agent.customDatas
-													?.timePassedLastGood ?? 0
-											)
-										)
-									)
-								)
-							)
-						}
-					}
-					// 更新递增数据
-					agent.customDatas.timePassedLastGood =
-						Number(agent.customDatas?.timePassedLastGood ?? 0) + 1
-					agent.customDatas.timePassedLastBad =
-						Number(agent.customDatas?.timePassedLastBad ?? 0) + 1
-				},
-				/** @implements babble：取随机操作 */
-				babble: (
-					env: NARSEnv,
-					agent: NARSPlayerAgent,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix
-				): NARSOperation => agent.randomRegisteredOperation(),
-				/**
-				 * @implements 根据操作移动
-				 * * 索引即方向
-				 * * 【2023-11-25 21:44:14】现在使用「0 => xy+, 1 => xy-, 2 => xOz+, ...」这样的旋转方式
-				 *   * 既能兼容「任意维地图」
-				 *   * 又能实现「一直同样操作≠状态一直不变」
-				 */
-				operate: (
-					env: NARSEnv,
-					agent: NARSPlayerAgent,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix,
-					op: NARSOperation,
-					operateI: uint | -1,
-					send2NARS: (message: string) => void
-				): NARSOperationResult => {
-					// 软处理@ONA：没有索引时，有「left」「right」也算
-					if (operateI < 0)
-						if (op[0].indexOf('left') >= 0) operateI = 0 // y+
-						else if (op[0].indexOf('right') >= 0) operateI = 1 // y-
-					// 有操作⇒行动&反馈
-					if (operateI >= 0) {
-						// 玩家转向 // !【2023-11-07 00:32:16】行动「前进」在AITick中
-						const newDirection: mRot = rotateInPlane_M(
-							agent.player.direction,
-							0, // x+
-							operateI + 2, // 从y+开始
-							1
-						)
-						agent.player.turnTo(host, newDirection)
-						return undefined
-					} else
-						console.warn(
-							`未知的操作「${selfConfig.NAL.op_output(op)}」`
-						)
-					// 没执行⇒无结果
-					return undefined
-				},
-				fallFeedback: (
-					env: NARSEnv,
-					event: string,
-					agent: NARSPlayerAgent,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix,
-					send2NARS: (message: string) => void
-				): void => {
-					// 预处理 //
-					switch (event) {
-						// 拒绝「世界刻」
-						case NativePlayerEvent.TICK:
-							break
-						// * 默认向NARS发送Narsese * //
-						default:
-							// ! 这里实际上是「以客户端为主体，借客户端发送消息」
-							// 例句：`<{SELF} --> [respawn]>. :|:`
-							send2NARS(
-								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
-									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									`[${event}]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present // 时态
-									// selfConfig.NAL.negativeTruth // 真值
-								)
-							)
-							break
-					}
-				},
-				/**
-				 * @implements 映射「前进」操作
-				 */
-				actionReplacementMap(
-					env: NARSEnv,
-					event: PlayerEvent,
-					agent: NARSPlayerAgent,
-					selfConfig: NARSPlayerConfig,
-					host: IMatrix,
-					action: PlayerAction
-				): NARSOperation | undefined | null {
-					// * 前进行为⇒执行操作
-					if (isActionMoveForward(action))
-						return agent.registeredOperations[
-							// * 直接翻译成「任意维整数角」⇒索引得到操作
-							toRotFromActionMoveForward(action)
-						]
-					// * 其它⇒放行
-					return undefined
-				},
-			},
-		},
+		AgentHai(extraConfig),
 	],
 })
 

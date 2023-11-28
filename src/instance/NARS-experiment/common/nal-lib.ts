@@ -24,7 +24,7 @@ export const simpleNAVMCmd = (cmd_type: string, content: string): string =>
  * @example generateCommonNarseseInheritance('{SELF}', '[safe]', '.', ':|:', '%1.0;0.9%')
  * => `<{SELF} --> [safe]>. :|: %1.0;0.9%`
  */
-export const generateCommonNarseseBinary = (
+export const generateCommonNarsese_Binary = (
 	subject: string,
 	copula: string,
 	prejudice: string,
@@ -34,18 +34,18 @@ export const generateCommonNarseseBinary = (
 ): string =>
 	`<${subject} ${copula} ${prejudice}>${punctuation} ${tense} ${truth}`.trimEnd()
 
-/** {@link generateCommonNarseseBinary}和{@link generateNarseseToCIN}的复合函数 */
-export const generateCommonNarseseBinaryToCIN = (
+/** {@link generateCommonNarsese_Binary}和{@link generateNarseseToCIN}的复合函数 */
+export const generateCommonNarseseToCIN_Binary = (
 	subject: string,
 	copula: string,
 	prejudice: string,
-	punctuation: string = '.',
+	punctuation: string,
 	tense: string = '',
 	truth: string = ''
 ): string =>
 	simpleNAVMCmd(
 		NAIRCmdTypes.NSE,
-		generateCommonNarseseBinary(
+		generateCommonNarsese_Binary(
 			subject,
 			copula,
 			prejudice,
@@ -55,6 +55,74 @@ export const generateCommonNarseseBinaryToCIN = (
 		)
 	)
 
+// ! ↓【2023-11-28 20:07:43】下面这些其实都没用：要是直接用了，就不能在配置里自由更改「NAL语句组织」了，会乱套
+// /**
+//  * 短缩写别名
+//  * @alias generateCommonNarseseBinaryToCIN
+//  */
+// export const gCNToCIN_Binary = generateCommonNarseseToCIN_Binary
+
+// /**
+//  * 生成「现在继承判断」
+//  * * 因为的确过于常用
+//  */
+// export const generateCommonNarsese_PresentInheritanceJudgement = (
+// 	subject: string,
+// 	prejudice: string,
+// 	truth: string = ''
+// ): string =>
+// 	generateCommonNarsese_Binary(
+// 		subject,
+// 		NarseseCopulas.Inheritance,
+// 		prejudice,
+// 		NarsesePunctuation.Judgement,
+// 		NarseseTenses.Present,
+// 		truth
+// 	)
+
+// /**
+//  * 短缩写别名
+//  * @alias generateCommonNarsese_PresentInheritanceJudgement
+//  */
+// export const GCN_PresentInheritanceJudgement =
+// 	generateCommonNarsese_PresentInheritanceJudgement
+// /**
+//  * 短缩写别名
+//  * @alias generateCommonNarsese_PresentInheritanceJudgement
+//  */
+// export const GCN_PIJ = generateCommonNarsese_PresentInheritanceJudgement
+
+// /**
+//  * 生成「现在继承判断」
+//  * * 因为的确过于常用
+//  */
+// export const generateCommonNarseseToCIN_PresentInheritanceJudgement = (
+// 	subject: string,
+// 	prejudice: string,
+// 	truth: string = ''
+// ): string =>
+// 	simpleNAVMCmd(
+// 		NAIRCmdTypes.NSE,
+// 		generateCommonNarsese_PresentInheritanceJudgement(
+// 			subject,
+// 			prejudice,
+// 			truth
+// 		)
+// 	)
+
+// /**
+//  * 短缩写别名
+//  * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
+//  */
+// export const GCNToCIN_PresentInheritanceJudgement =
+// 	generateCommonNarseseToCIN_PresentInheritanceJudgement
+// /**
+//  * 短缩写别名
+//  * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
+//  */
+// export const GCNToCIN_PIJ =
+// 	generateCommonNarseseToCIN_PresentInheritanceJudgement
+
 /**
  * CommonNarsese 真值模板
  * *【2023-11-28 09:07:47】现在有了BabelNAR，可以不再需要注意各种CIN中NAL的细节
@@ -62,5 +130,13 @@ export const generateCommonNarseseBinaryToCIN = (
  * @param f 频率
  * @param c 信度
  */
-export const generateCommonNarseseTruthValue = (f: number, c: number): string =>
-	`%${f};${c}%`
+export const generateCommonNarsese_TruthValue = (
+	f: number,
+	c: number
+): string => `%${f};${c}%`
+
+/**
+ * 短缩写别名
+ * @alias generateCommonNarsese_TruthValue
+ */
+export const GCN_TruthValue = generateCommonNarsese_TruthValue

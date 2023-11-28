@@ -36,15 +36,16 @@ export function envConstructor(
 					intrinsicKnowledge: {
 						// 告诉NARS「它有什么操作」
 						whatOperationItHas: true,
+						// 先天知识
+						initialKnowledge: [
+							// * 自身感知器信息（要自己填，因为后面随时有可能加）
+							// * 作弊码
+							// // <(&/, 正向能量包在前方, 一定时间) =/> 自身充能>.
+						],
 					},
 					// 运动系统
 					motorSys: {
-						/**
-						 * 暂时使用「被动模式」
-						 *
-						 * TODO: 目前只支持「被动模式」，「主动模式」还需要进一步支持
-						 */
-						mode: PlayerMotorMode.PASSIVE,
+						mode: PlayerMotorMode.INITIATIVE,
 						// 被动模式的步进：频率为3
 						passiveStepCriterion: (stepTick: uint): boolean =>
 							stepTick > 3,

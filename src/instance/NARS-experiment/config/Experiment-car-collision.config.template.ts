@@ -17,9 +17,6 @@ import {
 	NARSOperationRecord,
 	NARSOperationRecordFull,
 	NARSOperationResult,
-	NarseseCopulas,
-	NarsesePunctuation,
-	NarseseTenses,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { NAIRCmdTypes } from 'matriangle-mod-nar-framework/NAIRCmdTypes.type'
@@ -36,9 +33,9 @@ import {
 } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import {
 	simpleNAVMCmd,
-	generateCommonNarseseBinary,
-	generateCommonNarseseBinaryToCIN,
-	generateCommonNarseseTruthValue,
+	generateCommonNarsese_Binary,
+	generateCommonNarsese_TruthValue,
+	GCNToCIN_PIJ,
 } from '../common/nal-lib'
 
 // 需复用的常量 //
@@ -281,8 +278,8 @@ const configConstructor = (
 				POSITIVE_GOALS: [SAFE],
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
-				positiveTruth: generateCommonNarseseTruthValue(1.0, 0.9),
-				negativeTruth: generateCommonNarseseTruthValue(0.0, 0.9),
+				positiveTruth: generateCommonNarsese_TruthValue(1.0, 0.9),
+				negativeTruth: generateCommonNarsese_TruthValue(0.0, 0.9),
 				/** @implements 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
 				op_output: (op: NARSOperation): string =>
 					`${op[0]}([${op.slice(1).join(', ')}])`,
@@ -304,7 +301,7 @@ const configConstructor = (
 					tense: string = '',
 					truth: string = ''
 				): string =>
-					generateCommonNarseseBinary(
+					generateCommonNarsese_Binary(
 						subject,
 						copula,
 						prejudice,
@@ -323,7 +320,11 @@ const configConstructor = (
 					self: IPlayer,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
-					registerOperation: (op: [string, ...string[]]) => void
+					send2NARS: (message: string) => void,
+					registerOperation: (
+						op: NARSOperation,
+						tellToNARS: boolean
+					) => void
 				): void => {
 					// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
 					let name: string
@@ -337,12 +338,15 @@ const configConstructor = (
 							++i
 						) {
 							// 负/正方向 //
-							registerOperation([
-								// * 样例：['^left', '{SELF}', 'x']
-								'^' + name, // 朝负/正方向 // ! 不要忘记尖号
-								selfConfig.NAL.SELF,
-								nameOfAxis_M(i),
-							])
+							registerOperation(
+								[
+									// * 样例：['^left', '{SELF}', 'x']
+									'^' + name, // 朝负/正方向 // ! 不要忘记尖号
+									selfConfig.NAL.SELF,
+									nameOfAxis_M(i),
+								],
+								true // ! 默认是「告知NARS『我有这个操作』的」
+							)
 						}
 					}
 				},
@@ -364,12 +368,9 @@ const configConstructor = (
 						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
+								GCNToCIN_PIJ(
 									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
 									`[${nameOfAxis_M(i)}_l_blocked]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
 									selfConfig.NAL.positiveTruth // 真值
 								)
 							)
@@ -379,12 +380,9 @@ const configConstructor = (
 						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
+								GCNToCIN_PIJ(
 									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
 									`[${nameOfAxis_M(i)}_r_blocked]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
 									selfConfig.NAL.positiveTruth // 真值
 								)
 							)
@@ -424,12 +422,9 @@ const configConstructor = (
 						if (oldP.isEqual(agent.player.position)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
+								GCNToCIN_PIJ(
 									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
 									SAFE, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present, // 时态
 									selfConfig.NAL.negativeTruth // 真值
 								)
 							)
@@ -440,12 +435,9 @@ const configConstructor = (
 						else {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
+								GCNToCIN_PIJ(
 									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									SAFE, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present // 时态
+									SAFE // 谓词
 									// selfConfig.NAL.positiveTruth // ! 目标没有真值
 								)
 							)
@@ -477,12 +469,9 @@ const configConstructor = (
 							// 例句：`<{SELF} --> [respawn]>. :|:`
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								generateCommonNarseseBinaryToCIN(
+								GCNToCIN_PIJ(
 									selfConfig.NAL.SELF, // 主词
-									NarseseCopulas.Inheritance, // 系词
-									`[${event}]`, // 谓词
-									NarsesePunctuation.Judgement, // 标点
-									NarseseTenses.Present // 时态
+									`[${event}]` // 谓词
 									// selfConfig.NAL.negativeTruth // 真值
 								)
 							)
