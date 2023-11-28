@@ -228,7 +228,7 @@ export type NARSPlayerConfig = {
 			self: IPlayer,
 			selfConfig: NARSPlayerConfig,
 			host: IMatrix,
-			registerOperation: (op: [string, ...string[]]) => void
+			registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
 		) => void
 		/**
 		 * 一个AI刻（单位AI运行周期）中

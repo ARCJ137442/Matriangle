@@ -251,8 +251,8 @@ const configConstructor = (
 						(record[1] ? '@' : '#') +
 						// 是否成功：成功Success，失败Failed
 						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
-					spontaneousPrefixName: '自主操作：\n',
-					unconsciousPrefixName: '教学操作：\n',
+					spontaneousPrefixName: '自主操作',
+					unconsciousPrefixName: '教学操作',
 				},
 			},
 

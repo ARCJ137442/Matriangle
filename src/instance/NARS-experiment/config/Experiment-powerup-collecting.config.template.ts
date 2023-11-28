@@ -49,7 +49,7 @@ import {
 } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
-import { randomBoolean2, sgn } from 'matriangle-common'
+import { sgn } from 'matriangle-common'
 import {
 	generateCommonNarseseBinaryToCIN,
 	simpleNAVMCmd,
@@ -316,8 +316,8 @@ function onPowerupCollected(
 
 	// * ✨高阶目标「POWERFUL」
 	if (
-		(env.config.extraConfig as ExtraPCExperimentConfig)?.highOrderGoals ===
-		true
+		(env.config.extraConfig as ExtraPCExperimentConfig)?.motivationSys
+			.highOrderGoals === true
 	) {
 		// 负面⇒立即惩罚
 		if (!powerup.good) {
@@ -347,9 +347,40 @@ const BlankMessageServiceConstructor = (): IMessageService => {
 	throw new Error('未被替换的「消息服务构造器」！')
 }
 
+// 专用NAL模板
+
+/**
+ * 生成「能量包感知」对象
+ * * 类型：外延集
+ */
+export const NAL_powerupSubject = (good: boolean, position: string): string =>
+	`{powerup_${good ? 'good' : 'bad'}_${position}}`
+
+/**
+ * 谓词「看见」
+ * * 类型：内涵集
+ */
+export const NAL_SEEN = '[seen]'
+
 // 开始配置 //
 
-// 临时变量
+/** 记录玩家「运动系统」的模式 */
+export enum PlayerMotorMode {
+	/**
+	 * 被动模式
+	 * * 「前进」操作以一定频率自动进行
+	 * * 「转向」操作每个维度有两个
+	 */
+	PASSIVE,
+	/**
+	 * 主动模式
+	 * * 「前进」作为一个显式的「操作」
+	 *   * 如`^left`（这里的`^left`已经不是原先的意义了）
+	 * * 「转向」每个维度只设置一个
+	 *   * 如`^right(x)`（这里的`^right`同上）
+	 */
+	INITIATIVE,
+}
 
 /** 额外配置 */
 export type ExtraPCExperimentConfig = {
@@ -362,35 +393,72 @@ export type ExtraPCExperimentConfig = {
 		/** 负向能量包数目 */
 		numBad: uint
 	}
-	/** 步进频率 */
-	stepProbability: uint
 	/**
-	 * 高阶目标
-	 * * 为`true`时启动类似SimNAR中「satisfy-healthy」的「双层目标系统」
+	 * 先天知识
+	 * * 所有涉及「先天内置语句」的「初始化⇒背景告知」相关配置
 	 */
-	highOrderGoals: boolean
+	intrinsicKnowledge: {
+		/**
+		 * 告知「自身有什么操作」
+		 * * 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
+		 */
+		whatOperationItHas: boolean
+		/**
+		 * 告知「自身有什么感知器」
+		 * TODO: 待完善
+		 */
+	}
 	/**
-	 * 达到「高阶目标」（POWERFUL）的条件
-	 * @param timePassedLastBad 距离「最后一次『负能量包惩罚』」的奖励次数
+	 * 运动系统
+	 * * 所有涉及「操作-行为-运动」的「EXE→玩家行为」相关配置
 	 */
-	powerfulCriterion: (timePassedLastBad: uint) => boolean
+	motorSys: {
+		/**
+		 * 是否「被动移动」
+		 * * 参考{@link PlayerMotorMode}
+		 */
+		mode: PlayerMotorMode
+		/**
+		 * 步进判据
+		 * * 时间单位：AI刻（时间颗粒）
+		 * * 仅在「被动移动」时使用
+		 */
+		passiveStepCriterion: (stepTick: uint) => boolean
+	}
 	/**
-	 * 负触发目标
-	 * * 为`true`时启动类似「长久不吃饭就会饿」的「负触发目标系统」
-	 * * 新词「negatrigger = negative + trigger」
+	 * 动机系统
+	 * * 🎯管理「环境如何向系统输入目标，以及『什么时候输入什么反馈』」
+	 * * 所有涉及「目标-反馈」的「动机/驱动/激励」相关配置
 	 */
-	negatriggerGoals: boolean
-	/**
-	 * 达到「负触发目标」（-POWERED）的条件
-	 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
-	 */
-	negatriggerCriterion: (timePassedLastGood: uint) => boolean
-	/**
-	 * 达到「负触发条件」后，给「负触发目标」输入的真值
-	 * @default 默认情况：常量`[0.0,1.0]`
-	 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
-	 */
-	negatriggerTruthF: (timePassedLastGood: uint) => [number, number]
+	motivationSys: {
+		/**
+		 * 高阶目标
+		 * * 为`true`时启动类似SimNAR中「satisfy-healthy」的「双层目标系统」
+		 */
+		highOrderGoals: boolean
+		/**
+		 * 达到「高阶目标」（POWERFUL）的条件
+		 * @param timePassedLastBad 距离「最后一次『负能量包惩罚』」的奖励次数
+		 */
+		powerfulCriterion: (timePassedLastBad: uint) => boolean
+		/**
+		 * 负触发目标
+		 * * 为`true`时启动类似「长久不吃饭就会饿」的「负触发目标系统」
+		 * * 新词「negatrigger = negative + trigger」
+		 */
+		negatriggerGoals: boolean
+		/**
+		 * 达到「负触发目标」（-POWERED）的条件
+		 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
+		 */
+		negatriggerCriterion: (timePassedLastGood: uint) => boolean
+		/**
+		 * 达到「负触发条件」后，给「负触发目标」输入的真值
+		 * @default 默认情况：常量`[0.0,1.0]`
+		 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
+		 */
+		negatriggerTruthF: (timePassedLastGood: uint) => [number, number]
+	}
 }
 
 /** 配置 */
@@ -562,8 +630,8 @@ const configConstructor = (
 						(record[1] ? '@' : '#') +
 						// 是否成功：成功Success，失败Failed
 						(record[2] === undefined ? '?' : record[2] ? 'S' : 'F'),
-					spontaneousPrefixName: '自主操作：\n',
-					unconsciousPrefixName: '教学操作：\n',
+					spontaneousPrefixName: '自主操作',
+					unconsciousPrefixName: '教学操作',
 				},
 			},
 
@@ -594,7 +662,9 @@ const configConstructor = (
 					// ? 可能多目标还会「分心干扰」一些
 					POWERED,
 					// 存储是否附加「高阶目标」
-					...(extraConfig.highOrderGoals ? [POWERFUL] : []),
+					...(extraConfig.motivationSys.highOrderGoals
+						? [POWERFUL]
+						: []),
 				],
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
@@ -640,7 +710,10 @@ const configConstructor = (
 					self: IPlayer,
 					selfConfig: NARSPlayerConfig,
 					host: IMatrix,
-					registerOperation: (op: [string, ...string[]]) => void
+					registerOperation: (
+						op: NARSOperation,
+						tellToNARS: boolean
+					) => void
 				): void => {
 					// 「方向控制」消息 // * 操作：`移动(自身)` 即 `(*, 自身) --> ^移动`
 					let name: string
@@ -658,7 +731,10 @@ const configConstructor = (
 					]
 					// * 优先注册「内部原始操作」
 					for (const operation of internalAtomicOperations) {
-						registerOperation(operation)
+						registerOperation(
+							operation,
+							extraConfig.intrinsicKnowledge.whatOperationItHas
+						)
 					}
 					// * 基于先前与他人的交流，这里借用「left⇒负方向移动，right⇒正方向移动」「同操作符+不同参数≈不同操作」的思想，使用「^left({SELF}, x)」表达「向x轴负方向移动」（其它移动方式可类推）
 					const rl = ['right', 'left'] // 先右后左，先正后负
@@ -672,12 +748,16 @@ const configConstructor = (
 					) {
 						for (name of rl) {
 							// 负/正方向 //
-							registerOperation([
-								// * 样例：['^left', '{SELF}', 'x']
-								'^' + name, // 朝负/正方向 // ! 不要忘记尖号
-								selfConfig.NAL.SELF,
-								nameOfAxis_M(i),
-							])
+							registerOperation(
+								[
+									// * 样例：['^left', '{SELF}', 'x']
+									'^' + name, // 朝负/正方向 // ! 不要忘记尖号
+									selfConfig.NAL.SELF,
+									nameOfAxis_M(i),
+								],
+								extraConfig.intrinsicKnowledge
+									.whatOperationItHas
+							)
 						}
 					}
 				},
@@ -696,11 +776,16 @@ const configConstructor = (
 					send2NARS: (message: string) => void
 				): void => {
 					// * 运动：前进 * //
+					// 自定义数据更新
+					agent.customDatas._stepTick =
+						Number(agent.customDatas?._stepTick ?? 0) + 1
 					// 前进 // * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
 					if (
 						agent.lastNARSOperated > 1 &&
 						// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
-						randomBoolean2(extraConfig.stepProbability)
+						extraConfig.motorSys.passiveStepCriterion(
+							agent.customDatas._stepTick as number
+						)
 					) {
 						agent.player.moveForward(host)
 						// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
@@ -711,6 +796,8 @@ const configConstructor = (
 							selfConfig,
 							send2NARS
 						)
+						// 自定义数据清零
+						agent.customDatas._stepTick = 0
 					}
 					// * 感知：能量包视野 * //
 					for (const entity of host.entities) {
@@ -743,11 +830,12 @@ const configConstructor = (
 										/**
 										 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
 										 */
-										`{powerup_${
-											entity.good ? 'good' : 'bad'
-										}_front}`, // 主词
+										NAL_powerupSubject(
+											entity.good,
+											'front'
+										), // 主词
 										NarseseCopulas.Inheritance, // 系词
-										`[seen]`, // 谓词
+										NAL_SEEN, // 谓词
 										NarsesePunctuation.Judgement, // 标点
 										NarseseTenses.Present, // 时态
 										// 真值
@@ -784,11 +872,12 @@ const configConstructor = (
 												/**
 												 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
 												 */
-												`{${nameOfAxis_M(i)}_powerup_${
-													entity.good ? 'good' : 'bad'
-												}}`, // 主词
+												NAL_powerupSubject(
+													entity.good,
+													nameOfAxis_M(i) // ! 现在把「坐标轴信息」放在末尾
+												), // 主词
 												NarseseCopulas.Inheritance, // 系词
-												`[seen]`, // 谓词
+												NAL_SEEN, // 谓词
 												NarsesePunctuation.Judgement, // 标点
 												NarseseTenses.Present, // 时态
 												// 真值
@@ -842,11 +931,13 @@ const configConstructor = (
 					// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
 					// * 持续性满足/持续性饥饿 机制 * //
 					// * ✨高阶目标：POWERFUL
-					if (extraConfig.highOrderGoals) {
+					if (extraConfig.motivationSys.highOrderGoals) {
 						// 满足一定程度开始奖励
 						if (
-							extraConfig.powerfulCriterion(
-								Number(agent.customDatas.timePassedLastBad)
+							extraConfig.motivationSys.powerfulCriterion(
+								Number(
+									agent.customDatas?.timePassedLastBad ?? 0
+								)
 							)
 						) {
 							// 高阶目标「POWERFUL」
@@ -864,11 +955,13 @@ const configConstructor = (
 						}
 					}
 					// * ✨负触发目标：POWERED
-					if (extraConfig.negatriggerGoals) {
+					if (extraConfig.motivationSys.negatriggerGoals) {
 						// 满足一定程度开始惩罚
 						if (
-							extraConfig.negatriggerCriterion(
-								Number(agent.customDatas.timePassedLastGood)
+							extraConfig.motivationSys.negatriggerCriterion(
+								Number(
+									agent.customDatas?.timePassedLastGood ?? 0
+								)
 							)
 						) {
 							// 负触发目标「POWERED」
@@ -882,10 +975,10 @@ const configConstructor = (
 									NarseseTenses.Present, // 时态
 									// 真值
 									generateCommonNarseseTruthValue(
-										...extraConfig.negatriggerTruthF(
+										...extraConfig.motivationSys.negatriggerTruthF(
 											Number(
 												agent.customDatas
-													.timePassedLastGood
+													?.timePassedLastGood ?? 0
 											)
 										)
 									)
@@ -895,9 +988,9 @@ const configConstructor = (
 					}
 					// 更新递增数据
 					agent.customDatas.timePassedLastGood =
-						Number(agent.customDatas?.timePassedLastGood) + 1
+						Number(agent.customDatas?.timePassedLastGood ?? 0) + 1
 					agent.customDatas.timePassedLastBad =
-						Number(agent.customDatas?.timePassedLastBad) + 1
+						Number(agent.customDatas?.timePassedLastBad ?? 0) + 1
 				},
 				/** @implements babble：取随机操作 */
 				babble: (

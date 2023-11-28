@@ -1113,8 +1113,16 @@ export class NARSPlayerAgent {
 		const messages: string[] = []
 		// 消息生成
 
-		/** 生成一个回调函数，在配置中被调用，以实现「插入循环」的效果 */
-		const registerOperation = (op: [string, ...string[]]): void => {
+		/**
+		 * 生成一个回调函数，在配置中被调用，以实现「插入循环」的效果
+		 *
+		 * @param op 操作符
+		 * @param tellToNARS 是否告诉NARS「我有这个操作」
+		 */
+		const registerOperation = (
+			op: NARSOperation,
+			tellToNARS: boolean
+		): void => {
 			// 注册操作符
 			if (!this.hasRegisteredOperator(op[0]))
 				messages.push(
@@ -1126,20 +1134,21 @@ export class NARSPlayerAgent {
 			// 注册内部状态
 			this.registeredOperations.push(op)
 			this.registeredOperation_outputs.push(this.config.NAL.op_output(op))
-			// 将操作符与自身联系起来
-			messages.push(
-				this.config.NAL.generateNarseseToCIN(
-					// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
-					this.config.NAL.generateCommonNarseseBinary(
-						this.config.NAL.SELF,
-						NarseseCopulas.Inheritance,
-						this.config.NAL.op_input(op),
-						NarsesePunctuation.Judgement,
-						NarseseTenses.Eternal,
-						this.config.NAL.positiveTruth
+			// * （当「需要告知NARS」时）将操作符与自身联系起来
+			if (tellToNARS)
+				messages.push(
+					this.config.NAL.generateNarseseToCIN(
+						// * 样例：`<{SELF} --> (^left, {SELF}, x)>.` | `<{SELF} --> <(*, {SELF}, x) --> ^left>>.`
+						this.config.NAL.generateCommonNarseseBinary(
+							this.config.NAL.SELF,
+							NarseseCopulas.Inheritance,
+							this.config.NAL.op_input(op),
+							NarsesePunctuation.Judgement,
+							NarseseTenses.Eternal,
+							this.config.NAL.positiveTruth
+						)
 					)
 				)
-			)
 		}
 		// 调用配置
 		this.config.behavior.init(
