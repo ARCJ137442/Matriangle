@@ -50,6 +50,12 @@ import {
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { randomBoolean2, sgn } from 'matriangle-common'
+import {
+	generateCommonNarseseBinaryToCIN,
+	simpleNAVMCmd,
+	generateCommonNarseseBinary,
+	generateCommonNarseseTruthValue,
+} from '../common/nal-lib'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -341,56 +347,6 @@ const BlankMessageServiceConstructor = (): IMessageService => {
 	throw new Error('未被替换的「消息服务构造器」！')
 }
 
-/** 简易NAVM指令构建 */
-export const simpleNAVMCmd = (cmd_type: string, content: string): string =>
-	`${cmd_type} ${content}`
-
-/**
- * 复用CommonNarsese模板：基础二元结构
- * * 核心结构：`<S --> P>` + 标点
- *
- * @param subject 主词
- * @param copula 系词
- * @param prejudice 谓词 '-->'继承，'<->'相似，'==>'蕴含，'<=>'等价
- * @param punctuation 标点（默认为'.'判断 '!'目标，'?'问题，'@'请求）
- * @param tense 语句时态（默认为''永恒 ':/:'将来，':|:'现在，':\:'过去）
- * @param truth 真值（默认为''，格式为'%频率;信度%'）
- * @returns Narsese语句
- *
- * @example generateCommonNarseseInheritance('{SELF}', '[safe]', '.', ':|:', '%1.0;0.9%')
- * => `<{SELF} --> [safe]>. :|: %1.0;0.9%`
- */
-export const generateCommonNarseseBinary = (
-	subject: string,
-	copula: string,
-	prejudice: string,
-	punctuation: string = '.',
-	tense: string = '',
-	truth: string = ''
-): string =>
-	`<${subject} ${copula} ${prejudice}>${punctuation} ${tense} ${truth}`.trimEnd()
-
-/** {@link generateCommonNarseseBinary}和{@link generateNarseseToCIN}的复合函数 */
-export const generateCommonNarseseBinaryToCIN = (
-	subject: string,
-	copula: string,
-	prejudice: string,
-	punctuation: string = '.',
-	tense: string = '',
-	truth: string = ''
-): string =>
-	simpleNAVMCmd(
-		NAIRCmdTypes.NSE,
-		generateCommonNarseseBinary(
-			subject,
-			copula,
-			prejudice,
-			punctuation,
-			tense,
-			truth
-		)
-	)
-
 // 开始配置 //
 
 // 临时变量
@@ -426,9 +382,15 @@ export type ExtraPCExperimentConfig = {
 	negatriggerGoals: boolean
 	/**
 	 * 达到「负触发目标」（-POWERED）的条件
-	 * @param timePassedLastBad 距离「最后一次『正能量包奖励』」的奖励次数
+	 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
 	 */
-	negatriggerCriterion: (timePassedLastBad: uint) => boolean
+	negatriggerCriterion: (timePassedLastGood: uint) => boolean
+	/**
+	 * 达到「负触发条件」后，给「负触发目标」输入的真值
+	 * @default 默认情况：常量`[0.0,1.0]`
+	 * @param timePassedLastGood 距离「最后一次『正能量包奖励』」的奖励次数
+	 */
+	negatriggerTruthF: (timePassedLastGood: uint) => [number, number]
 }
 
 /** 配置 */
@@ -636,8 +598,8 @@ const configConstructor = (
 				],
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
-				positiveTruth: '%1.0;0.9%',
-				negativeTruth: '%0.0;0.9%',
+				positiveTruth: generateCommonNarseseTruthValue(1.0, 0.9),
+				negativeTruth: generateCommonNarseseTruthValue(0.0, 0.9),
 				/** @implements 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
 				op_output: (op: NARSOperation): string =>
 					`${op[0]}([${op.slice(1).join(', ')}])`,
@@ -918,7 +880,15 @@ const configConstructor = (
 									POWERED, // 谓词
 									NarsesePunctuation.Judgement, // 标点
 									NarseseTenses.Present, // 时态
-									agent.config.NAL.negativeTruth
+									// 真值
+									generateCommonNarseseTruthValue(
+										...extraConfig.negatriggerTruthF(
+											Number(
+												agent.customDatas
+													.timePassedLastGood
+											)
+										)
+									)
 								)
 							)
 						}

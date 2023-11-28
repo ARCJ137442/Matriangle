@@ -44,6 +44,17 @@ export function envConstructor(
 					negatriggerCriterion: (timePassedLastGood: uint): boolean =>
 						// *【2023-11-27 23:27:54】目前定高点没所谓，这和「时间颗粒」有关
 						timePassedLastGood > 30 && randomBoolean2(0.25), // 暂时不要定这么快，不然太饥饿了系统容易崩
+					// 负触发目标的真值函数
+					negatriggerTruthF: (
+						timePassedLastGood: uint
+					): [number, number] =>
+						// *【2023-11-27 23:27:54】目前定高点没所谓，这和「时间颗粒」有关
+						[
+							// 频率
+							1 / (timePassedLastGood + 1), // 暂时不要定这么快，不然太饥饿了系统容易崩
+							// 信度
+							0.9, // 这是默认值
+						],
 				}
 			),
 			...modifiers

@@ -34,6 +34,12 @@ import {
 	isActionMoveForward,
 	toRotFromActionMoveForward,
 } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
+import {
+	simpleNAVMCmd,
+	generateCommonNarseseBinary,
+	generateCommonNarseseBinaryToCIN,
+	generateCommonNarseseTruthValue,
+} from '../common/nal-lib'
 
 // 需复用的常量 //
 /** 目标：「安全」 */
@@ -92,61 +98,16 @@ const BlankMessageServiceConstructor = (): IMessageService => {
 	throw new Error('未被替换的「消息服务构造器」！')
 }
 
-/** 简易NAVM指令构建 */
-export const simpleNAVMCmd = (cmd_type: string, content: string): string =>
-	`${cmd_type} ${content}`
-
-/**
- * 复用CommonNarsese模板：基础二元结构
- * * 核心结构：`<S --> P>` + 标点
- *
- * @param subject 主词
- * @param copula 系词
- * @param prejudice 谓词 '-->'继承，'<->'相似，'==>'蕴含，'<=>'等价
- * @param punctuation 标点（默认为'.'判断 '!'目标，'?'问题，'@'请求）
- * @param tense 语句时态（默认为''永恒 ':/:'将来，':|:'现在，':\:'过去）
- * @param truth 真值（默认为''，格式为'%频率;信度%'）
- * @returns Narsese语句
- *
- * @example generateCommonNarseseInheritance('{SELF}', '[safe]', '.', ':|:', '%1.0;0.9%')
- * => `<{SELF} --> [safe]>. :|: %1.0;0.9%`
- */
-export const generateCommonNarseseBinary = (
-	subject: string,
-	copula: string,
-	prejudice: string,
-	punctuation: string = '.',
-	tense: string = '',
-	truth: string = ''
-): string =>
-	`<${subject} ${copula} ${prejudice}>${punctuation} ${tense} ${truth}`.trimEnd()
-
-/** {@link generateCommonNarseseBinary}和{@link generateNarseseToCIN}的复合函数 */
-export const generateCommonNarseseBinaryToCIN = (
-	subject: string,
-	copula: string,
-	prejudice: string,
-	punctuation: string = '.',
-	tense: string = '',
-	truth: string = ''
-): string =>
-	simpleNAVMCmd(
-		NAIRCmdTypes.NSE,
-		generateCommonNarseseBinary(
-			subject,
-			copula,
-			prejudice,
-			punctuation,
-			tense,
-			truth
-		)
-	)
-
 // 开始配置 //
 
 // 临时变量
 
-/** 额外配置 */
+/**
+ * 额外配置
+ * * 一个「config.temple」文件基本确定的是「一个实验」
+ *   * 如「小车碰撞」
+ * * 一个「额外配置」一般用于**控制实验变量**
+ */
 export type ExtraCCExperimentConfig = {
 	/** 地图尺寸 */
 	map_sizes: uint[]
@@ -157,6 +118,8 @@ const configConstructor = (
 	// 额外参数 //
 	extraConfig: ExtraCCExperimentConfig
 ): NARSEnvConfig => ({
+	// 额外配置
+	extraConfig,
 	// 根据自身输出 实验/配置 信息
 	info,
 	// 网络连接地址
@@ -318,8 +281,8 @@ const configConstructor = (
 				POSITIVE_GOALS: [SAFE],
 				/** @implements 暂时没有「负向目标」 */
 				NEGATIVE_GOALS: [],
-				positiveTruth: '%1.0;0.9%',
-				negativeTruth: '%0.0;0.9%',
+				positiveTruth: generateCommonNarseseTruthValue(1.0, 0.9),
+				negativeTruth: generateCommonNarseseTruthValue(0.0, 0.9),
 				/** @implements 操作符带尖号，模板：OpenNARS输出`^left([{SELF}, x])` */
 				op_output: (op: NARSOperation): string =>
 					`${op[0]}([${op.slice(1).join(', ')}])`,
