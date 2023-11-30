@@ -4,6 +4,12 @@
  */
 
 import { NAIRCmdTypes } from 'matriangle-mod-nar-framework/NAIRCmdTypes.type'
+import { NARSPlayerConfig } from '../config/API'
+import {
+	NarseseCopulas,
+	NarsesePunctuation,
+	NarseseTenses,
+} from 'matriangle-mod-nar-framework/NARSTypes.type'
 
 /** 简易NAVM指令构建 */
 export const simpleNAVMCmd = (cmd_type: string, content: string): string =>
@@ -55,73 +61,136 @@ export const generateCommonNarseseToCIN_Binary = (
 		)
 	)
 
-// ! ↓【2023-11-28 20:07:43】下面这些其实都没用：要是直接用了，就不能在配置里自由更改「NAL语句组织」了，会乱套
-// /**
-//  * 短缩写别名
-//  * @alias generateCommonNarseseBinaryToCIN
-//  */
-// export const gCNToCIN_Binary = generateCommonNarseseToCIN_Binary
+// !【2023-11-30 23:07:12】现在这些直接在参数中引入配置，于是便可不失通用性地使用在各个实现中
+/**
+ * 短缩写别名
+ * @alias generateCommonNarseseBinaryToCIN
+ */
+export const gCNToCIN_Binary = generateCommonNarseseToCIN_Binary
 
-// /**
-//  * 生成「现在继承判断」
-//  * * 因为的确过于常用
-//  */
-// export const generateCommonNarsese_PresentInheritanceJudgement = (
-// 	subject: string,
-// 	prejudice: string,
-// 	truth: string = ''
-// ): string =>
-// 	generateCommonNarsese_Binary(
-// 		subject,
-// 		NarseseCopulas.Inheritance,
-// 		prejudice,
-// 		NarsesePunctuation.Judgement,
-// 		NarseseTenses.Present,
-// 		truth
-// 	)
+/**
+ * 生成「现在继承判断」
+ * * 因为的确过于常用
+ */
+export const generateCommonNarsese_PresentInheritanceJudgement = (
+	config: NARSPlayerConfig,
+	subject: string,
+	prejudice: string,
+	truth: string = ''
+): string =>
+	config.NAL.generateNarseseToCIN(
+		config.NAL.generateCommonNarseseBinary(
+			subject,
+			NarseseCopulas.Inheritance,
+			prejudice,
+			NarsesePunctuation.Judgement,
+			NarseseTenses.Present,
+			truth
+		)
+	)
 
-// /**
-//  * 短缩写别名
-//  * @alias generateCommonNarsese_PresentInheritanceJudgement
-//  */
-// export const GCN_PresentInheritanceJudgement =
-// 	generateCommonNarsese_PresentInheritanceJudgement
-// /**
-//  * 短缩写别名
-//  * @alias generateCommonNarsese_PresentInheritanceJudgement
-//  */
-// export const GCN_PIJ = generateCommonNarsese_PresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarsese_PresentInheritanceJudgement
+ */
+export const GCN_PresentInheritanceJudgement =
+	generateCommonNarsese_PresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarsese_PresentInheritanceJudgement
+ */
+export const GCN_PIJ = generateCommonNarsese_PresentInheritanceJudgement
 
-// /**
-//  * 生成「现在继承判断」
-//  * * 因为的确过于常用
-//  */
-// export const generateCommonNarseseToCIN_PresentInheritanceJudgement = (
-// 	subject: string,
-// 	prejudice: string,
-// 	truth: string = ''
-// ): string =>
-// 	simpleNAVMCmd(
-// 		NAIRCmdTypes.NSE,
-// 		generateCommonNarsese_PresentInheritanceJudgement(
-// 			subject,
-// 			prejudice,
-// 			truth
-// 		)
-// 	)
+/**
+ * 生成「现在继承判断」到CIN
+ * * 因为的确过于常用
+ */
+export const generateCommonNarseseToCIN_PresentInheritanceJudgement = (
+	config: NARSPlayerConfig,
+	subject: string,
+	prejudice: string,
+	truth: string = ''
+): string =>
+	simpleNAVMCmd(
+		NAIRCmdTypes.NSE,
+		generateCommonNarsese_PresentInheritanceJudgement(
+			config,
+			subject,
+			prejudice,
+			truth
+		)
+	)
 
-// /**
-//  * 短缩写别名
-//  * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
-//  */
-// export const GCNToCIN_PresentInheritanceJudgement =
-// 	generateCommonNarseseToCIN_PresentInheritanceJudgement
-// /**
-//  * 短缩写别名
-//  * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
-//  */
-// export const GCNToCIN_PIJ =
-// 	generateCommonNarseseToCIN_PresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
+ */
+export const GCNToCIN_PresentInheritanceJudgement =
+	generateCommonNarseseToCIN_PresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarseseToCIN_PresentInheritanceJudgement
+ */
+export const GCNToCIN_PIJ =
+	generateCommonNarseseToCIN_PresentInheritanceJudgement
+
+/**
+ * 生成「自身现在继承判断」
+ * * 属于「现在继承判断」在「主词=SELF」的特化
+ * * 因为的确过于常用
+ */
+export const generateCommonNarsese_SelfPresentInheritanceJudgement = (
+	config: NARSPlayerConfig,
+	prejudice: string,
+	truth: string = ''
+): string =>
+	generateCommonNarsese_PresentInheritanceJudgement(
+		config,
+		config.NAL.SELF,
+		prejudice,
+		truth
+	)
+
+/**
+ * 短缩写别名
+ * @alias generateCommonNarsese_SelfPresentInheritanceJudgement
+ */
+export const GCN_SelfPresentInheritanceJudgement =
+	generateCommonNarsese_SelfPresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarsese_SelfPresentInheritanceJudgement
+ */
+export const GCN_SPIJ = generateCommonNarsese_SelfPresentInheritanceJudgement
+
+/**
+ * 生成「自身现在继承判断」到CIN
+ * * 因为的确过于常用
+ */
+export const generateCommonNarseseToCIN_SelfPresentInheritanceJudgement = (
+	config: NARSPlayerConfig,
+	prejudice: string,
+	truth: string = ''
+): string =>
+	generateCommonNarseseToCIN_PresentInheritanceJudgement(
+		config,
+		config.NAL.SELF,
+		prejudice,
+		truth
+	)
+
+/**
+ * 短缩写别名
+ * @alias generateCommonNarseseToCIN_SelfPresentInheritanceJudgement
+ */
+export const GCNToCIN_SelfPresentInheritanceJudgement =
+	generateCommonNarseseToCIN_SelfPresentInheritanceJudgement
+/**
+ * 短缩写别名
+ * @alias generateCommonNarseseToCIN_SelfPresentInheritanceJudgement
+ */
+export const GCNToCIN_SPIJ =
+	generateCommonNarseseToCIN_SelfPresentInheritanceJudgement
 
 /**
  * CommonNarsese 真值模板

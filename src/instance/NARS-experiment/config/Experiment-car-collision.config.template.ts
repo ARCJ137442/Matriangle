@@ -35,7 +35,7 @@ import {
 	simpleNAVMCmd,
 	generateCommonNarsese_Binary,
 	generateCommonNarsese_TruthValue,
-	GCNToCIN_PIJ,
+	GCNToCIN_SPIJ,
 } from '../common/nal-lib'
 
 // 需复用的常量 //
@@ -368,8 +368,8 @@ const configConstructor = (
 						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								GCNToCIN_PIJ(
-									selfConfig.NAL.SELF, // 主词
+								GCNToCIN_SPIJ(
+									selfConfig,
 									`[${nameOfAxis_M(i)}_l_blocked]`, // 谓词
 									selfConfig.NAL.positiveTruth // 真值
 								)
@@ -380,8 +380,8 @@ const configConstructor = (
 						if (!agent.player.testCanGoTo(host, posPointer)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [x_l_blocked]>. :|: %1.0;0.9%`
-								GCNToCIN_PIJ(
-									selfConfig.NAL.SELF, // 主词
+								GCNToCIN_SPIJ(
+									selfConfig,
 									`[${nameOfAxis_M(i)}_r_blocked]`, // 谓词
 									selfConfig.NAL.positiveTruth // 真值
 								)
@@ -422,8 +422,8 @@ const configConstructor = (
 						if (oldP.isEqual(agent.player.position)) {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								GCNToCIN_PIJ(
-									selfConfig.NAL.SELF, // 主词
+								GCNToCIN_SPIJ(
+									selfConfig,
 									SAFE, // 谓词
 									selfConfig.NAL.negativeTruth // 真值
 								)
@@ -435,8 +435,8 @@ const configConstructor = (
 						else {
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								GCNToCIN_PIJ(
-									selfConfig.NAL.SELF, // 主词
+								GCNToCIN_SPIJ(
+									selfConfig,
 									SAFE // 谓词
 									// selfConfig.NAL.positiveTruth // ! 目标没有真值
 								)
@@ -469,8 +469,8 @@ const configConstructor = (
 							// 例句：`<{SELF} --> [respawn]>. :|:`
 							send2NARS(
 								// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-								GCNToCIN_PIJ(
-									selfConfig.NAL.SELF, // 主词
+								GCNToCIN_SPIJ(
+									selfConfig,
 									`[${event}]` // 谓词
 									// selfConfig.NAL.negativeTruth // 真值
 								)

@@ -54,15 +54,8 @@ import {
 	simpleNAVMCmd,
 	generateCommonNarsese_Binary,
 	generateCommonNarsese_TruthValue,
+	GCNToCIN_SPIJ,
 } from '../common/nal-lib'
-
-// 需复用的常量 //
-/** 目标：「安全」 */
-export const SAFE: string = '[safe]'
-/** 目标：充能 */
-export const POWERED: string = '[powered]'
-/** 目标：充满能量的 */
-export const POWERFUL: string = '[powerful]'
 
 /** 信息 */
 export const info = (config: NARSEnvConfig): string => `
@@ -289,22 +282,19 @@ function onPowerupCollected(
 	// 重定位
 	powerup.relocate(host)
 	// * 玩家作为「NARS智能体」：奖励/惩罚，发送「目标达成/未成」信息给NARS *
-	// 直接目标「POWERED」
+	// 基础目标
 	send2NARS(
 		// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-		agent.config.NAL.generateNarseseToCIN(
-			agent.config.NAL.generateCommonNarseseBinary(
-				playerConfig.NAL.SELF, // 主词
-				NarseseCopulas.Inheritance, // 系词
-				POWERED, // 谓词
-				NarsesePunctuation.Judgement, // 标点
-				NarseseTenses.Present, // 时态
-				powerup.good // 真值
-					? // 正向
-					  playerConfig.NAL.positiveTruth
-					: // 负向
-					  playerConfig.NAL.negativeTruth
-			)
+		GCNToCIN_SPIJ(
+			agent.config,
+			// 基础目标
+			(env.config.extraConfig as ExtraPCExperimentConfig).motivationSys
+				.goalBasic, // 谓词
+			powerup.good // 真值
+				? // 正向
+				  playerConfig.NAL.positiveTruth
+				: // 负向
+				  playerConfig.NAL.negativeTruth
 		)
 	)
 
@@ -325,15 +315,12 @@ function onPowerupCollected(
 			// 立即惩罚
 			send2NARS(
 				// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-				agent.config.NAL.generateNarseseToCIN(
-					agent.config.NAL.generateCommonNarseseBinary(
-						playerConfig.NAL.SELF, // 主词
-						NarseseCopulas.Inheritance, // 系词
-						POWERFUL, // 谓词
-						NarsesePunctuation.Judgement, // 标点
-						NarseseTenses.Present, // 时态
-						playerConfig.NAL.negativeTruth
-					)
+				GCNToCIN_SPIJ(
+					agent.config,
+					// 高阶目标
+					(env.config.extraConfig as ExtraPCExperimentConfig)
+						.motivationSys.highOrderGoal, // 谓词
+					playerConfig.NAL.negativeTruth
 				)
 			)
 		}
@@ -437,10 +424,22 @@ export type ExtraPCExperimentConfig = {
 	 */
 	motivationSys: {
 		/**
-		 * 高阶目标
+		 * 用于「基础目标」的词项
+		 * * 设置为NARS的「内部心理词项」时，可能有不同的效果
+		 *   * 🔬此亦即「Narsese指代」实验
+		 */
+		goalBasic: string
+		/**
+		 * 是否启用高阶目标
 		 * * 为`true`时启动类似SimNAR中「satisfy-healthy」的「双层目标系统」
 		 */
 		highOrderGoals: boolean
+		/**
+		 * 高阶目标所对应的词项
+		 * * 默认为内涵集`[powerful]`
+		 *   * 对应SimNAR中的`[healthy]`
+		 */
+		highOrderGoal: string
 		/**
 		 * 达到「高阶目标」（POWERFUL）的条件
 		 * @param timePassedLastBad 距离「最后一次『负能量包惩罚』」的奖励次数
@@ -650,11 +649,15 @@ export const AgentHai = (
 		SELF: '{SELF}',
 		/** @implements 表示「正向目标」的词项组 */
 		POSITIVE_GOALS: [
-			// SAFE, // !【2023-11-07 00:41:59】现在主要目标变成了「要充能」
-			// ? 可能多目标还会「分心干扰」一些
-			POWERED,
+			// 基础目标
+			extraConfig.motivationSys.goalBasic,
 			// 存储是否附加「高阶目标」
-			...(extraConfig.motivationSys.highOrderGoals ? [POWERFUL] : []),
+			...(extraConfig.motivationSys.highOrderGoals
+				? [
+						// 高阶目标
+						extraConfig.motivationSys.highOrderGoal,
+				  ]
+				: []),
 		],
 		/** @implements 暂时没有「负向目标」 */
 		NEGATIVE_GOALS: [],
@@ -847,15 +850,12 @@ export const AgentHai = (
 					// 高阶目标「POWERFUL」
 					send2NARS(
 						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-						agent.config.NAL.generateNarseseToCIN(
-							agent.config.NAL.generateCommonNarseseBinary(
-								agent.config.NAL.SELF, // 主词
-								NarseseCopulas.Inheritance, // 系词
-								POWERFUL, // 谓词
-								NarsesePunctuation.Judgement, // 标点
-								NarseseTenses.Present, // 时态
-								agent.config.NAL.positiveTruth
-							)
+						GCNToCIN_SPIJ(
+							agent.config,
+							// 高阶目标
+							(env.config.extraConfig as ExtraPCExperimentConfig)
+								.motivationSys.highOrderGoal, // 谓词
+							agent.config.NAL.positiveTruth
 						)
 					)
 				}
@@ -871,20 +871,17 @@ export const AgentHai = (
 					// 负触发目标「POWERED」
 					send2NARS(
 						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-						agent.config.NAL.generateNarseseToCIN(
-							agent.config.NAL.generateCommonNarseseBinary(
-								agent.config.NAL.SELF, // 主词
-								NarseseCopulas.Inheritance, // 系词
-								POWERED, // 谓词
-								NarsesePunctuation.Judgement, // 标点
-								NarseseTenses.Present, // 时态
-								// 真值
-								generateCommonNarsese_TruthValue(
-									...extraConfig.motivationSys.negatriggerTruthF(
-										Number(
-											agent.customDatas
-												?.timePassedLastGood ?? 0
-										)
+						GCNToCIN_SPIJ(
+							agent.config,
+							// 基础目标
+							(env.config.extraConfig as ExtraPCExperimentConfig)
+								.motivationSys.goalBasic, // 谓词
+							// 真值
+							generateCommonNarsese_TruthValue(
+								...extraConfig.motivationSys.negatriggerTruthF(
+									Number(
+										agent.customDatas?.timePassedLastGood ??
+											0
 									)
 								)
 							)
@@ -989,15 +986,10 @@ export const AgentHai = (
 					// 例句：`<{SELF} --> [respawn]>. :|:`
 					send2NARS(
 						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
-						agent.config.NAL.generateNarseseToCIN(
-							agent.config.NAL.generateCommonNarseseBinary(
-								selfConfig.NAL.SELF, // 主词
-								NarseseCopulas.Inheritance, // 系词
-								`[${event}]`, // 谓词
-								NarsesePunctuation.Judgement, // 标点
-								NarseseTenses.Present // 时态
-								// selfConfig.NAL.negativeTruth // 真值
-							)
+						GCNToCIN_SPIJ(
+							agent.config,
+							`[${event}]` // 谓词
+							// selfConfig.NAL.negativeTruth // 真值
 						)
 					)
 					break
