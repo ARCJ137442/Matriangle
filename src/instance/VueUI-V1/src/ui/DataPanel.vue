@@ -21,14 +21,12 @@ pp<!--
 		<button
 			type="button"
 			@click="plotVisible = !plotVisible"
+			@contextmenu="exportPlotDataToClipboard"
 			@vue:mounted="init"
 		>
-			{{ plotVisible ? '点击折叠图表' : '点击展开图表' }}（{{
-				isConnected ? '已连接' : '未连接'
-			}}）
-		</button>
-		<button type="button" @click="exportDataToClipboard">
-			复制图表数据到剪贴板
+			点击{{ plotVisible ? '折叠' : '展开' }}图表（{{
+				isConnected ? '已' : '未'
+			}}连接 | 右键复制数据）
 		</button>
 		<div>
 			<!-- TODO: 控制图表数量 -->
@@ -62,9 +60,9 @@ pp<!--
 	<!-- * 文本 * -->
 	<div v-show="textData.length > 0">
 		<p @click="textVisible = !textVisible" class="sub-title">
-			文本（{{ textVisible ? '点击折叠' : '点击展开' }}）：
+			文本（点击{{ textVisible ? '折叠' : '展开' }} | 右键文本复制）：
 		</p>
-		<p class="text">
+		<p class="text" @contextmenu="exportTextDataToClipboard">
 			{{ textVisible ? textData : textData.slice(0, 20) + '……' }}
 		</p>
 	</div>
@@ -250,42 +248,78 @@ function plotInit(): void {
 }
 
 /**
- * 图表数据导出到剪贴板
+ * 导出图表数据
+ * * 目前是采用「复制到剪贴板」的方式
+ */
+async function exportPlotDataToClipboard(event: Event) {
+	// 阻止默认右键菜单
+	event.preventDefault()
+	// 获取数据⇒复制到剪贴板
+	await exportDataToClipboard(
+		// 使用函数获取图表数据（TSV，适合直接复制入Excel）
+		plot.value?.exportTSV() ?? null,
+		'图表数据'
+	)
+}
+
+/**
+ * 导出文本数据
+ * * 目前是采用「复制到剪贴板」的方式
+ */
+async function exportTextDataToClipboard(event: Event) {
+	// 阻止默认右键菜单
+	event.preventDefault()
+	// 获取数据⇒复制到剪贴板
+	await exportDataToClipboard(
+		// 直接取值
+		textData.value,
+		'文本数据'
+	)
+}
+
+/**
+ * 数据复制到剪贴板
  * * 技术路线：优先使用`execCommand`，其次是`navigator.clipboard`
  */
-async function exportDataToClipboard(): Promise<void> {
-	// 调用函数获取图表数据 //
-	const data = plot.value?.exportTSV() ?? null
+async function exportDataToClipboard(
+	data: string | null,
+	name: string
+): Promise<void> {
 	// 非空检测
-	if (data === null) {
-		console.error('图表数据为空！')
-		return
-	}
+	if (data === null) return console.error(`${name}为空！`)
 	// 正式开始存入剪贴板 //
-	console.info('已获得图表数据：', data)
+	console.info(`已获得${name}：`, data)
 	// 优先execCommand
 	if (document.execCommand) {
-		// 核心原理：创建一个隐形文本框，设置文本，并执行命令复制其中的数据
-		// 此处操作参见<https://zhuanlan.zhihu.com/p/597944027>
-		const textArea: HTMLTextAreaElement = document.createElement(
-			'textArea'
-		) as HTMLTextAreaElement
-		textArea.style.width = '0px'
-		textArea.style.position = 'fixed'
-		textArea.style.left = '-999px'
-		textArea.style.top = '10px'
-		textArea.setAttribute('readonly', 'readonly')
-		textArea.value = data // 📌不能用`innerText`，会吃掉换行符
-		document.body.appendChild(textArea)
+		await (async () => {
+			// 核心原理：创建一个隐形文本框，设置文本，并执行命令复制其中的数据
+			// 此处操作参见<https://zhuanlan.zhihu.com/p/597944027>
+			const textArea: HTMLTextAreaElement = document.createElement(
+				'textArea'
+			) as HTMLTextAreaElement
+			textArea.style.width = '0px'
+			textArea.style.position = 'fixed'
+			textArea.style.left = '-999px'
+			textArea.style.top = '10px'
+			textArea.setAttribute('readonly', 'readonly')
+			textArea.value = data // 📌不能用`innerText`，会吃掉换行符
+			document.body.appendChild(textArea)
 
-		textArea.select()
-		document.execCommand('copy')
-		document.body.removeChild(textArea)
+			textArea.select()
+			document.execCommand('copy')
+			document.body.removeChild(textArea)
+		})()
 	}
 	// 其次考虑navigator.clipboard
 	else if (navigator.clipboard) {
 		await navigator.clipboard.writeText(data)
 	}
+	alert(
+		`${name}「${
+			// 限制长度
+			data.length > 10 ? data.slice(0, 10) + '...' : data
+		}」复制成功！`
+	)
 }
 
 /**
