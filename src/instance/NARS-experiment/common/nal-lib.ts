@@ -78,15 +78,13 @@ export const generateCommonNarsese_PresentInheritanceJudgement = (
 	prejudice: string,
 	truth: string = ''
 ): string =>
-	config.NAL.generateNarseseToCIN(
-		config.NAL.generateCommonNarseseBinary(
-			subject,
-			NarseseCopulas.Inheritance,
-			prejudice,
-			NarsesePunctuation.Judgement,
-			NarseseTenses.Present,
-			truth
-		)
+	config.NAL.generateCommonNarseseBinary(
+		subject,
+		NarseseCopulas.Inheritance,
+		prejudice,
+		NarsesePunctuation.Judgement,
+		NarseseTenses.Present,
+		truth
 	)
 
 /**
@@ -111,8 +109,7 @@ export const generateCommonNarseseToCIN_PresentInheritanceJudgement = (
 	prejudice: string,
 	truth: string = ''
 ): string =>
-	simpleNAVMCmd(
-		NAIRCmdTypes.NSE,
+	config.NAL.generateNarseseToCIN(
 		generateCommonNarsese_PresentInheritanceJudgement(
 			config,
 			subject,

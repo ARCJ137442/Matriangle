@@ -45,9 +45,9 @@ export const extraConfigConstructor = () => ({
 	motivationSys: {
 		// 基础目标
 		// goalBasic:'[powered]',
-		goalBasic: '[satisfied]', // ! 对应OpenNARS内部NAL-9中的「情感机制」，是一个「硬编码特殊词项」 // * 参考
+		goalBasic: '[satisfied]', // ! 对应OpenNARS内部NAL-9中的「情感机制」，是一个「硬编码特殊词项」 // * 参考OpenNARS 3.11源码`nars_core_java\nars\mental\Emotion.java`中的方法`public void adjustSatisfation(float newValue, float weight, Memory memory)`
 		// 高阶目标
-		highOrderGoals: false, // !【2023-11-27 00:27:39】目前启用
+		highOrderGoals: false,
 		highOrderGoal: '[powerful]', // 高阶目标：「有能量的」
 		// 高阶目标「有能量的」：一个阈值
 		powerfulCriterion: (timePassedLastBad: uint): boolean =>

@@ -544,7 +544,13 @@ export class NARSPlayerAgent {
 	 * 记录一条统计数据：试验结果
 	 */
 	public recordStat(result: NARSOperationResult, spontaneous: boolean): void {
-		// ! 必须是「操作有结果」的时候
+		// * 算入「上一次执行时间」无需「操作有结果」
+		if (spontaneous)
+			// 记录时刻
+			this.stats.最后一次自主操作时刻 = this.stats.总时间
+		// 记录时刻
+		else this.stats.最后一次教学操作时刻 = this.stats.总时间
+		// ! 计入「操作次数」必须是「操作有结果」的时候
 		if (result === undefined) return
 		// 总次数递增
 		this.stats.总次数++
@@ -554,17 +560,10 @@ export class NARSPlayerAgent {
 		if (spontaneous) {
 			// 自主操作次数递增
 			this.stats.自主操作次数++ // ?【2023-11-07 01:33:29】这里所谓「自主操作」可能不再纯粹是「自己做出了操作」，有可能指「得到能量包的行为是自己做出的」而非「真实反应NARS的`EXE`数目」
-			// 记录时刻
-			this.stats.最后一次自主操作时刻 = this.stats.总时间
 			if (result === true) {
 				// 自主成功次数递增
 				this.stats.自主成功次数++
 			}
-		}
-		// 仅教学操作
-		else {
-			// 记录时刻
-			this.stats.最后一次教学操作时刻 = this.stats.总时间
 		}
 	}
 
@@ -1200,7 +1199,7 @@ export class NARSPlayerAgent {
 					)
 				)
 			// `<${config.NAL.SELF} --> ${goal}>! :|: ${config.NAL.positiveTruth}`
-			// 再提醒负向目标
+			// 再提醒负向目标 // ? 到底是「真值の负向」还是「否定の负向」
 			for (const goal of this.config.NAL.NEGATIVE_GOALS)
 				this.send2NARS(
 					this.config.NAL.generateNarseseToCIN(

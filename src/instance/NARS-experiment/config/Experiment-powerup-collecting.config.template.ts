@@ -538,9 +538,9 @@ export const AgentHai_registerOperations = (
 			)
 		}
 	}
-	// 其它「固定的内置知识」
+	// 其它「固定的内置知识」（从Narsese生成NAIR指令）
 	for (const narsese of extraConfig.intrinsicKnowledge.initialKnowledge)
-		send2NARS(narsese)
+		simpleNAVMCmd(NAIRCmdTypes.NSE, narsese)
 }
 
 /** 玩家配置：AgentHai */
