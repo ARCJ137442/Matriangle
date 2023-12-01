@@ -35,6 +35,13 @@ export const extraConfigConstructor = () => ({
 			// // <(&/, 正向能量包在前方, 一定时间) =/> 自身充能>.
 		],
 	},
+	// 感知系统
+	senseSys: {
+		// 侧方感知
+		sideSensory: true,
+		// 前方感知
+		frontSensory: true,
+	},
 	// 运动系统
 	motorSys: {
 		mode: PlayerMotorMode.INITIATIVE,

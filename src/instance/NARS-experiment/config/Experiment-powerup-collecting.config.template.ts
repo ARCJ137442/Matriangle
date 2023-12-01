@@ -55,6 +55,7 @@ import {
 	generateCommonNarsese_Binary,
 	generateCommonNarsese_TruthValue,
 	GCNToCIN_SPIJ,
+	GCNToCIN_PIJ,
 } from '../common/nal-lib'
 
 /** 信息 */
@@ -401,6 +402,22 @@ export type ExtraPCExperimentConfig = {
 		initialKnowledge: string[]
 	}
 	/**
+	 * 感知系统
+	 * * 所有涉及「外部信息→内部Narsese输入」的相关配置
+	 */
+	senseSys: {
+		/**
+		 * 侧方感知
+		 * * 在「玩家和能量包有坐标维度（如x、y）相同」时发出「感知信号」
+		 */
+		sideSensory: boolean
+		/**
+		 * 前方感知
+		 * * 在「玩家正前方有能量包」时发出「感知信号」
+		 */
+		frontSensory: boolean
+	}
+	/**
 	 * 运动系统
 	 * * 所有涉及「操作-行为-运动」的「EXE→玩家行为」相关配置
 	 */
@@ -693,7 +710,6 @@ export const AgentHai = (
 				truth
 			),
 	},
-
 	// 行为参数
 	behavior: {
 		/** @implements 实现：初始化 */
@@ -751,11 +767,13 @@ export const AgentHai = (
 			allEntity: for (const entity of host.entities) {
 				if (!(entity instanceof Powerup)) continue
 				// 若为能量包
-				// * 正前方感知
+				// * 前方感知
 				const lineIndex = agent.player.position.indexOfSameLine(
 					entity.position
 				)
 				if (
+					// 启用了「前方感知」
+					extraConfig.senseSys.frontSensory &&
 					// 在一条直线上
 					lineIndex === mRot2axis(agent.player.direction) &&
 					// 并且是前方： 轴向相等 & ("实体坐标>玩家坐标"&正方向 | "实体坐标<玩家坐标"&负方向)
@@ -773,29 +791,25 @@ export const AgentHai = (
 					// !【2023-11-07 00:28:05】目前还是「看到的才返回」稳妥
 					send2NARS(
 						// 例句：`<{SELF} --> [x_powerup_good_seen]>. :|: %1.0;0.9%`
-						agent.config.NAL.generateNarseseToCIN(
-							agent.config.NAL.generateCommonNarseseBinary(
-								/**
-								 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
-								 */
-								NAL_powerupSubject(entity.good, 'front'), // 主词
-								NarseseCopulas.Inheritance, // 系词
-								NAL_SEEN, // 谓词
-								NarsesePunctuation.Judgement, // 标点
-								NarseseTenses.Present, // 时态
-								// 真值
-								/* entity.position[i] === self.position[i]
+						GCNToCIN_PIJ(
+							agent.config,
+							/**
+							 *  !【2023-11-25 20:17:06】现在学习SimNAR的做法，调整为`<{x_powerup_good} --> [seen]> :|: %1.0;0.9%`
+							 */
+							NAL_powerupSubject(entity.good, 'front'), // 主词
+							NAL_SEEN, // 谓词
+							// 真值
+							/* entity.position[i] === self.position[i]
 							? selfConfig.NAL.positiveTruth
 							: selfConfig.NAL.negativeTruth */
-								selfConfig.NAL.positiveTruth
-							)
+							selfConfig.NAL.positiveTruth
 						)
 					)
 					// 感知到就结束了
 					break allEntity
 				}
-				// 逐个维度对比
-				else
+				// * 否则⇒侧方感知：逐个维度对比
+				else if (extraConfig.senseSys.sideSensory)
 					for (let i = 0; i < host.map.storage.numDimension; ++i) {
 						// ! 核心「视野」逻辑：只要有一个坐标相等，就算是「（在这个维度上）看见」
 						// * 直接对每个维度进行判断，然后返回各自的「是否看见」
