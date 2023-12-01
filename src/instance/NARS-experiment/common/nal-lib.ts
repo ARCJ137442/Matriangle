@@ -6,6 +6,8 @@
 import { NAIRCmdTypes } from 'matriangle-mod-nar-framework/NAIRCmdTypes.type'
 import { NARSPlayerConfig } from '../config/API'
 import {
+	NARSOperationRecord,
+	NARSOperationRecordFull,
 	NarseseCopulas,
 	NarsesePunctuation,
 	NarseseTenses,
@@ -206,3 +208,50 @@ export const generateCommonNarsese_TruthValue = (
  * @alias generateCommonNarsese_TruthValue
  */
 export const GCN_TruthValue = generateCommonNarsese_TruthValue
+
+/**
+ * 用于集中呈现「操作历史」
+ *
+ * @example `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
+ */
+export const visualizeOperationRecord = (record: NARSOperationRecord): string =>
+	// 操作符&操作参数（截去前缀`^`）
+	record[0].join('_').slice(1) +
+	(record[1] === undefined
+		? '' // 无果⇒没有「进一步连接」
+		: '-' + // 「操作-状态」分隔符
+		  // 是否成功：成功Success，失败Failed
+		  (record[1] ? 'S' : 'F'))
+
+/**
+ * 用于集中呈现「操作历史」（包括「自主/教学」的完整版）
+ *
+ * @example `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
+ */
+export const visualizeOperationRecordFull = (
+	record: NARSOperationRecordFull
+): string =>
+	// 操作符&操作参数（截去前缀`^`）
+	record[0].join('_').slice(1) +
+	// 「操作-状态」分隔符
+	'-' +
+	// 是否自主：自主`@`「机器开眼」，无意识`#`「机械行动」
+	(record[1] ? '@' : '#') +
+	// 是否成功：成功Success，失败Failed
+	(record[2] === undefined ? '?' : record[2] ? 'S' : 'F')
+
+/**
+ * 集中呈现「操作历史」的数据显示
+ */
+export const commonDataShow_operationHistory = {
+	/**
+	 * @implements `[['^left', '{SELF}', 'x'], true]` => `left_{SELF}_x-S`
+	 */
+	visualizeOperationRecord,
+	/**
+	 * @implements `[['^left', '{SELF}', 'x'], true, true]` => `left_{SELF}_x-@S`
+	 */
+	visualizeOperationRecordFull,
+	spontaneousPrefixName: '自主操作',
+	unconsciousPrefixName: '教学操作',
+}
