@@ -8,22 +8,19 @@ import { NARSEnv } from './NARSEnv'
 /* import experimentCarCollisionConfigConstructor, {
 	ExtraCCExperimentConfig,
 } from './config/Experiment-car-collision.config.template' */
-import envConstructorPC, {
+/* import envConstructorPC, {
 	PlayerMotorMode,
-} from './config/Experiment-powerup-collecting.config.template'
+} from './config/Experiment-powerup-collecting.config.template' */
+import envConstructorLC, {
+	PlayerMotorMode,
+	ExtraLCExperimentConfig,
+} from './config/Experiment-linguistic-communication.config.template'
 import { chainApply, randomBoolean2 } from 'matriangle-common/utils'
 import { NARSEnvConfig } from './config/API'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 
 /** 构造「额外配置」 */
-export const extraConfigConstructor = () => ({
-	// 二维地图
-	map_sizes: [5, 5],
-	powerup: {
-		// !【2023-11-06 22:55:27】当前测试：一边一个
-		numGood: 1,
-		numBad: 1,
-	},
+export const extraConfigConstructor = (): ExtraLCExperimentConfig => ({
 	// 先天知识
 	intrinsicKnowledge: {
 		// 告诉NARS「它有什么操作」
@@ -45,8 +42,6 @@ export const extraConfigConstructor = () => ({
 	// 运动系统
 	motorSys: {
 		mode: PlayerMotorMode.INITIATIVE,
-		// 被动模式的步进：频率为3
-		passiveStepCriterion: (stepTick: uint): boolean => stepTick > 3,
 	},
 	// 动机系统
 	motivationSys: {
@@ -57,7 +52,7 @@ export const extraConfigConstructor = () => ({
 		highOrderGoals: false,
 		highOrderGoal: '[powerful]', // 高阶目标：「有能量的」
 		// 高阶目标「有能量的」：一个阈值
-		powerfulCriterion: (timePassedLastBad: uint): boolean =>
+		highOrderPraiseCriterion: (timePassedLastBad: uint): boolean =>
 			// *【2023-11-27 23:27:54】目前定高点没所谓，这和「时间颗粒」有关
 			timePassedLastBad > 30,
 		// 负触发目标
@@ -85,7 +80,7 @@ export function envConstructor(
 	return new NARSEnv(
 		chainApply(
 			// ! 原配置（决定「实验之所以是这个实验」）
-			envConstructorPC(
+			envConstructorLC(
 				// * 加之于「原始实验配置」的额外配置（用于控制变量）
 				extraConfigConstructor()
 			),

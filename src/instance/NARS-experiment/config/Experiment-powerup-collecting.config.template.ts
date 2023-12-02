@@ -5,7 +5,6 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import {
 	mRot,
 	mRot2axis,
@@ -57,6 +56,8 @@ import {
 	GCNToCIN_SPIJ,
 	GCNToCIN_PIJ,
 } from '../common/nal-lib'
+import { NARSEnv } from '../NARSEnv'
+import { NARSPlayerAgent } from '../NARSPlayerAgent'
 
 /** 信息 */
 export const info = (config: NARSEnvConfig): string => `

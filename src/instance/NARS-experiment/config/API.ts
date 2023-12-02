@@ -4,7 +4,6 @@ import { EChartsOption } from 'echarts'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { PlayerEvent } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import IMap from 'matriangle-api/server/map/IMap'
 import {
 	NARSOperation,
@@ -16,6 +15,8 @@ import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInter
 import Entity from 'matriangle-api/server/entity/Entity'
 import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import { DictionaryLikeObject } from 'matriangle-common'
+import { NARSEnv } from '../NARSEnv'
+import { NARSPlayerAgent } from '../NARSPlayerAgent'
 
 /** 统一存储玩家外观配置 */
 export type NARSPlayerAppearanceConfig = {

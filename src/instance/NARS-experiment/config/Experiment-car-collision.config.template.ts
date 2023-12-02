@@ -3,7 +3,6 @@ import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import { nameOfAxis_M } from 'matriangle-api/server/general/GlobalRot'
 import {
 	IMessageService,
@@ -37,6 +36,8 @@ import {
 	generateCommonNarsese_TruthValue,
 	GCNToCIN_SPIJ,
 } from '../common/nal-lib'
+import { NARSEnv } from '../NARSEnv'
+import { NARSPlayerAgent } from '../NARSPlayerAgent'
 
 // 需复用的常量 //
 /** 目标：「安全」 */

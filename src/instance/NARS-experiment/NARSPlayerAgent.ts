@@ -384,6 +384,9 @@ export class NARSPlayerAgent {
 		)
 
 		// NARS参数 //
+		// 原类内初始化
+		this._lastNARSOperated = this.config.timing.babbleThreshold // * 默认一开始就进行babble
+		this.teachingTimeLasting = this.config.timing.teachingTime
 		/** 对接的是NARS的逻辑 */
 		const ctlFeedback: FeedbackController = new FeedbackController('NARS')
 		/** AI执行速度 = 单位执行速度 */
@@ -647,14 +650,14 @@ export class NARSPlayerAgent {
 	}
 
 	// NARS参数 //
-	// ! 📝时刻注意：类内的初始化表达式比构造函数内初始化表达式早
-	protected _lastNARSOperated: uint = this.config.timing.babbleThreshold // * 默认一开始就进行babble
+	// !【2023-12-02 23:17:32】现在因为「浏览器端兼容」问题，不建议在类内初始化与`this`有关的值（错误如`TypeError: Cannot read properties of undefined (reading 'timing')`）
+	protected _lastNARSOperated: uint
 	/** 距离「上一次NARS发送操作」所过的单位时间 */
 	public get lastNARSOperated(): uint {
 		return this._lastNARSOperated
 	}
 	/** 当前教学「所剩时间」（Babble「不被NARS操作所抑制」的阶段） */
-	protected teachingTimeLasting: uint = this.config.timing.teachingTime
+	protected teachingTimeLasting: uint
 
 	/**
 	 * 处理NARS传来的「操作」

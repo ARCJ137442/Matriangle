@@ -3,7 +3,6 @@ import { NARSEnvConfig, NARSPlayerConfig } from './API'
 import plotOption from './PlotData-NARS.config'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { NARSEnv, NARSPlayerAgent } from '../NARSEnv'
 import { nameOfAxis_M } from 'matriangle-api/server/general/GlobalRot'
 import {
 	IMessageService,
@@ -36,6 +35,8 @@ import {
 	GCNToCIN_SPIJ,
 	commonDataShow_operationHistory,
 } from '../common/nal-lib'
+import { NARSEnv } from '../NARSEnv'
+import { NARSPlayerAgent } from '../NARSPlayerAgent'
 
 /** 信息 */
 export const info = (config: NARSEnvConfig): string => `

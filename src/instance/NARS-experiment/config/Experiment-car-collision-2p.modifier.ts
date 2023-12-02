@@ -56,6 +56,9 @@ export function playerAlpha2Beta(
 
 			/** 「长时间无操作⇒babble」的阈值 */
 			babbleThreshold: 1,
+
+			/** 「教学时间」暂且设置为0 */
+			teachingTime: 0,
 		},
 
 		// !【2023-11-04 22:00:37】暂时和Alpha一个NAL属性

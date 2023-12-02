@@ -1,7 +1,7 @@
-import { MessageServiceConstructor, NARSEnvConfig } from './API'
 import {
 	IMessageService,
 	MessageCallback,
+	MessageServiceConstructor,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { dictionaryPatternReplace } from 'matriangle-common/utils'
@@ -9,6 +9,7 @@ import {
 	WebSocketServiceClient,
 	WebSocketServiceServer,
 } from 'matriangle-mod-message-io-node/services'
+import { NARSEnvConfig } from './API'
 
 // 需复用的常量
 /** 构造Websocket服务端服务（Node环境） */
