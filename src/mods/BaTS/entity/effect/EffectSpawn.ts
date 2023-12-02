@@ -3,7 +3,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import Effect2Blocks from './Effect2BlockContainer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 重生

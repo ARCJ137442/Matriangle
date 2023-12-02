@@ -7,7 +7,7 @@ import {
 	VisualizationOutputMessagePrefix,
 	packDisplayData,
 } from 'matriangle-api/display/RemoteDisplayAPI'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import MatrixVisualizerText from './MatrixVisualizerText'
 import {
 	JSObjectValue,

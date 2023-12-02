@@ -7,7 +7,7 @@ import {
 	MessageServiceConfig,
 	linkToRouterLazy,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import { uint } from 'matriangle-legacy'
 
 /**

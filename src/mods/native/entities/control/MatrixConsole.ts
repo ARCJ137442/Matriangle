@@ -1,4 +1,8 @@
-import { MatrixProgram, MatrixProgramLabel, typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import {
+	MatrixProgram,
+	MatrixProgramLabel,
+} from 'matriangle-api/server/control/MatrixProgram'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 
 type CmdExecuter = (...params: string[]) => unknown

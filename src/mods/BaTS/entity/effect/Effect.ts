@@ -9,7 +9,7 @@ import {
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 特效通用的「附加显示状态」

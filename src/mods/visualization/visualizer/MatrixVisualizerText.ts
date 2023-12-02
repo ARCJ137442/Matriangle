@@ -16,7 +16,7 @@ import IPlayer, {
 	isPlayer,
 } from 'matriangle-mod-native/entities/player/IPlayer'
 import Entity from 'matriangle-api/server/entity/Entity'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 返回的类型标识

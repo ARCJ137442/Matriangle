@@ -6,7 +6,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { getRandomMap } from '../BatrMatrixMechanics'
 import MapSwitcher from './MapSwitcher'
 import { MatrixRules_Native } from 'matriangle-mod-native/rule/MatrixRules_Native'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「地图切换者」是

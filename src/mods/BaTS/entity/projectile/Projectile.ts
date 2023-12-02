@@ -15,7 +15,7 @@ import IPlayerHasTeam from '../player/IPlayerHasTeam'
 import { computeAttackerDamage } from '../../mechanics/BatrMatrixMechanics'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import { Ref, Val, xPoint } from 'matriangle-common'
 
 export interface IDisplayDataStateProjectile extends IDisplayDataEntityState {

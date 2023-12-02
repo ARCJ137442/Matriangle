@@ -10,7 +10,7 @@ import {
 	getAddress,
 } from './MessageInterfaces'
 import { IMessageService } from './MessageInterfaces'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「网络消息路由器」是

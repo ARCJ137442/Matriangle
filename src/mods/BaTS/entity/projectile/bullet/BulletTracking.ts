@@ -12,7 +12,7 @@ import {
 	toolCreateExplode,
 } from '../../../mechanics/BatrMatrixMechanics'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 跟踪子弹

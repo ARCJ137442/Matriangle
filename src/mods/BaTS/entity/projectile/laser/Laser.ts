@@ -19,7 +19,7 @@ import {
 import Tool from '../../../tool/Tool'
 import { i_hasAttributes } from '../../player/IPlayerHasAttributes'
 import Projectile, { IDisplayDataStateProjectile } from '../Projectile'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 export interface IDisplayDataEntityStateLaser
 	extends IDisplayDataStateProjectile {

@@ -9,7 +9,7 @@ import {
 	toOpposite_M,
 } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /** 特有的「显示数据」：增加`isPull`属性 */
 export interface IDisplayDataEntityStateLaserPulse

@@ -12,7 +12,7 @@ import {
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import Tool from '../../../tool/Tool'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 export default class ShockWaveDrone
 	extends Projectile

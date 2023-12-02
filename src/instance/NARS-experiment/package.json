@@ -4,7 +4,11 @@
 	"description": "基于NARS开展各类实验",
 	"main": "server.ts",
 	"scripts": {
-		"test": "npx ts-node server.ts"
+		"client": "start ../VueUI-V1/dist/index.html",
+		"car": "npm run client & npm run server-car",
+		"powerup": "npm run client & npm run server-powerup",
+		"server-car": "npx ts-node ./launch-node-car-collision.ts",
+		"server-powerup": "npx ts-node ./launch-node-powerup-collection.ts"
 	},
 	"keywords": [
 		"matriangle",

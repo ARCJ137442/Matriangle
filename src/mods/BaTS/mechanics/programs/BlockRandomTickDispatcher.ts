@@ -8,7 +8,7 @@ import {
 import { IEntityActive } from 'matriangle-api/server/entity/EntityInterfaces'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { BlockEventType_Batr } from '../../registry/BlockEventRegistry_Batr'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「方块随机刻分派者」是

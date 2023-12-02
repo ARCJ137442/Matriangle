@@ -6,7 +6,7 @@ import Bullet from './Bullet'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「核弹」

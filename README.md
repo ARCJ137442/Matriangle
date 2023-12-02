@@ -18,9 +18,10 @@ Matriangle（中译名未定）是一个
 
 ### 安装
 
-作为一个npm包，Matriangle可以通过npm进行安装：
+作为一个npm包，Matriangle可以通过`git clone`被下载，并通过npm进行部署：
 
 ```bash
+git clone https://github.com/ARCJ137442/Matriangle.git
 npm install
 ```
 
@@ -36,41 +37,139 @@ npm install
 npm run
 ```
 
+只会显示可执行的脚本（script）列表
+
+* 附带每个脚本对应的cmd指令
+* 除此之外没有其它副作用
+
+#### 实例「Battle Triangle TS」
+
+以下的启动脚本记录在实例「BaTS-Server」中，最好预先使用如下命令跳转至相应目录：
+
+```bash
+cd src/instance/BaTS-Server
+```
+
+（若预先跳转了目录，下面指令中的`cd`行便可省略）
+
+⚠️注意：实例代码后续可能**独立**成单独的npm包
+
 #### 启动游戏「Battle Triangle TS」
 
 ```bash
+cd src/instance/BaTS-Server
 npm run batr
 ```
 
-#### 启动「NARS小车碰撞实验」
-
-```bash
-npm run nars-car
-```
+启动Node服务端，一并启动Vue客户端
 
 #### 启动游戏「Battle Triangle TS」服务端
 
 ```bash
-npm run server-batr
+cd src/instance/BaTS-Server
+npm run serve
 ```
 
-#### 启动「默认」客户端
+单独启动BaTS的Node服务端
+
+#### NARS实验相关
+
+以下的启动脚本记录在实例「NARS-Experiment」中，最好预先使用如下命令跳转至相应目录：
 
 ```bash
-npm run client
+cd src/instance/NARS-experiment
 ```
 
-#### 启动「NARS小车碰撞实验」服务端
+（若预先跳转了目录，下面指令中的`cd`行便可省略）
+
+⚠️注意：实例代码后续可能**独立**成单独的npm包
+
+##### 启动「NARS小车碰撞实验」
 
 ```bash
-npm run server-nars-car
+cd src/instance/NARS-experiment
+npm run car
+```
+
+启动Node服务端，一并启动Vue客户端
+
+##### 启动「NARS小车碰撞实验」服务端
+
+```bash
+cd src/instance/NARS-experiment
+npm run server-car
+```
+
+##### 启动「NARS能量包收集实验」
+
+```bash
+cd src/instance/NARS-experiment
+npm run powerup
+```
+
+启动Node服务端，一并启动Vue客户端
+
+##### 启动「NARS能量包收集实验」服务端
+
+```bash
+cd src/instance/NARS-experiment
+npm run server-powerup
 ```
 
 #### 启动「NARS实验通用」客户端
 
 ```bash
-npm run client-nars
+cd src/instance/NARS-experiment
+npm run client
 ```
+
+#### VueUI相关
+
+目前项目客户端使用Vue+Webpack编写，并记录在实例「VueUI-V1」中，最好预先使用如下命令跳转至相应目录：
+
+```bash
+cd src/instance/VueUI-V1
+```
+
+（若预先跳转了目录，下面指令中的`cd`行便可省略）
+
+⚠️注意：实例代码后续可能**独立**成单独的npm包
+
+##### 构建「基于Node服务端」的客户端
+
+```bash
+cd src/instance/VueUI-V1
+npm run build-n
+```
+
+构建「与Node服务端进行连接」并且「使用Websocket进行通信」的客户端（不把服务端集成进客户端中）
+
+##### 构建「纯浏览器」的客户端（集成NARS测试环境）
+
+```bash
+cd src/instance/VueUI-V1
+npm run build-bn
+```
+
+构建「不依赖Node，逻辑显示一同在浏览器端运作」且「上载了NARS测试环境」的一体式客户端
+
+##### 调试「基于Node服务端」的客户端
+
+```bash
+cd src/instance/VueUI-V1
+npm run dev-n
+```
+
+调试「与Node服务端进行连接」并且「使用Websocket进行通信」的客户端（不把服务端集成进客户端中）
+
+##### 调试「纯浏览器」的客户端（集成NARS测试环境）
+
+```bash
+cd src/instance/VueUI-V1
+npm run dev-bn
+```
+
+调试「不依赖Node，逻辑显示一同在浏览器端运作」且「上载了NARS测试环境」的一体式客户端
 
 ## Features 功能
 

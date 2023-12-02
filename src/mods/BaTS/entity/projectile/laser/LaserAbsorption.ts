@@ -5,7 +5,7 @@ import { iPoint } from 'matriangle-common/geometricTools'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「吸收激光」

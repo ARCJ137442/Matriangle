@@ -30,7 +30,7 @@ import {
 import { omega } from 'matriangle-common'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
 import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 有关玩家的「自定义显示数据」

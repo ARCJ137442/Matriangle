@@ -14,7 +14,7 @@ import {
 	PlayerAction,
 } from '../../entities/player/controller/PlayerAction'
 import IPlayer from '../../entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 有关「按下一个按键对应的行为」

@@ -4,7 +4,7 @@ import { uint } from 'matriangle-legacy/AS3Legacy'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectPlayerShape from './EffectPlayerShape'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 玩家死亡淡出

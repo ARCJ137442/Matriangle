@@ -11,7 +11,7 @@ import { IDisplayDataStateProjectile, ProjectileOutGrid } from '../Projectile'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /** 子弹的显示数据 */
 export interface IDisplayDataEntityStateBullet

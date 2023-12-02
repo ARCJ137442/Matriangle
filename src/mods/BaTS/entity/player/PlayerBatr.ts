@@ -32,7 +32,7 @@ import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import EffectPlayerDeathLight from '../effect/EffectPlayerDeathLight'
 import EffectSpawn from '../effect/EffectSpawn'
 import EffectTeleport from '../effect/EffectTeleport'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 有关玩家的「自定义显示数据」

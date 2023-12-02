@@ -6,7 +6,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { toolCreateExplode } from '../../../mechanics/BatrMatrixMechanics'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import Bullet from './Bullet'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 普通子弹

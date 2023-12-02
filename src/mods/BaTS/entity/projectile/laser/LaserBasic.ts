@@ -5,7 +5,7 @@ import Laser from './Laser'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 「基础激光」

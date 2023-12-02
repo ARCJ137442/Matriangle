@@ -5,10 +5,8 @@
 	"main": "index-node.js",
 	"scripts": {
 		"dev-n": "webpack-dev-server -c build/node.webpack.dev.mjs",
-		"dev-b": "webpack-dev-server -c build/browser-nars.webpack.dev.mjs",
 		"dev-bn": "webpack-dev-server -c build/browser-nars.webpack.dev.mjs",
 		"build-n": "webpack -c build/node.webpack.prod.mjs",
-		"build-b": "webpack -c build/browser-nars.webpack.prod.mjs",
 		"build-bn": "webpack -c build/browser-nars.webpack.prod.mjs",
 		"serve": "serve -s dist"
 	},

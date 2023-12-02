@@ -3,7 +3,7 @@ import Block from 'matriangle-api/server/block/Block'
 import Effect, { IDisplayDataStateEffect } from './Effect'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import { uintToPercent } from 'matriangle-common'
 
 /** 专用的显示状态数据 */

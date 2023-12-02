@@ -1,5 +1,5 @@
 <template>
-	<MessageCenterDirect ref="router" @vue:mounted="launchEnv(100, 10)" />
+	<MessageCenterDirectNARS ref="router" @vue:mounted="launchEnv(100, 10)" />
 
 	<h1>控制</h1>
 	<ControlPanel
@@ -41,7 +41,7 @@ import { VueElementRefNullable, splitAddress } from '../lib/common'
 import { omega1 } from './../lib/common'
 import ControlPanel from './ControlPanel.vue'
 // import ScreenText from './ScreenText.vue'
-import MessageCenterDirect from './MessageCenterDirect.vue'
+import MessageCenterDirectNARS from './MessageCenterDirect-NARS.vue'
 import DisplayPanel from './DisplayPanel.vue'
 import DataPanel from './DataPanel.vue'
 import {
@@ -54,7 +54,7 @@ import { DirectService } from 'matriangle-mod-message-io-api/services/DirectServ
 // diff //
 
 /** 消息路由器 */
-const router: VueElementRefNullable<typeof MessageCenterDirect> = ref(null)
+const router: VueElementRefNullable<typeof MessageCenterDirectNARS> = ref(null)
 
 /**
  * 给路由器指定地址自动注册服务

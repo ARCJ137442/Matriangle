@@ -3,7 +3,7 @@ import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import EffectPlayerShape from './EffectPlayerShape'
 import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 玩家死亡光效

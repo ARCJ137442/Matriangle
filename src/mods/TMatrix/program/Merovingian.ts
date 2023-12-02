@@ -9,7 +9,7 @@ import {
 	i_shortLive,
 } from 'matriangle-api/server/entity/EntityInterfaces'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 
 /**
  * 这个类其实有一部分是在实验JS「动态类型特性」中的「任意属性均可黑」「实例方法亦可改」的特性

@@ -1,4 +1,4 @@
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import {
 	IStateDisplayer,
 	IDisplayDataEntities,

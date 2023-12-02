@@ -20,7 +20,7 @@ import {
 import { getPlayers } from 'matriangle-mod-native/mechanics/NativeMatrixMechanics'
 import IPlayerHasAttributes from '../../player/IPlayerHasAttributes'
 import { BlockAttributes_Native } from 'matriangle-mod-native/registry/BlockRegistry_Native'
-import { typeID } from 'matriangle-api'
+import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
 import {
 	IDisplayDataBlock,
 	IDisplayDataEntityState,
