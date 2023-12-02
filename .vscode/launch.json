@@ -59,6 +59,20 @@
 			//     "${workspaceFolder}/**/*.js"
 			// ],
 			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
-		}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Matriangle Instance: AI Env - Powerup Collection",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			// "program": "${workspaceFolder}\\test\\test.ts",
+			"program": "src/instance/NARS-experiment/launch-node-powerup-collection.ts",
+			// "outFiles": [
+			//     "${workspaceFolder}/**/*.js"
+			// ],
+			"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+		},
 	]
 }
