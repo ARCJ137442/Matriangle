@@ -43,3 +43,6 @@ RECOVER_*
 
 # VSCode log
 debug.log
+
+# * 现在忽略工作区下的所有实例：每个实例被视作一个独立的项目
+src/instance/*/
