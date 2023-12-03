@@ -71,6 +71,8 @@ export const extraConfigConstructor = (): ExtraLCExperimentConfig => ({
 				0.9, // 这是默认值
 			],
 	},
+	// * 测试环境
+	// TODO: 完善「对话循环」机制
 })
 
 /** 创建环境 */
