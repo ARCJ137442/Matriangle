@@ -39,13 +39,7 @@
 		"conventionalCommits.scopes": [
 			"IO/Web",
 			"可视化",
-			"显示端",
 			"世界机制",
-			"BaTS",
-			"webpack",
-			"实例/客户端",
-			"NARS",
-			"文档",
 			".gitignore",
 			"泛用库"
 		],
