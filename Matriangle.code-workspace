@@ -1,0 +1,167 @@
+/*
+! 一些配置参考 !
+* 基本设置：https://juejin.cn/post/7272191578828030004
+* 扩展选择：https://juejin.cn/post/7066032710778617892
+*/
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "./src/instance/NARS-experiment"
+		},
+		{
+			"path": "./src/instance/VueUI-V1"
+		},
+		{
+			"path": "./src/instance/BaTS-Server"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"AIID",
+			"batr",
+			"coaxis",
+			"davisoares",
+			"fscommand",
+			"Linlies",
+			"Linly",
+			"Matriangle",
+			"negatrigger",
+			"Prittier",
+			"SPIJ",
+			"SPMAVCV",
+			"SPSACV",
+			"tsindexer",
+			"Unrotatable"
+		],
+		"conventionalCommits.scopes": [
+			"IO/Web",
+			"可视化",
+			"显示端",
+			"世界机制",
+			"BaTS",
+			"webpack",
+			"实例/客户端",
+			"NARS",
+			"文档",
+			".gitignore",
+			"泛用库"
+		],
+		// Prittier×editorconfig参考：https://blog.csdn.net/qq_43886365/article/details/130409080
+		"prettier.configPath": ".prettierrc.mjs",
+		"prettier.useEditorConfig": true,
+		"editor.formatOnSave": true,
+	},
+	"extensions": {
+		"recommendations": [
+			"davisoares.tsindexer"
+		]
+	},
+	"launch": {
+		// 使用 IntelliSense 了解相关属性。
+		// 悬停以查看现有属性的描述。
+		// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Launch Program",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				// "program": "${workspaceFolder}\\test\\test.ts",
+				"program": "${file}",
+				// "outFiles": [
+				//     "${workspaceFolder}/**/*.js"
+				// ],
+				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			},
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Matriangle Instance V1 - BaTS",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				// "program": "${workspaceFolder}\\test\\test.ts",
+				"program": "src/instance/BaTS-Server/MatriangleServer_BaTS.ts",
+				// "outFiles": [
+				//     "${workspaceFolder}/**/*.js"
+				// ],
+				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			},
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Matriangle Instance: AI Env",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				// "program": "${workspaceFolder}\\test\\test.ts",
+				"program": "src/instance/NARS-experiment/launch-node.ts",
+				// "outFiles": [
+				//     "${workspaceFolder}/**/*.js"
+				// ],
+				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			},
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Matriangle Instance: AI Env - Car Collision",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				// "program": "${workspaceFolder}\\test\\test.ts",
+				"program": "src/instance/NARS-experiment/launch-node-car-collision.ts",
+				// "outFiles": [
+				//     "${workspaceFolder}/**/*.js"
+				// ],
+				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			},
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Matriangle Instance: AI Env - Powerup Collection",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				// "program": "${workspaceFolder}\\test\\test.ts",
+				"program": "src/instance/NARS-experiment/launch-node-powerup-collection.ts",
+				// "outFiles": [
+				//     "${workspaceFolder}/**/*.js"
+				// ],
+				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
+			},
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "My Task",
+				"command": "echo hello",
+				"type": "shell",
+				"args": [],
+				"problemMatcher": [
+					"$tsc"
+				],
+				"presentation": {
+					"reveal": "always"
+				},
+				"group": "build"
+			},
+			{
+				"type": "typescript",
+				"tsconfig": "tsconfig.json",
+				"problemMatcher": [
+					"$tsc"
+				],
+				"group": "build",
+				"label": "tsc: 构建 - tsconfig.json"
+			}
+		]
+	}
+}
