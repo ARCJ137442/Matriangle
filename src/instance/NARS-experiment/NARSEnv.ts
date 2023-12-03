@@ -1,5 +1,6 @@
 import { int, uint } from 'matriangle-legacy/AS3Legacy'
 import {
+	BATR_DEFAULT_PLAYER_CONTROL_CONFIGS,
 	BATR_TOOL_USAGE_MAP as BATR_TOOL_USAGE_MAP,
 	getRandomMap,
 } from 'matriangle-mod-bats/mechanics/BatrMatrixMechanics'
@@ -18,7 +19,9 @@ import IWorldRegistry from 'matriangle-api/server/registry/IWorldRegistry'
 import IMap from 'matriangle-api/server/map/IMap'
 import { ProgramMessageRouter } from 'matriangle-mod-message-io-api/MessageRouter'
 import WebController from 'matriangle-mod-web-io/controller/WebController'
-import KeyboardControlCenter from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
+import KeyboardControlCenter, {
+	generateBehaviorFromPlayerConfig,
+} from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { BlockConstructorMap } from 'matriangle-api/server/map/IMapStorage'
 import MatrixRule_V1 from 'matriangle-mod-native/rule/MatrixRule_V1'
@@ -106,7 +109,10 @@ export class NARSEnv {
 	readonly router: ProgramMessageRouter
 
 	/** 配置玩家 */
-	setupPlayers(host: IMatrix, configs: NARSPlayerConfig[]): void {
+	setupPlayers(
+		host: IMatrix,
+		configs: NARSPlayerConfig<NARSPlayerAgent>[]
+	): void {
 		// 配置统一的控制器、键控中心
 
 		// Web控制器
@@ -140,7 +146,7 @@ export class NARSEnv {
 	/** 配置NARS玩家 */
 	setupNARSPlayer(
 		host: IMatrix,
-		config: NARSPlayerConfig,
+		config: NARSPlayerConfig<NARSPlayerAgent>,
 		ctlWeb: WebController,
 		kcc: KeyboardControlCenter
 	): void {
@@ -163,11 +169,61 @@ export class NARSEnv {
 
 		// 注入智能体 // * 初始化控制器、路由器、连接和行为
 		console.warn('config =', config)
-		this.agents.push(
-			new NARSPlayerAgent(this, host, p, config, this.router, ctlWeb, kcc)
+		const agent: NARSPlayerAgent = config.constructor(
+			this,
+			host,
+			p,
+			config,
+			this.router
+		)
+
+		// 网络控制器：增加连接
+		ctlWeb.addConnection(
+			p,
+			// 用于「Web控制器」
+			config.connections.controlKey
+		)
+
+		// 按键绑定
+		kcc.addKeyBehaviors(
+			generateBehaviorFromPlayerConfig(
+				p,
+				BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]
+			)
+		)
+
+		// 连接：键控中心 - 消息路由器
+		this.router.registerService(
+			this.config.connections.controlService.constructor(
+				this.config.connections.controlService.host,
+				this.config.connections.controlService.port,
+				// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
+				// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
+				(message: string): undefined =>
+					agent.dealKeyboardCenterMessage(kcc, message)
+			),
+			(): void => {
+				console.log('键控中心连接成功！')
+			}
+		)
+
+		// 连接：数据显示服务
+		this.router.registerService(
+			config.connections.dataShow.constructor(
+				config.connections.dataShow.host,
+				config.connections.dataShow.port,
+				/**
+				 * 消息回调=初始化：回传「配置信息」
+				 * * 初始配置：
+				 *   * 消息格式：`JSON.stringify(NARSPlotData)`
+				 */
+				(message: string): string =>
+					agent.dealDataShowMessage(this, message)
+			)
 		)
 
 		// *添加实体
+		this.agents.push(agent)
 		host.addEntities(p, this.router, ctlWeb, kcc)
 	}
 	/** 存储所有创建了的NARS智能体 */
@@ -374,7 +430,7 @@ export class NARSEnv {
 		await Promise.allSettled(
 			this.config.players.map(
 				// 这时候已经开始立即执行了，但会返回一个Promise
-				(p: NARSPlayerConfig): Promise<void> =>
+				(p: NARSPlayerConfig<NARSPlayerAgent>): Promise<void> =>
 					// 等待NARS连接
 					this.waitConnection(
 						1000,

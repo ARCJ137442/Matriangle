@@ -11,7 +11,10 @@ import {
 	NARSOperationRecordFull,
 	NARSOperationResult,
 } from 'matriangle-mod-nar-framework/NARSTypes.type'
-import { MessageServiceConfig } from 'matriangle-mod-message-io-api/MessageInterfaces'
+import {
+	IMessageRouter,
+	MessageServiceConfig,
+} from 'matriangle-mod-message-io-api/MessageInterfaces'
 import Entity from 'matriangle-api/server/entity/Entity'
 import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/PlayerAction'
 import { DictionaryLikeObject } from 'matriangle-common'
@@ -29,7 +32,19 @@ export type NARSPlayerAppearanceConfig = {
 /**
  * NARS玩家配置
  */
-export type NARSPlayerConfig = {
+export type NARSPlayerConfig<AgentType extends NARSPlayerAgent> = {
+	/**
+	 * 构造器
+	 * * 🎯便于后续定义「自定义的Agent变量」
+	 */
+	constructor: (
+		env: NARSEnv,
+		host: IMatrix,
+		p: IPlayer,
+		config: NARSPlayerConfig<AgentType>,
+		router: IMessageRouter
+		// !【2023-12-03 19:43:18】目前认为没必要特别安排「控制器」和「键控中心」
+	) => AgentType
 	/** 属性参数（承继自IPlayer，与Matriangle环境相关） */
 	attributes: {
 		/** （自定义）名称 */
@@ -227,7 +242,7 @@ export type NARSPlayerConfig = {
 			env: NARSEnv,
 			event: PlayerEvent,
 			self: IPlayer,
-			selfConfig: NARSPlayerConfig,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix,
 			send2NARS: (message: string) => void,
 			registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
@@ -247,8 +262,8 @@ export type NARSPlayerConfig = {
 		AITick: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: AgentType,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix,
 			posPointer: iPointRef,
 			send2NARS: (message: string) => void
@@ -263,8 +278,8 @@ export type NARSPlayerConfig = {
 		 */
 		babble: (
 			env: NARSEnv,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: AgentType,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix
 		) => NARSOperation
 		/**
@@ -279,8 +294,8 @@ export type NARSPlayerConfig = {
 		 */
 		operate: (
 			env: NARSEnv,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: AgentType,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix,
 			op: NARSOperation,
 			operateI: uint | -1,
@@ -301,8 +316,8 @@ export type NARSPlayerConfig = {
 		fallFeedback: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: AgentType,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix,
 			send2NARS: (message: string) => void
 		) => void
@@ -322,8 +337,8 @@ export type NARSPlayerConfig = {
 		actionReplacementMap: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: AgentType,
+			selfConfig: NARSPlayerConfig<AgentType>,
 			host: IMatrix,
 			action: PlayerAction
 		) => NARSOperation | undefined | null
@@ -383,5 +398,20 @@ export type NARSEnvConfig = {
 	}
 
 	/** 玩家 */
-	players: NARSPlayerConfig[]
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	players: NARSPlayerConfig<any>[]
+	// players: NARSPlayerConfig<NARSPlayerAgent & unknown>[] // ! 使用`NARSPlayerAgent & unknown`无效
+	// players: NARSPlayerConfig<Extract<NARSPlayerAgent, unknown>>[] // ! 使用`Extract`无效
+	// !【2023-12-03 21:33:14】↑这里使用泛型参数`any`是为了解决「`NARSPlayerConfig<NARSPlayerAgent>`无法兼容`NARSPlayerConfig<【NARSPlayerAgent的子类】>`」的问题
+	// !【2023-12-03 21:35:10】💭要是有Julia那样`NARSPlayerConfig{<:NARSPlayerAgent}`的类型就好了
+	/**
+	 * 目前报错：
+	 * 不能将类型“NARSPlayerConfig<NARSPlayerAgent_Hai>”分配给类型“NARSPlayerConfig<NARSPlayerAgent>”。
+	 * 属性“constructor”的类型不兼容。
+	 *   不能将类型“(env: NARSEnv, host: IMatrix, p: IPlayer, config: NARSPlayerConfig<NARSPlayerAgent_Hai>, router: IMessageRouter) => NARSPlayerAgent_Hai”分配给类型“(env: NARSEnv, host: IMatrix, p: IPlayer, config: NARSPlayerConfig<NARSPlayerAgent>, router: IMessageRouter) => NARSPlayerAgent”。
+	 *     参数“config”和“config” 的类型不兼容。
+	 *       不能将类型“NARSPlayerConfig<NARSPlayerAgent>”分配给类型“NARSPlayerConfig<NARSPlayerAgent_Hai>”。
+	 *         在这些类型中，"constructor(...)" 返回的类型不兼容。
+	 *           不能将类型“NARSPlayerAgent”分配给类型“NARSPlayerAgent_Hai”。ts(2322)
+	 */
 }

@@ -5,6 +5,7 @@ import IMatrix from 'matriangle-api/server/main/IMatrix'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { nameOfAxis_M } from 'matriangle-api/server/general/GlobalRot'
 import {
+	IMessageRouter,
 	IMessageService,
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
@@ -214,6 +215,36 @@ export type ExtraLCExperimentConfig = {
 }
 
 /**
+ * 特制的「智能体」Linly
+ */
+export class NARSPlayerAgent_Linly extends NARSPlayerAgent {
+	/**
+	 * 新的构造函数
+	 * @override 引入原先的构造函数，并引入「额外参数」
+	 */
+	public constructor(
+		env: NARSEnv,
+		host: IMatrix,
+		p: IPlayer,
+		config: NARSPlayerConfig<NARSPlayerAgent_Linly>,
+		extraConfig: ExtraLCExperimentConfig,
+		router: IMessageRouter
+	) {
+		super(env, host, p, config, router)
+		console.log('自定义类「NARSPlayerAgent_Linly」载入成功！', extraConfig)
+	}
+
+	// * 自定义变量 * //
+
+	/** 距离「上一次正反馈」后过去的时间颗粒 */
+	timePassedLastGood: uint = 0
+	/** 距离「上一次负反馈」后过去的时间颗粒 */
+	timePassedLastBad: uint = 0
+
+	// TODO: 后续根据「对话循环」整理相关变量
+}
+
+/**
  * 玩家配置：AgentLinly
  * * 📌这里的「Linly」取自「Linguistic-ly」
  *   * 复数形式：Linlies
@@ -225,7 +256,16 @@ export type ExtraLCExperimentConfig = {
 export const AgentLinly = (
 	extraConfig: ExtraLCExperimentConfig,
 	num: uint
-): NARSPlayerConfig => ({
+): NARSPlayerConfig<NARSPlayerAgent_Linly> => ({
+	// 构造函数
+	constructor: (
+		env: NARSEnv,
+		host: IMatrix,
+		p: IPlayer,
+		config: NARSPlayerConfig<NARSPlayerAgent_Linly>,
+		router: IMessageRouter
+	): NARSPlayerAgent_Linly =>
+		new NARSPlayerAgent_Linly(env, host, p, config, extraConfig, router),
 	// 属性参数（对接母体逻辑）
 	attributes: {
 		// * 自动生成「名字+编号」，如`AgentLinly`, `AgentLinly001`, ...
@@ -312,7 +352,7 @@ export const AgentLinly = (
  */
 export const AgentLinly_NAL = (
 	extraConfig: ExtraLCExperimentConfig
-): NARSPlayerConfig['NAL'] => ({
+): NARSPlayerConfig<NARSPlayerAgent_Linly>['NAL'] => ({
 	SELF: '{SELF}',
 	/** @implements 表示「正向目标」的词项组 */
 	POSITIVE_GOALS: [
@@ -352,13 +392,13 @@ export const AgentLinly_NAL = (
  */
 export const AgentLinly_behavior = (
 	extraConfig: ExtraLCExperimentConfig
-): NARSPlayerConfig['behavior'] => ({
+): NARSPlayerConfig<NARSPlayerAgent_Linly>['behavior'] => ({
 	/** @implements 实现：初始化 */
 	init(
 		env: NARSEnv,
 		event: PlayerEvent,
 		self: IPlayer,
-		selfConfig: NARSPlayerConfig,
+		selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 		host: IMatrix,
 		send2NARS: (message: string) => void,
 		registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
@@ -382,8 +422,8 @@ export const AgentLinly_behavior = (
 	AITick: (
 		env: NARSEnv,
 		event: PlayerEvent,
-		agent: NARSPlayerAgent,
-		selfConfig: NARSPlayerConfig,
+		agent: NARSPlayerAgent_Linly,
+		selfConfig: NARSPlayerConfig<typeof agent>,
 		host: IMatrix,
 		posPointer: iPoint,
 		send2NARS: (message: string) => void
@@ -395,7 +435,7 @@ export const AgentLinly_behavior = (
 			// 满足一定程度开始奖励
 			if (
 				extraConfig.motivationSys.highOrderPraiseCriterion(
-					Number(agent.customDatas?.timePassedLastBad ?? 0)
+					agent.timePassedLastBad
 				)
 			) {
 				send2NARS(
@@ -415,7 +455,7 @@ export const AgentLinly_behavior = (
 			// 满足一定程度开始惩罚
 			if (
 				extraConfig.motivationSys.negatriggerCriterion(
-					Number(agent.customDatas?.timePassedLastGood ?? 0)
+					agent.timePassedLastGood
 				)
 			) {
 				send2NARS(
@@ -428,9 +468,7 @@ export const AgentLinly_behavior = (
 						// 真值
 						generateCommonNarsese_TruthValue(
 							...extraConfig.motivationSys.negatriggerTruthF(
-								Number(
-									agent.customDatas?.timePassedLastGood ?? 0
-								)
+								agent.timePassedLastGood
 							)
 						)
 					)
@@ -438,16 +476,14 @@ export const AgentLinly_behavior = (
 			}
 		}
 		// 更新递增数据
-		agent.customDatas.timePassedLastGood =
-			Number(agent.customDatas?.timePassedLastGood ?? 0) + 1
-		agent.customDatas.timePassedLastBad =
-			Number(agent.customDatas?.timePassedLastBad ?? 0) + 1
+		agent.timePassedLastGood += 1
+		agent.timePassedLastBad += 1
 	},
 	/** @implements babble：取随机操作 */
 	babble: (
 		env: NARSEnv,
-		agent: NARSPlayerAgent,
-		selfConfig: NARSPlayerConfig,
+		agent: NARSPlayerAgent_Linly,
+		selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 		host: IMatrix
 	): NARSOperation => agent.randomRegisteredOperation(),
 	/**
@@ -455,8 +491,8 @@ export const AgentLinly_behavior = (
 	 */
 	operate: (
 		env: NARSEnv,
-		agent: NARSPlayerAgent,
-		selfConfig: NARSPlayerConfig,
+		agent: NARSPlayerAgent_Linly,
+		selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 		host: IMatrix,
 		op: NARSOperation,
 		operateI: uint | -1,
@@ -490,8 +526,8 @@ export const AgentLinly_behavior = (
 	fallFeedback: (
 		env: NARSEnv,
 		event: string,
-		agent: NARSPlayerAgent,
-		selfConfig: NARSPlayerConfig,
+		agent: NARSPlayerAgent_Linly,
+		selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 		host: IMatrix,
 		send2NARS: (message: string) => void
 	): void => {
@@ -521,8 +557,8 @@ export const AgentLinly_behavior = (
 	actionReplacementMap(
 		env: NARSEnv,
 		event: PlayerEvent,
-		agent: NARSPlayerAgent,
-		selfConfig: NARSPlayerConfig,
+		agent: NARSPlayerAgent_Linly,
+		selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 		host: IMatrix,
 		action: PlayerAction
 	): NARSOperation | undefined | null {
@@ -543,8 +579,8 @@ export const AgentLinly_behavior = (
  */
 export function AgentLinly_utter(
 	env: NARSEnv,
-	agent: NARSPlayerAgent,
-	selfConfig: NARSPlayerConfig,
+	agent: NARSPlayerAgent_Linly,
+	selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 	host: IMatrix,
 	send2NARS: (message: string) => void
 ): void {
@@ -563,7 +599,7 @@ export const AgentLinly_registerOperations = (
 	extraConfig: ExtraLCExperimentConfig,
 	env: NARSEnv,
 	self: IPlayer,
-	selfConfig: NARSPlayerConfig,
+	selfConfig: NARSPlayerConfig<NARSPlayerAgent_Linly>,
 	host: IMatrix,
 	send2NARS: (message: string) => void,
 	registerOperation: (op: NARSOperation, tellToNARS: boolean) => void

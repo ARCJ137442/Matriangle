@@ -13,6 +13,7 @@ import {
 	rotateInPlane_M,
 } from 'matriangle-api/server/general/GlobalRot'
 import {
+	IMessageRouter,
 	IMessageService,
 	getAddress,
 } from 'matriangle-mod-message-io-api/MessageInterfaces'
@@ -249,8 +250,8 @@ export class Powerup
 function testPowerupCollision(
 	env: NARSEnv,
 	host: IMatrix,
-	agent: NARSPlayerAgent,
-	playerConfig: NARSPlayerConfig,
+	agent: NARSPlayerAgent_Hai,
+	playerConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 	send2NARS: (message: string) => void
 ): boolean {
 	for (const entity of host.entities) {
@@ -277,8 +278,8 @@ function onPowerupCollected(
 	env: NARSEnv,
 	host: IMatrix,
 	powerup: Powerup,
-	agent: NARSPlayerAgent,
-	playerConfig: NARSPlayerConfig,
+	agent: NARSPlayerAgent_Hai,
+	playerConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 	send2NARS: (message: string) => void
 ): void {
 	// 重定位
@@ -303,9 +304,9 @@ function onPowerupCollected(
 	// 自定义数据「上一次奖励/上一次惩罚」
 	if (powerup.good)
 		// 负面⇒清零「惩罚」数据
-		agent.customDatas.timePassedLastBad = 0
+		agent.timePassedLastBad = 0
 	// 正面⇒清零「奖励」数据
-	else agent.customDatas.timePassedLastGood = 0
+	else agent.timePassedLastGood = 0
 
 	// * ✨高阶目标「POWERFUL」
 	if (
@@ -489,8 +490,8 @@ export type ExtraPCExperimentConfig = {
  */
 export function AgentHai_moveForward(
 	env: NARSEnv,
-	agent: NARSPlayerAgent,
-	selfConfig: NARSPlayerConfig,
+	agent: NARSPlayerAgent_Hai,
+	selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 	host: IMatrix,
 	send2NARS: (message: string) => void
 ): void {
@@ -499,7 +500,7 @@ export function AgentHai_moveForward(
 	// * 测试「能量包」碰撞：检测碰撞，发送反馈，更新统计数据（现在的「成功率」变成了「拾取的『正向能量包』数/总拾取能量包数」）
 	testPowerupCollision(env, host, agent, selfConfig, send2NARS)
 	// 自定义数据清零
-	agent.customDatas._stepTick = 0
+	agent._stepTick = 0
 }
 
 /** 玩家配置：AgentHai/操作注册 */
@@ -507,7 +508,7 @@ export const AgentHai_registerOperations = (
 	extraConfig: ExtraPCExperimentConfig,
 	env: NARSEnv,
 	self: IPlayer,
-	selfConfig: NARSPlayerConfig,
+	selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 	host: IMatrix,
 	send2NARS: (message: string) => void,
 	registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
@@ -561,10 +562,56 @@ export const AgentHai_registerOperations = (
 		simpleNAVMCmd(NAIRCmdTypes.NSE, narsese)
 }
 
+/**
+ * 自定义「智能体」类：AgentHai
+ */
+class NARSPlayerAgent_Hai extends NARSPlayerAgent {
+	/**
+	 * 新的构造函数
+	 * @override 引入原先的构造函数，并引入「额外参数」
+	 */
+	public constructor(
+		env: NARSEnv,
+		host: IMatrix,
+		p: IPlayer,
+		config: NARSPlayerConfig<NARSPlayerAgent_Hai>,
+		extraConfig: ExtraPCExperimentConfig,
+		router: IMessageRouter
+	) {
+		super(
+			env,
+			host,
+			p,
+			config as unknown as NARSPlayerConfig<NARSPlayerAgent>,
+			router
+		)
+		console.log('自定义类「NARSPlayerAgent_Hai」载入成功！', extraConfig)
+	}
+
+	// * 自定义变量 * //
+
+	/** 距离「上一次正反馈」后过去的时间颗粒 */
+	timePassedLastGood: uint = 0
+	/** 距离「上一次负反馈」后过去的时间颗粒 */
+	timePassedLastBad: uint = 0
+
+	/** 用于记录「被动前进」的时钟 */
+	_stepTick: uint = 0
+}
+
 /** 玩家配置：AgentHai */
 export const AgentHai = (
 	extraConfig: ExtraPCExperimentConfig
-): NARSPlayerConfig => ({
+): NARSPlayerConfig<NARSPlayerAgent_Hai> => ({
+	// 构造函数（对接特定参数）
+	constructor: (
+		env: NARSEnv,
+		host: IMatrix,
+		p: IPlayer,
+		config: NARSPlayerConfig<NARSPlayerAgent_Hai>,
+		router: IMessageRouter
+	): NARSPlayerAgent_Hai =>
+		new NARSPlayerAgent_Hai(env, host, p, config, extraConfig, router),
 	// 属性参数（对接母体逻辑）
 	attributes: {
 		name: 'AgentHai',
@@ -718,7 +765,7 @@ export const AgentHai = (
 			env: NARSEnv,
 			event: PlayerEvent,
 			self: IPlayer,
-			selfConfig: NARSPlayerConfig,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix,
 			send2NARS: (message: string) => void,
 			registerOperation: (op: NARSOperation, tellToNARS: boolean) => void
@@ -742,16 +789,15 @@ export const AgentHai = (
 		AITick: (
 			env: NARSEnv,
 			event: PlayerEvent,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: NARSPlayerAgent_Hai,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix,
 			posPointer: iPoint,
 			send2NARS: (message: string) => void
 		): void => {
 			// * 运动：前进 * //
 			// 自定义数据更新
-			agent.customDatas._stepTick =
-				Number(agent.customDatas?._stepTick ?? 0) + 1
+			agent._stepTick += 1
 			// 「被动模式」前进
 			if (
 				// * 仅在「被动模式」起效
@@ -759,9 +805,7 @@ export const AgentHai = (
 				// * 现在只在「上一次没操作1时间颗粒」后前进（或许可以考虑解放出来「成为一个智能体操作」）
 				agent.lastNARSOperated > 1 &&
 				// ! 因为没法缓存局部变量，所以只能使用「概率」的方式进行步进
-				extraConfig.motorSys.passiveStepCriterion(
-					agent.customDatas._stepTick as number
-				)
+				extraConfig.motorSys.passiveStepCriterion(agent._stepTick)
 			)
 				AgentHai_moveForward(env, agent, selfConfig, host, send2NARS)
 			// * 感知：能量包视野 * //
@@ -854,15 +898,14 @@ export const AgentHai = (
 			// !【2023-11-28 19:43:49】现在移除有关「墙壁碰撞」的代码（小车碰撞遗留）
 			// !【2023-11-08 00:23:49】现在移除有关「安全」的目标机制，若需挪用请参考「小车碰撞实验」
 			// * 持续性满足/持续性饥饿 机制 * //
-			// * ✨高阶目标：POWERFUL
+			// * ✨高阶目标
 			if (extraConfig.motivationSys.highOrderGoals) {
 				// 满足一定程度开始奖励
 				if (
 					extraConfig.motivationSys.powerfulCriterion(
-						Number(agent.customDatas?.timePassedLastBad ?? 0)
+						agent.timePassedLastBad
 					)
 				) {
-					// 高阶目标「POWERFUL」
 					send2NARS(
 						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 						GCNToCIN_SPIJ(
@@ -875,15 +918,14 @@ export const AgentHai = (
 					)
 				}
 			}
-			// * ✨负触发目标：POWERED
+			// * ✨负触发基础目标
 			if (extraConfig.motivationSys.negatriggerGoals) {
 				// 满足一定程度开始惩罚
 				if (
 					extraConfig.motivationSys.negatriggerCriterion(
-						Number(agent.customDatas?.timePassedLastGood ?? 0)
+						agent.timePassedLastGood
 					)
 				) {
-					// 负触发目标「POWERED」
 					send2NARS(
 						// 例句：`<{SELF} --> [safe]>. :|: %1.0;0.9%`
 						GCNToCIN_SPIJ(
@@ -894,10 +936,7 @@ export const AgentHai = (
 							// 真值
 							generateCommonNarsese_TruthValue(
 								...extraConfig.motivationSys.negatriggerTruthF(
-									Number(
-										agent.customDatas?.timePassedLastGood ??
-											0
-									)
+									agent.timePassedLastGood
 								)
 							)
 						)
@@ -905,16 +944,14 @@ export const AgentHai = (
 				}
 			}
 			// 更新递增数据
-			agent.customDatas.timePassedLastGood =
-				Number(agent.customDatas?.timePassedLastGood ?? 0) + 1
-			agent.customDatas.timePassedLastBad =
-				Number(agent.customDatas?.timePassedLastBad ?? 0) + 1
+			agent.timePassedLastGood += 1
+			agent.timePassedLastBad += 1
 		},
 		/** @implements babble：取随机操作 */
 		babble: (
 			env: NARSEnv,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: NARSPlayerAgent_Hai,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix
 		): NARSOperation => agent.randomRegisteredOperation(),
 		/**
@@ -926,8 +963,8 @@ export const AgentHai = (
 		 */
 		operate: (
 			env: NARSEnv,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: NARSPlayerAgent_Hai,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix,
 			op: NARSOperation,
 			operateI: uint | -1,
@@ -985,8 +1022,8 @@ export const AgentHai = (
 		fallFeedback: (
 			env: NARSEnv,
 			event: string,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: NARSPlayerAgent_Hai,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix,
 			send2NARS: (message: string) => void
 		): void => {
@@ -1016,8 +1053,8 @@ export const AgentHai = (
 		actionReplacementMap(
 			env: NARSEnv,
 			event: PlayerEvent,
-			agent: NARSPlayerAgent,
-			selfConfig: NARSPlayerConfig,
+			agent: NARSPlayerAgent_Hai,
+			selfConfig: NARSPlayerConfig<NARSPlayerAgent_Hai>,
 			host: IMatrix,
 			action: PlayerAction
 		): NARSOperation | undefined | null {
@@ -1071,7 +1108,6 @@ const configConstructor = (
 
 			// 存储结构 //
 			const storage = new MapStorageSparse(SIZES.length)
-			// * 大体结构：#__C__#
 			// 填充两个角落
 			storage.setBlock(
 				new iPoint().copyFrom(SIZES).fill(0),

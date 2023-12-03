@@ -173,6 +173,8 @@ const configConstructor = (
 	players: [
 		// 第一个玩家Alpha
 		{
+			// 构造函数：不需要啥太特殊的
+			constructor: NARSPlayerAgent.DEFAULT_CONSTRUCTOR,
 			// 属性参数（对接母体逻辑）
 			attributes: {
 				name: 'Alpha',

@@ -1,6 +1,5 @@
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import {
-	DictionaryLikeObject,
 	normalShannonEntropy,
 	randomIn,
 	countIn,
@@ -9,7 +8,6 @@ import {
 	randomBoolean2,
 } from 'matriangle-common'
 import { uint } from 'matriangle-legacy'
-import { BATR_DEFAULT_PLAYER_CONTROL_CONFIGS } from 'matriangle-mod-bats'
 import { IMessageRouter, getAddress } from 'matriangle-mod-message-io-api'
 import {
 	NARSOperationRecordFull,
@@ -33,10 +31,7 @@ import {
 	PlayerEvent,
 	NativePlayerEventOptions,
 } from 'matriangle-mod-native/entities/player/controller/PlayerEvent'
-import KeyboardControlCenter, {
-	generateBehaviorFromPlayerConfig,
-} from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
-import WebController from 'matriangle-mod-web-io/controller/WebController'
+import KeyboardControlCenter from 'matriangle-mod-native/mechanics/program/KeyboardControlCenter'
 import { NARSEnv } from './NARSEnv'
 import { NARSPlayerConfig } from './config/API'
 
@@ -117,8 +112,10 @@ export class NARSPlayerAgent {
 	 *   * 「能量包收集」实验中需要的「上一次奖励后所过时间颗粒数」时钟变量
 	 *
 	 * ! 其中各属性的「存在性」「类型」都需要自己去检查
+	 *
+	 * @deprecated // ! 现在将逐渐转移到「自定义子类」的路线上
 	 */
-	public customDatas: DictionaryLikeObject = {}
+	// public customDatas: DictionaryLikeObject = {}
 
 	// 统计数据 //
 	/** 有关「NARS运行状态」「智能体表现状态」的统计数据 */
@@ -318,9 +315,19 @@ export class NARSPlayerAgent {
 		return randomIn(this.registeredOperations)
 	}
 
+	public static readonly DEFAULT_CONSTRUCTOR = (
+		env: NARSEnv,
+		host: IMatrix,
+		player: IPlayer,
+		config: NARSPlayerConfig<NARSPlayerAgent>,
+		router: IMessageRouter
+	): NARSPlayerAgent => new NARSPlayerAgent(env, host, player, config, router)
 	/**
 	 * 构造函数
 	 * *【2023-10-30 21:32:26】目前大多数参数都是从旧「NARSEnv」的全局变量引入的
+	 * *【2023-12-03 19:57:17】现在此构造函数与所谓「自定义变量」被新的「constructor配置」取代
+	 *   * 允许实验根据需要使用不同的`NARSPlayerAgent`子类实例
+	 *   * 允许在「自定义子类」的基础上创建「自定义参数」（由此取缔原先的`customDatas`）
 	 */
 	public constructor(
 		/** 所处在的NARS环境 */
@@ -329,59 +336,12 @@ export class NARSPlayerAgent {
 		/** 所控制的玩家 */
 		public player: IPlayer,
 		/** 所持有的「玩家配置」 */
-		public config: NARSPlayerConfig,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		public config: NARSPlayerConfig<any>,
 		/** 所连接的「消息路由器」 */
-		public router: IMessageRouter,
-		ctlWeb: WebController,
-		kcc: KeyboardControlCenter
+		public router: IMessageRouter
 	) {
 		// 读秒时钟（用于统一「激活率」指标，并统一图表）
-
-		console.warn('config =', config)
-		// 网络控制器：增加连接
-		ctlWeb.addConnection(
-			player,
-			// 用于「Web控制器」
-			config.connections.controlKey
-		)
-
-		// 按键绑定
-		kcc.addKeyBehaviors(
-			generateBehaviorFromPlayerConfig(
-				player,
-				BATR_DEFAULT_PLAYER_CONTROL_CONFIGS[1]
-			)
-		)
-
-		// 连接：键控中心 - 消息路由器
-		router.registerService(
-			env.config.connections.controlService.constructor(
-				env.config.connections.controlService.host,
-				env.config.connections.controlService.port,
-				// * 消息格式：`|+【按键代码】`（按下⇒前导空格）/`|【按键代码】`（释放⇒原样）
-				// ! 使用「前导`|`」区分「控制指定玩家」和「输送至键控中心」
-				(message: string): undefined =>
-					this.dealKeyboardCenterMessage(kcc, message)
-			),
-			(): void => {
-				console.log('键控中心连接成功！')
-			}
-		)
-
-		// 连接：数据显示服务
-		router.registerService(
-			config.connections.dataShow.constructor(
-				config.connections.dataShow.host,
-				config.connections.dataShow.port,
-				/**
-				 * 消息回调=初始化：回传「配置信息」
-				 * * 初始配置：
-				 *   * 消息格式：`JSON.stringify(NARSPlotData)`
-				 */
-				(message: string): string =>
-					this.dealDataShowMessage(env, message)
-			)
-		)
 
 		// NARS参数 //
 		// 原类内初始化
@@ -510,10 +470,11 @@ export class NARSPlayerAgent {
 
 	/**
 	 * 处理键控中心消息
+	 * !【2023-12-03 19:42:05】现在在大环境中添加侦听，为能引用必须设为public
 	 * @param kcc 所连接的键控中心
 	 * @param message 从消息路由器处收到的消息
 	 */
-	protected dealKeyboardCenterMessage(
+	public dealKeyboardCenterMessage(
 		kcc: KeyboardControlCenter,
 		message: string
 	): undefined {
@@ -526,8 +487,9 @@ export class NARSPlayerAgent {
 
 	/**
 	 * 处理「数据显示服务」消息
+	 * !【2023-12-03 19:42:05】现在在大环境中添加侦听，为能引用必须设为public
 	 */
-	protected dealDataShowMessage(env: NARSEnv, message: string): string {
+	public dealDataShowMessage(env: NARSEnv, message: string): string {
 		// 具体「消息源」参考`src/instance/VueUI-V1/src/ui/DataPanel.vue#L247`
 		switch (message) {
 			// 'request-config' => 图表配置
