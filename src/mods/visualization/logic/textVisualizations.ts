@@ -67,7 +67,7 @@ export function showEntity(entity: Entity, maxLength: uint = 7): string {
 		// 自定义名称
 		(entity as IPlayer)?.customName ??
 			// Type.name
-			getEntityType(entity, BatrEntityTypes._ALL_ENTITY)?.name ??
+			getEntityType(entity, BatrEntityTypes._ALL_ENTITY)?.id ??
 			// 用类名
 			getClass(entity)?.name ??
 			// 未定义

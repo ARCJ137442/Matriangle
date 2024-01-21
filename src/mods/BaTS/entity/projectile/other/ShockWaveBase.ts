@@ -234,6 +234,8 @@ export default class ShockWaveBase
 	}
 
 	//============Display Implements============//
+	// !【2024-01-21 20:34:42】暂且使用一个空实现
+	syncDisplayProxy(): void {}
 	// TODO: 【2023-11-15 23:38:04】亟待迁移至显示端
 	// /** 实现：大方形盖掉小方形 */
 	// public displayInit(shape: IShape): void {

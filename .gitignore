@@ -18,7 +18,7 @@ dist/
 *.lnk
 
 # VS Code
-# .vscode # * 可能需要调试信息
+.vscode
 .code-workspace
 
 # Node

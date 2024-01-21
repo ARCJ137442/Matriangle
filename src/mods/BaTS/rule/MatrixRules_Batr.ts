@@ -15,6 +15,7 @@ import {
 	mapSaveJSObject,
 	uniLoadJSObject,
 	uniSaveJSObject,
+	isJSObject,
 } from 'matriangle-common/JSObjectify'
 import { loadRecursiveCriterion_true } from 'matriangle-common/JSObjectify'
 import { RuleDefaultValueMap } from 'matriangle-api/server/rule/IMatrixRule'
@@ -66,10 +67,12 @@ export namespace MatrixRules_Batr {
 			}
 			// 函数内对每个「玩家队伍的JS对象」都进行转换
 			return arr.map(
-				(value: JSObject): PlayerTeam =>
-					value instanceof PlayerTeam
-						? value // （没搞清楚是为何转换完成的）如果已经是转换后的对象，就不要再转换了
-						: uniLoadJSObject<PlayerTeam>(new PlayerTeam(), value)
+				(value: JSObjectValue): PlayerTeam =>
+					isJSObject(value)
+						? value instanceof PlayerTeam
+							? value // （没搞清楚是为何转换完成的）如果已经是转换后的对象，就不要再转换了
+							: uniLoadJSObject<PlayerTeam>(new PlayerTeam(), value as JSObject)
+						: new PlayerTeam()
 			)
 		},
 		loadRecursiveCriterion_false // ! 【2023-09-24 11:44:41】现在直接设置就行了，因为里边数据都已预处理完成
@@ -165,9 +168,9 @@ export namespace MatrixRules_Batr {
 						bonusType: unknown,
 						weight: unknown
 					): [BonusType, number] => [
-						String(bonusType),
-						Number(weight),
-					]
+							String(bonusType),
+							Number(weight),
+						]
 				)
 			},
 			loadRecursiveCriterion_true

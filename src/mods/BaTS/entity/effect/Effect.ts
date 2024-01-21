@@ -64,6 +64,7 @@ export default abstract class Effect<StateT extends IDisplayDataStateEffect>
 		this._proxy.position = this._position
 	}
 
+	/** 从可选变为必选 */
 	syncDisplayProxy(): void {}
 
 	// 轻量级活跃 //

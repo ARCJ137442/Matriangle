@@ -273,6 +273,8 @@ export default class Lightning
 	//  * ? 第一次更新，第一个世界刻……联动耦合地太紧了
 	//  * * 第一次计算完成之后就应该绘制（且只绘制一次图）
 	//  */
+	// !【2024-01-21 20:34:42】暂且使用一个空实现
+	syncDisplayProxy(): void {}
 	// public shapeRefresh(shape: IShape): void {
 	// 	// 更新不透明度
 	// 	shape.alpha = this._life / Lightning.LIFE
