@@ -23,6 +23,7 @@
 			"AIID",
 			"batr",
 			"coaxis",
+			"createjs",
 			"davisoares",
 			"fscommand",
 			"Linlies",
@@ -34,7 +35,8 @@
 			"SPMAVCV",
 			"SPSACV",
 			"tsindexer",
-			"Unrotatable"
+			"Unrotatable",
+			"zimjs"
 		],
 		"conventionalCommits.scopes": [
 			"IO/Web",
@@ -46,7 +48,7 @@
 		// Prittier×editorconfig参考：https://blog.csdn.net/qq_43886365/article/details/130409080
 		"prettier.configPath": ".prettierrc.mjs",
 		"prettier.useEditorConfig": true,
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": true
 	},
 	"extensions": {
 		"recommendations": [
@@ -58,7 +60,7 @@
 			"vivaxy.vscode-conventional-commits",
 			"esbenp.prettier-vscode",
 			"YoavBls.pretty-ts-errors",
-			"alefragnani.project-manager",
+			"alefragnani.project-manager"
 		]
 	},
 	"launch": {
@@ -71,9 +73,7 @@
 				"type": "node",
 				"request": "launch",
 				"name": "Launch Program",
-				"skipFiles": [
-					"<node_internals>/**"
-				],
+				"skipFiles": ["<node_internals>/**"],
 				// "program": "${workspaceFolder}\\test\\test.ts",
 				"program": "${file}",
 				// "outFiles": [
@@ -85,9 +85,7 @@
 				"type": "node",
 				"request": "launch",
 				"name": "Matriangle Instance V1 - BaTS",
-				"skipFiles": [
-					"<node_internals>/**"
-				],
+				"skipFiles": ["<node_internals>/**"],
 				// "program": "${workspaceFolder}\\test\\test.ts",
 				"program": "src/instance/BaTS-Server/MatriangleServer_BaTS.ts",
 				// "outFiles": [
@@ -99,9 +97,7 @@
 				"type": "node",
 				"request": "launch",
 				"name": "Matriangle Instance: AI Env",
-				"skipFiles": [
-					"<node_internals>/**"
-				],
+				"skipFiles": ["<node_internals>/**"],
 				// "program": "${workspaceFolder}\\test\\test.ts",
 				"program": "src/instance/NARS-experiment/launch-node.ts",
 				// "outFiles": [
@@ -113,9 +109,7 @@
 				"type": "node",
 				"request": "launch",
 				"name": "Matriangle Instance: AI Env - Car Collision",
-				"skipFiles": [
-					"<node_internals>/**"
-				],
+				"skipFiles": ["<node_internals>/**"],
 				// "program": "${workspaceFolder}\\test\\test.ts",
 				"program": "src/instance/NARS-experiment/launch-node-car-collision.ts",
 				// "outFiles": [
@@ -127,16 +121,14 @@
 				"type": "node",
 				"request": "launch",
 				"name": "Matriangle Instance: AI Env - Powerup Collection",
-				"skipFiles": [
-					"<node_internals>/**"
-				],
+				"skipFiles": ["<node_internals>/**"],
 				// "program": "${workspaceFolder}\\test\\test.ts",
 				"program": "src/instance/NARS-experiment/launch-node-powerup-collection.ts",
 				// "outFiles": [
 				//     "${workspaceFolder}/**/*.js"
 				// ],
 				"runtimeExecutable": "C:/Users/56506/AppData/Roaming/npm/ts-node.cmd"
-			},
+			}
 		]
 	},
 	"tasks": {
@@ -147,9 +139,7 @@
 				"command": "echo hello",
 				"type": "shell",
 				"args": [],
-				"problemMatcher": [
-					"$tsc"
-				],
+				"problemMatcher": ["$tsc"],
 				"presentation": {
 					"reveal": "always"
 				},
@@ -158,9 +148,7 @@
 			{
 				"type": "typescript",
 				"tsconfig": "tsconfig.json",
-				"problemMatcher": [
-					"$tsc"
-				],
+				"problemMatcher": ["$tsc"],
 				"group": "build",
 				"label": "tsc: 构建 - tsconfig.json"
 			}

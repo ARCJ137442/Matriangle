@@ -234,6 +234,8 @@ export class DisplayProxyEntity<EntityStateT extends IDisplayDataEntityState>
 	/**
 	 * 构造函数
 	 * * 用于初始化`id`值
+	 *
+	 * @param id 显示ID // !【2024-01-29 18:27:18】与实体ID可能不同
 	 */
 	public constructor(id: typeID) {
 		// 初始化数据

@@ -26,10 +26,12 @@ export default abstract class EntityDisplayable<
 {
 	/**
 	 * 构造函数
+	 * @param entityId 实体ID
+	 * @param displayID 显示ID // * 默认与实体ID相同
 	 */
-	public constructor(id: typeID) {
-		super(id)
-		this._proxy = new DisplayProxyEntity<EntityStateT>(id)
+	public constructor(entityId: typeID, displayID: typeID = entityId) {
+		super(entityId)
+		this._proxy = new DisplayProxyEntity<EntityStateT>(displayID)
 	}
 	/** @implements 直接委托自身的「代理对象」 */
 	getDisplayData(): IDisplayDataEntity<EntityStateT> {
