@@ -20,6 +20,9 @@ const config = {
 
 	// 💭避免使用箭头函数的括号
 	arrowParens: 'avoid',
+
+	// 使用EditorConfig 参考：https://prettier.io/docs/en/api.html（搜索editorconfig）
+	editorconfig: true
 }
 
 export default config

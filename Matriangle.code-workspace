@@ -50,7 +50,15 @@
 	},
 	"extensions": {
 		"recommendations": [
-			"davisoares.tsindexer"
+			"davisoares.tsindexer",
+			"steoates.autoimport",
+			"dbaeumer.vscode-eslint",
+			"aaron-bond.better-comments",
+			"EditorConfig.EditorConfig",
+			"vivaxy.vscode-conventional-commits",
+			"esbenp.prettier-vscode",
+			"YoavBls.pretty-ts-errors",
+			"alefragnani.project-manager",
 		]
 	},
 	"launch": {
