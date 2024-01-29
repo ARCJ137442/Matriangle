@@ -24,29 +24,29 @@ import { PlayerAction } from 'matriangle-mod-native/entities/player/controller/P
 import EffectPlayerHurt from '../effect/EffectPlayerHurt'
 import IPlayerBatr from './IPlayerBatr'
 import { BatrPlayerEvent, BatrPlayerEventOptions } from './BatrPlayerEvent'
-import Player_V1, {
-	IDisplayDataEntityStatePlayerV1,
-} from 'matriangle-mod-native/entities/player/Player_V1'
+import Player_V1 from 'matriangle-mod-native/entities/player/Player_V1'
 import { EnumBatrPlayerAction } from './control/BatrPlayerAction'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import EffectPlayerDeathLight from '../effect/EffectPlayerDeathLight'
 import EffectSpawn from '../effect/EffectSpawn'
 import EffectTeleport from '../effect/EffectTeleport'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { IDisplayDataEntityStateTriangleAgent } from 'matriangle-api/display/implements/CommonDisplayRegistry'
 
-/**
- * 有关玩家的「自定义显示数据」
- *
- * !【2023-11-15 20:45:57】注意：其本质无需继承`IDisplayDataEntity`接口
- * * 简略缘由：其内属性被极度泛化，导致「字符串键取值约束」失效
- * * 详见方法{@link IDisplayProxyEntity.storeState}
- *
- * ?【2023-11-15 20:49:20】似乎若后续显示端要用到（通过「玩家显示数据」更新玩家Shape）的话，可能需要将其独立在一个地方以避免全部导入
- */
-export interface IDisplayDataEntityStatePlayerBatr
-	extends IDisplayDataEntityStatePlayerV1 {
-	// TODO: 暂时还没内容，有待扩充（例如「更新队伍⇒更新颜色。。。」）
-}
+// /**
+// !【2024-01-29 22:59:48】暂且弃用，与「初代玩家」共用「三角智能体」显示数据
+//  * 有关玩家的「自定义显示数据」
+//  *
+//  * !【2023-11-15 20:45:57】注意：其本质无需继承`IDisplayDataEntity`接口
+//  * * 简略缘由：其内属性被极度泛化，导致「字符串键取值约束」失效
+//  * * 详见方法{@link IDisplayProxyEntity.storeState}
+//  *
+//  * ?【2023-11-15 20:49:20】似乎若后续显示端要用到（通过「玩家显示数据」更新玩家Shape）的话，可能需要将其独立在一个地方以避免全部导入
+//  */
+// export interface IDisplayDataEntityStatePlayerBatr
+// 	extends IDisplayDataEntityStatePlayerV1 {
+// 	// TODO: 暂时还没内容，有待扩充（例如「更新队伍⇒更新颜色。。。」）
+// }
 
 /**
  * 「Batr玩家」的主类
@@ -56,7 +56,7 @@ export interface IDisplayDataEntityStatePlayerBatr
  * !【2023-10-08 17:19:26】现在「从接口实现的属性/方法」不再外加访问修饰符，以便和「非接口实现」的属性/方法区分
  */
 export default class PlayerBatr
-	extends Player_V1<IDisplayDataEntityStatePlayerBatr>
+	extends Player_V1<IDisplayDataEntityStateTriangleAgent>
 	implements IPlayerBatr
 {
 	// **独有属性** //

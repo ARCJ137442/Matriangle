@@ -33,6 +33,7 @@ export default abstract class EntityDisplayable<
 		super(entityId)
 		this._proxy = new DisplayProxyEntity<EntityStateT>(displayID)
 	}
+
 	/** @implements 直接委托自身的「代理对象」 */
 	getDisplayData(): IDisplayDataEntity<EntityStateT> {
 		// * 先尝试同步一次（可选）

@@ -1,9 +1,9 @@
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
 import EffectPlayerShape from './EffectPlayerShape'
-import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { TriangleAgentDecorationLabel } from 'matriangle-api/display/implements/triangleAgent/DecorationLabels'
 
 /**
  * 玩家死亡光效
@@ -44,7 +44,7 @@ export default class EffectPlayerDeathLight extends EffectPlayerShape {
 		position: fPoint,
 		direction: uint = 0,
 		color: uint = 0xffffff,
-		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
+		decorationLabel: TriangleAgentDecorationLabel = TriangleAgentDecorationLabel.EMPTY,
 		reverse: boolean = false,
 		life: uint = EffectPlayerShape.MAX_LIFE
 	) {

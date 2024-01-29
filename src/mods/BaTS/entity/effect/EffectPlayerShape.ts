@@ -5,9 +5,9 @@ import { IEntityWithDirection } from 'matriangle-api/server/entity/EntityInterfa
 import { TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import { mRot } from 'matriangle-api/server/general/GlobalRot'
 import { fPoint } from 'matriangle-common/geometricTools'
-import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { alignToGridCenter_P } from 'matriangle-api/server/general/PosTransform'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { TriangleAgentDecorationLabel } from 'matriangle-api/display/implements/triangleAgent/DecorationLabels'
 
 /** 专用的显示状态数据 */
 export interface IDisplayDataStateEffectPlayerShape
@@ -16,7 +16,7 @@ export interface IDisplayDataStateEffectPlayerShape
 	color: uint
 
 	/** （用于曾经「AI玩家」的）装饰图案名 */
-	decorationLabel: NativeDecorationLabel
+	decorationLabel: TriangleAgentDecorationLabel
 
 	/**
 	 * 是否反转播放
@@ -70,7 +70,7 @@ export default abstract class EffectPlayerShape<
 	// }
 
 	// /** 用于仿制（AI）玩家的标识 */ // TODO: 等待玩家方迁移
-	// protected _decorationLabel: NativeDecorationLabel
+	// protected _decorationLabel: TriangleAgentDecorationLabel
 	// protected _alphaFunction: (effect: EffectPlayerLike) => number
 
 	//============Constructor & Destructor============//
@@ -79,7 +79,7 @@ export default abstract class EffectPlayerShape<
 		position: fPoint,
 		public readonly direction: mRot = 0,
 		public readonly color: uint = 0xffffff,
-		public readonly decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
+		public readonly decorationLabel: TriangleAgentDecorationLabel = TriangleAgentDecorationLabel.EMPTY,
 		public readonly reverse: boolean = false,
 		life: uint = EffectPlayerShape.MAX_LIFE
 	) {

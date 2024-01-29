@@ -11,9 +11,9 @@ import Entity from 'matriangle-api/server/entity/Entity'
 import IMatrix from 'matriangle-api/server/main/IMatrix'
 import { iPointRef, iPoint } from 'matriangle-common/geometricTools'
 import { uint, int } from 'matriangle-legacy/AS3Legacy'
-import { NativeDecorationLabel } from './DecorationLabels'
 import { PlayerAction } from './controller/PlayerAction'
 import PlayerController from './controller/PlayerController'
+import { TriangleAgentDecorationLabel } from 'matriangle-api/display/implements/triangleAgent/DecorationLabels'
 
 /**
  * 「玩家」是
@@ -343,7 +343,7 @@ export default interface IPlayer
 	 * 用于判断「装饰类型」的标记
 	 * * 用途：玩家自身或在「玩家类特效」从玩家处构造时，用于获取到所有绘制信息
 	 */
-	decorationLabel: NativeDecorationLabel
+	decorationLabel: TriangleAgentDecorationLabel
 }
 
 /**

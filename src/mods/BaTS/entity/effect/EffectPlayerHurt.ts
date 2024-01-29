@@ -1,10 +1,10 @@
 import { fPoint, iPoint } from 'matriangle-common/geometricTools'
-import { NativeDecorationLabel } from 'matriangle-mod-native/entities/player/DecorationLabels'
 import { uint } from 'matriangle-legacy/AS3Legacy'
 import { FIXED_TPS } from 'matriangle-api/server/main/GlobalWorldVariables'
 import IPlayer from 'matriangle-mod-native/entities/player/IPlayer'
 import EffectPlayerShape from './EffectPlayerShape'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
+import { TriangleAgentDecorationLabel } from 'matriangle-api/display/implements/triangleAgent/DecorationLabels'
 
 /**
  * 玩家受伤害
@@ -42,7 +42,7 @@ export default class EffectPlayerHurt extends EffectPlayerShape {
 	public constructor(
 		position: fPoint,
 		rot: uint = 0,
-		decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY,
+		decorationLabel: TriangleAgentDecorationLabel = TriangleAgentDecorationLabel.EMPTY,
 		reverse: boolean = false,
 		life: uint = EffectPlayerHurt.LIFE
 	) {

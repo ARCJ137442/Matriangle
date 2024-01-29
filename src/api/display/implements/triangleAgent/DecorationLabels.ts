@@ -1,7 +1,7 @@
 /**
  * 存储在「绘制玩家/玩家型特效」时使用的「装饰名称」
  */
-export enum NativeDecorationLabel {
+export enum TriangleAgentDecorationLabel {
 	/** 空：用于玩家 */
 	EMPTY = '',
 	/** 圆形：用于AI_DUMMY */

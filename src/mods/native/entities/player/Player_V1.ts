@@ -13,7 +13,6 @@ import {
 	handlePlayerLocationChanged,
 } from '../../mechanics/NativeMatrixMechanics'
 import { MatrixRules_Native } from '../../rule/MatrixRules_Native'
-import { NativeDecorationLabel } from './DecorationLabels'
 import IPlayer from './IPlayer'
 import {
 	PlayerAction,
@@ -29,25 +28,12 @@ import {
 } from './controller/PlayerEvent'
 import { omega } from 'matriangle-common'
 import EntityDisplayable from 'matriangle-api/server/entity/EntityDisplayable'
-import { IDisplayDataEntityState } from 'matriangle-api/display/RemoteDisplayAPI'
 import { typeID } from 'matriangle-api/server/registry/IWorldRegistry'
-
-/**
- * 有关玩家的「自定义显示数据」
- *
- * !【2023-11-15 20:45:57】注意：其本质无需继承`IDisplayDataEntity`接口
- * * 简略缘由：其内属性被极度泛化，导致「字符串键取值约束」失效
- * * 详见方法{@link IDisplayProxyEntity.storeState}
- *
- * ?【2023-11-15 20:49:20】似乎若后续显示端要用到（通过「玩家显示数据」更新玩家Shape）的话，可能需要将其独立在一个地方以避免全部导入
- */
-export interface IDisplayDataEntityStatePlayerV1
-	extends IDisplayDataEntityState {
-	customName: string
-	fillColor: uint
-	lineColor: uint
-	decorationLabel: NativeDecorationLabel
-}
+import {
+	CommonDisplayIDs,
+	IDisplayDataEntityStateTriangleAgent,
+} from 'matriangle-api/display/implements/CommonDisplayRegistry'
+import { TriangleAgentDecorationLabel } from 'matriangle-api/display/implements/triangleAgent/DecorationLabels'
 
 /**
  * 玩家第一版
@@ -55,7 +41,7 @@ export interface IDisplayDataEntityStatePlayerV1
  */
 export default class Player_V1<
 		// !【2023-11-15 23:23:18】查明原因了：不是泛型约束出了问题，而是「带多个`keyof`的泛型函数」出了问题
-		PlayerStateT extends IDisplayDataEntityStatePlayerV1,
+		PlayerStateT extends IDisplayDataEntityStateTriangleAgent,
 	>
 	extends EntityDisplayable<PlayerStateT>
 	implements IPlayer
@@ -105,7 +91,10 @@ export default class Player_V1<
 			lineColor = 0x808080,
 		} = args
 
-		super(id)
+		super(
+			id, // !【2024-01-29 22:58:52】↓现在使用「三角智能体」作为显示ID
+			CommonDisplayIDs.TRIANGLE_AGENT
+		)
 		this._isActive = isActive
 
 		// 有方向实体 & 格点实体 // ! 这里统一使用内部变量，不使用setter
@@ -156,7 +145,7 @@ export default class Player_V1<
 	// 🏷️名称 //
 
 	/** 玩家的自定义名称（不受国际化影响） */
-	protected _customName: string = 'noname'
+	protected _customName: string = 'no-name'
 	/** 玩家的自定义名称（不受国际化影响） */
 	get customName(): string {
 		return this._customName
@@ -911,5 +900,6 @@ export default class Player_V1<
 	}
 
 	/** 用于判断「装饰类型」的标记 */
-	decorationLabel: NativeDecorationLabel = NativeDecorationLabel.EMPTY
+	decorationLabel: TriangleAgentDecorationLabel =
+		TriangleAgentDecorationLabel.EMPTY
 }
