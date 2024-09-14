@@ -1,8 +1,9 @@
 /**
  * 一个记录「NARS操作及其参数」的元组（至少有一个字符串元素）
+ * * 🚩【2024-04-08 19:41:27】现在去除「操作符」前方的尖号
  *
  * @example
- * ['^left', '{SELF}', 'x']
+ * ['left', '{SELF}', 'x']
  */
 export type NARSOperation = [string, ...string[]]
 /**
@@ -67,12 +68,16 @@ export enum NARSOutputType {
 }
 
 // 网络通信
-/** 解包格式 */
+/**
+ * 解包格式
+ * * 🚩现在遵从**BabelNAR.rs**的规范
+ */
 export type WebNARSOutput = {
-	interface_name?: string
-	output_type?: string
+	// interface_name?: string
+	type?: string
 	content?: string
-	output_operation?: string[]
+	narsese?: string
+	operation?: NARSOperation
 }
 /** NARS通过Web(Socket)传回的消息中会有的格式 */
 export type WebNARSOutputJSON = WebNARSOutput[]
