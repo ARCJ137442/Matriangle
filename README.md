@@ -1,5 +1,13 @@
 # Matriangle
 
+![GitHub License](https://img.shields.io/github/license/ARCJ137442/Matriangle?style=for-the-badge&color=78dce8)
+![Code Size](https://img.shields.io/github/languages/code-size/ARCJ137442/Matriangle?style=for-the-badge&color=78dce8)
+![Lines of Code](https://www.aschey.tech/tokei/github.com/ARCJ137442/Matriangle?style=for-the-badge&color=78dce8)
+[![Language](https://img.shields.io/badge/language-TypeScript-cyan?style=for-the-badge&color=78dce8)](https://www.typescriptlang.org/)
+
+![Created At](https://img.shields.io/github/created-at/ARCJ137442/Matriangle?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/ARCJ137442/Matriangle?style=for-the-badge)
+
 ## Overview 概述
 
 Matriangle（中译名未定）是一个
