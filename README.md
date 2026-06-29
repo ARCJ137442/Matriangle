@@ -8,6 +8,24 @@
 ![Created At](https://img.shields.io/github/created-at/ARCJ137442/Matriangle?style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/ARCJ137442/Matriangle?style=for-the-badge)
 
+> ⚠️ **项目状态：停止维护（2026-06-29 更新）**
+>
+> 本项目已许久未维护，后续很长一段时间预期不再维护。
+>
+> - 🔒 仓库 watch 已禁用，**不再发送 Dependabot 告警邮件**
+> - ✅ 2026-06-29 已对 `Matriangle-Vue-UI` 子仓库一次性升级 `webpack-dev-server` 4→5.2.5 等核心依赖
+> - ✅ Dependabot 扫描状态：30/30 漏洞已 `fixed`（1 critical + 14 high + 14 medium + 1 low）
+> - ⚠️ 不推荐 fork 后继续开发；如需参考实现，可直接克隆后修改
+
+## 🤖 Agent 维护披露
+
+> 本仓库自 2026-06-29 起的维护性 commit（包括子仓库 `Matriangle-Vue-UI` 依赖升级、Dependabot 告警处理、文档同步）均由 AI Agent **MiniMax-M3** 在用户监督下协助完成。
+>
+> - **Agent 角色**：执行批量依赖升级、npm audit 验证、lock 文件重生成、文档标注维护状态
+> - **人工监督**：所有 commit 由用户审阅后手动 push
+> - **披露原则**：遵循「Agent 协作必须可追溯」原则，commit 信息、文档修改、依赖变更均可被审计
+> - **能力边界**：本项目不再接受新功能开发，仅做安全维护；如发现新漏洞请自行处理
+
 ## Overview 概述
 
 Matriangle（中译名未定）是一个
