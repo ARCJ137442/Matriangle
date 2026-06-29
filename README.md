@@ -19,12 +19,30 @@
 
 ## 🤖 Agent 维护披露
 
-> 本仓库自 2026-06-29 起的维护性 commit（包括子仓库 `Matriangle-Vue-UI` 依赖升级、Dependabot 告警处理、文档同步）均由 AI Agent **MiniMax-M3** 在用户监督下协助完成。
->
-> - **Agent 角色**：执行批量依赖升级、npm audit 验证、lock 文件重生成、文档标注维护状态
-> - **人工监督**：所有 commit 由用户审阅后手动 push
-> - **披露原则**：遵循「Agent 协作必须可追溯」原则，commit 信息、文档修改、依赖变更均可被审计
-> - **能力边界**：本项目不再接受新功能开发，仅做安全维护；如发现新漏洞请自行处理
+> ⚠️ **重要边界说明：以下披露仅适用于「部分最新提交」，不代表项目历史代码由 Agent 编写。**
+
+**历史代码归属**：本仓库 2023-2025 年的全部历史 commit（包含绝大部分源码、文档、配置）均由项目作者 `ARCJ137442` **人工编写**，AI Agent **未参与**。这些历史 commit 不含 `Co-Authored-By: MiniMax-M3` 标记。
+
+**Agent 维护范围**（**仅限以下 2 个 commit**，2026-06-29）：
+
+| Commit 主题 | 改动内容 | 协作 Agent |
+|------------|----------|-----------|
+| `docs: 精确化 Agent 维护披露边界` | README 修正披露边界（明确「仅部分最新提交」）| MiniMax-M3 |
+| `docs: 标注项目停止维护状态 + Agent 维护披露` | README 顶部加维护状态 + Agent 披露区块 | MiniMax-M3 |
+
+> 📋 完整 commit 列表请见 [commits 页面](https://github.com/ARCJ137442/Matriangle/commits/main)（按时间倒序查看 2026-06-29 的所有 commit）
+
+**关于子仓库 `Matriangle-Vue-UI` 的依赖升级**：相关 4 个 commit（依赖升级、postcss 修正、README 标注、披露边界修正）由 MiniMax-M3 协助完成，请到子仓库的 README 查看具体披露。
+
+**Agent 在本仓库 commit 中的具体工作**：
+- 撰写本次 README 披露区块
+
+**未由 Agent 完成的工作**：
+- 业务逻辑代码（TypeScript 模块）
+- 项目架构设计
+- 各工作区（workspaces）下的源码
+
+**披露原则**：所有 Agent 协助的 commit 在 git 历史中可审计；如需查看具体改动，对照上述 commit hash 即可定位。
 
 ## Overview 概述
 
